@@ -1,0 +1,11 @@
+﻿namespace Audiochan.Core.Features.Users.Models
+{
+    /// <summary>
+    /// Returns a bit of data about the user who owns a resource.
+    /// </summary>
+    public class UserViewModel
+    {
+        public long Id { get; set; }
+        public string Username { get; set; } = null!;
+    }
+}

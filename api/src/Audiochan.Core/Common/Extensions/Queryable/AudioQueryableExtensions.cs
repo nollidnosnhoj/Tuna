@@ -1,0 +1,41 @@
+﻿using System.Linq;
+using Audiochan.Core.Entities;
+
+namespace Audiochan.Core.Common.Extensions.Queryable
+{
+    public static class AudioQueryableExtensions
+    {
+        /// <summary>
+        /// Filter only public audio uploads, unless the audio belongs to the current user, then display regardless
+        /// </summary>
+        public static IQueryable<Audio> FilterVisibility(this IQueryable<Audio> queryable, 
+            long currentUserId)
+        {
+            return queryable
+                .Where(a => a.UserId == currentUserId || a.IsPublic);
+        }
+        
+        public static IQueryable<Audio> FilterByTags(this IQueryable<Audio> queryable, string tags)
+        {
+            if (string.IsNullOrWhiteSpace(tags)) return queryable;
+            
+            var parsedTags = tags.Split(',')
+                .Select(t => t.Trim().ToLower())
+                .ToArray();
+            
+            return queryable.Where(a => 
+                a.Tags.Any(t => parsedTags.Contains(t.TagId)));
+        }
+        
+        public static IQueryable<Audio> Sort(this IQueryable<Audio> queryable, string orderBy)
+        {
+            return orderBy switch
+            {
+                "favorites" => 
+                    queryable.OrderByDescending(a => a.Favorited.Count),
+                _ => 
+                    queryable.OrderByDescending(a => a.Created)
+            };
+        }
+    }
+}
