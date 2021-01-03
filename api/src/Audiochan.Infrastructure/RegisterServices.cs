@@ -23,7 +23,7 @@ namespace Audiochan.Infrastructure
                     .UseNpgsql(configuration.GetConnectionString("PostgreSQL"))
                     .UseSnakeCaseNamingConvention();
             });
-            
+
             if (isProduction)
             {
                 services.AddAWSService<IAmazonS3>();

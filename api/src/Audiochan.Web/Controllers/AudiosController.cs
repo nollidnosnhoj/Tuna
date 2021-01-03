@@ -51,6 +51,13 @@ namespace Audiochan.Web.Controllers
                 : result.ReturnErrorResponse();
         }
 
+        [HttpGet("random-id")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetRandomId(CancellationToken cancellationToken)
+        {
+            return Ok(await _audioService.GetRandomAudioId(cancellationToken));
+        }
+
         [HttpPost(Name="UploadAudio")]
         [Produces("application/json")]
         [ProducesResponseType(typeof(AudioDetailViewModel), StatusCodes.Status201Created)]

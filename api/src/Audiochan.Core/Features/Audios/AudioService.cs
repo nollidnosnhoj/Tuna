@@ -13,6 +13,7 @@ using Audiochan.Core.Common.Models;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Audios.Models;
 using Audiochan.Core.Interfaces;
+using Dapper;
 using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Audios
@@ -115,6 +116,14 @@ namespace Audiochan.Core.Features.Audios
             audio.Url = blob.FoundBlob ? blob.Url : "";
 
             return Result<AudioDetailViewModel>.Success(audio);
+        }
+
+        public async Task<string> GetRandomAudioId(CancellationToken cancellationToken = default)
+        {
+            await using var dbConnection = _dbContext.Database.GetDbConnection();
+            const string queryString = "SELECT id FROM audios ORDER BY random()";
+            var id = dbConnection.QueryFirstOrDefault<string>(queryString, cancellationToken);
+            return id;
         }
 
         public async Task<IResult<AudioDetailViewModel>> Create(UploadAudioRequest request, 
