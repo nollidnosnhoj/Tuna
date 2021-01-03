@@ -10,11 +10,11 @@ This is a personal project of mine that I have been working on and off during CO
 - Next.js (Frontend)
 - Amazon S3 (Media Storage)
 - PostgreSQL (Database)
-- * Redis
-- * Docker
-- * Nginx
+- *Redis
+- *Docker
+- *Nginx
 
-* Planned
+*Planned
 
 ## TODOS
 
