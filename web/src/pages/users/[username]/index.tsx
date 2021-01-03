@@ -56,7 +56,7 @@ export default function ProfilePage(
   useEffect(() => {
     const checkIsFollowing = async () => {
       try {
-        await request(`users/${username}/followers`, { method: "head" });
+        await request(`users/${username}/follow`, { method: "head" });
         setIsFollowing(true);
       } catch (err) {
         setIsFollowing(false);

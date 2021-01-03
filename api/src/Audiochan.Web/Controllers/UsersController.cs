@@ -73,20 +73,6 @@ namespace Audiochan.Web.Controllers
             return result.IsSuccess ? Ok(result.Data) : result.ReturnErrorResponse();
         }
 
-        [HttpHead("{username}/followers", Name = "CheckIsFollowing")]
-        [Authorize]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> CheckIsFollowing(string username, CancellationToken cancellationToken)
-        {
-            var currentUserId = _currentUserService.GetUserId();
-
-            return await _followerService.CheckFollowing(currentUserId, username, cancellationToken)
-                ? NoContent()
-                : NotFound();
-        }
-
         [HttpGet("{username}/followers", Name="GetUserFollowers")]
         [ProducesResponseType(typeof(List<UserViewModel>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
@@ -105,6 +91,20 @@ namespace Audiochan.Web.Controllers
         {
             var result = await _followerService.GetUsersFollowings(username.ToLower(), query, cancellationToken);
             return result.IsSuccess ? Ok(result.Data) : result.ReturnErrorResponse();
+        }
+        
+        [HttpHead("{username}/follow", Name = "CheckIsFollowing")]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> CheckIsFollowing(string username, CancellationToken cancellationToken)
+        {
+            var currentUserId = _currentUserService.GetUserId();
+
+            return await _followerService.CheckFollowing(currentUserId, username, cancellationToken)
+                ? NoContent()
+                : NotFound();
         }
         
         [HttpPost("{username}/follow", Name="FollowUser")]
