@@ -27,13 +27,15 @@ namespace Audiochan.Core.Features.Auth
             _dateTimeService = dateTimeService;
         }
 
-        public async Task<IResult<AuthResultDto>> Login(string username, string password, 
+        public async Task<IResult<AuthResultDto>> Login(string login, string password, 
             CancellationToken cancellationToken = default)
         {
-            var user = await _userManager.FindByNameAsync(username.ToLower());
+            var user = await _userManager.Users
+                .SingleOrDefaultAsync(u => u.UserName == login.ToLower() 
+                                           || u.Email == login, cancellationToken);
 
             if (user == null || !await _userManager.CheckPasswordAsync(user, password))
-                return Result<AuthResultDto>.Fail(ResultErrorCode.UnprocessedEntity, "Invalid username/password.");
+                return Result<AuthResultDto>.Fail(ResultErrorCode.UnprocessedEntity, "Invalid login credentials.");
 
             var token = await _tokenService.GenerateAccessToken(user);
 
