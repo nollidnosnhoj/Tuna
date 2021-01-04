@@ -3,7 +3,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Features.Audios.Models;
-using Audiochan.Core.Features.Profiles.Models;
 using Audiochan.Core.Features.Users.Models;
 using Audiochan.Core.Interfaces;
 using Audiochan.Web.Extensions;
@@ -18,27 +17,27 @@ namespace Audiochan.Web.Controllers
     {
         private readonly IAudioService _audioService;
         private readonly IFollowerService _followerService;
-        private readonly IProfileService _profileService;
-        private readonly IAudioFavoriteService _audioFavoriteService;
+        private readonly IFavoriteService _favoriteService;
         private readonly ICurrentUserService _currentUserService;
+        private readonly IUserService _userService;
 
         public UsersController(IAudioService audioService, IFollowerService followerService, 
-            IProfileService profileService, IAudioFavoriteService audioFavoriteService, 
-            ICurrentUserService currentUserService)
+            IFavoriteService favoriteService, ICurrentUserService currentUserService, 
+            IUserService userService)
         {
             _audioService = audioService;
             _followerService = followerService;
-            _profileService = profileService;
-            _audioFavoriteService = audioFavoriteService;
+            _favoriteService = favoriteService;
             _currentUserService = currentUserService;
+            _userService = userService;
         }
 
         [HttpGet("{username}", Name="GetProfile")]
-        [ProducesResponseType(typeof(ProfileViewModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(UserDetailsViewModel), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetUserProfile(string username, CancellationToken cancellationToken)
         {
-            var result = await _profileService.GetProfile(username, cancellationToken);
+            var result = await _userService.GetUserDetails(username, cancellationToken);
 
             return result.IsSuccess
                 ? Ok(result.Data)
@@ -69,7 +68,7 @@ namespace Audiochan.Web.Controllers
         public async Task<IActionResult> GetUserFavorites(string username, PaginationQuery paginationQuery,
             CancellationToken cancellationToken)
         {
-            var result = await _audioFavoriteService.GetUserFavorites(username, paginationQuery, cancellationToken);
+            var result = await _favoriteService.GetUserFavorites(username, paginationQuery, cancellationToken);
             return result.IsSuccess ? Ok(result.Data) : result.ReturnErrorResponse();
         }
 
@@ -91,40 +90,6 @@ namespace Audiochan.Web.Controllers
         {
             var result = await _followerService.GetUsersFollowings(username.ToLower(), query, cancellationToken);
             return result.IsSuccess ? Ok(result.Data) : result.ReturnErrorResponse();
-        }
-        
-        [HttpHead("{username}/follow", Name = "CheckIsFollowing")]
-        [Authorize]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> CheckIsFollowing(string username, CancellationToken cancellationToken)
-        {
-            var currentUserId = _currentUserService.GetUserId();
-
-            return await _followerService.CheckFollowing(currentUserId, username, cancellationToken)
-                ? NoContent()
-                : NotFound();
-        }
-        
-        [HttpPost("{username}/follow", Name="FollowUser")]
-        [Authorize]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> FollowUser(string username, CancellationToken cancellationToken)
-        {
-            var result = await _followerService.Follow(username.ToLower(), cancellationToken);
-            return result.IsSuccess ? NoContent() : result.ReturnErrorResponse();
-        }
-        
-        [HttpDelete("{username}/follow", Name="UnfollowUser")]
-        [Authorize]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> UnfollowUser(string username, CancellationToken cancellationToken)
-        {
-            var result = await _followerService.Unfollow(username.ToLower(), cancellationToken);
-            return result.IsSuccess ? NoContent() : result.ReturnErrorResponse();
         }
     }
 }

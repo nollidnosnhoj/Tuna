@@ -16,14 +16,14 @@ namespace Audiochan.Web.Controllers
     public class AudiosController : ControllerBase
     {
         private readonly IAudioService _audioService;
-        private readonly IAudioFavoriteService _audioFavoriteService;
+        private readonly IFavoriteService _favoriteService;
         private readonly ICurrentUserService _currentUserService;
 
-        public AudiosController(IAudioService audioService, IAudioFavoriteService audioFavoriteService, 
+        public AudiosController(IAudioService audioService, IFavoriteService favoriteService, 
             ICurrentUserService currentUserService)
         {
             _audioService = audioService;
-            _audioFavoriteService = audioFavoriteService;
+            _favoriteService = favoriteService;
             _currentUserService = currentUserService;
         }
 
@@ -55,7 +55,9 @@ namespace Audiochan.Web.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> GetRandomId(CancellationToken cancellationToken)
         {
-            return Ok(await _audioService.GetRandomAudioId(cancellationToken));
+            var id = await _audioService.GetRandomAudioId(cancellationToken);
+
+            return id == null ? NotFound() : Ok(id);
         }
 
         [HttpPost(Name="UploadAudio")]
@@ -106,44 +108,6 @@ namespace Audiochan.Web.Controllers
             return result.IsSuccess
                 ? NoContent()
                 : result.ReturnErrorResponse();
-        }
-
-        [HttpPost("{audioId}/favorites", Name = "FavoriteAudio")]
-        [Authorize]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Favorite(string audioId, CancellationToken cancellationToken)
-        {
-            var currentUserId = _currentUserService.GetUserId();
-            var result = await _audioFavoriteService.FavoriteAudio(currentUserId, audioId, cancellationToken);
-            return result.IsSuccess ? NoContent() : result.ReturnErrorResponse();
-        }
-        
-        [HttpDelete("{audioId}/favorites", Name = "UnfavoriteAudio")]
-        [Authorize]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Unfavorite(string audioId, CancellationToken cancellationToken)
-        {
-            var currentUserId = _currentUserService.GetUserId();
-            var result = await _audioFavoriteService.UnfavoriteAudio(currentUserId, audioId, cancellationToken);
-            return result.IsSuccess ? NoContent() : result.ReturnErrorResponse();
-        }
-
-        [HttpHead("{audioId}/favorites", Name="IsFavorited")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> CheckFavorite(string audioId, CancellationToken cancellationToken)
-        {
-            var currentUserId = _currentUserService.GetUserId();
-
-            return await _audioFavoriteService.CheckIfUserFavorited(currentUserId, audioId, cancellationToken)
-                ? NoContent()
-                : NotFound();
         }
     }
 }

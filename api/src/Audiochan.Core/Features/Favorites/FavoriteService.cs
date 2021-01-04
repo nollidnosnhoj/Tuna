@@ -13,12 +13,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Favorites
 {
-    public class AudioFavoriteService : IAudioFavoriteService
+    public class FavoriteService : IFavoriteService
     {
         private readonly IAudiochanContext _dbContext;
         private readonly ICurrentUserService _currentUserService;
 
-        public AudioFavoriteService(IAudiochanContext dbContext, ICurrentUserService currentUserService)
+        public FavoriteService(IAudiochanContext dbContext, ICurrentUserService currentUserService)
         {
             _dbContext = dbContext;
             _currentUserService = currentUserService;

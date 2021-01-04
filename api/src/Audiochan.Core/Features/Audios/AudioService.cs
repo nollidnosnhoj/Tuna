@@ -118,7 +118,7 @@ namespace Audiochan.Core.Features.Audios
             return Result<AudioDetailViewModel>.Success(audio);
         }
 
-        public async Task<string> GetRandomAudioId(CancellationToken cancellationToken = default)
+        public async Task<string?> GetRandomAudioId(CancellationToken cancellationToken = default)
         {
             await using var dbConnection = _dbContext.Database.GetDbConnection();
             const string queryString = "SELECT id FROM audios ORDER BY random()";
@@ -169,7 +169,6 @@ namespace Audiochan.Core.Features.Audios
                 var audio = new Audio
                 {
                     Id = id,
-                    IsUploaded = true,
                     Title = title,
                     Description = request.Description ?? "",
                     IsPublic = request.IsPublic ?? true,

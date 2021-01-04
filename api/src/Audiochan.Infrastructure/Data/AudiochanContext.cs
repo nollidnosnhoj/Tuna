@@ -5,11 +5,9 @@ using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Entities.Base;
 using Audiochan.Core.Interfaces;
-using Audiochan.Infrastructure.Data.Configurations;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Audiochan.Infrastructure.Data
@@ -77,14 +75,6 @@ namespace Audiochan.Infrastructure.Data
                     refreshToken.Property<long>("Id");
                     refreshToken.HasKey("Id");
                     refreshToken.ToTable("refresh_tokens");
-                });
-
-                entity.OwnsOne(u => u.Profile, profile =>
-                {
-                    profile.WithOwner().HasForeignKey(p => p.UserId);
-                    profile.Property<long>("Id");
-                    profile.HasKey("Id");
-                    profile.ToTable("profiles");
                 });
             });
             

@@ -6,7 +6,7 @@ using Audiochan.Core.Features.Audios.Models;
 
 namespace Audiochan.Core.Interfaces
 {
-    public interface IAudioFavoriteService
+    public interface IFavoriteService
     {
         Task<IResult<List<AudioListViewModel>>> GetUserFavorites(string username, PaginationQuery query,
             CancellationToken cancellationToken = default);

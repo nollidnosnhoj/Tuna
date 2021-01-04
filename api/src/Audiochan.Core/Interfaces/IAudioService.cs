@@ -12,7 +12,7 @@ namespace Audiochan.Core.Interfaces
             CancellationToken cancellationToken = default);
         Task<List<AudioListViewModel>> GetList(GetAudioListQuery query, CancellationToken cancellationToken = default);
         Task<IResult<AudioDetailViewModel>> Get(string audioId, CancellationToken cancellationToken = default);
-        Task<string> GetRandomAudioId(CancellationToken cancellationToken = default);
+        Task<string?> GetRandomAudioId(CancellationToken cancellationToken = default);
         Task<IResult<AudioDetailViewModel>> Create(UploadAudioRequest request, 
             CancellationToken cancellationToken = default);
         Task<IResult<AudioDetailViewModel>> Update(string audioId, UpdateAudioRequest request, 

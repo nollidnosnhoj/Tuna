@@ -4,7 +4,6 @@ using System.Linq.Expressions;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Audios.Models;
 using Audiochan.Core.Features.Followers.Models;
-using Audiochan.Core.Features.Profiles.Models;
 using Audiochan.Core.Features.Users.Models;
 
 namespace Audiochan.Core.Common.Mappings
@@ -67,14 +66,14 @@ namespace Audiochan.Core.Common.Mappings
             };
         }
 
-        public static Expression<Func<User, ProfileViewModel>> Profile(long currentUserId)
+        public static Expression<Func<User, UserDetailsViewModel>> UserDetails(long currentUserId)
         {
-            return user => new ProfileViewModel
+            return user => new UserDetailsViewModel
             {
                 Id = user.Id,
                 Username = user.UserName,
-                AboutMe = user.Profile.About ?? string.Empty,
-                Website = user.Profile.Website ?? string.Empty,
+                AboutMe = user.About ?? string.Empty,
+                Website = user.Website ?? string.Empty,
                 AudioCount = user.Audios.Count,
                 FollowerCount = user.Followers.Count,
                 FollowingCount = user.Followings.Count,

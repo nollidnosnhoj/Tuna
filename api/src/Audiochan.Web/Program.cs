@@ -36,7 +36,6 @@ namespace Audiochan.Web
                             UserName = "superuser",
                             DisplayName = "Superuser",
                             Email = "superuser@localhost",
-                            Profile = new Profile(),
                             Created = dateTime.Now
                         };
 

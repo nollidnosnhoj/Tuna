@@ -2,9 +2,9 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Enums;
+using Audiochan.Core.Common.Mappings;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Entities;
-using Audiochan.Core.Features.Profiles.Models;
 using Audiochan.Core.Features.Users.Models;
 using Audiochan.Core.Interfaces;
 using Microsoft.AspNetCore.Identity;
@@ -23,13 +23,9 @@ namespace Audiochan.Core.Features.Users
             _currentUserService = currentUserService;
         }
 
-        public async Task<IResult<CurrentUserViewModel>> GetCurrentUser(CancellationToken cancellationToken = default)
+        public async Task<IResult<CurrentUserViewModel>> GetCurrentUser(long authUserId, 
+            CancellationToken cancellationToken = default)
         {
-            var authUserId = _currentUserService.GetUserId();
-
-            if (authUserId == 0)
-                return Result<CurrentUserViewModel>.Fail(ResultErrorCode.Unauthorized);
-            
             var user = await _userManager.Users
                 .AsNoTracking()
                 .Include(u => u.Roles)
@@ -44,6 +40,24 @@ namespace Audiochan.Core.Features.Users
             return user == null
                 ? Result<CurrentUserViewModel>.Fail(ResultErrorCode.Unauthorized)
                 : Result<CurrentUserViewModel>.Success(user);
+        }
+
+        public async Task<IResult<UserDetailsViewModel>> GetUserDetails(string username, CancellationToken cancellationToken = default)
+        {
+            var currentUserId = _currentUserService.GetUserId();
+            
+            var profile = await _userManager.Users
+                .AsNoTracking()
+                .Include(u => u.Followers)
+                .Include(u => u.Followings)
+                .Include(u => u.Audios)
+                .Where(u => u.UserName == username)
+                .Select(MapProjections.UserDetails(currentUserId))
+                .SingleOrDefaultAsync(cancellationToken);
+
+            return profile == null
+                ? Result<UserDetailsViewModel>.Fail(ResultErrorCode.NotFound)
+                : Result<UserDetailsViewModel>.Success(profile);
         }
 
         public async Task<bool> CheckIfUsernameExists(

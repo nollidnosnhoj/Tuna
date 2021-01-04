@@ -52,10 +52,6 @@ namespace Audiochan.Infrastructure.Data.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("is_public");
 
-                    b.Property<bool>("IsUploaded")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_uploaded");
-
                     b.Property<DateTime?>("LastModified")
                         .HasColumnType("timestamp without time zone")
                         .HasColumnName("last_modified");
@@ -205,6 +201,10 @@ namespace Audiochan.Infrastructure.Data.Migrations
                         .HasColumnName("id")
                         .UseIdentityByDefaultColumn();
 
+                    b.Property<string>("About")
+                        .HasColumnType("text")
+                        .HasColumnName("about");
+
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer")
                         .HasColumnName("access_failed_count");
@@ -279,6 +279,10 @@ namespace Audiochan.Infrastructure.Data.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)")
                         .HasColumnName("user_name");
+
+                    b.Property<string>("Website")
+                        .HasColumnType("text")
+                        .HasColumnName("website");
 
                     b.HasKey("Id")
                         .HasName("pk_users");
@@ -498,48 +502,6 @@ namespace Audiochan.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Audiochan.Core.Entities.User", b =>
                 {
-                    b.OwnsOne("Audiochan.Core.Entities.Profile", "Profile", b1 =>
-                        {
-                            b1.Property<long>("Id")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("bigint")
-                                .HasColumnName("id")
-                                .UseIdentityByDefaultColumn();
-
-                            b1.Property<string>("About")
-                                .HasColumnType("text")
-                                .HasColumnName("about");
-
-                            b1.Property<DateTime>("Created")
-                                .HasColumnType("timestamp without time zone")
-                                .HasColumnName("created");
-
-                            b1.Property<DateTime?>("LastModified")
-                                .HasColumnType("timestamp without time zone")
-                                .HasColumnName("last_modified");
-
-                            b1.Property<long>("UserId")
-                                .HasColumnType("bigint")
-                                .HasColumnName("user_id");
-
-                            b1.Property<string>("Website")
-                                .HasColumnType("text")
-                                .HasColumnName("website");
-
-                            b1.HasKey("Id")
-                                .HasName("pk_profiles");
-
-                            b1.HasIndex("UserId")
-                                .IsUnique()
-                                .HasDatabaseName("ix_users_user_id");
-
-                            b1.ToTable("profiles");
-
-                            b1.WithOwner()
-                                .HasForeignKey("UserId")
-                                .HasConstraintName("fk_profile_users_user_id");
-                        });
-
                     b.OwnsMany("Audiochan.Core.Entities.RefreshToken", "RefreshTokens", b1 =>
                         {
                             b1.Property<long>("Id")
@@ -585,9 +547,6 @@ namespace Audiochan.Infrastructure.Data.Migrations
                                 .HasForeignKey("UserId")
                                 .HasConstraintName("fk_refresh_token_users_user_id");
                         });
-
-                    b.Navigation("Profile")
-                        .IsRequired();
 
                     b.Navigation("RefreshTokens");
                 });

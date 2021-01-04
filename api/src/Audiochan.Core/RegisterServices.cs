@@ -3,7 +3,6 @@ using Audiochan.Core.Features.Favorites;
 using Audiochan.Core.Features.Audios;
 using Audiochan.Core.Features.Auth;
 using Audiochan.Core.Features.Followers;
-using Audiochan.Core.Features.Profiles;
 using Audiochan.Core.Features.Tags;
 using Audiochan.Core.Features.Users;
 using Audiochan.Core.Interfaces;
@@ -18,10 +17,9 @@ namespace Audiochan.Core
         {
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
             services.AddScoped<IAudioService, AudioService>();
-            services.AddScoped<IAudioFavoriteService, AudioFavoriteService>();
+            services.AddScoped<IFavoriteService, FavoriteService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IFollowerService, FollowerService>();
-            services.AddScoped<IProfileService, ProfileService>();
             services.AddScoped<ITagService, TagService>();
             services.AddScoped<IUserService, UserService>();
 

@@ -41,6 +41,8 @@ namespace Audiochan.Infrastructure.Data.Migrations
                     id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     display_name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    about = table.Column<string>(type: "text", nullable: true),
+                    website = table.Column<string>(type: "text", nullable: true),
                     created = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     last_modified = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     user_name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -94,7 +96,6 @@ namespace Audiochan.Infrastructure.Data.Migrations
                     duration = table.Column<int>(type: "integer", nullable: false),
                     file_size = table.Column<long>(type: "bigint", nullable: false),
                     file_ext = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: false),
-                    is_uploaded = table.Column<bool>(type: "boolean", nullable: false),
                     is_public = table.Column<bool>(type: "boolean", nullable: false),
                     user_id = table.Column<long>(type: "bigint", nullable: false),
                     created = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
@@ -135,29 +136,6 @@ namespace Audiochan.Infrastructure.Data.Migrations
                         principalTable: "users",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "profiles",
-                columns: table => new
-                {
-                    id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    about = table.Column<string>(type: "text", nullable: true),
-                    website = table.Column<string>(type: "text", nullable: true),
-                    user_id = table.Column<long>(type: "bigint", nullable: false),
-                    created = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    last_modified = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_profiles", x => x.id);
-                    table.ForeignKey(
-                        name: "fk_profile_users_user_id",
-                        column: x => x.user_id,
-                        principalTable: "users",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -340,12 +318,6 @@ namespace Audiochan.Infrastructure.Data.Migrations
                 column: "target_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_users_user_id",
-                table: "profiles",
-                column: "user_id",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "ix_refresh_token_user_id",
                 table: "refresh_tokens",
                 column: "user_id");
@@ -398,9 +370,6 @@ namespace Audiochan.Infrastructure.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "followed_users");
-
-            migrationBuilder.DropTable(
-                name: "profiles");
 
             migrationBuilder.DropTable(
                 name: "refresh_tokens");

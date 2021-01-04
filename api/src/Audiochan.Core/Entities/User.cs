@@ -17,10 +17,10 @@ namespace Audiochan.Core.Entities
         }
 
         public string DisplayName { get; set; } = null!;
+        public string? About { get; set; }
+        public string? Website { get; set; }
         public DateTime Created { get; set; }
         public DateTime? LastModified { get; set; }
-        
-        public Profile Profile { get; set; } = null!;
 
         public ICollection<Audio> Audios { get; set; }
         public ICollection<FavoriteAudio> FavoriteAudios { get; set; }
