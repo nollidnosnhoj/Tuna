@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Enums;
+using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Mappings;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Entities;
@@ -58,6 +59,32 @@ namespace Audiochan.Core.Features.Users
             return profile == null
                 ? Result<UserDetailsViewModel>.Fail(ResultErrorCode.NotFound)
                 : Result<UserDetailsViewModel>.Success(profile);
+        }
+
+        public async Task<IResult> UpdateUsername(long userId, string newUsername, 
+            CancellationToken cancellationToken = default)
+        {
+            var user = await _userManager.FindByIdAsync(userId + "");
+            var result = await _userManager.SetUserNameAsync(user, newUsername);
+            return result.ToResult();
+        }
+
+        public async Task<IResult> UpdateEmail(long userId, string newEmail, 
+            CancellationToken cancellationToken = default)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public async Task<IResult> UpdatePassword(long userId, string newPassword, 
+            CancellationToken cancellationToken = default)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public async Task<IResult> UpdateUser(long userId, UpdateUserDetailsRequest request, 
+            CancellationToken cancellationToken = default)
+        {
+            throw new System.NotImplementedException();
         }
 
         public async Task<bool> CheckIfUsernameExists(

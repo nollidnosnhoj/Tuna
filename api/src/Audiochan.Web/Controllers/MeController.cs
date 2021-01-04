@@ -111,5 +111,12 @@ namespace Audiochan.Web.Controllers
             var result = await _followerService.Unfollow(username.ToLower(), cancellationToken);
             return result.IsSuccess ? NoContent() : result.ReturnErrorResponse();
         }
+
+        [HttpPatch("change-username")]
+        public async Task<IActionResult> ChangeUsername([FromBody] string username, CancellationToken cancellationToken)
+        {
+            var result = await _userService.UpdateUsername(_currentUserId, username, cancellationToken);
+            return result.IsSuccess ? NoContent() : result.ReturnErrorResponse();
+        }
     }
 }
