@@ -64,32 +64,26 @@ namespace Audiochan.Web.Controllers
 
         [HttpGet("{username}/favorites")]
         [ProducesResponseType(typeof(List<AudioListViewModel>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetUserFavorites(string username, PaginationQuery paginationQuery,
             CancellationToken cancellationToken)
         {
-            var result = await _favoriteService.GetUserFavorites(username, paginationQuery, cancellationToken);
-            return result.IsSuccess ? Ok(result.Data) : result.ReturnErrorResponse();
+            return Ok(await _favoriteService.GetUserFavorites(username, paginationQuery, cancellationToken));
         }
 
         [HttpGet("{username}/followers", Name="GetUserFollowers")]
         [ProducesResponseType(typeof(List<UserViewModel>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetFollowers(string username, [FromQuery] PaginationQuery query,
             CancellationToken cancellationToken)
         {
-            var result = await _followerService.GetUsersFollowers(username.ToLower(), query, cancellationToken);
-            return result.IsSuccess ? Ok(result.Data) : result.ReturnErrorResponse();
+            return Ok(await _followerService.GetUsersFollowers(username.ToLower(), query, cancellationToken));
         }
         
         [HttpGet("{username}/followings", Name="GetUserFollowings")]
         [ProducesResponseType(typeof(List<UserViewModel>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetFollowings(string username, [FromQuery] PaginationQuery query,
             CancellationToken cancellationToken)
         {
-            var result = await _followerService.GetUsersFollowings(username.ToLower(), query, cancellationToken);
-            return result.IsSuccess ? Ok(result.Data) : result.ReturnErrorResponse();
+            return Ok(await _followerService.GetUsersFollowings(username.ToLower(), query, cancellationToken));
         }
     }
 }

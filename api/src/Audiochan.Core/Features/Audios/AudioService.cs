@@ -38,12 +38,9 @@ namespace Audiochan.Core.Features.Audios
             _tagService = tagService;
         }
 
-        public async Task<IResult<List<AudioListViewModel>>> GetFeed(long userId, PaginationQuery query,
+        public async Task<List<AudioListViewModel>> GetFeed(long userId, PaginationQuery query,
             CancellationToken cancellationToken = default)
         {
-            if (userId == 0)
-                return Result<List<AudioListViewModel>>.Fail(ResultErrorCode.Unauthorized);
-            
             // Get the user Ids of the followed users
             var followedIds = await _dbContext.FollowedUsers
                 .AsNoTracking()
@@ -61,10 +58,7 @@ namespace Audiochan.Core.Features.Audios
                 .Select(MapProjections.AudioList(userId))
                 .OrderByDescending(a => a.Created);
 
-            var result = await queryable
-                .Paginate(query, cancellationToken);
-
-            return Result<List<AudioListViewModel>>.Success(result);
+            return await queryable.Paginate(query, cancellationToken);
         }
 
         public async Task<List<AudioListViewModel>> GetList(GetAudioListQuery query, 

@@ -8,7 +8,7 @@ namespace Audiochan.Core.Interfaces
 {
     public interface IAudioService
     {
-        Task<IResult<List<AudioListViewModel>>> GetFeed(long userId, PaginationQuery query, 
+        Task<List<AudioListViewModel>> GetFeed(long userId, PaginationQuery query, 
             CancellationToken cancellationToken = default);
         Task<List<AudioListViewModel>> GetList(GetAudioListQuery query, CancellationToken cancellationToken = default);
         Task<IResult<AudioDetailViewModel>> Get(string audioId, CancellationToken cancellationToken = default);

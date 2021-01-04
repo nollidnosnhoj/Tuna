@@ -24,42 +24,27 @@ namespace Audiochan.Core.Features.Followers
             _dbContext = dbContext;
         }
 
-        public async Task<IResult<List<FollowUserViewModel>>> GetUsersFollowers(string username, 
+        public async Task<List<FollowUserViewModel>> GetUsersFollowers(string username, 
             PaginationQuery paginationQuery, CancellationToken cancellationToken = default)
         {
             var currentUserId = _currentUserService.GetUserId();
 
-            if (!await _dbContext.Users.AsNoTracking()
-                .AnyAsync(u => u.UserName == username, cancellationToken))
-            {
-                return Result<List<FollowUserViewModel>>.Fail(ResultErrorCode.NotFound);
-            }
-
-            var queryable = _dbContext.FollowedUsers
+            return await _dbContext.FollowedUsers
                 .AsNoTracking()
                 .Include(u => u.Target)
                 .Include(u => u.Observer)
                 .ThenInclude(u => u.Followers)
                 .Where(u => u.Target.UserName == username)
-                .Select(MapProjections.FollowUser(currentUserId));
-
-            var list = await queryable.Paginate(paginationQuery, cancellationToken);
-
-            return Result<List<FollowUserViewModel>>.Success(list);
+                .Select(MapProjections.FollowUser(currentUserId))
+                .Paginate(paginationQuery, cancellationToken);
         }
 
-        public async Task<IResult<List<FollowUserViewModel>>> GetUsersFollowings(string username, 
+        public async Task<List<FollowUserViewModel>> GetUsersFollowings(string username, 
             PaginationQuery paginationQuery, CancellationToken cancellationToken = default)
         {
             var currentUserId = _currentUserService.GetUserId();
 
-            if (!await _dbContext.Users.AsNoTracking()
-                .AnyAsync(u => u.UserName == username, cancellationToken))
-            {
-                return Result<List<FollowUserViewModel>>.Fail(ResultErrorCode.NotFound);
-            }
-
-            var list = await _dbContext.FollowedUsers
+            return await _dbContext.FollowedUsers
                 .AsNoTracking()
                 .Include(u => u.Observer)
                 .Include(u => u.Target)
@@ -67,8 +52,6 @@ namespace Audiochan.Core.Features.Followers
                 .Where(u => u.Observer.UserName == username)
                 .Select(MapProjections.FollowUser(currentUserId))
                 .Paginate(paginationQuery, cancellationToken);
-            
-            return Result<List<FollowUserViewModel>>.Success(list);
         }
 
         public async Task<bool> CheckFollowing(long userId, string username, 

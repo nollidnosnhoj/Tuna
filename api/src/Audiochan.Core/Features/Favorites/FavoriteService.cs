@@ -24,18 +24,12 @@ namespace Audiochan.Core.Features.Favorites
             _currentUserService = currentUserService;
         }
 
-        public async Task<IResult<List<AudioListViewModel>>> GetUserFavorites(string username, PaginationQuery query, 
+        public async Task<List<AudioListViewModel>> GetUserFavorites(string username, PaginationQuery query, 
             CancellationToken cancellationToken = default)
         {
             var currentUserId = _currentUserService.GetUserId();
 
-            if (!await _dbContext.Users.AsNoTracking()
-                .AnyAsync(u => u.UserName == username.ToLower(), cancellationToken))
-            {
-                return Result<List<AudioListViewModel>>.Fail(ResultErrorCode.NotFound, "User was not found.");
-            }
-
-            var favorites = await _dbContext.FavoriteAudios
+            return await _dbContext.FavoriteAudios
                 .AsNoTracking()
                 .Include(fa => fa.User)
                 .Include(fa => fa.Audio)
@@ -47,8 +41,6 @@ namespace Audiochan.Core.Features.Favorites
                 .Select(fa => fa.Audio)
                 .Select(MapProjections.AudioList(currentUserId))
                 .Paginate(query, cancellationToken);
-
-            return Result<List<AudioListViewModel>>.Success(favorites);
         }
 
         public async Task<IResult> FavoriteAudio(long userId, string audioId, 

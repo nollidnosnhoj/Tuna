@@ -64,10 +64,8 @@ namespace Audiochan.Web.Controllers
             CancellationToken cancellationToken)
         {
             var result = await _audioService.GetFeed(_currentUserId, query, cancellationToken);
-            
-            return result.IsSuccess 
-                ? Ok(result.Data) 
-                : result.ReturnErrorResponse();
+
+            return Ok(result);
         }
 
         [HttpHead("audios/{audioId}/favorite", Name="CheckIfUserFavoritedAudio")]
