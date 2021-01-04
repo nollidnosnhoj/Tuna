@@ -32,6 +32,8 @@ import NextLink from "next/link";
 import { useRouter } from "next/router";
 import useUser from "~/lib/contexts/user_context";
 import { useAudioPlayer } from "~/lib/contexts/audio_player_context";
+import LoginModal from "../Login/LoginModal";
+import RegisterModal from "../Register/RegisterModal";
 
 const HeaderUser: React.FC = () => {
   const router = useRouter();
@@ -104,14 +106,8 @@ const HeaderUser: React.FC = () => {
         </div>
         {!isAuth ? (
           <>
-            <NextLink href={`/login?redirect=${router.asPath}`}>
-              <Button>Login</Button>
-            </NextLink>
-            <NextLink href={`/register?redirect=${router.asPath}`}>
-              <Button colorScheme="primary" variant="solid">
-                Register
-              </Button>
-            </NextLink>
+            <LoginModal />
+            <RegisterModal />
           </>
         ) : (
           <>

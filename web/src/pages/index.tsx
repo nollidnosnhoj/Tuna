@@ -17,6 +17,8 @@ import { errorToast } from "~/utils/toast";
 import { FaRandom } from "react-icons/fa";
 import { isAxiosError } from "~/utils";
 import { User } from "~/lib/types";
+import LoginModal from "~/components/Login/LoginModal";
+import RegisterModal from "~/components/Register/RegisterModal";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
@@ -60,14 +62,8 @@ const Index = () => {
           <Text fontSize="4xl">Upload music and share!</Text>
           <Flex justify="center" marginTop={4}>
             <Stack direction="row">
-              <NextLink href="/login">
-                <Button size="lg">Login</Button>
-              </NextLink>
-              <NextLink href="/register">
-                <Button size="lg" colorScheme="primary">
-                  Register
-                </Button>
-              </NextLink>
+              <LoginModal buttonSize="lg" />
+              <RegisterModal buttonSize="lg" />
               <IconButton
                 size="lg"
                 aria-label="Random audio"

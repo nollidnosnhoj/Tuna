@@ -34,7 +34,12 @@ const InputField = React.forwardRef<any, InputFieldProps>(
     ref
   ) => {
     return (
-      <FormControl id={name} isInvalid={!!error} isRequired={isRequired}>
+      <FormControl
+        id={name}
+        isInvalid={!!error}
+        isRequired={isRequired}
+        marginY={2}
+      >
         {label && <FormLabel htmlFor={name}>{label}</FormLabel>}
         {isTextArea ? (
           <Textarea
