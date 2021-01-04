@@ -35,6 +35,7 @@ namespace Audiochan.Core.Features.Users
                 {
                     Id = u.Id,
                     Username = u.UserName,
+                    Email = u.Email,
                     Roles = u.Roles.Select(r => r.Role.Name).ToArray()
                 }).SingleOrDefaultAsync(cancellationToken);
 
