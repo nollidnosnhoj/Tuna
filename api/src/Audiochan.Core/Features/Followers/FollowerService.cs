@@ -64,7 +64,7 @@ namespace Audiochan.Core.Features.Followers
                                && u.Target.UserName == username.ToLower(), cancellationToken);
         }
 
-        public async Task<IResult<FollowUserViewModel>> Follow(string username, CancellationToken cancellationToken = default)
+        public async Task<IResult> Follow(string username, CancellationToken cancellationToken = default)
         {
             var target = await _dbContext.Users.AsNoTracking()
                 .SingleOrDefaultAsync(u => u.UserName == username.ToLower(), cancellationToken);
@@ -72,10 +72,7 @@ namespace Audiochan.Core.Features.Followers
             if (target == null)
                 return Result<FollowUserViewModel>.Fail(ResultErrorCode.NotFound);
 
-            var currentUserId = await _dbContext.Users
-                .AsNoTracking()
-                .Select(u => u.Id)
-                .SingleOrDefaultAsync(id => id == _currentUserService.GetUserId(), cancellationToken);
+            var currentUserId = _currentUserService.GetUserId();
 
             var followedUser = await _dbContext.FollowedUsers
                 .SingleOrDefaultAsync(u => u.TargetId == target.Id 
@@ -93,7 +90,7 @@ namespace Audiochan.Core.Features.Followers
                 await _dbContext.SaveChangesAsync(cancellationToken);
             }
 
-            return Result<FollowUserViewModel>.Success(FollowUserViewModel.From(followedUser, currentUserId));
+            return Result.Success();
         }
 
         public async Task<IResult> Unfollow(string username, CancellationToken cancellationToken = default)
