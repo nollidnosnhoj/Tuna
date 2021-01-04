@@ -1,4 +1,4 @@
-export type AudioSearchType = 'audios' | 'favorites' | 'user'
+export type AudioSearchType = 'audios' | 'favorites' | 'user' | 'feed'
 export type Audio = {
   id: string;
   title: string;

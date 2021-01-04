@@ -1,5 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
+import axios from 'axios'
 import { REFRESH_TOKEN_KEY } from '~/constants';
+import ENVIRONMENT from '~/constants/environment'
 import { AuthResultResponse } from '~/lib/types';
 import request from '~/lib/request'
 import { isAxiosError } from '~/utils';
@@ -15,12 +17,9 @@ export default async (req: NextApiRequest, res: NextApiResponse ) => {
 
     const refreshToken = getCookie(REFRESH_TOKEN_KEY, { req }) || "";
     
-    const response = await request<BackendAuthResult>('auth/refresh', {
-      method: 'post',
-      body: { refreshToken: refreshToken },
-      skipAuthRefresh: true,
-      ctx: { req }
-    });
+    const response = await axios.post<BackendAuthResult>(ENVIRONMENT.API_URL + 'auth/refresh', { 
+      refreshToken: refreshToken 
+    }, { withCredentials: true });
 
     const { data, status } = response;
 

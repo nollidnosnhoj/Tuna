@@ -1,4 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
+import axios from 'axios'
+import ENVIRONMENT from '~/constants/environment'
 import { AuthResultResponse } from '~/lib/types';
 import { isAxiosError } from '~/utils';
 import { setAccessTokenCookie, setRefreshTokenCookie } from '~/utils/cookies'
@@ -19,11 +21,8 @@ export default async (req: NextApiRequest, res: NextApiResponse<AuthResultRespon
 
     const loginRequest = req.body;
 
-    const response = await request<BackendAuthResult>('auth/login', { 
-      method: 'post',
-      body: loginRequest,
-      skipAuthRefresh: true,
-      ctx: { req }
+    const response = await axios.post<BackendAuthResult>(ENVIRONMENT.API_URL + 'auth/login', loginRequest, {
+      withCredentials: true
     });
 
     const { status, data } = response

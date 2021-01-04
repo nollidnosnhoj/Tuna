@@ -10,14 +10,15 @@ import {
   Tabs,
   Text,
 } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 import PageLayout from "~/components/Layout";
+import AudioList from "~/components/AudioList";
 import request from "~/lib/request";
 import { ErrorResponse, Profile } from "~/lib/types";
-import AudioList from "~/components/AudioList";
+import { useFollow } from "~/lib/services/users";
 
 interface PageProps {
   initialData?: Profile;
@@ -29,7 +30,9 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
   const username = context.params?.username as string;
 
   try {
-    const { data: initialData } = await request<Profile>(`/users/${username}`);
+    const { data: initialData } = await request<Profile>(`/users/${username}`, {
+      ctx: context,
+    });
     return {
       props: {
         initialData,
@@ -47,23 +50,13 @@ export default function ProfilePage(
 ) {
   const { query } = useRouter();
   const username = query.username as string;
-  const [isFollowing, setIsFollowing] = useState(false);
-
-  const { data: profile } = useSWR<Profile, ErrorResponse>(`/me/${username}`, {
-    initialData: props.initialData,
-  });
-
-  useEffect(() => {
-    const checkIsFollowing = async () => {
-      try {
-        await request(`users/${username}/follow`, { method: "head" });
-        setIsFollowing(true);
-      } catch (err) {
-        setIsFollowing(false);
-      }
-    };
-    checkIsFollowing();
-  }, [profile]);
+  const { data: profile } = useSWR<Profile, ErrorResponse>(
+    `users/${username}`,
+    {
+      initialData: props.initialData,
+    }
+  );
+  const { isFollowing, follow } = useFollow(username);
 
   return (
     <PageLayout title={`${profile.username} | Audiochan`}>
@@ -80,7 +73,9 @@ export default function ProfilePage(
             <Button
               colorScheme="primary"
               variant={isFollowing ? "solid" : "outline"}
+              disabled={isFollowing === undefined}
               paddingX={12}
+              onClick={() => follow()}
             >
               {isFollowing ? "Followed" : "Follow"}
             </Button>

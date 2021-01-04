@@ -1,4 +1,12 @@
-import { Box, Button, Flex, Link, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Divider,
+  Flex,
+  Heading,
+  Link,
+  Text,
+} from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import { Audio, AudioSearchType } from "~/lib/types";
 import { useAudiosInfinite } from "~/lib/services/audio";
@@ -18,13 +26,13 @@ const AudioList: React.FC<AudioListProps> = ({
   size = 15,
   params,
   username,
+  headerText,
   ...props
 }) => {
   const {
     data,
     page,
     setPage,
-    error,
     isLoadingMore,
     isEmpty,
     isReachingEnd,
@@ -34,16 +42,18 @@ const AudioList: React.FC<AudioListProps> = ({
     return data ? [].concat(...data) : [];
   }, [data]);
 
-  if (!!error) {
-    apiErrorToast(error);
-  }
-
   return (
     <React.Fragment>
+      {headerText && (
+        <>
+          <Heading>{headerText}</Heading>
+          <Divider marginY={4} />
+        </>
+      )}
       {isEmpty && <p>No audio found.</p>}
       {audios.map((audio) => (
         <Flex direction="row" marginY="3" key={audio.id}>
-          <Box paddingX="5" width="100%">
+          <Box width="100%">
             <Link href={`/audios/${audio.id}`}>
               <Text as="b" fontSize="2xl">
                 {audio.title}

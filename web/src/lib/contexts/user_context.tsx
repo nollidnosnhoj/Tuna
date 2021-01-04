@@ -6,8 +6,7 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { ACCESS_TOKEN_KEY } from "~/constants";
-import { getCookie } from "~/utils/cookies";
+import Router from "next/router";
 import fetcher from "../fetcher";
 import { login, revokeRefreshToken } from "../services/auth";
 import { LoginFormValues, User } from "../types";
@@ -28,7 +27,7 @@ interface UserProviderProps {
 }
 
 export function UserProvider(props: PropsWithChildren<UserProviderProps>) {
-  const [user, setUser] = useState<User>(null);
+  const [user, setUser] = useState<User>(props.initialUser);
   const [loading, setLoading] = useState(false);
 
   async function authenticate(inputs: LoginFormValues) {
@@ -57,6 +56,7 @@ export function UserProvider(props: PropsWithChildren<UserProviderProps>) {
     try {
       await revokeRefreshToken();
       updateUser(null);
+      Router.push("/");
     } catch (err) {
       console.error(err);
     }

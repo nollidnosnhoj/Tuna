@@ -27,26 +27,28 @@ const defaultValues: RegisterFormInputs = {
   confirmPassword: "",
 };
 
-//// THIS CODE CAUSES THE NEXTJS API TO STALL
-// export const getServerSideProps: GetServerSideProps = async (ctx) => {
-//   const { res } = ctx;
-//   try {
-//     await request("me", { method: "head", ctx });
-//     res.writeHead(302, {
-//       Location: "/",
-//     });
-//     res.end();
-//   } catch (err) {}
-
-//   return { props: {} };
-// };
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const { req } = ctx;
+  try {
+    const { data } = await request("me", { ctx: { req } });
+    return {
+      props: { user: data },
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  } catch (err) {
+    return { props: {} };
+  }
+};
 
 const RegisterPage: React.FC = () => {
   const { query } = useRouter();
   const { isAuth } = useUser();
 
   if (isAuth) {
-    Router.push("/");
+    Router.push("/login");
   }
 
   const redirect = useMemo(
@@ -141,7 +143,7 @@ const RegisterPage: React.FC = () => {
               isRequired
             />
             <Button type="submit" mt={4} isLoading={isSubmitting}>
-              Login
+              Register
             </Button>
           </form>
         </Box>

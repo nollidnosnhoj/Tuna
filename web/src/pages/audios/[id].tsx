@@ -10,7 +10,7 @@ import AudioEdit from "~/components/AudioEdit";
 import useUser from "~/lib/contexts/user_context";
 import { Audio } from "~/lib/types";
 import request from "~/lib/request";
-import { useAudio } from "~/lib/services/audio";
+import { useAudio, useFavorite } from "~/lib/services/audio";
 
 const DynamicAudioPlayer = dynamic(() => import("~/components/AudioPlayer"), {
   ssr: false,
@@ -23,12 +23,12 @@ interface PageProps {
 
 // Fetch the audio detail and render it onto the server.
 export const getServerSideProps: GetServerSideProps<PageProps> = async (
-  ctx
+  context
 ) => {
-  const id = ctx.params.id as string;
+  const id = context.params.id as string;
 
   try {
-    const { data } = await request<Audio>(`audios/${id}`);
+    const { data } = await request<Audio>(`audios/${id}`, { ctx: context });
 
     return {
       props: {
@@ -57,6 +57,8 @@ export default function AudioUploadPage(
   } = useDisclosure();
 
   const { data: audio } = useAudio(id, props.initialData);
+
+  const { isFavorite, favorite } = useFavorite(id);
 
   // get
   const audioUrl = props.isDevelopment

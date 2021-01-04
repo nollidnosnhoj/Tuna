@@ -9,22 +9,25 @@ import PageLayout from "~/components/Layout";
 import useUser from "~/lib/contexts/user_context";
 import { LoginFormValues } from "~/lib/types";
 import InputField from "~/components/InputField";
-import { apiErrorToast } from "~/utils/toast";
+import { apiErrorToast, successfulToast } from "~/utils/toast";
 import request from "~/lib/request";
 
-// // THIS CODE CAUSES THE NEXTJS API TO STALL
-// export const getServerSideProps: GetServerSideProps = async (ctx) => {
-//   const { res } = ctx;
-//   try {
-//     await request("me", { method: "head", ctx });
-//     res.writeHead(302, {
-//       Location: "/",
-//     });
-//     res.end();
-//   } catch (err) {}
-
-//   return { props: {} };
-// };
+// THIS CODE CAUSES THE NEXTJS API TO STALL
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const { req } = ctx;
+  try {
+    const { data } = await request("me", { ctx: { req } });
+    return {
+      props: { user: data },
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  } catch (err) {
+    return { props: {} };
+  }
+};
 
 const LoginPage: React.FC = () => {
   const router = useRouter();
@@ -74,7 +77,7 @@ const LoginPage: React.FC = () => {
           <form onSubmit={handleSubmit(onSubmit)}>
             <InputField
               name="username"
-              label="Username"
+              label="Username/Email"
               ref={register}
               error={errors.username}
               isRequired

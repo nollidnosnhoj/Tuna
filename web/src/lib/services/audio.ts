@@ -1,9 +1,38 @@
+import { useState, useEffect } from 'react';
 import useSWR, { mutate } from 'swr'
 import useInfiniteFetch, { useInfiniteFetchOptions } from '../hooks/useInfiniteFetch'
 import { Audio, AudioListItem, AudioRequest, AudioSearchType, ErrorResponse } from '../types';
 import request from '../request';
+import { apiErrorToast } from '~/utils/toast';
 
+export const useFavorite = (audioId: string) => {
+  const [isFavorite, setIsFavorite] = useState<boolean | undefined>(undefined);
 
+  useEffect(() => {
+    const checkIsFollowing = async () => {
+      try {
+        await request(`me/audios/${audioId}/favorite`, { method: "head" });
+        setIsFavorite(true);
+      } catch (err) {
+        setIsFavorite(false);
+      }
+    };
+    checkIsFollowing();
+  }, []);
+
+  const favoriteHandler = async () => {
+    try {
+      await request(`me/audios/${audioId}/favorite`, {
+        method: isFavorite ? "delete" : "put",
+      });
+      setIsFavorite(!isFavorite);
+    } catch (err) {
+      apiErrorToast(err);
+    }
+  }
+
+  return { isFavorite, favorite: favoriteHandler };
+}
 
 export const useAudio = (id: string, initialData?: Audio) => {
   const { data, isValidating: isLoading, error, mutate } = useSWR<Audio, ErrorResponse>(`audios/${id}`, { 
@@ -24,11 +53,11 @@ export const useAudiosInfinite = (options: useAudiosInfiniteOptions = { type: 'a
 
   let url = 'audios'
 
-  if (type === 'favorites' && username) {
+  if (type === 'feed') {
+    url = `me/feed`
+  } else if (type === 'favorites' && username) {
     url = `users/${username}/favorites`
-  }
-
-  if (type === 'user' && username) {
+  } else if (type === 'user' && username) {
     url = `users/${username}/audios`
   }
 

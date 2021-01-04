@@ -1,10 +1,10 @@
 import axios from 'axios'
-import createAuthRefreshInterceptor, { AxiosAuthRefreshRequestConfig } from 'axios-auth-refresh'
-import { IncomingMessage } from 'http'
-import { ACCESS_TOKEN_KEY } from '~/constants'
+import createAuthRefreshInterceptor, { AxiosAuthRefreshRequestConfig } from 'axios-auth-refresh';
+import { IncomingMessage } from 'http';
+import { ACCESS_TOKEN_KEY } from '~/constants';
 import ENVIRONMENT from '~/constants/environment'
-import { refreshAccessToken } from '~/lib/services/auth'
-import { getCookie } from '~/utils/cookies'
+import { getCookie } from '~/utils/cookies';
+import { refreshAccessToken } from './services/auth';
 
 type MethodType = 'get' | 'delete' | 'head' | 'post' | 'put' | 'patch'
 
@@ -20,10 +20,14 @@ export interface RequestOptions<TRequest = any> {
   ctx?: NextContext,
 }
 
-const getBearer = (token: string) => !!token ? `Bearer ${token}` : '';
+function getBearer(token: string) {
+  return token ? `Bearer ${token}` : ''
+}
 
-axios.defaults.baseURL = ENVIRONMENT.API_URL
-axios.defaults.withCredentials = true;
+const requestClient = axios.create();
+
+requestClient.defaults.baseURL = ENVIRONMENT.API_URL;
+requestClient.defaults.withCredentials = true;
 
 const refreshAuthLogic = async (failedRequest: any) => refreshAccessToken().then(response => {
   failedRequest.response.config.headers['Authorization'] = getBearer(response.accessToken);
@@ -31,7 +35,7 @@ const refreshAuthLogic = async (failedRequest: any) => refreshAccessToken().then
   return Promise.resolve();
 });
 
-createAuthRefreshInterceptor(axios, refreshAuthLogic);
+createAuthRefreshInterceptor(requestClient, refreshAuthLogic);
 
 export default function request<TResponse = any>(url: string, options: RequestOptions = {}) {
   let { method = 'get', body, ctx, skipAuthRefresh = false } = options;
@@ -49,5 +53,5 @@ export default function request<TResponse = any>(url: string, options: RequestOp
     Object.assign(requestConfig, { headers: { Authorization: getBearer(accessToken) }})
   }
 
-  return axios.request<TResponse>(requestConfig);
+  return requestClient.request<TResponse>(requestConfig);
 }

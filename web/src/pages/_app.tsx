@@ -6,10 +6,13 @@ import theme from "~/lib/theme";
 import fetcher from "~/lib/fetcher";
 import { SWRConfig } from "swr";
 import { AudioPlayerProvider } from "~/lib/contexts/audio_player_context";
+import { User } from "~/lib/types";
 
-interface AppProps extends NextAppProps {}
+interface AppProps extends NextAppProps {
+  user?: User;
+}
 
-function App({ Component, pageProps }: AppProps) {
+function App({ Component, user, pageProps }: AppProps) {
   return (
     <SWRConfig
       value={{
@@ -18,7 +21,7 @@ function App({ Component, pageProps }: AppProps) {
       }}
     >
       <ChakraProvider resetCSS theme={theme}>
-        <UserProvider>
+        <UserProvider initialUser={user}>
           <AudioPlayerProvider>
             <PageLoader color={theme.colors.primary[500]} />
             <Component {...pageProps} />

@@ -7,23 +7,43 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
-import Router, { useRouter } from "next/router";
+import { GetServerSideProps } from "next";
+import Router from "next/router";
 import Head from "next/head";
 import NextLink from "next/link";
 import React from "react";
 import request from "~/lib/request";
 import { errorToast } from "~/utils/toast";
 import { FaRandom } from "react-icons/fa";
+import { isAxiosError } from "~/utils";
+import { User } from "~/lib/types";
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  try {
+    const { data } = await request<User>("me/feed", { ctx: context });
+    return {
+      props: { user: data },
+      redirect: {
+        destination: "/feed",
+        permanent: false,
+      },
+    };
+  } catch (err) {
+    return {
+      props: {},
+    };
+  }
+};
 
 const Index = () => {
-  const router = useRouter();
-
   const goToRandomAudio = async () => {
     try {
       const { data } = await request<string>("audios/random-id");
       Router.push(`/audios/${data}`);
     } catch (err) {
-      errorToast({ message: "Unknown error" });
+      if (!isAxiosError(err)) {
+        console.log(err);
+      }
     }
   };
 
