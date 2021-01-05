@@ -26,6 +26,7 @@ namespace Audiochan.Web.Configurations
             services
                 .AddIdentity<User, Role>(options =>
                 {
+                    options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyz-_";
                     options.Password.RequiredLength = passwordSetting.RequireLength;
                     options.Password.RequireDigit = passwordSetting.RequireDigit;
                     options.Password.RequireLowercase = passwordSetting.RequireLowercase;

@@ -112,10 +112,35 @@ namespace Audiochan.Web.Controllers
             return result.IsSuccess ? NoContent() : result.ReturnErrorResponse();
         }
 
-        [HttpPatch("change-username")]
-        public async Task<IActionResult> ChangeUsername([FromBody] string username, CancellationToken cancellationToken)
+        [HttpPatch]
+        public async Task<IActionResult> UpdateUser([FromBody] UpdateUserDetailsRequest request,
+            CancellationToken cancellationToken)
         {
-            var result = await _userService.UpdateUsername(_currentUserId, username, cancellationToken);
+            var result = await _userService.UpdateUser(_currentUserId, request, cancellationToken);
+            return result.IsSuccess ? NoContent() : result.ReturnErrorResponse();
+        }
+
+        [HttpPatch("change-username")]
+        public async Task<IActionResult> ChangeUsername([FromBody] UpdateUsernameRequest request,
+            CancellationToken cancellationToken)
+        {
+            var result = await _userService.UpdateUsername(_currentUserId, request.Username, cancellationToken);
+            return result.IsSuccess ? NoContent() : result.ReturnErrorResponse();
+        }
+
+        [HttpPatch("change-email")]
+        public async Task<IActionResult> ChangeEmail([FromBody] UpdateEmailRequest request,
+            CancellationToken cancellationToken)
+        {
+            var result = await _userService.UpdateEmail(_currentUserId, request.Email, cancellationToken);
+            return result.IsSuccess ? NoContent() : result.ReturnErrorResponse();
+        }
+
+        [HttpPatch("change-password")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request,
+            CancellationToken cancellationToken)
+        {
+            var result = await _userService.UpdatePassword(_currentUserId, request, cancellationToken);
             return result.IsSuccess ? NoContent() : result.ReturnErrorResponse();
         }
     }

@@ -66,26 +66,45 @@ namespace Audiochan.Core.Features.Users
             CancellationToken cancellationToken = default)
         {
             var user = await _userManager.FindByIdAsync(userId + "");
+            if (user == null) return Result.Fail(ResultErrorCode.Unauthorized);
             var result = await _userManager.SetUserNameAsync(user, newUsername);
-            return result.ToResult();
+            if (!result.Succeeded) result.ToResult();
+            await _userManager.UpdateNormalizedUserNameAsync(user);
+            return Result.Success();
         }
 
         public async Task<IResult> UpdateEmail(long userId, string newEmail, 
             CancellationToken cancellationToken = default)
         {
-            throw new System.NotImplementedException();
+            var user = await _userManager.FindByIdAsync(userId + "");
+            if (user == null) return Result.Fail(ResultErrorCode.Unauthorized);
+            
+            // TEMPORARY UNTIL EMAIL CONFIRMATION IS SETUP
+            var result = await _userManager.SetEmailAsync(user, newEmail);
+            if (!result.Succeeded) return result.ToResult();
+            await _userManager.UpdateNormalizedEmailAsync(user);
+            return Result.Success();
         }
 
-        public async Task<IResult> UpdatePassword(long userId, string newPassword, 
+        public async Task<IResult> UpdatePassword(long userId, ChangePasswordRequest request, 
             CancellationToken cancellationToken = default)
         {
-            throw new System.NotImplementedException();
+            var user = await _userManager.FindByIdAsync(userId + "");
+            if (user == null) return Result.Fail(ResultErrorCode.Unauthorized);
+            // TEMPORARY UNTIL EMAIL CONFIRMATION IS SETUP
+            var result = await _userManager.ChangePasswordAsync(user, request.CurrentPassword, request.NewPassword);
+            return result.ToResult();
         }
 
         public async Task<IResult> UpdateUser(long userId, UpdateUserDetailsRequest request, 
             CancellationToken cancellationToken = default)
         {
-            throw new System.NotImplementedException();
+            var user = await _userManager.FindByIdAsync(userId + "");
+            if (user == null) return Result.Fail(ResultErrorCode.Unauthorized);
+            user.About = request.About ?? user.About;
+            user.Website = request.Website ?? user.Website;
+            await _userManager.UpdateAsync(user);
+            return Result.Success();
         }
 
         public async Task<bool> CheckIfUsernameExists(
