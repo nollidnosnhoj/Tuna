@@ -32,8 +32,6 @@ export function setAccessTokenCookie(value: string, ctx?: ResponseContext) {
 }
 
 export function setRefreshTokenCookie(value: string, expires: number, ctx?: ResponseContext) {
-  console.log(expires * 1000 - Date.now())
-  console.log(new Date(expires * 1000))
   setCookie(REFRESH_TOKEN_KEY, value, ctx, {
     expires: new Date(expires * 1000),
     path: '/',

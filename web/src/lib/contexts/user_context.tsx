@@ -7,9 +7,10 @@ import React, {
   useState,
 } from "react";
 import Router from "next/router";
+import { LoginFormValues } from "~/components/Login/LoginForm";
 import fetcher from "../fetcher";
 import { login, revokeRefreshToken } from "../services/auth";
-import { LoginFormValues, User } from "../types";
+import { User } from "../types";
 
 type UserContextType = {
   isAuth: boolean;

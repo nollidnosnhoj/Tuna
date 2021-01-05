@@ -5,7 +5,6 @@ export type AuthResultResponse = {
 export type User = {
   id: number;
   username: string;
+  email: string;
   roles?: string[];
-  followingIds?: number[];
-  favoriteAudioIds?: number[];
 }
