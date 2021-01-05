@@ -1,43 +1,21 @@
-import {
-  Box,
-  Button,
-  Flex,
-  Heading,
-  IconButton,
-  Stack,
-  Text,
-} from "@chakra-ui/react";
-import { GetServerSideProps } from "next";
+import React, { useEffect } from "react";
+import { Box, Flex, Heading, IconButton, Stack, Text } from "@chakra-ui/react";
 import Router from "next/router";
 import Head from "next/head";
-import NextLink from "next/link";
-import React from "react";
-import request from "~/lib/request";
-import { errorToast } from "~/utils/toast";
 import { FaRandom } from "react-icons/fa";
+import AuthButton from "~/components/Auth/AuthButton";
+import useUser from "~/lib/contexts/user_context";
+import request from "~/lib/request";
 import { isAxiosError } from "~/utils";
-import { User } from "~/lib/types";
-import LoginModal from "~/components/Login/LoginModal";
-import RegisterModal from "~/components/Register/RegisterModal";
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  try {
-    const { data } = await request<User>("me/feed", { ctx: context });
-    return {
-      props: { user: data },
-      redirect: {
-        destination: "/feed",
-        permanent: false,
-      },
-    };
-  } catch (err) {
-    return {
-      props: {},
-    };
-  }
-};
 
 const Index = () => {
+  const { isAuth } = useUser();
+
+  useEffect(() => {
+    Router.prefetch("/feed");
+    if (isAuth) Router.push("/feed");
+  }, [isAuth]);
+
   const goToRandomAudio = async () => {
     try {
       const { data } = await request<string>("audios/random-id");
@@ -61,16 +39,20 @@ const Index = () => {
           </Heading>
           <Text fontSize="4xl">Upload music and share!</Text>
           <Flex justify="center" marginTop={4}>
-            <Stack direction="row">
-              <LoginModal buttonSize="lg" />
-              <RegisterModal buttonSize="lg" />
-              <IconButton
-                size="lg"
-                aria-label="Random audio"
-                icon={<FaRandom />}
-                onClick={() => goToRandomAudio()}
-              />
-            </Stack>
+            {!isAuth ? (
+              <Stack direction="row">
+                <AuthButton authType="login" size="lg" />
+                <AuthButton authType="register" size="lg" />
+                <IconButton
+                  size="lg"
+                  aria-label="Random audio"
+                  icon={<FaRandom />}
+                  onClick={() => goToRandomAudio()}
+                />
+              </Stack>
+            ) : (
+              <Text>Redirecting...</Text>
+            )}
           </Flex>
         </Box>
       </Flex>

@@ -3,16 +3,21 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import useUser from "~/lib/contexts/user_context";
-import { apiErrorToast } from "~/utils/toast";
+import { apiErrorToast, successfulToast } from "~/utils/toast";
 import InputField from "../InputField";
-import { Button, Flex } from "@chakra-ui/react";
+import { Button, Flex, flexboxParser, Stack } from "@chakra-ui/react";
+import AuthButton from "./AuthButton";
 
 export type LoginFormValues = {
   username: string;
   password: string;
 };
 
-export default function LoginForm() {
+interface LoginFormProps {
+  onSuccess?: () => void;
+}
+
+export default function LoginForm(props: LoginFormProps) {
   const { login } = useUser();
 
   const {
@@ -32,6 +37,8 @@ export default function LoginForm() {
   const onSubmit = async (values: LoginFormValues) => {
     try {
       await login(values);
+      successfulToast({ message: "You have logged in successfully. " });
+      props.onSuccess();
     } catch (err) {
       apiErrorToast(err);
     }
@@ -54,11 +61,11 @@ export default function LoginForm() {
         error={errors.password}
         isRequired
       />
-      <Flex justify="flex-end">
-        <Button type="submit" mt={4} isLoading={isSubmitting}>
+      <Stack mt={4} spacing={4}>
+        <Button type="submit" isLoading={isSubmitting} colorScheme="primary">
           Login
         </Button>
-      </Flex>
+      </Stack>
     </form>
   );
 }

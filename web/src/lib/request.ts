@@ -1,23 +1,21 @@
 import axios from 'axios'
 import createAuthRefreshInterceptor, { AxiosAuthRefreshRequestConfig } from 'axios-auth-refresh';
 import { IncomingMessage } from 'http';
+import Router from 'next/router'
 import { ACCESS_TOKEN_KEY } from '~/constants';
 import ENVIRONMENT from '~/constants/environment'
+import { isAxiosError } from '~/utils';
 import { getCookie } from '~/utils/cookies';
+import { errorToast } from '~/utils/toast';
 import { refreshAccessToken } from './services/auth';
 
 type MethodType = 'get' | 'delete' | 'head' | 'post' | 'put' | 'patch'
 
-interface NextContext {
-  req?: IncomingMessage;
-  ctx?: { req: IncomingMessage };
-}
-
 export interface RequestOptions<TRequest = any> {
   method?: MethodType,
   body?: TRequest,
+  accessToken?: string;
   skipAuthRefresh?: boolean;
-  ctx?: NextContext,
 }
 
 function getBearer(token: string) {
@@ -37,10 +35,16 @@ const refreshAuthLogic = async (failedRequest: any) => refreshAccessToken().then
 
 createAuthRefreshInterceptor(requestClient, refreshAuthLogic);
 
-export default function request<TResponse = any>(url: string, options: RequestOptions = {}) {
-  let { method = 'get', body, ctx, skipAuthRefresh = false } = options;
+requestClient.interceptors.request.use(request => {
+  const accessToken = getCookie(ACCESS_TOKEN_KEY);
+  if (!request.headers.Authorization) {
+    request.headers.Authorization = getBearer(accessToken);
+  }
+  return request;
+})
 
-  const accessToken = getCookie(ACCESS_TOKEN_KEY, ctx);
+export default function request<TResponse = any>(url: string, options: RequestOptions = {}) {
+  let { method = 'get', body, accessToken, skipAuthRefresh = false } = options;
 
   const requestConfig: AxiosAuthRefreshRequestConfig = {
     url: url,

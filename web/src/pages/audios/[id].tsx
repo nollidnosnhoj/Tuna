@@ -11,6 +11,8 @@ import useUser from "~/lib/contexts/user_context";
 import { Audio } from "~/lib/types";
 import request from "~/lib/request";
 import { useAudio, useFavorite } from "~/lib/services/audio";
+import { getCookie } from "~/utils/cookies";
+import { ACCESS_TOKEN_KEY } from "~/constants";
 
 const DynamicAudioPlayer = dynamic(() => import("~/components/AudioPlayer"), {
   ssr: false,
@@ -26,9 +28,12 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
   context
 ) => {
   const id = context.params.id as string;
+  const accessToken = getCookie(ACCESS_TOKEN_KEY, context);
 
   try {
-    const { data } = await request<Audio>(`audios/${id}`, { ctx: context });
+    const { data } = await request<Audio>(`audios/${id}`, {
+      accessToken: accessToken,
+    });
 
     return {
       props: {

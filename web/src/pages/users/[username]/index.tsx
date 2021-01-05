@@ -19,6 +19,8 @@ import AudioList from "~/components/AudioList";
 import request from "~/lib/request";
 import { ErrorResponse, Profile } from "~/lib/types";
 import { useFollow } from "~/lib/services/users";
+import { getCookie } from "~/utils/cookies";
+import { ACCESS_TOKEN_KEY } from "~/constants";
 
 interface PageProps {
   initialData?: Profile;
@@ -28,10 +30,11 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
   context
 ) => {
   const username = context.params?.username as string;
+  const accessToken = getCookie(ACCESS_TOKEN_KEY, context);
 
   try {
     const { data: initialData } = await request<Profile>(`/users/${username}`, {
-      ctx: context,
+      accessToken: accessToken,
     });
     return {
       props: {

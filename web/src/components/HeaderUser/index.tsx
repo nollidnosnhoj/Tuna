@@ -32,8 +32,7 @@ import NextLink from "next/link";
 import { useRouter } from "next/router";
 import useUser from "~/lib/contexts/user_context";
 import { useAudioPlayer } from "~/lib/contexts/audio_player_context";
-import LoginModal from "../Login/LoginModal";
-import RegisterModal from "../Register/RegisterModal";
+import AuthButton from "../Auth/AuthButton";
 
 const HeaderUser: React.FC = () => {
   const router = useRouter();
@@ -106,8 +105,8 @@ const HeaderUser: React.FC = () => {
         </div>
         {!isAuth ? (
           <>
-            <LoginModal />
-            <RegisterModal />
+            <AuthButton authType="login" />
+            <AuthButton authType="register" />
           </>
         ) : (
           <>

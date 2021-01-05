@@ -1,30 +1,15 @@
+import { Text } from "@chakra-ui/react";
 import React from "react";
-import { GetServerSideProps } from "next";
 import AudioUpload from "~/components/AudioUpload";
 import PageLayout from "~/components/Layout";
-
-import request from "~/lib/request";
-
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const { res } = ctx;
-  try {
-    const { data } = await request("me", { ctx });
-    return { props: { user: data } };
-  } catch (err) {
-    return {
-      props: {},
-      redirect: {
-        destination: "/login",
-        permanent: false,
-      },
-    };
-  }
-};
+import useUser from "~/lib/contexts/user_context";
 
 export default function UploadPage() {
+  const { isAuth } = useUser();
+
   return (
     <PageLayout title="Upload Audio">
-      <AudioUpload />
+      {isAuth ? <AudioUpload /> : <Text>Sample text</Text>}
     </PageLayout>
   );
 }

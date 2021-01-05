@@ -7,7 +7,7 @@ import React, {
   useState,
 } from "react";
 import Router from "next/router";
-import { LoginFormValues } from "~/components/Login/LoginForm";
+import { LoginFormValues } from "~/components/Auth/LoginForm";
 import fetcher from "../fetcher";
 import { login, revokeRefreshToken } from "../services/auth";
 import { User } from "../types";
