@@ -1,14 +1,12 @@
 import React from "react";
-import PageLayout from "~/components/Layout";
-import AudioList from "~/components/AudioList";
+import Page from "~/components/Layout";
+import AudioList from "~/components/Audio/List";
 import AuthRequired from "~/components/Auth/AuthRequired";
 
 export default function FeedPage() {
   return (
-    <PageLayout title="Dashboard">
-      <AuthRequired>
-        <AudioList headerText="Your Feed" type="feed" />
-      </AuthRequired>
-    </PageLayout>
+    <Page title="Your Feed" loginRequired={true}>
+      <AudioList headerText="Your Feed" type="feed" />
+    </Page>
   );
 }

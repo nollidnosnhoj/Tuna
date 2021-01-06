@@ -26,6 +26,8 @@ export function apiErrorToast(err: any) {
     if (err.response.status === 401) return;
     title = err.response.data.title ?? title
     message = err.response.data.message ?? message;
+  } else {
+    console.log(err);
   }
   errorToast({ title, message })
 }

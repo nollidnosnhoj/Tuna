@@ -1,5 +1,13 @@
 import React, { useEffect } from "react";
-import { Box, Flex, Heading, IconButton, Stack, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Flex,
+  Heading,
+  IconButton,
+  Stack,
+  Text,
+} from "@chakra-ui/react";
 import Router from "next/router";
 import Head from "next/head";
 import { FaRandom } from "react-icons/fa";
@@ -7,6 +15,7 @@ import AuthButton from "~/components/Auth/AuthButton";
 import useUser from "~/lib/contexts/user_context";
 import request from "~/lib/request";
 import { isAxiosError } from "~/utils";
+import Page from "~/components/Layout";
 
 const Index = () => {
   const { isAuth } = useUser();
@@ -28,10 +37,7 @@ const Index = () => {
   };
 
   return (
-    <React.Fragment>
-      <Head>
-        <title>Audiochan</title>
-      </Head>
+    <Page>
       <Flex justify="center" align="center" height="75vh">
         <Box textAlign="center">
           <Heading size="4xl" marginBottom={4}>
@@ -39,24 +45,18 @@ const Index = () => {
           </Heading>
           <Text fontSize="4xl">Upload music and share!</Text>
           <Flex justify="center" marginTop={4}>
-            {!isAuth ? (
-              <Stack direction="row">
-                <AuthButton authType="login" size="lg" />
-                <AuthButton authType="register" size="lg" />
-                <IconButton
-                  size="lg"
-                  aria-label="Random audio"
-                  icon={<FaRandom />}
-                  onClick={() => goToRandomAudio()}
-                />
-              </Stack>
-            ) : (
-              <Text>Redirecting...</Text>
-            )}
+            <Button
+              leftIcon={<FaRandom />}
+              colorScheme="primary"
+              variant="solid"
+              onClick={() => goToRandomAudio()}
+            >
+              I'm feeling lucky
+            </Button>
           </Flex>
         </Box>
       </Flex>
-    </React.Fragment>
+    </Page>
   );
 };
 

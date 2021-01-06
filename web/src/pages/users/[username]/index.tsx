@@ -14,8 +14,8 @@ import React from "react";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-import PageLayout from "~/components/Layout";
-import AudioList from "~/components/AudioList";
+import Page from "~/components/Layout";
+import AudioList from "~/components/Audio/List";
 import request from "~/lib/request";
 import { ErrorResponse, Profile } from "~/lib/types";
 import { useFollow } from "~/lib/services/users";
@@ -62,7 +62,7 @@ export default function ProfilePage(
   const { isFollowing, follow } = useFollow(username);
 
   return (
-    <PageLayout title={`${profile.username} | Audiochan`}>
+    <Page title={`${profile.username} | Audiochan`}>
       <Flex direction="row">
         <Box flex="1">
           <Box textAlign="center" marginBottom={4}>
@@ -101,6 +101,6 @@ export default function ProfilePage(
           </Tabs>
         </Box>
       </Flex>
-    </PageLayout>
+    </Page>
   );
 }

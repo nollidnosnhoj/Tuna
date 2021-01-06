@@ -5,8 +5,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import useUser from "~/lib/contexts/user_context";
 import { apiErrorToast, successfulToast } from "~/utils/toast";
 import InputField from "../InputField";
-import { Button, Flex, flexboxParser, Stack } from "@chakra-ui/react";
-import AuthButton from "./AuthButton";
+import { Button, Stack } from "@chakra-ui/react";
 
 export type LoginFormValues = {
   username: string;
@@ -38,7 +37,7 @@ export default function LoginForm(props: LoginFormProps) {
     try {
       await login(values);
       successfulToast({ message: "You have logged in successfully. " });
-      props.onSuccess();
+      if (props.onSuccess) props.onSuccess();
     } catch (err) {
       apiErrorToast(err);
     }

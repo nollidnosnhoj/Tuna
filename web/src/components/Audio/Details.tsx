@@ -11,7 +11,7 @@ interface AudioMetaProps {
   username: string;
 }
 
-const AudioMeta: React.FC<AudioMetaProps> = (props) => {
+const AudioDetails: React.FC<AudioMetaProps> = (props) => {
   const router = useRouter();
 
   useEffect(() => {
@@ -38,4 +38,4 @@ const AudioMeta: React.FC<AudioMetaProps> = (props) => {
   );
 };
 
-export default AudioMeta;
+export default AudioDetails;

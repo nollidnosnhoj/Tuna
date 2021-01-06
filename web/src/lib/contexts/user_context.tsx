@@ -11,6 +11,9 @@ import { LoginFormValues } from "~/components/Auth/LoginForm";
 import fetcher from "../fetcher";
 import { login, revokeRefreshToken } from "../services/auth";
 import { User } from "../types";
+import { getCookie } from "~/utils/cookies";
+import { ACCESS_TOKEN_KEY } from "~/constants";
+import { errorToast, successfulToast } from "~/utils/toast";
 
 type UserContextType = {
   isAuth: boolean;
@@ -57,14 +60,15 @@ export function UserProvider(props: PropsWithChildren<UserProviderProps>) {
     try {
       await revokeRefreshToken();
       updateUser(null);
-      Router.push("/");
+      successfulToast({ message: "You have successfully logged out." });
     } catch (err) {
       console.error(err);
     }
   }
 
   useEffect(() => {
-    if (!user) {
+    const accessToken = getCookie(ACCESS_TOKEN_KEY);
+    if (!user && accessToken) {
       fetchAuthenticatedUser();
     }
   }, [user]);

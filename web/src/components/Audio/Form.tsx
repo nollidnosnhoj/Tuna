@@ -1,13 +1,27 @@
-import React, { useEffect, useState } from "react";
-import { Box, Button, Divider, Flex, Spacer, useTheme } from "@chakra-ui/react";
+import React, { useEffect } from "react";
+import {
+  Box,
+  Button,
+  ButtonGroup,
+  Flex,
+  IconButton,
+  Popover,
+  PopoverArrow,
+  PopoverBody,
+  PopoverCloseButton,
+  PopoverContent,
+  PopoverFooter,
+  PopoverHeader,
+  PopoverTrigger,
+  Spacer,
+} from "@chakra-ui/react";
 import { Controller, FieldValues, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import InputField from "~/components/InputField";
 import TagInput from "~/components/TagInput";
-import AudioRemove from "~/components/AudioForm/remove";
-import theme from "~/lib/theme";
 import { AudioRequest } from "~/lib/types";
+import { DeleteIcon } from "@chakra-ui/icons";
 
 interface AudioFormProps {
   type: "create" | "edit";
@@ -78,11 +92,43 @@ const AudioForm = ({ type, currentValues, ...props }: AudioFormProps) => {
         )}
       />
       <Flex marginY={4}>
-        {type === "edit" ? (
-          <AudioRemove isSubmitting={isSubmitting} onDelete={onDelete} />
-        ) : (
-          <Box></Box>
-        )}
+        <Box>
+          {type === "edit" && (
+            <Popover>
+              <PopoverTrigger>
+                <IconButton
+                  colorScheme="red"
+                  variant="outline"
+                  aria-label="Remove upload"
+                  icon={<DeleteIcon />}
+                  isLoading={isSubmitting}
+                >
+                  Delete
+                </IconButton>
+              </PopoverTrigger>
+              <PopoverContent>
+                <PopoverArrow />
+                <PopoverCloseButton />
+                <PopoverHeader>Remove Confirmation</PopoverHeader>
+                <PopoverBody>
+                  Are you sure you want to remove this upload? You cannot undo
+                  this action.
+                </PopoverBody>
+                <PopoverFooter d="flex" justifyContent="flex-end">
+                  <ButtonGroup size="sm">
+                    <Button
+                      colorScheme="red"
+                      onClick={onDelete}
+                      disabled={isSubmitting}
+                    >
+                      Remove
+                    </Button>
+                  </ButtonGroup>
+                </PopoverFooter>
+              </PopoverContent>
+            </Popover>
+          )}
+        </Box>
         <Spacer />
         <Box>
           <Button

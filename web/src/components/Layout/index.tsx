@@ -1,19 +1,45 @@
 import { Box } from "@chakra-ui/react";
 import Head from "next/head";
-import React from "react";
+import Router, { useRouter } from "next/router";
+import React, { useEffect, useMemo } from "react";
 import Container from "~/components/Container";
 import Header from "~/components/Header";
+import useUser from "~/lib/contexts/user_context";
 
-const PageLayout: React.FC<{
+interface PageProps {
   title?: string;
+  loginRequired?: boolean;
+  useHeader?: boolean;
   beforeContainer?: React.ReactNode;
-}> = ({ title, beforeContainer, children, ...props }) => {
+}
+
+const Page: React.FC<PageProps> = ({
+  title = "Audiochan",
+  loginRequired = false,
+  useHeader = true,
+  beforeContainer,
+  children,
+  ...props
+}) => {
+  const { isAuth } = useUser();
+  const { asPath } = useRouter();
+
+  const loginUrl = useMemo<string>(() => {
+    return `/login?redirect=${decodeURIComponent(asPath)}`;
+  }, [asPath]);
+
+  useEffect(() => {
+    if (!isAuth && loginRequired) {
+      Router.push(loginUrl);
+    }
+  }, [isAuth, asPath, loginRequired]);
+
   return (
     <>
       <Head>
-        <title>{title ?? "Audiochan"}</title>
+        <title>{title}</title>
       </Head>
-      <Header title="Audiochan" />
+      {useHeader && <Header title="Audiochan" />}
       {beforeContainer}
       <Container {...props}>
         <Box paddingX="5" paddingY="1.5rem">
@@ -24,4 +50,4 @@ const PageLayout: React.FC<{
   );
 };
 
-export default PageLayout;
+export default Page;

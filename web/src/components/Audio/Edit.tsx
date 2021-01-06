@@ -9,7 +9,7 @@ import {
 } from "@chakra-ui/react";
 import React, { useMemo, useState } from "react";
 import Router from "next/router";
-import AudioForm from "~/components/AudioForm";
+import AudioForm from "~/components/Audio/Form";
 import { Audio, AudioRequest } from "~/lib/types";
 import { apiErrorToast, successfulToast } from "~/utils/toast";
 import { deleteAudio, updateAudio } from "~/lib/services/audio";

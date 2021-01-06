@@ -3,10 +3,10 @@ import { Box, Flex, useDisclosure, Button } from "@chakra-ui/react";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
-import AudioMeta from "~/components/AudioMeta";
+import AudioDetails from "~/components/Audio/Details";
 import Container from "~/components/Container";
-import PageLayout from "~/components/Layout";
-import AudioEdit from "~/components/AudioEdit";
+import Page from "~/components/Layout";
+import AudioEdit from "~/components/Audio/Edit";
 import useUser from "~/lib/contexts/user_context";
 import { Audio } from "~/lib/types";
 import request from "~/lib/request";
@@ -14,7 +14,7 @@ import { useAudio, useFavorite } from "~/lib/services/audio";
 import { getCookie } from "~/utils/cookies";
 import { ACCESS_TOKEN_KEY } from "~/constants";
 
-const DynamicAudioPlayer = dynamic(() => import("~/components/AudioPlayer"), {
+const DynamicAudioPlayer = dynamic(() => import("~/components/Audio/Player"), {
   ssr: false,
 });
 
@@ -48,7 +48,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
   }
 };
 
-export default function AudioUploadPage(
+export default function AudioDetailsPage(
   props: InferGetServerSidePropsType<typeof getServerSideProps>
 ) {
   const { user, isAuth } = useUser();
@@ -71,7 +71,7 @@ export default function AudioUploadPage(
     : audio.url;
 
   return (
-    <PageLayout
+    <Page
       title={audio.title}
       beforeContainer={
         <Container>
@@ -81,7 +81,7 @@ export default function AudioUploadPage(
     >
       <Flex>
         <Box flex="2">
-          <AudioMeta
+          <AudioDetails
             title={audio.title}
             description={audio.description}
             username={audio.user?.username ?? "ERROR"}
@@ -97,6 +97,6 @@ export default function AudioUploadPage(
         </Box>
       </Flex>
       <AudioEdit model={audio} isOpen={isEditOpen} onClose={onEditClose} />
-    </PageLayout>
+    </Page>
   );
 }
