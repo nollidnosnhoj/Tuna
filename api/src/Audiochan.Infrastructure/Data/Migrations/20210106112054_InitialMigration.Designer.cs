@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Audiochan.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(AudiochanContext))]
-    [Migration("20210103225514_InitialMigration")]
+    [Migration("20210106112054_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -63,6 +63,11 @@ namespace Audiochan.Infrastructure.Data.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)")
                         .HasColumnName("title");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("url");
 
                     b.Property<long>("UserId")
                         .HasColumnType("bigint")

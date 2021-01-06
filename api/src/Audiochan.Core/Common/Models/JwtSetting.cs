@@ -2,10 +2,10 @@
 
 namespace Audiochan.Core.Common.Models
 {
-    public class JwtSetting
+    public record JwtSetting
     {
-        public string Secret { get; set; } = null!;
-        public TimeSpan AccessTokenExpiration { get; set; }
-        public TimeSpan RefreshTokenExpiration { get; set; }
+        public string Secret { get; init; } = null!;
+        public TimeSpan AccessTokenExpiration { get; init; }
+        public TimeSpan RefreshTokenExpiration { get; init; }
     }
 }

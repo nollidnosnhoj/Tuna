@@ -28,7 +28,7 @@ namespace Audiochan.Core.Common.Extensions
                 .WithMessage("File type is invalid.");
         }
 
-        public static IRuleBuilder<T, string> Password<T>(this IRuleBuilder<T, string> ruleBuilder, 
+        public static IRuleBuilder<T, string?> Password<T>(this IRuleBuilder<T, string?> ruleBuilder, 
             PasswordSetting passwordSetting, string field = "Password")
         {
             if (passwordSetting.RequireDigit)
@@ -55,7 +55,7 @@ namespace Audiochan.Core.Common.Extensions
             return ruleBuilder;
         }
 
-        public static IRuleBuilder<T, string> Username<T>(this IRuleBuilder<T, string> ruleBuilder)
+        public static IRuleBuilder<T, string?> Username<T>(this IRuleBuilder<T, string?> ruleBuilder)
         {
             const string allowedCharacters = "abcdefghijklmnopqrstuvwxyz-_";
 

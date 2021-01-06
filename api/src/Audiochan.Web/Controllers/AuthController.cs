@@ -25,7 +25,7 @@ namespace Audiochan.Web.Controllers
         public async Task<IActionResult> Login([FromBody] LoginRequest request, 
             CancellationToken cancellationToken)
         {
-            var authResult = await _authService.Login(request.Username, request.Password, cancellationToken);
+            var authResult = await _authService.Login(request.Username!, request.Password!, cancellationToken);
 
             return authResult.IsSuccess ? Ok(authResult.Data) : authResult.ReturnErrorResponse();
         }

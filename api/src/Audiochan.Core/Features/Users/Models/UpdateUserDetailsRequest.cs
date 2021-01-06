@@ -2,7 +2,7 @@
 {
     public record UpdateUserDetailsRequest
     {
-        public string? About { get; }
-        public string? Website { get; }
+        public string? About { get; init; } = string.Empty;
+        public string? Website { get; init; } = string.Empty;
     }
 }

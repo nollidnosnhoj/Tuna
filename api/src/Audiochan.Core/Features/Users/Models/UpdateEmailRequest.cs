@@ -2,6 +2,6 @@
 {
     public record UpdateEmailRequest
     {
-        public string? Email { get; } = string.Empty;
+        public string? Email { get; init; } = string.Empty;
     }
 }

@@ -2,11 +2,11 @@
 
 namespace Audiochan.Core.Features.Audios.Models
 {
-    public class UpdateAudioRequest
+    public record UpdateAudioRequest
     {
-        public string? Title { get; set; }
-        public string? Description { get; set; }
-        public bool? IsPublic { get; set; }
-        public List<string?> Tags { get; set; } = new();
+        public string? Title { get; init; }
+        public string? Description { get; init; }
+        public bool? IsPublic { get; init; }
+        public List<string?> Tags { get; init; } = new();
     }
 }

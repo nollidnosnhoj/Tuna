@@ -1,7 +1,7 @@
 ﻿namespace Audiochan.Core.Features.Auth.Models
 {
-    public class RefreshTokenRequest
+    public record RefreshTokenRequest
     {
-        public string? RefreshToken { get; set; } = string.Empty;
+        public string? RefreshToken { get; } = string.Empty;
     }
 }

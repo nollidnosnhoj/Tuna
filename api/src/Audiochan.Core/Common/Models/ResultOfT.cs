@@ -8,16 +8,16 @@ namespace Audiochan.Core.Common.Models
         T Data { get; }
     }
     
-    public class Result<T> : Result, IResult<T>
+    public record Result<T> : Result, IResult<T>
     {
-        public T Data { get; private set; } = default!;
+        public T Data { get; init; } = default!;
 
         public new static Result<T> Fail(
             ResultErrorCode errorCode
             , string? message = null
             , Dictionary<string, string[]>? errors = null)
         {
-            return new Result<T>
+            return new()
             {
                 ErrorCode = errorCode,
                 IsSuccess = false,
@@ -28,7 +28,7 @@ namespace Audiochan.Core.Common.Models
 
         public static Result<T> Success(T data)
         {
-            return new Result<T>
+            return new()
             {
                 IsSuccess = true,
                 Message = "Success",

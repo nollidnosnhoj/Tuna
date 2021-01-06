@@ -78,22 +78,12 @@ namespace Audiochan.Infrastructure.Storage
 
             if (!File.Exists(path))
             {
-                return new BlobDto
-                {
-                    FoundBlob = false
-                };
+                return new BlobDto(false, "", "", "", 0);
             }
             
             var file = new FileInfo(path);
 
-            return new BlobDto
-            {
-                FoundBlob = true,
-                Name = file.Name,
-                Container = container,
-                Url = $"{container}/{blobName}",
-                Size = file.Length
-            };
+            return new BlobDto(true, container, file.Name, $"{container}/{blobName}", file.Length);
         }
     }
 }

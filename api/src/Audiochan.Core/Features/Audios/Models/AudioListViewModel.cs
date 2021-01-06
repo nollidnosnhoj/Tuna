@@ -7,14 +7,14 @@ namespace Audiochan.Core.Features.Audios.Models
 {
     public record AudioListViewModel
     {
-        public string Id { get; set; } = null!;
-        public string Title { get; set; } = null!;
-        public bool IsPublic { get; set; }
-        public int FavoriteCount { get; set; }
-        public bool IsFavorited { get; set; }
-        public DateTime Created { get; set; }
-        public DateTime? Updated { get; set; }
-        public UserViewModel User { get; set; } = null!;
+        public string Id { get; init; } = null!;
+        public string Title { get; init; } = null!;
+        public bool IsPublic { get; init; }
+        public int FavoriteCount { get; init; }
+        public bool IsFavorited { get; init; }
+        public DateTime Created { get; init; }
+        public DateTime? Updated { get; init; }
+        public UserViewModel User { get; init; } = null!;
 
         public static AudioListViewModel From(Audio audio, long currentUserId)
         {

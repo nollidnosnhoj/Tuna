@@ -15,16 +15,14 @@ namespace Audiochan.Web.Filters
         {
             if (!context.ModelState.IsValid)
             {
-                var errorResponse = new ErrorViewModel
-                {
-                    Errors = context.ModelState
-                        .Where(x => x.Value.Errors.Count > 0)
-                        .ToDictionary(kvp => kvp.Key,
-                            kvp =>
-                                kvp.Value.Errors.Select(x => x.ErrorMessage).ToArray()),
-                    Title = ErrorConstants.Titles[ResultErrorCode.UnprocessedEntity],
-                    Message = ErrorConstants.Titles[ResultErrorCode.UnprocessedEntity]
-                };
+                var errors = context.ModelState
+                    .Where(x => x.Value.Errors.Count > 0)
+                    .ToDictionary(kvp => kvp.Key, kvp =>
+                        kvp.Value.Errors.Select(x => x.ErrorMessage).ToArray());
+                var errorResponse = new ErrorViewModel(
+                    ErrorConstants.Titles[ResultErrorCode.UnprocessedEntity],
+                    ErrorConstants.Messages[ResultErrorCode.UnprocessedEntity], 
+                    errors);
 
                 context.Result = new UnprocessableEntityObjectResult(errorResponse);
                 return;

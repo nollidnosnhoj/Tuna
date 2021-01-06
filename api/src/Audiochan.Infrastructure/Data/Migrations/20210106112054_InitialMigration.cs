@@ -96,6 +96,7 @@ namespace Audiochan.Infrastructure.Data.Migrations
                     duration = table.Column<int>(type: "integer", nullable: false),
                     file_size = table.Column<long>(type: "bigint", nullable: false),
                     file_ext = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: false),
+                    url = table.Column<string>(type: "text", nullable: false),
                     is_public = table.Column<bool>(type: "boolean", nullable: false),
                     user_id = table.Column<long>(type: "bigint", nullable: false),
                     created = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),

@@ -37,7 +37,7 @@ namespace Audiochan.Core.Features.Tags
 
             var vm = await queryable.Paginate(
                 paginationQuery.Page
-                , paginationQuery.Size
+                , paginationQuery.Limit
                 , cancellationToken);
 
             return Result<List<PopularTagViewModel>>.Success(vm);

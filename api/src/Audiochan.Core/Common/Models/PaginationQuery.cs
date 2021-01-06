@@ -1,8 +1,8 @@
 ﻿namespace Audiochan.Core.Common.Models
 {
-    public class PaginationQuery
+    public record PaginationQuery
     {
-        public int Page { get; set; } = 1;
-        public int Size { get; set; } = 15;
+        public int Page { get; init; } = 1;
+        public int Limit { get; init; } = 15;
     }
 }

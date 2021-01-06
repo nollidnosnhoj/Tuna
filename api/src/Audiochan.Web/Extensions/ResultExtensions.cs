@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Linq;
 using Audiochan.Core.Common.Constants;
 using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Common.Models;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Audiochan.Web.Extensions
@@ -12,12 +10,8 @@ namespace Audiochan.Web.Extensions
     {
         public static IActionResult ReturnErrorResponse(this IResult result)
         {
-            var response = new ErrorViewModel
-            {
-                Title = result.ErrorCode.ToErrorTitleString(),
-                Message = result.GetErrorMessage(),
-                Errors = result.Errors
-            };
+            var response = new ErrorViewModel(result.ErrorCode.ToErrorTitleString(), result.GetErrorMessage(),
+                result.Errors);
 
             return result.ErrorCode switch
             {

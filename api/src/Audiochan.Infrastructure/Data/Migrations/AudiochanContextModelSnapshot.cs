@@ -62,6 +62,11 @@ namespace Audiochan.Infrastructure.Data.Migrations
                         .HasColumnType("character varying(100)")
                         .HasColumnName("title");
 
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("url");
+
                     b.Property<long>("UserId")
                         .HasColumnType("bigint")
                         .HasColumnName("user_id");

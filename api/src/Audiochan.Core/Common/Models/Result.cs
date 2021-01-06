@@ -12,17 +12,17 @@ namespace Audiochan.Core.Common.Models
 
     }
 
-    public class Result : IResult
+    public record Result : IResult
     {
-        public Dictionary<string, string[]>? Errors { get; protected set; }
-        public string? Message { get; protected set; }
-        public bool IsSuccess { get; protected set; }
-        public ResultErrorCode? ErrorCode { get; protected set; }
+        public Dictionary<string, string[]>? Errors { get; init; }
+        public string? Message { get; init; }
+        public bool IsSuccess { get; init; }
+        public ResultErrorCode? ErrorCode { get; init; }
 
         public static Result Fail(ResultErrorCode errorCode, string message = null!, 
             Dictionary<string, string[]>? errors = null)
         {
-            return new Result
+            return new()
             {
                 ErrorCode = errorCode,
                 Message = message,
@@ -33,7 +33,7 @@ namespace Audiochan.Core.Common.Models
 
         public static Result Success()
         {
-            return new Result
+            return new()
             {
                 IsSuccess = true,
                 Message = "Success"

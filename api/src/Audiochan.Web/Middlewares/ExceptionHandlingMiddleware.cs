@@ -47,14 +47,12 @@ namespace Audiochan.Web.Middlewares
         private async Task HandleException(HttpContext context, Exception ex)
         {
             _logger.LogError(ex, ex.Message);
-            
-            var response = new ErrorViewModel
-            {
-                Title = "Unknown Error",
-                Message = _env.IsDevelopment()
-                    ? ex.Message
-                    : "An unknown error has occurred. Please contact the administrators."
-            };
+
+            var message = _env.IsDevelopment()
+                ? ex.Message
+                : "An unknown error has occurred. Please contact the administrators.";
+
+            var response = new ErrorViewModel("Unknown Error", message, null);
 
             context.Response.StatusCode = (int) HttpStatusCode.InternalServerError;
             context.Response.ContentType = "application/json";

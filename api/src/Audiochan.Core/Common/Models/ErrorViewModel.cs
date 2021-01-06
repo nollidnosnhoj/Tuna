@@ -1,11 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Text;
 
 namespace Audiochan.Core.Common.Models
 {
-    public class ErrorViewModel
+    public record ErrorViewModel(string? Title, string Message, IDictionary<string, string[]>? Errors)
     {
-        public string? Title { get; set; } = string.Empty;
-        public string Message { get; set; } = null!;
-        public IDictionary<string, string[]>? Errors { get; set; }
     }
 }

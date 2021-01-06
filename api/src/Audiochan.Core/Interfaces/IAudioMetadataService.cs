@@ -5,6 +5,6 @@ namespace Audiochan.Core.Interfaces
 {
     public interface IAudioMetadataService
     {
-        AudioDataDto GetMetadata(Stream stream, string mimeType);
+        AudioMetadata GetMetadata(Stream stream, string mimeType);
     }
 }

@@ -101,15 +101,9 @@ namespace Audiochan.Core.Features.Audios
                 .Select(MapProjections.AudioDetail(currentUserId))
                 .SingleOrDefaultAsync(cancellationToken);
 
-            if (audio == null)
-                return Result<AudioDetailViewModel>.Fail(ResultErrorCode.NotFound);
-
-            var blob = await _storageService
-                .GetBlobAsync(ContainerConstants.Audios, audio.Id + audio.FileExt, cancellationToken);
-
-            audio.Url = blob.FoundBlob ? blob.Url : "";
-
-            return Result<AudioDetailViewModel>.Success(audio);
+            return audio == null 
+                ? Result<AudioDetailViewModel>.Fail(ResultErrorCode.NotFound) 
+                : Result<AudioDetailViewModel>.Success(audio);
         }
 
         public async Task<string?> GetRandomAudioId(CancellationToken cancellationToken = default)
@@ -169,7 +163,8 @@ namespace Audiochan.Core.Features.Audios
                     Duration = data.Duration,
                     FileSize = blob.Size,
                     User = currentUser,
-                    FileExt = ext
+                    FileExt = ext,
+                    Url = blob.Url
                 };
 
                 if (request.Tags.Count > 0)

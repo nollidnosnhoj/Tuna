@@ -7,17 +7,11 @@ namespace Audiochan.Infrastructure.Shared
 {
     public class AudioMetadataService : IAudioMetadataService
     {
-        public AudioDataDto GetMetadata(Stream stream, string mimeType)
+        public AudioMetadata GetMetadata(Stream stream, string mimeType)
         {
             var track = new Track(stream, mimeType);
-            
-            return new AudioDataDto
-            {
-                Title = track.Title,
-                Duration = track.Duration,
-                BitRate = track.Bitrate,
-                SampleRate = track.SampleRate
-            };
+
+            return new AudioMetadata(track.Title, track.Duration);
         }
     }
 }

@@ -2,10 +2,10 @@
 
 namespace Audiochan.Core.Features.Audios.Models
 {
-    public class GetAudioListQuery : PaginationQuery
+    public record GetAudioListQuery : PaginationQuery
     {
-        public string Username { get; set; } = string.Empty;
-        public string Tags { get; set; } = string.Empty;
-        public string Sort { get; set; } = string.Empty;
+        public string Username { get; init; } = string.Empty;
+        public string Tags { get; init; } = string.Empty;
+        public string Sort { get; init; } = string.Empty;
     }
 }

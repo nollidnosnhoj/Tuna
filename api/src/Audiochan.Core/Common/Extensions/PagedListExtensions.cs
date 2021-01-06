@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,16 +10,15 @@ namespace Audiochan.Core.Common.Extensions
 {
     public static class PagedListExtensions
     {
-        public static async Task<List<T>> Paginate<T>(this IQueryable<T> queryable
-            , int pageNumber
-            , int pageSize
-            , CancellationToken cancellationToken = default)
+        
+        public static async Task<List<T>> Paginate<T>(this IQueryable<T> queryable, int page, int limit, 
+            CancellationToken cancellationToken = default)
         {
-            var page = pageNumber > 0 ? pageNumber : 1;
-            var size = pageSize < 1 ? 1 : pageSize > 30 ? 30 : pageSize;
+            var pageNumber = Math.Max(1, page);
+            var pageLimit = Math.Min(30, Math.Max(0, limit));
             return await queryable
-                .Skip((page - 1) * size)
-                .Take(size)
+                .Skip((pageNumber - 1) * pageLimit)
+                .Take(pageLimit)
                 .ToListAsync(cancellationToken);
         }
         
@@ -26,7 +26,7 @@ namespace Audiochan.Core.Common.Extensions
             , PaginationQuery paginationQuery
             , CancellationToken cancellationToken = default)
         {
-            return await queryable.Paginate(paginationQuery.Page, paginationQuery.Size, cancellationToken);
+            return await queryable.Paginate(paginationQuery.Page, paginationQuery.Limit, cancellationToken);
         }
 
         public static async Task<List<T>> Paginate<T>(this IQueryable<T> queryable,

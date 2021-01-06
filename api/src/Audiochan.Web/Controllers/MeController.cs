@@ -124,7 +124,7 @@ namespace Audiochan.Web.Controllers
         public async Task<IActionResult> ChangeUsername([FromBody] UpdateUsernameRequest request,
             CancellationToken cancellationToken)
         {
-            var result = await _userService.UpdateUsername(_currentUserId, request.Username, cancellationToken);
+            var result = await _userService.UpdateUsername(_currentUserId, request.Username!, cancellationToken);
             return result.IsSuccess ? NoContent() : result.ReturnErrorResponse();
         }
 
@@ -132,7 +132,7 @@ namespace Audiochan.Web.Controllers
         public async Task<IActionResult> ChangeEmail([FromBody] UpdateEmailRequest request,
             CancellationToken cancellationToken)
         {
-            var result = await _userService.UpdateEmail(_currentUserId, request.Email, cancellationToken);
+            var result = await _userService.UpdateEmail(_currentUserId, request.Email!, cancellationToken);
             return result.IsSuccess ? NoContent() : result.ReturnErrorResponse();
         }
 

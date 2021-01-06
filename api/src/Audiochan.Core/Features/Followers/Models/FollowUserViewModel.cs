@@ -5,10 +5,10 @@ namespace Audiochan.Core.Features.Followers.Models
 {
     public record FollowUserViewModel
     {
-        public long Id { get; set; }
-        public string Username { get; set; } = null!;
-        public string AvatarUrl { get; set; } = string.Empty;
-        public bool IsFollowing { get; set; }
+        public long Id { get; init; }
+        public string Username { get; init; } = null!;
+        public string AvatarUrl { get; init; } = string.Empty;
+        public bool IsFollowing { get; init; }
 
         public static FollowUserViewModel From(FollowedUser followedUser, long currentUserId)
         {

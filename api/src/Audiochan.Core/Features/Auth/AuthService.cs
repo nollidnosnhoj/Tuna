@@ -58,7 +58,7 @@ namespace Audiochan.Core.Features.Auth
         {
             var user = new User
             {
-                UserName = request.Username.ToLower(),
+                UserName = request.Username!.ToLower(),
                 DisplayName = request.Username,
                 Email = request.Email,
                 Created = _dateTimeService.Now

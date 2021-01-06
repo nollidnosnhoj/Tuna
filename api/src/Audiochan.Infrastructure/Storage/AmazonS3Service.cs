@@ -140,14 +140,7 @@ namespace Audiochan.Infrastructure.Storage
 
                 var response = await _client.GetObjectMetadataAsync(getRequest, cancellationToken);
 
-                return new BlobDto
-                {
-                    Container = container,
-                    Name = blobName,
-                    Size = response.ContentLength,
-                    FoundBlob = true,
-                    Url = $"{_url}/{key}"
-                };
+                return new BlobDto(true, container, blobName, $"{_url}/{key}", response.ContentLength);
             }
             catch (AmazonS3Exception ex)
             {

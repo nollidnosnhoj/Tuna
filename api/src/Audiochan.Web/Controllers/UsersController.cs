@@ -54,7 +54,7 @@ namespace Audiochan.Web.Controllers
             {
                 Username = username,
                 Page = paginationQuery.Page,
-                Size = paginationQuery.Size
+                Limit = paginationQuery.Limit
             };
 
             var list = await _audioService.GetList(query, cancellationToken);
