@@ -9,19 +9,19 @@ import {
   Spacer,
   Divider,
   Checkbox,
-  useToast,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import Router from "next/router";
 import { Controller, useForm } from "react-hook-form";
-import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { FaCloudUploadAlt } from "react-icons/fa";
 import useAudioDropzone from "~/lib/hooks/useAudioDropzone";
-import { apiErrorToast, errorToast } from "~/utils/toast";
-import InputField from "../InputField";
-import TagInput from "../TagInput";
+import { apiErrorToast, errorToast, successfulToast } from "~/utils/toast";
+import TextInput from "../Form/TextInput";
+import TagInput from "../Form/TagInput";
 import { uploadAudio } from "~/lib/services/audio";
+import { audioSchema } from "~/lib/validationSchemas";
+import InputCheckbox from "../Form/Checkbox";
 
 type FormInputs = {
   title: string;
@@ -32,7 +32,6 @@ type FormInputs = {
 };
 
 const AudioUpload = () => {
-  const toast = useToast();
   const [file, setFile] = useState<File>(undefined);
   const [uploaded, setUploaded] = useState(false);
 
@@ -51,15 +50,11 @@ const AudioUpload = () => {
     try {
       const { id: audioId } = await uploadAudio(formData);
       setUploaded(true);
-      toast({
+      successfulToast({
         title: "Audio uploaded!",
-        description: "You will be redirected to the audio page.",
-        status: "success",
-        duration: 500,
-        onCloseComplete: () => {
-          Router.push(`audios/${audioId}`);
-        },
+        message: "You will be redirected...",
       });
+      Router.push(`audios/${audioId}`);
     } catch (err) {
       apiErrorToast(err);
     }
@@ -90,18 +85,7 @@ const AudioUpload = () => {
       isPublic: true,
       acceptTerms: false,
     },
-    resolver: yupResolver(
-      yup.object().shape({
-        title: yup.string().required().max(30),
-        description: yup.string().max(500),
-        tags: yup.array(yup.string()).max(10).ensure(),
-        isPublic: yup.boolean(),
-        acceptTerms: yup
-          .boolean()
-          .required()
-          .oneOf([true], "You must accept terms of service."),
-      })
-    ),
+    resolver: yupResolver(audioSchema("create")),
   });
 
   return (
@@ -133,7 +117,7 @@ const AudioUpload = () => {
             <Divider marginY={4} />
             <Box>
               <form onSubmit={handleSubmit(onSubmit)}>
-                <InputField
+                <TextInput
                   name="title"
                   type="text"
                   ref={register}
@@ -142,7 +126,7 @@ const AudioUpload = () => {
                   isRequired
                   disabled={isSubmitting || uploaded}
                 />
-                <InputField
+                <TextInput
                   name="description"
                   ref={register}
                   label="Description"
@@ -162,6 +146,15 @@ const AudioUpload = () => {
                       disabled={isSubmitting || uploaded}
                     />
                   )}
+                />
+                <InputCheckbox
+                  name="isPublic"
+                  label="Public?"
+                  ref={register}
+                  isInvalid={!!errors.isPublic}
+                  disabled={isSubmitting || uploaded}
+                  isRequired={true}
+                  isSwitch={true}
                 />
                 <Flex marginY={4}>
                   <Controller

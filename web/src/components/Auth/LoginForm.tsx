@@ -4,7 +4,7 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import useUser from "~/lib/contexts/user_context";
 import { apiErrorToast, successfulToast } from "~/utils/toast";
-import InputField from "../InputField";
+import TextInput from "../Form/TextInput";
 import { Button, Stack } from "@chakra-ui/react";
 
 export type LoginFormValues = {
@@ -45,14 +45,14 @@ export default function LoginForm(props: LoginFormProps) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <InputField
+      <TextInput
         name="username"
         label="Username/Email"
         ref={register}
         error={errors.username}
         isRequired
       />
-      <InputField
+      <TextInput
         name="password"
         type="password"
         label="Password"

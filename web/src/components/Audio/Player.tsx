@@ -3,7 +3,7 @@ import { Box, Circle, Flex, Text } from "@chakra-ui/react";
 import { IoMdPlay, IoMdPause } from "react-icons/io";
 
 import WaveSurfer from "wavesurfer.js";
-import WaveSurferComponent from "~/components/Wavesurfer";
+import WaveSurferComponent from "~/components/Audio/Wavesurfer";
 import { formatDuration } from "~/utils/time";
 import { useAudioPlayer } from "~/lib/contexts/audio_player_context";
 

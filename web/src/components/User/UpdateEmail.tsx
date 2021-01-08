@@ -2,7 +2,7 @@ import { Button, Stack } from "@chakra-ui/react";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
-import InputField from "~/components/InputField";
+import TextInput from "~/components/Form/TextInput";
 import useUser from "~/lib/contexts/user_context";
 import request from "~/lib/request";
 import { apiErrorToast } from "~/utils/toast";
@@ -43,7 +43,7 @@ export default function UpdateEmail() {
 
   return (
     <form onSubmit={handleSubmit(updateEmail)}>
-      <InputField
+      <TextInput
         name="email"
         label="Change Email"
         ref={register}

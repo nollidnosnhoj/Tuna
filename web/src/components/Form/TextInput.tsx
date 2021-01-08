@@ -19,7 +19,7 @@ interface InputFieldProps {
   disabled?: boolean;
 }
 
-const InputField = React.forwardRef<any, InputFieldProps>(
+const TextInput = React.forwardRef<any, InputFieldProps>(
   (
     {
       name,
@@ -63,4 +63,4 @@ const InputField = React.forwardRef<any, InputFieldProps>(
   }
 );
 
-export default InputField;
+export default TextInput;

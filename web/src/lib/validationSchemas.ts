@@ -1,4 +1,4 @@
-import * as yup from 'yup';
+import * as yup from 'yup'
 import { identitySettings } from '~/constants/identity_setting'
 import { validationMessages } from '~/utils'
 
@@ -60,4 +60,26 @@ export const passwordRule = (label: string, isRequired: boolean = true) => {
     && rule.matches(/^[^a-zA-Z\d]+$/, "Password must contain one non-alphanumeric character.");
 
   return rule;
+}
+
+export const audioSchema = (type: "create" | "edit") => {
+  const main = yup.object().shape({
+    title: yup.string().required(validationMessages.required("Title")).max(30),
+    description: yup.string().max(500, validationMessages.max("Description", 500)),
+    tags: yup.array(yup.string()).max(10, validationMessages.max("Tags", 10)).ensure(),
+    isPublic: yup.boolean()
+  });
+
+  if (type === 'create') {
+    const accept = yup.object().shape({
+      acceptTerms: yup
+      .boolean()
+      .required()
+      .oneOf([true], "You must accept terms of service."),
+    });
+
+    return main.concat(accept);
+  }
+
+  return main;
 }

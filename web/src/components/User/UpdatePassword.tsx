@@ -2,7 +2,7 @@ import { Button } from "@chakra-ui/react";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
-import InputField from "~/components/InputField";
+import TextInput from "~/components/Form/TextInput";
 import request from "~/lib/request";
 import { apiErrorToast } from "~/utils/toast";
 import React from "react";
@@ -62,14 +62,14 @@ export default function UpdatePassword() {
 
   return (
     <form onSubmit={handleSubmit(updatePassword)}>
-      <InputField
+      <TextInput
         name="currentPassword"
         label="Current Password"
         ref={register}
         isRequired
         error={errors.currentPassword}
       />
-      <InputField
+      <TextInput
         name="newPassword"
         type="password"
         label="New Password"
@@ -77,7 +77,7 @@ export default function UpdatePassword() {
         isRequired
         error={errors.currentPassword}
       />
-      <InputField
+      <TextInput
         name="confirmPassword"
         type="password"
         label="Confirm Password"

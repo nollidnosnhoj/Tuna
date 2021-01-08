@@ -3,11 +3,11 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { validationMessages } from "~/utils";
-import { passwordRule, usernameRule } from "~/utils/validators";
+import { passwordRule, usernameRule } from "~/lib/validationSchemas";
 import request from "~/lib/request";
 import { apiErrorToast, successfulToast } from "~/utils/toast";
 import { Button, Checkbox, Flex } from "@chakra-ui/react";
-import InputField from "../InputField";
+import TextInput from "../Form/TextInput";
 
 type RegisterFormInputs = {
   username: string;
@@ -73,21 +73,21 @@ export default function RegisterForm() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <InputField
+      <TextInput
         name="username"
         label="Username"
         ref={register}
         error={errors.username}
         isRequired
       />
-      <InputField
+      <TextInput
         name="email"
         label="Email"
         ref={register}
         error={errors.email}
         isRequired
       />
-      <InputField
+      <TextInput
         name="password"
         type="password"
         label="Password"
@@ -95,7 +95,7 @@ export default function RegisterForm() {
         error={errors.password}
         isRequired
       />
-      <InputField
+      <TextInput
         name="confirmPassword"
         type="password"
         label="Confirm Password"
