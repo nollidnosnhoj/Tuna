@@ -9,7 +9,7 @@ import {
 } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import { Audio, AudioSearchType } from "~/lib/types";
-import { useAudiosInfinite } from "~/lib/services/audio";
+import { useAudiosInfiniteQuery } from "~/lib/services/audio";
 import { apiErrorToast } from "~/utils/toast";
 
 interface AudioListProps {
@@ -36,7 +36,7 @@ const AudioList: React.FC<AudioListProps> = ({
     isLoadingMore,
     isEmpty,
     isReachingEnd,
-  } = useAudiosInfinite({ type, size, params, username });
+  } = useAudiosInfiniteQuery({ type, size, params, username });
 
   const audios = useMemo<Audio[]>(() => {
     return data ? [].concat(...data) : [];

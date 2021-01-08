@@ -1,9 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import axios from 'axios'
-import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from '~/constants';
+import { REFRESH_TOKEN_KEY } from '~/constants';
 import ENVIRONMENT from '~/constants/environment'
-import request from '~/lib/request';
-import { isAxiosError } from '~/utils';
+import { isAxiosError } from '~/utils/axios';
 import cookieHelper, { setAccessTokenCookie, setRefreshTokenCookie } from '~/utils/cookies'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {

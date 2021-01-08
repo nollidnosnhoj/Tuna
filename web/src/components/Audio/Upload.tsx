@@ -40,12 +40,16 @@ const AudioUpload = () => {
     var formData = new FormData();
     formData.append("file", file);
 
-    Object.entries(values).forEach(([key, value]) =>
-      formData.append(key, value.toString())
-    );
+    Object.entries(values).forEach(([key, value]) => {
+      if (Array.isArray(value)) {
+        value.forEach((val) => formData.append(key, val));
+      } else {
+        formData.append(key, value.toString());
+      }
+    });
 
     try {
-      const data = await uploadAudio(formData);
+      const { id: audioId } = await uploadAudio(formData);
       setUploaded(true);
       toast({
         title: "Audio uploaded!",
@@ -53,7 +57,7 @@ const AudioUpload = () => {
         status: "success",
         duration: 500,
         onCloseComplete: () => {
-          Router.push(`audios/${data.id}`);
+          Router.push(`audios/${audioId}`);
         },
       });
     } catch (err) {
@@ -92,7 +96,10 @@ const AudioUpload = () => {
         description: yup.string().max(500),
         tags: yup.array(yup.string()).max(10).ensure(),
         isPublic: yup.boolean(),
-        acceptTerms: yup.boolean().required(),
+        acceptTerms: yup
+          .boolean()
+          .required()
+          .oneOf([true], "You must accept terms of service."),
       })
     ),
   });

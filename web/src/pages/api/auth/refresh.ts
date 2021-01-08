@@ -2,9 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import axios from 'axios'
 import { REFRESH_TOKEN_KEY } from '~/constants';
 import ENVIRONMENT from '~/constants/environment'
-import { AuthResultResponse } from '~/lib/types';
-import request from '~/lib/request'
-import { isAxiosError } from '~/utils';
+import { isAxiosError } from '~/utils/axios';
 import { getCookie, setAccessTokenCookie, setRefreshTokenCookie } from '~/utils/cookies'
 import { BackendAuthResult } from './login';
 
@@ -17,9 +15,11 @@ export default async (req: NextApiRequest, res: NextApiResponse ) => {
 
     const refreshToken = getCookie(REFRESH_TOKEN_KEY, { req }) || "";
     
-    const response = await axios.post<BackendAuthResult>(ENVIRONMENT.API_URL + 'auth/refresh', { 
-      refreshToken: refreshToken 
-    }, { withCredentials: true });
+    const response = await axios.post<BackendAuthResult>(ENVIRONMENT.API_URL + 'auth/refresh', JSON.stringify({ refreshToken: refreshToken }), { 
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
 
     const { data, status } = response;
 
@@ -27,6 +27,7 @@ export default async (req: NextApiRequest, res: NextApiResponse ) => {
     setRefreshTokenCookie(data.refreshToken, data.refreshTokenExpires, { res });
     res.status(status).json({ accessToken: data.accessToken });
   } catch (err) {
+    console.log(err);
     if (!isAxiosError(err)) {
       res.status(500);
     } else {

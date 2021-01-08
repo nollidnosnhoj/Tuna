@@ -67,12 +67,12 @@ export default function AudioDetailsPage(
 
   // get
   const audioUrl = props.isDevelopment
-    ? "https://localhost:5001/uploads/" + audio.url
-    : audio.url;
+    ? "https://localhost:5001/uploads/" + audio?.url
+    : audio?.url;
 
   return (
     <Page
-      title={audio.title}
+      title={audio.title ?? "Removed"}
       beforeContainer={
         <Container>
           <DynamicAudioPlayer url={audioUrl} />
@@ -82,10 +82,10 @@ export default function AudioDetailsPage(
       <Flex>
         <Box flex="2">
           <AudioDetails
-            title={audio.title}
-            description={audio.description}
+            title={audio.title ?? ""}
+            description={audio.description ?? ""}
             username={audio.user?.username ?? "ERROR"}
-            created={audio.created}
+            created={audio.created ?? ""}
           />
         </Box>
         <Box flex="1">

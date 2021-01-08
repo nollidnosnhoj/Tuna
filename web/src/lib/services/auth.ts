@@ -1,5 +1,6 @@
 import Axios from 'axios'
-import { AuthResultResponse, LoginFormValues } from '../types';
+import { LoginFormValues } from '~/components/Auth/LoginForm'
+import { AuthResultResponse } from '../types';
 
 const http = Axios.create({
   baseURL: 'http://localhost:3000',

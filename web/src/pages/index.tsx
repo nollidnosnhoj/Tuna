@@ -1,20 +1,10 @@
 import React, { useEffect } from "react";
-import {
-  Box,
-  Button,
-  Flex,
-  Heading,
-  IconButton,
-  Stack,
-  Text,
-} from "@chakra-ui/react";
+import { Box, Button, Flex, Heading, Text } from "@chakra-ui/react";
 import Router from "next/router";
-import Head from "next/head";
 import { FaRandom } from "react-icons/fa";
-import AuthButton from "~/components/Auth/AuthButton";
 import useUser from "~/lib/contexts/user_context";
 import request from "~/lib/request";
-import { isAxiosError } from "~/utils";
+import { isAxiosError } from "~/utils/axios";
 import Page from "~/components/Layout";
 
 const Index = () => {

@@ -2,12 +2,12 @@ import { useMemo } from 'react';
 import { useSWRInfinite } from 'swr'
 import { stringify as queryStringify } from 'query-string'
 
-export interface useInfiniteFetchOptions {
+export interface PaginatedOptions {
   size?: number,
   params?: Record<string, any>
 }
 
-const useInfiniteFetch = <TItem = any, TError = any>(url: string, options: useInfiniteFetchOptions = {}) => {
+const useInfiniteQuery = <TItem = any, TError = any>(url: string, options: PaginatedOptions = {}) => {
 
   const { size = 15, params = {}} = options;
 
@@ -66,4 +66,4 @@ const useInfiniteFetch = <TItem = any, TError = any>(url: string, options: useIn
   }
 }
 
-export default useInfiniteFetch;
+export default useInfiniteQuery;

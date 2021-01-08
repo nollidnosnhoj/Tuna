@@ -8,11 +8,12 @@ import { formatDuration } from "~/utils/time";
 import { useAudioPlayer } from "~/lib/contexts/audio_player_context";
 
 const AudioPlayer: React.FC<{
-  url: string;
+  url?: string;
   color?: string;
 }> = ({ url, color = "#ED64A6", ...props }) => {
-  const { volume, handleVolume } = useAudioPlayer();
+  if (!url) return null;
 
+  const { volume, handleVolume } = useAudioPlayer();
   const [loop, setLoop] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [loading, setLoading] = useState(0);

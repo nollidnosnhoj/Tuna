@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import useSWR, { mutate } from 'swr'
-import useInfiniteFetch, { useInfiniteFetchOptions } from '../hooks/useInfiniteFetch'
+import useInfiniteQuery, { PaginatedOptions } from '../hooks/useInfiniteQuery'
 import { Audio, AudioListItem, AudioRequest, AudioSearchType, ErrorResponse } from '../types';
 import request from '../request';
 import { apiErrorToast } from '~/utils/toast';
@@ -35,33 +35,42 @@ export const useFavorite = (audioId: string) => {
 }
 
 export const useAudio = (id: string, initialData?: Audio) => {
-  const { data, isValidating: isLoading, error, mutate } = useSWR<Audio, ErrorResponse>(`audios/${id}`, { 
-    revalidateOnFocus: false,
+  const { 
+    data,
+    isValidating: isLoading,
+    error,
+    mutate 
+  } = useSWR<Audio, ErrorResponse>(`audios/${id}`, {
     initialData 
   });
 
   return { data, isLoading, error, mutate };
 }
 
-interface useAudiosInfiniteOptions extends useInfiniteFetchOptions {
+interface useAudiosInfiniteOptions extends PaginatedOptions {
   type: AudioSearchType
   username?: string
 }
 
-export const useAudiosInfinite = (options: useAudiosInfiniteOptions = { type: 'audios' }) => {
-  const { type, size, params = {}, username } = options;
-
+function generateUseAudiosKey(options: useAudiosInfiniteOptions) {
   let url = 'audios'
 
-  if (type === 'feed') {
+  if (options.type === 'feed') {
     url = `me/feed`
-  } else if (type === 'favorites' && username) {
-    url = `users/${username}/favorites`
-  } else if (type === 'user' && username) {
-    url = `users/${username}/audios`
+  } else if (options.type === 'favorites' && options.username) {
+    url = `users/${options.username}/favorites`
+  } else if (options.type === 'user' && options.username) {
+    url = `users/${options.username}/audios`
   }
 
-  return useInfiniteFetch<AudioListItem, ErrorResponse>(url, { size, params });
+  return url;
+}
+
+export const useAudiosInfiniteQuery = (options: useAudiosInfiniteOptions = { type: 'audios' }) => {
+  return useInfiniteQuery<AudioListItem, ErrorResponse>(generateUseAudiosKey(options), { 
+    size: options.size,
+    params: options.params
+  });
 }
 
 export const uploadAudio = async (formData: FormData) => {
@@ -74,9 +83,7 @@ export const uploadAudio = async (formData: FormData) => {
 }
 
 export const deleteAudio = async (id: string | number) => {
-  mutate(`audios/${id}`, null, false);
-  await request(`audios/${id}`, { method: 'post' });
-  mutate(`audios/${id}`);
+  await request(`audios/${id}`, { method: 'delete' });
 }
 
 export const updateAudio = async (audio: Audio, inputs: AudioRequest) => {

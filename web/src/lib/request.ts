@@ -1,12 +1,8 @@
 import axios from 'axios'
 import createAuthRefreshInterceptor, { AxiosAuthRefreshRequestConfig } from 'axios-auth-refresh';
-import { IncomingMessage } from 'http';
-import Router from 'next/router'
 import { ACCESS_TOKEN_KEY } from '~/constants';
 import ENVIRONMENT from '~/constants/environment'
-import { isAxiosError } from '~/utils';
 import { getCookie } from '~/utils/cookies';
-import { errorToast } from '~/utils/toast';
 import { refreshAccessToken } from './services/auth';
 
 type MethodType = 'get' | 'delete' | 'head' | 'post' | 'put' | 'patch'

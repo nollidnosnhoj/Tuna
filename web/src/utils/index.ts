@@ -1,7 +1,4 @@
-import queryString from 'query-string';
-
-export * from './axios'
-export * from './format'
+import slugify from "slugify";
 
 export const validationMessages = {
   required: function (field: string) {
@@ -15,11 +12,10 @@ export const validationMessages = {
   },
 };
 
-export function isServer() {
-  return typeof window === 'undefined'
-}
-
-export function generatePaginatedKey(key: string, page: number, size: number, params?: Record<string, any>) {
-  const queryParams = { page, size, ...params };
-  return key + queryString.stringify(queryParams);
+export function taggify(value: string) {
+  return slugify(value, {
+    replacement: '-',
+    lower: true,
+    strict: true
+  });
 }
