@@ -19,7 +19,7 @@ import AuthButton from "../Auth/AuthButton";
 import ChangeThemeModeButton from "./ChangeThemeModeButton";
 import VolumeSliderHeader from "./VolumeSliderHeader";
 
-const HeaderUser: React.FC = () => {
+export default function UserHeader() {
   const { user, isLoading, isAuth, logout } = useUser();
 
   if (isLoading) {
@@ -70,6 +70,4 @@ const HeaderUser: React.FC = () => {
       </Stack>
     </>
   );
-};
-
-export default HeaderUser;
+}

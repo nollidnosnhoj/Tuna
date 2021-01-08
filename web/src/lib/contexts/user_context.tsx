@@ -11,9 +11,8 @@ import { LoginFormValues } from "~/components/Auth/LoginForm";
 import fetcher from "../fetcher";
 import { login, revokeRefreshToken } from "../services/auth";
 import { User } from "../types";
-import { getCookie } from "~/utils/cookies";
-import { ACCESS_TOKEN_KEY } from "~/constants";
-import { errorToast, successfulToast } from "~/utils/toast";
+import { getAccessToken } from "~/utils/cookies";
+import { successfulToast } from "~/utils/toast";
 
 type UserContextType = {
   isAuth: boolean;
@@ -68,7 +67,7 @@ export function UserProvider(props: PropsWithChildren<UserProviderProps>) {
   }
 
   useEffect(() => {
-    const accessToken = getCookie(ACCESS_TOKEN_KEY);
+    const accessToken = getAccessToken();
     if (!user && accessToken) {
       fetchAuthenticatedUser();
     }

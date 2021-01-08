@@ -10,7 +10,6 @@ import {
 import React, { useMemo } from "react";
 import { Audio, AudioSearchType } from "~/lib/types";
 import { useAudiosInfiniteQuery } from "~/lib/services/audio";
-import { apiErrorToast } from "~/utils/toast";
 
 interface AudioListProps {
   type?: AudioSearchType;

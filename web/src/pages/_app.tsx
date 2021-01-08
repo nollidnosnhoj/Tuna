@@ -1,6 +1,6 @@
 import { ChakraProvider } from "@chakra-ui/react";
 import { AppProps as NextAppProps } from "next/app";
-import PageLoader from "~/components/PageLoader";
+import PageLoader from "~/components/Shared/PageLoader";
 import { UserProvider } from "~/lib/contexts/user_context";
 import theme from "~/lib/theme";
 import fetcher from "~/lib/fetcher";

@@ -1,7 +1,6 @@
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import { Box, Circle, Flex, Text } from "@chakra-ui/react";
 import { IoMdPlay, IoMdPause } from "react-icons/io";
-
 import WaveSurfer from "wavesurfer.js";
 import WaveSurferComponent from "~/components/Audio/Wavesurfer";
 import { formatDuration } from "~/utils/time";

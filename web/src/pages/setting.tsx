@@ -3,7 +3,7 @@ import { Box, Heading, Stack } from "@chakra-ui/react";
 import UpdateUsername from "~/components/User/UpdateUsername";
 import UpdateEmail from "~/components/User/UpdateEmail";
 import UpdatePassword from "~/components/User/UpdatePassword";
-import Page from "~/components/Layout";
+import Page from "~/components/Shared/Page";
 import AuthRequired from "~/components/Auth/AuthRequired";
 
 export default function SettingPage() {

@@ -4,15 +4,15 @@ import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import AudioDetails from "~/components/Audio/Details";
-import Container from "~/components/Container";
-import Page from "~/components/Layout";
+import Container from "~/components/Shared/Container";
+import Page from "~/components/Shared/Page";
 import AudioEdit from "~/components/Audio/Edit";
 import useUser from "~/lib/contexts/user_context";
 import { Audio } from "~/lib/types";
 import request from "~/lib/request";
 import { useAudio, useFavorite } from "~/lib/services/audio";
-import { getCookie } from "~/utils/cookies";
-import { ACCESS_TOKEN_KEY } from "~/constants";
+import { getAccessToken, getCookie } from "~/utils/cookies";
+import CONSTANTS from "~/constants";
 
 const DynamicAudioPlayer = dynamic(() => import("~/components/Audio/Player"), {
   ssr: false,
@@ -28,7 +28,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
   context
 ) => {
   const id = context.params.id as string;
-  const accessToken = getCookie(ACCESS_TOKEN_KEY, context);
+  const accessToken = getAccessToken(context);
 
   try {
     const { data } = await request<Audio>(`audios/${id}`, {

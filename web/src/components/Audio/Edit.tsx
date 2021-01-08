@@ -25,13 +25,13 @@ import React, { useEffect, useMemo, useState } from "react";
 import Router from "next/router";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import InputCheckbox from "../Form/Checkbox";
 import TextInput from "../Form/TextInput";
 import TagInput from "../Form/TagInput";
 import { Audio, AudioRequest } from "~/lib/types";
-import { apiErrorToast, successfulToast } from "~/utils/toast";
 import { deleteAudio, updateAudio } from "~/lib/services/audio";
 import { audioSchema } from "~/lib/validationSchemas";
-import InputCheckbox from "../Form/Checkbox";
+import { apiErrorToast, successfulToast } from "~/utils/toast";
 
 interface AudioEditProps {
   model: Audio;

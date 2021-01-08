@@ -1,9 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import axios from 'axios'
-import { REFRESH_TOKEN_KEY } from '~/constants';
-import ENVIRONMENT from '~/constants/environment'
+import CONSTANTS from '~/constants'
 import { isAxiosError } from '~/utils/axios';
-import cookieHelper, { setAccessTokenCookie, setRefreshTokenCookie } from '~/utils/cookies'
+import cookieHelper, { getRefreshToken, setAccessTokenCookie, setRefreshTokenCookie } from '~/utils/cookies'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method?.toUpperCase() !== 'POST') {
@@ -11,10 +10,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     return;
   }
 
-  const refreshToken = cookieHelper.get(REFRESH_TOKEN_KEY, { req });
+  const refreshToken = getRefreshToken({ req });
 
   try {
-    const { status } = await axios.post(ENVIRONMENT.API_URL + 'auth/revoke', { 
+    const { status } = await axios.post(CONSTANTS.API_URL + 'auth/revoke', { 
       refreshToken: refreshToken 
     }, { withCredentials: true });
 

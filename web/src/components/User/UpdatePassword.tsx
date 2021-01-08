@@ -1,12 +1,12 @@
+import React from "react";
 import { Button } from "@chakra-ui/react";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import TextInput from "~/components/Form/TextInput";
 import request from "~/lib/request";
+import { passwordRule } from "~/lib/validationSchemas";
 import { apiErrorToast } from "~/utils/toast";
-import React from "react";
-import { passwordRule } from "~/utils/validators";
 import { validationMessages } from "~/utils";
 
 type UpdatePasswordValues = {

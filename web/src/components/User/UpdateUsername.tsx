@@ -5,9 +5,9 @@ import { useForm } from "react-hook-form";
 import TextInput from "~/components/Form/TextInput";
 import useUser from "~/lib/contexts/user_context";
 import request from "~/lib/request";
+import { usernameRule } from "~/lib/validationSchemas";
 import { apiErrorToast } from "~/utils/toast";
 import React from "react";
-import { usernameRule } from "~/utils/validators";
 
 export default function UpdateUsername() {
   const { user, updateUser } = useUser();

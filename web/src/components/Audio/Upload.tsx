@@ -1,4 +1,3 @@
-import { AttachmentIcon, DeleteIcon } from "@chakra-ui/icons";
 import {
   Flex,
   Box,
@@ -14,14 +13,15 @@ import React, { useState } from "react";
 import Router from "next/router";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { AttachmentIcon, DeleteIcon } from "@chakra-ui/icons";
 import { FaCloudUploadAlt } from "react-icons/fa";
-import useAudioDropzone from "~/lib/hooks/useAudioDropzone";
-import { apiErrorToast, errorToast, successfulToast } from "~/utils/toast";
+import InputCheckbox from "../Form/Checkbox";
 import TextInput from "../Form/TextInput";
 import TagInput from "../Form/TagInput";
+import useAudioDropzone from "~/lib/hooks/useAudioDropzone";
 import { uploadAudio } from "~/lib/services/audio";
 import { audioSchema } from "~/lib/validationSchemas";
-import InputCheckbox from "../Form/Checkbox";
+import { apiErrorToast, errorToast, successfulToast } from "~/utils/toast";
 
 type FormInputs = {
   title: string;

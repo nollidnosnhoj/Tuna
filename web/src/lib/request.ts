@@ -1,8 +1,7 @@
 import axios from 'axios'
 import createAuthRefreshInterceptor, { AxiosAuthRefreshRequestConfig } from 'axios-auth-refresh';
-import { ACCESS_TOKEN_KEY } from '~/constants';
-import ENVIRONMENT from '~/constants/environment'
-import { getCookie } from '~/utils/cookies';
+import CONSTANTS from '~/constants'
+import { getAccessToken, getCookie } from '~/utils/cookies';
 import { refreshAccessToken } from './services/auth';
 
 type MethodType = 'get' | 'delete' | 'head' | 'post' | 'put' | 'patch'
@@ -20,7 +19,7 @@ function getBearer(token: string) {
 
 const requestClient = axios.create();
 
-requestClient.defaults.baseURL = ENVIRONMENT.API_URL;
+requestClient.defaults.baseURL = CONSTANTS.API_URL;
 requestClient.defaults.withCredentials = true;
 
 const refreshAuthLogic = async (failedRequest: any) => refreshAccessToken().then(response => {
@@ -32,7 +31,7 @@ const refreshAuthLogic = async (failedRequest: any) => refreshAccessToken().then
 createAuthRefreshInterceptor(requestClient, refreshAuthLogic);
 
 requestClient.interceptors.request.use(request => {
-  const accessToken = getCookie(ACCESS_TOKEN_KEY);
+  const accessToken = getAccessToken();
   if (!request.headers.Authorization) {
     request.headers.Authorization = getBearer(accessToken);
   }

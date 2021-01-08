@@ -2,7 +2,7 @@ import { Box } from "@chakra-ui/react";
 import Head from "next/head";
 import Router, { useRouter } from "next/router";
 import React, { useEffect, useMemo } from "react";
-import Container from "~/components/Container";
+import Container from "~/components/Shared/Container";
 import Header from "~/components/Header";
 import useUser from "~/lib/contexts/user_context";
 

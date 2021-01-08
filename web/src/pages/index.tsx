@@ -5,7 +5,7 @@ import { FaRandom } from "react-icons/fa";
 import useUser from "~/lib/contexts/user_context";
 import request from "~/lib/request";
 import { isAxiosError } from "~/utils/axios";
-import Page from "~/components/Layout";
+import Page from "~/components/Shared/Page";
 
 const Index = () => {
   const { isAuth } = useUser();

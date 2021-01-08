@@ -2,7 +2,7 @@ import { Box, Flex } from "@chakra-ui/react";
 import Router, { useRouter } from "next/router";
 import React, { useEffect, useMemo } from "react";
 import LoginForm from "~/components/Auth/LoginForm";
-import Page from "~/components/Layout";
+import Page from "~/components/Shared/Page";
 import useUser from "~/lib/contexts/user_context";
 
 export default function LoginPage() {

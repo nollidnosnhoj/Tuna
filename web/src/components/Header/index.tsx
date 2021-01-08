@@ -1,18 +1,8 @@
-import { SearchIcon } from "@chakra-ui/icons";
-import {
-  Box,
-  Flex,
-  Heading,
-  IconButton,
-  Input,
-  InputGroup,
-  InputRightElement,
-} from "@chakra-ui/react";
-import NextLink from "next/link";
-import React, { useState } from "react";
-import Container from "~/components/Container";
-import Link from "~/components/Link";
-import HeaderUser from "~/components/HeaderUser";
+import { Box, Flex, Heading } from "@chakra-ui/react";
+import React from "react";
+import Container from "~/components/Shared/Container";
+import Link from "~/components/Shared/Link";
+import UserHeader from "~/components/Header/UserHeader";
 
 interface HeaderProps {
   title: string;
@@ -20,18 +10,6 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ title, logo, children, ...props }) => {
-  // const [searchTerm, setSearchTerm] = useState("");
-
-  // const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-  //   if (e.key === "Enter") handleSearch();
-  // };
-
-  // const handleSearch = () => {
-  //   if (searchTerm === "") return;
-
-  //   console.log(searchTerm);
-  // };
-
   return (
     <Box
       as="header"
@@ -47,29 +25,8 @@ const Header: React.FC<HeaderProps> = ({ title, logo, children, ...props }) => {
               {title}
             </Heading>
           </Link>
-          {/* <Box marginLeft="5">
-            <InputGroup>
-              <Input
-                paddingLeft="2"
-                placeholder="Search"
-                value={searchTerm}
-                onKeyDown={onKeyDown}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                variant="flushed"
-              />
-              <InputRightElement>
-                <IconButton
-                  size="sm"
-                  aria-label="Search"
-                  icon={<SearchIcon />}
-                  variant="ghost"
-                  onClick={handleSearch}
-                />
-              </InputRightElement>
-            </InputGroup>
-          </Box> */}
           <div style={{ flexGrow: 1 }}></div>
-          <HeaderUser />
+          <UserHeader />
         </Flex>
       </Container>
     </Box>

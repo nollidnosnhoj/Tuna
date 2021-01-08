@@ -1,8 +1,6 @@
 import { NextPageContext, NextApiRequest, NextApiResponse } from 'next'
 import { CookieSerializeOptions, CookieParseOptions } from 'cookie';
 import nookies from 'nookies'
-import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from '~/constants';
-import { IncomingMessage, ServerResponse } from 'http';
 
 export type RequestContext = Pick<NextPageContext, 'req'> | { req: NextApiRequest }
 export type ResponseContext = Pick<NextPageContext, 'res'> | { res: NextApiResponse }
@@ -24,15 +22,23 @@ export function removeCookie(key: string, ctx?: ResponseContext, options: Cookie
   nookies.destroy(ctx, key, options);
 }
 
+export function getAccessToken(ctx?: RequestContext) {
+  return getCookie("accessToken", ctx);
+}
+
 export function setAccessTokenCookie(value: string, ctx?: ResponseContext) {
-  setCookie(ACCESS_TOKEN_KEY, value, ctx, {
+  setCookie("accessToken", value, ctx, {
     path: "/",
     sameSite: true,
   });
 }
 
+export function getRefreshToken(ctx?: RequestContext) {
+  return getCookie("refreshToken", ctx);
+}
+
 export function setRefreshTokenCookie(value: string, expires: number, ctx?: ResponseContext) {
-  setCookie(REFRESH_TOKEN_KEY, value, ctx, {
+  setCookie("refreshToken", value, ctx, {
     expires: new Date(expires * 1000),
     path: '/',
     httpOnly: true,

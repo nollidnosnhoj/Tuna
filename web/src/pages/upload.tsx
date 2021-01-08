@@ -1,7 +1,7 @@
 import { Text } from "@chakra-ui/react";
 import React from "react";
 import AudioUpload from "~/components/Audio/Upload";
-import Page from "~/components/Layout";
+import Page from "~/components/Shared/Page";
 import useUser from "~/lib/contexts/user_context";
 
 export default function UploadPage() {

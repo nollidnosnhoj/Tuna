@@ -1,13 +1,13 @@
 import React from "react";
+import { Button, Checkbox, Flex } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { validationMessages } from "~/utils";
+import TextInput from "../Form/TextInput";
 import { passwordRule, usernameRule } from "~/lib/validationSchemas";
 import request from "~/lib/request";
 import { apiErrorToast, successfulToast } from "~/utils/toast";
-import { Button, Checkbox, Flex } from "@chakra-ui/react";
-import TextInput from "../Form/TextInput";
+import { validationMessages } from "~/utils";
 
 type RegisterFormInputs = {
   username: string;

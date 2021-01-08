@@ -14,13 +14,13 @@ import React from "react";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-import Page from "~/components/Layout";
+import Page from "~/components/Shared/Page";
 import AudioList from "~/components/Audio/List";
 import request from "~/lib/request";
 import { ErrorResponse, Profile } from "~/lib/types";
 import { useFollow } from "~/lib/services/users";
-import { getCookie } from "~/utils/cookies";
-import { ACCESS_TOKEN_KEY } from "~/constants";
+import { getAccessToken, getCookie } from "~/utils/cookies";
+import CONSTANTS from "~/constants";
 
 interface PageProps {
   initialData?: Profile;
@@ -30,7 +30,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
   context
 ) => {
   const username = context.params?.username as string;
-  const accessToken = getCookie(ACCESS_TOKEN_KEY, context);
+  const accessToken = getAccessToken(context);
 
   try {
     const { data: initialData } = await request<Profile>(`/users/${username}`, {

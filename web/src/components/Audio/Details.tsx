@@ -2,7 +2,7 @@ import { Box, Flex, Heading, Text } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 import { relativeDate } from "~/utils/time";
-import Link from "../Link";
+import Link from "../Shared/Link";
 
 interface AudioMetaProps {
   title: string;

@@ -1,9 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import axios from 'axios'
-import { REFRESH_TOKEN_KEY } from '~/constants';
-import ENVIRONMENT from '~/constants/environment'
+import CONSTANTS from '~/constants'
 import { isAxiosError } from '~/utils/axios';
-import { getCookie, setAccessTokenCookie, setRefreshTokenCookie } from '~/utils/cookies'
+import { getCookie, getRefreshToken, setAccessTokenCookie, setRefreshTokenCookie } from '~/utils/cookies'
 import { BackendAuthResult } from './login';
 
 export default async (req: NextApiRequest, res: NextApiResponse ) => {
@@ -13,9 +12,9 @@ export default async (req: NextApiRequest, res: NextApiResponse ) => {
       return;
     }
 
-    const refreshToken = getCookie(REFRESH_TOKEN_KEY, { req }) || "";
+    const refreshToken = getRefreshToken({ req }) || "";
     
-    const response = await axios.post<BackendAuthResult>(ENVIRONMENT.API_URL + 'auth/refresh', JSON.stringify({ refreshToken: refreshToken }), { 
+    const response = await axios.post<BackendAuthResult>(CONSTANTS.API_URL + 'auth/refresh', JSON.stringify({ refreshToken: refreshToken }), { 
       headers: {
         'Content-Type': 'application/json'
       }

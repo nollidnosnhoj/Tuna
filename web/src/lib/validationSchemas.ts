@@ -1,5 +1,5 @@
 import * as yup from 'yup'
-import { identitySettings } from '~/constants/identity_setting'
+import CONSTANTS from '~/constants/'
 import { validationMessages } from '~/utils'
 
 const { 
@@ -10,7 +10,7 @@ const {
   passwordRequireLowercase, 
   passwordRequireNonAlphanumeric, 
   passwordRequireUppercase, 
-  passwordMinLength } = identitySettings;
+  passwordMinLength } = CONSTANTS.IDENTITY_SETTINGS;
 
 export const usernameRule = (label: string, isRequired: boolean = true) => {
   let rule = yup.string();
