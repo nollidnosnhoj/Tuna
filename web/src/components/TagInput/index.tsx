@@ -1,133 +1,103 @@
-import React, { useState, createRef } from "react";
 import {
+  Flex,
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
   Input,
   Tag,
-  Flex,
   TagCloseButton,
-  FormControl,
-  FormLabel,
-  FormErrorMessage,
+  TagLabel,
 } from "@chakra-ui/react";
+import React, { useState } from "react";
 import { FieldError } from "react-hook-form";
+import { taggify } from "~/utils";
 
 interface TagInputProps {
   name: string;
   value: string[];
-  onChange: (val: string[]) => void;
+  onChange: (value: string[]) => void;
   error?: FieldError;
-  allowDuplicates?: boolean;
-  maxLength?: number;
   disabled?: boolean;
+  allowDuplicate?: boolean;
+  maxLength?: number;
 }
 
 const TagInput: React.FC<TagInputProps> = ({
   name,
-  onChange,
   value,
-  error: formError,
-  allowDuplicates = false,
-  maxLength = 10,
+  onChange,
+  error,
   disabled = false,
+  allowDuplicate = false,
+  maxLength = 10,
 }) => {
-  const [current, setCurrent] = useState("");
-  const [error, setError] = useState(formError?.message ?? "");
-  const divRef = createRef<HTMLDivElement>();
-  const innerRef = createRef<HTMLInputElement>();
+  const [currentInput, setCurrentInput] = useState("");
+  const [inputError, setInputError] = useState(error?.message ?? "");
 
-  const focusDiv = () => {
-    if (divRef.current) {
-      divRef.current.focus();
+  const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCurrentInput(e.target.value);
+  };
+
+  const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e?.preventDefault();
+      onAddTag();
     }
   };
 
-  const removeTag = (idx: number, e?: React.SyntheticEvent): string => {
+  const validateInput = (tag: string): boolean => {
+    if (tag.length <= 0) {
+      setInputError("A tag must have an character.");
+      return false;
+    }
+    if (!allowDuplicate && value.includes(tag)) {
+      setInputError("Tag aleady exists in set.");
+      return false;
+    }
+    if (value.length >= maxLength) {
+      setInputError("You reached the maximum amount of tags.");
+      return false;
+    }
+    return true;
+  };
+
+  const onAddTag = () => {
+    const taggifyTag = taggify(currentInput);
+    if (!validateInput(taggifyTag)) return;
+    const newValues = [...value, taggifyTag];
+    console.log("new values", newValues);
+    onChange(newValues);
+    setCurrentInput("");
+    setInputError("");
+  };
+
+  const removeTag = (idx: number, e?: React.SyntheticEvent) => {
     if (idx < 0) return "";
-    e?.preventDefault();
-    const lastTag = value[idx];
-    const filtered = value.filter((x, i) => x !== lastTag);
+    const filtered = value.filter((_, i) => i !== idx);
     onChange(filtered);
-    return lastTag;
-  };
-
-  const addCurrentTag = (e?: React.SyntheticEvent) => {
-    e?.preventDefault();
-    const newTags = [...value, current];
-    onChange(newTags);
-    focusDiv();
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.isDefaultPrevented()) {
-      setCurrent(e.target.value);
-      setError("");
-    }
-  };
-
-  const onKeyDown = (e: React.KeyboardEvent) => {
-    switch (e.keyCode) {
-      case 8:
-        if (current.length === 0) {
-          const lastTag = removeTag(value.length - 1, e);
-          setCurrent(lastTag);
-        }
-        return;
-      case 13:
-      case 32:
-      case 188:
-        if (value.length === maxLength) {
-          setError(`Cannot have more than ${maxLength} tags.`);
-          return;
-        }
-
-        if (!allowDuplicates && value.includes(current)) {
-          setError("Cannot have duplicate tags");
-          return;
-        }
-        addCurrentTag(e);
-        setCurrent("");
-        return;
-    }
   };
 
   return (
-    <FormControl id="tags" isInvalid={!!error}>
+    <FormControl id={name} isInvalid={!!inputError}>
       <FormLabel>Tags</FormLabel>
-      <Flex
-        ref={divRef}
-        borderWidth="1px"
-        borderRadius="0.375rem"
-        py={2}
-        px={4}
-        rounded={2}
-        flexWrap="wrap"
-      >
+      <Input
+        name={name}
+        value={currentInput}
+        onChange={onInputChange}
+        onKeyDown={onKeyDown}
+        disabled={disabled}
+      />
+      <FormErrorMessage>{inputError}</FormErrorMessage>
+      <Flex flexWrap="wrap" marginTop={4}>
         {value &&
           value.length > 0 &&
-          value.map((val, index) => (
-            <Tag key={index} marginRight={5} size="sm">
-              {val}
-              {disabled && <TagCloseButton onClick={(e) => removeTag(index)} />}
+          value.map((tag, idx) => (
+            <Tag size="md" key={idx} borderRadius="full" colorScheme="primary">
+              <TagLabel>{tag}</TagLabel>
+              <TagCloseButton onClick={() => removeTag(idx)} />
             </Tag>
           ))}
-        <Input
-          type="text"
-          name={name}
-          placeholder="Add tag..."
-          _focus={{ outline: "none" }}
-          _invalid={{ outline: "none" }}
-          borderWidth={0}
-          flex={1}
-          minW="100px"
-          value={current}
-          onKeyDown={onKeyDown}
-          onChange={handleChange}
-          ref={innerRef}
-          px={0}
-          size="sm"
-          disabled={disabled}
-        />
       </Flex>
-      <FormErrorMessage>{error}</FormErrorMessage>
     </FormControl>
   );
 };
