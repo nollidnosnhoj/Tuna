@@ -2,6 +2,6 @@
 {
     public record RefreshTokenRequest
     {
-        public string? RefreshToken { get; } = string.Empty;
+        public string RefreshToken { get; init; } = null!;
     }
 }
