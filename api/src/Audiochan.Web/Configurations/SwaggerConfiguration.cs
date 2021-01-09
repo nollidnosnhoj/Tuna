@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
@@ -6,7 +7,7 @@ using Swashbuckle.AspNetCore.Swagger;
 
 namespace Audiochan.Web.Configurations
 {
-    public static class SwaggerConfigurationExtension
+    public static class SwaggerConfiguration
     {
         public static void ConfigureSwagger(this IServiceCollection services, IConfiguration config)
         {
@@ -36,6 +37,16 @@ namespace Audiochan.Web.Configurations
                         }, new List<string>()
                     } 
                 });
+            });
+        }
+
+        public static void UseSwaggerConfig(this IApplicationBuilder app)
+        {
+            app.UseSwagger();
+            
+            app.UseSwaggerUI(options =>
+            {
+                options.SwaggerEndpoint("/swagger/v1/swagger.json", "Audiochan API Version 1");
             });
         }
     }

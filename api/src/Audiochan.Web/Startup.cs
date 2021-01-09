@@ -1,18 +1,10 @@
-using System;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using Audiochan.Core;
+using Audiochan.Core.Common.Models;
 using Audiochan.Core.Interfaces;
-using Audiochan.Web.Extensions;
 using Audiochan.Infrastructure;
-using Audiochan.Infrastructure.Storage;
-using Audiochan.Infrastructure.Storage.Options;
 using Audiochan.Web.Configurations;
-using Audiochan.Web.Filters;
 using Audiochan.Web.Middlewares;
 using Audiochan.Web.Services;
-using FluentValidation.AspNetCore;
-using MicroElements.Swashbuckle.FluentValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -26,8 +18,6 @@ namespace Audiochan.Web
         public IConfiguration Configuration { get; }
         public IWebHostEnvironment Environment { get; }
 
-        private const string CorsPolicyName = "CORS_POLICY";
-
         public Startup(IConfiguration configuration, IWebHostEnvironment environment)
         {
             Configuration = configuration;
@@ -36,29 +26,28 @@ namespace Audiochan.Web
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCoreServices();
-            services.AddInfraServices(Configuration, Environment.IsProduction(), Environment.WebRootPath);
-            services.AddScoped<ICurrentUserService, CurrentUserService>();
-            services.AddIdentityAndAuth(Configuration);
-            services.AddHttpContextAccessor();
+            var jwtSetting = new JwtSetting();
+            Configuration.GetSection(nameof(JwtSetting)).Bind(jwtSetting);
+            services.AddSingleton(jwtSetting);
             
-            services
-                .AddMvc(options =>
-                {
-                    options.EnableEndpointRouting = false;
-                    options.Filters.Add<ValidationFilter>();
-                })
-                .AddJsonOptions(options =>
-                {
-                    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-                    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-                })
-                .AddFluentValidation(c =>
-                    c.ValidatorFactoryType = typeof(HttpContextServiceProviderValidatorFactory));
+            var passwordSetting = new PasswordSetting();
+            Configuration.GetSection(nameof(PasswordSetting)).Bind(passwordSetting);
+            services.AddSingleton(passwordSetting);
 
-            services.AddRouting(options => options.LowercaseUrls = true);
-            services.ConfigureCors(CorsPolicyName, Configuration);
-            services.ConfigureSwagger(Configuration);
+            services
+                .ConfigureDatabase(Configuration)
+                .AddCoreServices()
+                .AddInfraServices()
+                .ConfigureStorage(Environment)
+                .ConfigureIdentity(passwordSetting)
+                .ConfigureAuthentication(jwtSetting)
+                .ConfigureAuthorization()
+                .AddHttpContextAccessor()
+                .AddScoped<ICurrentUserService, CurrentUserService>()
+                .ConfigureControllers()
+                .ConfigureRouting()
+                .ConfigureCors()
+                .ConfigureSwagger(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -66,30 +55,28 @@ namespace Audiochan.Web
         {
             app.UseMiddleware<ExceptionHandlingMiddleware>();
             
-            app.UseStaticFiles(new StaticFileOptions()
+            if (env.IsDevelopment())
             {
-                OnPrepareResponse = context =>
+                app.UseStaticFiles(new StaticFileOptions()
                 {
-                    context.Context.Response.Headers["Access-Control-Allow-Origin"] = "*";
-                }
-            });
+                    OnPrepareResponse = context =>
+                    {
+                        context.Context.Response.Headers["Access-Control-Allow-Origin"] = "*";
+                    }
+                });
+            }
             
             app.UseRouting();
-            
-            app.UseCors(CorsPolicyName);
-            
+            app.UseCorsConfig();
             app.UseAuthentication();
-            
+            app.UseRouting();
             app.UseAuthorization();
-
-            app.UseMvc();
-            
-            app.UseSwagger();
-            
-            app.UseSwaggerUI(options =>
+            app.UseEndpoints(endpoints =>
             {
-                options.SwaggerEndpoint("/swagger/v1/swagger.json", "Audiochan API Version 1");
+                endpoints.MapControllers();
             });
+
+            app.UseSwaggerConfig();
         }
     }
 }

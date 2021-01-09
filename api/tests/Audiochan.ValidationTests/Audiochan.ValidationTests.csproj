@@ -24,7 +24,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\src\Audiochan.Core\Audiochan.Core.csproj" />
-      <ProjectReference Include="..\..\src\Audiochan.Web\Audiochan.Web.csproj" />
     </ItemGroup>
 
 </Project>
