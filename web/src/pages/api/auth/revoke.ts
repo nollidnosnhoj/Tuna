@@ -1,8 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import axios from 'axios'
-import CONSTANTS from '~/constants'
+import request from '~/lib/request';
 import { isAxiosError } from '~/utils/axios';
-import cookieHelper, { getRefreshToken, setAccessTokenCookie, setRefreshTokenCookie } from '~/utils/cookies'
+import { getRefreshToken, setAccessTokenCookie, setRefreshTokenCookie } from '~/utils/cookies'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method?.toUpperCase() !== 'POST') {
@@ -12,10 +11,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   const refreshToken = getRefreshToken({ req });
 
+  const body = { refreshToken: refreshToken };
+
   try {
-    const { status } = await axios.post(CONSTANTS.API_URL + 'auth/revoke', { 
-      refreshToken: refreshToken 
-    }, { withCredentials: true });
+    const { status } = await request('auth/request', {
+      method: 'post',
+      body: body,
+      skipAuthRefresh: true
+    });
 
     setAccessTokenCookie('', { res });
     setRefreshTokenCookie('', 0, { res })

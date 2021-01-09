@@ -1,7 +1,6 @@
 import React from "react";
 import Page from "~/components/Shared/Page";
 import AudioList from "~/components/Audio/List";
-import AuthRequired from "~/components/Auth/AuthRequired";
 
 export default function FeedPage() {
   return (

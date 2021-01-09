@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Flex, useDisclosure, Button } from "@chakra-ui/react";
+import { Box, Flex, useDisclosure, Button, Text } from "@chakra-ui/react";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
@@ -31,19 +31,22 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
   const accessToken = getAccessToken(context);
 
   try {
-    const { data } = await request<Audio>(`audios/${id}`, {
+    const response = await request<Audio>(`audios/${id}`, {
       accessToken: accessToken,
     });
 
     return {
       props: {
-        initialData: data,
+        initialData: response.data,
         isDevelopment: process.env.NODE_ENV === "development",
       },
     };
   } catch (err) {
     return {
-      notFound: true,
+      props: {
+        initialData: null,
+        isDevelopment: process.env.NODE_ENV === "development",
+      },
     };
   }
 };
@@ -62,6 +65,14 @@ export default function AudioDetailsPage(
   } = useDisclosure();
 
   const { data: audio } = useAudio(id, props.initialData);
+
+  if (!audio) {
+    return (
+      <Page title="Audio was not found.">
+        <Text>Audio was not found.</Text>
+      </Page>
+    );
+  }
 
   const { isFavorite, favorite } = useFavorite(id);
 

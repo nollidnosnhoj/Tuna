@@ -4,27 +4,24 @@ import UpdateUsername from "~/components/User/UpdateUsername";
 import UpdateEmail from "~/components/User/UpdateEmail";
 import UpdatePassword from "~/components/User/UpdatePassword";
 import Page from "~/components/Shared/Page";
-import AuthRequired from "~/components/Auth/AuthRequired";
 
 export default function SettingPage() {
   return (
-    <Page title="Settings">
-      <AuthRequired>
-        <Stack direction="column" spacing={4}>
-          <Box>
-            <Heading>Username</Heading>
-            <UpdateUsername />
-          </Box>
-          <Box>
-            <Heading>Email</Heading>
-            <UpdateEmail />
-          </Box>
-          <Box>
-            <Heading>Password</Heading>
-            <UpdatePassword />
-          </Box>
-        </Stack>
-      </AuthRequired>
+    <Page title="Settings" loginRequired>
+      <Stack direction="column" spacing={4}>
+        <Box>
+          <Heading>Username</Heading>
+          <UpdateUsername />
+        </Box>
+        <Box>
+          <Heading>Email</Heading>
+          <UpdateEmail />
+        </Box>
+        <Box>
+          <Heading>Password</Heading>
+          <UpdatePassword />
+        </Box>
+      </Stack>
     </Page>
   );
 }
