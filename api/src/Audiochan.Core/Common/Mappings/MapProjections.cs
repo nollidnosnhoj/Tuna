@@ -18,6 +18,7 @@ namespace Audiochan.Core.Common.Mappings
                 Title = audio.Title,
                 Description = audio.Description ?? string.Empty,
                 IsPublic = audio.IsPublic,
+                IsLoop = audio.IsLoop,
                 Duration = audio.Duration,
                 FileSize = audio.FileSize,
                 FileExt = audio.FileExt,
@@ -43,6 +44,7 @@ namespace Audiochan.Core.Common.Mappings
                 Id = audio.Id,
                 Title = audio.Title,
                 IsPublic = audio.IsPublic,
+                IsLoop = audio.IsLoop,
                 FavoriteCount = audio.Favorited.Count,
                 IsFavorited = currentUserId > 0
                               && audio.Favorited.Any(f => f.UserId == currentUserId),

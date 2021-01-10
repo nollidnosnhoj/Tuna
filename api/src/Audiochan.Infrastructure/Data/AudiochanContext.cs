@@ -12,16 +12,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Audiochan.Infrastructure.Data
 {
-    public class AudiochanContext : IdentityDbContext<
-        User, 
-        Role, 
-        long, 
-        IdentityUserClaim<long>, 
-        UserRole, 
-        IdentityUserLogin<long>, 
-        IdentityRoleClaim<long>, 
-        IdentityUserToken<long>
-    >, IAudiochanContext
+    public class AudiochanContext : IdentityDbContext<User, Role, long>, IAudiochanContext
     {
         private readonly IDateTimeService _dateTimeService;
         
@@ -38,7 +29,7 @@ namespace Audiochan.Infrastructure.Data
         public DbSet<FollowedUser> FollowedUsers { get; set; } = null!;
         public DbSet<Tag> Tags { get; set; } = null!;
 
-        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new())
         {
             foreach (var entry in ChangeTracker.Entries<BaseEntity>())
             {
@@ -83,15 +74,9 @@ namespace Audiochan.Infrastructure.Data
                 entity.ToTable("roles");
             });
             
-            builder.Entity<UserRole>(entity =>
+            builder.Entity<IdentityUserRole<long>>(entity =>
             {
                 entity.ToTable("user_roles");
-                entity.HasOne(x => x.Role)
-                    .WithMany(x => x.Users)
-                    .HasForeignKey(x => x.RoleId);
-                entity.HasOne(x => x.User)
-                    .WithMany(x => x.Roles)
-                    .HasForeignKey(x => x.UserId);
             });
             
             builder.Entity<IdentityUserClaim<long>>(entity =>

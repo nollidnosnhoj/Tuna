@@ -21,9 +21,9 @@ namespace Audiochan.Web.Configurations
                     options.Password.RequireUppercase = passwordSetting.RequireUppercase;
                     options.Password.RequireNonAlphanumeric = passwordSetting.RequireNonAlphanumeric;
                 })
-                .AddEntityFrameworkStores<AudiochanContext>()
-                .AddSignInManager<SignInManager<User>>()
                 .AddRoleManager<RoleManager<Role>>()
+                .AddSignInManager<SignInManager<User>>()
+                .AddEntityFrameworkStores<AudiochanContext>()
                 .AddDefaultTokenProviders();
 
             return services;

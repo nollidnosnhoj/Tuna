@@ -12,7 +12,6 @@ namespace Audiochan.Core.Entities
             FavoriteAudios = new HashSet<FavoriteAudio>();
             Followings = new HashSet<FollowedUser>();
             Followers = new HashSet<FollowedUser>();
-            Roles = new HashSet<UserRole>();
             RefreshTokens = new HashSet<RefreshToken>();
         }
 
@@ -26,7 +25,6 @@ namespace Audiochan.Core.Entities
         public ICollection<FavoriteAudio> FavoriteAudios { get; set; }
         public ICollection<FollowedUser> Followings { get; set; }
         public ICollection<FollowedUser> Followers { get; set; }
-        public ICollection<UserRole> Roles { get; set; }
         public ICollection<RefreshToken> RefreshTokens { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Constants;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Interfaces;
 using Audiochan.Infrastructure.Data;
@@ -27,29 +28,27 @@ namespace Audiochan.Web
                     var context = services.GetRequiredService<AudiochanContext>();
                     var userManager = services.GetRequiredService<UserManager<User>>();
                     var roleManager = services.GetRequiredService<RoleManager<Role>>();
-                    var dateTime = services.GetRequiredService<IDateTimeService>();
                     await context.Database.MigrateAsync();
-                    if (await userManager.Users.CountAsync() == 0)
+                    if (await userManager.Users.AnyAsync())
                     {
                         var superuser = new User
                         {
                             UserName = "superuser",
                             DisplayName = "Superuser",
                             Email = "superuser@localhost",
-                            Created = dateTime.Now
                         };
 
+                        // TODO: Do not hardcode superuser password when deploying into production haha
                         await userManager.CreateAsync(superuser, "Password1");
 
-                        var superUserRole = await roleManager.FindByNameAsync("Admin");
+                        var superUserRole = await roleManager.FindByNameAsync(UserRoleConstants.Admin);
 
                         if (superUserRole == null)
                         {
-                            superUserRole = new Role {Name = "Admin"};
-                            await roleManager.CreateAsync(superUserRole);
+                            await roleManager.CreateAsync(new Role(UserRoleConstants.Admin));
                         }
 
-                        await userManager.AddToRoleAsync(superuser, "Admin");
+                        await userManager.AddToRoleAsync(superuser, UserRoleConstants.Admin);
                     }
                 }
                 catch(Exception ex)

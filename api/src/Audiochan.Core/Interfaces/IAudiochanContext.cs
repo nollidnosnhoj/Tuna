@@ -14,8 +14,6 @@ namespace Audiochan.Core.Interfaces
         DbSet<Audio> Audios { get; }
         DbSet<AudioTag> AudioTags { get; }
         DbSet<User> Users { get; }
-        DbSet<Role> Roles { get; }
-        DbSet<UserRole> UserRoles { get; }
         
         DatabaseFacade Database { get; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);

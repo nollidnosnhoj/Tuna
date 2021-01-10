@@ -29,19 +29,21 @@ namespace Audiochan.Core.Features.Users
         {
             var user = await _userManager.Users
                 .AsNoTracking()
-                .Include(u => u.Roles)
                 .Where(u => u.Id == authUserId)
-                .Select(u => new CurrentUserViewModel
-                {
-                    Id = u.Id,
-                    Username = u.UserName,
-                    Email = u.Email,
-                    Roles = u.Roles.Select(r => r.Role.Name).ToArray()
-                }).SingleOrDefaultAsync(cancellationToken);
+                .SingleOrDefaultAsync(cancellationToken);
 
-            return user == null
-                ? Result<CurrentUserViewModel>.Fail(ResultErrorCode.Unauthorized)
-                : Result<CurrentUserViewModel>.Success(user);
+            if (user == null)
+                return Result<CurrentUserViewModel>.Fail(ResultErrorCode.Unauthorized);
+
+            var roles = await _userManager.GetRolesAsync(user);
+
+            return Result<CurrentUserViewModel>.Success(new CurrentUserViewModel
+            {
+                Id = user.Id,
+                Email = user.Email,
+                Username = user.Email,
+                Roles = roles
+            });
         }
 
         public async Task<IResult<UserDetailsViewModel>> GetUserDetails(string username, CancellationToken cancellationToken = default)
