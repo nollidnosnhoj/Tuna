@@ -23,6 +23,8 @@ namespace Audiochan.Core.Entities
         public bool IsLoop { get; set; }
         public long UserId { get; set; }
         public User User { get; set; } = null!;
+        public long GenreId { get; set; }
+        public Genre Genre { get; set; } = null!;
         public ICollection<AudioTag> Tags { get; set; }
         public ICollection<FavoriteAudio> Favorited { get; }
     }

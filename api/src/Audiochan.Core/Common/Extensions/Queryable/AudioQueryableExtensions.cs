@@ -14,6 +14,18 @@ namespace Audiochan.Core.Common.Extensions.Queryable
             return queryable
                 .Where(a => a.UserId == currentUserId || a.IsPublic);
         }
+
+        public static IQueryable<Audio> FilterByGenre(this IQueryable<Audio> queryable, string genreInput)
+        {
+            if (string.IsNullOrWhiteSpace(genreInput)) return queryable;
+
+            long genreId = 0;
+
+            if (long.TryParse(genreInput, out var parsedId))
+                genreId = parsedId;
+
+            return queryable.Where(a => a.GenreId == genreId || a.Genre.Slug == genreInput.Trim().ToLower());
+        }
         
         public static IQueryable<Audio> FilterByTags(this IQueryable<Audio> queryable, string tags)
         {

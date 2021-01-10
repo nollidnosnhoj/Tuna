@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Models;
+using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Audios.Models;
 using Audiochan.Core.Interfaces;
 using Audiochan.Web.Extensions;
@@ -18,18 +19,19 @@ namespace Audiochan.Web.Controllers
         private readonly IAudioService _audioService;
         private readonly IFavoriteService _favoriteService;
         private readonly ICurrentUserService _currentUserService;
+        private readonly IGenreService _genreService;
 
         public AudiosController(IAudioService audioService, IFavoriteService favoriteService, 
-            ICurrentUserService currentUserService)
+            ICurrentUserService currentUserService, IGenreService genreService)
         {
             _audioService = audioService;
             _favoriteService = favoriteService;
             _currentUserService = currentUserService;
+            _genreService = genreService;
         }
 
         [HttpGet(Name="GetAudios")]
         [AllowAnonymous]
-        [Produces("application/json")]
         [ProducesResponseType(typeof(List<AudioListViewModel>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetList([FromQuery] GetAudioListQuery query, 
             CancellationToken cancellationToken)
@@ -39,16 +41,20 @@ namespace Audiochan.Web.Controllers
 
         [HttpGet("{audioId}", Name = "GetAudioById")]
         [AllowAnonymous]
-        [Produces("application/json")]
         [ProducesResponseType(typeof(AudioDetailViewModel), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetById(string audioId, CancellationToken cancellationToken)
         {
             var result = await _audioService.Get(audioId, cancellationToken);
+            return result.IsSuccess ? Ok(result.Data) : result.ReturnErrorResponse();
+        }
 
-            return result.IsSuccess
-                ? Ok(result.Data)
-                : result.ReturnErrorResponse();
+        [HttpGet("genres")]
+        [AllowAnonymous]
+        [ProducesResponseType(typeof(List<Genre>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetGenres(CancellationToken cancellationToken)
+        {
+            return Ok(await _genreService.ListGenre(cancellationToken));
         }
 
         [HttpGet("random-id")]
@@ -56,12 +62,10 @@ namespace Audiochan.Web.Controllers
         public async Task<IActionResult> GetRandomId(CancellationToken cancellationToken)
         {
             var id = await _audioService.GetRandomAudioId(cancellationToken);
-
             return id == null ? NotFound() : Ok(id);
         }
 
         [HttpPost(Name="UploadAudio")]
-        [Produces("application/json")]
         [ProducesResponseType(typeof(AudioDetailViewModel), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status422UnprocessableEntity)]
@@ -69,18 +73,13 @@ namespace Audiochan.Web.Controllers
             [FromForm] UploadAudioRequest request
             , CancellationToken cancellationToken)
         {
-            var uploadResult = await _audioService.Create(request, cancellationToken);
-
-            if (uploadResult.IsSuccess)
-            {
-                return CreatedAtRoute(new {uploadResult.Data.Id}, uploadResult.Data);
-            }
-            
-            return uploadResult.ReturnErrorResponse();
+            var result = await _audioService.Create(request, cancellationToken);
+            return result.IsSuccess 
+                ? CreatedAtRoute(new {result.Data.Id}, result.Data) 
+                : result.ReturnErrorResponse();
         }
 
         [HttpPatch("{audioId}", Name="UpdateAudio")]
-        [Produces("application/json")]
         [ProducesResponseType(typeof(AudioDetailViewModel), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -90,10 +89,7 @@ namespace Audiochan.Web.Controllers
             CancellationToken cancellationToken)
         {
             var result = await _audioService.Update(audioId, request, cancellationToken);
-
-            return result.IsSuccess
-                ? Ok(result.Data)
-                : result.ReturnErrorResponse();
+            return result.IsSuccess ? Ok(result.Data) : result.ReturnErrorResponse();
         }
 
         [HttpDelete("{audioId}", Name="DeleteAudio")]
@@ -104,10 +100,7 @@ namespace Audiochan.Web.Controllers
         public async Task<IActionResult> Destroy(string audioId, CancellationToken cancellationToken)
         {
             var result = await _audioService.Remove(audioId, cancellationToken);
-
-            return result.IsSuccess
-                ? NoContent()
-                : result.ReturnErrorResponse();
+            return result.IsSuccess ? NoContent() : result.ReturnErrorResponse();
         }
     }
 }

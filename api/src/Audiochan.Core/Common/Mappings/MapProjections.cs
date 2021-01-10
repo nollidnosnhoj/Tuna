@@ -29,6 +29,12 @@ namespace Audiochan.Core.Common.Mappings
                               && audio.Favorited.Any(f => f.UserId == currentUserId),
                 Created = audio.Created,
                 Updated = audio.LastModified,
+                Genre = new GenreViewModel
+                {
+                    Id = audio.Genre.Id,
+                    Name = audio.Genre.Name,
+                    Slug = audio.Genre.Slug
+                },
                 User = new UserViewModel
                 {
                     Id = audio.User.Id,
@@ -50,6 +56,7 @@ namespace Audiochan.Core.Common.Mappings
                               && audio.Favorited.Any(f => f.UserId == currentUserId),
                 Created = audio.Created,
                 Updated = audio.LastModified,
+                Genre = audio.Genre.Name,
                 User = new UserViewModel
                 {
                     Id = audio.User.Id,

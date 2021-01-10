@@ -25,17 +25,20 @@ namespace Audiochan.Core.Features.Audios
         private readonly IStorageService _storageService;
         private readonly ITagService _tagService;
         private readonly ICurrentUserService _currentUserService;
+        private readonly IGenreService _genreService;
 
         public AudioService(IAudiochanContext dbContext, 
             ICurrentUserService currentUserService, 
             IAudioMetadataService audioMetadataService, 
-            IStorageService storageService, ITagService tagService)
+            IStorageService storageService, ITagService tagService, 
+            IGenreService genreService)
         {
             _dbContext = dbContext;
             _currentUserService = currentUserService;
             _audioMetadataService = audioMetadataService;
             _storageService = storageService;
             _tagService = tagService;
+            _genreService = genreService;
         }
 
         public async Task<List<AudioListViewModel>> GetFeed(long userId, PaginationQuery query,
@@ -72,6 +75,7 @@ namespace Audiochan.Core.Features.Audios
                 .AsNoTracking()
                 .Include(a => a.Favorited)
                 .Include(a => a.User)
+                .Include(a => a.Genre)
                 .FilterVisibility(currentUserId);
 
             if (!string.IsNullOrWhiteSpace(query.Username))
@@ -79,6 +83,9 @@ namespace Audiochan.Core.Features.Audios
             
             if (!string.IsNullOrWhiteSpace(query.Tags))
                 queryable = queryable.FilterByTags(query.Tags);
+
+            if (!string.IsNullOrWhiteSpace(query.Genre))
+                queryable = queryable.FilterByGenre(query.Genre);
             
             queryable = queryable.Sort(query.Sort.ToLower());
 
@@ -96,6 +103,7 @@ namespace Audiochan.Core.Features.Audios
                 .Include(a => a.Favorited)
                 .Include(a => a.Tags)
                 .Include(a => a.User)
+                .Include(a => a.Genre)
                 .FilterVisibility(currentUserId)
                 .Where(x => x.Id == audioId)
                 .Select(MapProjections.AudioDetail(currentUserId))
@@ -125,7 +133,8 @@ namespace Audiochan.Core.Features.Audios
             await request.File.CopyToAsync(memoryStream, cancellationToken);
 
             // Get audio's metadata
-            var data = _audioMetadataService.GetMetadata(memoryStream, request.File.ContentType);
+            var (audioTitle, audioDuration) = _audioMetadataService
+                .GetMetadata(memoryStream, request.File.ContentType);
 
             var id = Guid.NewGuid().ToString();
             var ext = Path.GetExtension(request.File.FileName);
@@ -141,9 +150,9 @@ namespace Audiochan.Core.Features.Audios
             var blob = await _storageService
                 .GetBlobAsync(ContainerConstants.Audios, blobName, cancellationToken);
 
-            var title = request.Title ?? (string.IsNullOrWhiteSpace(data.Title)
+            var title = request.Title ?? (string.IsNullOrWhiteSpace(audioTitle)
                 ? Path.GetFileNameWithoutExtension(request.File.FileName)
-                : data.Title);
+                : audioTitle);
 
             if (string.IsNullOrEmpty(title))
             {
@@ -151,6 +160,11 @@ namespace Audiochan.Core.Features.Audios
                     .Fail(ResultErrorCode.BadRequest,
                         "Cannot obtain the title of song, please provide a title in the request.");
             }
+
+            var genre = await _genreService.GetGenre(request.Genre ?? "misc", cancellationToken);
+            
+            if (genre == null)
+                return Result<AudioDetailViewModel>.Fail(ResultErrorCode.BadRequest, "Genre does not exist.");
 
             try
             {
@@ -161,9 +175,10 @@ namespace Audiochan.Core.Features.Audios
                     Description = request.Description ?? "",
                     IsPublic = request.IsPublic ?? true,
                     IsLoop = request.IsLoop ?? false,
-                    Duration = data.Duration,
+                    Duration = audioDuration,
                     FileSize = blob.Size,
                     User = currentUser,
+                    Genre = genre,
                     FileExt = ext,
                     Url = blob.Url
                 };
@@ -197,6 +212,7 @@ namespace Audiochan.Core.Features.Audios
                 .Include(a => a.Favorited)
                 .Include(a => a.User)
                 .Include(a => a.Tags)
+                .Include(a => a.Genre)
                 .SingleOrDefaultAsync(a => a.Id == audioId, cancellationToken);
 
             if (audio == null) return Result<AudioDetailViewModel>.Fail(ResultErrorCode.NotFound);
@@ -209,6 +225,16 @@ namespace Audiochan.Core.Features.Audios
             audio.Description = request.Description ?? audio.Description;
             audio.IsPublic = request.IsPublic ?? audio.IsPublic;
             audio.IsLoop = request.IsLoop ?? audio.IsLoop;
+
+            if (!string.IsNullOrWhiteSpace(request.Genre) || audio.Genre.Name != request.Genre)
+            {
+                var genre = await _genreService.GetGenre(request.Genre, cancellationToken);
+
+                if (genre == null)
+                    return Result<AudioDetailViewModel>.Fail(ResultErrorCode.BadRequest, "Genre does not exist.");
+                
+                audio.Genre = genre!;
+            }
             
             var newTags = await _tagService.CreateNewTags(request.Tags, cancellationToken);
 

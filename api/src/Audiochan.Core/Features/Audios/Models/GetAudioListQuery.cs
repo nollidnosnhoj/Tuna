@@ -7,5 +7,6 @@ namespace Audiochan.Core.Features.Audios.Models
         public string Username { get; init; } = string.Empty;
         public string Tags { get; init; } = string.Empty;
         public string Sort { get; init; } = string.Empty;
+        public string Genre { get; init; } = string.Empty;
     }
 }

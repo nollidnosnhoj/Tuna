@@ -27,6 +27,7 @@ namespace Audiochan.Infrastructure.Data
         public DbSet<AudioTag> AudioTags { get; set; } = null!;
         public DbSet<FavoriteAudio> FavoriteAudios { get; set; } = null!;
         public DbSet<FollowedUser> FollowedUsers { get; set; } = null!;
+        public DbSet<Genre> Genres { get; set; } = null!;
         public DbSet<Tag> Tags { get; set; } = null!;
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new())
