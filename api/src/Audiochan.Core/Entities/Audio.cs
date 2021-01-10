@@ -20,6 +20,7 @@ namespace Audiochan.Core.Entities
         public string FileExt { get; set; } = null!;
         public string Url { get; set; } = null!;
         public bool IsPublic { get; set; }
+        public bool IsLoop { get; set; }
         public long UserId { get; set; }
         public User User { get; set; } = null!;
         public ICollection<AudioTag> Tags { get; set; }

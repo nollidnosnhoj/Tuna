@@ -160,6 +160,7 @@ namespace Audiochan.Core.Features.Audios
                     Title = title,
                     Description = request.Description ?? "",
                     IsPublic = request.IsPublic ?? true,
+                    IsLoop = request.IsLoop ?? false,
                     Duration = data.Duration,
                     FileSize = blob.Size,
                     User = currentUser,
@@ -207,6 +208,7 @@ namespace Audiochan.Core.Features.Audios
             audio.Title = request.Title ?? audio.Title;
             audio.Description = request.Description ?? audio.Description;
             audio.IsPublic = request.IsPublic ?? audio.IsPublic;
+            audio.IsLoop = request.IsLoop ?? audio.IsLoop;
             
             var newTags = await _tagService.CreateNewTags(request.Tags, cancellationToken);
 
