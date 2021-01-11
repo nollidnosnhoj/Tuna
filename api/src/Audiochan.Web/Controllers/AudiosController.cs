@@ -49,14 +49,6 @@ namespace Audiochan.Web.Controllers
             return result.IsSuccess ? Ok(result.Data) : result.ReturnErrorResponse();
         }
 
-        [HttpGet("genres")]
-        [AllowAnonymous]
-        [ProducesResponseType(typeof(List<Genre>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetGenres(CancellationToken cancellationToken)
-        {
-            return Ok(await _genreService.ListGenre(cancellationToken));
-        }
-
         [HttpGet("random-id")]
         [AllowAnonymous]
         public async Task<IActionResult> GetRandomId(CancellationToken cancellationToken)

@@ -1,6 +1,7 @@
 ﻿using System;
 using Audiochan.Core.Common.Mappings;
 using Audiochan.Core.Entities;
+using Audiochan.Core.Features.Genres.Models;
 using Audiochan.Core.Features.Users.Models;
 
 namespace Audiochan.Core.Features.Audios.Models
@@ -21,7 +22,7 @@ namespace Audiochan.Core.Features.Audios.Models
         public bool IsFavorited { get; init; }
         public DateTime Created { get; init; }
         public DateTime? Updated { get; init; }
-        public GenreViewModel Genre { get; init; } = null!;
+        public GenreDto Genre { get; init; } = null!;
         public UserViewModel User { get; init; } = null!;
 
         public static AudioDetailViewModel From(Audio audio, long currentUserId)

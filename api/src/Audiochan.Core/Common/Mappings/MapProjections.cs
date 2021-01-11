@@ -4,6 +4,7 @@ using System.Linq.Expressions;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Audios.Models;
 using Audiochan.Core.Features.Followers.Models;
+using Audiochan.Core.Features.Genres.Models;
 using Audiochan.Core.Features.Users.Models;
 
 namespace Audiochan.Core.Common.Mappings
@@ -29,7 +30,7 @@ namespace Audiochan.Core.Common.Mappings
                               && audio.Favorited.Any(f => f.UserId == currentUserId),
                 Created = audio.Created,
                 Updated = audio.LastModified,
-                Genre = new GenreViewModel
+                Genre = new GenreDto
                 {
                     Id = audio.Genre.Id,
                     Name = audio.Genre.Name,
