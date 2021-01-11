@@ -8,18 +8,17 @@ import Container from "~/components/Shared/Container";
 import Page from "~/components/Shared/Page";
 import AudioEdit from "~/components/Audio/Edit";
 import useUser from "~/lib/contexts/user_context";
-import { Audio } from "~/lib/types";
+import { AudioDetail } from "~/lib/types/audio";
 import request from "~/lib/request";
 import { useAudio, useFavorite } from "~/lib/services/audio";
-import { getAccessToken, getCookie } from "~/utils/cookies";
-import CONSTANTS from "~/constants";
+import { getAccessToken } from "~/utils/cookies";
 
 const DynamicAudioPlayer = dynamic(() => import("~/components/Audio/Player"), {
   ssr: false,
 });
 
 interface PageProps {
-  initialData: Audio;
+  initialData: AudioDetail;
   isDevelopment: boolean;
 }
 
@@ -31,7 +30,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
   const accessToken = getAccessToken(context);
 
   try {
-    const response = await request<Audio>(`audios/${id}`, {
+    const response = await request<AudioDetail>(`audios/${id}`, {
       accessToken: accessToken,
     });
 

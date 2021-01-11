@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import useSWR, { mutate } from 'swr'
 import useInfiniteQuery, { PaginatedOptions } from '../hooks/useInfiniteQuery'
-import { Audio, AudioListItem, AudioRequest, AudioSearchType, ErrorResponse } from '../types';
+import { ErrorResponse } from '~/lib/types'
+import { AudioDetail, AudioListItem, AudioRequest, AudioSearchType } from '../types/audio';
 import request from '../request';
 import { apiErrorToast } from '~/utils/toast';
 
@@ -34,13 +35,13 @@ export const useFavorite = (audioId: string) => {
   return { isFavorite, favorite: favoriteHandler };
 }
 
-export const useAudio = (id: string, initialData?: Audio) => {
+export const useAudio = (id: string, initialData?: AudioDetail) => {
   const { 
     data,
     isValidating: isLoading,
     error,
     mutate 
-  } = useSWR<Audio, ErrorResponse>(`audios/${id}`, {
+  } = useSWR<AudioDetail, ErrorResponse>(`audios/${id}`, {
     initialData 
   });
 
@@ -74,7 +75,7 @@ export const useAudiosInfiniteQuery = (options: useAudiosInfiniteOptions = { typ
 }
 
 export const uploadAudio = async (formData: FormData) => {
-  const { data } = await request<Audio>('audios', {
+  const { data } = await request<AudioDetail>('audios', {
     method: 'post',
     body: formData
   });
@@ -86,8 +87,8 @@ export const deleteAudio = async (id: string | number) => {
   await request(`audios/${id}`, { method: 'delete' });
 }
 
-export const updateAudio = async (audio: Audio, inputs: AudioRequest) => {
-  const { data } = await request<Audio>(`audios/${audio.id}`, {
+export const updateAudio = async (audio: AudioDetail, inputs: AudioRequest) => {
+  const { data } = await request<AudioDetail>(`audios/${audio.id}`, {
     method: 'patch',
     body: inputs
   });

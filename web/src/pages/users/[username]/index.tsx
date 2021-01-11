@@ -17,10 +17,10 @@ import useSWR from "swr";
 import Page from "~/components/Shared/Page";
 import AudioList from "~/components/Audio/List";
 import request from "~/lib/request";
-import { ErrorResponse, Profile } from "~/lib/types";
+import { ErrorResponse } from "~/lib/types";
+import { Profile } from "~/lib/types/user";
 import { useFollow } from "~/lib/services/users";
-import { getAccessToken, getCookie } from "~/utils/cookies";
-import CONSTANTS from "~/constants";
+import { getAccessToken } from "~/utils/cookies";
 
 interface PageProps {
   initialData?: Profile;

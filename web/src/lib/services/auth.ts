@@ -1,6 +1,6 @@
 import Axios from 'axios'
 import { LoginFormValues } from '~/components/Auth/LoginForm'
-import { AuthResultResponse } from '../types';
+import { AuthResult } from '../types';
 
 const http = Axios.create({
   baseURL: 'http://localhost:3000',
@@ -8,12 +8,12 @@ const http = Axios.create({
 });
 
 export async function login(request: LoginFormValues) {
-  const { data } = await http.post<AuthResultResponse>('/api/auth/login', request);
+  const { data } = await http.post<AuthResult>('/api/auth/login', request);
   return data;
 }
 
 export async function refreshAccessToken() {
-  const { data } = await http.post<AuthResultResponse>('/api/auth/refresh');
+  const { data } = await http.post<AuthResult>('/api/auth/refresh');
   return data;
 }
 

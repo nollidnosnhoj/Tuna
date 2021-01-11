@@ -10,27 +10,27 @@ import Router from "next/router";
 import { LoginFormValues } from "~/components/Auth/LoginForm";
 import fetcher from "../fetcher";
 import { login, revokeRefreshToken } from "../services/auth";
-import { User } from "../types";
+import { CurrentUser } from "../types/user";
 import { getAccessToken } from "~/utils/cookies";
 import { successfulToast } from "~/utils/toast";
 
 type UserContextType = {
   isAuth: boolean;
-  user: User;
+  user: CurrentUser;
   login: (inputs: LoginFormValues) => Promise<void>;
   logout: () => Promise<void>;
-  updateUser: (updatedUser: User) => void;
+  updateUser: (updatedUser: CurrentUser) => void;
   isLoading: boolean;
 };
 
 const UserContext = createContext<UserContextType>(null);
 
 interface UserProviderProps {
-  initialUser?: User;
+  initialUser?: CurrentUser;
 }
 
 export function UserProvider(props: PropsWithChildren<UserProviderProps>) {
-  const [user, setUser] = useState<User>(props.initialUser);
+  const [user, setUser] = useState<CurrentUser>(props.initialUser);
   const [loading, setLoading] = useState(false);
 
   async function authenticate(inputs: LoginFormValues) {
@@ -40,14 +40,14 @@ export function UserProvider(props: PropsWithChildren<UserProviderProps>) {
     } catch (err) {}
   }
 
-  const updateUser = (updatedUser: User) => {
+  const updateUser = (updatedUser: CurrentUser) => {
     setUser(updatedUser);
   };
 
   const fetchAuthenticatedUser = async () => {
     try {
       setLoading(true);
-      const fetchedUser = await fetcher<User>("me");
+      const fetchedUser = await fetcher<CurrentUser>("me");
       setUser(fetchedUser);
     } catch (err) {
     } finally {

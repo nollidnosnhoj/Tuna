@@ -6,10 +6,10 @@ import theme from "~/lib/theme";
 import fetcher from "~/lib/fetcher";
 import { SWRConfig } from "swr";
 import { AudioPlayerProvider } from "~/lib/contexts/audio_player_context";
-import { User } from "~/lib/types";
+import { CurrentUser } from "~/lib/types/user";
 
 interface AppProps extends NextAppProps {
-  user?: User;
+  user?: CurrentUser;
 }
 
 function App({ Component, user, pageProps }: AppProps) {

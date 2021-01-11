@@ -8,7 +8,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import React, { useMemo } from "react";
-import { Audio, AudioSearchType } from "~/lib/types";
+import { AudioDetail, AudioSearchType } from "~/lib/types/audio";
 import { useAudiosInfiniteQuery } from "~/lib/services/audio";
 
 interface AudioListProps {
@@ -37,7 +37,7 @@ const AudioList: React.FC<AudioListProps> = ({
     isReachingEnd,
   } = useAudiosInfiniteQuery({ type, size, params, username });
 
-  const audios = useMemo<Audio[]>(() => {
+  const audios = useMemo<AudioDetail[]>(() => {
     return data ? [].concat(...data) : [];
   }, [data]);
 

@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { AuthResultResponse } from '~/lib/types';
+import { AuthResult } from '~/lib/types';
 import request from '~/lib/request';
 import { isAxiosError } from '~/utils/axios';
 import { setAccessTokenCookie, setRefreshTokenCookie } from '~/utils/cookies'
@@ -10,7 +10,7 @@ export type BackendAuthResult = {
   refreshTokenExpires: number
 }
 
-export default async (req: NextApiRequest, res: NextApiResponse<AuthResultResponse>) => {
+export default async (req: NextApiRequest, res: NextApiResponse<AuthResult>) => {
   try {
     if (req.method?.toUpperCase() !== 'POST') {
       res.status(404);

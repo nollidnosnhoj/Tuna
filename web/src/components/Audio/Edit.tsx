@@ -28,18 +28,18 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import InputCheckbox from "../Form/Checkbox";
 import TextInput from "../Form/TextInput";
 import TagInput from "../Form/TagInput";
-import { Audio, AudioRequest } from "~/lib/types";
+import { AudioDetail, AudioRequest } from "~/lib/types/audio";
 import { deleteAudio, updateAudio } from "~/lib/services/audio";
 import { audioSchema } from "~/lib/validationSchemas";
 import { apiErrorToast, successfulToast } from "~/utils/toast";
 
 interface AudioEditProps {
-  model: Audio;
+  model: AudioDetail;
   isOpen: boolean;
   onClose: () => void;
 }
 
-function mapAudioToModifyInputs(audio: Audio): AudioRequest {
+function mapAudioToModifyInputs(audio: AudioDetail): AudioRequest {
   return {
     title: audio.title,
     description: audio.description,
