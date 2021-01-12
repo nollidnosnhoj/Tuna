@@ -28,6 +28,7 @@ const InputCheckbox = React.forwardRef<any, InputCheckboxProps>(
         alignItems="center"
         isInvalid={isInvalid}
         isRequired={isRequired}
+        paddingY={2}
       >
         {label && (
           <FormLabel htmlFor={name} mb="0">

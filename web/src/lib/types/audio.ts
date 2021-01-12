@@ -38,4 +38,5 @@ export interface AudioRequest {
   description?: string;
   tags?: string[];
   isPublic?: boolean;
+  genre?: string;
 };

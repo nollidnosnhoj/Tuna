@@ -9,5 +9,19 @@ export default {
     passwordRequireLowercase: true,
     passwordRequireUppercase: true,
     passwordRequireNonAlphanumeric: false
+  },
+  UPLOAD_RULES: {
+    accept: [
+      "audio/mpeg",
+      "audio/x-mpeg",
+      "audio/mp3",
+      "audio/x-mp3",
+      "audio/mpeg3",
+      "audio/x-mpeg3",
+      "audio/mpg",
+      "audio/x-mpg",
+      "audio/x-mpegaudio",
+    ],
+    maxSize: 2000000000
   }
 }

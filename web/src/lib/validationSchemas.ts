@@ -1,6 +1,7 @@
 import * as yup from 'yup'
 import CONSTANTS from '~/constants/'
 import { validationMessages } from '~/utils'
+import { formatFileSize } from '~/utils/format';
 
 const { 
   usernameMinLength,
@@ -67,18 +68,34 @@ export const audioSchema = (type: "create" | "edit") => {
     title: yup.string().required(validationMessages.required("Title")).max(30),
     description: yup.string().max(500, validationMessages.max("Description", 500)),
     tags: yup.array(yup.string()).max(10, validationMessages.max("Tags", 10)).ensure(),
+    genre: yup.string().required(),
     isPublic: yup.boolean()
   });
 
   if (type === 'create') {
-    const accept = yup.object().shape({
+    const { accept, maxSize } = CONSTANTS.UPLOAD_RULES;
+
+    const uploadSchema = yup.object().shape({
+      file: yup
+        .mixed()
+        .required()
+        .test({
+          name: 'maxSize',
+          message: `File cannot be greater than 2GB.`,
+          test: (value) => value != null && value.size <= maxSize
+        })
+        .test({
+          name: 'accept',
+          message: 'File has an invalid content-type.',
+          test: (value) => value != null && accept.includes(value.type)
+        }),
       acceptTerms: yup
-      .boolean()
-      .required()
-      .oneOf([true], "You must accept terms of service."),
+        .boolean()
+        .required()
+        .oneOf([true], "You must accept terms of service."),
     });
 
-    return main.concat(accept);
+    return main.concat(uploadSchema);
   }
 
   return main;

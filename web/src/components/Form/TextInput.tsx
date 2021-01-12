@@ -38,7 +38,7 @@ const TextInput = React.forwardRef<any, InputFieldProps>(
         id={name}
         isInvalid={!!error}
         isRequired={isRequired}
-        marginY={2}
+        paddingY={2}
       >
         {label && <FormLabel htmlFor={name}>{label}</FormLabel>}
         {isTextArea ? (

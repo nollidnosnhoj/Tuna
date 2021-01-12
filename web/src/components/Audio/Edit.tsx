@@ -19,6 +19,9 @@ import {
   PopoverHeader,
   PopoverTrigger,
   Spacer,
+  FormControl,
+  FormLabel,
+  Select,
 } from "@chakra-ui/react";
 import { DeleteIcon } from "@chakra-ui/icons";
 import React, { useEffect, useMemo, useState } from "react";
@@ -32,6 +35,7 @@ import { AudioDetail, AudioRequest } from "~/lib/types/audio";
 import { deleteAudio, updateAudio } from "~/lib/services/audio";
 import { audioSchema } from "~/lib/validationSchemas";
 import { apiErrorToast, successfulToast } from "~/utils/toast";
+import GenreSelect from "../Form/GenreSelect";
 
 interface AudioEditProps {
   model: AudioDetail;
@@ -45,6 +49,7 @@ function mapAudioToModifyInputs(audio: AudioDetail): AudioRequest {
     description: audio.description,
     tags: audio.tags,
     isPublic: audio.isPublic,
+    genre: audio.genre.slug,
   };
 }
 
@@ -131,6 +136,19 @@ const AudioEditModal: React.FC<AudioEditProps> = ({
               error={errors.description}
               disabled={isSubmitting || deleting}
               isTextArea
+            />
+            <Controller
+              name="genre"
+              control={control}
+              render={({ name, value, onChange }) => (
+                <GenreSelect
+                  name={name}
+                  value={value}
+                  onChange={onChange}
+                  isRequired
+                  isDisabled={isSubmitting}
+                />
+              )}
             />
             <Controller
               name="tags"

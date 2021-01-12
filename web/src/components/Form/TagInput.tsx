@@ -1,4 +1,5 @@
 import {
+  Box,
   Flex,
   FormControl,
   FormErrorMessage,
@@ -7,6 +8,8 @@ import {
   Tag,
   TagCloseButton,
   TagLabel,
+  Wrap,
+  WrapItem,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { FieldError } from "react-hook-form";
@@ -78,7 +81,7 @@ const TagInput: React.FC<TagInputProps> = ({
   };
 
   return (
-    <FormControl id={name} isInvalid={!!inputError}>
+    <FormControl paddingY={2} id={name} isInvalid={!!inputError}>
       <FormLabel>Tags</FormLabel>
       <Input
         name={name}
@@ -88,16 +91,23 @@ const TagInput: React.FC<TagInputProps> = ({
         disabled={disabled}
       />
       <FormErrorMessage>{inputError}</FormErrorMessage>
-      <Flex flexWrap="wrap" marginTop={4}>
+      <Wrap marginTop={4}>
         {value &&
           value.length > 0 &&
           value.map((tag, idx) => (
-            <Tag size="md" key={idx} borderRadius="full" colorScheme="primary">
-              <TagLabel>{tag}</TagLabel>
-              <TagCloseButton onClick={() => removeTag(idx)} />
-            </Tag>
+            <WrapItem>
+              <Tag
+                size="md"
+                key={idx}
+                borderRadius="full"
+                colorScheme="primary"
+              >
+                <TagLabel>{tag}</TagLabel>
+                <TagCloseButton onClick={() => removeTag(idx)} />
+              </Tag>
+            </WrapItem>
           ))}
-      </Flex>
+      </Wrap>
     </FormControl>
   );
 };
