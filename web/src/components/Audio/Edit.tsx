@@ -31,9 +31,9 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import InputCheckbox from "../Form/Checkbox";
 import TextInput from "../Form/TextInput";
 import TagInput from "../Form/TagInput";
-import { AudioDetail, AudioRequest } from "~/lib/types/audio";
+import { AudioDetail, EditAudioRequest } from "~/lib/types/audio";
 import { deleteAudio, updateAudio } from "~/lib/services/audio";
-import { audioSchema } from "~/lib/validationSchemas";
+import { editAudioSchema } from "~/lib/validationSchemas";
 import { apiErrorToast, successfulToast } from "~/utils/toast";
 import GenreSelect from "../Form/GenreSelect";
 
@@ -43,7 +43,7 @@ interface AudioEditProps {
   onClose: () => void;
 }
 
-function mapAudioToModifyInputs(audio: AudioDetail): AudioRequest {
+function mapAudioToModifyInputs(audio: AudioDetail): EditAudioRequest {
   return {
     title: audio.title,
     description: audio.description,
@@ -68,9 +68,9 @@ const AudioEditModal: React.FC<AudioEditProps> = ({
     control,
     errors,
     formState: { isSubmitting },
-  } = useForm<AudioRequest>({
+  } = useForm<EditAudioRequest>({
     defaultValues: currentValues,
-    resolver: yupResolver(audioSchema("edit")),
+    resolver: yupResolver(editAudioSchema),
   });
 
   useEffect(() => {
@@ -91,7 +91,7 @@ const AudioEditModal: React.FC<AudioEditProps> = ({
     setDeleting(false);
   };
 
-  const onEditSubmit = async (inputs: AudioRequest) => {
+  const onEditSubmit = async (inputs: EditAudioRequest) => {
     const newRequest = {};
     if (currentValues) {
       Object.entries(inputs).forEach(([key, value]) => {

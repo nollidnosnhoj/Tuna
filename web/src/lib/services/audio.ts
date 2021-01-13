@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import useSWR, { mutate } from 'swr'
 import useInfiniteQuery, { PaginatedOptions } from '../hooks/useInfiniteQuery'
 import { ErrorResponse } from '~/lib/types'
-import { AudioDetail, AudioListItem, AudioRequest, AudioSearchType } from '../types/audio';
+import { AudioDetail, AudioListItem, EditAudioRequest, AudioSearchType } from '../types/audio';
 import request from '../request';
 import { apiErrorToast } from '~/utils/toast';
 
@@ -87,7 +87,7 @@ export const deleteAudio = async (id: string | number) => {
   await request(`audios/${id}`, { method: 'delete' });
 }
 
-export const updateAudio = async (audio: AudioDetail, inputs: AudioRequest) => {
+export const updateAudio = async (audio: AudioDetail, inputs: object) => {
   const { data } = await request<AudioDetail>(`audios/${audio.id}`, {
     method: 'patch',
     body: inputs

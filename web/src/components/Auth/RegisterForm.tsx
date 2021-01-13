@@ -17,6 +17,27 @@ type RegisterFormInputs = {
   acceptTerms: boolean;
 };
 
+const schema: yup.SchemaOf<RegisterFormInputs> = yup
+  .object()
+  .shape({
+    username: usernameRule("Username"),
+    password: passwordRule("Password"),
+    email: yup
+      .string()
+      .required(validationMessages.required("Email"))
+      .email()
+      .defined(),
+    confirmPassword: yup
+      .string()
+      .oneOf([yup.ref("password")], "Password does not match.")
+      .defined(),
+    acceptTerms: yup
+      .boolean()
+      .oneOf([true], validationMessages.required("Terms of Service"))
+      .defined(),
+  })
+  .defined();
+
 export default function RegisterForm() {
   const {
     register,
@@ -31,22 +52,7 @@ export default function RegisterForm() {
       confirmPassword: "",
       acceptTerms: false,
     },
-    resolver: yupResolver(
-      yup.object().shape({
-        username: usernameRule("Username"),
-        password: passwordRule("Password"),
-        email: yup
-          .string()
-          .required(validationMessages.required("Email"))
-          .email(),
-        confirmPassword: yup
-          .string()
-          .oneOf([yup.ref("password")], "Password does not match."),
-        acceptTerms: yup
-          .boolean()
-          .oneOf([true], validationMessages.required("Terms of Service")),
-      })
-    ),
+    resolver: yupResolver(schema),
   });
 
   const onSubmit = async (values: RegisterFormInputs) => {

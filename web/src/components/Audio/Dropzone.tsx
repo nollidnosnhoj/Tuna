@@ -2,14 +2,11 @@ import { WarningIcon } from "@chakra-ui/icons";
 import {
   Box,
   Flex,
-  FormControl,
-  FormErrorMessage,
   Icon,
   List,
   ListIcon,
   ListItem,
   Text,
-  UnorderedList,
 } from "@chakra-ui/react";
 import React, { useMemo, useState } from "react";
 import { useDropzone } from "react-dropzone";
@@ -22,7 +19,7 @@ interface AudioDropzoneProps {
   onChange: (file: File | FileList) => void;
   maxSize?: number;
   accept?: string[];
-  error?: string;
+  error?: FieldError;
 }
 
 const AudioDropzone: React.FC<AudioDropzoneProps> = ({
@@ -32,7 +29,9 @@ const AudioDropzone: React.FC<AudioDropzoneProps> = ({
   maxSize = CONSTANTS.UPLOAD_RULES.maxSize,
   accept = CONSTANTS.UPLOAD_RULES.accept,
 }) => {
-  const [errors, setErrors] = useState<string[]>(formError ? [formError] : []);
+  const [errors, setErrors] = useState<string[]>(
+    formError ? [formError.message] : []
+  );
 
   const {
     acceptedFiles,

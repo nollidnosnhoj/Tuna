@@ -33,10 +33,15 @@ export type AudioListItem = {
   user: Creator;
 }
 
-export interface AudioRequest {
-  title?: string;
+export interface EditAudioRequest {
+  title: string;
   description?: string;
   tags?: string[];
-  isPublic?: boolean;
-  genre?: string;
+  isPublic: boolean;
+  genre: string;
 };
+
+export interface UploadAudioRequest extends EditAudioRequest {
+  file?: File,
+  acceptTerms: boolean
+}

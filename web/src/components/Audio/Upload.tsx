@@ -9,21 +9,12 @@ import GenreSelect from "../Form/GenreSelect";
 import TextInput from "../Form/TextInput";
 import TagInput from "../Form/TagInput";
 import { uploadAudio } from "~/lib/services/audio";
-import { audioSchema } from "~/lib/validationSchemas";
+import { uploadAudioSchema } from "~/lib/validationSchemas";
 import { apiErrorToast, successfulToast } from "~/utils/toast";
-
-type FormInputs = {
-  file?: File;
-  title: string;
-  description?: string;
-  tags?: string[];
-  isPublic: boolean;
-  genre: string;
-  acceptTerms: boolean;
-};
+import { UploadAudioRequest } from "~/lib/types/audio";
 
 const AudioUpload = () => {
-  const onSubmit = async (values: FormInputs) => {
+  const onSubmit = async (values: UploadAudioRequest) => {
     var formData = new FormData();
 
     Object.entries(values).forEach(([key, value]) => {
@@ -54,10 +45,9 @@ const AudioUpload = () => {
     errors,
     control,
     formState: { isSubmitting },
-  } = useForm<FormInputs>({
-    mode: "onChange",
+  } = useForm<UploadAudioRequest>({
     defaultValues: {
-      file: "",
+      file: undefined,
       title: "",
       description: "",
       tags: [],
@@ -65,111 +55,103 @@ const AudioUpload = () => {
       genre: "",
       acceptTerms: false,
     },
-    resolver: yupResolver(audioSchema("create")),
+    resolver: yupResolver(uploadAudioSchema),
   });
 
   return (
-    <div>
-      <Flex justify="center">
-        <Box width="100%">
-          <Box>
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <Controller
-                name="file"
-                control={control}
-                render={({ name, onChange }) => (
-                  <AudioDropzone
-                    name={name}
-                    onChange={onChange}
-                    error={errors.genre?.message}
-                  />
-                )}
-              />
-              <TextInput
-                name="title"
-                type="text"
-                ref={register}
-                label="Title"
-                error={errors.title}
+    <Flex justify="center">
+      <Box width="100%">
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Controller
+            name="file"
+            control={control}
+            render={({ name, onChange }) => (
+              <AudioDropzone name={name} onChange={onChange} />
+            )}
+          />
+          <TextInput
+            name="title"
+            type="text"
+            ref={register}
+            label="Title"
+            error={errors.title}
+            isRequired
+            disabled={isSubmitting}
+          />
+          <TextInput
+            name="description"
+            ref={register}
+            label="Description"
+            error={errors.description}
+            isTextArea
+            disabled={isSubmitting}
+          />
+          <Controller
+            name="genre"
+            control={control}
+            render={({ name, value, onChange }) => (
+              <GenreSelect
+                name={name}
+                value={value}
+                onChange={onChange}
+                placeholder="Select Genre"
                 isRequired
+                isDisabled={isSubmitting}
+              />
+            )}
+          />
+          <Controller
+            name="tags"
+            control={control}
+            render={({ name, value, onChange }) => (
+              <TagInput
+                name={name}
+                value={value}
+                onChange={onChange}
+                error={errors.tags && errors.tags[0]}
                 disabled={isSubmitting}
               />
-              <TextInput
-                name="description"
-                ref={register}
-                label="Description"
-                error={errors.description}
-                isTextArea
-                disabled={isSubmitting}
-              />
-              <Controller
-                name="genre"
-                control={control}
-                render={({ name, value, onChange }) => (
-                  <GenreSelect
-                    name={name}
-                    value={value}
-                    onChange={onChange}
-                    placeholder="Select Genre"
-                    isRequired
-                    isDisabled={isSubmitting}
-                  />
-                )}
-              />
-              <Controller
-                name="tags"
-                control={control}
-                render={({ name, value, onChange }) => (
-                  <TagInput
-                    name={name}
-                    value={value}
-                    onChange={onChange}
-                    error={errors.tags && errors.tags[0]}
-                    disabled={isSubmitting}
-                  />
-                )}
-              />
-              <InputCheckbox
-                name="isPublic"
-                label="Public?"
-                ref={register}
-                isInvalid={!!errors.isPublic}
-                disabled={isSubmitting}
-                isRequired={true}
-                isSwitch={true}
-              />
-              <Flex marginY={4}>
-                <Controller
-                  name="acceptTerms"
-                  control={control}
-                  render={({ name, onBlur, onChange, ref, value }) => (
-                    <Checkbox
-                      name={name}
-                      ref={ref}
-                      onChange={(e) => onChange(e.target.checked)}
-                      onBlur={onBlur}
-                      value={value}
-                      isInvalid={!!errors.acceptTerms}
-                      disabled={isSubmitting}
-                    >
-                      I agree to Audiochan's terms of service.
-                    </Checkbox>
-                  )}
-                />
-                <Spacer />
-                <Button
-                  type="submit"
-                  isLoading={isSubmitting}
-                  loadingText="Uploading..."
+            )}
+          />
+          <InputCheckbox
+            name="isPublic"
+            label="Public?"
+            ref={register}
+            isInvalid={!!errors.isPublic}
+            disabled={isSubmitting}
+            isRequired={true}
+            isSwitch={true}
+          />
+          <Flex marginY={4}>
+            <Controller
+              name="acceptTerms"
+              control={control}
+              render={({ name, onBlur, onChange, ref, value }) => (
+                <Checkbox
+                  name={name}
+                  ref={ref}
+                  onChange={(e) => onChange(e.target.checked)}
+                  onBlur={onBlur}
+                  value={value}
+                  isInvalid={!!errors.acceptTerms}
+                  disabled={isSubmitting}
                 >
-                  Upload
-                </Button>
-              </Flex>
-            </form>
-          </Box>
-        </Box>
-      </Flex>
-    </div>
+                  I agree to Audiochan's terms of service.
+                </Checkbox>
+              )}
+            />
+            <Spacer />
+            <Button
+              type="submit"
+              isLoading={isSubmitting}
+              loadingText="Uploading..."
+            >
+              Upload
+            </Button>
+          </Flex>
+        </form>
+      </Box>
+    </Flex>
   );
 };
 
