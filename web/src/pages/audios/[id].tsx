@@ -75,17 +75,12 @@ export default function AudioDetailsPage(
 
   const { isFavorite, favorite } = useFavorite(id);
 
-  // get
-  const audioUrl = props.isDevelopment
-    ? "https://localhost:5001/uploads/" + audio?.url
-    : audio?.url;
-
   return (
     <Page
       title={audio.title ?? "Removed"}
       beforeContainer={
         <Container>
-          <DynamicAudioPlayer url={audioUrl} />
+          <DynamicAudioPlayer audio={audio} isDev={props.isDevelopment} />
         </Container>
       }
     >

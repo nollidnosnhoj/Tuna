@@ -1,19 +1,31 @@
-import React, { useState, useRef, useCallback, useEffect } from "react";
+import React, {
+  useState,
+  useRef,
+  useCallback,
+  useEffect,
+  useMemo,
+} from "react";
 import { Box, Circle, Flex, Text } from "@chakra-ui/react";
 import { IoMdPlay, IoMdPause } from "react-icons/io";
 import WaveSurfer from "wavesurfer.js";
 import WaveSurferComponent from "~/components/Audio/Wavesurfer";
 import { formatDuration } from "~/utils/time";
 import { useAudioPlayer } from "~/lib/contexts/audio_player_context";
+import { AudioDetail } from "~/lib/types/audio";
 
 const AudioPlayer: React.FC<{
-  url?: string;
+  audio?: AudioDetail;
   color?: string;
-}> = ({ url, color = "#ED64A6", ...props }) => {
-  if (!url) return null;
+  isDev?: boolean;
+}> = ({ audio, color = "#ED64A6", isDev = true, ...props }) => {
+  if (!audio) return null;
+
+  const audioUrl = useMemo(() => {
+    return isDev ? "https://localhost:5001/uploads/" + audio?.url : audio?.url;
+  }, [audio]);
 
   const { volume, handleVolume } = useAudioPlayer();
-  const [loop, setLoop] = useState(false);
+  const [loop, setLoop] = useState(audio.isLoop);
   const [loaded, setLoaded] = useState(false);
   const [loading, setLoading] = useState(0);
   const [playing, setPlaying] = useState(false);
@@ -23,7 +35,7 @@ const AudioPlayer: React.FC<{
     (ws: WaveSurfer) => {
       wavesurferRef.current = ws;
       if (wavesurferRef.current) {
-        wavesurferRef.current.load(url);
+        wavesurferRef.current.load(audioUrl);
         wavesurferRef.current.on("ready", () => {
           setLoaded(true);
         });
@@ -40,14 +52,13 @@ const AudioPlayer: React.FC<{
           setSeconds(wavesurferRef.current.getCurrentTime());
         });
         wavesurferRef.current.on("finish", () => {
-          if (!loop) {
-            setPlaying(false);
-            setSeconds(0);
-          }
+          setSeconds(0);
+          if (!loop) setPlaying(false);
+          else wavesurferRef.current.play();
         });
       }
     },
-    [url]
+    [audioUrl]
   );
 
   const handleUnmount = () => {
