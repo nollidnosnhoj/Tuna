@@ -1,7 +1,7 @@
 import { Button, Stack } from "@chakra-ui/react";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import TextInput from "~/components/Form/TextInput";
 import useUser from "~/lib/contexts/user_context";
 import request from "~/lib/request";
@@ -14,7 +14,7 @@ export default function UpdateEmail() {
 
   const updateEmail = async (values: { email: string }) => {
     const { email } = values;
-    if (email.trim() === user.email) return;
+    if (email.trim() === user?.email) return;
 
     try {
       await request("me/change-email", { method: "patch", body: email });
@@ -24,13 +24,8 @@ export default function UpdateEmail() {
     }
   };
 
-  const {
-    handleSubmit,
-    errors,
-    register,
-    formState: { isSubmitting, isValid },
-  } = useForm<{ email: string }>({
-    defaultValues: { email: user.email },
+  const methods = useForm<{ email: string }>({
+    defaultValues: { email: user?.email },
     resolver: yupResolver(
       yup.object().shape({
         email: yup
@@ -41,23 +36,24 @@ export default function UpdateEmail() {
     ),
   });
 
+  const {
+    handleSubmit,
+    formState: { isSubmitting },
+  } = methods;
+
   return (
-    <form onSubmit={handleSubmit(updateEmail)}>
-      <TextInput
-        name="email"
-        label="Change Email"
-        ref={register}
-        isRequired
-        error={errors.email}
-      />
-      <Button
-        type="submit"
-        isLoading={isSubmitting}
-        disabled={isSubmitting || !isValid}
-        loadingText="Submitting..."
-      >
-        Update Email
-      </Button>
-    </form>
+    <FormProvider {...methods}>
+      <form onSubmit={handleSubmit(updateEmail)}>
+        <TextInput name="email" label="Change Email" required />
+        <Button
+          type="submit"
+          isLoading={isSubmitting}
+          disabled={isSubmitting}
+          loadingText="Submitting..."
+        >
+          Update Email
+        </Button>
+      </form>
+    </FormProvider>
   );
 }

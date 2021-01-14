@@ -1,25 +1,29 @@
-import { FormControl, FormLabel, Select } from "@chakra-ui/react";
+import {
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
+  Select,
+} from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
+import { useFormContext } from "react-hook-form";
+import { ErrorMessage } from "@hookform/error-message";
 import { GenreDto } from "~/lib/types/genre";
 import fetch from "~/lib/fetcher";
 
 interface GenreSelectProps {
   name: string;
-  value: string;
-  onChange: (value: string) => void;
   placeholder?: string;
-  isRequired?: boolean;
-  isDisabled?: boolean;
+  required?: boolean;
+  disabled?: boolean;
 }
 
 const GenreSelect: React.FC<GenreSelectProps> = ({
   name,
-  value,
-  onChange,
   placeholder,
-  isRequired,
-  isDisabled,
+  required = false,
+  disabled = false,
 }) => {
+  const { register, errors } = useFormContext();
   const [genres, setGenres] = useState<GenreDto[]>([]);
 
   useEffect(() => {
@@ -35,14 +39,18 @@ const GenreSelect: React.FC<GenreSelectProps> = ({
   }, []);
 
   return (
-    <FormControl paddingY={2} id={name} isRequired={isRequired}>
+    <FormControl
+      paddingY={2}
+      id={name}
+      isRequired={required}
+      isInvalid={!!errors[name]}
+    >
       <FormLabel>Genre</FormLabel>
       <Select
         name={name}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
+        ref={register}
         placeholder={placeholder}
-        isDisabled={isDisabled}
+        isDisabled={disabled}
       >
         {genres.map((g, i) => (
           <option key={i} value={g.slug}>
@@ -50,6 +58,7 @@ const GenreSelect: React.FC<GenreSelectProps> = ({
           </option>
         ))}
       </Select>
+      <ErrorMessage name={name} errors={errors} as={FormErrorMessage} />
     </FormControl>
   );
 };

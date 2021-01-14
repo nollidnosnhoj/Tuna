@@ -9,6 +9,7 @@
     "@chakra-ui/theme-tools": "^1.0.1",
     "@emotion/react": "^11.1.2",
     "@emotion/styled": "^11.0.0",
+    "@hookform/error-message": "^0.0.5",
     "@hookform/resolvers": "^1.0.1",
     "axios": "^0.21.1",
     "axios-auth-refresh": "^3.0.0",
@@ -30,6 +31,7 @@
     "yup": "^0.32.8"
   },
   "devDependencies": {
+    "@hookform/devtools": "^2.2.1",
     "@types/cookie": "^0.4.0",
     "@types/js-cookie": "^2.2.6",
     "@types/next": "^9.0.0",

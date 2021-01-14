@@ -8,6 +8,7 @@ export type AudioDetail = {
   title: string;
   description: string;
   isPublic: boolean;
+  isLoop: boolean;
   tags: string[];
   duration: number;
   fileSize: number;

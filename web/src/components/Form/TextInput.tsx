@@ -6,61 +6,57 @@ import {
   Textarea,
 } from "@chakra-ui/react";
 import React from "react";
-import { FieldError } from "react-hook-form";
+import { FieldError, useFormContext } from "react-hook-form";
+import { ErrorMessage } from "@hookform/error-message";
 
 interface InputFieldProps {
   name: string;
   type?: string;
   label?: string;
-  isRequired?: boolean;
-  error?: FieldError;
+  required?: boolean;
   placeholder?: string;
-  isTextArea?: boolean;
+  textArea?: boolean;
   disabled?: boolean;
 }
 
-const TextInput = React.forwardRef<any, InputFieldProps>(
-  (
-    {
-      name,
-      type = "text",
-      label,
-      isRequired = false,
-      error,
-      placeholder,
-      isTextArea = false,
-      disabled = false,
-    },
-    ref
-  ) => {
-    return (
-      <FormControl
-        id={name}
-        isInvalid={!!error}
-        isRequired={isRequired}
-        paddingY={2}
-      >
-        {label && <FormLabel htmlFor={name}>{label}</FormLabel>}
-        {isTextArea ? (
-          <Textarea
-            ref={ref}
-            name={name}
-            placeholder={placeholder}
-            disabled={disabled}
-          />
-        ) : (
-          <Input
-            type={type}
-            ref={ref}
-            name={name}
-            placeholder={placeholder}
-            disabled={disabled}
-          />
-        )}
-        <FormErrorMessage>{error?.message}</FormErrorMessage>
-      </FormControl>
-    );
-  }
-);
+const TextInput: React.FC<InputFieldProps> = ({
+  name,
+  type = "text",
+  label,
+  placeholder,
+  required = false,
+  textArea = false,
+  disabled = false,
+}) => {
+  const { register, errors } = useFormContext();
+
+  return (
+    <FormControl
+      id={name}
+      isInvalid={!!errors[name]}
+      isRequired={required}
+      paddingY={2}
+    >
+      {label && <FormLabel htmlFor={name}>{label}</FormLabel>}
+      {textArea ? (
+        <Textarea
+          ref={register}
+          name={name}
+          placeholder={placeholder}
+          disabled={disabled}
+        />
+      ) : (
+        <Input
+          type={type}
+          ref={register}
+          name={name}
+          placeholder={placeholder}
+          disabled={disabled}
+        />
+      )}
+      <ErrorMessage name={name} errors={errors} as={FormErrorMessage} />
+    </FormControl>
+  );
+};
 
 export default TextInput;

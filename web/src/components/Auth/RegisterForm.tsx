@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, Checkbox, Flex } from "@chakra-ui/react";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import TextInput from "../Form/TextInput";
@@ -8,6 +8,7 @@ import { passwordRule, usernameRule } from "~/lib/validationSchemas";
 import request from "~/lib/request";
 import { apiErrorToast, successfulToast } from "~/utils/toast";
 import { validationMessages } from "~/utils";
+import InputCheckbox from "../Form/Checkbox";
 
 type RegisterFormInputs = {
   username: string;
@@ -39,12 +40,7 @@ const schema: yup.SchemaOf<RegisterFormInputs> = yup
   .defined();
 
 export default function RegisterForm() {
-  const {
-    register,
-    handleSubmit,
-    errors,
-    formState: { isSubmitting },
-  } = useForm<RegisterFormInputs>({
+  const methods = useForm<RegisterFormInputs>({
     defaultValues: {
       username: "",
       password: "",
@@ -54,6 +50,11 @@ export default function RegisterForm() {
     },
     resolver: yupResolver(schema),
   });
+
+  const {
+    handleSubmit,
+    formState: { isSubmitting },
+  } = methods;
 
   const onSubmit = async (values: RegisterFormInputs) => {
     const registrationRequest = {
@@ -78,49 +79,26 @@ export default function RegisterForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <TextInput
-        name="username"
-        label="Username"
-        ref={register}
-        error={errors.username}
-        isRequired
-      />
-      <TextInput
-        name="email"
-        label="Email"
-        ref={register}
-        error={errors.email}
-        isRequired
-      />
-      <TextInput
-        name="password"
-        type="password"
-        label="Password"
-        ref={register}
-        error={errors.password}
-        isRequired
-      />
-      <TextInput
-        name="confirmPassword"
-        type="password"
-        label="Confirm Password"
-        ref={register}
-        error={errors.confirmPassword}
-        isRequired
-      />
-      <Checkbox
-        name="acceptTerms"
-        ref={register}
-        isInvalid={!!errors.acceptTerms}
-      >
-        I agree to the terms of service.
-      </Checkbox>
-      <Flex justify="flex-end">
-        <Button type="submit" mt={4} isLoading={isSubmitting}>
-          Register
-        </Button>
-      </Flex>
-    </form>
+    <FormProvider {...methods}>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <TextInput name="username" label="Username" required />
+        <TextInput name="email" label="Email" required />
+        <TextInput name="password" type="password" label="Password" required />
+        <TextInput
+          name="confirmPassword"
+          type="password"
+          label="Confirm Password"
+          required
+        />
+        <InputCheckbox name="acceptTerms" required>
+          I agree to the terms of service.
+        </InputCheckbox>
+        <Flex justify="flex-end">
+          <Button type="submit" mt={4} isLoading={isSubmitting}>
+            Register
+          </Button>
+        </Flex>
+      </form>
+    </FormProvider>
   );
 }

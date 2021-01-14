@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, Stack } from "@chakra-ui/react";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import TextInput from "../Form/TextInput";
@@ -19,12 +19,7 @@ interface LoginFormProps {
 export default function LoginForm(props: LoginFormProps) {
   const { login } = useUser();
 
-  const {
-    register,
-    handleSubmit,
-    errors,
-    formState: { isSubmitting },
-  } = useForm<LoginFormValues>({
+  const methods = useForm<LoginFormValues>({
     resolver: yupResolver(
       yup.object().shape({
         username: yup.string().required(),
@@ -32,6 +27,11 @@ export default function LoginForm(props: LoginFormProps) {
       })
     ),
   });
+
+  const {
+    handleSubmit,
+    formState: { isSubmitting },
+  } = methods;
 
   const onSubmit = async (values: LoginFormValues) => {
     try {
@@ -44,27 +44,16 @@ export default function LoginForm(props: LoginFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <TextInput
-        name="username"
-        label="Username/Email"
-        ref={register}
-        error={errors.username}
-        isRequired
-      />
-      <TextInput
-        name="password"
-        type="password"
-        label="Password"
-        ref={register}
-        error={errors.password}
-        isRequired
-      />
-      <Stack mt={4} spacing={4}>
-        <Button type="submit" isLoading={isSubmitting} colorScheme="primary">
-          Login
-        </Button>
-      </Stack>
-    </form>
+    <FormProvider {...methods}>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <TextInput name="username" label="Username/Email" required />
+        <TextInput name="password" type="password" label="Password" required />
+        <Stack mt={4} spacing={4}>
+          <Button type="submit" isLoading={isSubmitting} colorScheme="primary">
+            Login
+          </Button>
+        </Stack>
+      </form>
+    </FormProvider>
   );
 }

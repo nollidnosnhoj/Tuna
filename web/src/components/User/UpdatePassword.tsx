@@ -1,8 +1,8 @@
 import React from "react";
 import { Button } from "@chakra-ui/react";
+import { useForm, FormProvider } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useForm } from "react-hook-form";
 import TextInput from "~/components/Form/TextInput";
 import request from "~/lib/request";
 import { passwordRule } from "~/lib/validationSchemas";
@@ -22,13 +22,7 @@ const defaultValues = {
 };
 
 export default function UpdatePassword() {
-  const {
-    handleSubmit,
-    errors,
-    register,
-    reset,
-    formState: { isSubmitting, isValid },
-  } = useForm<UpdatePasswordValues>({
+  const methods = useForm<UpdatePasswordValues>({
     defaultValues: defaultValues,
     resolver: yupResolver(
       yup.object().shape({
@@ -43,6 +37,12 @@ export default function UpdatePassword() {
       })
     ),
   });
+
+  const {
+    handleSubmit,
+    reset,
+    formState: { isSubmitting },
+  } = methods;
 
   const updatePassword = async (values: UpdatePasswordValues) => {
     const { currentPassword, newPassword } = values;
@@ -61,38 +61,35 @@ export default function UpdatePassword() {
   };
 
   return (
-    <form onSubmit={handleSubmit(updatePassword)}>
-      <TextInput
-        name="currentPassword"
-        label="Current Password"
-        ref={register}
-        isRequired
-        error={errors.currentPassword}
-      />
-      <TextInput
-        name="newPassword"
-        type="password"
-        label="New Password"
-        ref={register}
-        isRequired
-        error={errors.currentPassword}
-      />
-      <TextInput
-        name="confirmPassword"
-        type="password"
-        label="Confirm Password"
-        ref={register}
-        isRequired
-        error={errors.currentPassword}
-      />
-      <Button
-        type="submit"
-        isLoading={isSubmitting}
-        disabled={isSubmitting || !isValid}
-        loadingText="Submitting..."
-      >
-        Update Password
-      </Button>
-    </form>
+    <FormProvider {...methods}>
+      <form onSubmit={handleSubmit(updatePassword)}>
+        <TextInput
+          name="currentPassword"
+          type="password"
+          label="Current Password"
+          required
+        />
+        <TextInput
+          name="newPassword"
+          type="password"
+          label="New Password"
+          required
+        />
+        <TextInput
+          name="confirmPassword"
+          type="password"
+          label="Confirm Password"
+          required
+        />
+        <Button
+          type="submit"
+          isLoading={isSubmitting}
+          disabled={isSubmitting}
+          loadingText="Submitting..."
+        >
+          Update Password
+        </Button>
+      </form>
+    </FormProvider>
   );
 }
