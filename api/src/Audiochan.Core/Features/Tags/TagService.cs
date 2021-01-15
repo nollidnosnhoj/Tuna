@@ -45,10 +45,7 @@ namespace Audiochan.Core.Features.Tags
 
         public async Task<List<Tag>> CreateNewTags(IEnumerable<string?> tags, CancellationToken cancellationToken = default)
         {
-            var taggifyTags = tags
-                .Where(t => t != null)
-                .Select(t => t!.GenerateTag())
-                .ToList();
+            var taggifyTags = tags.FormatTags();
 
             var existingTags = await _dbContext.Tags
                 .AsNoTracking()
