@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
+using Audiochan.Core.Common.Models;
 using Audiochan.Core.Features.Audios.Models;
 using Audiochan.Core.Features.Audios.Validators;
 using FluentValidation.TestHelper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
 
@@ -15,7 +17,23 @@ namespace Audiochan.ValidationTests
 
         public UploadAudioValidationTests()
         {
-            _validator = new UploadAudioRequestValidator();
+            var options = Options.Create(new UploadSetting
+            {
+                ContentTypes = new List<string>
+                {
+                    "audio/mpeg",
+                    "audio/x-mpeg",
+                    "audio/mp3",
+                    "audio/x-mp3",
+                    "audio/mpeg3",
+                    "audio/x-mpeg3",
+                    "audio/mpg",
+                    "audio/x-mpg",
+                    "audio/x-mpegaudio"
+                },
+                FileSize = 262144000
+            });
+            _validator = new UploadAudioRequestValidator(options);
             _fileMock = new Mock<IFormFile>();
         }
         

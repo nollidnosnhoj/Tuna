@@ -2,15 +2,20 @@
 using Audiochan.Core.Entities;
 using Audiochan.Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using SixLabors.ImageSharp;
 
 namespace Audiochan.Web.Configurations
 {
     public static class IdentityConfiguration
     {
         public static IServiceCollection ConfigureIdentity(this IServiceCollection services, 
-            PasswordSetting passwordSetting)
+            IConfiguration configuration)
         {
+            var passwordSetting = new PasswordSetting();
+            configuration.GetSection(nameof(PasswordSetting)).Bind(passwordSetting);
+            
             services
                 .AddIdentity<User, Role>(options =>
                 {

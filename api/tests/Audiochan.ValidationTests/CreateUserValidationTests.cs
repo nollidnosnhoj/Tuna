@@ -3,6 +3,7 @@ using Audiochan.Core.Common.Models;
 using Audiochan.Core.Features.Auth.Models;
 using Audiochan.Core.Features.Auth.Validators;
 using FluentValidation.TestHelper;
+using Microsoft.Extensions.Options;
 using Xunit;
 
 namespace Audiochan.ValidationTests
@@ -13,7 +14,7 @@ namespace Audiochan.ValidationTests
 
         public CreateUserValidationTests()
         {
-            _validator = new CreateUserRequestValidator(new PasswordSetting
+            var options = Options.Create(new PasswordSetting
             {
                 RequireDigit = true,
                 RequireLowercase = true,
@@ -21,6 +22,7 @@ namespace Audiochan.ValidationTests
                 RequireNonAlphanumeric = true,
                 RequireLength = 5
             });
+            _validator = new CreateUserRequestValidator(options);
         }
 
         [Fact]

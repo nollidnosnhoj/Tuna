@@ -2,6 +2,7 @@
 using System.Text;
 using Audiochan.Core.Common.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 
@@ -9,8 +10,12 @@ namespace Audiochan.Web.Configurations
 {
     public static class AuthenticationConfiguration
     {
-        public static IServiceCollection ConfigureAuthentication(this IServiceCollection services, JwtSetting jwtSetting)
+        public static IServiceCollection ConfigureAuthentication(this IServiceCollection services,
+            IConfiguration configuration)
         {
+            var jwtSetting = new JwtSetting();
+            configuration.GetSection(nameof(JwtSetting)).Bind(jwtSetting);
+            
             services
                 .AddAuthentication(options =>
                 {

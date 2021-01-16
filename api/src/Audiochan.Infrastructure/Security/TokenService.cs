@@ -10,6 +10,7 @@ using Audiochan.Core.Common.Models;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Audiochan.Infrastructure.Security
@@ -20,9 +21,10 @@ namespace Audiochan.Infrastructure.Security
         private readonly IDateTimeService _dateTimeService;
         private readonly UserManager<User> _userManager;
 
-        public TokenService(JwtSetting jwtSetting, UserManager<User> userManager, IDateTimeService dateTimeService)
+        public TokenService(IOptions<JwtSetting> jwtOptions, UserManager<User> userManager, 
+            IDateTimeService dateTimeService)
         {
-            _jwtSetting = jwtSetting;
+            _jwtSetting = jwtOptions.Value;
             _userManager = userManager;
             _dateTimeService = dateTimeService;
         }

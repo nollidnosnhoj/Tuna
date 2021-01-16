@@ -26,21 +26,21 @@ namespace Audiochan.Web
 
         public void ConfigureServices(IServiceCollection services)
         {
-            var jwtSetting = new JwtSetting();
-            Configuration.GetSection(nameof(JwtSetting)).Bind(jwtSetting);
-            services.AddSingleton(jwtSetting);
+            // var jwtSetting = new JwtSetting();
+            // Configuration.GetSection(nameof(JwtSetting)).Bind(jwtSetting);
+            // services.AddSingleton(jwtSetting);
             
-            var passwordSetting = new PasswordSetting();
-            Configuration.GetSection(nameof(PasswordSetting)).Bind(passwordSetting);
-            services.AddSingleton(passwordSetting);
+            services.Configure<JwtSetting>(Configuration.GetSection(nameof(JwtSetting)));
+            services.Configure<PasswordSetting>(Configuration.GetSection(nameof(PasswordSetting)));
+            services.Configure<UploadSetting>(Configuration.GetSection(nameof(UploadSetting)));
 
             services
                 .ConfigureDatabase(Configuration)
                 .AddCoreServices()
                 .AddInfraServices()
                 .ConfigureStorage(Environment)
-                .ConfigureIdentity(passwordSetting)
-                .ConfigureAuthentication(jwtSetting)
+                .ConfigureIdentity(Configuration)
+                .ConfigureAuthentication(Configuration)
                 .ConfigureAuthorization()
                 .AddHttpContextAccessor()
                 .AddScoped<ICurrentUserService, CurrentUserService>()

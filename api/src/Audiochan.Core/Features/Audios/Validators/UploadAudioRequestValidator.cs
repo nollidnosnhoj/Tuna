@@ -1,30 +1,19 @@
 ﻿using Audiochan.Core.Common.Extensions;
+using Audiochan.Core.Common.Models;
 using Audiochan.Core.Features.Audios.Models;
 using FluentValidation;
+using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Audios.Validators
 {
     public class UploadAudioRequestValidator : AbstractValidator<UploadAudioRequest>
     {
-        private readonly string[] _validContentTypes =
-        {
-            "audio/mpeg",
-            "audio/x-mpeg",
-            "audio/mp3",
-            "audio/x-mp3",
-            "audio/mpeg3",
-            "audio/x-mpeg3",
-            "audio/mpg",
-            "audio/x-mpg",
-            "audio/x-mpegaudio"
-        };
-        
-        public UploadAudioRequestValidator()
+        public UploadAudioRequestValidator(IOptions<UploadSetting> uploadSetting)
         {
             RuleFor(req => req.File)
                 .Cascade(CascadeMode.Stop)
                 .NotEmpty().WithMessage("File is required.")
-                .FileValidation(_validContentTypes, 2000000 * 1000);
+                .FileValidation(uploadSetting.Value.ContentTypes, uploadSetting.Value.FileSize);
             
             Include(new UpdateAudioRequestValidator());
         }
