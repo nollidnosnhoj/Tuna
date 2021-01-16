@@ -7,21 +7,26 @@ namespace Audiochan.Core.Common.Extensions
 {
     public static class StringExtensions
     {
-        public static bool ValidSlug(this string phrase)
+        public static bool ValidSlug(this string? phrase)
         {
-            return Regex.IsMatch(phrase.ToLower(), @"/^[a-z0-9]+(?:-[a-z0-9]+)*$/");
+            return phrase != null 
+                   && Regex.IsMatch(phrase.ToLower(), @"/^[a-z0-9]+(?:-[a-z0-9]+)*$/");
         }
         
-        public static string GenerateSlug(this string phrase)
+        public static string GenerateSlug(this string? phrase)
         {
+            if (string.IsNullOrWhiteSpace(phrase)) return string.Empty;
+            
             // Convert foreign characters into ASCII
             var text = new IdnMapping().GetAscii(phrase);
 
             return text.GenerateTag();
         }
         
-        public static string GenerateTag(this string name)
+        public static string GenerateTag(this string? name)
         {
+            if (string.IsNullOrWhiteSpace(name)) return string.Empty;
+            
             var text = name.ToLower();
 
             //  Remove all invalid characters.  
@@ -44,10 +49,13 @@ namespace Audiochan.Core.Common.Extensions
 
         public static List<string> FormatTags(this IEnumerable<string?> tags)
         {
+            // If a tag is null, return an empty string
+            // If the tag is valid, do not tagify it
+            // Remove any entries that are empty.
             List<string> formattedTags = tags
-                .Where(t => t != null)
-                .Select(t => t!)
+                .Select(t => t ?? string.Empty)
                 .Select(t => t.ValidSlug() ? t : t.GenerateTag())
+                .Where(t => !string.IsNullOrWhiteSpace(t))
                 .ToList();
 
             return formattedTags;

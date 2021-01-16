@@ -91,5 +91,15 @@ namespace Audiochan.Core.Common.Mappings
                 IsFollowing = user.Followers.Any(f => f.ObserverId == currentUserId)
             };
         }
+
+        public static Expression<Func<Genre, GenreDto>> Genre()
+        {
+            return genre => new GenreDto
+            {
+                Id = genre.Id,
+                Name = genre.Name,
+                Slug = genre.Slug
+            };
+        }
     }
 }
