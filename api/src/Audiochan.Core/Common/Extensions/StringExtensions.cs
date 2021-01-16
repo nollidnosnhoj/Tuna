@@ -44,10 +44,13 @@ namespace Audiochan.Core.Common.Extensions
 
         public static List<string> FormatTags(this IEnumerable<string?> tags)
         {
-            return tags
+            List<string> formattedTags = tags
                 .Where(t => t != null)
-                .Select(t => t!.ValidSlug() ? t : t.GenerateTag())
+                .Select(t => t!)
+                .Select(t => t.ValidSlug() ? t : t.GenerateTag())
                 .ToList();
+
+            return formattedTags;
         }
         
         public static string ToSnakeCase(this string input)
