@@ -1,51 +1,25 @@
-import { useState, useEffect } from 'react';
-import useSWR, { mutate } from 'swr'
-import useInfiniteQuery, { PaginatedOptions } from '../hooks/useInfiniteQuery'
-import { ErrorResponse } from '~/lib/types'
-import { AudioDetail, AudioListItem, EditAudioRequest, AudioSearchType } from '../types/audio';
-import request from '../request';
+import { useEffect, useState } from 'react';
+import { useQuery, useInfiniteQuery, useMutation, QueryClient, UseQueryOptions, useQueryClient } from 'react-query'
+import queryString from 'query-string'
 import { apiErrorToast } from '~/utils/toast';
+import request from '../request'
+import { ErrorResponse, PaginatedOptions } from '../types';
+import { AudioDetail, AudioListItem, AudioSearchType } from '../types/audio'
 
-export const useFavorite = (audioId: string) => {
-  const [isFavorite, setIsFavorite] = useState<boolean | undefined>(undefined);
-
-  useEffect(() => {
-    const checkIsFollowing = async () => {
-      try {
-        await request(`me/audios/${audioId}/favorite`, { method: "head" });
-        setIsFavorite(true);
-      } catch (err) {
-        setIsFavorite(false);
-      }
-    };
-    checkIsFollowing();
-  }, []);
-
-  const favoriteHandler = async () => {
-    try {
-      await request(`me/audios/${audioId}/favorite`, {
-        method: isFavorite ? "delete" : "put",
-      });
-      setIsFavorite(!isFavorite);
-    } catch (err) {
-      apiErrorToast(err);
-    }
-  }
-
-  return { isFavorite, favorite: favoriteHandler };
+interface FetchAudioByIdOptions {
+  accessToken?: string;
 }
 
-export const useAudio = (id: string, initialData?: AudioDetail) => {
-  const { 
-    data,
-    isValidating: isLoading,
-    error,
-    mutate 
-  } = useSWR<AudioDetail, ErrorResponse>(`audios/${id}`, {
-    initialData 
+export const fetchAudioById = async (id: string, options: FetchAudioByIdOptions = {}) => {
+  const { data } = await request<AudioDetail>(`audios/${id}`, { 
+    method: 'get',
+    accessToken: options.accessToken
   });
+  return data;
+}
 
-  return { data, isLoading, error, mutate };
+export const useAudio = (id: string, options: UseQueryOptions<AudioDetail, ErrorResponse> = {}) => {
+  return useQuery<AudioDetail, ErrorResponse>(['audios', id], () => fetchAudioById(id), options);
 }
 
 interface useAudiosInfiniteOptions extends PaginatedOptions {
@@ -68,29 +42,94 @@ function generateUseAudiosKey(options: useAudiosInfiniteOptions) {
 }
 
 export const useAudiosInfiniteQuery = (options: useAudiosInfiniteOptions = { type: 'audios' }) => {
-  return useInfiniteQuery<AudioListItem, ErrorResponse>(generateUseAudiosKey(options), { 
-    size: options.size,
-    params: options.params
-  });
+  const key = generateUseAudiosKey(options);
+  const fetchAudios = async (params?: Record<string, any>, page: number = 1) => {
+    const qs = `?page=${page}&${queryString.stringify(params)}`
+    const { data } = await request<AudioListItem[]>(key + qs);
+    return data;
+  }
+  const params = {...options.params, size: options.size = 15 };
+  return useInfiniteQuery<AudioListItem[], ErrorResponse>([key, params], ({ pageParam = 1 }) => 
+    fetchAudios(params, pageParam), {
+      getNextPageParam: (lastPage, allPages) => {
+        return lastPage.length > 0 ? allPages.length + 1 : undefined
+      },
+    });
 }
 
-export const uploadAudio = async (formData: FormData) => {
-  const { data } = await request<AudioDetail>('audios', {
-    method: 'post',
-    body: formData
-  });
+export const useFavorite = (audioId: string, initialData?: boolean) => {
+  const [isFavorite, setIsFavorite] = useState<boolean | undefined>(initialData);
 
-  return data;
+  useEffect(() => {
+    if (isFavorite === undefined) {
+      (async () => {
+        try {
+          await request(`me/audios/${audioId}/favorite`, { method: "head" });
+          setIsFavorite(true);
+        } catch (err) {
+          setIsFavorite(false);
+        }
+      })();
+    }
+  }, []);
+
+  const favoriteHandler = async () => {
+    try {
+      await request(`me/audios/${audioId}/favorite`, {
+        method: isFavorite ? "delete" : "put",
+      });
+      setIsFavorite(!isFavorite);
+    } catch (err) {
+      apiErrorToast(err);
+    }
+  }
+
+  return { isFavorite, favorite: favoriteHandler };
 }
 
-export const deleteAudio = async (id: string | number) => {
-  await request(`audios/${id}`, { method: 'delete' });
+export const useCreateAudio = () => {
+  const queryClient = useQueryClient();
+  const uploadAudio = async (formData: FormData) => {
+    const { data } = await request<AudioDetail>('audios', {
+      method: 'post',
+      body: formData
+    });
+  
+    return data;
+  }
+
+  return useMutation(uploadAudio, {
+    onSuccess() {
+      queryClient.invalidateQueries(`audios`, { exact: true });
+    }
+  })
 }
 
-export const updateAudio = async (audio: AudioDetail, inputs: object) => {
-  const { data } = await request<AudioDetail>(`audios/${audio.id}`, {
-    method: 'patch',
-    body: inputs
-  });
-  mutate(`audios/${audio.id}`, data, false);
+export const useEditAudio = (id: string) => {
+  const queryClient = useQueryClient();
+  const updateAudio = async (input: object) => {
+    const { data } = await request<AudioDetail>(`audios/${id}`, { method: 'patch', body: input });
+    return data;
+  }
+
+  return useMutation(updateAudio, {
+    onSuccess: (data) => {
+      queryClient.setQueryData<AudioDetail>([`audios`, id], data);
+      queryClient.invalidateQueries(`audios`, { exact: true });
+    }
+  })
+}
+
+export const useRemoveAudio = (id: string) => {
+  const queryClient = useQueryClient();
+  const removeAudio = async () => {
+    return await request(`audios/${id}`, { method: 'delete' });
+  }
+
+  return useMutation(removeAudio, {
+    onSuccess() {
+      queryClient.invalidateQueries(`audios`);
+      queryClient.invalidateQueries([`audios`, id], { exact: true })
+    }
+  })
 }

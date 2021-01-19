@@ -19,9 +19,6 @@ import {
   PopoverHeader,
   PopoverTrigger,
   Spacer,
-  FormControl,
-  FormLabel,
-  Select,
 } from "@chakra-ui/react";
 import { DeleteIcon } from "@chakra-ui/icons";
 import React, { useEffect, useMemo, useState } from "react";
@@ -32,7 +29,7 @@ import InputCheckbox from "../Form/Checkbox";
 import TextInput from "../Form/TextInput";
 import TagInput from "../Form/TagInput";
 import { AudioDetail, EditAudioRequest } from "~/lib/types/audio";
-import { deleteAudio, updateAudio } from "~/lib/services/audio";
+import { useEditAudio, useRemoveAudio } from "~/lib/services/audio";
 import { editAudioSchema } from "~/lib/validationSchemas";
 import { apiErrorToast, successfulToast } from "~/utils/toast";
 import GenreSelect from "../Form/GenreSelect";
@@ -59,6 +56,8 @@ const AudioEditModal: React.FC<AudioEditProps> = ({
   onClose,
 }) => {
   const currentValues = useMemo(() => mapAudioToModifyInputs(model), [model]);
+  const { mutateAsync: updateAudio } = useEditAudio(model.id);
+  const { mutateAsync: deleteAudio } = useRemoveAudio(model.id);
   const [deleting, setDeleting] = useState(false);
 
   const methods = useForm<EditAudioRequest>({
@@ -81,7 +80,7 @@ const AudioEditModal: React.FC<AudioEditProps> = ({
   const onDeleteSubmit = async () => {
     setDeleting(true);
     try {
-      await deleteAudio(model.id);
+      await deleteAudio();
       Router.push("/");
       successfulToast({
         title: "Audio deleted!",
@@ -105,7 +104,7 @@ const AudioEditModal: React.FC<AudioEditProps> = ({
     }
 
     try {
-      await updateAudio(model, newRequest);
+      await updateAudio(newRequest);
       successfulToast({ title: "Audio updated" });
       onClose();
     } catch (err) {

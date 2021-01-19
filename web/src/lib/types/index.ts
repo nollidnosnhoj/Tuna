@@ -13,3 +13,8 @@ export type ErrorResponse = {
   message: string;
   errors?: { [key: string]: string[] }
 }
+
+export interface PaginatedOptions {
+  size?: number;
+  params?: Record<string, any>
+}

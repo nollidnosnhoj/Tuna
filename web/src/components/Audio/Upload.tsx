@@ -9,12 +9,13 @@ import InputCheckbox from "../Form/Checkbox";
 import GenreSelect from "../Form/GenreSelect";
 import TextInput from "../Form/TextInput";
 import TagInput from "../Form/TagInput";
-import { uploadAudio } from "~/lib/services/audio";
+import { useCreateAudio } from "~/lib/services/audio";
 import { UploadAudioRequest } from "~/lib/types/audio";
 import { uploadAudioSchema } from "~/lib/validationSchemas";
 import { apiErrorToast, successfulToast } from "~/utils/toast";
 
 const AudioUpload = () => {
+  const { mutateAsync: uploadAudio } = useCreateAudio();
   const onSubmit = async (values: UploadAudioRequest) => {
     var formData = new FormData();
 

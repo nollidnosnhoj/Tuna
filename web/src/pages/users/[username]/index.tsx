@@ -11,34 +11,28 @@ import {
   Text,
 } from "@chakra-ui/react";
 import React from "react";
-import { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
-import useSWR from "swr";
 import Page from "~/components/Shared/Page";
 import AudioList from "~/components/Audio/List";
-import request from "~/lib/request";
-import { ErrorResponse } from "~/lib/types";
 import { Profile } from "~/lib/types/user";
-import { useFollow } from "~/lib/services/users";
+
+import { fetchUserProfile, useFollow, useProfile } from "~/lib/services/users";
 import { getAccessToken } from "~/utils/cookies";
+import { QueryClient, useQuery } from "react-query";
+import { dehydrate } from "react-query/hydration";
 
-interface PageProps {
-  initialData?: Profile;
-}
-
-export const getServerSideProps: GetServerSideProps<PageProps> = async (
-  context
-) => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const queryClient = new QueryClient();
   const username = context.params?.username as string;
   const accessToken = getAccessToken(context);
-
   try {
-    const { data: initialData } = await request<Profile>(`/users/${username}`, {
-      accessToken: accessToken,
-    });
+    await queryClient.fetchQuery(["users", username], () =>
+      fetchUserProfile(username, { accessToken })
+    );
     return {
       props: {
-        initialData,
+        dehydratedState: dehydrate(queryClient),
       },
     };
   } catch (err) {
@@ -48,17 +42,10 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
   }
 };
 
-export default function ProfilePage(
-  props: InferGetServerSidePropsType<typeof getServerSideProps>
-) {
+export default function ProfilePage() {
   const { query } = useRouter();
   const username = query.username as string;
-  const { data: profile } = useSWR<Profile, ErrorResponse>(
-    `users/${username}`,
-    {
-      initialData: props.initialData,
-    }
-  );
+  const { data: profile } = useProfile(username, { staleTime: 1000 });
   const { isFollowing, follow } = useFollow(username);
 
   return (

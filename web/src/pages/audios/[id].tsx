@@ -3,14 +3,14 @@ import { Box, Flex, useDisclosure, Button, Text } from "@chakra-ui/react";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
+import { QueryClient } from "react-query";
+import { dehydrate } from "react-query/hydration";
 import AudioDetails from "~/components/Audio/Details";
 import Container from "~/components/Shared/Container";
 import Page from "~/components/Shared/Page";
 import AudioEdit from "~/components/Audio/Edit";
 import useUser from "~/lib/contexts/user_context";
-import { AudioDetail } from "~/lib/types/audio";
-import request from "~/lib/request";
-import { useAudio, useFavorite } from "~/lib/services/audio";
+import { fetchAudioById, useAudio } from "~/lib/services/audio";
 import { getAccessToken } from "~/utils/cookies";
 
 const DynamicAudioPlayer = dynamic(() => import("~/components/Audio/Player"), {
@@ -18,7 +18,6 @@ const DynamicAudioPlayer = dynamic(() => import("~/components/Audio/Player"), {
 });
 
 interface PageProps {
-  initialData: AudioDetail;
   isDevelopment: boolean;
 }
 
@@ -26,26 +25,23 @@ interface PageProps {
 export const getServerSideProps: GetServerSideProps<PageProps> = async (
   context
 ) => {
+  const queryClient = new QueryClient();
   const id = context.params.id as string;
   const accessToken = getAccessToken(context);
 
   try {
-    const response = await request<AudioDetail>(`audios/${id}`, {
-      accessToken: accessToken,
-    });
-
+    await queryClient.fetchQuery(["audios", id], () =>
+      fetchAudioById(id, { accessToken })
+    );
     return {
       props: {
-        initialData: response.data,
+        dehydratedState: dehydrate(queryClient),
         isDevelopment: process.env.NODE_ENV === "development",
       },
     };
   } catch (err) {
     return {
-      props: {
-        initialData: null,
-        isDevelopment: process.env.NODE_ENV === "development",
-      },
+      notFound: true,
     };
   }
 };
@@ -63,7 +59,9 @@ export default function AudioDetailsPage(
     onClose: onEditClose,
   } = useDisclosure();
 
-  const { data: audio } = useAudio(id, props.initialData);
+  const { data: audio } = useAudio(id, {
+    staleTime: 1000,
+  });
 
   if (!audio) {
     return (
@@ -72,8 +70,6 @@ export default function AudioDetailsPage(
       </Page>
     );
   }
-
-  const { isFavorite, favorite } = useFavorite(id);
 
   return (
     <Page
