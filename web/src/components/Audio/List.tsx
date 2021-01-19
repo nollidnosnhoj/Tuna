@@ -30,15 +30,15 @@ const AudioList: React.FC<AudioListProps> = ({
 }) => {
   const {
     data,
-    page,
-    setPage,
-    isLoadingMore,
-    isEmpty,
-    isReachingEnd,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetching,
+    isFetchingNextPage,
   } = useAudiosInfiniteQuery({ type, size, params, username });
 
   const audios = useMemo<AudioDetail[]>(() => {
-    return data ? [].concat(...data) : [];
+    return data ? [].concat(...data.pages) : [];
   }, [data]);
 
   return (
@@ -49,7 +49,7 @@ const AudioList: React.FC<AudioListProps> = ({
           <Divider marginY={4} />
         </>
       )}
-      {isEmpty && <p>No audio found.</p>}
+      {audios.length === 0 && <p>No audio found.</p>}
       {audios.map((audio) => (
         <Flex direction="row" marginY="3" key={audio.id}>
           <Box width="100%">
@@ -62,14 +62,14 @@ const AudioList: React.FC<AudioListProps> = ({
           </Box>
         </Flex>
       ))}
-      {!isReachingEnd && (
+      {hasNextPage && (
         <Button
           width="100%"
           variant="outline"
-          disabled={isLoadingMore}
-          onClick={() => setPage(page + 1)}
+          disabled={isFetchingNextPage}
+          onClick={() => fetchNextPage()}
         >
-          {isLoadingMore ? "Loading..." : "Load more"}
+          {isFetchingNextPage ? "Loading..." : "Load more"}
         </Button>
       )}
     </React.Fragment>
