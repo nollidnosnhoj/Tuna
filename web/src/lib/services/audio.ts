@@ -1,12 +1,10 @@
 import { useEffect, useState } from 'react';
-import { useQuery, useInfiniteQuery, useMutation, QueryClient } from 'react-query'
+import { useQuery, useInfiniteQuery, useMutation, QueryClient, UseQueryOptions, useQueryClient } from 'react-query'
 import queryString from 'query-string'
 import { apiErrorToast } from '~/utils/toast';
 import request from '../request'
 import { ErrorResponse, PaginatedOptions } from '../types';
 import { AudioDetail, AudioListItem, AudioSearchType } from '../types/audio'
-
-const queryClient = new QueryClient();
 
 interface FetchAudioByIdOptions {
   accessToken?: string;
@@ -20,10 +18,8 @@ export const fetchAudioById = async (id: string, options: FetchAudioByIdOptions 
   return data;
 }
 
-export const useAudio = (id: string, initialData?: AudioDetail) => {
-  return useQuery<AudioDetail, ErrorResponse>(['audios', id], () => fetchAudioById(id), {
-    initialData: initialData
-  });
+export const useAudio = (id: string, options: UseQueryOptions<AudioDetail, ErrorResponse> = {}) => {
+  return useQuery<AudioDetail, ErrorResponse>(['audios', id], () => fetchAudioById(id), options);
 }
 
 interface useAudiosInfiniteOptions extends PaginatedOptions {
@@ -90,6 +86,7 @@ export const useFavorite = (audioId: string, initialData?: boolean) => {
 }
 
 export const useCreateAudio = () => {
+  const queryClient = useQueryClient();
   const uploadAudio = async (formData: FormData) => {
     const { data } = await request<AudioDetail>('audios', {
       method: 'post',
@@ -101,35 +98,36 @@ export const useCreateAudio = () => {
 
   return useMutation(uploadAudio, {
     onSuccess() {
-      queryClient.invalidateQueries(`audios`);
+      queryClient.invalidateQueries(`audios`, { exact: true });
     }
   })
 }
 
 export const useEditAudio = (id: string) => {
+  const queryClient = useQueryClient();
   const updateAudio = async (input: object) => {
     const { data } = await request<AudioDetail>(`audios/${id}`, { method: 'patch', body: input });
     return data;
   }
 
   return useMutation(updateAudio, {
-    onSuccess() {
-      queryClient.invalidateQueries(`audios/${id}`);
-      queryClient.invalidateQueries(`audios`);
-      queryClient.invalidateQueries(`me`);
+    onSuccess: (data) => {
+      queryClient.setQueryData<AudioDetail>([`audios`, id], data);
+      queryClient.invalidateQueries(`audios`, { exact: true });
     }
   })
 }
 
 export const useRemoveAudio = (id: string) => {
+  const queryClient = useQueryClient();
   const removeAudio = async () => {
     return await request(`audios/${id}`, { method: 'delete' });
   }
 
   return useMutation(removeAudio, {
     onSuccess() {
-      queryClient.invalidateQueries(`audios/${id}`);
       queryClient.invalidateQueries(`audios`);
+      queryClient.invalidateQueries([`audios`, id], { exact: true })
     }
   })
 }

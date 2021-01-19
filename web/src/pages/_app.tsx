@@ -2,6 +2,7 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { AppProps as NextAppProps } from "next/app";
 import { QueryClientProvider, QueryClient } from "react-query";
 import { Hydrate } from "react-query/hydration";
+import { ReactQueryDevtools } from "react-query/devtools";
 import PageLoader from "~/components/Shared/PageLoader";
 import { UserProvider } from "~/lib/contexts/user_context";
 import theme from "~/lib/theme";
@@ -32,6 +33,7 @@ function App({ Component, user, pageProps }: AppProps) {
             </AudioPlayerProvider>
           </UserProvider>
         </ChakraProvider>
+        <ReactQueryDevtools initialIsOpen={false} />
       </Hydrate>
     </QueryClientProvider>
   );

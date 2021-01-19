@@ -4,7 +4,7 @@ import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { QueryClient } from "react-query";
-import { dehydrate } from "react-query/types/hydration";
+import { dehydrate } from "react-query/hydration";
 import AudioDetails from "~/components/Audio/Details";
 import Container from "~/components/Shared/Container";
 import Page from "~/components/Shared/Page";
@@ -59,7 +59,9 @@ export default function AudioDetailsPage(
     onClose: onEditClose,
   } = useDisclosure();
 
-  const { data: audio } = useAudio(id);
+  const { data: audio } = useAudio(id, {
+    staleTime: 1000,
+  });
 
   if (!audio) {
     return (

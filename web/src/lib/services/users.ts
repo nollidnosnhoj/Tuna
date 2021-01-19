@@ -1,7 +1,9 @@
 
 import { useState, useEffect } from "react";
+import { useQuery, UseQueryOptions } from "react-query";
 import { apiErrorToast } from "~/utils/toast";
 import request from "../request";
+import { ErrorResponse } from "../types";
 import { Profile } from "../types/user";
 
 export const useFollow = (username: string) => {
@@ -44,4 +46,8 @@ export const fetchUserProfile = async (username: string, options: FetchUserProfi
   });
 
   return data;
+}
+
+export const useProfile = (username: string, options: UseQueryOptions<Profile, ErrorResponse> = {}) => {
+  return useQuery<Profile, ErrorResponse>(["users", username], () => fetchUserProfile(username), options);
 }

@@ -17,10 +17,10 @@ import Page from "~/components/Shared/Page";
 import AudioList from "~/components/Audio/List";
 import { Profile } from "~/lib/types/user";
 
-import { fetchUserProfile, useFollow } from "~/lib/services/users";
+import { fetchUserProfile, useFollow, useProfile } from "~/lib/services/users";
 import { getAccessToken } from "~/utils/cookies";
 import { QueryClient, useQuery } from "react-query";
-import { dehydrate } from "react-query/types/hydration";
+import { dehydrate } from "react-query/hydration";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const queryClient = new QueryClient();
@@ -45,9 +45,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 export default function ProfilePage() {
   const { query } = useRouter();
   const username = query.username as string;
-  const { data: profile } = useQuery<Profile>(["users", username], () =>
-    fetchUserProfile(username)
-  );
+  const { data: profile } = useProfile(username, { staleTime: 1000 });
   const { isFollowing, follow } = useFollow(username);
 
   return (
