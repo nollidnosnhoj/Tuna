@@ -44,6 +44,7 @@ function generateUseAudiosKey(options: useAudiosInfiniteOptions) {
 export const useAudiosInfiniteQuery = (options: useAudiosInfiniteOptions = { type: 'audios' }) => {
   const key = generateUseAudiosKey(options);
   const fetchAudios = async (params?: Record<string, any>, page: number = 1) => {
+    console.log(page)
     const qs = `?page=${page}&${queryString.stringify(params)}`
     const { data } = await request<AudioListItem[]>(key + qs);
     return data;
@@ -51,7 +52,9 @@ export const useAudiosInfiniteQuery = (options: useAudiosInfiniteOptions = { typ
   const params = {...options.params, size: options.size = 15 };
   return useInfiniteQuery<AudioListItem[], ErrorResponse>([key, params], ({ pageParam = 1 }) => 
     fetchAudios(params, pageParam), {
-      getNextPageParam: (lastPage) => lastPage.length > 0,
+      getNextPageParam: (lastPage, allPages) => {
+        return lastPage.length > 0 ? allPages.length + 1 : undefined
+      },
     });
 }
 
