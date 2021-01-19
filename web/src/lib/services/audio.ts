@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useQuery, useInfiniteQuery, useMutation, QueryClient, QueryFunctionContext } from 'react-query'
+import { useQuery, useInfiniteQuery, useMutation, QueryClient } from 'react-query'
 import queryString from 'query-string'
 import { apiErrorToast } from '~/utils/toast';
 import request from '../request'
@@ -8,8 +8,15 @@ import { AudioDetail, AudioListItem, AudioSearchType } from '../types/audio'
 
 const queryClient = new QueryClient();
 
-export const fetchAudioById = async (id: string) => {
-  const { data } = await request<AudioDetail>(`audios/${id}`, { method: 'get' });
+interface FetchAudioByIdOptions {
+  accessToken?: string;
+}
+
+export const fetchAudioById = async (id: string, options: FetchAudioByIdOptions = {}) => {
+  const { data } = await request<AudioDetail>(`audios/${id}`, { 
+    method: 'get',
+    accessToken: options.accessToken
+  });
   return data;
 }
 

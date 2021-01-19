@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { apiErrorToast } from "~/utils/toast";
 import request from "../request";
+import { Profile } from "../types/user";
 
 export const useFollow = (username: string) => {
   const [isFollowing, setIsFollowing] = useState<boolean | undefined>(undefined);
@@ -30,4 +31,17 @@ export const useFollow = (username: string) => {
   }
 
   return { isFollowing, follow: followHandler };
+}
+
+interface FetchUserProfileOptions {
+  accessToken?: string;
+}
+
+export const fetchUserProfile = async (username: string, options: FetchUserProfileOptions = {}) => {
+  const { data } = await request<Profile>(`users/${username}`, {
+    method: 'get',
+    accessToken: options.accessToken
+  });
+
+  return data;
 }
