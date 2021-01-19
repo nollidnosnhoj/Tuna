@@ -47,15 +47,14 @@ namespace Audiochan.Core.Features.Favorites
             CancellationToken cancellationToken = default)
         {
             if (!await _dbContext.Users.AsNoTracking().AnyAsync(u => u.Id == userId, cancellationToken))
-                return Result.Fail(ResultErrorCode.NotFound, "User was not found.");
+                return Result.NotFound("User was not found.");
 
             var audio = await _dbContext.Audios
                 .AsNoTracking()
                 .Select(a => new {a.Id, a.UserId})
                 .SingleOrDefaultAsync(a => a.Id == audioId, cancellationToken);
 
-            if (audio == null) 
-                return Result.Fail(ResultErrorCode.NotFound, "Audio was not found.");
+            if (audio == null) return Result.NotFound("Audio was not found.");
 
             // User cannot favorite their own audio
             if (audio.UserId == userId)
@@ -80,10 +79,10 @@ namespace Audiochan.Core.Features.Favorites
             CancellationToken cancellationToken = default)
         {
             if (!await _dbContext.Users.AsNoTracking().AnyAsync(u => u.Id == userId, cancellationToken))
-                return Result.Fail(ResultErrorCode.NotFound, "User was not found.");
+                return Result.NotFound("User was not found.");
 
             if (!await _dbContext.Audios.AsNoTracking().AnyAsync(a => a.Id == audioId, cancellationToken))
-                return Result.Fail(ResultErrorCode.NotFound, "Audio was not found.");
+                return Result.NotFound("Audio was not found.");
 
             var favorite =
                 await _dbContext.FavoriteAudios

@@ -32,8 +32,7 @@ namespace Audiochan.Core.Features.Users
                 .Where(u => u.Id == authUserId)
                 .SingleOrDefaultAsync(cancellationToken);
 
-            if (user == null)
-                return Result<CurrentUserViewModel>.Fail(ResultErrorCode.Unauthorized);
+            if (user == null) return Result<CurrentUserViewModel>.Unauthorized();
 
             var roles = await _userManager.GetRolesAsync(user);
 
@@ -46,7 +45,8 @@ namespace Audiochan.Core.Features.Users
             });
         }
 
-        public async Task<IResult<UserDetailsViewModel>> GetUserDetails(string username, CancellationToken cancellationToken = default)
+        public async Task<IResult<UserDetailsViewModel>> GetUserDetails(string username, 
+            CancellationToken cancellationToken = default)
         {
             var currentUserId = _currentUserService.GetUserId();
             
@@ -60,7 +60,7 @@ namespace Audiochan.Core.Features.Users
                 .SingleOrDefaultAsync(cancellationToken);
 
             return profile == null
-                ? Result<UserDetailsViewModel>.Fail(ResultErrorCode.NotFound)
+                ? Result<UserDetailsViewModel>.NotFound()
                 : Result<UserDetailsViewModel>.Success(profile);
         }
 
@@ -68,7 +68,7 @@ namespace Audiochan.Core.Features.Users
             CancellationToken cancellationToken = default)
         {
             var user = await _userManager.FindByIdAsync(userId + "");
-            if (user == null) return Result.Fail(ResultErrorCode.Unauthorized);
+            if (user == null) return Result.Unauthorized();
             var result = await _userManager.SetUserNameAsync(user, newUsername);
             if (!result.Succeeded) result.ToResult();
             await _userManager.UpdateNormalizedUserNameAsync(user);
@@ -79,7 +79,7 @@ namespace Audiochan.Core.Features.Users
             CancellationToken cancellationToken = default)
         {
             var user = await _userManager.FindByIdAsync(userId + "");
-            if (user == null) return Result.Fail(ResultErrorCode.Unauthorized);
+            if (user == null) return Result.Unauthorized();
             
             // TEMPORARY UNTIL EMAIL CONFIRMATION IS SETUP
             var result = await _userManager.SetEmailAsync(user, newEmail);
@@ -92,7 +92,7 @@ namespace Audiochan.Core.Features.Users
             CancellationToken cancellationToken = default)
         {
             var user = await _userManager.FindByIdAsync(userId + "");
-            if (user == null) return Result.Fail(ResultErrorCode.Unauthorized);
+            if (user == null) return Result.Unauthorized();
             // TEMPORARY UNTIL EMAIL CONFIRMATION IS SETUP
             var result = await _userManager.ChangePasswordAsync(user, request.CurrentPassword, request.NewPassword);
             return result.ToResult();
@@ -102,7 +102,7 @@ namespace Audiochan.Core.Features.Users
             CancellationToken cancellationToken = default)
         {
             var user = await _userManager.FindByIdAsync(userId + "");
-            if (user == null) return Result.Fail(ResultErrorCode.Unauthorized);
+            if (user == null) return Result.Unauthorized();
             user.About = request.About ?? user.About;
             user.Website = request.Website ?? user.Website;
             await _userManager.UpdateAsync(user);

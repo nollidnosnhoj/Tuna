@@ -19,7 +19,7 @@ namespace Audiochan.Core.Common.Models
         public bool IsSuccess { get; init; }
         public ResultErrorCode? ErrorCode { get; init; }
 
-        public static Result Fail(ResultErrorCode errorCode, string message = null!, 
+        public static Result Fail(ResultErrorCode errorCode, string? message = null, 
             Dictionary<string, string[]>? errors = null)
         {
             return new()
@@ -29,6 +29,26 @@ namespace Audiochan.Core.Common.Models
                 IsSuccess = false,
                 Errors = errors
             };
+        }
+
+        public static Result NotFound(string? message = null)
+        {
+            return Fail(ResultErrorCode.NotFound, message);
+        }
+
+        public static Result Unauthorized(string? message = null)
+        {
+            return Fail(ResultErrorCode.Unauthorized, message);
+        }
+
+        public static Result Forbidden(string? message = null)
+        {
+            return Fail(ResultErrorCode.Forbidden, message);
+        }
+
+        public static Result Invalid(string? message = null, Dictionary<string, string[]>? errors = null)
+        {
+            return Fail(ResultErrorCode.UnprocessedEntity, message, errors);
         }
 
         public static Result Success()

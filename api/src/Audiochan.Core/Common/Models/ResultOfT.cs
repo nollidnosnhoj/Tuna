@@ -25,6 +25,26 @@ namespace Audiochan.Core.Common.Models
                 Errors = errors
             };
         }
+        
+        public new static Result<T> NotFound(string? message = null)
+        {
+            return Fail(ResultErrorCode.NotFound, message);
+        }
+
+        public new static Result<T> Unauthorized(string? message = null)
+        {
+            return Fail(ResultErrorCode.Unauthorized, message);
+        }
+
+        public new static Result<T> Forbidden(string? message = null)
+        {
+            return Fail(ResultErrorCode.Forbidden, message);
+        }
+
+        public new static Result<T> Invalid(string? message = null, Dictionary<string, string[]>? errors = null)
+        {
+            return Fail(ResultErrorCode.UnprocessedEntity, message, errors);
+        }
 
         public static Result<T> Success(T data)
         {

@@ -2,6 +2,7 @@
 using Audiochan.Core.Common.Constants;
 using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Common.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Audiochan.Web.Extensions
@@ -10,33 +11,49 @@ namespace Audiochan.Web.Extensions
     {
         public static IActionResult ReturnErrorResponse(this IResult result)
         {
-            var response = new ErrorViewModel(result.ErrorCode.ToErrorTitleString(), result.GetErrorMessage(),
+            var response = new ErrorViewModel(
+                result.ToErrorTitle(),
+                result.ToErrorMessage(),
                 result.Errors);
 
             return result.ErrorCode switch
             {
                 ResultErrorCode.NotFound => new NotFoundObjectResult(response),
-                ResultErrorCode.Unauthorized => new UnauthorizedResult(),
-                ResultErrorCode.Forbidden => new ForbidResult(),
+                ResultErrorCode.Unauthorized => new UnauthorizedObjectResult(response),
+                ResultErrorCode.Forbidden => new ObjectResult(response) { StatusCode = StatusCodes.Status403Forbidden },
                 ResultErrorCode.UnprocessedEntity => new UnprocessableEntityObjectResult(response),
-                ResultErrorCode.BadRequest => new BadRequestObjectResult(response),
-                _ => throw new ArgumentOutOfRangeException()
+                _ => new BadRequestObjectResult(response)
             };
         }
 
-        private static string GetErrorMessage(this IResult result)
+        private static string ToErrorMessage(this IResult result)
         {
-            return !string.IsNullOrWhiteSpace(result.Message) 
-                ? result.Message 
-                : ErrorConstants.Messages[result.ErrorCode ?? ResultErrorCode.BadRequest];
+            if (!string.IsNullOrWhiteSpace(result.Message)) return result.Message;
+
+            return result.ErrorCode switch
+            {
+                ResultErrorCode.Unauthorized => "You are not authorized to use this endpoint.",
+                ResultErrorCode.Forbidden => "You are forbidden to use this endpoint.",
+                ResultErrorCode.NotFound => "The requested resource was not found.",
+                ResultErrorCode.UnprocessedEntity =>
+                    "The request payload is invalid. Please check errors for more information.",
+                _ => "The request is invalid."
+            };
         }
         
-        private static string ToErrorTitleString(this ResultErrorCode? status)
+        private static string ToErrorTitle(this IResult result)
         {
-            if (status == null)
-                throw new ArgumentNullException(nameof(status));
-            
-            return ErrorConstants.Titles[(ResultErrorCode) status];
+            if (result == null)
+                throw new ArgumentNullException(nameof(result));
+
+            return result.ErrorCode switch
+            {
+                ResultErrorCode.Unauthorized => "Unauthorized",
+                ResultErrorCode.Forbidden => "Forbidden",
+                ResultErrorCode.NotFound => "Not Found",
+                ResultErrorCode.UnprocessedEntity => "Invalid Payload",
+                _ => "Invalid Request"
+            };
         }
     }
 }

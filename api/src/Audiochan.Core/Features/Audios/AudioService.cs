@@ -114,7 +114,7 @@ namespace Audiochan.Core.Features.Audios
                 .SingleOrDefaultAsync(cancellationToken);
 
             return audio == null 
-                ? Result<AudioDetailViewModel>.Fail(ResultErrorCode.NotFound) 
+                ? Result<AudioDetailViewModel>.NotFound() 
                 : Result<AudioDetailViewModel>.Success(audio);
         }
 
@@ -125,8 +125,7 @@ namespace Audiochan.Core.Features.Audios
                 .Include(a => a.Views)
                 .SingleOrDefaultAsync(a => a.Id == audioId, cancellationToken);
 
-            if (audio == null)
-                return Result<bool>.Fail(ResultErrorCode.NotFound, "Audio was not found.");
+            if (audio == null) return Result<bool>.NotFound();
             
             // If the user already viewed the audio within now and the start of the audio duration,
             // do not add another view.
@@ -135,8 +134,7 @@ namespace Audiochan.Core.Features.Audios
             var view = audio.Views
                 .SingleOrDefault(v => v.Created >= backDate && v.IpAddress == ipAddress);
 
-            if (view != null)
-                return Result<bool>.Success(false);
+            if (view != null) return Result<bool>.Success(false);
 
             view = new View {AudioId = audioId, IpAddress = ipAddress};
 
@@ -247,9 +245,9 @@ namespace Audiochan.Core.Features.Audios
                 .Include(a => a.Genre)
                 .SingleOrDefaultAsync(a => a.Id == audioId, cancellationToken);
 
-            if (audio == null) return Result<AudioDetailViewModel>.Fail(ResultErrorCode.NotFound);
+            if (audio == null) return Result<AudioDetailViewModel>.NotFound();
 
-            if (audio.UserId != currentUserId) return Result<AudioDetailViewModel>.Fail(ResultErrorCode.Forbidden);
+            if (audio.UserId != currentUserId) return Result<AudioDetailViewModel>.Forbidden();
 
             // If values are null, do not change property
             
@@ -317,10 +315,10 @@ namespace Audiochan.Core.Features.Audios
                 .SingleOrDefaultAsync(a => a.Id == id, cancellationToken);
 
             if (audio == null)
-                return Result.Fail(ResultErrorCode.NotFound);
+                return Result.NotFound();
 
             if (audio.UserId != currentUserId)
-                return Result.Fail(ResultErrorCode.Forbidden);
+                return Result.Forbidden();
 
             var blobName = audio.Id + audio.FileExt;
             

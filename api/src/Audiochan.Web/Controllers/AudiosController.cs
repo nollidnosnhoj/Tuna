@@ -1,10 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Constants;
-using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Common.Models;
-using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Audios.Models;
 using Audiochan.Core.Interfaces;
 using Audiochan.Web.Extensions;
@@ -19,17 +16,11 @@ namespace Audiochan.Web.Controllers
     public class AudiosController : ControllerBase
     {
         private readonly IAudioService _audioService;
-        private readonly IFavoriteService _favoriteService;
-        private readonly ICurrentUserService _currentUserService;
-        private readonly IGenreService _genreService;
 
-        public AudiosController(IAudioService audioService, IFavoriteService favoriteService, 
-            ICurrentUserService currentUserService, IGenreService genreService)
+        public AudiosController(IAudioService audioService)
         {
             _audioService = audioService;
-            _favoriteService = favoriteService;
-            _currentUserService = currentUserService;
-            _genreService = genreService;
+
         }
 
         [HttpGet(Name="GetAudios")]

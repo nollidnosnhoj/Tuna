@@ -35,7 +35,7 @@ namespace Audiochan.Core.Features.Auth
                                            || u.Email == login, cancellationToken);
 
             if (user == null || !await _userManager.CheckPasswordAsync(user, password))
-                return Result<AuthResultDto>.Fail(ResultErrorCode.UnprocessedEntity, "Invalid login credentials.");
+                return Result<AuthResultDto>.Invalid("Invalid login credentials.");
 
             var token = await _tokenService.GenerateAccessToken(user);
 
@@ -77,7 +77,7 @@ namespace Audiochan.Core.Features.Auth
             // Fail when refresh token is not defined
             if (string.IsNullOrEmpty(refreshToken))
             {
-                return Result<AuthResultDto>.Fail(ResultErrorCode.BadRequest, "Refresh token was not defined.");
+                return Result<AuthResultDto>.Invalid("Refresh token was not defined.");
             }
             
             // get the user and his/her refresh tokens based on the defined refresh token
@@ -130,7 +130,7 @@ namespace Audiochan.Core.Features.Auth
             // Fail when refresh token is not defined
             if (string.IsNullOrEmpty(refreshToken))
             {
-                return Result.Fail(ResultErrorCode.BadRequest, "Refresh token was not defined.");
+                return Result.Invalid("Refresh token was not defined.");
             }
             
             var user = await _userManager.Users
