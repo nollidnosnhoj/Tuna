@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Constants;
+using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Audios.Models;
@@ -47,6 +49,26 @@ namespace Audiochan.Web.Controllers
         {
             var result = await _audioService.Get(audioId, cancellationToken);
             return result.IsSuccess ? Ok(result.Data) : result.ReturnErrorResponse();
+        }
+
+        [HttpPost("{audioId}/views", Name = "AddView")]
+        [AllowAnonymous]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status304NotModified)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> AddView(string audioId, CancellationToken cancellationToken)
+        {
+            var ip = HttpContext.Connection.RemoteIpAddress?.MapToIPv4().ToString();
+            if (string.IsNullOrEmpty(ip)) return BadRequest();
+            var result = await _audioService.AddView(audioId, ip, cancellationToken);
+
+            if (result.IsSuccess)
+                return result.Data 
+                    ? Ok() 
+                    : StatusCode(StatusCodes.Status304NotModified);
+
+            return result.ReturnErrorResponse();
         }
 
         [HttpGet("random-id")]

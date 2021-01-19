@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Audiochan.Core.Entities.Base;
 
 namespace Audiochan.Core.Entities
@@ -10,6 +9,7 @@ namespace Audiochan.Core.Entities
         {
             Tags = new HashSet<AudioTag>();
             Favorited = new HashSet<FavoriteAudio>();
+            Views = new HashSet<View>();
         }
 
         public string Id { get; set; } = null!;
@@ -27,5 +27,6 @@ namespace Audiochan.Core.Entities
         public Genre Genre { get; set; } = null!;
         public ICollection<AudioTag> Tags { get; set; }
         public ICollection<FavoriteAudio> Favorited { get; }
+        public ICollection<View> Views { get; }
     }
 }

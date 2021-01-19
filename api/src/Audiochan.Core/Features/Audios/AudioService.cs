@@ -26,12 +26,15 @@ namespace Audiochan.Core.Features.Audios
         private readonly ITagService _tagService;
         private readonly ICurrentUserService _currentUserService;
         private readonly IGenreService _genreService;
+        private readonly IDateTimeService _dateTimeService;
 
         public AudioService(IAudiochanContext dbContext, 
             ICurrentUserService currentUserService, 
             IAudioMetadataService audioMetadataService, 
-            IStorageService storageService, ITagService tagService, 
-            IGenreService genreService)
+            IStorageService storageService, 
+            ITagService tagService, 
+            IGenreService genreService, 
+            IDateTimeService dateTimeService)
         {
             _dbContext = dbContext;
             _currentUserService = currentUserService;
@@ -39,6 +42,7 @@ namespace Audiochan.Core.Features.Audios
             _storageService = storageService;
             _tagService = tagService;
             _genreService = genreService;
+            _dateTimeService = dateTimeService;
         }
 
         public async Task<List<AudioListViewModel>> GetFeed(long userId, PaginationQuery query,
@@ -112,6 +116,34 @@ namespace Audiochan.Core.Features.Audios
             return audio == null 
                 ? Result<AudioDetailViewModel>.Fail(ResultErrorCode.NotFound) 
                 : Result<AudioDetailViewModel>.Success(audio);
+        }
+
+        public async Task<IResult<bool>> AddView(string audioId, string ipAddress, 
+            CancellationToken cancellationToken = default)
+        {
+            var audio = await _dbContext.Audios
+                .Include(a => a.Views)
+                .SingleOrDefaultAsync(a => a.Id == audioId, cancellationToken);
+
+            if (audio == null)
+                return Result<bool>.Fail(ResultErrorCode.NotFound, "Audio was not found.");
+            
+            // If the user already viewed the audio within now and the start of the audio duration,
+            // do not add another view.
+            var backDate = _dateTimeService.Now.Subtract(TimeSpan.FromSeconds(audio.Duration));
+
+            var view = audio.Views
+                .SingleOrDefault(v => v.Created >= backDate && v.IpAddress == ipAddress);
+
+            if (view != null)
+                return Result<bool>.Success(false);
+
+            view = new View {AudioId = audioId, IpAddress = ipAddress};
+
+            audio.Views.Add(view);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+
+            return Result<bool>.Success(true);
         }
 
         public async Task<string?> GetRandomAudioId(CancellationToken cancellationToken = default)
