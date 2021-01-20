@@ -2,15 +2,16 @@
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Features.Auth.Models;
 using Audiochan.Core.Features.Auth.Validators;
+using FluentValidation;
 using FluentValidation.TestHelper;
 using Microsoft.Extensions.Options;
 using Xunit;
 
-namespace Audiochan.ValidationTests
+namespace Audiochan.UnitTests.Validations
 {
     public class CreateUserValidationTests
     {
-        private readonly CreateUserRequestValidator _validator;
+        private readonly IValidator<CreateUserRequest> _validator;
 
         public CreateUserValidationTests()
         {

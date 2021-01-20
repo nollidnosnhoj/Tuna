@@ -1,14 +1,15 @@
 ﻿using System.Collections.Generic;
 using Audiochan.Core.Features.Audios.Models;
 using Audiochan.Core.Features.Audios.Validators;
+using FluentValidation;
 using FluentValidation.TestHelper;
 using Xunit;
 
-namespace Audiochan.ValidationTests
+namespace Audiochan.UnitTests.Validations
 {
     public class UpdateAudioValidationTests
     {
-        private readonly UpdateAudioRequestValidator _validator;
+        private readonly IValidator<UpdateAudioRequest> _validator;
 
         public UpdateAudioValidationTests()
         {

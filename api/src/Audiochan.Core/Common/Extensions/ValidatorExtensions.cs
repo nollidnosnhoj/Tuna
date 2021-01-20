@@ -60,12 +60,15 @@ namespace Audiochan.Core.Common.Extensions
             const string allowedCharacters = "abcdefghijklmnopqrstuvwxyz-_";
 
             return ruleBuilder
-                .NotEmpty().WithMessage("Username is required.")
-                .MinimumLength(3).WithMessage("Username must be at least 3 characters long.")
-                .MaximumLength(20).WithMessage("Username must be at most 20 characters long.")
+                .NotEmpty()
+                    .WithMessage("Username is required.")
+                .MinimumLength(3)
+                    .WithMessage("Username must be at least 3 characters long.")
+                .MaximumLength(20)
+                    .WithMessage("Username must be at most 20 characters long.")
                 .Must(username => username.All(x => allowedCharacters.Contains(x)))
-                .WithErrorCode(ValidationErrorCodes.RequireCharacters)
-                .WithMessage("Username is invalid.");
+                    .WithErrorCode(ValidationErrorCodes.RequireCharacters)
+                    .WithMessage("Username is invalid.");
         }
     }
 }

@@ -2,17 +2,18 @@
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Features.Audios.Models;
 using Audiochan.Core.Features.Audios.Validators;
+using FluentValidation;
 using FluentValidation.TestHelper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
 
-namespace Audiochan.ValidationTests
+namespace Audiochan.UnitTests.Validations
 {
     public class UploadAudioValidationTests
     {
-        private readonly UploadAudioRequestValidator _validator;
+        private readonly IValidator<UploadAudioRequest> _validator;
         private readonly Mock<IFormFile> _fileMock;
 
         public UploadAudioValidationTests()
