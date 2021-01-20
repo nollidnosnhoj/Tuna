@@ -1,4 +1,4 @@
-﻿namespace Audiochan.Core.Features.Tags.Models
+﻿namespace Audiochan.Core.Features.Audios.Models
 {
     /// <summary>
     /// Used to return data about a tag

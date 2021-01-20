@@ -15,10 +15,10 @@ namespace Audiochan.Core.Features.Favorites
 {
     public class FavoriteService : IFavoriteService
     {
-        private readonly IAudiochanContext _dbContext;
+        private readonly IDbContext _dbContext;
         private readonly ICurrentUserService _currentUserService;
 
-        public FavoriteService(IAudiochanContext dbContext, ICurrentUserService currentUserService)
+        public FavoriteService(IDbContext dbContext, ICurrentUserService currentUserService)
         {
             _dbContext = dbContext;
             _currentUserService = currentUserService;

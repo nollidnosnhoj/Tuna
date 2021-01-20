@@ -24,7 +24,7 @@ namespace Audiochan.Core.Common.Mappings
                 FileSize = audio.FileSize,
                 FileExt = audio.FileExt,
                 Url = audio.Url,
-                Tags = audio.Tags.Select(tag => tag.TagId).ToArray(),
+                Tags = audio.Tags.Select(tag => tag.Id).ToArray(),
                 FavoriteCount = audio.Favorited.Count,
                 IsFavorited = currentUserId > 0
                               && audio.Favorited.Any(f => f.UserId == currentUserId),

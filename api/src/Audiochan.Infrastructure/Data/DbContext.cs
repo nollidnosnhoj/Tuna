@@ -12,19 +12,18 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Audiochan.Infrastructure.Data
 {
-    public class AudiochanContext : IdentityDbContext<User, Role, long>, IAudiochanContext
+    public class DbContext : IdentityDbContext<User, Role, long>, IDbContext
     {
         private readonly IDateTimeService _dateTimeService;
         
-        public AudiochanContext(DbContextOptions<AudiochanContext> options, 
+        public DbContext(DbContextOptions options, 
             IDateTimeService dateTimeService) : base(options)
         {
             _dateTimeService = dateTimeService;
         }
 
-        
         public DbSet<Audio> Audios { get; set; } = null!;
-        public DbSet<AudioTag> AudioTags { get; set; } = null!;
+        // public DbSet<AudioTag> AudioTags { get; set; } = null!;
         public DbSet<FavoriteAudio> FavoriteAudios { get; set; } = null!;
         public DbSet<FollowedUser> FollowedUsers { get; set; } = null!;
         public DbSet<Genre> Genres { get; set; } = null!;

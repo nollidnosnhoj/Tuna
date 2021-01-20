@@ -120,7 +120,7 @@ namespace Audiochan.Web.Controllers
             return result.IsSuccess ? NoContent() : result.ReturnErrorResponse();
         }
 
-        [HttpPatch("change-username")]
+        [HttpPatch("username")]
         public async Task<IActionResult> ChangeUsername([FromBody] UpdateUsernameRequest request,
             CancellationToken cancellationToken)
         {
@@ -128,7 +128,7 @@ namespace Audiochan.Web.Controllers
             return result.IsSuccess ? NoContent() : result.ReturnErrorResponse();
         }
 
-        [HttpPatch("change-email")]
+        [HttpPatch("email")]
         public async Task<IActionResult> ChangeEmail([FromBody] UpdateEmailRequest request,
             CancellationToken cancellationToken)
         {
@@ -136,7 +136,7 @@ namespace Audiochan.Web.Controllers
             return result.IsSuccess ? NoContent() : result.ReturnErrorResponse();
         }
 
-        [HttpPatch("change-password")]
+        [HttpPatch("password")]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request,
             CancellationToken cancellationToken)
         {

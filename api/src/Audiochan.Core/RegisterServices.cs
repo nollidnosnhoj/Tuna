@@ -4,7 +4,6 @@ using Audiochan.Core.Features.Audios;
 using Audiochan.Core.Features.Auth;
 using Audiochan.Core.Features.Followers;
 using Audiochan.Core.Features.Genres;
-using Audiochan.Core.Features.Tags;
 using Audiochan.Core.Features.Users;
 using Audiochan.Core.Interfaces;
 using FluentValidation;
@@ -22,7 +21,6 @@ namespace Audiochan.Core
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IFollowerService, FollowerService>();
             services.AddScoped<IGenreService, GenreService>();
-            services.AddScoped<ITagService, TagService>();
             services.AddScoped<IUserService, UserService>();
 
             return services;
