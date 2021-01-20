@@ -6,10 +6,10 @@ namespace Audiochan.Core.Entities
     {
         public Tag()
         {
-            Audios = new HashSet<AudioTag>();
+            Audios = new HashSet<Audio>();
         }
 
         public string Id { get; set; } = null!;
-        public ICollection<AudioTag> Audios { get; set; }
+        public ICollection<Audio> Audios { get; set; }
     }
 }

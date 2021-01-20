@@ -17,6 +17,10 @@ namespace Audiochan.Infrastructure.Data.Configurations
             builder.Property(x => x.FileExt)
                 .HasMaxLength(10);
 
+            builder.HasMany(a => a.Tags)
+                .WithMany(t => t.Audios)
+                .UsingEntity(j => j.ToTable("audio_tags"));
+
             builder.HasOne(x => x.User)
                 .WithMany(x => x.Audios)
                 .HasForeignKey(x => x.UserId)

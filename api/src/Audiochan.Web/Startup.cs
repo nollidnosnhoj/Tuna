@@ -35,7 +35,7 @@ namespace Audiochan.Web
             services.Configure<UploadSetting>(Configuration.GetSection(nameof(UploadSetting)));
 
             services
-                .ConfigureDatabase(Configuration)
+                .ConfigureDatabase(Configuration, Environment)
                 .AddCoreServices()
                 .AddInfraServices()
                 .ConfigureStorage(Environment)

@@ -6,10 +6,10 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace Audiochan.Core.Interfaces
 {
-    public interface IAudiochanContext
+    public interface IDbContext
     {
         DbSet<Audio> Audios { get; }
-        DbSet<AudioTag> AudioTags { get; }
+        // DbSet<AudioTag> AudioTags { get; }
         DbSet<FavoriteAudio> FavoriteAudios { get; }
         DbSet<FollowedUser> FollowedUsers { get; }
         DbSet<Genre> Genres { get; }

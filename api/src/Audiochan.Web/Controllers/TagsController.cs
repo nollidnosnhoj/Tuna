@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Models;
-using Audiochan.Core.Features.Tags.Models;
+using Audiochan.Core.Features.Audios.Models;
 using Audiochan.Core.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -12,11 +12,11 @@ namespace Audiochan.Web.Controllers
     [Route("[controller]")]
     public class TagsController : ControllerBase
     {
-        private readonly ITagService _tagService;
+        private readonly IAudioService _audioService;
 
-        public TagsController(ITagService tagService)
+        public TagsController(IAudioService audioService)
         {
-            _tagService = tagService;
+            _audioService = audioService;
         }
 
         [HttpGet(Name="GetPopularTags")]
@@ -24,7 +24,7 @@ namespace Audiochan.Web.Controllers
         [ProducesResponseType(typeof(List<PopularTagViewModel>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetPopularTags([FromQuery] PaginationQuery paginationQuery, CancellationToken cancellationToken)
         {
-            return Ok((await _tagService.GetPopularTags(paginationQuery, cancellationToken)).Data);
+            return Ok((await _audioService.GetPopularTags(paginationQuery, cancellationToken)).Data);
         }
     }
 }

@@ -35,8 +35,7 @@ namespace Audiochan.Core.Common.Extensions.Queryable
                 .Select(t => t.Trim().ToLower())
                 .ToArray();
             
-            return queryable.Where(a => 
-                a.Tags.Any(t => parsedTags.Contains(t.TagId)));
+            return queryable.Where(a => a.Tags.Any(t => parsedTags.Contains(t.Id)));
         }
         
         public static IQueryable<Audio> Sort(this IQueryable<Audio> queryable, string orderBy)

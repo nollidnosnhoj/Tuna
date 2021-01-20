@@ -1,9 +1,11 @@
 ﻿using Audiochan.Core.Common.Models;
 using Audiochan.Core.Entities;
 using Audiochan.Infrastructure.Data;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using SixLabors.ImageSharp;
 
 namespace Audiochan.Web.Configurations
@@ -28,7 +30,7 @@ namespace Audiochan.Web.Configurations
                 })
                 .AddRoleManager<RoleManager<Role>>()
                 .AddSignInManager<SignInManager<User>>()
-                .AddEntityFrameworkStores<AudiochanContext>()
+                .AddEntityFrameworkStores<DbContext>()
                 .AddDefaultTokenProviders();
 
             return services;

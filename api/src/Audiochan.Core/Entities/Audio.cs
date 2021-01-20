@@ -8,7 +8,7 @@ namespace Audiochan.Core.Entities
     {
         public Audio()
         {
-            Tags = new HashSet<AudioTag>();
+            Tags = new HashSet<Tag>();
             Favorited = new HashSet<FavoriteAudio>();
         }
 
@@ -25,7 +25,7 @@ namespace Audiochan.Core.Entities
         public User User { get; set; } = null!;
         public long GenreId { get; set; }
         public Genre Genre { get; set; } = null!;
-        public ICollection<AudioTag> Tags { get; set; }
+        public ICollection<Tag> Tags { get; set; }
         public ICollection<FavoriteAudio> Favorited { get; }
     }
 }

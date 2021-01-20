@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Builders;
 using Audiochan.Core.Common.Constants;
 using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Common.Extensions;
@@ -20,24 +21,22 @@ namespace Audiochan.Core.Features.Audios
 {
     public class AudioService : IAudioService
     {
-        private readonly IAudiochanContext _dbContext;
+        private readonly IDbContext _dbContext;
         private readonly IAudioMetadataService _audioMetadataService;
         private readonly IStorageService _storageService;
-        private readonly ITagService _tagService;
         private readonly ICurrentUserService _currentUserService;
         private readonly IGenreService _genreService;
 
-        public AudioService(IAudiochanContext dbContext, 
+        public AudioService(IDbContext dbContext, 
             ICurrentUserService currentUserService, 
             IAudioMetadataService audioMetadataService, 
-            IStorageService storageService, ITagService tagService, 
+            IStorageService storageService,
             IGenreService genreService)
         {
             _dbContext = dbContext;
             _currentUserService = currentUserService;
             _audioMetadataService = audioMetadataService;
             _storageService = storageService;
-            _tagService = tagService;
             _genreService = genreService;
         }
 
@@ -127,68 +126,51 @@ namespace Audiochan.Core.Features.Audios
         {
             var currentUser = await _dbContext.Users
                 .SingleOrDefaultAsync(u => u.Id == _currentUserService.GetUserId(), cancellationToken);
-            
-            // Create memory stream for uploaded audio file
+
+            // Start building audio
+            var audioBuilder = new AudioBuilder(request.File);
+
+            // Create memory stream for audio file
             var memoryStream = new MemoryStream();
             await request.File.CopyToAsync(memoryStream, cancellationToken);
-
-            // Get audio's metadata
-            var (audioTitle, audioDuration) = _audioMetadataService
+            
+            // This gets the metadata of the audio file, including duration, bitrate, etc.
+            var audioMetadata = _audioMetadataService
                 .GetMetadata(memoryStream, request.File.ContentType);
+            
+            // Get Genre for audio
+            var genre = await _genreService.GetGenre(request.Genre ?? "misc", cancellationToken);
+            if (genre == null)
+                return Result<AudioDetailViewModel>.Fail(ResultErrorCode.BadRequest, "Genre does not exist.");
+            
+            // Generate tags for audio
+            var tags = request.Tags.Count > 0
+                ? await CreateNewTags(request.Tags, cancellationToken)
+                : new List<Tag>();
 
-            var id = Guid.NewGuid().ToString();
-            var ext = Path.GetExtension(request.File.FileName);
-            var blobName = id + ext;
-
-            // Upload audio to storage
+            // Start uploading the audio stream into a storage (file or cloud)
+            var blobName = audioBuilder.GetBlobName();
             await _storageService.SaveBlobAsync(
                 ContainerConstants.Audios, 
                 blobName, 
                 memoryStream, 
                 cancellationToken: cancellationToken);
+            var blob = await _storageService.GetBlobAsync(ContainerConstants.Audios, blobName, cancellationToken);
 
-            var blob = await _storageService
-                .GetBlobAsync(ContainerConstants.Audios, blobName, cancellationToken);
-
-            var title = request.Title ?? (string.IsNullOrWhiteSpace(audioTitle)
-                ? Path.GetFileNameWithoutExtension(request.File.FileName)
-                : audioTitle);
-
-            if (string.IsNullOrEmpty(title))
-            {
-                return Result<AudioDetailViewModel>
-                    .Fail(ResultErrorCode.BadRequest,
-                        "Cannot obtain the title of song, please provide a title in the request.");
-            }
-
-            var genre = await _genreService.GetGenre(request.Genre ?? "misc", cancellationToken);
-            
-            if (genre == null)
-                return Result<AudioDetailViewModel>.Fail(ResultErrorCode.BadRequest, "Genre does not exist.");
+            audioBuilder = audioBuilder
+                .AddTitle(request.Title)
+                .AddDescription(request.Description)
+                .AddGenre(genre)
+                .AddTags(tags)
+                .AddAudioMetadata(audioMetadata)
+                .AddBlobInfo(blob)
+                .SetToPublic(request.IsPublic)
+                .SetToLoop(request.IsLoop)
+                .AddUser(currentUser);
 
             try
             {
-                var audio = new Audio
-                {
-                    Id = id,
-                    Title = title,
-                    Description = request.Description ?? "",
-                    IsPublic = request.IsPublic ?? true,
-                    IsLoop = request.IsLoop ?? false,
-                    Duration = audioDuration,
-                    FileSize = blob.Size,
-                    User = currentUser,
-                    Genre = genre,
-                    FileExt = ext,
-                    Url = blob.Url
-                };
-
-                if (request.Tags.Count > 0)
-                {
-                    var tags = await _tagService.CreateNewTags(request.Tags, cancellationToken);
-                    audio.Tags = tags.Select(tag => new AudioTag {Tag = tag, Audio = audio}).ToList();
-                }
-
+                var audio = audioBuilder.Build();
                 await _dbContext.Audios.AddAsync(audio, cancellationToken);
                 await _dbContext.SaveChangesAsync(cancellationToken);
 
@@ -218,15 +200,15 @@ namespace Audiochan.Core.Features.Audios
             if (audio == null) return Result<AudioDetailViewModel>.Fail(ResultErrorCode.NotFound);
 
             if (audio.UserId != currentUserId) return Result<AudioDetailViewModel>.Fail(ResultErrorCode.Forbidden);
-
-            // If values are null, do not change property
             
+            var newTags = await CreateNewTags(request.Tags, cancellationToken);
+
             audio.Title = request.Title ?? audio.Title;
             audio.Description = request.Description ?? audio.Description;
             audio.IsPublic = request.IsPublic ?? audio.IsPublic;
             audio.IsLoop = request.IsLoop ?? audio.IsLoop;
 
-            if (!string.IsNullOrWhiteSpace(request.Genre) || audio.Genre.Name != request.Genre)
+            if (!string.IsNullOrWhiteSpace(request.Genre) && audio.Genre.Name != request.Genre)
             {
                 var genre = await _genreService.GetGenre(request.Genre, cancellationToken);
 
@@ -235,40 +217,17 @@ namespace Audiochan.Core.Features.Audios
                 
                 audio.Genre = genre!;
             }
-            
-            var newTags = await _tagService.CreateNewTags(request.Tags, cancellationToken);
 
-            var tagsToDelete = new List<AudioTag>();
-
-            // Get audio tags to remove
             foreach (var audioTag in audio.Tags)
             {
-                if (newTags.All(t => t.Id != audioTag.TagId))
-                {
-                    tagsToDelete.Add(audioTag);
-                }
+                if (newTags.All(t => t.Id != audioTag.Id))
+                    audio.Tags.Remove(audioTag);
             }
 
-            // Remove audio tags from audio
-            foreach (var deleteTag in tagsToDelete)
-            {
-                if (audio.Tags.Any(x => x.TagId == deleteTag.TagId))
-                {
-                    audio.Tags.Remove(deleteTag);
-                }
-            }
-
-            // Add the new audio tags
             foreach (var newTag in newTags)
             {
-                if (audio.Tags.All(at => at.TagId != newTag.Id))
-                {
-                    audio.Tags.Add(new AudioTag
-                    {
-                        AudioId = audio.Id,
-                        TagId = newTag.Id
-                    });
-                }
+                if (audio.Tags.All(t => t.Id != newTag.Id))
+                    audio.Tags.Add(newTag);
             }
 
             _dbContext.Audios.Update(audio);
@@ -298,6 +257,50 @@ namespace Audiochan.Core.Features.Audios
             await _storageService.DeleteBlobAsync(ContainerConstants.Audios, blobName, cancellationToken);
 
             return Result.Success();
+        }
+        
+        public async Task<IResult<List<PopularTagViewModel>>>  GetPopularTags(
+            PaginationQuery paginationQuery
+            , CancellationToken cancellationToken = default)
+        {
+            var queryable = _dbContext.Tags
+                .AsNoTracking()
+                .Include(t => t.Audios)
+                .Select(t => new PopularTagViewModel{ Tag = t.Id, Count = t.Audios.Count })
+                .OrderByDescending(dto => dto.Count);
+
+            var vm = await queryable.Paginate(
+                paginationQuery.Page
+                , paginationQuery.Limit
+                , cancellationToken);
+
+            return Result<List<PopularTagViewModel>>.Success(vm);
+        }
+        
+        private async Task<List<Tag>> CreateNewTags(IEnumerable<string?> requestedTags, 
+            CancellationToken cancellationToken = default)
+        {
+            var taggifyTags = requestedTags.FormatTags();
+
+            var existingTags = await _dbContext.Tags
+                .Where(tag => taggifyTags.Contains(tag.Id))
+                .ToListAsync(cancellationToken);
+            
+            var newTags = new List<Tag>();
+
+            foreach (var tag in taggifyTags)
+            {
+                if (existingTags.All(t => t.Id != tag))
+                    newTags.Add(new Tag{Id = tag});
+            }
+
+            await _dbContext.Tags.AddRangeAsync(newTags, cancellationToken);
+
+            await _dbContext.SaveChangesAsync(cancellationToken);
+
+            return await _dbContext.Tags
+                .Where(tag => taggifyTags.Contains(tag.Id))
+                .ToListAsync(cancellationToken);
         }
     }
 }

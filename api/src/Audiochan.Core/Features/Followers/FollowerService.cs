@@ -16,9 +16,9 @@ namespace Audiochan.Core.Features.Followers
     public class FollowerService : IFollowerService
     {
         private readonly ICurrentUserService _currentUserService;
-        private readonly IAudiochanContext _dbContext;
+        private readonly IDbContext _dbContext;
 
-        public FollowerService(ICurrentUserService currentUserService, IAudiochanContext dbContext)
+        public FollowerService(ICurrentUserService currentUserService, IDbContext dbContext)
         {
             _currentUserService = currentUserService;
             _dbContext = dbContext;

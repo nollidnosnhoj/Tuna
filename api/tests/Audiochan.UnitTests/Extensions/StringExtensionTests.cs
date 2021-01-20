@@ -1,8 +1,7 @@
-using System;
 using Audiochan.Core.Common.Extensions;
 using Xunit;
 
-namespace Audiochan.UnitTests
+namespace Audiochan.UnitTests.Extensions
 {
     public class StringExtensionTests
     {
