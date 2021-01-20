@@ -10,7 +10,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using DbContext = Audiochan.Infrastructure.Data.DbContext;
 
 namespace Audiochan.Web
 {
@@ -26,7 +25,7 @@ namespace Audiochan.Web
 
                 try
                 {
-                    var context = services.GetRequiredService<DbContext>();
+                    var context = services.GetRequiredService<DatabaseContext>();
                     var userManager = services.GetRequiredService<UserManager<User>>();
                     var roleManager = services.GetRequiredService<RoleManager<Role>>();
                     await context.Database.MigrateAsync();

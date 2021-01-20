@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using DbContext = Audiochan.Infrastructure.Data.DbContext;
 
 namespace Audiochan.Web.Configurations
 {
@@ -14,19 +13,16 @@ namespace Audiochan.Web.Configurations
         public static IServiceCollection ConfigureDatabase(this IServiceCollection services, 
             IConfiguration configuration, IWebHostEnvironment environment)
         {
-            services.AddDbContext<DbContext>(options =>
+            services.AddDbContext<DatabaseContext>(options =>
             {
-                if (environment.IsDevelopment())
-                    options.UseSqlite(configuration.GetConnectionString("SQLite"));
-                else
-                    options.UseNpgsql(configuration.GetConnectionString("PostgreSQL"));
+                options.UseNpgsql(configuration.GetConnectionString("PostgreSQL"));
                 
                 options
                     .EnableSensitiveDataLogging()
                     .UseSnakeCaseNamingConvention();
             });
             
-            services.AddScoped<IDbContext>(provider => provider.GetService<DbContext>()!);
+            services.AddScoped<IDatabaseContext>(provider => provider.GetService<DatabaseContext>()!);
 
             return services;
         }

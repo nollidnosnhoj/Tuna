@@ -13,9 +13,9 @@ namespace Audiochan.Core.Features.Genres
 {
     public class GenreService : IGenreService
     {
-        private readonly IDbContext _dbContext;
+        private readonly IDatabaseContext _dbContext;
 
-        public GenreService(IDbContext dbContext)
+        public GenreService(IDatabaseContext dbContext)
         {
             _dbContext = dbContext;
         }

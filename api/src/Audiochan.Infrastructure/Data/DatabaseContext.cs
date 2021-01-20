@@ -12,11 +12,11 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Audiochan.Infrastructure.Data
 {
-    public class DbContext : IdentityDbContext<User, Role, long>, IDbContext
+    public class DatabaseContext : IdentityDbContext<User, Role, long>, IDatabaseContext
     {
         private readonly IDateTimeService _dateTimeService;
         
-        public DbContext(DbContextOptions options, 
+        public DatabaseContext(DbContextOptions options, 
             IDateTimeService dateTimeService) : base(options)
         {
             _dateTimeService = dateTimeService;

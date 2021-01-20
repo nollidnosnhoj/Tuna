@@ -3,29 +3,30 @@ using System;
 using Audiochan.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Audiochan.Infrastructure.Data.Migrations
 {
-    [DbContext(typeof(DbContext))]
-    [Migration("20210120092057_InitialMigration")]
-    partial class InitialMigration
+    [DbContext(typeof(DatabaseContext))]
+    partial class DatabaseContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
+                .UseIdentityByDefaultColumns()
+                .HasAnnotation("Relational:MaxIdentifierLength", 63)
                 .HasAnnotation("ProductVersion", "5.0.1");
 
             modelBuilder.Entity("AudioTag", b =>
                 {
                     b.Property<string>("AudiosId")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("text")
                         .HasColumnName("audios_id");
 
                     b.Property<string>("TagsId")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("text")
                         .HasColumnName("tags_id");
 
                     b.HasKey("AudiosId", "TagsId")
@@ -40,61 +41,61 @@ namespace Audiochan.Infrastructure.Data.Migrations
             modelBuilder.Entity("Audiochan.Core.Entities.Audio", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("text")
                         .HasColumnName("id");
 
                     b.Property<DateTime>("Created")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("timestamp without time zone")
                         .HasColumnName("created");
 
                     b.Property<string>("Description")
                         .HasMaxLength(500)
-                        .HasColumnType("TEXT")
+                        .HasColumnType("character varying(500)")
                         .HasColumnName("description");
 
                     b.Property<int>("Duration")
-                        .HasColumnType("INTEGER")
+                        .HasColumnType("integer")
                         .HasColumnName("duration");
 
                     b.Property<string>("FileExt")
                         .IsRequired()
                         .HasMaxLength(10)
-                        .HasColumnType("TEXT")
+                        .HasColumnType("character varying(10)")
                         .HasColumnName("file_ext");
 
                     b.Property<long>("FileSize")
-                        .HasColumnType("INTEGER")
+                        .HasColumnType("bigint")
                         .HasColumnName("file_size");
 
                     b.Property<long>("GenreId")
-                        .HasColumnType("INTEGER")
+                        .HasColumnType("bigint")
                         .HasColumnName("genre_id");
 
                     b.Property<bool>("IsLoop")
-                        .HasColumnType("INTEGER")
+                        .HasColumnType("boolean")
                         .HasColumnName("is_loop");
 
                     b.Property<bool>("IsPublic")
-                        .HasColumnType("INTEGER")
+                        .HasColumnType("boolean")
                         .HasColumnName("is_public");
 
                     b.Property<DateTime?>("LastModified")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("timestamp without time zone")
                         .HasColumnName("last_modified");
 
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("TEXT")
+                        .HasColumnType("character varying(100)")
                         .HasColumnName("title");
 
                     b.Property<string>("Url")
                         .IsRequired()
-                        .HasColumnType("TEXT")
+                        .HasColumnType("text")
                         .HasColumnName("url");
 
                     b.Property<long>("UserId")
-                        .HasColumnType("INTEGER")
+                        .HasColumnType("bigint")
                         .HasColumnName("user_id");
 
                     b.HasKey("Id")
@@ -112,19 +113,19 @@ namespace Audiochan.Infrastructure.Data.Migrations
             modelBuilder.Entity("Audiochan.Core.Entities.FavoriteAudio", b =>
                 {
                     b.Property<long>("UserId")
-                        .HasColumnType("INTEGER")
+                        .HasColumnType("bigint")
                         .HasColumnName("user_id");
 
                     b.Property<string>("AudioId")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("text")
                         .HasColumnName("audio_id");
 
                     b.Property<DateTime>("Created")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("timestamp without time zone")
                         .HasColumnName("created");
 
                     b.Property<DateTime?>("LastModified")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("timestamp without time zone")
                         .HasColumnName("last_modified");
 
                     b.HasKey("UserId", "AudioId")
@@ -139,19 +140,19 @@ namespace Audiochan.Infrastructure.Data.Migrations
             modelBuilder.Entity("Audiochan.Core.Entities.FollowedUser", b =>
                 {
                     b.Property<long>("ObserverId")
-                        .HasColumnType("INTEGER")
+                        .HasColumnType("bigint")
                         .HasColumnName("observer_id");
 
                     b.Property<long>("TargetId")
-                        .HasColumnType("INTEGER")
+                        .HasColumnType("bigint")
                         .HasColumnName("target_id");
 
                     b.Property<DateTime>("Created")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("timestamp without time zone")
                         .HasColumnName("created");
 
                     b.Property<DateTime?>("LastModified")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("timestamp without time zone")
                         .HasColumnName("last_modified");
 
                     b.HasKey("ObserverId", "TargetId")
@@ -167,19 +168,20 @@ namespace Audiochan.Infrastructure.Data.Migrations
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("id");
+                        .HasColumnType("bigint")
+                        .HasColumnName("id")
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("TEXT")
+                        .HasColumnType("character varying(50)")
                         .HasColumnName("name");
 
                     b.Property<string>("Slug")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("TEXT")
+                        .HasColumnType("character varying(50)")
                         .HasColumnName("slug");
 
                     b.HasKey("Id")
@@ -192,22 +194,23 @@ namespace Audiochan.Infrastructure.Data.Migrations
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("id");
+                        .HasColumnType("bigint")
+                        .HasColumnName("id")
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("TEXT")
+                        .HasColumnType("text")
                         .HasColumnName("concurrency_stamp");
 
                     b.Property<string>("Name")
                         .HasMaxLength(256)
-                        .HasColumnType("TEXT")
+                        .HasColumnType("character varying(256)")
                         .HasColumnName("name");
 
                     b.Property<string>("NormalizedName")
                         .HasMaxLength(256)
-                        .HasColumnType("TEXT")
+                        .HasColumnType("character varying(256)")
                         .HasColumnName("normalized_name");
 
                     b.HasKey("Id")
@@ -223,7 +226,7 @@ namespace Audiochan.Infrastructure.Data.Migrations
             modelBuilder.Entity("Audiochan.Core.Entities.Tag", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("text")
                         .HasColumnName("id");
 
                     b.HasKey("Id")
@@ -236,90 +239,91 @@ namespace Audiochan.Infrastructure.Data.Migrations
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("id");
+                        .HasColumnType("bigint")
+                        .HasColumnName("id")
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<string>("About")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("text")
                         .HasColumnName("about");
 
                     b.Property<int>("AccessFailedCount")
-                        .HasColumnType("INTEGER")
+                        .HasColumnType("integer")
                         .HasColumnName("access_failed_count");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("TEXT")
+                        .HasColumnType("text")
                         .HasColumnName("concurrency_stamp");
 
                     b.Property<DateTime>("Created")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("timestamp without time zone")
                         .HasColumnName("created");
 
                     b.Property<string>("DisplayName")
                         .IsRequired()
                         .HasMaxLength(256)
-                        .HasColumnType("TEXT")
+                        .HasColumnType("character varying(256)")
                         .HasColumnName("display_name");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
-                        .HasColumnType("TEXT")
+                        .HasColumnType("character varying(256)")
                         .HasColumnName("email");
 
                     b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("INTEGER")
+                        .HasColumnType("boolean")
                         .HasColumnName("email_confirmed");
 
                     b.Property<DateTime?>("LastModified")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("timestamp without time zone")
                         .HasColumnName("last_modified");
 
                     b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("INTEGER")
+                        .HasColumnType("boolean")
                         .HasColumnName("lockout_enabled");
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("lockout_end");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
-                        .HasColumnType("TEXT")
+                        .HasColumnType("character varying(256)")
                         .HasColumnName("normalized_email");
 
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(256)
-                        .HasColumnType("TEXT")
+                        .HasColumnType("character varying(256)")
                         .HasColumnName("normalized_user_name");
 
                     b.Property<string>("PasswordHash")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("text")
                         .HasColumnName("password_hash");
 
                     b.Property<string>("PhoneNumber")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("text")
                         .HasColumnName("phone_number");
 
                     b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("INTEGER")
+                        .HasColumnType("boolean")
                         .HasColumnName("phone_number_confirmed");
 
                     b.Property<string>("SecurityStamp")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("text")
                         .HasColumnName("security_stamp");
 
                     b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("INTEGER")
+                        .HasColumnType("boolean")
                         .HasColumnName("two_factor_enabled");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
-                        .HasColumnType("TEXT")
+                        .HasColumnType("character varying(256)")
                         .HasColumnName("user_name");
 
                     b.Property<string>("Website")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("text")
                         .HasColumnName("website");
 
                     b.HasKey("Id")
@@ -339,19 +343,20 @@ namespace Audiochan.Infrastructure.Data.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("id");
+                        .HasColumnType("integer")
+                        .HasColumnName("id")
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<string>("ClaimType")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("text")
                         .HasColumnName("claim_type");
 
                     b.Property<string>("ClaimValue")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("text")
                         .HasColumnName("claim_value");
 
                     b.Property<long>("RoleId")
-                        .HasColumnType("INTEGER")
+                        .HasColumnType("bigint")
                         .HasColumnName("role_id");
 
                     b.HasKey("Id")
@@ -367,19 +372,20 @@ namespace Audiochan.Infrastructure.Data.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("id");
+                        .HasColumnType("integer")
+                        .HasColumnName("id")
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<string>("ClaimType")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("text")
                         .HasColumnName("claim_type");
 
                     b.Property<string>("ClaimValue")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("text")
                         .HasColumnName("claim_value");
 
                     b.Property<long>("UserId")
-                        .HasColumnType("INTEGER")
+                        .HasColumnType("bigint")
                         .HasColumnName("user_id");
 
                     b.HasKey("Id")
@@ -394,19 +400,19 @@ namespace Audiochan.Infrastructure.Data.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<long>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("text")
                         .HasColumnName("login_provider");
 
                     b.Property<string>("ProviderKey")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("text")
                         .HasColumnName("provider_key");
 
                     b.Property<string>("ProviderDisplayName")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("text")
                         .HasColumnName("provider_display_name");
 
                     b.Property<long>("UserId")
-                        .HasColumnType("INTEGER")
+                        .HasColumnType("bigint")
                         .HasColumnName("user_id");
 
                     b.HasKey("LoginProvider", "ProviderKey")
@@ -421,11 +427,11 @@ namespace Audiochan.Infrastructure.Data.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<long>", b =>
                 {
                     b.Property<long>("UserId")
-                        .HasColumnType("INTEGER")
+                        .HasColumnType("bigint")
                         .HasColumnName("user_id");
 
                     b.Property<long>("RoleId")
-                        .HasColumnType("INTEGER")
+                        .HasColumnType("bigint")
                         .HasColumnName("role_id");
 
                     b.HasKey("UserId", "RoleId")
@@ -440,19 +446,19 @@ namespace Audiochan.Infrastructure.Data.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<long>", b =>
                 {
                     b.Property<long>("UserId")
-                        .HasColumnType("INTEGER")
+                        .HasColumnType("bigint")
                         .HasColumnName("user_id");
 
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("text")
                         .HasColumnName("login_provider");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("text")
                         .HasColumnName("name");
 
                     b.Property<string>("Value")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("text")
                         .HasColumnName("value");
 
                     b.HasKey("UserId", "LoginProvider", "Name")
@@ -547,32 +553,33 @@ namespace Audiochan.Infrastructure.Data.Migrations
                         {
                             b1.Property<long>("Id")
                                 .ValueGeneratedOnAdd()
-                                .HasColumnType("INTEGER")
-                                .HasColumnName("id");
+                                .HasColumnType("bigint")
+                                .HasColumnName("id")
+                                .UseIdentityByDefaultColumn();
 
                             b1.Property<DateTime>("Created")
-                                .HasColumnType("TEXT")
+                                .HasColumnType("timestamp without time zone")
                                 .HasColumnName("created");
 
                             b1.Property<DateTime>("Expiry")
-                                .HasColumnType("TEXT")
+                                .HasColumnType("timestamp without time zone")
                                 .HasColumnName("expiry");
 
                             b1.Property<string>("ReplacedByToken")
-                                .HasColumnType("TEXT")
+                                .HasColumnType("text")
                                 .HasColumnName("replaced_by_token");
 
                             b1.Property<DateTime?>("Revoked")
-                                .HasColumnType("TEXT")
+                                .HasColumnType("timestamp without time zone")
                                 .HasColumnName("revoked");
 
                             b1.Property<string>("Token")
                                 .IsRequired()
-                                .HasColumnType("TEXT")
+                                .HasColumnType("text")
                                 .HasColumnName("token");
 
                             b1.Property<long>("UserId")
-                                .HasColumnType("INTEGER")
+                                .HasColumnType("bigint")
                                 .HasColumnName("user_id");
 
                             b1.HasKey("Id")

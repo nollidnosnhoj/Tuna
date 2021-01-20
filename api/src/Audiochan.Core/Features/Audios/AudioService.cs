@@ -21,13 +21,13 @@ namespace Audiochan.Core.Features.Audios
 {
     public class AudioService : IAudioService
     {
-        private readonly IDbContext _dbContext;
+        private readonly IDatabaseContext _dbContext;
         private readonly IAudioMetadataService _audioMetadataService;
         private readonly IStorageService _storageService;
         private readonly ICurrentUserService _currentUserService;
         private readonly IGenreService _genreService;
 
-        public AudioService(IDbContext dbContext, 
+        public AudioService(IDatabaseContext dbContext, 
             ICurrentUserService currentUserService, 
             IAudioMetadataService audioMetadataService, 
             IStorageService storageService,

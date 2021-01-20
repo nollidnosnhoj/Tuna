@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace Audiochan.Core.Interfaces
 {
-    public interface IDbContext
+    public interface IDatabaseContext
     {
         DbSet<Audio> Audios { get; }
         // DbSet<AudioTag> AudioTags { get; }
