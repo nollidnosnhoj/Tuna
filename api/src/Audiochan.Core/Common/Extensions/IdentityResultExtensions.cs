@@ -15,7 +15,7 @@ namespace Audiochan.Core.Common.Extensions
                 x => x.Code,
                 x => new[] {x.Description});
                
-            return Result.Fail(ResultErrorCode.UnprocessedEntity, message, errors);
+            return Result.Fail(ResultStatus.UnprocessedEntity, message, errors);
         }
         
         public static IResult<T> ToResult<T>(this IdentityResult identityResult, string message = "")
@@ -24,7 +24,7 @@ namespace Audiochan.Core.Common.Extensions
                 x => x.Code,
                 x => new[] {x.Description});
 
-            return Result<T>.Fail(ResultErrorCode.UnprocessedEntity, message, errors);
+            return Result<T>.Fail(ResultStatus.UnprocessedEntity, message, errors);
         }
     }
 }

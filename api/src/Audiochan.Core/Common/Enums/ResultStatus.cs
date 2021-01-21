@@ -1,11 +1,12 @@
 ﻿namespace Audiochan.Core.Common.Enums
 {
-    public enum ResultErrorCode
+    public enum ResultStatus
     {
         BadRequest,
         NotFound,
         Unauthorized,
         Forbidden,
-        UnprocessedEntity
+        UnprocessedEntity,
+        Success
     }
 }

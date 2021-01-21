@@ -109,7 +109,7 @@ namespace Audiochan.Core.Features.Audios
                 .SingleOrDefaultAsync(cancellationToken);
 
             return audio == null 
-                ? Result<AudioDetailViewModel>.Fail(ResultErrorCode.NotFound) 
+                ? Result<AudioDetailViewModel>.Fail(ResultStatus.NotFound) 
                 : Result<AudioDetailViewModel>.Success(audio);
         }
 
@@ -141,7 +141,7 @@ namespace Audiochan.Core.Features.Audios
             // Get Genre for audio
             var genre = await _genreService.GetGenre(request.Genre ?? "misc", cancellationToken);
             if (genre == null)
-                return Result<AudioDetailViewModel>.Fail(ResultErrorCode.BadRequest, "Genre does not exist.");
+                return Result<AudioDetailViewModel>.Fail(ResultStatus.BadRequest, "Genre does not exist.");
             
             // Generate tags for audio
             var tags = request.Tags.Count > 0
@@ -197,9 +197,9 @@ namespace Audiochan.Core.Features.Audios
                 .Include(a => a.Genre)
                 .SingleOrDefaultAsync(a => a.Id == audioId, cancellationToken);
 
-            if (audio == null) return Result<AudioDetailViewModel>.Fail(ResultErrorCode.NotFound);
+            if (audio == null) return Result<AudioDetailViewModel>.Fail(ResultStatus.NotFound);
 
-            if (audio.UserId != currentUserId) return Result<AudioDetailViewModel>.Fail(ResultErrorCode.Forbidden);
+            if (audio.UserId != currentUserId) return Result<AudioDetailViewModel>.Fail(ResultStatus.Forbidden);
             
             var newTags = await CreateNewTags(request.Tags, cancellationToken);
 
@@ -213,7 +213,7 @@ namespace Audiochan.Core.Features.Audios
                 var genre = await _genreService.GetGenre(request.Genre, cancellationToken);
 
                 if (genre == null)
-                    return Result<AudioDetailViewModel>.Fail(ResultErrorCode.BadRequest, "Genre does not exist.");
+                    return Result<AudioDetailViewModel>.Fail(ResultStatus.BadRequest, "Genre does not exist.");
                 
                 audio.Genre = genre!;
             }
@@ -244,10 +244,10 @@ namespace Audiochan.Core.Features.Audios
                 .SingleOrDefaultAsync(a => a.Id == id, cancellationToken);
 
             if (audio == null)
-                return Result.Fail(ResultErrorCode.NotFound);
+                return Result.Fail(ResultStatus.NotFound);
 
             if (audio.UserId != currentUserId)
-                return Result.Fail(ResultErrorCode.Forbidden);
+                return Result.Fail(ResultStatus.Forbidden);
 
             var blobName = audio.Id + audio.FileExt;
             

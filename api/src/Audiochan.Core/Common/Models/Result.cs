@@ -6,7 +6,7 @@ namespace Audiochan.Core.Common.Models
     public interface IResult
     {
         bool IsSuccess { get; }
-        ResultErrorCode? ErrorCode { get; }
+        ResultStatus? ErrorCode { get; }
         string? Message { get; }
         Dictionary<string, string[]>? Errors { get; }
 
@@ -17,9 +17,9 @@ namespace Audiochan.Core.Common.Models
         public Dictionary<string, string[]>? Errors { get; init; }
         public string? Message { get; init; }
         public bool IsSuccess { get; init; }
-        public ResultErrorCode? ErrorCode { get; init; }
+        public ResultStatus? ErrorCode { get; init; }
 
-        public static Result Fail(ResultErrorCode errorCode, string message = null!, 
+        public static Result Fail(ResultStatus errorCode, string message = null!, 
             Dictionary<string, string[]>? errors = null)
         {
             return new()

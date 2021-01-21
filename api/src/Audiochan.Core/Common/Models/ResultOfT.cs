@@ -13,7 +13,7 @@ namespace Audiochan.Core.Common.Models
         public T Data { get; init; } = default!;
 
         public new static Result<T> Fail(
-            ResultErrorCode errorCode
+            ResultStatus errorCode
             , string? message = null
             , Dictionary<string, string[]>? errors = null)
         {

@@ -70,7 +70,7 @@ namespace Audiochan.Core.Features.Followers
                 .SingleOrDefaultAsync(u => u.UserName == username.ToLower(), cancellationToken);
 
             if (target == null)
-                return Result<FollowUserViewModel>.Fail(ResultErrorCode.NotFound);
+                return Result<FollowUserViewModel>.Fail(ResultStatus.NotFound);
 
             var currentUserId = _currentUserService.GetUserId();
 
@@ -99,7 +99,7 @@ namespace Audiochan.Core.Features.Followers
                 .SingleOrDefaultAsync(u => u.UserName == username.ToLower(), cancellationToken);
 
             if (target == null)
-                return Result.Fail(ResultErrorCode.NotFound);
+                return Result.Fail(ResultStatus.NotFound);
 
             var currentUserId = await _dbContext.Users
                 .AsNoTracking()
