@@ -47,6 +47,7 @@ namespace Audiochan.Web.Configurations
             app.UseSwaggerUI(options =>
             {
                 options.SwaggerEndpoint("/swagger/v1/swagger.json", "Audiochan API Version 1");
+                options.DefaultModelsExpandDepth(-1);
             });
         }
     }

@@ -6,7 +6,6 @@ using Audiochan.Core.Features.Audios.Models;
 using Audiochan.Core.Features.Users.Models;
 using Audiochan.Core.Interfaces;
 using Audiochan.Web.Extensions;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,16 +14,19 @@ namespace Audiochan.Web.Controllers
     [Route("[controller]")]
     public class UsersController : ControllerBase
     {
+        private readonly IAudioService _audioService;
         private readonly IFollowerService _followerService;
         private readonly IFavoriteService _favoriteService;
         private readonly IUserService _userService;
 
         public UsersController(IFollowerService followerService, 
-            IFavoriteService favoriteService, IUserService userService)
+            IFavoriteService favoriteService, IUserService userService, 
+            IAudioService audioService)
         {
             _followerService = followerService;
             _favoriteService = favoriteService;
             _userService = userService;
+            _audioService = audioService;
         }
 
         [HttpGet("{username}", Name="GetProfile")]
@@ -37,6 +39,24 @@ namespace Audiochan.Web.Controllers
             return result.IsSuccess
                 ? Ok(result.Data)
                 : result.ReturnErrorResponse();
+        }
+        
+        [HttpGet("{username}/audios", Name="GetUserAudios")]
+        [ProducesResponseType(typeof(List<AudioListViewModel>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetUserAudios(string username,
+            PaginationQuery paginationQuery, CancellationToken cancellationToken)
+        {
+            var query = new GetAudioListQuery
+            {
+                Username = username,
+                Page = paginationQuery.Page,
+                Limit = paginationQuery.Limit
+            };
+
+            var list = await _audioService.GetList(query, cancellationToken);
+
+            return Ok(list);
         }
 
         [HttpGet("{username}/favorites")]
