@@ -17,17 +17,10 @@ namespace Audiochan.Web.Controllers
     public class AudiosController : ControllerBase
     {
         private readonly IAudioService _audioService;
-        private readonly IFavoriteService _favoriteService;
-        private readonly ICurrentUserService _currentUserService;
-        private readonly IGenreService _genreService;
 
-        public AudiosController(IAudioService audioService, IFavoriteService favoriteService, 
-            ICurrentUserService currentUserService, IGenreService genreService)
+        public AudiosController(IAudioService audioService)
         {
             _audioService = audioService;
-            _favoriteService = favoriteService;
-            _currentUserService = currentUserService;
-            _genreService = genreService;
         }
 
         [HttpGet(Name="GetAudios")]
@@ -49,25 +42,29 @@ namespace Audiochan.Web.Controllers
             return result.IsSuccess ? Ok(result.Data) : result.ReturnErrorResponse();
         }
 
-        [HttpGet("random-id")]
+        [HttpGet("random")]
         [AllowAnonymous]
-        public async Task<IActionResult> GetRandomId(CancellationToken cancellationToken)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetRandom(CancellationToken cancellationToken)
         {
-            var id = await _audioService.GetRandomAudioId(cancellationToken);
-            return id == null ? NotFound() : Ok(id);
+            var result = await _audioService.GetRandom(cancellationToken);
+            return result.IsSuccess 
+                ? Ok(result.Data) 
+                : result.ReturnErrorResponse();
         }
 
         [HttpPost(Name="UploadAudio")]
         [ProducesResponseType(typeof(AudioDetailViewModel), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status422UnprocessableEntity)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         public async Task<IActionResult> Upload(
             [FromForm] UploadAudioRequest request
             , CancellationToken cancellationToken)
         {
             var result = await _audioService.Create(request, cancellationToken);
             return result.IsSuccess 
-                ? CreatedAtRoute(new {result.Data.Id}, result.Data) 
+                ? CreatedAtAction(nameof(GetById), result.Data.Id, result.Data)
                 : result.ReturnErrorResponse();
         }
 
@@ -75,8 +72,8 @@ namespace Audiochan.Web.Controllers
         [ProducesResponseType(typeof(AudioDetailViewModel), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status422UnprocessableEntity)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         public async Task<IActionResult> Update(string audioId, [FromBody] UpdateAudioRequest request, 
             CancellationToken cancellationToken)
         {

@@ -64,13 +64,17 @@ namespace Audiochan.Core.Features.Followers
                                && u.Target.UserName == username.ToLower(), cancellationToken);
         }
 
-        public async Task<IResult> Follow(string username, CancellationToken cancellationToken = default)
+        public async Task<IResult> Follow(long userId, string username, CancellationToken cancellationToken = default)
         {
+            if (!await _dbContext.Users.AsNoTracking().AnyAsync(u => u.Id == userId, cancellationToken))
+                return Result.Fail(ResultStatus.Unauthorized);
+            
             var target = await _dbContext.Users.AsNoTracking()
                 .SingleOrDefaultAsync(u => u.UserName == username.ToLower(), cancellationToken);
 
             if (target == null)
-                return Result<FollowUserViewModel>.Fail(ResultStatus.NotFound);
+                return Result<FollowUserViewModel>
+                    .Fail(ResultStatus.NotFound, "The user you are trying to follow was not found.");
 
             var currentUserId = _currentUserService.GetUserId();
 
@@ -93,13 +97,17 @@ namespace Audiochan.Core.Features.Followers
             return Result.Success();
         }
 
-        public async Task<IResult> Unfollow(string username, CancellationToken cancellationToken = default)
+        public async Task<IResult> Unfollow(long userId, string username, CancellationToken cancellationToken = default)
         {
+            if (!await _dbContext.Users.AsNoTracking().AnyAsync(u => u.Id == userId, cancellationToken))
+                return Result.Fail(ResultStatus.Unauthorized);
+            
             var target = await _dbContext.Users.AsNoTracking()
                 .SingleOrDefaultAsync(u => u.UserName == username.ToLower(), cancellationToken);
 
             if (target == null)
-                return Result.Fail(ResultStatus.NotFound);
+                return Result<FollowUserViewModel>
+                    .Fail(ResultStatus.NotFound, "The user you are trying to follow was not found.");
 
             var currentUserId = await _dbContext.Users
                 .AsNoTracking()

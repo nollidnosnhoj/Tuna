@@ -15,26 +15,21 @@ namespace Audiochan.Web.Controllers
     [Route("[controller]")]
     public class UsersController : ControllerBase
     {
-        private readonly IAudioService _audioService;
         private readonly IFollowerService _followerService;
         private readonly IFavoriteService _favoriteService;
-        private readonly ICurrentUserService _currentUserService;
         private readonly IUserService _userService;
 
-        public UsersController(IAudioService audioService, IFollowerService followerService, 
-            IFavoriteService favoriteService, ICurrentUserService currentUserService, 
-            IUserService userService)
+        public UsersController(IFollowerService followerService, 
+            IFavoriteService favoriteService, IUserService userService)
         {
-            _audioService = audioService;
             _followerService = followerService;
             _favoriteService = favoriteService;
-            _currentUserService = currentUserService;
             _userService = userService;
         }
 
         [HttpGet("{username}", Name="GetProfile")]
         [ProducesResponseType(typeof(UserDetailsViewModel), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetUserProfile(string username, CancellationToken cancellationToken)
         {
             var result = await _userService.GetUserDetails(username, cancellationToken);
@@ -42,24 +37,6 @@ namespace Audiochan.Web.Controllers
             return result.IsSuccess
                 ? Ok(result.Data)
                 : result.ReturnErrorResponse();
-        }
-
-        [HttpGet("{username}/audios", Name="GetUserAudios")]
-        [ProducesResponseType(typeof(List<AudioListViewModel>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetUserAudios(string username,
-            PaginationQuery paginationQuery, CancellationToken cancellationToken)
-        {
-            var query = new GetAudioListQuery
-            {
-                Username = username,
-                Page = paginationQuery.Page,
-                Limit = paginationQuery.Limit
-            };
-
-            var list = await _audioService.GetList(query, cancellationToken);
-
-            return Ok(list);
         }
 
         [HttpGet("{username}/favorites")]

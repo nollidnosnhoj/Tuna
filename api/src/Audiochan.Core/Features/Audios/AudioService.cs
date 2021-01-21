@@ -113,12 +113,26 @@ namespace Audiochan.Core.Features.Audios
                 : Result<AudioDetailViewModel>.Success(audio);
         }
 
-        public async Task<string?> GetRandomAudioId(CancellationToken cancellationToken = default)
+        public async Task<IResult<AudioDetailViewModel>> GetRandom(CancellationToken cancellationToken = default)
         {
-            await using var dbConnection = _dbContext.Database.GetDbConnection();
-            const string queryString = "SELECT id FROM audios ORDER BY random()";
-            var id = dbConnection.QueryFirstOrDefault<string>(queryString, cancellationToken);
-            return id;
+            var currentUserId = _currentUserService.GetUserId();
+            var count = await _dbContext.Audios.CountAsync(cancellationToken);
+            Random rand = new();
+            var offset = rand.Next(0, count);
+            var audio = await _dbContext.Audios
+                .AsNoTracking()
+                .Include(a => a.Favorited)
+                .Include(a => a.Tags)
+                .Include(a => a.User)
+                .Include(a => a.Genre)
+                .FilterVisibility(currentUserId)
+                .Skip(offset)
+                .Select(MapProjections.AudioDetail(currentUserId))
+                .SingleOrDefaultAsync(cancellationToken);
+
+            return audio == null 
+                ? Result<AudioDetailViewModel>.Fail(ResultStatus.NotFound) 
+                : Result<AudioDetailViewModel>.Success(audio);
         }
 
         public async Task<IResult<AudioDetailViewModel>> Create(UploadAudioRequest request, 

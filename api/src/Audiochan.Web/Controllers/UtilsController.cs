@@ -16,27 +16,23 @@ namespace Audiochan.Web.Controllers
             _userService = userService;
         }
 
-        [HttpHead("check-username", Name="CheckIfUsernameExists")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [HttpHead("username", Name="CheckIfUsernameExists")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DoesUsernameExist([FromQuery] string username, CancellationToken cancellationToken)
         {
             var exist = await _userService.CheckIfUsernameExists(username, cancellationToken);
-
-            if (exist) return NoContent();
-
+            if (exist) return Ok();
             return NotFound();
         }
         
-        [HttpHead("check-email", Name="CheckIfEmailExists")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [HttpHead("email", Name="CheckIfEmailExists")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DoesEmailExist([FromQuery] string email, CancellationToken cancellationToken)
         {
             var exist = await _userService.CheckIfEmailExists(email, cancellationToken);
-
-            if (exist) return NoContent();
-
+            if (exist) return Ok();
             return NotFound();
         }
     }

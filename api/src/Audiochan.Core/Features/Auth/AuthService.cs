@@ -31,11 +31,10 @@ namespace Audiochan.Core.Features.Auth
             CancellationToken cancellationToken = default)
         {
             var user = await _userManager.Users
-                .SingleOrDefaultAsync(u => u.UserName == login.ToLower() 
-                                           || u.Email == login, cancellationToken);
+                .SingleOrDefaultAsync(u => u.UserName == login.ToLower() || u.Email == login, cancellationToken);
 
             if (user == null || !await _userManager.CheckPasswordAsync(user, password))
-                return Result<AuthResultDto>.Fail(ResultStatus.UnprocessedEntity, "Invalid login credentials.");
+                return Result<AuthResultDto>.Fail(ResultStatus.Unauthorized);
 
             var token = await _tokenService.GenerateAccessToken(user);
 
@@ -66,49 +65,34 @@ namespace Audiochan.Core.Features.Auth
 
             var identityResult = await _userManager.CreateAsync(user, request.Password);
 
-            if (!identityResult.Succeeded) return identityResult.ToResult();
-
-            return Result.Success();
+            return identityResult.Succeeded
+                ? Result.Success()
+                : identityResult.ToResult();
         }
 
         public async Task<IResult<AuthResultDto>> Refresh(string? refreshToken, 
             CancellationToken cancellationToken = default)
         {
-            // Fail when refresh token is not defined
             if (string.IsNullOrEmpty(refreshToken))
-            {
-                return Result<AuthResultDto>.Fail(ResultStatus.BadRequest, "Refresh token was not defined.");
-            }
+                return Result<AuthResultDto>
+                    .Fail(ResultStatus.BadRequest, "Refresh token was not defined.");
             
-            // get the user and his/her refresh tokens based on the defined refresh token
             var user = await _userManager.Users
                 .Include(u => u.RefreshTokens)
                 .SingleOrDefaultAsync(u => u.RefreshTokens
                     .Any(t => t.Token == refreshToken && t.UserId == u.Id), cancellationToken);
 
             if (user == null)
-            {
                 return Result<AuthResultDto>.Fail(ResultStatus.BadRequest, 
                     "Refresh token does not belong to a user.");
-            }
             
             var existingRefreshToken = user.RefreshTokens
-                .SingleOrDefault(r => r.Token == refreshToken);
-
-            if (existingRefreshToken == null)
-            {
-                return Result<AuthResultDto>.Fail(ResultStatus.BadRequest, 
-                    "Refresh token does not belong to a user.");
-            }
+                .Single(r => r.Token == refreshToken);
 
             if (!_tokenService.IsRefreshTokenValid(existingRefreshToken))
-            {
                 return Result<AuthResultDto>.Fail(ResultStatus.BadRequest, 
                     "Refresh token is invalid/expired.");
-            }
-
-            // Create new refresh token
-            // Revoked the old token (defined token)
+            
             var newRefreshToken = _tokenService.GenerateRefreshToken(user.Id);
             existingRefreshToken.Revoked = _dateTimeService.Now;
             existingRefreshToken.ReplacedByToken = newRefreshToken.Token;
@@ -129,9 +113,7 @@ namespace Audiochan.Core.Features.Auth
         {
             // Fail when refresh token is not defined
             if (string.IsNullOrEmpty(refreshToken))
-            {
                 return Result.Fail(ResultStatus.BadRequest, "Refresh token was not defined.");
-            }
             
             var user = await _userManager.Users
                 .Include(u => u.RefreshTokens)
@@ -139,20 +121,11 @@ namespace Audiochan.Core.Features.Auth
                     .Any(r => r.Token == refreshToken && u.Id == r.UserId), cancellationToken);
 
             if (user == null)
-            {
                 return Result.Fail(ResultStatus.BadRequest, "Refresh token does not belong to a user.");
-            }
 
             var existingRefreshToken = user.RefreshTokens
-                .SingleOrDefault(r => r.Token == refreshToken);
-
-            if (existingRefreshToken == null)
-            {
-                return Result.Fail(ResultStatus.BadRequest, "Refresh token does not belong to a user.");
-            }
-
-            // If the token is already revoked/invalid, just return success.
-            // If not, then update refresh token.
+                .Single(r => r.Token == refreshToken);
+            
             if (_tokenService.IsRefreshTokenValid(existingRefreshToken))
             {
                 existingRefreshToken.Revoked = _dateTimeService.Now;
