@@ -1,5 +1,6 @@
 ﻿using Audiochan.Core.Common.Constants;
 using Audiochan.Core.Common.Models;
+using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Features.Auth.Models;
 using Audiochan.Core.Features.Auth.Validators;
 using FluentValidation;

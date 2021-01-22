@@ -1,6 +1,7 @@
 ﻿using System;
 using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Common.Models;
+using Audiochan.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Audiochan.Web.Extensions

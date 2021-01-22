@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Constants;
 using Audiochan.Core.Common.Models;
+using Audiochan.Core.Common.Settings;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
 

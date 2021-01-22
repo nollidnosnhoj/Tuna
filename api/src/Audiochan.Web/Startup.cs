@@ -1,5 +1,6 @@
 using Audiochan.Core;
 using Audiochan.Core.Common.Models;
+using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Interfaces;
 using Audiochan.Infrastructure;
 using Audiochan.Web.Configurations;

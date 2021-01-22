@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Audiochan.Core.Common.Models;
+using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Features.Audios.Models;
 using Audiochan.Core.Features.Audios.Validators;
 using FluentValidation;

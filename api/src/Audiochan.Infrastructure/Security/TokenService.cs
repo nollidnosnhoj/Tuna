@@ -7,6 +7,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Models;
+using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Interfaces;
 using Microsoft.AspNetCore.Identity;

@@ -6,7 +6,7 @@ using Audiochan.Core.Common.Models;
 using Audiochan.Core.Entities;
 using Microsoft.AspNetCore.Http;
 
-namespace Audiochan.Core.Common.Builders
+namespace Audiochan.Core.Features.Audios.Builders
 {
     public class AudioBuilder
     {
@@ -49,7 +49,7 @@ namespace Audiochan.Core.Common.Builders
             return this;
         }
 
-        public AudioBuilder AddAudioMetadata(AudioMetadata audioMetadata)
+        public AudioBuilder AddAudioMetadata(AudioMetadataDto audioMetadata)
         {
             var (_, duration) = audioMetadata;
             _audio.Duration = duration;

@@ -4,6 +4,7 @@ using Audiochan.Core.Common.Models;
 using Audiochan.Core.Features.Auth.Models;
 using Audiochan.Core.Interfaces;
 using Audiochan.Web.Extensions;
+using Audiochan.Web.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 

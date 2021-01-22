@@ -7,6 +7,7 @@ using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Models;
+using Audiochan.Web.Models;
 
 namespace Audiochan.Web.Middlewares
 {
