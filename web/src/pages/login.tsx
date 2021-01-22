@@ -1,6 +1,6 @@
+import React, { useEffect, useMemo } from "react";
 import { Box, Flex } from "@chakra-ui/react";
 import Router, { useRouter } from "next/router";
-import React, { useEffect, useMemo } from "react";
 import LoginForm from "~/components/Auth/LoginForm";
 import Page from "~/components/Shared/Page";
 import useUser from "~/lib/contexts/user_context";
@@ -10,7 +10,7 @@ export default function LoginPage() {
   const { isAuth } = useUser();
 
   const redirect = useMemo<string>(() => {
-    return decodeURIComponent((query.redirect as string) || "/feed");
+    return decodeURIComponent((query.redirect as string) || "/");
   }, [query]);
 
   useEffect(() => {
