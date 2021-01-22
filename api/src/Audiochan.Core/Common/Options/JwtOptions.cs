@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Audiochan.Core.Common.Settings
+namespace Audiochan.Core.Common.Options
 {
-    public record JwtSetting
+    public record JwtOptions
     {
         public string Secret { get; init; } = null!;
         public TimeSpan AccessTokenExpiration { get; init; }

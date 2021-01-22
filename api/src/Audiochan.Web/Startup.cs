@@ -1,6 +1,6 @@
 using Audiochan.Core;
 using Audiochan.Core.Common.Models;
-using Audiochan.Core.Common.Settings;
+using Audiochan.Core.Common.Options;
 using Audiochan.Core.Interfaces;
 using Audiochan.Infrastructure;
 using Audiochan.Web.Configurations;
@@ -31,9 +31,9 @@ namespace Audiochan.Web
             // Configuration.GetSection(nameof(JwtSetting)).Bind(jwtSetting);
             // services.AddSingleton(jwtSetting);
             
-            services.Configure<JwtSetting>(Configuration.GetSection(nameof(JwtSetting)));
-            services.Configure<PasswordSetting>(Configuration.GetSection(nameof(PasswordSetting)));
-            services.Configure<UploadSetting>(Configuration.GetSection(nameof(UploadSetting)));
+            services.Configure<JwtOptions>(Configuration.GetSection(nameof(JwtOptions)));
+            services.Configure<IdentityUserOptions>(Configuration.GetSection(nameof(IdentityUserOptions)));
+            services.Configure<UploadOptions>(Configuration.GetSection(nameof(UploadOptions)));
 
             services
                 .ConfigureDatabase(Configuration, Environment)

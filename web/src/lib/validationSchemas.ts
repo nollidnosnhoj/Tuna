@@ -14,11 +14,11 @@ const {
   usernameMinLength,
   usernameMaxLength,
   usernameAllowedChars,
-  passwordRequireDigit, 
-  passwordRequireLowercase, 
-  passwordRequireNonAlphanumeric, 
-  passwordRequireUppercase, 
-  passwordMinLength } = CONSTANTS.IDENTITY_SETTINGS;
+  passwordRequiresDigit: passwordRequireDigit, 
+  passwordRequiresLowercase: passwordRequireLowercase, 
+  passwordRequiresNonAlphanumeric: passwordRequireNonAlphanumeric, 
+  passwordRequiresUppercase: passwordRequireUppercase, 
+  passwordMinimumLength: passwordMinLength } = CONSTANTS.IDENTITY_OPTIONS;
 
 export const usernameRule = (label: string, isRequired: boolean = true) => {
   let schema = string();

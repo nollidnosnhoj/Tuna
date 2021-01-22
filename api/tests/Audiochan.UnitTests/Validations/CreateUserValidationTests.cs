@@ -1,6 +1,6 @@
 ﻿using Audiochan.Core.Common.Constants;
 using Audiochan.Core.Common.Models;
-using Audiochan.Core.Common.Settings;
+using Audiochan.Core.Common.Options;
 using Audiochan.Core.Features.Auth.Models;
 using Audiochan.Core.Features.Auth.Validators;
 using FluentValidation;
@@ -16,13 +16,13 @@ namespace Audiochan.UnitTests.Validations
 
         public CreateUserValidationTests()
         {
-            var options = Options.Create(new PasswordSetting
+            var options = Options.Create(new IdentityUserOptions
             {
-                RequireDigit = true,
-                RequireLowercase = true,
-                RequireUppercase = true,
-                RequireNonAlphanumeric = true,
-                RequireLength = 5
+                PasswordRequiresDigit = true,
+                PasswordRequiresLowercase = true,
+                PasswordRequiresUppercase = true,
+                PasswordRequiresNonAlphanumeric = true,
+                PasswordMinimumLength = 5
             });
             _validator = new CreateUserRequestValidator(options);
         }

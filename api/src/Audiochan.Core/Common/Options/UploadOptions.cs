@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace Audiochan.Core.Common.Settings
+namespace Audiochan.Core.Common.Options
 {
-    public record UploadSetting
+    public record UploadOptions
     {
         public List<string> ContentTypes { get; init; } = new();
         public long FileSize { get; init; }

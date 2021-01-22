@@ -7,7 +7,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Models;
-using Audiochan.Core.Common.Settings;
+using Audiochan.Core.Common.Options;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Interfaces;
 using Microsoft.AspNetCore.Identity;
@@ -18,14 +18,14 @@ namespace Audiochan.Infrastructure.Security
 {
     public class TokenService : ITokenService
     {
-        private readonly JwtSetting _jwtSetting;
+        private readonly JwtOptions _jwtOptions;
         private readonly IDateTimeService _dateTimeService;
         private readonly UserManager<User> _userManager;
 
-        public TokenService(IOptions<JwtSetting> jwtOptions, UserManager<User> userManager, 
+        public TokenService(IOptions<JwtOptions> jwtOptions, UserManager<User> userManager, 
             IDateTimeService dateTimeService)
         {
-            _jwtSetting = jwtOptions.Value;
+            _jwtOptions = jwtOptions.Value;
             _userManager = userManager;
             _dateTimeService = dateTimeService;
         }
@@ -34,10 +34,10 @@ namespace Audiochan.Infrastructure.Security
         {
             var claims = await GetClaims(user);
             
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSetting.Secret));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.Secret));
 
             var createdDate = _dateTimeService.Now;
-            var expirationDate = createdDate.Add(_jwtSetting.AccessTokenExpiration);
+            var expirationDate = createdDate.Add(_jwtOptions.AccessTokenExpiration);
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
@@ -77,7 +77,7 @@ namespace Audiochan.Infrastructure.Security
             return new RefreshToken
             {
                 Token = Convert.ToBase64String(randomBytes),
-                Expiry = _dateTimeService.Now.Add(_jwtSetting.RefreshTokenExpiration),
+                Expiry = _dateTimeService.Now.Add(_jwtOptions.RefreshTokenExpiration),
                 Created = _dateTimeService.Now,
                 UserId = userId
             };

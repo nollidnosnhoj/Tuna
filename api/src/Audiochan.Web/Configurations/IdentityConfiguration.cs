@@ -1,5 +1,5 @@
 ﻿using Audiochan.Core.Common.Models;
-using Audiochan.Core.Common.Settings;
+using Audiochan.Core.Common.Options;
 using Audiochan.Core.Entities;
 using Audiochan.Infrastructure.Data;
 using Microsoft.AspNetCore.Hosting;
@@ -16,18 +16,18 @@ namespace Audiochan.Web.Configurations
         public static IServiceCollection ConfigureIdentity(this IServiceCollection services, 
             IConfiguration configuration)
         {
-            var passwordSetting = new PasswordSetting();
-            configuration.GetSection(nameof(PasswordSetting)).Bind(passwordSetting);
+            var identityOptions = new IdentityUserOptions();
+            configuration.GetSection(nameof(IdentityUserOptions)).Bind(identityOptions);
             
             services
                 .AddIdentity<User, Role>(options =>
                 {
-                    options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyz-_";
-                    options.Password.RequiredLength = passwordSetting.RequireLength;
-                    options.Password.RequireDigit = passwordSetting.RequireDigit;
-                    options.Password.RequireLowercase = passwordSetting.RequireLowercase;
-                    options.Password.RequireUppercase = passwordSetting.RequireUppercase;
-                    options.Password.RequireNonAlphanumeric = passwordSetting.RequireNonAlphanumeric;
+                    options.User.AllowedUserNameCharacters = identityOptions.UsernameAllowedCharacters;
+                    options.Password.RequiredLength = identityOptions.PasswordMinimumLength;
+                    options.Password.RequireDigit = identityOptions.PasswordRequiresDigit;
+                    options.Password.RequireLowercase = identityOptions.PasswordRequiresLowercase;
+                    options.Password.RequireUppercase = identityOptions.PasswordRequiresUppercase;
+                    options.Password.RequireNonAlphanumeric = identityOptions.PasswordRequiresNonAlphanumeric;
                 })
                 .AddRoleManager<RoleManager<Role>>()
                 .AddSignInManager<SignInManager<User>>()

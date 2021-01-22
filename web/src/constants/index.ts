@@ -1,14 +1,14 @@
 export default {
   API_URL: 'http://localhost:5000/',
-  IDENTITY_SETTINGS: {
+  IDENTITY_OPTIONS: {
     usernameMinLength: 3,
     usernameMaxLength: 20,
     usernameAllowedChars: "abcdefghijklmnopqrstuvwxyz-_",
-    passwordMinLength: 6,
-    passwordRequireDigit: true,
-    passwordRequireLowercase: true,
-    passwordRequireUppercase: true,
-    passwordRequireNonAlphanumeric: false
+    passwordMinimumLength: 6,
+    passwordRequiresDigit: true,
+    passwordRequiresLowercase: true,
+    passwordRequiresUppercase: true,
+    passwordRequiresNonAlphanumeric: false
   },
   UPLOAD_RULES: {
     accept: [

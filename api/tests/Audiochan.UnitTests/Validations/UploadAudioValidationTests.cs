@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using Audiochan.Core.Common.Models;
-using Audiochan.Core.Common.Settings;
+using Audiochan.Core.Common.Options;
 using Audiochan.Core.Features.Audios.Models;
 using Audiochan.Core.Features.Audios.Validators;
 using FluentValidation;
@@ -19,7 +19,7 @@ namespace Audiochan.UnitTests.Validations
 
         public UploadAudioValidationTests()
         {
-            var options = Options.Create(new UploadSetting
+            var options = Options.Create(new UploadOptions
             {
                 ContentTypes = new List<string>
                 {

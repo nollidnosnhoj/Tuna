@@ -1,6 +1,6 @@
 ﻿using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Models;
-using Audiochan.Core.Common.Settings;
+using Audiochan.Core.Common.Options;
 using Audiochan.Core.Features.Users.Models;
 using FluentValidation;
 using Microsoft.Extensions.Options;
@@ -9,7 +9,7 @@ namespace Audiochan.Core.Features.Users.Validators
 {
     public class ChangePasswordRequestValidator : AbstractValidator<ChangePasswordRequest>
     {
-        public ChangePasswordRequestValidator(IOptions<PasswordSetting> options)
+        public ChangePasswordRequestValidator(IOptions<IdentityUserOptions> options)
         {
             RuleFor(req => req.NewPassword)
                 .NotEmpty()
