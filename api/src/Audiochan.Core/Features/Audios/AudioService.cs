@@ -14,7 +14,6 @@ using Audiochan.Core.Common.Models;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Audios.Models;
 using Audiochan.Core.Interfaces;
-using Dapper;
 using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Audios
@@ -40,7 +39,7 @@ namespace Audiochan.Core.Features.Audios
             _genreService = genreService;
         }
 
-        public async Task<List<AudioListViewModel>> GetFeed(long userId, PaginationQuery query,
+        public async Task<PagedList<AudioListViewModel>> GetFeed(long userId, PaginationQuery query,
             CancellationToken cancellationToken = default)
         {
             // Get the user Ids of the followed users
@@ -50,7 +49,7 @@ namespace Audiochan.Core.Features.Audios
                 .Select(user => user.TargetId)
                 .ToListAsync(cancellationToken);
 
-            var queryable = _dbContext.Audios
+            return await _dbContext.Audios
                 .AsNoTracking()
                 .Include(a => a.Favorited)
                 .Include(a => a.User)
@@ -58,12 +57,11 @@ namespace Audiochan.Core.Features.Audios
                 .Where(a => followedIds.Contains(a.UserId))
                 .Distinct()
                 .Select(MapProjections.AudioList(userId))
-                .OrderByDescending(a => a.Created);
-
-            return await queryable.Paginate(query, cancellationToken);
+                .OrderByDescending(a => a.Created)
+                .Paginate(query, cancellationToken);
         }
 
-        public async Task<List<AudioListViewModel>> GetList(GetAudioListQuery query, 
+        public async Task<PagedList<AudioListViewModel>> GetList(GetAudioListQuery query, 
             CancellationToken cancellationToken = default)
         {
             // Get userId of the current user
@@ -273,22 +271,16 @@ namespace Audiochan.Core.Features.Audios
             return Result.Success();
         }
         
-        public async Task<IResult<List<PopularTagViewModel>>>  GetPopularTags(
+        public async Task<PagedList<PopularTagViewModel>>  GetPopularTags(
             PaginationQuery paginationQuery
             , CancellationToken cancellationToken = default)
         {
-            var queryable = _dbContext.Tags
+            return await _dbContext.Tags
                 .AsNoTracking()
                 .Include(t => t.Audios)
                 .Select(t => new PopularTagViewModel{ Tag = t.Id, Count = t.Audios.Count })
-                .OrderByDescending(dto => dto.Count);
-
-            var vm = await queryable.Paginate(
-                paginationQuery.Page
-                , paginationQuery.Limit
-                , cancellationToken);
-
-            return Result<List<PopularTagViewModel>>.Success(vm);
+                .OrderByDescending(dto => dto.Count)
+                .Paginate(paginationQuery, cancellationToken);
         }
         
         private async Task<List<Tag>> CreateNewTags(IEnumerable<string?> requestedTags, 

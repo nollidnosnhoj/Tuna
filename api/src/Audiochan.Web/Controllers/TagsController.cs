@@ -21,10 +21,10 @@ namespace Audiochan.Web.Controllers
 
         [HttpGet(Name="GetPopularTags")]
         [Produces("application/json")]
-        [ProducesResponseType(typeof(List<PopularTagViewModel>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PagedList<PopularTagViewModel>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetPopularTags([FromQuery] PaginationQuery paginationQuery, CancellationToken cancellationToken)
         {
-            return Ok((await _audioService.GetPopularTags(paginationQuery, cancellationToken)).Data);
+            return Ok(await _audioService.GetPopularTags(paginationQuery, cancellationToken));
         }
     }
 }

@@ -54,7 +54,7 @@ namespace Audiochan.Web.Controllers
 
         [HttpGet("feed", Name="GetAudioFeed")]
         [Produces("application/json")]
-        [ProducesResponseType(typeof(List<AudioListViewModel>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PagedList<AudioListViewModel>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAuthenticatedUserFeed([FromQuery] PaginationQuery query, 
             CancellationToken cancellationToken)
         {

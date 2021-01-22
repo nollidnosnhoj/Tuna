@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Enums;
@@ -24,7 +23,7 @@ namespace Audiochan.Core.Features.Followers
             _dbContext = dbContext;
         }
 
-        public async Task<List<FollowUserViewModel>> GetUsersFollowers(string username, 
+        public async Task<PagedList<FollowUserViewModel>> GetUsersFollowers(string username, 
             PaginationQuery paginationQuery, CancellationToken cancellationToken = default)
         {
             var currentUserId = _currentUserService.GetUserId();
@@ -39,7 +38,7 @@ namespace Audiochan.Core.Features.Followers
                 .Paginate(paginationQuery, cancellationToken);
         }
 
-        public async Task<List<FollowUserViewModel>> GetUsersFollowings(string username, 
+        public async Task<PagedList<FollowUserViewModel>> GetUsersFollowings(string username, 
             PaginationQuery paginationQuery, CancellationToken cancellationToken = default)
         {
             var currentUserId = _currentUserService.GetUserId();

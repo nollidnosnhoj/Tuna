@@ -42,7 +42,7 @@ namespace Audiochan.Web.Controllers
         }
         
         [HttpGet("{username}/audios", Name="GetUserAudios")]
-        [ProducesResponseType(typeof(List<AudioListViewModel>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PagedList<AudioListViewModel>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetUserAudios(string username,
             PaginationQuery paginationQuery, CancellationToken cancellationToken)
@@ -51,7 +51,7 @@ namespace Audiochan.Web.Controllers
             {
                 Username = username,
                 Page = paginationQuery.Page,
-                Limit = paginationQuery.Limit
+                Size = paginationQuery.Size
             };
 
             var list = await _audioService.GetList(query, cancellationToken);
@@ -60,7 +60,7 @@ namespace Audiochan.Web.Controllers
         }
 
         [HttpGet("{username}/favorites")]
-        [ProducesResponseType(typeof(List<AudioListViewModel>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PagedList<AudioListViewModel>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetUserFavorites(string username, PaginationQuery paginationQuery,
             CancellationToken cancellationToken)
         {
@@ -68,7 +68,7 @@ namespace Audiochan.Web.Controllers
         }
 
         [HttpGet("{username}/followers", Name="GetUserFollowers")]
-        [ProducesResponseType(typeof(List<UserViewModel>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PagedList<UserViewModel>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetFollowers(string username, [FromQuery] PaginationQuery query,
             CancellationToken cancellationToken)
         {
@@ -76,7 +76,7 @@ namespace Audiochan.Web.Controllers
         }
         
         [HttpGet("{username}/followings", Name="GetUserFollowings")]
-        [ProducesResponseType(typeof(List<UserViewModel>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PagedList<UserViewModel>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetFollowings(string username, [FromQuery] PaginationQuery query,
             CancellationToken cancellationToken)
         {

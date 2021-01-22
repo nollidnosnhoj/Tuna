@@ -8,10 +8,10 @@ namespace Audiochan.Core.Interfaces
 {
     public interface IFollowerService
     {
-        Task<List<FollowUserViewModel>> GetUsersFollowers(string username, PaginationQuery paginationQuery,
+        Task<PagedList<FollowUserViewModel>> GetUsersFollowers(string username, PaginationQuery paginationQuery,
             CancellationToken cancellationToken = default);
 
-        Task<List<FollowUserViewModel>> GetUsersFollowings(string username, PaginationQuery paginationQuery,
+        Task<PagedList<FollowUserViewModel>> GetUsersFollowings(string username, PaginationQuery paginationQuery,
             CancellationToken cancellationToken = default);
 
         Task<bool> CheckFollowing(long userId, string username, CancellationToken cancellationToken = default);

@@ -24,7 +24,7 @@ namespace Audiochan.Core.Features.Favorites
             _currentUserService = currentUserService;
         }
 
-        public async Task<List<AudioListViewModel>> GetUserFavorites(string username, PaginationQuery query, 
+        public async Task<PagedList<AudioListViewModel>> GetUserFavorites(string username, PaginationQuery query, 
             CancellationToken cancellationToken = default)
         {
             var currentUserId = _currentUserService.GetUserId();

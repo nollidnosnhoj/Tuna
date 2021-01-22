@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
-import { useQuery, useInfiniteQuery, useMutation, QueryClient, UseQueryOptions, useQueryClient } from 'react-query'
+import { useQuery, useMutation, UseQueryOptions, useQueryClient } from 'react-query'
 import queryString from 'query-string'
 import { apiErrorToast } from '~/utils/toast';
 import request from '../request'
-import { ErrorResponse, PaginatedOptions } from '../types';
+import { ErrorResponse, PagedList, PaginatedOptions } from '../types';
 import { AudioDetail, AudioListItem, AudioSearchType } from '../types/audio'
+import usePagination from '../hooks/usePagination';
+import useInfinitePagination from '../hooks/useInfinitePagination';
 
 interface FetchAudioByIdOptions {
   accessToken?: string;
@@ -22,12 +24,12 @@ export const useAudio = (id: string, options: UseQueryOptions<AudioDetail, Error
   return useQuery<AudioDetail, ErrorResponse>(['audios', id], () => fetchAudioById(id), options);
 }
 
-interface useAudiosInfiniteOptions extends PaginatedOptions {
+interface useAudiosPaginatedOptions extends PaginatedOptions {
   type: AudioSearchType
   username?: string
 }
 
-function generateUseAudiosKey(options: useAudiosInfiniteOptions) {
+function generateUseAudiosKey(options: useAudiosPaginatedOptions) {
   let url = 'audios'
 
   if (options.type === 'feed') {
@@ -41,20 +43,38 @@ function generateUseAudiosKey(options: useAudiosInfiniteOptions) {
   return url;
 }
 
-export const useAudiosInfiniteQuery = (options: useAudiosInfiniteOptions = { type: 'audios' }) => {
+export const useAudiosInfiniteQuery = (options: useAudiosPaginatedOptions = { type: 'audios' }) => {
   const key = generateUseAudiosKey(options);
-  const fetchAudios = async (params?: Record<string, any>, page: number = 1) => {
+
+  const params = {
+    ...options.params,
+    size: options.size ?? 30
+  };
+
+  const fetchAudios = async (page: number = 1) => {
     const qs = `?page=${page}&${queryString.stringify(params)}`
-    const { data } = await request<AudioListItem[]>(key + qs);
+    const { data } = await request<PagedList<AudioListItem>>(key + qs);
     return data;
   }
-  const params = {...options.params, size: options.size = 15 };
-  return useInfiniteQuery<AudioListItem[], ErrorResponse>([key, params], ({ pageParam = 1 }) => 
-    fetchAudios(params, pageParam), {
-      getNextPageParam: (lastPage, allPages) => {
-        return lastPage.length > 0 ? allPages.length + 1 : undefined
-      },
-    });
+
+  return useInfinitePagination(key, fetchAudios, params);
+}
+
+export const useAudiosPaginatedQuery = (options: useAudiosPaginatedOptions = { type: 'audios' }) => {
+  const key = generateUseAudiosKey(options);
+
+  const params = {
+    ...options.params,
+    size: options.size = 30 
+  };
+
+  const fetchAudios = async (page: number) => {
+    const qs = `?page=${page}&${queryString.stringify(params)}`
+    const { data } = await request<PagedList<AudioListItem>>(key + qs);
+    return data;
+  }
+
+  return usePagination(key, fetchAudios, params);
 }
 
 export const useFavorite = (audioId: string, initialData?: boolean) => {

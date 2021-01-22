@@ -3,6 +3,6 @@
     public record PaginationQuery
     {
         public int Page { get; init; } = 1;
-        public int Limit { get; init; } = 15;
+        public int Size { get; init; } = 30;
     }
 }

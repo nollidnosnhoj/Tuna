@@ -8,7 +8,7 @@ namespace Audiochan.Core.Interfaces
 {
     public interface IFavoriteService
     {
-        Task<List<AudioListViewModel>> GetUserFavorites(string username, PaginationQuery query,
+        Task<PagedList<AudioListViewModel>> GetUserFavorites(string username, PaginationQuery query,
             CancellationToken cancellationToken = default);
         Task<IResult> FavoriteAudio(long userId, string audioId, CancellationToken cancellationToken = default);
         Task<IResult> UnfavoriteAudio(long userId, string audioId, CancellationToken cancellationToken = default);

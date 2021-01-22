@@ -1,8 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Models;
-using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Audios.Models;
 using Audiochan.Core.Interfaces;
 using Audiochan.Web.Extensions;
@@ -25,7 +23,7 @@ namespace Audiochan.Web.Controllers
 
         [HttpGet(Name="GetAudios")]
         [AllowAnonymous]
-        [ProducesResponseType(typeof(List<AudioListViewModel>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PagedList<AudioListViewModel>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetList([FromQuery] GetAudioListQuery query, 
             CancellationToken cancellationToken)
         {
@@ -64,7 +62,7 @@ namespace Audiochan.Web.Controllers
         {
             var result = await _audioService.Create(request, cancellationToken);
             return result.IsSuccess 
-                ? CreatedAtAction(nameof(GetById), result.Data.Id, result.Data)
+                ? CreatedAtAction(nameof(GetById), new { audioId = result.Data.Id }, result.Data)
                 : result.ReturnErrorResponse();
         }
 
