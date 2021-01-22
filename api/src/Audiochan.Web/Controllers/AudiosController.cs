@@ -8,6 +8,7 @@ using Audiochan.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Audiochan.Web.Controllers
 {
@@ -22,29 +23,32 @@ namespace Audiochan.Web.Controllers
             _audioService = audioService;
         }
 
-        [HttpGet(Name="GetAudios")]
+        [HttpGet(Name = "GetAudios")]
         [AllowAnonymous]
         [ProducesResponseType(typeof(PagedList<AudioListViewModel>), StatusCodes.Status200OK)]
+        [SwaggerOperation(Summary = "Returns a list of audios.", OperationId = "GetAudios", Tags = new[] { "audios" })]
         public async Task<IActionResult> GetList([FromQuery] GetAudioListQuery query, 
             CancellationToken cancellationToken)
         {
             return Ok(await _audioService.GetList(query, cancellationToken));
         }
 
-        [HttpGet("{audioId}", Name = "GetAudioById")]
+        [HttpGet("{audioId}", Name = "GetAudio")]
         [AllowAnonymous]
         [ProducesResponseType(typeof(AudioDetailViewModel), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetById(string audioId, CancellationToken cancellationToken)
+        [SwaggerOperation(Summary = "Return an audio by ID.", OperationId = "GetAudio", Tags = new [] { "audios" })]
+        public async Task<IActionResult> Get(string audioId, CancellationToken cancellationToken)
         {
             var result = await _audioService.Get(audioId, cancellationToken);
             return result.IsSuccess ? Ok(result.Data) : result.ReturnErrorResponse();
         }
 
-        [HttpGet("random")]
+        [HttpGet("random", Name = "GetRandomAudio")]
         [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [SwaggerOperation(Summary = "Return a random audio.", OperationId = "GetRandomAudio", Tags = new [] { "audios" })]
         public async Task<IActionResult> GetRandom(CancellationToken cancellationToken)
         {
             var result = await _audioService.GetRandom(cancellationToken);
@@ -57,13 +61,18 @@ namespace Audiochan.Web.Controllers
         [ProducesResponseType(typeof(AudioDetailViewModel), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+        [SwaggerOperation(
+            Summary = "Upload audio.",
+            Description = "Requires authentication.",
+            OperationId = "UploadAudio",
+            Tags = new [] { "audios" })]
         public async Task<IActionResult> Upload(
             [FromForm] UploadAudioRequest request
             , CancellationToken cancellationToken)
         {
             var result = await _audioService.Create(request, cancellationToken);
             return result.IsSuccess 
-                ? CreatedAtAction(nameof(GetById), new { audioId = result.Data.Id }, result.Data)
+                ? CreatedAtAction(nameof(Get), new { audioId = result.Data.Id }, result.Data)
                 : result.ReturnErrorResponse();
         }
 
@@ -73,6 +82,11 @@ namespace Audiochan.Web.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+        [SwaggerOperation(
+            Summary = "Update audio's details.",
+            Description = "Requires authentication.",
+            OperationId = "UpdateAudio",
+            Tags = new [] { "audios" })]
         public async Task<IActionResult> Update(string audioId, [FromBody] UpdateAudioRequest request, 
             CancellationToken cancellationToken)
         {
@@ -85,6 +99,11 @@ namespace Audiochan.Web.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
+        [SwaggerOperation(
+            Summary = "Remove audio.",
+            Description = "Requires authentication.",
+            OperationId = "DeleteAudio",
+            Tags = new [] { "audios" })]
         public async Task<IActionResult> Destroy(string audioId, CancellationToken cancellationToken)
         {
             var result = await _audioService.Remove(audioId, cancellationToken);

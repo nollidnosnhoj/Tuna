@@ -18,7 +18,7 @@ namespace Audiochan.Core.Entities
         public int Duration { get; set; }
         public long FileSize { get; set; }
         public string FileExt { get; set; } = null!;
-        public string Url { get; set; } = null!;
+        public string? Url { get; set; }
         public bool IsPublic { get; set; }
         public bool IsLoop { get; set; }
         public long UserId { get; set; }

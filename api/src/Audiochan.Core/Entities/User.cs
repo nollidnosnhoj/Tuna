@@ -18,9 +18,7 @@ namespace Audiochan.Core.Entities
         public string DisplayName { get; set; } = null!;
         public string? About { get; set; }
         public string? Website { get; set; }
-        public DateTime Created { get; set; }
-        public DateTime? LastModified { get; set; }
-
+        public DateTime Joined { get; set; }
         public ICollection<Audio> Audios { get; set; }
         public ICollection<FavoriteAudio> FavoriteAudios { get; set; }
         public ICollection<FollowedUser> Followings { get; set; }

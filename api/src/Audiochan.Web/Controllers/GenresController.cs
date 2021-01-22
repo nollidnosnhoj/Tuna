@@ -6,6 +6,7 @@ using Audiochan.Core.Features.Genres.Models;
 using Audiochan.Core.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Audiochan.Web.Controllers
 {
@@ -19,8 +20,12 @@ namespace Audiochan.Web.Controllers
             _genreService = genreService;
         }
 
-        [HttpGet]
+        [HttpGet(Name = "GetGenres")]
         [ProducesResponseType(typeof(List<Genre>), StatusCodes.Status200OK)]
+        [SwaggerOperation(
+            Summary = "Returns a list of available genres.",
+            OperationId = "GetGenres",
+            Tags = new []{"genres"})]
         public async Task<IActionResult> GetGenres([FromQuery] ListGenresQueryParams queryParams, 
             CancellationToken cancellationToken)
         {

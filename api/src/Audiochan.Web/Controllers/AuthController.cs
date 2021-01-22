@@ -1,12 +1,12 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Models;
 using Audiochan.Core.Features.Auth.Models;
 using Audiochan.Core.Interfaces;
 using Audiochan.Web.Extensions;
 using Audiochan.Web.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Audiochan.Web.Controllers
 {
@@ -23,6 +23,11 @@ namespace Audiochan.Web.Controllers
         [HttpPost("login", Name="Login")]
         [ProducesResponseType(typeof(AuthResultDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [SwaggerOperation(
+            Summary = "Obtain access and refresh token using your login credentials.",
+            OperationId = "Login",
+            Tags = new []{ "auth" }
+        )]
         public async Task<IActionResult> Login([FromBody] LoginRequest request, 
             CancellationToken cancellationToken)
         {
@@ -35,6 +40,12 @@ namespace Audiochan.Web.Controllers
         [HttpPost("register", Name="CreateAccount")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+        [SwaggerOperation(
+            Summary = "Create an account.",
+            Description = "Once successful, you can use the login endpoint to obtain access and refresh tokens.",
+            OperationId = "CreateAccount",
+            Tags = new []{ "auth" }
+        )]
         public async Task<IActionResult> Register([FromBody] CreateUserRequest request,
             CancellationToken cancellationToken)
         {
@@ -47,6 +58,12 @@ namespace Audiochan.Web.Controllers
         [HttpPost("refresh", Name="RefreshAccessToken")]
         [ProducesResponseType(typeof(AuthResultDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [SwaggerOperation(
+            Summary = "Refresh access token using valid refresh token.",
+            Description = "Once successful, you will also get a new refresh token, and the previous token will be invalid.",
+            OperationId = "RefreshAccessToken",
+            Tags = new []{"auth"}
+        )]
         public async Task<IActionResult> Refresh([FromBody] RefreshTokenRequest request,
             CancellationToken cancellationToken)
         {
@@ -59,6 +76,11 @@ namespace Audiochan.Web.Controllers
         [HttpPost("revoke", Name="RevokeRefreshToken")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
+        [SwaggerOperation(
+            Summary = "Revoke a refresh token",
+            OperationId = "RevokeRefreshToken",
+            Tags = new []{"auth"}
+        )]
         public async Task<IActionResult> Revoke([FromBody] RefreshTokenRequest request, 
             CancellationToken cancellationToken)
         {

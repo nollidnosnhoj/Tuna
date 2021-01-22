@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Features.Audios.Models;
@@ -9,6 +8,7 @@ using Audiochan.Web.Extensions;
 using Audiochan.Web.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Audiochan.Web.Controllers
 {
@@ -33,6 +33,11 @@ namespace Audiochan.Web.Controllers
         [HttpGet("{username}", Name="GetProfile")]
         [ProducesResponseType(typeof(UserDetailsViewModel), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [SwaggerOperation(
+            Summary = "Return user's profile.",
+            OperationId = "GetProfile",
+            Tags = new []{"users"}
+        )]
         public async Task<IActionResult> GetUserProfile(string username, CancellationToken cancellationToken)
         {
             var result = await _userService.GetUserDetails(username, cancellationToken);
@@ -45,6 +50,11 @@ namespace Audiochan.Web.Controllers
         [HttpGet("{username}/audios", Name="GetUserAudios")]
         [ProducesResponseType(typeof(PagedList<AudioListViewModel>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
+        [SwaggerOperation(
+            Summary = "Return a list of the user's audios.",
+            OperationId = "GetUserAudios",
+            Tags = new []{"users"}
+        )]
         public async Task<IActionResult> GetUserAudios(string username,
             PaginationQuery paginationQuery, CancellationToken cancellationToken)
         {
@@ -60,8 +70,13 @@ namespace Audiochan.Web.Controllers
             return Ok(list);
         }
 
-        [HttpGet("{username}/favorites")]
+        [HttpGet("{username}/favorites/audios", Name="GetUserFavoriteAudios")]
         [ProducesResponseType(typeof(PagedList<AudioListViewModel>), StatusCodes.Status200OK)]
+        [SwaggerOperation(
+            Summary = "Return a list of the user's favorite audios.",
+            OperationId = "GetUserFavoriteAudios",
+            Tags = new []{"users"}
+        )]
         public async Task<IActionResult> GetUserFavorites(string username, PaginationQuery paginationQuery,
             CancellationToken cancellationToken)
         {
@@ -70,6 +85,11 @@ namespace Audiochan.Web.Controllers
 
         [HttpGet("{username}/followers", Name="GetUserFollowers")]
         [ProducesResponseType(typeof(PagedList<UserViewModel>), StatusCodes.Status200OK)]
+        [SwaggerOperation(
+            Summary = "Return a list of the user's followers.",
+            OperationId = "GetUserFollowers",
+            Tags = new []{"users"}
+        )]
         public async Task<IActionResult> GetFollowers(string username, [FromQuery] PaginationQuery query,
             CancellationToken cancellationToken)
         {
@@ -78,6 +98,11 @@ namespace Audiochan.Web.Controllers
         
         [HttpGet("{username}/followings", Name="GetUserFollowings")]
         [ProducesResponseType(typeof(PagedList<UserViewModel>), StatusCodes.Status200OK)]
+        [SwaggerOperation(
+            Summary = "Return a list of the user's followings.",
+            OperationId = "GetUserFollowings",
+            Tags = new []{"users"}
+        )]
         public async Task<IActionResult> GetFollowings(string username, [FromQuery] PaginationQuery query,
             CancellationToken cancellationToken)
         {

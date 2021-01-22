@@ -37,6 +37,8 @@ namespace Audiochan.Web.Configurations
                         }, new List<string>()
                     } 
                 });
+                
+                options.EnableAnnotations();
             });
         }
 

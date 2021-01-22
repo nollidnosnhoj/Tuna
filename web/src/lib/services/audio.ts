@@ -84,7 +84,7 @@ export const useFavorite = (audioId: string, initialData?: boolean) => {
     if (isFavorite === undefined) {
       (async () => {
         try {
-          await request(`me/audios/${audioId}/favorite`, { method: "head" });
+          await request(`favorites/audios/${audioId}`, { method: "head" });
           setIsFavorite(true);
         } catch (err) {
           setIsFavorite(false);
@@ -95,7 +95,7 @@ export const useFavorite = (audioId: string, initialData?: boolean) => {
 
   const favoriteHandler = async () => {
     try {
-      await request(`me/audios/${audioId}/favorite`, {
+      await request(`favorites/audios/${audioId}`, {
         method: isFavorite ? "delete" : "put",
       });
       setIsFavorite(!isFavorite);

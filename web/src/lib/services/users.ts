@@ -12,7 +12,7 @@ export const useFollow = (username: string) => {
   useEffect(() => {
     const checkIsFollowing = async () => {
       try {
-        await request(`me/users/${username}/follow`, { method: "head" });
+        await request(`me/followings/${username}`, { method: "head" });
         setIsFollowing(true);
       } catch (err) {
         setIsFollowing(false);
@@ -23,7 +23,7 @@ export const useFollow = (username: string) => {
 
   const followHandler = async () => {
     try {
-      await request(`me/users/${username}/follow`, {
+      await request(`me/followings/${username}`, {
         method: isFollowing ? "delete" : "put",
       });
       setIsFollowing(!isFollowing);

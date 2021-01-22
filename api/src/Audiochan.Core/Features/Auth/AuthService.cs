@@ -60,7 +60,7 @@ namespace Audiochan.Core.Features.Auth
                 UserName = request.Username!.ToLower(),
                 DisplayName = request.Username,
                 Email = request.Email,
-                Created = _dateTimeService.Now
+                Joined = _dateTimeService.Now
             };
 
             var identityResult = await _userManager.CreateAsync(user, request.Password);

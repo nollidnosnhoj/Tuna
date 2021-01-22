@@ -15,7 +15,10 @@ namespace Audiochan.Web.Configurations
         {
             services.AddDbContext<DatabaseContext>(options =>
             {
-                options.UseNpgsql(configuration.GetConnectionString("PostgreSQL"));
+                if (environment.IsDevelopment())
+                    options.UseSqlite(configuration.GetConnectionString("SQLite"));
+                else
+                    options.UseNpgsql(configuration.GetConnectionString("PostgreSQL"));
                 
                 options
                     .EnableSensitiveDataLogging()
