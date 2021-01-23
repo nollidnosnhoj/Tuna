@@ -271,14 +271,17 @@ namespace Audiochan.Core.Features.Audios
 
             if (audio.UserId != currentUserId)
                 return Result.Fail(ResultStatus.Forbidden);
-
+            
             var blobName = audio.Id + audio.AudioFileExtension;
-            
-            _dbContext.Audios.Remove(audio);
-            await _dbContext.SaveChangesAsync(cancellationToken);
-            
-            await _storageService.DeleteBlobAsync(ContainerConstants.Audios, blobName, cancellationToken);
 
+            _dbContext.Audios.Remove(audio);
+            var task1 = _dbContext.SaveChangesAsync(cancellationToken);
+            var task2 = _storageService.DeleteBlobAsync(ContainerConstants.Audios, blobName, cancellationToken);
+            var task3 = _imageService.DeleteArtworkAndThumbnails(
+                Path.Combine(ContainerConstants.Artworks, ContainerConstants.Audios),
+                id, 
+                cancellationToken);
+            await Task.WhenAll(task1, task2, task3);
             return Result.Success();
         }
 

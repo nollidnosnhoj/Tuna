@@ -31,19 +31,19 @@ namespace Audiochan.Infrastructure.ImageSharp
             var thumbnailSm = GenerateThumbnail(image, 100, 100);
             var task1 = _storageService.SaveBlobAsync(
                 container: container,
-                blobName: name + ".jpg",
+                blobName: name + "-large.jpg",
                 stream: imageStream,
                 overwrite: true,
                 cancellationToken);
             var task2 = _storageService.SaveBlobAsync(
                 container: container,
-                blobName: name + $"-{thumbnailMd.Height}.jpg",
+                blobName: name + "-medium.jpg",
                 stream: thumbnailMd.Stream,
                 overwrite: true,
                 cancellationToken);
             var task3 = _storageService.SaveBlobAsync(
                 container: container,
-                blobName: name + $"-{thumbnailSm.Height}.jpg",
+                blobName: name + "-small.jpg",
                 stream: thumbnailSm.Stream,
                 overwrite: true,
                 cancellationToken);
@@ -52,7 +52,7 @@ namespace Audiochan.Infrastructure.ImageSharp
 
             var blob = await _storageService.GetBlobAsync(
                 container: container,
-                blobName: name + ".jpg",
+                blobName: name + "-large.jpg",
                 cancellationToken);
 
             return blob;
@@ -86,15 +86,15 @@ namespace Audiochan.Infrastructure.ImageSharp
         {
             var task1 = _storageService.DeleteBlobAsync(
                 container: container,
-                blobName: name + ".jpg",
+                blobName: name + "-large.jpg",
                 cancellationToken);
             var task2 = _storageService.DeleteBlobAsync(
                 container: container,
-                blobName: name + "-200.jpg",
+                blobName: name + "-medium.jpg",
                 cancellationToken);
             var task3 = _storageService.DeleteBlobAsync(
                 container: container,
-                blobName: name + "-100.jpg",
+                blobName: name + "-small.jpg",
                 cancellationToken);
             await Task.WhenAll(task1, task2, task3);
         }
