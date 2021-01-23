@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Audiochan.Infrastructure.Data
 {
-    public class DatabaseContext : IdentityDbContext<User, Role, long>, IDatabaseContext
+    public class DatabaseContext : IdentityDbContext<User, Role, string>, IDatabaseContext
     {
         private readonly IDateTimeService _dateTimeService;
         
@@ -73,27 +73,27 @@ namespace Audiochan.Infrastructure.Data
                 entity.ToTable("roles");
             });
             
-            builder.Entity<IdentityUserRole<long>>(entity =>
+            builder.Entity<IdentityUserRole<string>>(entity =>
             {
                 entity.ToTable("user_roles");
             });
             
-            builder.Entity<IdentityUserClaim<long>>(entity =>
+            builder.Entity<IdentityUserClaim<string>>(entity =>
             {
                 entity.ToTable("user_claims");
             });
             
-            builder.Entity<IdentityUserLogin<long>>(entity =>
+            builder.Entity<IdentityUserLogin<string>>(entity =>
             {
                 entity.ToTable("user_logins");
             });
             
-            builder.Entity<IdentityRoleClaim<long>>(entity =>
+            builder.Entity<IdentityRoleClaim<string>>(entity =>
             {
                 entity.ToTable("role_claims");
             });
             
-            builder.Entity<IdentityUserToken<long>>(entity =>
+            builder.Entity<IdentityUserToken<string>>(entity =>
             {
                 entity.ToTable("user_tokens");
             });

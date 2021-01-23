@@ -25,8 +25,7 @@ namespace Audiochan.Infrastructure.Data.Migrations
                 name: "roles",
                 columns: table => new
                 {
-                    id = table.Column<long>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                    id = table.Column<string>(type: "TEXT", nullable: false),
                     name = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     normalized_name = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     concurrency_stamp = table.Column<string>(type: "TEXT", nullable: true)
@@ -51,8 +50,7 @@ namespace Audiochan.Infrastructure.Data.Migrations
                 name: "users",
                 columns: table => new
                 {
-                    id = table.Column<long>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                    id = table.Column<string>(type: "TEXT", nullable: false),
                     display_name = table.Column<string>(type: "TEXT", maxLength: 256, nullable: false),
                     about = table.Column<string>(type: "TEXT", nullable: true),
                     website = table.Column<string>(type: "TEXT", nullable: true),
@@ -83,7 +81,7 @@ namespace Audiochan.Infrastructure.Data.Migrations
                 {
                     id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    role_id = table.Column<long>(type: "INTEGER", nullable: false),
+                    role_id = table.Column<string>(type: "TEXT", nullable: false),
                     claim_type = table.Column<string>(type: "TEXT", nullable: true),
                     claim_value = table.Column<string>(type: "TEXT", nullable: true)
                 },
@@ -106,12 +104,13 @@ namespace Audiochan.Infrastructure.Data.Migrations
                     title = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
                     description = table.Column<string>(type: "TEXT", maxLength: 500, nullable: true),
                     duration = table.Column<int>(type: "INTEGER", nullable: false),
-                    file_size = table.Column<long>(type: "INTEGER", nullable: false),
-                    file_ext = table.Column<string>(type: "TEXT", maxLength: 10, nullable: false),
-                    url = table.Column<string>(type: "TEXT", nullable: true),
+                    audio_file_size = table.Column<long>(type: "INTEGER", nullable: false),
+                    audio_file_extension = table.Column<string>(type: "TEXT", maxLength: 10, nullable: false),
+                    audio_url = table.Column<string>(type: "TEXT", nullable: true),
+                    artwork_url = table.Column<string>(type: "TEXT", nullable: true),
                     is_public = table.Column<bool>(type: "INTEGER", nullable: false),
                     is_loop = table.Column<bool>(type: "INTEGER", nullable: false),
-                    user_id = table.Column<long>(type: "INTEGER", nullable: false),
+                    user_id = table.Column<string>(type: "TEXT", nullable: false),
                     genre_id = table.Column<long>(type: "INTEGER", nullable: false),
                     created = table.Column<DateTime>(type: "TEXT", nullable: false),
                     last_modified = table.Column<DateTime>(type: "TEXT", nullable: true)
@@ -137,8 +136,8 @@ namespace Audiochan.Infrastructure.Data.Migrations
                 name: "followed_users",
                 columns: table => new
                 {
-                    observer_id = table.Column<long>(type: "INTEGER", nullable: false),
-                    target_id = table.Column<long>(type: "INTEGER", nullable: false),
+                    observer_id = table.Column<string>(type: "TEXT", nullable: false),
+                    target_id = table.Column<string>(type: "TEXT", nullable: false),
                     created = table.Column<DateTime>(type: "TEXT", nullable: false),
                     last_modified = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
@@ -170,7 +169,7 @@ namespace Audiochan.Infrastructure.Data.Migrations
                     created = table.Column<DateTime>(type: "TEXT", nullable: false),
                     revoked = table.Column<DateTime>(type: "TEXT", nullable: true),
                     replaced_by_token = table.Column<string>(type: "TEXT", nullable: true),
-                    user_id = table.Column<long>(type: "INTEGER", nullable: false)
+                    user_id = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -189,7 +188,7 @@ namespace Audiochan.Infrastructure.Data.Migrations
                 {
                     id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    user_id = table.Column<long>(type: "INTEGER", nullable: false),
+                    user_id = table.Column<string>(type: "TEXT", nullable: false),
                     claim_type = table.Column<string>(type: "TEXT", nullable: true),
                     claim_value = table.Column<string>(type: "TEXT", nullable: true)
                 },
@@ -211,7 +210,7 @@ namespace Audiochan.Infrastructure.Data.Migrations
                     login_provider = table.Column<string>(type: "TEXT", nullable: false),
                     provider_key = table.Column<string>(type: "TEXT", nullable: false),
                     provider_display_name = table.Column<string>(type: "TEXT", nullable: true),
-                    user_id = table.Column<long>(type: "INTEGER", nullable: false)
+                    user_id = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -228,8 +227,8 @@ namespace Audiochan.Infrastructure.Data.Migrations
                 name: "user_roles",
                 columns: table => new
                 {
-                    user_id = table.Column<long>(type: "INTEGER", nullable: false),
-                    role_id = table.Column<long>(type: "INTEGER", nullable: false)
+                    user_id = table.Column<string>(type: "TEXT", nullable: false),
+                    role_id = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -252,7 +251,7 @@ namespace Audiochan.Infrastructure.Data.Migrations
                 name: "user_tokens",
                 columns: table => new
                 {
-                    user_id = table.Column<long>(type: "INTEGER", nullable: false),
+                    user_id = table.Column<string>(type: "TEXT", nullable: false),
                     login_provider = table.Column<string>(type: "TEXT", nullable: false),
                     name = table.Column<string>(type: "TEXT", nullable: false),
                     value = table.Column<string>(type: "TEXT", nullable: true)
@@ -296,7 +295,7 @@ namespace Audiochan.Infrastructure.Data.Migrations
                 name: "favorite_audios",
                 columns: table => new
                 {
-                    user_id = table.Column<long>(type: "INTEGER", nullable: false),
+                    user_id = table.Column<string>(type: "TEXT", nullable: false),
                     audio_id = table.Column<string>(type: "TEXT", nullable: false),
                     created = table.Column<DateTime>(type: "TEXT", nullable: false),
                     last_modified = table.Column<DateTime>(type: "TEXT", nullable: true)

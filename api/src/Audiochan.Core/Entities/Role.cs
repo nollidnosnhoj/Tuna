@@ -2,7 +2,7 @@
 
 namespace Audiochan.Core.Entities
 {
-    public class Role : IdentityRole<long>
+    public class Role : IdentityRole
     {
     }
 }

@@ -58,7 +58,7 @@ namespace Audiochan.Infrastructure.Security
             var claims = new List<Claim>
             {
                 new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+                new(JwtRegisteredClaimNames.Sub, user.Id),
                 new("name", user.UserName)
             };
 
@@ -69,7 +69,7 @@ namespace Audiochan.Infrastructure.Security
             return claims;
         }
 
-        public RefreshToken GenerateRefreshToken(long userId)
+        public RefreshToken GenerateRefreshToken(string userId)
         {
             using var rng = new RNGCryptoServiceProvider();
             var randomBytes = new byte[64];

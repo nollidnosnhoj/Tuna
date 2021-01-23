@@ -9,6 +9,6 @@ namespace Audiochan.Core.Entities
         public DateTime Created { get; set; }
         public DateTime? Revoked { get; set; }
         public string? ReplacedByToken { get; set; }
-        public long UserId { get; set; }
+        public string UserId { get; set; } = null!;
     }
 }

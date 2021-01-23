@@ -2,7 +2,7 @@
 {
     public interface ICurrentUserService
     {
-        long GetUserId();
+        string GetUserId();
         string GetUsername();
         bool IsAuthenticated(long? userId = null);
     }

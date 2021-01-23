@@ -25,21 +25,24 @@ namespace Audiochan.Core.Features.Audios
         private readonly IStorageService _storageService;
         private readonly ICurrentUserService _currentUserService;
         private readonly IGenreService _genreService;
+        private readonly IImageService _imageService;
 
         public AudioService(IDatabaseContext dbContext, 
             ICurrentUserService currentUserService, 
             IAudioMetadataService audioMetadataService, 
             IStorageService storageService,
-            IGenreService genreService)
+            IGenreService genreService, 
+            IImageService imageService)
         {
             _dbContext = dbContext;
             _currentUserService = currentUserService;
             _audioMetadataService = audioMetadataService;
             _storageService = storageService;
             _genreService = genreService;
+            _imageService = imageService;
         }
 
-        public async Task<PagedList<AudioListViewModel>> GetFeed(long userId, PaginationQuery query,
+        public async Task<PagedList<AudioListViewModel>> GetFeed(string userId, PaginationQuery query,
             CancellationToken cancellationToken = default)
         {
             // Get the user Ids of the followed users
@@ -136,116 +139,124 @@ namespace Audiochan.Core.Features.Audios
         public async Task<IResult<AudioDetailViewModel>> Create(UploadAudioRequest request, 
             CancellationToken cancellationToken = default)
         {
-            var currentUser = await _dbContext.Users
-                .SingleOrDefaultAsync(u => u.Id == _currentUserService.GetUserId(), cancellationToken);
-
-            // Start building audio
             var audioBuilder = new AudioBuilder(request.File);
-
-            // Create memory stream for audio file
-            var memoryStream = new MemoryStream();
-            await request.File.CopyToAsync(memoryStream, cancellationToken);
-            
-            // This gets the metadata of the audio file, including duration, bitrate, etc.
-            var audioMetadata = _audioMetadataService
-                .GetMetadata(memoryStream, request.File.ContentType);
-            
-            // Get Genre for audio
-            var genre = await _genreService.GetGenre(request.Genre ?? "misc", cancellationToken);
-            if (genre == null)
-                return Result<AudioDetailViewModel>.Fail(ResultStatus.BadRequest, "Genre does not exist.");
-            
-            // Generate tags for audio
-            var tags = request.Tags.Count > 0
-                ? await CreateNewTags(request.Tags, cancellationToken)
-                : new List<Tag>();
-
-            // Start uploading the audio stream into a storage (file or cloud)
-            var blobName = audioBuilder.GetBlobName();
-            await _storageService.SaveBlobAsync(
-                ContainerConstants.Audios, 
-                blobName, 
-                memoryStream, 
-                cancellationToken: cancellationToken);
-            var blob = await _storageService.GetBlobAsync(ContainerConstants.Audios, blobName, cancellationToken);
-
-            audioBuilder = audioBuilder
-                .AddTitle(request.Title)
-                .AddDescription(request.Description)
-                .AddGenre(genre)
-                .AddTags(tags)
-                .AddAudioMetadata(audioMetadata)
-                .AddBlobInfo(blob)
-                .SetToPublic(request.IsPublic)
-                .SetToLoop(request.IsLoop)
-                .AddUser(currentUser);
-
+            await using var transaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
             try
             {
+                var currentUser = await _dbContext.Users
+                    .SingleOrDefaultAsync(u => u.Id == _currentUserService.GetUserId(), cancellationToken);
+
+                var memoryStream = new MemoryStream();
+                await request.File.CopyToAsync(memoryStream, cancellationToken);
+
+                var audioMetadata = _audioMetadataService.GetMetadata(memoryStream, request.File.ContentType);
+
+                await _storageService.SaveBlobAsync(
+                    ContainerConstants.Audios,
+                    audioBuilder.GetBlobName(),
+                    memoryStream,
+                    cancellationToken: cancellationToken);
+
+                var blob = await _storageService
+                    .GetBlobAsync(ContainerConstants.Audios, audioBuilder.GetBlobName(), cancellationToken);
+
+                // Get Genre for audio
+                var genre = await _genreService.GetGenre(request.Genre ?? "misc", cancellationToken);
+                if (genre == null)
+                    return Result<AudioDetailViewModel>
+                        .Fail(ResultStatus.BadRequest, "Genre does not exist.");
+
+                // Generate tags for audio
+                var tags = request.Tags.Count > 0
+                    ? await CreateNewTags(request.Tags, cancellationToken)
+                    : new List<Tag>();
+
+                audioBuilder = audioBuilder
+                    .AddTitle(request.Title)
+                    .AddDescription(request.Description)
+                    .AddAudioMetadata(audioMetadata)
+                    .AddBlobInfo(blob)
+                    .SetToPublic(request.IsPublic)
+                    .SetToLoop(request.IsLoop)
+                    .AddGenre(genre)
+                    .AddTags(tags)
+                    .AddUser(currentUser);
+
                 var audio = audioBuilder.Build();
                 await _dbContext.Audios.AddAsync(audio, cancellationToken);
                 await _dbContext.SaveChangesAsync(cancellationToken);
-
+                await transaction.CommitAsync(cancellationToken);
                 return Result<AudioDetailViewModel>.Success(AudioDetailViewModel.From(audio, currentUser.Id));
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // delete blob if an unknown error occurs
-                await _storageService.DeleteBlobAsync(blob.Container, blob.Name, cancellationToken);
-                
-                throw;
-            }  
+                if (ex is DbUpdateException)
+                    await transaction.RollbackAsync(cancellationToken);
+                await _storageService.DeleteBlobAsync(ContainerConstants.Audios, audioBuilder.GetBlobName(), cancellationToken);
+                throw; 
+            }
         }
 
         public async Task<IResult<AudioDetailViewModel>> Update(string audioId, UpdateAudioRequest request, 
             CancellationToken cancellationToken = default)
         {
-            var currentUserId = _currentUserService.GetUserId();
-            
-            var audio = await _dbContext.Audios
-                .Include(a => a.Favorited)
-                .Include(a => a.User)
-                .Include(a => a.Tags)
-                .Include(a => a.Genre)
-                .SingleOrDefaultAsync(a => a.Id == audioId, cancellationToken);
-
-            if (audio == null) return Result<AudioDetailViewModel>.Fail(ResultStatus.NotFound);
-
-            if (audio.UserId != currentUserId) return Result<AudioDetailViewModel>.Fail(ResultStatus.Forbidden);
-            
-            var newTags = await CreateNewTags(request.Tags, cancellationToken);
-
-            audio.Title = request.Title ?? audio.Title;
-            audio.Description = request.Description ?? audio.Description;
-            audio.IsPublic = request.IsPublic ?? audio.IsPublic;
-            audio.IsLoop = request.IsLoop ?? audio.IsLoop;
-
-            if (!string.IsNullOrWhiteSpace(request.Genre) && audio.Genre.Name != request.Genre)
+            await using var transaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
+            try
             {
-                var genre = await _genreService.GetGenre(request.Genre, cancellationToken);
+                var currentUserId = _currentUserService.GetUserId();
 
-                if (genre == null)
-                    return Result<AudioDetailViewModel>.Fail(ResultStatus.BadRequest, "Genre does not exist.");
-                
-                audio.Genre = genre!;
+                var audio = await _dbContext.Audios
+                    .Include(a => a.Favorited)
+                    .Include(a => a.User)
+                    .Include(a => a.Tags)
+                    .Include(a => a.Genre)
+                    .SingleOrDefaultAsync(a => a.Id == audioId, cancellationToken);
+
+                if (audio == null) return Result<AudioDetailViewModel>.Fail(ResultStatus.NotFound);
+
+                if (audio.UserId != currentUserId) return Result<AudioDetailViewModel>.Fail(ResultStatus.Forbidden);
+
+                var newTags = await CreateNewTags(request.Tags, cancellationToken);
+
+                audio.Title = request.Title ?? audio.Title;
+                audio.Description = request.Description ?? audio.Description;
+                audio.IsPublic = request.IsPublic ?? audio.IsPublic;
+                audio.IsLoop = request.IsLoop ?? audio.IsLoop;
+
+                if (!string.IsNullOrWhiteSpace(request.Genre) && audio.Genre.Name != request.Genre)
+                {
+                    var genre = await _genreService.GetGenre(request.Genre, cancellationToken);
+
+                    if (genre == null)
+                        return Result<AudioDetailViewModel>
+                            .Fail(ResultStatus.BadRequest, "Genre does not exist.");
+
+                    audio.Genre = genre!;
+                }
+
+                foreach (var audioTag in audio.Tags)
+                {
+                    if (newTags.All(t => t.Id != audioTag.Id))
+                        audio.Tags.Remove(audioTag);
+                }
+
+                foreach (var newTag in newTags)
+                {
+                    if (audio.Tags.All(t => t.Id != newTag.Id))
+                        audio.Tags.Add(newTag);
+                }
+
+                _dbContext.Audios.Update(audio);
+                await _dbContext.SaveChangesAsync(cancellationToken);
+                await transaction.CommitAsync(cancellationToken);
+                return Result<AudioDetailViewModel>.Success(AudioDetailViewModel.From(audio, currentUserId));
             }
-
-            foreach (var audioTag in audio.Tags)
+            catch (Exception ex)
             {
-                if (newTags.All(t => t.Id != audioTag.Id))
-                    audio.Tags.Remove(audioTag);
+                if (ex is DbUpdateException)
+                    await transaction.RollbackAsync(cancellationToken);
+                throw;
             }
-
-            foreach (var newTag in newTags)
-            {
-                if (audio.Tags.All(t => t.Id != newTag.Id))
-                    audio.Tags.Add(newTag);
-            }
-
-            _dbContext.Audios.Update(audio);
-            await _dbContext.SaveChangesAsync(cancellationToken);
-
-            return Result<AudioDetailViewModel>.Success(AudioDetailViewModel.From(audio, currentUserId));
         }
 
         public async Task<IResult> Remove(string id, CancellationToken cancellationToken = default)
@@ -261,7 +272,7 @@ namespace Audiochan.Core.Features.Audios
             if (audio.UserId != currentUserId)
                 return Result.Fail(ResultStatus.Forbidden);
 
-            var blobName = audio.Id + audio.FileExt;
+            var blobName = audio.Id + audio.AudioFileExtension;
             
             _dbContext.Audios.Remove(audio);
             await _dbContext.SaveChangesAsync(cancellationToken);
@@ -269,6 +280,29 @@ namespace Audiochan.Core.Features.Audios
             await _storageService.DeleteBlobAsync(ContainerConstants.Audios, blobName, cancellationToken);
 
             return Result.Success();
+        }
+
+        public async Task<IResult<string>> AddArtwork(string audioId, AddArtworkImageDataDto request,
+            CancellationToken cancellationToken = default)
+        {
+            var audio = await _dbContext.Audios
+                .SingleOrDefaultAsync(a => a.Id == audioId, cancellationToken);
+
+            if (audio == null)
+                return Result<string>.Fail(ResultStatus.NotFound, "Audio was not found.");
+
+            var containerPath = Path.Combine(ContainerConstants.Artworks, ContainerConstants.Audios);
+
+            var blobDto = await _imageService.UploadArtwork(
+                request.ImageData ?? string.Empty,
+                containerPath,
+                audio.Id,
+                cancellationToken);
+
+            audio.ArtworkUrl = blobDto.Url;
+            _dbContext.Audios.Update(audio);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+            return Result<string>.Success(blobDto.Url);
         }
         
         public async Task<PagedList<PopularTagViewModel>>  GetPopularTags(
@@ -288,25 +322,16 @@ namespace Audiochan.Core.Features.Audios
         {
             var taggifyTags = requestedTags.FormatTags();
 
-            var existingTags = await _dbContext.Tags
+            var tags = await _dbContext.Tags
                 .Where(tag => taggifyTags.Contains(tag.Id))
                 .ToListAsync(cancellationToken);
             
-            var newTags = new List<Tag>();
-
-            foreach (var tag in taggifyTags)
+            foreach (var tag in taggifyTags.Where(tag => tags.All(t => t.Id != tag)))
             {
-                if (existingTags.All(t => t.Id != tag))
-                    newTags.Add(new Tag{Id = tag});
+                tags.Add(new Tag{Id = tag});
             }
 
-            await _dbContext.Tags.AddRangeAsync(newTags, cancellationToken);
-
-            await _dbContext.SaveChangesAsync(cancellationToken);
-
-            return await _dbContext.Tags
-                .Where(tag => taggifyTags.Contains(tag.Id))
-                .ToListAsync(cancellationToken);
+            return tags;
         }
     }
 }

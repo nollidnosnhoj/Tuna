@@ -19,3 +19,21 @@ export function taggify(value: string) {
     strict: true
   });
 }
+
+export function getThumbnailUrl(url: string, size: 'lg' | 'md' | 'sm' = 'lg') {
+  if (size === 'lg') return url;
+
+  let pixels: number;
+  switch(size) {
+    case 'md':
+      pixels = 200;
+      break;
+    case 'sm':
+      pixels = 100;
+      break;
+  }
+
+  const [filePath, fileExt] = url.split('.');
+  var thumbnailUrl = filePath + `-${pixels}`;
+  return thumbnailUrl + fileExt;
+}

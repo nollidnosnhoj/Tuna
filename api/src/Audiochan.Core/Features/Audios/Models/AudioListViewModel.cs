@@ -13,12 +13,13 @@ namespace Audiochan.Core.Features.Audios.Models
         public bool IsLoop { get; init; }
         public int FavoriteCount { get; init; }
         public bool IsFavorited { get; init; }
+        public string? ArtworkUrl { get; init; }
         public DateTime Created { get; init; }
         public DateTime? Updated { get; init; }
         public string Genre { get; init; } = null!;
         public UserViewModel User { get; init; } = null!;
 
-        public static AudioListViewModel From(Audio audio, long currentUserId)
+        public static AudioListViewModel From(Audio audio, string currentUserId)
         {
             return MapProjections.AudioList(currentUserId).Compile().Invoke(audio);
         }

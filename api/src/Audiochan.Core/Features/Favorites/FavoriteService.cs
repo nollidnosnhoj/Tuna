@@ -43,7 +43,7 @@ namespace Audiochan.Core.Features.Favorites
                 .Paginate(query, cancellationToken);
         }
 
-        public async Task<IResult> FavoriteAudio(long userId, string audioId, 
+        public async Task<IResult> FavoriteAudio(string userId, string audioId, 
             CancellationToken cancellationToken = default)
         {
             if (!await _dbContext.Users.AsNoTracking().AnyAsync(u => u.Id == userId, cancellationToken))
@@ -76,7 +76,7 @@ namespace Audiochan.Core.Features.Favorites
             return Result.Success();
         }
 
-        public async Task<IResult> UnfavoriteAudio(long userId, string audioId, 
+        public async Task<IResult> UnfavoriteAudio(string userId, string audioId, 
             CancellationToken cancellationToken = default)
         {
             if (!await _dbContext.Users.AsNoTracking().AnyAsync(u => u.Id == userId, cancellationToken))
@@ -99,7 +99,7 @@ namespace Audiochan.Core.Features.Favorites
             return Result.Success();
         }
 
-        public async Task<bool> CheckIfUserFavorited(long userId, string audioId,
+        public async Task<bool> CheckIfUserFavorited(string userId, string audioId,
             CancellationToken cancellationToken = default)
         {
             return await _dbContext.FavoriteAudios.AsNoTracking()

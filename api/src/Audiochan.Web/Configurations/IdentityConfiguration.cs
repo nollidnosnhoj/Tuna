@@ -1,13 +1,9 @@
-﻿using Audiochan.Core.Common.Models;
-using Audiochan.Core.Common.Options;
+﻿using Audiochan.Core.Common.Options;
 using Audiochan.Core.Entities;
 using Audiochan.Infrastructure.Data;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using SixLabors.ImageSharp;
 
 namespace Audiochan.Web.Configurations
 {

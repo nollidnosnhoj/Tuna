@@ -24,7 +24,7 @@ namespace Audiochan.Core.Features.Users
             _currentUserService = currentUserService;
         }
 
-        public async Task<IResult<CurrentUserViewModel>> GetCurrentUser(long authUserId, 
+        public async Task<IResult<CurrentUserViewModel>> GetCurrentUser(string authUserId, 
             CancellationToken cancellationToken = default)
         {
             var user = await _userManager.Users
@@ -64,7 +64,7 @@ namespace Audiochan.Core.Features.Users
                 : Result<UserDetailsViewModel>.Success(profile);
         }
 
-        public async Task<IResult> UpdateUsername(long userId, string newUsername, 
+        public async Task<IResult> UpdateUsername(string userId, string newUsername, 
             CancellationToken cancellationToken = default)
         {
             var user = await _userManager.FindByIdAsync(userId + "");
@@ -75,7 +75,7 @@ namespace Audiochan.Core.Features.Users
             return Result.Success();
         }
 
-        public async Task<IResult> UpdateEmail(long userId, string newEmail, 
+        public async Task<IResult> UpdateEmail(string userId, string newEmail, 
             CancellationToken cancellationToken = default)
         {
             var user = await _userManager.FindByIdAsync(userId + "");
@@ -88,7 +88,7 @@ namespace Audiochan.Core.Features.Users
             return Result.Success();
         }
 
-        public async Task<IResult> UpdatePassword(long userId, ChangePasswordRequest request, 
+        public async Task<IResult> UpdatePassword(string userId, ChangePasswordRequest request, 
             CancellationToken cancellationToken = default)
         {
             var user = await _userManager.FindByIdAsync(userId + "");
@@ -98,7 +98,7 @@ namespace Audiochan.Core.Features.Users
             return result.ToResult();
         }
 
-        public async Task<IResult> UpdateUser(long userId, UpdateUserDetailsRequest request, 
+        public async Task<IResult> UpdateUser(string userId, UpdateUserDetailsRequest request, 
             CancellationToken cancellationToken = default)
         {
             var user = await _userManager.FindByIdAsync(userId + "");

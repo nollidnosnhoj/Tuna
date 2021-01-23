@@ -53,7 +53,7 @@ namespace Audiochan.Core.Features.Followers
                 .Paginate(paginationQuery, cancellationToken);
         }
 
-        public async Task<bool> CheckFollowing(long userId, string username, 
+        public async Task<bool> CheckFollowing(string userId, string username, 
             CancellationToken cancellationToken = default)
         {
             return await _dbContext.FollowedUsers
@@ -63,7 +63,7 @@ namespace Audiochan.Core.Features.Followers
                                && u.Target.UserName == username.ToLower(), cancellationToken);
         }
 
-        public async Task<IResult> Follow(long userId, string username, CancellationToken cancellationToken = default)
+        public async Task<IResult> Follow(string userId, string username, CancellationToken cancellationToken = default)
         {
             if (!await _dbContext.Users.AsNoTracking().AnyAsync(u => u.Id == userId, cancellationToken))
                 return Result.Fail(ResultStatus.Unauthorized);
@@ -96,7 +96,7 @@ namespace Audiochan.Core.Features.Followers
             return Result.Success();
         }
 
-        public async Task<IResult> Unfollow(long userId, string username, CancellationToken cancellationToken = default)
+        public async Task<IResult> Unfollow(string userId, string username, CancellationToken cancellationToken = default)
         {
             if (!await _dbContext.Users.AsNoTracking().AnyAsync(u => u.Id == userId, cancellationToken))
                 return Result.Fail(ResultStatus.Unauthorized);

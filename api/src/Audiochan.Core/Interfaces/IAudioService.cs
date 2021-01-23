@@ -8,7 +8,7 @@ namespace Audiochan.Core.Interfaces
 {
     public interface IAudioService
     {
-        Task<PagedList<AudioListViewModel>> GetFeed(long userId, PaginationQuery query, 
+        Task<PagedList<AudioListViewModel>> GetFeed(string userId, PaginationQuery query, 
             CancellationToken cancellationToken = default);
         Task<PagedList<AudioListViewModel>> GetList(GetAudioListQuery query, CancellationToken cancellationToken = default);
         Task<IResult<AudioDetailViewModel>> Get(string audioId, CancellationToken cancellationToken = default);
@@ -18,7 +18,8 @@ namespace Audiochan.Core.Interfaces
         Task<IResult<AudioDetailViewModel>> Update(string audioId, UpdateAudioRequest request, 
             CancellationToken cancellationToken = default);
         Task<IResult> Remove(string id, CancellationToken cancellationToken = default);
-
+        Task<IResult<string>> AddArtwork(string audioId, AddArtworkImageDataDto request,
+            CancellationToken cancellationToken = default);
         Task<PagedList<PopularTagViewModel>> GetPopularTags(PaginationQuery paginationQuery,
             CancellationToken cancellationToken = default);
     }

@@ -20,7 +20,7 @@ namespace Audiochan.Web.Controllers
         private readonly IAudioService _audioService;
         private readonly IUserService _userService;
         private readonly IFollowerService _followerService;
-        private readonly long _currentUserId;
+        private readonly string _currentUserId;
 
         public MeController(ICurrentUserService currentUserService, IAudioService audioService, 
             IUserService userService, IFollowerService followerService)

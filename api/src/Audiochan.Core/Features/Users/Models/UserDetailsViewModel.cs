@@ -5,7 +5,7 @@ namespace Audiochan.Core.Features.Users.Models
 {
     public record UserDetailsViewModel
     {
-        public long Id { get; set; }
+        public string Id { get; set; } = null!;
         public string Username { get; set; } = null!;
         public string AboutMe { get; set; } = string.Empty;
         public string Website { get; set; } = string.Empty;
@@ -14,7 +14,7 @@ namespace Audiochan.Core.Features.Users.Models
         public int FollowerCount { get; set; }
         public int FollowingCount { get; set; }
 
-        public static UserDetailsViewModel From(User user, long currentUserId)
+        public static UserDetailsViewModel From(User user, string currentUserId)
         {
             return MapProjections.UserDetails(currentUserId).Compile().Invoke(user);
         }

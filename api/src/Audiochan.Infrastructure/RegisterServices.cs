@@ -1,13 +1,7 @@
-﻿using System;
-using System.IO;
-using Amazon.S3;
-using Audiochan.Core.Interfaces;
-using Audiochan.Infrastructure.Data;
+﻿using Audiochan.Core.Interfaces;
+using Audiochan.Infrastructure.ImageSharp;
 using Audiochan.Infrastructure.Security;
 using Audiochan.Infrastructure.Shared;
-using Audiochan.Infrastructure.Storage;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Audiochan.Infrastructure
@@ -19,7 +13,7 @@ namespace Audiochan.Infrastructure
             services.AddTransient<IAudioMetadataService, AudioMetadataService>();
             services.AddTransient<ITokenService, TokenService>();
             services.AddTransient<IDateTimeService, DateTimeService>();
-                
+            services.AddTransient<IImageService, ImageService>();
             return services;
         }
     }

@@ -9,7 +9,7 @@ namespace Audiochan.Core.Common.Extensions.Queryable
         /// Filter only public audio uploads, unless the audio belongs to the current user, then display regardless
         /// </summary>
         public static IQueryable<Audio> FilterVisibility(this IQueryable<Audio> queryable, 
-            long currentUserId)
+            string? currentUserId)
         {
             return queryable
                 .Where(a => a.UserId == currentUserId || a.IsPublic);

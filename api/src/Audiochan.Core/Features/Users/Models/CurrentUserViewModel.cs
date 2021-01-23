@@ -7,7 +7,7 @@ namespace Audiochan.Core.Features.Users.Models
     /// </summary>
     public class CurrentUserViewModel
     {
-        public long Id { get; init; }
+        public string Id { get; init; } = null!;
         public string Username { get; init; } = null!;
         public string Email { get; init; } = null!;
         public ICollection<string> Roles { get; init; } = new List<string>();

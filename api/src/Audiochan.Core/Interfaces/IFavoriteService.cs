@@ -10,8 +10,8 @@ namespace Audiochan.Core.Interfaces
     {
         Task<PagedList<AudioListViewModel>> GetUserFavorites(string username, PaginationQuery query,
             CancellationToken cancellationToken = default);
-        Task<IResult> FavoriteAudio(long userId, string audioId, CancellationToken cancellationToken = default);
-        Task<IResult> UnfavoriteAudio(long userId, string audioId, CancellationToken cancellationToken = default);
-        Task<bool> CheckIfUserFavorited(long userId, string audioId, CancellationToken cancellationToken = default);
+        Task<IResult> FavoriteAudio(string userId, string audioId, CancellationToken cancellationToken = default);
+        Task<IResult> UnfavoriteAudio(string userId, string audioId, CancellationToken cancellationToken = default);
+        Task<bool> CheckIfUserFavorited(string userId, string audioId, CancellationToken cancellationToken = default);
     }
 }

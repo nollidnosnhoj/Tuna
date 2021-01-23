@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Features.Audios.Models;
@@ -76,7 +77,7 @@ namespace Audiochan.Web.Controllers
                 : result.ReturnErrorResponse();
         }
 
-        [HttpPatch("{audioId}", Name="UpdateAudio")]
+        [HttpPut("{audioId}", Name="UpdateAudio")]
         [ProducesResponseType(typeof(AudioDetailViewModel), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -108,6 +109,23 @@ namespace Audiochan.Web.Controllers
         {
             var result = await _audioService.Remove(audioId, cancellationToken);
             return result.IsSuccess ? NoContent() : result.ReturnErrorResponse();
+        }
+
+        [HttpPatch("{audioId}/artwork", Name = "AddArtwork")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [SwaggerOperation(
+            Summary = "Add artwork to audio upload.",
+            OperationId = "AddArtwork",
+            Tags = new[] {"audios"}
+        )]
+        public async Task<IActionResult> AddArtwork(string audioId, [FromBody] AddArtworkImageDataDto request,
+            CancellationToken cancellationToken)
+        {
+            var result = await _audioService.AddArtwork(audioId, request, cancellationToken);
+
+            return result.IsSuccess
+                ? Ok(new {Image = result.Data})
+                : result.ReturnErrorResponse();
         }
     }
 }

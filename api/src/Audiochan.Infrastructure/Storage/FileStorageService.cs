@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Exceptions;
@@ -38,7 +39,7 @@ namespace Audiochan.Infrastructure.Storage
             {
                 Directory.CreateDirectory(Path.GetDirectoryName(blobPath) ?? containerPath);
 
-                if (File.Exists(blobPath))
+                if (File.Exists(blobPath) && overwrite == false)
                     throw new StorageException("File already exists in file storage.");
 
                 await using var file = File.Create(blobPath);
@@ -83,7 +84,9 @@ namespace Audiochan.Infrastructure.Storage
             
             var file = new FileInfo(path);
 
-            return new BlobDto(true, container, file.Name, $"{container}/{blobName}", file.Length);
+            var url = Path.Combine(container, blobName).Replace(@"\", "/");
+
+            return new BlobDto(true, container, file.Name, url, file.Length);
         }
     }
 }

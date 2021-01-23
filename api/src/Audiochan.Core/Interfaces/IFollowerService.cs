@@ -14,10 +14,10 @@ namespace Audiochan.Core.Interfaces
         Task<PagedList<FollowUserViewModel>> GetUsersFollowings(string username, PaginationQuery paginationQuery,
             CancellationToken cancellationToken = default);
 
-        Task<bool> CheckFollowing(long userId, string username, CancellationToken cancellationToken = default);
+        Task<bool> CheckFollowing(string userId, string username, CancellationToken cancellationToken = default);
 
-        Task<IResult> Follow(long userId, string username, CancellationToken cancellationToken = default);
+        Task<IResult> Follow(string userId, string username, CancellationToken cancellationToken = default);
         
-        Task<IResult> Unfollow(long userId, string username, CancellationToken cancellationToken = default);
+        Task<IResult> Unfollow(string userId, string username, CancellationToken cancellationToken = default);
     }
 }

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Audiochan.Core.Entities
 {
-    public class User : IdentityUser<long>
+    public class User : IdentityUser
     {
         public User()
         {

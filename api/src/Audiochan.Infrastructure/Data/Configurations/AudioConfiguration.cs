@@ -14,7 +14,7 @@ namespace Audiochan.Infrastructure.Data.Configurations
             builder.Property(x => x.Description)
                 .HasMaxLength(500);
 
-            builder.Property(x => x.FileExt)
+            builder.Property(x => x.AudioFileExtension)
                 .HasMaxLength(10);
 
             builder.HasMany(a => a.Tags)

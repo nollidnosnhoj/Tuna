@@ -11,7 +11,7 @@ namespace Audiochan.Core.Common.Mappings
 {
     public static class MapProjections
     {
-        public static Expression<Func<Audio, AudioDetailViewModel>> AudioDetail(long currentUserId)
+        public static Expression<Func<Audio, AudioDetailViewModel>> AudioDetail(string? currentUserId)
         {
             return audio => new AudioDetailViewModel
             {
@@ -21,12 +21,14 @@ namespace Audiochan.Core.Common.Mappings
                 IsPublic = audio.IsPublic,
                 IsLoop = audio.IsLoop,
                 Duration = audio.Duration,
-                FileSize = audio.FileSize,
-                FileExt = audio.FileExt,
-                Url = audio.Url ?? string.Empty,
+                FileSize = audio.AudioFileSize,
+                FileExt = audio.AudioFileExtension,
+                Url = audio.AudioUrl ?? string.Empty,
+                ArtworkUrl = audio.ArtworkUrl,
                 Tags = audio.Tags.Select(tag => tag.Id).ToArray(),
                 FavoriteCount = audio.Favorited.Count,
-                IsFavorited = currentUserId > 0
+                IsFavorited = currentUserId != null 
+                              && currentUserId.Length > 0
                               && audio.Favorited.Any(f => f.UserId == currentUserId),
                 Created = audio.Created,
                 Updated = audio.LastModified,
@@ -44,7 +46,7 @@ namespace Audiochan.Core.Common.Mappings
             };
         }
 
-        public static Expression<Func<Audio, AudioListViewModel>> AudioList(long currentUserId)
+        public static Expression<Func<Audio, AudioListViewModel>> AudioList(string? currentUserId)
         {
             return audio => new AudioListViewModel
             {
@@ -52,8 +54,10 @@ namespace Audiochan.Core.Common.Mappings
                 Title = audio.Title,
                 IsPublic = audio.IsPublic,
                 IsLoop = audio.IsLoop,
+                ArtworkUrl = audio.ArtworkUrl,
                 FavoriteCount = audio.Favorited.Count,
-                IsFavorited = currentUserId > 0
+                IsFavorited = currentUserId != null 
+                              && currentUserId.Length > 0
                               && audio.Favorited.Any(f => f.UserId == currentUserId),
                 Created = audio.Created,
                 Updated = audio.LastModified,
@@ -66,7 +70,7 @@ namespace Audiochan.Core.Common.Mappings
             };
         }
 
-        public static Expression<Func<FollowedUser, FollowUserViewModel>> FollowUser(long currentUserId)
+        public static Expression<Func<FollowedUser, FollowUserViewModel>> FollowUser(string currentUserId)
         {
             return u => new FollowUserViewModel
             {
@@ -77,7 +81,7 @@ namespace Audiochan.Core.Common.Mappings
             };
         }
 
-        public static Expression<Func<User, UserDetailsViewModel>> UserDetails(long currentUserId)
+        public static Expression<Func<User, UserDetailsViewModel>> UserDetails(string currentUserId)
         {
             return user => new UserDetailsViewModel
             {

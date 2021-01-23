@@ -5,9 +5,9 @@ namespace Audiochan.Core.Entities
 {
     public class FollowedUser : BaseEntity
     {
-        public long ObserverId { get; set; }
+        public string ObserverId { get; set; } = null!;
         public User Observer { get; set; } = null!;
-        public long TargetId { get; set; }
+        public string TargetId { get; set; } = null!;
         public User Target { get; set; } = null!;
     }
 }

@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Audiochan.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20210122225429_InitialMigration")]
+    [Migration("20210123214455_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -43,6 +43,24 @@ namespace Audiochan.Infrastructure.Data.Migrations
                         .HasColumnType("TEXT")
                         .HasColumnName("id");
 
+                    b.Property<string>("ArtworkUrl")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("artwork_url");
+
+                    b.Property<string>("AudioFileExtension")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("TEXT")
+                        .HasColumnName("audio_file_extension");
+
+                    b.Property<long>("AudioFileSize")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("audio_file_size");
+
+                    b.Property<string>("AudioUrl")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("audio_url");
+
                     b.Property<DateTime>("Created")
                         .HasColumnType("TEXT")
                         .HasColumnName("created");
@@ -55,16 +73,6 @@ namespace Audiochan.Infrastructure.Data.Migrations
                     b.Property<int>("Duration")
                         .HasColumnType("INTEGER")
                         .HasColumnName("duration");
-
-                    b.Property<string>("FileExt")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("TEXT")
-                        .HasColumnName("file_ext");
-
-                    b.Property<long>("FileSize")
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("file_size");
 
                     b.Property<long>("GenreId")
                         .HasColumnType("INTEGER")
@@ -88,12 +96,9 @@ namespace Audiochan.Infrastructure.Data.Migrations
                         .HasColumnType("TEXT")
                         .HasColumnName("title");
 
-                    b.Property<string>("Url")
+                    b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("TEXT")
-                        .HasColumnName("url");
-
-                    b.Property<long>("UserId")
-                        .HasColumnType("INTEGER")
                         .HasColumnName("user_id");
 
                     b.HasKey("Id")
@@ -110,8 +115,8 @@ namespace Audiochan.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Audiochan.Core.Entities.FavoriteAudio", b =>
                 {
-                    b.Property<long>("UserId")
-                        .HasColumnType("INTEGER")
+                    b.Property<string>("UserId")
+                        .HasColumnType("TEXT")
                         .HasColumnName("user_id");
 
                     b.Property<string>("AudioId")
@@ -137,12 +142,12 @@ namespace Audiochan.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Audiochan.Core.Entities.FollowedUser", b =>
                 {
-                    b.Property<long>("ObserverId")
-                        .HasColumnType("INTEGER")
+                    b.Property<string>("ObserverId")
+                        .HasColumnType("TEXT")
                         .HasColumnName("observer_id");
 
-                    b.Property<long>("TargetId")
-                        .HasColumnType("INTEGER")
+                    b.Property<string>("TargetId")
+                        .HasColumnType("TEXT")
                         .HasColumnName("target_id");
 
                     b.Property<DateTime>("Created")
@@ -189,9 +194,8 @@ namespace Audiochan.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Audiochan.Core.Entities.Role", b =>
                 {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
+                    b.Property<string>("Id")
+                        .HasColumnType("TEXT")
                         .HasColumnName("id");
 
                     b.Property<string>("ConcurrencyStamp")
@@ -233,9 +237,8 @@ namespace Audiochan.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Audiochan.Core.Entities.User", b =>
                 {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
+                    b.Property<string>("Id")
+                        .HasColumnType("TEXT")
                         .HasColumnName("id");
 
                     b.Property<string>("About")
@@ -330,7 +333,7 @@ namespace Audiochan.Infrastructure.Data.Migrations
                     b.ToTable("users");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<long>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -345,8 +348,9 @@ namespace Audiochan.Infrastructure.Data.Migrations
                         .HasColumnType("TEXT")
                         .HasColumnName("claim_value");
 
-                    b.Property<long>("RoleId")
-                        .HasColumnType("INTEGER")
+                    b.Property<string>("RoleId")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
                         .HasColumnName("role_id");
 
                     b.HasKey("Id")
@@ -358,7 +362,7 @@ namespace Audiochan.Infrastructure.Data.Migrations
                     b.ToTable("role_claims");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<long>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -373,8 +377,9 @@ namespace Audiochan.Infrastructure.Data.Migrations
                         .HasColumnType("TEXT")
                         .HasColumnName("claim_value");
 
-                    b.Property<long>("UserId")
-                        .HasColumnType("INTEGER")
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
                         .HasColumnName("user_id");
 
                     b.HasKey("Id")
@@ -386,7 +391,7 @@ namespace Audiochan.Infrastructure.Data.Migrations
                     b.ToTable("user_claims");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<long>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.Property<string>("LoginProvider")
                         .HasColumnType("TEXT")
@@ -400,8 +405,9 @@ namespace Audiochan.Infrastructure.Data.Migrations
                         .HasColumnType("TEXT")
                         .HasColumnName("provider_display_name");
 
-                    b.Property<long>("UserId")
-                        .HasColumnType("INTEGER")
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
                         .HasColumnName("user_id");
 
                     b.HasKey("LoginProvider", "ProviderKey")
@@ -413,14 +419,14 @@ namespace Audiochan.Infrastructure.Data.Migrations
                     b.ToTable("user_logins");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<long>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
-                    b.Property<long>("UserId")
-                        .HasColumnType("INTEGER")
+                    b.Property<string>("UserId")
+                        .HasColumnType("TEXT")
                         .HasColumnName("user_id");
 
-                    b.Property<long>("RoleId")
-                        .HasColumnType("INTEGER")
+                    b.Property<string>("RoleId")
+                        .HasColumnType("TEXT")
                         .HasColumnName("role_id");
 
                     b.HasKey("UserId", "RoleId")
@@ -432,10 +438,10 @@ namespace Audiochan.Infrastructure.Data.Migrations
                     b.ToTable("user_roles");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<long>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.Property<long>("UserId")
-                        .HasColumnType("INTEGER")
+                    b.Property<string>("UserId")
+                        .HasColumnType("TEXT")
                         .HasColumnName("user_id");
 
                     b.Property<string>("LoginProvider")
@@ -566,8 +572,9 @@ namespace Audiochan.Infrastructure.Data.Migrations
                                 .HasColumnType("TEXT")
                                 .HasColumnName("token");
 
-                            b1.Property<long>("UserId")
-                                .HasColumnType("INTEGER")
+                            b1.Property<string>("UserId")
+                                .IsRequired()
+                                .HasColumnType("TEXT")
                                 .HasColumnName("user_id");
 
                             b1.HasKey("Id")
@@ -586,7 +593,7 @@ namespace Audiochan.Infrastructure.Data.Migrations
                     b.Navigation("RefreshTokens");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<long>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Audiochan.Core.Entities.Role", null)
                         .WithMany()
@@ -596,7 +603,7 @@ namespace Audiochan.Infrastructure.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<long>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
                     b.HasOne("Audiochan.Core.Entities.User", null)
                         .WithMany()
@@ -606,7 +613,7 @@ namespace Audiochan.Infrastructure.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<long>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.HasOne("Audiochan.Core.Entities.User", null)
                         .WithMany()
@@ -616,7 +623,7 @@ namespace Audiochan.Infrastructure.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<long>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
                     b.HasOne("Audiochan.Core.Entities.Role", null)
                         .WithMany()
@@ -633,7 +640,7 @@ namespace Audiochan.Infrastructure.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<long>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
                     b.HasOne("Audiochan.Core.Entities.User", null)
                         .WithMany()

@@ -13,23 +13,21 @@ namespace Audiochan.Web.Services
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public long GetUserId()
+        public string GetUserId()
         {
-            var x = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            return !long.TryParse(x, out var id) ? 0 : id;
+            return _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier) 
+                   ?? string.Empty;
         }
 
         public bool IsAuthenticated(long? userId = null)
         {
-            userId ??= GetUserId();
-
-            return userId > 0;
+            var id = GetUserId();
+            return !string.IsNullOrEmpty(id);
         }
 
         public string GetUsername()
         {
-            return _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.Name) ?? "";
+            return _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.Name) ?? string.Empty;
         }
     }
 }
