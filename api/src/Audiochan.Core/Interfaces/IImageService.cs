@@ -7,13 +7,9 @@ namespace Audiochan.Core.Interfaces
 {
     public interface IImageService
     {
-        Task<BlobDto> UploadArtwork(string imageData, string container, string name,
-            CancellationToken cancellationToken = default);
-
-        Task<BlobDto> UploadArtwork(IFormFile file, string container, string name,
-            CancellationToken cancellationToken = default);
-
-        Task DeleteArtworkAndThumbnails(string container, string name,
-            CancellationToken cancellationToken = default);
+        Task<BlobDto> UploadAudioImage(IFormFile file, string audioId, CancellationToken cancellationToken = default);
+        Task<BlobDto> UploadUserImage(IFormFile file, string userId, CancellationToken cancellationToken = default);
+        Task RemoveAudioImages(string audioId, CancellationToken cancellationToken = default);
+        Task RemoveUserImages(string userId, CancellationToken cancellationToken = default);
     }
 }

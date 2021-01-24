@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Features.Audios.Models;
@@ -118,10 +117,10 @@ namespace Audiochan.Web.Controllers
             OperationId = "AddArtwork",
             Tags = new[] {"audios"}
         )]
-        public async Task<IActionResult> AddArtwork(string audioId, [FromBody] AddArtworkImageDataDto request,
+        public async Task<IActionResult> AddArtwork(string audioId, [FromForm] IFormFile image,
             CancellationToken cancellationToken)
         {
-            var result = await _audioService.AddArtwork(audioId, request, cancellationToken);
+            var result = await _audioService.AddArtwork(audioId, image, cancellationToken);
 
             return result.IsSuccess
                 ? Ok(new {Image = result.Data})

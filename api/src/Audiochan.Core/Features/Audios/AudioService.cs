@@ -14,6 +14,7 @@ using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Audios.Builders;
 using Audiochan.Core.Features.Audios.Models;
 using Audiochan.Core.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Audios
@@ -157,8 +158,12 @@ namespace Audiochan.Core.Features.Audios
                     memoryStream,
                     cancellationToken: cancellationToken);
 
-                var blob = await _storageService
+                var audioBlob = await _storageService
                     .GetBlobAsync(ContainerConstants.Audios, audioBuilder.GetBlobName(), cancellationToken);
+
+                var imageBlob = request.Image != null
+                    ? await _imageService.UploadAudioImage(request.Image, audioBuilder.GetId(), cancellationToken)
+                    : null;
 
                 // Get Genre for audio
                 var genre = await _genreService.GetGenre(request.Genre ?? "misc", cancellationToken);
@@ -175,7 +180,8 @@ namespace Audiochan.Core.Features.Audios
                     .AddTitle(request.Title)
                     .AddDescription(request.Description)
                     .AddAudioMetadata(audioMetadata)
-                    .AddBlobInfo(blob)
+                    .AddBlobInfo(audioBlob)
+                    .AddImage(imageBlob)
                     .SetToPublic(request.IsPublic)
                     .SetToLoop(request.IsLoop)
                     .AddGenre(genre)
@@ -277,15 +283,12 @@ namespace Audiochan.Core.Features.Audios
             _dbContext.Audios.Remove(audio);
             var task1 = _dbContext.SaveChangesAsync(cancellationToken);
             var task2 = _storageService.DeleteBlobAsync(ContainerConstants.Audios, blobName, cancellationToken);
-            var task3 = _imageService.DeleteArtworkAndThumbnails(
-                Path.Combine(ContainerConstants.Artworks, ContainerConstants.Audios),
-                id, 
-                cancellationToken);
+            var task3 = _imageService.RemoveAudioImages(id, cancellationToken);
             await Task.WhenAll(task1, task2, task3);
             return Result.Success();
         }
 
-        public async Task<IResult<string>> AddArtwork(string audioId, AddArtworkImageDataDto request,
+        public async Task<IResult<string>> AddArtwork(string audioId, IFormFile file,
             CancellationToken cancellationToken = default)
         {
             var audio = await _dbContext.Audios
@@ -293,14 +296,9 @@ namespace Audiochan.Core.Features.Audios
 
             if (audio == null)
                 return Result<string>.Fail(ResultStatus.NotFound, "Audio was not found.");
-
-            var containerPath = Path.Combine(ContainerConstants.Artworks, ContainerConstants.Audios);
-
-            var blobDto = await _imageService.UploadArtwork(
-                request.ImageData ?? string.Empty,
-                containerPath,
-                audio.Id,
-                cancellationToken);
+            
+            var blobDto = await _imageService
+                .UploadAudioImage(file, audio.Id, cancellationToken);
 
             audio.ArtworkUrl = blobDto.Url;
             _dbContext.Audios.Update(audio);

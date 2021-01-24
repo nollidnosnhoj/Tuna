@@ -2,7 +2,9 @@
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Constants;
 using Audiochan.Core.Common.Models;
+using Audiochan.Core.Entities;
 using Audiochan.Core.Interfaces;
 using Microsoft.AspNetCore.Http;
 using SixLabors.ImageSharp;
@@ -20,69 +22,34 @@ namespace Audiochan.Infrastructure.ImageSharp
             _storageService = storageService;
         }
 
-        private async Task<BlobDto> UploadArtwork(Image image, string container, string name,
+        public async Task<BlobDto> UploadAudioImage(IFormFile file, string audioId,
             CancellationToken cancellationToken = default)
         {
-            var imageStream = new MemoryStream();
-            var imageOriginal = image.Clone(img => img.Resize(500, 500));
-            await imageOriginal.SaveAsync(imageStream, new JpegEncoder(), cancellationToken);
-            imageStream.Position = 0;
-            var thumbnailMd = GenerateThumbnail(image, 200, 200);
-            var thumbnailSm = GenerateThumbnail(image, 100, 100);
-            var task1 = _storageService.SaveBlobAsync(
-                container: container,
-                blobName: name + "-large.jpg",
-                stream: imageStream,
-                overwrite: true,
-                cancellationToken);
-            var task2 = _storageService.SaveBlobAsync(
-                container: container,
-                blobName: name + "-medium.jpg",
-                stream: thumbnailMd.Stream,
-                overwrite: true,
-                cancellationToken);
-            var task3 = _storageService.SaveBlobAsync(
-                container: container,
-                blobName: name + "-small.jpg",
-                stream: thumbnailSm.Stream,
-                overwrite: true,
-                cancellationToken);
-
-            await Task.WhenAll(task1, task2, task3);
-
-            var blob = await _storageService.GetBlobAsync(
-                container: container,
-                blobName: name + "-large.jpg",
-                cancellationToken);
-
-            return blob;
-        }
-        
-        private ThumbnailDto GenerateThumbnail(Image image, int height, int width)
-        {
-            var thumbnail = image.Clone(img => img.Resize(width, height));
-            var thumbnailStream = new MemoryStream();
-            thumbnail.Save(thumbnailStream, new JpegEncoder());
-            thumbnailStream.Position = 0;
-            return new ThumbnailDto(thumbnailStream, height, width);
+            var container = Path.Combine(ContainerConstants.Artworks, ContainerConstants.Audios);
+            return await ProcessAndUploadImage(file, container, audioId, cancellationToken);
         }
 
-        public async Task<BlobDto> UploadArtwork(string imageData, string container, string name,
+        public async Task<BlobDto> UploadUserImage(IFormFile file, string userId,
             CancellationToken cancellationToken = default)
         {
-            var bytes = Convert.FromBase64String(imageData);
-            using var image = Image.Load(bytes);
-            return await UploadArtwork(image, container, name, cancellationToken);
+            var container = Path.Combine(ContainerConstants.Artworks, "users");
+            return await ProcessAndUploadImage(file, container, userId, cancellationToken);
         }
 
-        public async Task<BlobDto> UploadArtwork(IFormFile file, string container, string name,
-            CancellationToken cancellationToken = default)
+        public async Task RemoveAudioImages(string audioId, CancellationToken cancellationToken = default)
         {
-            using var image = await Image.LoadAsync(file.OpenReadStream());
-            return await UploadArtwork(image, container, name, cancellationToken);
+            var container = Path.Combine(ContainerConstants.Artworks, ContainerConstants.Audios);
+            await DeleteArtworkAndThumbnails(container, audioId, cancellationToken);
         }
 
-        public async Task DeleteArtworkAndThumbnails(string container, string name, CancellationToken cancellationToken = default)
+        public async Task RemoveUserImages(string userId, CancellationToken cancellationToken = default)
+        {
+            var container = Path.Combine(ContainerConstants.Artworks, "users");
+            await DeleteArtworkAndThumbnails(container, userId, cancellationToken);
+        }
+
+        private async Task DeleteArtworkAndThumbnails(string container, string name, 
+            CancellationToken cancellationToken = default)
         {
             var task1 = _storageService.DeleteBlobAsync(
                 container: container,
@@ -97,6 +64,58 @@ namespace Audiochan.Infrastructure.ImageSharp
                 blobName: name + "-small.jpg",
                 cancellationToken);
             await Task.WhenAll(task1, task2, task3);
+        }
+        
+        private async Task<BlobDto> ProcessAndUploadImage(IFormFile file, string container, string name,
+            CancellationToken cancellationToken = default)
+        {
+            using var image = await Image.LoadAsync(file.OpenReadStream());
+            var imageOriginal = image.Clone(img => img.Resize(500, 500));
+            var imageStream = new MemoryStream();
+            await imageOriginal.SaveAsync(imageStream, new JpegEncoder(), cancellationToken);
+            imageStream.Seek(0, SeekOrigin.Begin);
+            var thumbnailMedium = await GenerateThumbnail(image, 200, 200, cancellationToken);
+            var thumbnailSmall = await GenerateThumbnail(image, 100, 100, cancellationToken);
+            var saveLargeImageIntoStorageTask = _storageService.SaveBlobAsync(
+                container: container,
+                blobName: name + "-large.jpg",
+                stream: imageStream,
+                overwrite: true,
+                cancellationToken);
+            var saveMediumImageIntoStorageTask = _storageService.SaveBlobAsync(
+                container: container,
+                blobName: name + "-medium.jpg",
+                stream: thumbnailMedium.Stream,
+                overwrite: true,
+                cancellationToken);
+            var saveSmallImageIntoStorageTask = _storageService.SaveBlobAsync(
+                container: container,
+                blobName: name + "-small.jpg",
+                stream: thumbnailSmall.Stream,
+                overwrite: true,
+                cancellationToken);
+
+            await Task.WhenAll(
+                saveLargeImageIntoStorageTask, 
+                saveMediumImageIntoStorageTask, 
+                saveSmallImageIntoStorageTask);
+
+            var blob = await _storageService.GetBlobAsync(
+                container: container,
+                blobName: name + "-large.jpg",
+                cancellationToken);
+
+            return blob;
+        }
+        
+        private static async Task<ThumbnailDto> GenerateThumbnail(Image image, int height, int width, 
+            CancellationToken cancellationToken = default)
+        {
+            var thumbnail = image.Clone(img => img.Resize(width, height));
+            var thumbnailStream = new MemoryStream();
+            await thumbnail.SaveAsync(thumbnailStream, new JpegEncoder(), cancellationToken);
+            thumbnailStream.Seek(0, SeekOrigin.Begin);
+            return new ThumbnailDto(thumbnailStream, height, width);
         }
     }
 }

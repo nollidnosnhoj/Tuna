@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Features.Audios.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace Audiochan.Core.Interfaces
 {
@@ -18,7 +19,7 @@ namespace Audiochan.Core.Interfaces
         Task<IResult<AudioDetailViewModel>> Update(string audioId, UpdateAudioRequest request, 
             CancellationToken cancellationToken = default);
         Task<IResult> Remove(string id, CancellationToken cancellationToken = default);
-        Task<IResult<string>> AddArtwork(string audioId, AddArtworkImageDataDto request,
+        Task<IResult<string>> AddArtwork(string audioId, IFormFile file,
             CancellationToken cancellationToken = default);
         Task<PagedList<PopularTagViewModel>> GetPopularTags(PaginationQuery paginationQuery,
             CancellationToken cancellationToken = default);
