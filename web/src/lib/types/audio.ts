@@ -40,9 +40,11 @@ export interface EditAudioRequest {
   tags?: string[];
   isPublic: boolean;
   genre: string;
+  image?: File;
 };
 
 export interface UploadAudioRequest extends EditAudioRequest {
-  file?: File,
+  file: File,
+  image?: File,
   acceptTerms: boolean
 }
