@@ -70,7 +70,7 @@ namespace Audiochan.Core.Features.Auth
                 : identityResult.ToResult();
         }
 
-        public async Task<IResult<AuthResultDto>> Refresh(string? refreshToken, 
+        public async Task<IResult<AuthResultDto>> Refresh(string refreshToken, 
             CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(refreshToken))
@@ -109,7 +109,7 @@ namespace Audiochan.Core.Features.Auth
             });
         }
 
-        public async Task<IResult> Revoke(string? refreshToken, CancellationToken cancellationToken = default)
+        public async Task<IResult> Revoke(string refreshToken, CancellationToken cancellationToken = default)
         {
             // Fail when refresh token is not defined
             if (string.IsNullOrEmpty(refreshToken))

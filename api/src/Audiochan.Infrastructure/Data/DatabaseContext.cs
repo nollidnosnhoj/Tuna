@@ -22,11 +22,11 @@ namespace Audiochan.Infrastructure.Data
             _dateTimeService = dateTimeService;
         }
 
-        public DbSet<Audio> Audios { get; set; } = null!;
-        public DbSet<FavoriteAudio> FavoriteAudios { get; set; } = null!;
-        public DbSet<FollowedUser> FollowedUsers { get; set; } = null!;
-        public DbSet<Genre> Genres { get; set; } = null!;
-        public DbSet<Tag> Tags { get; set; } = null!;
+        public DbSet<Audio> Audios { get; set; }
+        public DbSet<FavoriteAudio> FavoriteAudios { get; set; }
+        public DbSet<FollowedUser> FollowedUsers { get; set; }
+        public DbSet<Genre> Genres { get; set; }
+        public DbSet<Tag> Tags { get; set; }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new())
         {
@@ -56,14 +56,20 @@ namespace Audiochan.Infrastructure.Data
             builder.Entity<User>(entity =>
             {
                 entity.ToTable("users");
-
-                entity.Property(u => u.DisplayName).HasMaxLength(256);
+                entity.Property(u => u.DisplayName)
+                    .IsRequired()
+                    .HasMaxLength(256);
+                entity.Property(x => x.Joined)
+                    .IsRequired();
                 
                 entity.OwnsMany(u => u.RefreshTokens, refreshToken =>
                 {
                     refreshToken.WithOwner().HasForeignKey(r => r.UserId);
                     refreshToken.Property<long>("Id");
                     refreshToken.HasKey("Id");
+                    refreshToken.Property(x => x.Token).IsRequired();
+                    refreshToken.Property(x => x.Expiry).IsRequired();
+                    refreshToken.Property(x => x.Created).IsRequired();
                     refreshToken.ToTable("refresh_tokens");
                 });
             });

@@ -8,8 +8,8 @@ namespace Audiochan.Infrastructure.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<Genre> builder)
         {
-            builder.Property(x => x.Name).HasMaxLength(50);
-            builder.Property(x => x.Slug).HasMaxLength(50);
+            builder.Property(x => x.Name).IsRequired().HasMaxLength(50);
+            builder.Property(x => x.Slug).IsRequired().HasMaxLength(50);
         }
     }
 }

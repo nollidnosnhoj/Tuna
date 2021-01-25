@@ -7,8 +7,8 @@ namespace Audiochan.Core.Features.Auth.Models
     /// </summary>
     public record AuthResultDto
     {
-        public string AccessToken { get; init; } = null!;
-        public string RefreshToken { get; init; } = null!;
+        public string AccessToken { get; init; }
+        public string RefreshToken { get; init; }
         public long RefreshTokenExpires { get; init; }
     }
 }

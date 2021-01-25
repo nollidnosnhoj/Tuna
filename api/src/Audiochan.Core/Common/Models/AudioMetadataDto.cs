@@ -3,7 +3,7 @@
     /// <summary>
     /// Contains metadata from an audio file.
     /// </summary>
-    public record AudioMetadataDto(string? Title, int Duration)
+    public record AudioMetadataDto(string Title, int Duration)
     {
     }
 }

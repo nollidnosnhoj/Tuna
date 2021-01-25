@@ -5,7 +5,7 @@
     /// </summary>
     public class PopularTagViewModel
     {
-        public string Tag { get; init; } = null!;
+        public string Tag { get; init; }
         public int Count { get; init; }
     }
 }

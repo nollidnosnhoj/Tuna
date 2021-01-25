@@ -12,7 +12,7 @@ namespace Audiochan.Core.Common.Extensions
         /// <param name="defaultEnum">The enum type if failed.</param>
         /// <typeparam name="TEnum">The enumerator type that will be parsed into.</typeparam>
         /// <returns>The enumerator value</returns>
-        public static TEnum ParseToEnumOrDefault<TEnum>(this string? value, TEnum defaultEnum = default) where TEnum : struct
+        public static TEnum ParseToEnumOrDefault<TEnum>(this string value, TEnum defaultEnum = default) where TEnum : struct
         {
             if (string.IsNullOrWhiteSpace(value)) return defaultEnum;
             

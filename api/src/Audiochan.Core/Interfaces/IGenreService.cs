@@ -10,6 +10,6 @@ namespace Audiochan.Core.Interfaces
     {
         Task<List<ListGenreViewModel>> ListGenre(ListGenresQueryParams queryParams, 
             CancellationToken cancellationToken = default);
-        Task<Genre?> GetGenre(string? input, CancellationToken cancellationToken = default);
+        Task<Genre> GetGenre(string input, CancellationToken cancellationToken = default);
     }
 }

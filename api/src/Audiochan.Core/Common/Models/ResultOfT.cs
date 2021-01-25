@@ -14,8 +14,8 @@ namespace Audiochan.Core.Common.Models
 
         public new static Result<T> Fail(
             ResultStatus errorCode
-            , string? message = null
-            , Dictionary<string, string[]>? errors = null)
+            , string message = null
+            , Dictionary<string, string[]> errors = null)
         {
             return new()
             {

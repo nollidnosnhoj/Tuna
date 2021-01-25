@@ -9,10 +9,8 @@ namespace Audiochan.Infrastructure.Data.Configurations
         public void Configure(EntityTypeBuilder<Audio> builder)
         {
             builder.Property(x => x.Title)
+                .IsRequired()
                 .HasMaxLength(100);
-
-            builder.Property(x => x.Description)
-                .HasMaxLength(500);
 
             builder.Property(x => x.AudioFileExtension)
                 .HasMaxLength(10);
@@ -20,6 +18,11 @@ namespace Audiochan.Infrastructure.Data.Configurations
             builder.HasMany(a => a.Tags)
                 .WithMany(t => t.Audios)
                 .UsingEntity(j => j.ToTable("audio_tags"));
+
+            builder.HasOne(x => x.Genre)
+                .WithMany(x => x.Audios)
+                .HasForeignKey(x => x.GenreId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(x => x.User)
                 .WithMany(x => x.Audios)

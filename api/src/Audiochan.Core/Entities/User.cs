@@ -15,10 +15,10 @@ namespace Audiochan.Core.Entities
             RefreshTokens = new HashSet<RefreshToken>();
         }
 
-        public string DisplayName { get; set; } = null!;
-        public string? PictureUrl { get; set; }
-        public string? About { get; set; }
-        public string? Website { get; set; }
+        public string DisplayName { get; set; }
+        public string PictureUrl { get; set; }
+        public string About { get; set; }
+        public string Website { get; set; }
         public DateTime Joined { get; set; }
         public ICollection<Audio> Audios { get; set; }
         public ICollection<FavoriteAudio> FavoriteAudios { get; set; }

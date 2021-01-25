@@ -12,20 +12,20 @@ namespace Audiochan.Core.Entities
             Favorited = new HashSet<FavoriteAudio>();
         }
 
-        public string Id { get; set; } = null!;
-        public string Title { get; set; } = null!;
-        public string? Description { get; set; }
+        public string Id { get; set; }
+        public string Title { get; set; }
+        public string Description { get; set; }
         public int Duration { get; set; }
         public long AudioFileSize { get; set; }
-        public string AudioFileExtension { get; set; } = null!;
-        public string? AudioUrl { get; set; }
-        public string? PictureUrl { get; set; }
+        public string AudioFileExtension { get; set; }
+        public string AudioUrl { get; set; }
+        public string PictureUrl { get; set; }
         public bool IsPublic { get; set; }
         public bool IsLoop { get; set; }
-        public string UserId { get; set; } = null!;
-        public User User { get; set; } = null!;
+        public string UserId { get; set; }
+        public User User { get; set; }
         public long GenreId { get; set; }
-        public Genre Genre { get; set; } = null!;
+        public Genre Genre { get; set; }
         public ICollection<Tag> Tags { get; set; }
         public ICollection<FavoriteAudio> Favorited { get; }
     }

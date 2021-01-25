@@ -43,7 +43,7 @@ namespace Audiochan.UnitTests.Validations
         [Fact]
         public void CheckIfFileIsInvalidWhenEmpty()
         {
-            var result = _validator.TestValidate(new UploadAudioRequest {File = null!});
+            var result = _validator.TestValidate(new UploadAudioRequest {File = null});
             result.ShouldHaveValidationErrorFor(x => x.File);
         }
 

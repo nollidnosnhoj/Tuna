@@ -10,7 +10,7 @@ namespace Audiochan.Core.Common.Options
             public List<string> FileExtensions { get; init; } = new();
         }
 
-        public UploadOptions AudioUploadOptions { get; init; } = null!;
-        public UploadOptions ImageUploadOptions { get; init; } = null!;
+        public UploadOptions AudioUploadOptions { get; init; }
+        public UploadOptions ImageUploadOptions { get; init; }
     }
 }

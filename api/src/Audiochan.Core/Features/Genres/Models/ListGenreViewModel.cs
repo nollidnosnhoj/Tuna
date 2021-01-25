@@ -3,8 +3,8 @@
     public record ListGenreViewModel
     {
         public long Id { get; init; }
-        public string Name { get; init; } = null!;
-        public string Slug { get; init; } = null!;
-        public int? Count { get; init; } = null;
+        public string Name { get; init; }
+        public string Slug { get; init; }
+        public int? Count { get; init; }
     }
 }

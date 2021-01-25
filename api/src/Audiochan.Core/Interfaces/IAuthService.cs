@@ -10,7 +10,7 @@ namespace Audiochan.Core.Interfaces
     {
         Task<IResult<AuthResultDto>> Login(string username, string password, CancellationToken cancellationToken = default);
         Task<IResult> Register(CreateUserRequest request, CancellationToken cancellationToken = default);
-        Task<IResult<AuthResultDto>> Refresh(string? refreshToken, CancellationToken cancellationToken = default);
-        Task<IResult> Revoke(string? refreshToken, CancellationToken cancellationToken = default);
+        Task<IResult<AuthResultDto>> Refresh(string refreshToken, CancellationToken cancellationToken = default);
+        Task<IResult> Revoke(string refreshToken, CancellationToken cancellationToken = default);
     }
 }

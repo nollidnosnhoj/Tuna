@@ -5,8 +5,8 @@ namespace Audiochan.Core.Features.Users.Models
 {
     public record UserDetailsViewModel
     {
-        public string Id { get; init; } = null!;
-        public string Username { get; init; } = null!;
+        public string Id { get; init; }
+        public string Username { get; init; }
         public string AboutMe { get; init; } = string.Empty;
         public string Website { get; init; } = string.Empty;
         public string PictureUrl { get; init; } = string.Empty;

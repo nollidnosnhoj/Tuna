@@ -11,19 +11,19 @@ namespace Audiochan.Core.Common.Mappings
 {
     public static class MapProjections
     {
-        public static Expression<Func<Audio, AudioDetailViewModel>> AudioDetail(string? currentUserId)
+        public static Expression<Func<Audio, AudioDetailViewModel>> AudioDetail(string currentUserId)
         {
             return audio => new AudioDetailViewModel
             {
                 Id = audio.Id,
                 Title = audio.Title,
-                Description = audio.Description ?? string.Empty,
+                Description = audio.Description,
                 IsPublic = audio.IsPublic,
                 IsLoop = audio.IsLoop,
                 Duration = audio.Duration,
                 FileSize = audio.AudioFileSize,
                 FileExt = audio.AudioFileExtension,
-                Url = audio.AudioUrl ?? string.Empty,
+                Url = audio.AudioUrl,
                 PictureUrl = audio.PictureUrl,
                 Tags = audio.Tags.Select(tag => tag.Id).ToArray(),
                 FavoriteCount = audio.Favorited.Count,
@@ -46,7 +46,7 @@ namespace Audiochan.Core.Common.Mappings
             };
         }
 
-        public static Expression<Func<Audio, AudioListViewModel>> AudioList(string? currentUserId)
+        public static Expression<Func<Audio, AudioListViewModel>> AudioList(string currentUserId)
         {
             return audio => new AudioListViewModel
             {
@@ -76,7 +76,7 @@ namespace Audiochan.Core.Common.Mappings
             {
                 Id = u.Target.Id,
                 Username = u.Target.UserName,
-                AvatarUrl = string.Empty,
+                AvatarUrl = u.Target.PictureUrl,
                 IsFollowing = u.Target.Followers.Any(x => x.ObserverId == currentUserId)
             };
         }
@@ -87,9 +87,9 @@ namespace Audiochan.Core.Common.Mappings
             {
                 Id = user.Id,
                 Username = user.UserName,
-                AboutMe = user.About ?? string.Empty,
-                Website = user.Website ?? string.Empty,
-                PictureUrl = user.PictureUrl ?? string.Empty,
+                AboutMe = user.About,
+                Website = user.Website,
+                PictureUrl = user.PictureUrl,
                 AudioCount = user.Audios.Count,
                 FollowerCount = user.Followers.Count,
                 FollowingCount = user.Followings.Count,

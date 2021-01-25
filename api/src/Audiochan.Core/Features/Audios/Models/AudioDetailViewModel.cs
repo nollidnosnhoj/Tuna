@@ -8,23 +8,23 @@ namespace Audiochan.Core.Features.Audios.Models
 {
     public record AudioDetailViewModel
     {
-        public string Id { get; init; } = null!;
-        public string Title { get; init; } = null!;
-        public string Description { get; init; } = string.Empty;
+        public string Id { get; init; }
+        public string Title { get; init; }
+        public string Description { get; init; }
         public bool IsPublic { get; init; }
         public bool IsLoop { get; init; }
-        public string[] Tags { get; init; } = null!;
+        public string[] Tags { get; init; }
         public int Duration { get; init; }
         public long FileSize { get; init; }
-        public string FileExt { get; init; } = null!;
-        public string Url { get; init; } = null!;
-        public string? PictureUrl { get; init; }
+        public string FileExt { get; init; }
+        public string Url { get; init; }
+        public string PictureUrl { get; init; }
         public int FavoriteCount { get; init; }
         public bool IsFavorited { get; init; }
         public DateTime Created { get; init; }
         public DateTime? Updated { get; init; }
-        public GenreDto Genre { get; init; } = null!;
-        public UserViewModel User { get; init; } = null!;
+        public GenreDto Genre { get; init; }
+        public UserViewModel User { get; init; }
 
         public static AudioDetailViewModel From(Audio audio, string currentUserId)
         {

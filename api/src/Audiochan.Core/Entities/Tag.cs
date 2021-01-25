@@ -9,7 +9,7 @@ namespace Audiochan.Core.Entities
             Audios = new HashSet<Audio>();
         }
 
-        public string Id { get; set; } = null!;
+        public string Id { get; set; }
         public ICollection<Audio> Audios { get; set; }
     }
 }

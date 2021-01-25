@@ -2,5 +2,5 @@
 
 namespace Audiochan.Web.Models
 {
-    public record ErrorViewModel(int Code, string Message, IDictionary<string, string[]>? Errors) { }
+    public record ErrorViewModel(int Code, string Message, IDictionary<string, string[]> Errors) { }
 }

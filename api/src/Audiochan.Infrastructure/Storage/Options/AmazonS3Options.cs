@@ -2,10 +2,10 @@
 {
     public class AmazonS3Options
     {
-        public string PublicKey { get; set; } = null!;
-        public string SecretKey { get; set; } = null!;
-        public string Bucket { get; set; } = null!;
-        public string? Region { get; set; }
+        public string PublicKey { get; set; }
+        public string SecretKey { get; set; }
+        public string Bucket { get; set; }
+        public string Region { get; set; }
         public long ChunkThreshold { get; set; }
     }
 }

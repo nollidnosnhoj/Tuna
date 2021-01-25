@@ -36,14 +36,14 @@ namespace Audiochan.Core.Features.Audios.Builders
             return _audio.Id + _audio.AudioFileExtension;
         }
         
-        public AudioBuilder AddTitle(string? title)
+        public AudioBuilder AddTitle(string title)
         {
             if (!string.IsNullOrWhiteSpace(title))
                 _audio.Title = title;
             return this;
         }
 
-        public AudioBuilder AddDescription(string? description)
+        public AudioBuilder AddDescription(string description)
         {
             _audio.Description = description;
             return this;
@@ -84,7 +84,7 @@ namespace Audiochan.Core.Features.Audios.Builders
             return this;
         }
 
-        public AudioBuilder AddImage(BlobDto? blob)
+        public AudioBuilder AddImage(BlobDto blob)
         {
             _audio.PictureUrl = blob?.Url ?? string.Empty;
             return this;

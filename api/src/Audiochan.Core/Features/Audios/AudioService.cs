@@ -318,7 +318,7 @@ namespace Audiochan.Core.Features.Audios
                 .Paginate(paginationQuery, cancellationToken);
         }
         
-        private async Task<List<Tag>> CreateNewTags(IEnumerable<string?> requestedTags, 
+        private async Task<List<Tag>> CreateNewTags(IEnumerable<string> requestedTags, 
             CancellationToken cancellationToken = default)
         {
             var taggifyTags = requestedTags.FormatTags();

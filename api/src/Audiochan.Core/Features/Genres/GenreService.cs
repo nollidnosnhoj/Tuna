@@ -45,7 +45,7 @@ namespace Audiochan.Core.Features.Genres
             }).ToListAsync(cancellationToken);
         }
 
-        public async Task<Genre?> GetGenre(string? input, CancellationToken cancellationToken = default)
+        public async Task<Genre> GetGenre(string input, CancellationToken cancellationToken = default)
         {
             long genreId = 0;
             
