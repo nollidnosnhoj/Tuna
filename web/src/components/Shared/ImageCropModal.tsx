@@ -17,7 +17,7 @@ import "cropperjs/dist/cropper.css";
 interface ImageCropModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onCropped: (croppedFile: File) => void;
+  onCropped: (croppedFile: File) => Promise<void>;
   file?: File;
 }
 

@@ -1,5 +1,12 @@
-import React from "react";
-import { Box, Flex, useDisclosure, Button, Text } from "@chakra-ui/react";
+import React, { useMemo, useState } from "react";
+import {
+  Box,
+  Flex,
+  useDisclosure,
+  Button,
+  Text,
+  Image,
+} from "@chakra-ui/react";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
@@ -10,8 +17,10 @@ import Container from "~/components/Shared/Container";
 import Page from "~/components/Shared/Page";
 import AudioEdit from "~/components/Audio/Edit";
 import useUser from "~/lib/contexts/user_context";
-import { fetchAudioById, useAudio } from "~/lib/services/audio";
+import { fetchAudioById, useAddArtwork, useAudio } from "~/lib/services/audio";
 import { getAccessToken } from "~/utils/cookies";
+import ImageDropzone from "~/components/Shared/ImageDropzone";
+import AudioImage from "~/components/Audio/Image";
 
 const DynamicAudioPlayer = dynamic(() => import("~/components/Audio/Player"), {
   ssr: false,
@@ -71,6 +80,19 @@ export default function AudioDetailsPage(
     );
   }
 
+  const {
+    mutateAsync: uploadArtwork,
+    isLoading: isAddingArtwork,
+  } = useAddArtwork(audio.id);
+
+  const audioUrl = useMemo<string>(() => {
+    return audio
+      ? props.isDevelopment && audio.artworkUrl
+        ? "https://localhost:5001/uploads/" + audio.artworkUrl
+        : audio.artworkUrl
+      : "";
+  }, [audio]);
+
   return (
     <Page
       title={audio.title ?? "Removed"}
@@ -82,12 +104,27 @@ export default function AudioDetailsPage(
     >
       <Flex>
         <Box flex="2">
-          <AudioDetails
-            title={audio.title ?? ""}
-            description={audio.description ?? ""}
-            username={audio.user?.username ?? "ERROR"}
-            created={audio.created ?? ""}
-          />
+          <Flex>
+            <Box flex="1" marginRight={4}>
+              <AudioImage
+                name="image"
+                imageData={audioUrl}
+                disabled={isAddingArtwork}
+                canReplace={audio.user.id === user?.id}
+                onReplace={async (file) => {
+                  await uploadArtwork(file);
+                }}
+              />
+            </Box>
+            <Box flex="3">
+              <AudioDetails
+                title={audio.title ?? ""}
+                description={audio.description ?? ""}
+                username={audio.user?.username ?? "ERROR"}
+                created={audio.created ?? ""}
+              />
+            </Box>
+          </Flex>
         </Box>
         <Box flex="1">
           {isAuth && user?.id === audio.user?.id && (

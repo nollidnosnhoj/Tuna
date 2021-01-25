@@ -14,7 +14,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const body = { refreshToken: refreshToken };
 
   try {
-    const { status } = await request('auth/request', {
+    const { status } = await request('auth/revoke', {
       method: 'post',
       body: body,
       skipAuthRefresh: true

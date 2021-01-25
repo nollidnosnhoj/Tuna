@@ -63,7 +63,7 @@ export function UserProvider(props: PropsWithChildren<UserProviderProps>) {
     } catch (err) {
       console.error(err);
     }
-    Router.reload();
+    // Router.reload();
   }
 
   useEffect(() => {

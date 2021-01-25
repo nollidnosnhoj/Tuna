@@ -1,23 +1,10 @@
-import {
-  Flex,
-  Box,
-  Button,
-  Spacer,
-  Stack,
-  List,
-  ListItem,
-  ListIcon,
-  Text,
-  Icon,
-} from "@chakra-ui/react";
-import { WarningIcon } from "@chakra-ui/icons";
-import React from "react";
+import { Flex, Box, Button, Spacer, Stack } from "@chakra-ui/react";
+import React, { useState } from "react";
 import Router from "next/router";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { DevTool } from "@hookform/devtools";
-import { ErrorMessage } from "@hookform/error-message";
-import AudioDropzone from "./AudioDropzone";
+import AudioDropzone from "./Dropzone";
 import InputCheckbox from "../Form/Checkbox";
 import GenreSelect from "../Form/GenreSelect";
 import TextInput from "../Form/TextInput";
@@ -27,6 +14,7 @@ import { UploadAudioRequest } from "~/lib/types/audio";
 import { uploadAudioSchema } from "~/lib/validationSchemas";
 import { apiErrorToast, errorToast, successfulToast } from "~/utils/toast";
 import ImageDropzone from "../Shared/ImageDropzone";
+import AudioImage from "./Image";
 
 const AudioUpload = () => {
   const { mutateAsync: uploadAudio } = useCreateAudio();
@@ -97,10 +85,10 @@ const AudioUpload = () => {
                   name="image"
                   control={control}
                   render={({ name, onChange }) => (
-                    <ImageDropzone
+                    <AudioImage
                       name={name}
-                      onChange={onChange}
-                      buttonWidth="100%"
+                      disabled={isSubmitting}
+                      onReplace={async (file) => onChange(file)}
                     />
                   )}
                 />

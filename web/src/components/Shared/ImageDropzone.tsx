@@ -11,17 +11,19 @@ const ImageCropModal = dynamic(
 
 interface ImageDropzoneProps {
   name: string;
-  onChange: (file: File) => void;
+  onChange: (file: File) => Promise<void>;
+  initialImage?: string;
   buttonWidth?: string | number;
+  disabled?: boolean;
 }
 
 const ImageDropzone: React.FC<ImageDropzoneProps> = ({
   name,
   buttonWidth,
+  initialImage,
   onChange,
+  disabled = false,
 }) => {
-  const [croppedImage, setCroppedImage] = useState<string>(null);
-
   const {
     isOpen: isImageCropModalOpen,
     onOpen: openImageCropModal,
@@ -47,22 +49,16 @@ const ImageDropzone: React.FC<ImageDropzoneProps> = ({
 
   return (
     <Box>
-      {croppedImage && (
-        <Flex justifyContent="center" marginBottom={4}>
-          <Image boxSize="300px" objectFit="cover" src={croppedImage} />
-        </Flex>
-      )}
       <input {...getInputProps({ name })} />
-      <Button width={buttonWidth} onClick={open}>
-        {croppedImage ? "Replace Image" : "Upload Image"}
+      <Button width={buttonWidth} onClick={open} disabled={disabled}>
+        {initialImage ? "Replace Image" : "Upload Image"}
       </Button>
       <ImageCropModal
         file={acceptedFiles[0]}
         isOpen={isImageCropModalOpen}
         onClose={closeImageCropModal}
-        onCropped={(croppedFile) => {
-          setCroppedImage(window.URL.createObjectURL(croppedFile));
-          onChange(croppedFile);
+        onCropped={async (croppedFile) => {
+          await onChange(croppedFile);
         }}
       />
     </Box>

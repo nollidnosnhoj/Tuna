@@ -38,6 +38,7 @@ interface AudioEditProps {
   model: AudioDetail;
   isOpen: boolean;
   onClose: () => void;
+  isDev?: boolean;
 }
 
 function mapAudioToModifyInputs(audio: AudioDetail): EditAudioRequest {
@@ -54,6 +55,7 @@ const AudioEditModal: React.FC<AudioEditProps> = ({
   model,
   isOpen,
   onClose,
+  isDev = false,
 }) => {
   const currentValues = useMemo(() => mapAudioToModifyInputs(model), [model]);
   const { mutateAsync: updateAudio } = useEditAudio(model.id);
@@ -113,7 +115,7 @@ const AudioEditModal: React.FC<AudioEditProps> = ({
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={onClose} size="xl">
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Edit '{model.title}'</ModalHeader>

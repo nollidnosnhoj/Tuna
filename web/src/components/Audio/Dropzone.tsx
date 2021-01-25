@@ -1,13 +1,4 @@
-import { WarningIcon } from "@chakra-ui/icons";
-import {
-  Alert,
-  AlertIcon,
-  Box,
-  Flex,
-  Icon,
-  ListIcon,
-  Text,
-} from "@chakra-ui/react";
+import { Alert, AlertIcon, Box, Flex, Icon, Text } from "@chakra-ui/react";
 import { ErrorMessage } from "@hookform/error-message";
 import React, { useMemo } from "react";
 import { useDropzone } from "react-dropzone";

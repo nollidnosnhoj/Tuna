@@ -61,7 +61,9 @@ export default function UserHeader() {
                     </NextLink>
                   </MenuGroup>
                   <MenuDivider />
-                  <MenuItem onClick={() => logout()}>Logout</MenuItem>
+                  <MenuItem onClick={async () => await logout()}>
+                    Logout
+                  </MenuItem>
                 </MenuList>
               </Menu>
             </Box>

@@ -153,3 +153,22 @@ export const useRemoveAudio = (id: string) => {
     }
   })
 }
+
+export const useAddArtwork = (id: string) => {
+  const queryClient = useQueryClient();
+  const uploadArtwork = async (file: File) => {
+    const formData = new FormData();
+    formData.append('image', file);
+    return await request<{ image: string }>(`audios/${id}/artwork`, {
+      method: 'patch',
+      body: formData
+    });
+  }
+
+  return useMutation(uploadArtwork, {
+    onSuccess() {
+      queryClient.invalidateQueries(`audios`);
+      queryClient.invalidateQueries([`audios`, id], { exact: true })
+    }
+  })
+}
