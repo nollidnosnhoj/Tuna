@@ -9,7 +9,7 @@ namespace Audiochan.Core.Features.Auth.Validators
 {
     public class CreateUserRequestValidator : AbstractValidator<CreateUserRequest>
     {
-        public CreateUserRequestValidator(IOptions<IdentityUserOptions> options)
+        public CreateUserRequestValidator(IOptions<IdentityOptions> options)
         {
             RuleFor(req => req.Username).Username(options.Value);
             RuleFor(req => req.Email)

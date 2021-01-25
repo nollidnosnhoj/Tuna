@@ -30,10 +30,10 @@ namespace Audiochan.Web
             // var jwtSetting = new JwtSetting();
             // Configuration.GetSection(nameof(JwtSetting)).Bind(jwtSetting);
             // services.AddSingleton(jwtSetting);
-            
+
+            services.Configure<AudiochanOptions>(Configuration.GetSection(nameof(AudiochanOptions)));
             services.Configure<JwtOptions>(Configuration.GetSection(nameof(JwtOptions)));
-            services.Configure<IdentityUserOptions>(Configuration.GetSection(nameof(IdentityUserOptions)));
-            services.Configure<UploadOptions>(Configuration.GetSection(nameof(UploadOptions)));
+            services.Configure<IdentityOptions>(Configuration.GetSection(nameof(IdentityOptions)));
 
             services
                 .ConfigureDatabase(Configuration, Environment)

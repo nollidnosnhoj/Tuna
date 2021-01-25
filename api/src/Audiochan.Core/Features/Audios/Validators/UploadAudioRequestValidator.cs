@@ -9,12 +9,13 @@ namespace Audiochan.Core.Features.Audios.Validators
 {
     public class UploadAudioRequestValidator : AbstractValidator<UploadAudioRequest>
     {
-        public UploadAudioRequestValidator(IOptions<UploadOptions> uploadSetting)
+        public UploadAudioRequestValidator(IOptions<AudiochanOptions> options)
         {
+            var uploadOptions = options.Value.AudioUploadOptions;
             RuleFor(req => req.File)
                 .Cascade(CascadeMode.Stop)
                 .NotEmpty().WithMessage("File is required.")
-                .FileValidation(uploadSetting.Value.ContentTypes, uploadSetting.Value.FileSize);
+                .FileValidation(uploadOptions.FileExtensions, uploadOptions.FileSize);
             
             Include(new UpdateAudioRequestValidator());
         }

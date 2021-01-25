@@ -4,6 +4,7 @@ using Audiochan.Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using IdentityOptions = Audiochan.Core.Common.Options.IdentityOptions;
 
 namespace Audiochan.Web.Configurations
 {
@@ -12,8 +13,8 @@ namespace Audiochan.Web.Configurations
         public static IServiceCollection ConfigureIdentity(this IServiceCollection services, 
             IConfiguration configuration)
         {
-            var identityOptions = new IdentityUserOptions();
-            configuration.GetSection(nameof(IdentityUserOptions)).Bind(identityOptions);
+            var identityOptions = new IdentityOptions();
+            configuration.GetSection(nameof(IdentityOptions)).Bind(identityOptions);
             
             services
                 .AddIdentity<User, Role>(options =>

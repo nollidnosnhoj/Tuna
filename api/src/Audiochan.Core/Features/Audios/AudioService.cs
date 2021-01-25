@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 using Audiochan.Core.Common.Constants;
 using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Common.Extensions;
-using Audiochan.Core.Common.Extensions.Queryable;
 using Audiochan.Core.Common.Mappings;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Audios.Builders;
 using Audiochan.Core.Features.Audios.Models;
+using Audiochan.Core.Features.Audios.Queryable;
 using Audiochan.Core.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -291,6 +291,8 @@ namespace Audiochan.Core.Features.Audios
         public async Task<IResult<string>> AddArtwork(string audioId, IFormFile file,
             CancellationToken cancellationToken = default)
         {
+            
+            
             var audio = await _dbContext.Audios
                 .SingleOrDefaultAsync(a => a.Id == audioId, cancellationToken);
 

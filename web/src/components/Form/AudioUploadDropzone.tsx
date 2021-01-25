@@ -7,14 +7,14 @@ import { FaCloudUploadAlt, FaFileAudio } from "react-icons/fa";
 import CONSTANTS from "~/constants";
 import { errorToast } from "~/utils/toast";
 
-interface AudioDropzoneProps {
+interface AudioUploadDropzoneProps {
   name: string;
   onChange: (file: File | FileList) => void;
   maxSize?: number;
   accept?: string[];
 }
 
-const AudioDropzone: React.FC<AudioDropzoneProps> = ({
+const AudioUploadDropzone: React.FC<AudioUploadDropzoneProps> = ({
   name,
   onChange,
   maxSize = CONSTANTS.UPLOAD_RULES.maxSize,
@@ -23,10 +23,10 @@ const AudioDropzone: React.FC<AudioDropzoneProps> = ({
   const { errors } = useFormContext();
   const {
     acceptedFiles,
-    isDragReject,
     getRootProps,
     getInputProps,
     isDragActive,
+    isDragReject,
   } = useDropzone({
     multiple: false,
     maxSize: maxSize,
@@ -35,7 +35,7 @@ const AudioDropzone: React.FC<AudioDropzoneProps> = ({
       fileRejections.forEach((fileRejection) => {
         fileRejection.errors.forEach((err) => {
           errorToast({
-            title: "Invalid audio",
+            title: "Invalid Audio",
             message: err.message,
           });
         });
@@ -100,4 +100,4 @@ const AudioDropzone: React.FC<AudioDropzoneProps> = ({
   );
 };
 
-export default AudioDropzone;
+export default AudioUploadDropzone;

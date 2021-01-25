@@ -1,30 +1,31 @@
 import { Box, Flex, Image } from "@chakra-ui/react";
 import { PropsWithChildren, useState } from "react";
 import ImageDropzone from "~/components/Shared/ImageDropzone";
-import { apiErrorToast } from "~/utils/toast";
 
 interface AudioImageProps {
   name: string;
   disabled?: boolean;
   imageData?: string;
   canReplace?: boolean;
-  onReplace?: (file: File) => Promise<void>;
+  onChange?: (file: File) => Promise<void>;
 }
 
 export default function AudioImage({
   imageData,
   disabled = false,
   canReplace = false,
-  onReplace,
+  ...props
 }: PropsWithChildren<AudioImageProps>) {
   const [image, setImage] = useState<string>(imageData);
 
+  /** When image changes (after submitting crop) */
   const changeImage = async (file: File) => {
-    try {
-      if (onReplace) await onReplace(file);
+    if (props.onChange) {
+      props
+        .onChange(file)
+        .then(() => setImage(window.URL.createObjectURL(file)));
+    } else {
       setImage(window.URL.createObjectURL(file));
-    } catch (err) {
-      apiErrorToast(err);
     }
   };
 
@@ -36,8 +37,7 @@ export default function AudioImage({
       {canReplace && (
         <ImageDropzone
           name="image"
-          initialImage={image}
-          buttonWidth="100%"
+          image={image}
           disabled={disabled}
           onChange={changeImage}
         />

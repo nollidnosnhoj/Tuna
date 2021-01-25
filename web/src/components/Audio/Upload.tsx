@@ -4,7 +4,7 @@ import Router from "next/router";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { DevTool } from "@hookform/devtools";
-import AudioDropzone from "./Dropzone";
+import AudioUploadDropzone from "../Form/AudioUploadDropzone";
 import InputCheckbox from "../Form/Checkbox";
 import GenreSelect from "../Form/GenreSelect";
 import TextInput from "../Form/TextInput";
@@ -75,7 +75,7 @@ const AudioUpload = () => {
                 name="file"
                 control={control}
                 render={({ name, onChange }) => (
-                  <AudioDropzone name={name} onChange={onChange} />
+                  <AudioUploadDropzone name={name} onChange={onChange} />
                 )}
               />
             </Box>

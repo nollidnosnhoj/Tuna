@@ -111,7 +111,7 @@ export default function AudioDetailsPage(
                 imageData={audioUrl}
                 disabled={isAddingArtwork}
                 canReplace={audio.user.id === user?.id}
-                onReplace={async (file) => {
+                onChange={async (file) => {
                   await uploadArtwork(file);
                 }}
               />

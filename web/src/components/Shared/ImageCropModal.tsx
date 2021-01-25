@@ -17,7 +17,7 @@ import "cropperjs/dist/cropper.css";
 interface ImageCropModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onCropped: (croppedFile: File) => Promise<void>;
+  onCropped: (croppedFile: File) => void;
   file?: File;
 }
 
@@ -30,6 +30,7 @@ export default function ImageCropModal({
   const [image, setImage] = useState<string>(null);
   const [cropper, setCropper] = useState<Cropper>(null);
 
+  /** Load image from File */
   useEffect(() => {
     if (file) {
       const reader = new FileReader();
@@ -43,6 +44,7 @@ export default function ImageCropModal({
     }
   }, [file, cropper]);
 
+  /** Crop the image and return canvas into Blob */
   const handleCropped = () => {
     if (!cropper) return;
 
@@ -61,10 +63,13 @@ export default function ImageCropModal({
     canvasData.toBlob((blob) => {
       const croppedFile = new File([blob], file.name);
       onCropped(croppedFile);
+
+      /** Reset cropper */
       setImage(null);
       setCropper(null);
     });
 
+    /** Close modal */
     onClose();
   };
 

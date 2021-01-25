@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Audiochan.Core.Common.Models;
 using Audiochan.Core.Common.Options;
 using Audiochan.Core.Features.Audios.Models;
 using Audiochan.Core.Features.Audios.Validators;
@@ -19,21 +18,16 @@ namespace Audiochan.UnitTests.Validations
 
         public UploadAudioValidationTests()
         {
-            var options = Options.Create(new UploadOptions
+            var options = Options.Create(new AudiochanOptions
             {
-                ContentTypes = new List<string>
+                AudioUploadOptions = new AudiochanOptions.UploadOptions
                 {
-                    "audio/mpeg",
-                    "audio/x-mpeg",
-                    "audio/mp3",
-                    "audio/x-mp3",
-                    "audio/mpeg3",
-                    "audio/x-mpeg3",
-                    "audio/mpg",
-                    "audio/x-mpg",
-                    "audio/x-mpegaudio"
-                },
-                FileSize = 262144000
+                    FileExtensions = new List<string>
+                    {
+                        "mp3", "ogg", "aac"
+                    },
+                    FileSize = 262144000
+                }
             });
             _validator = new UploadAudioRequestValidator(options);
             _fileMock = new Mock<IFormFile>();
@@ -56,7 +50,7 @@ namespace Audiochan.UnitTests.Validations
         [Fact]
         public void CheckIfFileIsInvalidWhenInvalidContentType()
         {
-            _fileMock.Setup(x => x.ContentType).Returns("image/jpeg");
+            _fileMock.Setup(x => x.FileName).Returns("test.jpg");
             _fileMock.Setup(x => x.Length).Returns(50);
             var result = _validator.TestValidate(new UploadAudioRequest {File = _fileMock.Object});
             result.ShouldHaveValidationErrorFor(x => x.File);
@@ -65,7 +59,7 @@ namespace Audiochan.UnitTests.Validations
         [Fact]
         public void CheckIfFileIsInvalidWhenFileLengthExceeded()
         {
-            _fileMock.Setup(x => x.ContentType).Returns("audio/mpeg");
+            _fileMock.Setup(x => x.FileName).Returns("test.ogg");
             _fileMock.Setup(x => x.Length).Returns(2000000 * 1000 + 1);
             var result = _validator.TestValidate(new UploadAudioRequest {File = _fileMock.Object});
             result.ShouldHaveValidationErrorFor(x => x.File);
@@ -74,7 +68,7 @@ namespace Audiochan.UnitTests.Validations
         [Fact]
         public void CheckIfFileIsValid()
         {
-            _fileMock.Setup(x => x.ContentType).Returns("audio/mpeg");
+            _fileMock.Setup(x => x.FileName).Returns("test.mp3");
             _fileMock.Setup(x => x.Length).Returns(2000000);
             var result = _validator.TestValidate(new UploadAudioRequest {File = _fileMock.Object});
             result.ShouldNotHaveValidationErrorFor(x => x.File);

@@ -1,26 +1,19 @@
-import { Box, Button, Flex, Image, useDisclosure } from "@chakra-ui/react";
-import React, { useState } from "react";
+import { Box, Button, useDisclosure } from "@chakra-ui/react";
+import React from "react";
 import { useDropzone } from "react-dropzone";
-import dynamic from "next/dynamic";
+import ImageCropModal from "./ImageCropModal";
 import { errorToast } from "~/utils/toast";
-
-const ImageCropModal = dynamic(
-  () => import("~/components/Shared/ImageCropModal"),
-  { ssr: false }
-);
 
 interface ImageDropzoneProps {
   name: string;
-  onChange: (file: File) => Promise<void>;
-  initialImage?: string;
-  buttonWidth?: string | number;
+  onChange: (file: File) => void;
+  image?: string;
   disabled?: boolean;
 }
 
 const ImageDropzone: React.FC<ImageDropzoneProps> = ({
   name,
-  buttonWidth,
-  initialImage,
+  image,
   onChange,
   disabled = false,
 }) => {
@@ -34,10 +27,11 @@ const ImageDropzone: React.FC<ImageDropzoneProps> = ({
     maxSize: 2097152,
     multiple: false,
     onDropAccepted: () => {
-      // open image crop modal
+      /** open crop modal */
       openImageCropModal();
     },
     onDropRejected: ([fileRejection]) => {
+      /** Display error toasts */
       fileRejection.errors.forEach((err) => {
         errorToast({
           title: "Invalid Image",
@@ -50,15 +44,15 @@ const ImageDropzone: React.FC<ImageDropzoneProps> = ({
   return (
     <Box>
       <input {...getInputProps({ name })} />
-      <Button width={buttonWidth} onClick={open} disabled={disabled}>
-        {initialImage ? "Replace Image" : "Upload Image"}
+      <Button width="100%" onClick={open} disabled={disabled}>
+        {image ? "Replace Image" : "Upload Image"}
       </Button>
       <ImageCropModal
         file={acceptedFiles[0]}
         isOpen={isImageCropModalOpen}
         onClose={closeImageCropModal}
-        onCropped={async (croppedFile) => {
-          await onChange(croppedFile);
+        onCropped={(croppedFile) => {
+          onChange(croppedFile);
         }}
       />
     </Box>

@@ -16,7 +16,7 @@ namespace Audiochan.UnitTests.Validations
 
         public CreateUserValidationTests()
         {
-            var options = Options.Create(new IdentityUserOptions
+            var options = Options.Create(new IdentityOptions
             {
                 PasswordRequiresDigit = true,
                 PasswordRequiresLowercase = true,
