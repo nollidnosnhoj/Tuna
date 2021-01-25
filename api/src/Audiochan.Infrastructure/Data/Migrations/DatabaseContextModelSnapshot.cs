@@ -41,10 +41,6 @@ namespace Audiochan.Infrastructure.Data.Migrations
                         .HasColumnType("TEXT")
                         .HasColumnName("id");
 
-                    b.Property<string>("ArtworkUrl")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("artwork_url");
-
                     b.Property<string>("AudioFileExtension")
                         .IsRequired()
                         .HasMaxLength(10)
@@ -87,6 +83,10 @@ namespace Audiochan.Infrastructure.Data.Migrations
                     b.Property<DateTime?>("LastModified")
                         .HasColumnType("TEXT")
                         .HasColumnName("last_modified");
+
+                    b.Property<string>("PictureUrl")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("picture_url");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -300,6 +300,10 @@ namespace Audiochan.Infrastructure.Data.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("INTEGER")
                         .HasColumnName("phone_number_confirmed");
+
+                    b.Property<string>("PictureUrl")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("picture_url");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("TEXT")

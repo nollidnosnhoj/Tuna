@@ -17,7 +17,11 @@ import Container from "~/components/Shared/Container";
 import Page from "~/components/Shared/Page";
 import AudioEdit from "~/components/Audio/Edit";
 import useUser from "~/lib/contexts/user_context";
-import { fetchAudioById, useAddArtwork, useAudio } from "~/lib/services/audio";
+import {
+  fetchAudioById,
+  useAddAudioPicture,
+  useAudio,
+} from "~/lib/services/audio";
 import { getAccessToken } from "~/utils/cookies";
 import ImageDropzone from "~/components/Shared/ImageDropzone";
 import AudioImage from "~/components/Audio/Image";
@@ -83,7 +87,7 @@ export default function AudioDetailsPage(
   const {
     mutateAsync: uploadArtwork,
     isLoading: isAddingArtwork,
-  } = useAddArtwork(audio.id);
+  } = useAddAudioPicture(audio.id);
 
   const audioUrl = useMemo<string>(() => {
     return audio

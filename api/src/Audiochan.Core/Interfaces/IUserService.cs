@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Features.Users.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace Audiochan.Core.Interfaces
 {
@@ -10,6 +11,7 @@ namespace Audiochan.Core.Interfaces
         Task<IResult<CurrentUserViewModel>> GetCurrentUser(string authUserId, CancellationToken cancellationToken = default);
         Task<IResult<UserDetailsViewModel>> GetUserDetails(string username,
             CancellationToken cancellationToken = default);
+        Task<IResult<string>> AddPicture(string userId, IFormFile file, CancellationToken cancellationToken = default);
         Task<IResult> UpdateUsername(string userId, string newUsername, CancellationToken cancellationToken = default);
         Task<IResult> UpdateEmail(string userId, string newEmail, CancellationToken cancellationToken = default);
         Task<IResult> UpdatePassword(string userId, ChangePasswordRequest request, 

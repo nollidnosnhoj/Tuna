@@ -1,7 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Models;
-using Audiochan.Core.Common.Options;
 using Audiochan.Core.Features.Audios.Models;
 using Audiochan.Core.Interfaces;
 using Audiochan.Web.Extensions;
@@ -9,7 +8,6 @@ using Audiochan.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Audiochan.Web.Controllers
@@ -112,17 +110,18 @@ namespace Audiochan.Web.Controllers
             return result.IsSuccess ? NoContent() : result.ReturnErrorResponse();
         }
 
-        [HttpPatch("{audioId}/artwork", Name = "AddArtwork")]
+        [HttpPatch("{audioId}/picture", Name = "AddAudioPicture")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         [SwaggerOperation(
-            Summary = "Add artwork to audio upload.",
-            OperationId = "AddArtwork",
+            Summary = "Add picture to audio upload.",
+            OperationId = "AddAudioPicture",
             Tags = new[] {"audios"}
         )]
-        public async Task<IActionResult> AddArtwork(string audioId, [FromForm] IFormFile image,
+        public async Task<IActionResult> AddPicture(string audioId, [FromForm] UploadArtworkRequest request,
             CancellationToken cancellationToken)
         {
-            var result = await _audioService.AddArtwork(audioId, image, cancellationToken);
+            var result = await _audioService.AddPicture(audioId, request.Image, cancellationToken);
 
             return result.IsSuccess
                 ? Ok(new {Image = result.Data})

@@ -88,7 +88,7 @@ const AudioUpload = () => {
                     <AudioImage
                       name={name}
                       disabled={isSubmitting}
-                      onReplace={async (file) => onChange(file)}
+                      onChange={async (file) => onChange(file)}
                     />
                   )}
                 />

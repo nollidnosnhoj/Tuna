@@ -86,7 +86,7 @@ namespace Audiochan.Core.Features.Audios.Builders
 
         public AudioBuilder AddImage(BlobDto? blob)
         {
-            _audio.ArtworkUrl = blob?.Url ?? string.Empty;
+            _audio.PictureUrl = blob?.Url ?? string.Empty;
             return this;
         }
 

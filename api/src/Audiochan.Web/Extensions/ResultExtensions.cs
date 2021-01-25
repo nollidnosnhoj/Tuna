@@ -1,7 +1,7 @@
-﻿using System;
-using Audiochan.Core.Common.Enums;
+﻿using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Common.Models;
 using Audiochan.Web.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Audiochan.Web.Extensions
@@ -10,17 +10,8 @@ namespace Audiochan.Web.Extensions
     {
         public static IActionResult ReturnErrorResponse(this IResult result)
         {
-            var response = new ErrorViewModel(result.ToErrorTitle(), result.ToErrorMessage(), result.Errors);
-
-            return result.ErrorCode switch
-            {
-                ResultStatus.NotFound => new NotFoundObjectResult(response),
-                ResultStatus.Unauthorized => new UnauthorizedResult(),
-                ResultStatus.Forbidden => new ForbidResult(),
-                ResultStatus.UnprocessedEntity => new UnprocessableEntityObjectResult(response),
-                ResultStatus.BadRequest => new BadRequestObjectResult(response),
-                _ => throw new ArgumentOutOfRangeException()
-            };
+            var response = new ErrorViewModel(result.ToErrorCode(), result.ToErrorMessage(), result.Errors);
+            return new ObjectResult(response) {StatusCode = response.Code};
         }
 
         private static string ToErrorMessage(this IResult result)
@@ -33,19 +24,21 @@ namespace Audiochan.Web.Extensions
                 ResultStatus.Unauthorized => "You are not authorized access.",
                 ResultStatus.Forbidden => "You are authorized, but forbidden access.",
                 ResultStatus.UnprocessedEntity => "The request payload is invalid.",
-                _ => "Unable to process request."
+                ResultStatus.BadRequest => "Unable to process request.",
+                _ => "An unknown error has occurred."
             };
         }
-        
-        private static string ToErrorTitle(this IResult result)
+
+        private static int ToErrorCode(this IResult result)
         {
             return result.ErrorCode switch
             {
-                ResultStatus.NotFound => "Not Found",
-                ResultStatus.Unauthorized => "Unauthorized",
-                ResultStatus.Forbidden => "Forbidden",
-                ResultStatus.UnprocessedEntity => "Invalid Request",
-                _ => "Invalid Request."
+                ResultStatus.Success => StatusCodes.Status200OK,
+                ResultStatus.Unauthorized => StatusCodes.Status401Unauthorized,
+                ResultStatus.Forbidden => StatusCodes.Status403Forbidden,
+                ResultStatus.UnprocessedEntity => StatusCodes.Status422UnprocessableEntity,
+                ResultStatus.BadRequest => StatusCodes.Status400BadRequest,
+                _ => StatusCodes.Status500InternalServerError
             };
         }
     }

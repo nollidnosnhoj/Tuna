@@ -288,11 +288,9 @@ namespace Audiochan.Core.Features.Audios
             return Result.Success();
         }
 
-        public async Task<IResult<string>> AddArtwork(string audioId, IFormFile file,
+        public async Task<IResult<string>> AddPicture(string audioId, IFormFile file,
             CancellationToken cancellationToken = default)
         {
-            
-            
             var audio = await _dbContext.Audios
                 .SingleOrDefaultAsync(a => a.Id == audioId, cancellationToken);
 
@@ -302,7 +300,7 @@ namespace Audiochan.Core.Features.Audios
             var blobDto = await _imageService
                 .UploadAudioImage(file, audio.Id, cancellationToken);
 
-            audio.ArtworkUrl = blobDto.Url;
+            audio.PictureUrl = blobDto.Url;
             _dbContext.Audios.Update(audio);
             await _dbContext.SaveChangesAsync(cancellationToken);
             return Result<string>.Success(blobDto.Url);

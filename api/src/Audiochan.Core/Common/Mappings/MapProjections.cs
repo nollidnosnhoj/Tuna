@@ -24,7 +24,7 @@ namespace Audiochan.Core.Common.Mappings
                 FileSize = audio.AudioFileSize,
                 FileExt = audio.AudioFileExtension,
                 Url = audio.AudioUrl ?? string.Empty,
-                ArtworkUrl = audio.ArtworkUrl,
+                ArtworkUrl = audio.PictureUrl,
                 Tags = audio.Tags.Select(tag => tag.Id).ToArray(),
                 FavoriteCount = audio.Favorited.Count,
                 IsFavorited = currentUserId != null 
@@ -54,7 +54,7 @@ namespace Audiochan.Core.Common.Mappings
                 Title = audio.Title,
                 IsPublic = audio.IsPublic,
                 IsLoop = audio.IsLoop,
-                ArtworkUrl = audio.ArtworkUrl,
+                ArtworkUrl = audio.PictureUrl,
                 FavoriteCount = audio.Favorited.Count,
                 IsFavorited = currentUserId != null 
                               && currentUserId.Length > 0

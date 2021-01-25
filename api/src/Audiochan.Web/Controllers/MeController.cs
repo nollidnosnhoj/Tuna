@@ -131,6 +131,7 @@ namespace Audiochan.Web.Controllers
         }
 
         [HttpPut(Name="UpdateUser")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         [SwaggerOperation(
             Summary = "Updates authenticated user.",
@@ -147,14 +148,32 @@ namespace Audiochan.Web.Controllers
                 : result.ReturnErrorResponse();
         }
 
-        [HttpPatch("settings/username", Name="UpdateUsername")]
+        [HttpPatch("picture", Name="AddUserPicture")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+        [SwaggerOperation(
+            Summary = "Add picture to user.",
+            OperationId = "AddUserPicture",
+            Tags = new[] {"me"}
+        )]
+        public async Task<IActionResult> AddUserPicture([FromForm] UploadArtworkRequest request,
+            CancellationToken cancellationToken)
+        {
+            var result = await _userService.AddPicture(_currentUserId, request.Image, cancellationToken);
+            return result.IsSuccess
+                ? Ok(new {Image = result.Data})
+                : result.ReturnErrorResponse();
+        }
+
+        [HttpPatch("username", Name="UpdateUsername")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         [SwaggerOperation(
             Summary = "Updates authenticated user's username.",
             Description = "Requires authentication.",
             OperationId = "UpdateUsername",
             Tags = new []{"me"}
         )]
-        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         public async Task<IActionResult> ChangeUsername([FromBody] UpdateUsernameRequest request,
             CancellationToken cancellationToken)
         {
@@ -164,7 +183,8 @@ namespace Audiochan.Web.Controllers
                 : result.ReturnErrorResponse();
         }
 
-        [HttpPatch("settings/email", Name="UpdateEmail")]
+        [HttpPatch("email", Name="UpdateEmail")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         [SwaggerOperation(
             Summary = "Updates authenticated user's email.",
@@ -181,7 +201,8 @@ namespace Audiochan.Web.Controllers
                 : result.ReturnErrorResponse();
         }
 
-        [HttpPatch("settings/password", Name="UpdatePassword")]
+        [HttpPatch("password", Name="UpdatePassword")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         [SwaggerOperation(
             Summary = "Updates authenticated user's password.",

@@ -52,6 +52,7 @@ namespace Audiochan.Infrastructure.Data.Migrations
                 {
                     id = table.Column<string>(type: "TEXT", nullable: false),
                     display_name = table.Column<string>(type: "TEXT", maxLength: 256, nullable: false),
+                    picture_url = table.Column<string>(type: "TEXT", nullable: true),
                     about = table.Column<string>(type: "TEXT", nullable: true),
                     website = table.Column<string>(type: "TEXT", nullable: true),
                     joined = table.Column<DateTime>(type: "TEXT", nullable: false),
@@ -107,7 +108,7 @@ namespace Audiochan.Infrastructure.Data.Migrations
                     audio_file_size = table.Column<long>(type: "INTEGER", nullable: false),
                     audio_file_extension = table.Column<string>(type: "TEXT", maxLength: 10, nullable: false),
                     audio_url = table.Column<string>(type: "TEXT", nullable: true),
-                    artwork_url = table.Column<string>(type: "TEXT", nullable: true),
+                    picture_url = table.Column<string>(type: "TEXT", nullable: true),
                     is_public = table.Column<bool>(type: "INTEGER", nullable: false),
                     is_loop = table.Column<bool>(type: "INTEGER", nullable: false),
                     user_id = table.Column<string>(type: "TEXT", nullable: false),

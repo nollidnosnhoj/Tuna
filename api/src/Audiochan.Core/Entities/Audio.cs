@@ -19,7 +19,7 @@ namespace Audiochan.Core.Entities
         public long AudioFileSize { get; set; }
         public string AudioFileExtension { get; set; } = null!;
         public string? AudioUrl { get; set; }
-        public string? ArtworkUrl { get; set; }
+        public string? PictureUrl { get; set; }
         public bool IsPublic { get; set; }
         public bool IsLoop { get; set; }
         public string UserId { get; set; } = null!;

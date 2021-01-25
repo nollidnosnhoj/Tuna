@@ -8,6 +8,7 @@ using Audiochan.Core.Common.Models;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Users.Models;
 using Audiochan.Core.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,11 +18,13 @@ namespace Audiochan.Core.Features.Users
     {
         private readonly UserManager<User> _userManager;
         private readonly ICurrentUserService _currentUserService;
+        private readonly IImageService _imageService;
 
-        public UserService(UserManager<User> userManager, ICurrentUserService currentUserService)
+        public UserService(UserManager<User> userManager, ICurrentUserService currentUserService, IImageService imageService)
         {
             _userManager = userManager;
             _currentUserService = currentUserService;
+            _imageService = imageService;
         }
 
         public async Task<IResult<CurrentUserViewModel>> GetCurrentUser(string authUserId, 
@@ -62,6 +65,21 @@ namespace Audiochan.Core.Features.Users
             return profile == null
                 ? Result<UserDetailsViewModel>.Fail(ResultStatus.NotFound)
                 : Result<UserDetailsViewModel>.Success(profile);
+        }
+
+        public async Task<IResult<string>> AddPicture(string userId, IFormFile file,
+            CancellationToken cancellationToken = default)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+
+            if (user == null)
+                return Result<string>.Fail(ResultStatus.Unauthorized);
+            
+            var blobDto = await _imageService.UploadUserImage(file, user.Id, cancellationToken);
+
+            user.PictureUrl = blobDto.Url;
+            await _userManager.UpdateAsync(user);
+            return Result<string>.Success(blobDto.Url);
         }
 
         public async Task<IResult> UpdateUsername(string userId, string newUsername, 

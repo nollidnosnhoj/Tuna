@@ -53,12 +53,11 @@ namespace Audiochan.Web.Middlewares
                 ? ex.Message
                 : "An unknown error has occurred. Please contact the administrators.";
 
-            var response = new ErrorViewModel("Unknown Error", message, null);
+            var response = new ErrorViewModel(StatusCodes.Status500InternalServerError, message, null);
 
-            context.Response.StatusCode = (int) HttpStatusCode.InternalServerError;
+            context.Response.StatusCode = response.Code;
             context.Response.ContentType = "application/json";
-            await context.Response
-                .WriteAsync(JsonSerializer.Serialize(response, _jsonOptions));
+            await context.Response.WriteAsync(JsonSerializer.Serialize(response, _jsonOptions));
         }
     }
 }

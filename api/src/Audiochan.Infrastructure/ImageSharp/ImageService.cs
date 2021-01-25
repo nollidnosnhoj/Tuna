@@ -1,10 +1,8 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Constants;
 using Audiochan.Core.Common.Models;
-using Audiochan.Core.Entities;
 using Audiochan.Core.Interfaces;
 using Microsoft.AspNetCore.Http;
 using SixLabors.ImageSharp;
@@ -25,48 +23,48 @@ namespace Audiochan.Infrastructure.ImageSharp
         public async Task<BlobDto> UploadAudioImage(IFormFile file, string audioId,
             CancellationToken cancellationToken = default)
         {
-            var container = Path.Combine(ContainerConstants.Artworks, ContainerConstants.Audios);
-            return await ProcessAndUploadImage(file, container, audioId, cancellationToken);
+            var container = Path.Combine(ContainerConstants.Artworks, ContainerConstants.Audios, audioId);
+            return await ProcessAndUploadImage(file, container, cancellationToken);
         }
 
         public async Task<BlobDto> UploadUserImage(IFormFile file, string userId,
             CancellationToken cancellationToken = default)
         {
-            var container = Path.Combine(ContainerConstants.Artworks, "users");
-            return await ProcessAndUploadImage(file, container, userId, cancellationToken);
+            var container = Path.Combine(ContainerConstants.Artworks, ContainerConstants.Users, userId);
+            return await ProcessAndUploadImage(file, container, cancellationToken);
         }
 
         public async Task RemoveAudioImages(string audioId, CancellationToken cancellationToken = default)
         {
-            var container = Path.Combine(ContainerConstants.Artworks, ContainerConstants.Audios);
-            await DeleteArtworkAndThumbnails(container, audioId, cancellationToken);
+            var container = Path.Combine(ContainerConstants.Artworks, ContainerConstants.Audios, audioId);
+            await DeleteArtworkAndThumbnails(container, cancellationToken);
         }
 
         public async Task RemoveUserImages(string userId, CancellationToken cancellationToken = default)
         {
-            var container = Path.Combine(ContainerConstants.Artworks, "users");
-            await DeleteArtworkAndThumbnails(container, userId, cancellationToken);
+            var container = Path.Combine(ContainerConstants.Artworks, ContainerConstants.Users, userId);
+            await DeleteArtworkAndThumbnails(container, cancellationToken);
         }
 
-        private async Task DeleteArtworkAndThumbnails(string container, string name, 
+        private async Task DeleteArtworkAndThumbnails(string container,
             CancellationToken cancellationToken = default)
         {
             var task1 = _storageService.DeleteBlobAsync(
                 container: container,
-                blobName: name + "-large.jpg",
+                blobName: "large.jpg",
                 cancellationToken);
             var task2 = _storageService.DeleteBlobAsync(
                 container: container,
-                blobName: name + "-medium.jpg",
+                blobName: "medium.jpg",
                 cancellationToken);
             var task3 = _storageService.DeleteBlobAsync(
                 container: container,
-                blobName: name + "-small.jpg",
+                blobName: "small.jpg",
                 cancellationToken);
             await Task.WhenAll(task1, task2, task3);
         }
         
-        private async Task<BlobDto> ProcessAndUploadImage(IFormFile file, string container, string name,
+        private async Task<BlobDto> ProcessAndUploadImage(IFormFile file, string container,
             CancellationToken cancellationToken = default)
         {
             using var image = await Image.LoadAsync(file.OpenReadStream());
@@ -78,19 +76,19 @@ namespace Audiochan.Infrastructure.ImageSharp
             var thumbnailSmall = await GenerateThumbnail(image, 100, 100, cancellationToken);
             var saveLargeImageIntoStorageTask = _storageService.SaveBlobAsync(
                 container: container,
-                blobName: name + "-large.jpg",
+                blobName: "large.jpg",
                 stream: imageStream,
                 overwrite: true,
                 cancellationToken);
             var saveMediumImageIntoStorageTask = _storageService.SaveBlobAsync(
                 container: container,
-                blobName: name + "-medium.jpg",
+                blobName: "medium.jpg",
                 stream: thumbnailMedium.Stream,
                 overwrite: true,
                 cancellationToken);
             var saveSmallImageIntoStorageTask = _storageService.SaveBlobAsync(
                 container: container,
-                blobName: name + "-small.jpg",
+                blobName: "small.jpg",
                 stream: thumbnailSmall.Stream,
                 overwrite: true,
                 cancellationToken);
@@ -102,7 +100,7 @@ namespace Audiochan.Infrastructure.ImageSharp
 
             var blob = await _storageService.GetBlobAsync(
                 container: container,
-                blobName: name + "-large.jpg",
+                blobName: "large.jpg",
                 cancellationToken);
 
             return blob;
