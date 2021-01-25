@@ -1,17 +1,17 @@
 import { Box, Button, useDisclosure } from "@chakra-ui/react";
 import React from "react";
 import { useDropzone } from "react-dropzone";
-import ImageCropModal from "./ImageCropModal";
+import PictureCropModal from "./PictureCropModal";
 import { errorToast } from "~/utils/toast";
 
-interface ImageDropzoneProps {
+interface PictureDropzoneProps {
   name: string;
   onChange: (file: File) => void;
   image?: string;
   disabled?: boolean;
 }
 
-const ImageDropzone: React.FC<ImageDropzoneProps> = ({
+const PictureDropzone: React.FC<PictureDropzoneProps> = ({
   name,
   image,
   onChange,
@@ -44,10 +44,10 @@ const ImageDropzone: React.FC<ImageDropzoneProps> = ({
   return (
     <Box>
       <input {...getInputProps({ name })} />
-      <Button width="100%" onClick={open} disabled={disabled}>
+      <Button size="sm" onClick={open} disabled={disabled}>
         {image ? "Replace Image" : "Upload Image"}
       </Button>
-      <ImageCropModal
+      <PictureCropModal
         file={acceptedFiles[0]}
         isOpen={isImageCropModalOpen}
         onClose={closeImageCropModal}
@@ -59,4 +59,4 @@ const ImageDropzone: React.FC<ImageDropzoneProps> = ({
   );
 };
 
-export default ImageDropzone;
+export default PictureDropzone;

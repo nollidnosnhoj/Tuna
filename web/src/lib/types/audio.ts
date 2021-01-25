@@ -14,7 +14,7 @@ export type AudioDetail = {
   fileSize: number;
   fileExt: string;
   url: string;
-  artworkUrl: string;
+  pictureUrl: string;
   favoriteCount: number;
   isFavorited: boolean;
   created: string;

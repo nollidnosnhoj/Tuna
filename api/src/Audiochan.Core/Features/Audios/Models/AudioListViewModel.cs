@@ -13,7 +13,7 @@ namespace Audiochan.Core.Features.Audios.Models
         public bool IsLoop { get; init; }
         public int FavoriteCount { get; init; }
         public bool IsFavorited { get; init; }
-        public string? ArtworkUrl { get; init; }
+        public string? PictureUrl { get; init; }
         public DateTime Created { get; init; }
         public DateTime? Updated { get; init; }
         public string Genre { get; init; } = null!;

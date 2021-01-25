@@ -14,19 +14,19 @@ import ReactCropper from "react-cropper";
 import Cropper from "cropperjs";
 import "cropperjs/dist/cropper.css";
 
-interface ImageCropModalProps {
+interface PictureCropModalProps {
   isOpen: boolean;
   onClose: () => void;
   onCropped: (croppedFile: File) => void;
   file?: File;
 }
 
-export default function ImageCropModal({
+export default function PictureCropModal({
   isOpen,
   onClose,
   file,
   onCropped,
-}: PropsWithChildren<ImageCropModalProps>) {
+}: PropsWithChildren<PictureCropModalProps>) {
   const [image, setImage] = useState<string>(null);
   const [cropper, setCropper] = useState<Cropper>(null);
 

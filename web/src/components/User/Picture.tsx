@@ -1,22 +1,26 @@
-import { Box, Flex, Image } from "@chakra-ui/react";
+import { Avatar, Box, Flex, Image } from "@chakra-ui/react";
 import { PropsWithChildren, useState } from "react";
-import ImageDropzone from "~/components/Shared/ImageDropzone";
+import PictureDropzone from "~/components/Shared/Picture/PictureDropzone";
+import { Profile } from "~/lib/types/user";
 
-interface AudioImageProps {
-  name: string;
+interface PictureProps {
+  name?: string;
+  size?: string;
+  user?: Profile;
   disabled?: boolean;
-  imageData?: string;
   canReplace?: boolean;
   onChange?: (file: File) => Promise<void>;
 }
 
-export default function AudioImage({
-  imageData,
+export default function UserPicture({
+  user,
+  size = "2xl",
+  name = "image",
   disabled = false,
   canReplace = false,
   ...props
-}: PropsWithChildren<AudioImageProps>) {
-  const [image, setImage] = useState<string>(imageData);
+}: PropsWithChildren<PictureProps>) {
+  const [image, setImage] = useState<string>(user.pictureUrl);
 
   /** When image changes (after submitting crop) */
   const changeImage = async (file: File) => {
@@ -32,11 +36,11 @@ export default function AudioImage({
   return (
     <Box>
       <Flex justify="center" marginBottom={4}>
-        <Image src={image} boxSize="250px" />
+        <Avatar name={user?.username} src={image} size={size} />
       </Flex>
       {canReplace && (
-        <ImageDropzone
-          name="image"
+        <PictureDropzone
+          name={name}
           image={image}
           disabled={disabled}
           onChange={changeImage}

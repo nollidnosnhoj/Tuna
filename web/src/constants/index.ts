@@ -11,17 +11,7 @@ export default {
     passwordRequiresNonAlphanumeric: false
   },
   UPLOAD_RULES: {
-    accept: [
-      "audio/mpeg",
-      "audio/x-mpeg",
-      "audio/mp3",
-      "audio/x-mp3",
-      "audio/mpeg3",
-      "audio/x-mpeg3",
-      "audio/mpg",
-      "audio/x-mpg",
-      "audio/x-mpegaudio",
-    ],
+    accept: ['.mp3', '.aac', '.ogg'],
     maxSize: 2000000000
   }
 }

@@ -23,8 +23,8 @@ import {
   useAudio,
 } from "~/lib/services/audio";
 import { getAccessToken } from "~/utils/cookies";
-import ImageDropzone from "~/components/Shared/ImageDropzone";
-import AudioImage from "~/components/Audio/Image";
+import PictureDropzone from "~/components/Shared/Picture/PictureDropzone";
+import AudioPicture from "~/components/Audio/Picture";
 
 const DynamicAudioPlayer = dynamic(() => import("~/components/Audio/Player"), {
   ssr: false,
@@ -91,9 +91,9 @@ export default function AudioDetailsPage(
 
   const audioUrl = useMemo<string>(() => {
     return audio
-      ? props.isDevelopment && audio.artworkUrl
-        ? "https://localhost:5001/uploads/" + audio.artworkUrl
-        : audio.artworkUrl
+      ? props.isDevelopment && audio.pictureUrl
+        ? "https://localhost:5001/uploads/" + audio.pictureUrl
+        : audio.pictureUrl
       : "";
   }, [audio]);
 
@@ -110,7 +110,7 @@ export default function AudioDetailsPage(
         <Box flex="2">
           <Flex>
             <Box flex="1" marginRight={4}>
-              <AudioImage
+              <AudioPicture
                 name="image"
                 imageData={audioUrl}
                 disabled={isAddingArtwork}

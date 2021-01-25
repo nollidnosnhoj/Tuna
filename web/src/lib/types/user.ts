@@ -13,5 +13,5 @@ export type Profile = {
   isFollowing: boolean;
   followerCount: number;
   followingCount: number;
-  avatarUrl?: string;
+  pictureUrl: string;
 }

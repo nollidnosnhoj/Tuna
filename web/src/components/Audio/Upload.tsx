@@ -13,8 +13,8 @@ import { useCreateAudio } from "~/lib/services/audio";
 import { UploadAudioRequest } from "~/lib/types/audio";
 import { uploadAudioSchema } from "~/lib/validationSchemas";
 import { apiErrorToast, errorToast, successfulToast } from "~/utils/toast";
-import ImageDropzone from "../Shared/ImageDropzone";
-import AudioImage from "./Image";
+import PictureDropzone from "../Shared/Picture/PictureDropzone";
+import AudioPicture from "./Picture";
 
 const AudioUpload = () => {
   const { mutateAsync: uploadAudio } = useCreateAudio();
@@ -85,8 +85,9 @@ const AudioUpload = () => {
                   name="image"
                   control={control}
                   render={({ name, onChange }) => (
-                    <AudioImage
+                    <AudioPicture
                       name={name}
+                      canReplace={true}
                       disabled={isSubmitting}
                       onChange={async (file) => onChange(file)}
                     />
