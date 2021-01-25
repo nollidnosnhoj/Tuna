@@ -103,15 +103,15 @@ namespace Audiochan.Infrastructure.Data.Migrations
                 {
                     id = table.Column<string>(type: "TEXT", nullable: false),
                     title = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
-                    description = table.Column<string>(type: "TEXT", maxLength: 500, nullable: true),
+                    description = table.Column<string>(type: "TEXT", nullable: true),
                     duration = table.Column<int>(type: "INTEGER", nullable: false),
                     audio_file_size = table.Column<long>(type: "INTEGER", nullable: false),
-                    audio_file_extension = table.Column<string>(type: "TEXT", maxLength: 10, nullable: false),
+                    audio_file_extension = table.Column<string>(type: "TEXT", maxLength: 10, nullable: true),
                     audio_url = table.Column<string>(type: "TEXT", nullable: true),
                     picture_url = table.Column<string>(type: "TEXT", nullable: true),
                     is_public = table.Column<bool>(type: "INTEGER", nullable: false),
                     is_loop = table.Column<bool>(type: "INTEGER", nullable: false),
-                    user_id = table.Column<string>(type: "TEXT", nullable: false),
+                    user_id = table.Column<string>(type: "TEXT", nullable: true),
                     genre_id = table.Column<long>(type: "INTEGER", nullable: false),
                     created = table.Column<DateTime>(type: "TEXT", nullable: false),
                     last_modified = table.Column<DateTime>(type: "TEXT", nullable: true)
@@ -124,7 +124,7 @@ namespace Audiochan.Infrastructure.Data.Migrations
                         column: x => x.genre_id,
                         principalTable: "genres",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "fk_audios_users_user_id",
                         column: x => x.user_id,

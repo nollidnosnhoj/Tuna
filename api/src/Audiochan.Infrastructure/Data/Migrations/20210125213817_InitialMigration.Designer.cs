@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Audiochan.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20210125091101_InitialMigration")]
+    [Migration("20210125213817_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -44,7 +44,6 @@ namespace Audiochan.Infrastructure.Data.Migrations
                         .HasColumnName("id");
 
                     b.Property<string>("AudioFileExtension")
-                        .IsRequired()
                         .HasMaxLength(10)
                         .HasColumnType("TEXT")
                         .HasColumnName("audio_file_extension");
@@ -62,7 +61,6 @@ namespace Audiochan.Infrastructure.Data.Migrations
                         .HasColumnName("created");
 
                     b.Property<string>("Description")
-                        .HasMaxLength(500)
                         .HasColumnType("TEXT")
                         .HasColumnName("description");
 
@@ -97,7 +95,6 @@ namespace Audiochan.Infrastructure.Data.Migrations
                         .HasColumnName("title");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasColumnType("TEXT")
                         .HasColumnName("user_id");
 
@@ -489,15 +486,14 @@ namespace Audiochan.Infrastructure.Data.Migrations
                         .WithMany("Audios")
                         .HasForeignKey("GenreId")
                         .HasConstraintName("fk_audios_genres_genre_id")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Audiochan.Core.Entities.User", "User")
                         .WithMany("Audios")
                         .HasForeignKey("UserId")
                         .HasConstraintName("fk_audios_users_user_id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Genre");
 
