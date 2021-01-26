@@ -39,7 +39,7 @@ namespace Audiochan.Web
                 .ConfigureDatabase(Configuration, Environment)
                 .AddCoreServices()
                 .AddInfraServices()
-                .ConfigureStorage(Environment)
+                .ConfigureStorage(Configuration, Environment)
                 .ConfigureIdentity(Configuration)
                 .ConfigureAuthentication(Configuration)
                 .ConfigureAuthorization()

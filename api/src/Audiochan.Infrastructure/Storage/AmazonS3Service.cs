@@ -150,6 +150,8 @@ namespace Audiochan.Infrastructure.Storage
 
         private static string GetKeyName(string container, string blobName)
         {
+            container = container.Replace('\\', '/');
+            
             return string.IsNullOrWhiteSpace(container)
                 ? blobName
                 : $"{container}/{blobName}";

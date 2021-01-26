@@ -10,7 +10,6 @@ namespace Audiochan.Core.Interfaces
         Task DeleteBlobAsync(string container, string blobName, CancellationToken cancellationToken = default);
         Task SaveBlobAsync(string container, string blobName, Stream stream, bool overwrite = true,
             CancellationToken cancellationToken = default);
-
         Task<BlobDto> GetBlobAsync(string container, string blobName,
             CancellationToken cancellationToken = default);
     }

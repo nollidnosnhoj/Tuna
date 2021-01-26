@@ -5,17 +5,21 @@ using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Exceptions;
 using Audiochan.Core.Common.Models;
+using Audiochan.Core.Common.Options;
 using Audiochan.Core.Interfaces;
+using Microsoft.AspNetCore.Http;
 
 namespace Audiochan.Infrastructure.Storage
 {
     public class FileStorageService : IStorageService
     {
         private readonly string _basePath;
+        private readonly AudiochanOptions _audiochanOptions;
 
-        public FileStorageService(string basePath)
+        public FileStorageService(string basePath, AudiochanOptions audiochanOptions)
         {
             _basePath = basePath;
+            _audiochanOptions = audiochanOptions;
         }
 
         public async Task DeleteBlobAsync(string container, string blobName, CancellationToken cancellationToken = default)
@@ -76,15 +80,12 @@ namespace Audiochan.Infrastructure.Storage
         private BlobDto GetBlob(string container, string blobName)
         {
             var path = Path.Combine(_basePath, container, blobName);
-
             if (!File.Exists(path))
-            {
                 return new BlobDto(false, "", "", "", 0);
-            }
             
             var file = new FileInfo(path);
-
-            var url = Path.Combine(container, blobName).Replace(@"\", "/");
+            var url = string.Join('/', 
+                _audiochanOptions.BaseUrl, "uploads", container, blobName);
 
             return new BlobDto(true, container, file.Name, url, file.Length);
         }

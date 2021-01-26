@@ -16,9 +16,9 @@ namespace Audiochan.Web.Configurations
             services.AddDbContext<DatabaseContext>(options =>
             {
                 if (environment.IsDevelopment())
-                    options.UseSqlite(configuration.GetConnectionString("SQLite"));
+                    options.UseSqlite(configuration.GetConnectionString("AudiochanDB"));
                 else
-                    options.UseNpgsql(configuration.GetConnectionString("PostgreSQL"));
+                    options.UseNpgsql(configuration.GetConnectionString("AudiochanDB"));
                 
                 options
                     .EnableSensitiveDataLogging()
