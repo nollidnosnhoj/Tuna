@@ -40,7 +40,7 @@ namespace Audiochan.Web.Controllers
         )]
         public async Task<IActionResult> GetUserProfile(string username, CancellationToken cancellationToken)
         {
-            var result = await _userService.GetUserDetails(username, cancellationToken);
+            var result = await _userService.GetUserProfile(username, cancellationToken);
 
             return result.IsSuccess
                 ? Ok(result.Data)

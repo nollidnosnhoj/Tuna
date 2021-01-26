@@ -1,12 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Common.Extensions;
-using Audiochan.Core.Common.Mappings;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Entities;
+using Audiochan.Core.Features.Audios.Mappings;
 using Audiochan.Core.Features.Audios.Models;
 using Audiochan.Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -39,7 +38,7 @@ namespace Audiochan.Core.Features.Favorites
                 .Where(fa => fa.User.UserName == username.ToLower())
                 .OrderByDescending(fa => fa.Created)
                 .Select(fa => fa.Audio)
-                .Select(MapProjections.AudioList(currentUserId))
+                .Select(AudioListMapping.Map(currentUserId))
                 .Paginate(query, cancellationToken);
         }
 

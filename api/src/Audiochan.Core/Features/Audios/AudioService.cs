@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 using Audiochan.Core.Common.Constants;
 using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Common.Extensions;
-using Audiochan.Core.Common.Mappings;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Audios.Builders;
 using Audiochan.Core.Features.Audios.Models;
-using Audiochan.Core.Features.Audios.Queryable;
+using Audiochan.Core.Features.Audios.Extensions;
+using Audiochan.Core.Features.Audios.Mappings;
 using Audiochan.Core.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -60,7 +60,7 @@ namespace Audiochan.Core.Features.Audios
                 .FilterVisibility(userId)
                 .Where(a => followedIds.Contains(a.UserId))
                 .Distinct()
-                .Select(MapProjections.AudioList(userId))
+                .Select(AudioListMapping.Map(userId))
                 .OrderByDescending(a => a.Created)
                 .Paginate(query, cancellationToken);
         }
@@ -91,7 +91,7 @@ namespace Audiochan.Core.Features.Audios
             queryable = queryable.Sort(query.Sort.ToLower());
 
             return await queryable
-                .Select(MapProjections.AudioList(currentUserId))
+                .Select(AudioListMapping.Map(currentUserId))
                 .Paginate(query, cancellationToken);
         }
 
@@ -107,7 +107,7 @@ namespace Audiochan.Core.Features.Audios
                 .Include(a => a.Genre)
                 .FilterVisibility(currentUserId)
                 .Where(x => x.Id == audioId)
-                .Select(MapProjections.AudioDetail(currentUserId))
+                .Select(AudioDetailMapping.Map(currentUserId))
                 .SingleOrDefaultAsync(cancellationToken);
 
             return audio == null 
@@ -129,7 +129,7 @@ namespace Audiochan.Core.Features.Audios
                 .Include(a => a.Genre)
                 .FilterVisibility(currentUserId)
                 .Skip(offset)
-                .Select(MapProjections.AudioDetail(currentUserId))
+                .Select(AudioDetailMapping.Map(currentUserId))
                 .SingleOrDefaultAsync(cancellationToken);
 
             return audio == null 
@@ -192,7 +192,7 @@ namespace Audiochan.Core.Features.Audios
                 await _dbContext.Audios.AddAsync(audio, cancellationToken);
                 await _dbContext.SaveChangesAsync(cancellationToken);
                 await transaction.CommitAsync(cancellationToken);
-                return Result<AudioDetailViewModel>.Success(AudioDetailViewModel.From(audio, currentUser.Id));
+                return Result<AudioDetailViewModel>.Success(audio.MapToDetail(currentUser.Id));
             }
             catch (Exception ex)
             {
@@ -255,7 +255,7 @@ namespace Audiochan.Core.Features.Audios
                 _dbContext.Audios.Update(audio);
                 await _dbContext.SaveChangesAsync(cancellationToken);
                 await transaction.CommitAsync(cancellationToken);
-                return Result<AudioDetailViewModel>.Success(AudioDetailViewModel.From(audio, currentUserId));
+                return Result<AudioDetailViewModel>.Success(audio.MapToDetail(currentUserId));
             }
             catch (Exception ex)
             {

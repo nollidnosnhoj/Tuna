@@ -1,6 +1,4 @@
 ﻿using System;
-using Audiochan.Core.Common.Mappings;
-using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Users.Models;
 
 namespace Audiochan.Core.Features.Audios.Models
@@ -19,10 +17,5 @@ namespace Audiochan.Core.Features.Audios.Models
         public DateTime? Updated { get; init; }
         public string Genre { get; init; }
         public UserViewModel User { get; init; }
-
-        public static AudioListViewModel From(Audio audio, string currentUserId)
-        {
-            return MapProjections.AudioList(currentUserId).Compile().Invoke(audio);
-        }
     }
 }
