@@ -342,7 +342,4 @@ healthchecksdb
 # SQLite
 **/*.db
 
-# Appsettings (MAIN)
-appsettings.json
-
 **/wwwroot/*
