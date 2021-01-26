@@ -1,15 +1,8 @@
-import {
-  Box,
-  Button,
-  Divider,
-  Flex,
-  Heading,
-  Link,
-  Text,
-} from "@chakra-ui/react";
+import { Button, Divider, Heading } from "@chakra-ui/react";
 import React from "react";
 import { AudioSearchType } from "~/lib/types/audio";
 import { useAudiosInfiniteQuery } from "~/lib/services/audio";
+import AudioListItem from "./Item";
 
 interface AudioListProps {
   type?: AudioSearchType;
@@ -18,6 +11,7 @@ interface AudioListProps {
   size?: number;
   params?: Record<string, any>;
   headerText?: string;
+  removeArtistName?: boolean;
 }
 
 const AudioList: React.FC<AudioListProps> = ({
@@ -26,6 +20,7 @@ const AudioList: React.FC<AudioListProps> = ({
   params,
   username,
   headerText,
+  removeArtistName = false,
   ...props
 }) => {
   const {
@@ -45,16 +40,11 @@ const AudioList: React.FC<AudioListProps> = ({
       )}
       {audios.length === 0 && <p>No audio found.</p>}
       {audios.map((audio) => (
-        <Flex direction="row" marginY="3" key={audio.id}>
-          <Box width="100%">
-            <Link href={`/audios/${audio.id}`}>
-              <Text as="b" fontSize="2xl">
-                {audio.title}
-              </Text>
-            </Link>
-            <Text>{audio.user?.username}</Text>
-          </Box>
-        </Flex>
+        <AudioListItem
+          key={audio.id}
+          audio={audio}
+          removeArtistName={removeArtistName}
+        />
       ))}
       {hasNextPage && (
         <Button

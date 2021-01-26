@@ -54,6 +54,7 @@ namespace Audiochan.Core.Common.Mappings
                 Title = audio.Title,
                 IsPublic = audio.IsPublic,
                 IsLoop = audio.IsLoop,
+                Duration = audio.Duration,
                 PictureUrl = audio.PictureUrl,
                 FavoriteCount = audio.Favorited.Count,
                 IsFavorited = currentUserId != null 

@@ -11,6 +11,7 @@ namespace Audiochan.Core.Features.Audios.Models
         public string Title { get; init; }
         public bool IsPublic { get; init; }
         public bool IsLoop { get; init; }
+        public int Duration { get; init; }
         public int FavoriteCount { get; init; }
         public bool IsFavorited { get; init; }
         public string PictureUrl { get; init; }

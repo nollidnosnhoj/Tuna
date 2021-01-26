@@ -21,5 +21,5 @@ export function taggify(value: string) {
 }
 
 export function getThumbnailUrl(url: string, size: 'large' | 'medium' | 'small' = 'large') {
-  return url.replace('-large', `-${size}`);
+  return url.replace('_large', `_${size}`);
 }

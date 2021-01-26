@@ -11,10 +11,10 @@ import WaveSurfer from "wavesurfer.js";
 import WaveSurferComponent from "~/components/Audio/Wavesurfer";
 import { formatDuration } from "~/utils/time";
 import { useAudioPlayer } from "~/lib/contexts/audio_player_context";
-import { AudioDetail } from "~/lib/types/audio";
+import { AudioDetailModel } from "~/lib/types/audio";
 
 const AudioPlayer: React.FC<{
-  audio?: AudioDetail;
+  audio?: AudioDetailModel;
   color?: string;
   isDev?: boolean;
 }> = ({ audio, color = "#ED64A6", isDev = true, ...props }) => {
