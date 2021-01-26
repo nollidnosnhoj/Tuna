@@ -48,11 +48,15 @@ export default function LoginForm(props: LoginFormProps) {
       <form onSubmit={handleSubmit(onSubmit)}>
         <TextInput name="username" label="Username/Email" required />
         <TextInput name="password" type="password" label="Password" required />
-        <Stack mt={4} spacing={4}>
-          <Button type="submit" isLoading={isSubmitting} colorScheme="primary">
-            Login
-          </Button>
-        </Stack>
+        <Button
+          marginTop={4}
+          width="100%"
+          type="submit"
+          isLoading={isSubmitting}
+          colorScheme="primary"
+        >
+          Login
+        </Button>
       </form>
     </FormProvider>
   );

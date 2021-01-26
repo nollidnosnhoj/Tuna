@@ -39,7 +39,9 @@ export default function UserHeader() {
         ) : (
           <>
             <NextLink href="/upload">
-              <Button leftIcon={<FaCloudUploadAlt />}>Upload</Button>
+              <Button variant="ghost" leftIcon={<FaCloudUploadAlt />}>
+                Upload
+              </Button>
             </NextLink>
             <Box>
               <Menu>

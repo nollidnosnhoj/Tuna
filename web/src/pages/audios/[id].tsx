@@ -89,14 +89,6 @@ export default function AudioDetailsPage(
     isLoading: isAddingArtwork,
   } = useAddAudioPicture(audio.id);
 
-  const audioUrl = useMemo<string>(() => {
-    return audio
-      ? props.isDevelopment && audio.pictureUrl
-        ? "https://localhost:5001/uploads/" + audio.pictureUrl
-        : audio.pictureUrl
-      : "";
-  }, [audio]);
-
   return (
     <Page
       title={audio.title ?? "Removed"}
@@ -112,7 +104,7 @@ export default function AudioDetailsPage(
             <Box flex="1" marginRight={4}>
               <AudioPicture
                 name="image"
-                imageData={audioUrl}
+                audio={audio}
                 disabled={isAddingArtwork}
                 canReplace={audio.user.id === user?.id}
                 onChange={async (file) => {

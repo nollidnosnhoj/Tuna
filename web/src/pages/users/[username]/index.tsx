@@ -17,10 +17,17 @@ import Page from "~/components/Shared/Page";
 import AudioList from "~/components/Audio/List";
 import { Profile } from "~/lib/types/user";
 
-import { fetchUserProfile, useFollow, useProfile } from "~/lib/services/users";
+import {
+  fetchUserProfile,
+  useAddUserPicture,
+  useFollow,
+  useProfile,
+} from "~/lib/services/users";
 import { getAccessToken } from "~/utils/cookies";
 import { QueryClient, useQuery } from "react-query";
 import { dehydrate } from "react-query/hydration";
+import UserPicture from "~/components/User/Picture";
+import useUser from "~/lib/contexts/user_context";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const queryClient = new QueryClient();
@@ -43,19 +50,30 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 export default function ProfilePage() {
+  const { user } = useUser();
   const { query } = useRouter();
   const username = query.username as string;
   const { data: profile } = useProfile(username, { staleTime: 1000 });
+  const { mutateAsync: addPictureAsync } = useAddUserPicture(user?.username);
   const { isFollowing, follow } = useFollow(username);
 
   return (
     <Page title={`${profile.username} | Audiochan`}>
       <Flex direction="row">
-        <Box flex="1">
-          <Box textAlign="center" marginBottom={4}>
-            <Avatar size="2xl" name={profile.username} src="" />
-            <br />
-            <Text fontSize="lg" as="strong">
+        <Flex flex="1" direction="column" justify="center">
+          <Box textAlign="center">
+            <UserPicture
+              user={profile}
+              canReplace={profile.id === user?.id}
+              name="image"
+              size="2xl"
+              onChange={async (file) => {
+                await addPictureAsync(file);
+              }}
+            />
+          </Box>
+          <Box textAlign="center" marginY={4}>
+            <Text fontSize="2xl" as="strong">
               {profile.username}
             </Text>
           </Box>
@@ -70,8 +88,8 @@ export default function ProfilePage() {
               {isFollowing ? "Followed" : "Follow"}
             </Button>
           </Flex>
-        </Box>
-        <Box flex="2">
+        </Flex>
+        <Box flex="3">
           <Tabs isLazy>
             <TabList>
               <Tab>Uploads</Tab>

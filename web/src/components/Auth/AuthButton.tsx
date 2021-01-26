@@ -15,11 +15,12 @@ const AuthButton: React.FC<AuthButtonProps> = ({ authType, ...props }) => {
     <React.Fragment>
       <Button
         colorScheme={authType === "register" ? "primary" : "gray"}
+        variant="ghost"
         onClick={onOpen}
         {...props}
       >
-        {authType === "login" && "Login"}
-        {authType === "register" && "Register"}
+        {authType === "login" && "LOGIN"}
+        {authType === "register" && "REGISTER"}
       </Button>
       <AuthModal type={authType} isOpen={isOpen} onClose={onClose} />
     </React.Fragment>

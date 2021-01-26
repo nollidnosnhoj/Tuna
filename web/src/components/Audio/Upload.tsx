@@ -4,7 +4,7 @@ import Router from "next/router";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { DevTool } from "@hookform/devtools";
-import AudioUploadDropzone from "../Form/AudioUploadDropzone";
+import AudioUploadDropzone from "./Dropzone";
 import InputCheckbox from "../Form/Checkbox";
 import GenreSelect from "../Form/GenreSelect";
 import TextInput from "../Form/TextInput";

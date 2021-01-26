@@ -20,10 +20,6 @@ const AudioPlayer: React.FC<{
 }> = ({ audio, color = "#ED64A6", isDev = true, ...props }) => {
   if (!audio) return null;
 
-  const audioUrl = useMemo(() => {
-    return isDev ? "https://localhost:5001/uploads/" + audio?.url : audio?.url;
-  }, [audio]);
-
   const { volume, handleVolume } = useAudioPlayer();
   const [loop, setLoop] = useState(audio.isLoop);
   const [loaded, setLoaded] = useState(false);
@@ -35,7 +31,7 @@ const AudioPlayer: React.FC<{
     (ws: WaveSurfer) => {
       wavesurferRef.current = ws;
       if (wavesurferRef.current) {
-        wavesurferRef.current.load(audioUrl);
+        wavesurferRef.current.load(audio.url);
         wavesurferRef.current.on("ready", () => {
           setLoaded(true);
         });
@@ -58,7 +54,7 @@ const AudioPlayer: React.FC<{
         });
       }
     },
-    [audioUrl]
+    [audio]
   );
 
   const handleUnmount = () => {

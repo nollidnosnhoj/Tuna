@@ -42,7 +42,7 @@ const PictureDropzone: React.FC<PictureDropzoneProps> = ({
   });
 
   return (
-    <Box>
+    <Box marginY={4}>
       <input {...getInputProps({ name })} />
       <Button size="sm" onClick={open} disabled={disabled}>
         {image ? "Replace Image" : "Upload Image"}

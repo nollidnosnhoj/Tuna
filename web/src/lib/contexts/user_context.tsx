@@ -6,7 +6,6 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import Router from "next/router";
 import { LoginFormValues } from "~/components/Auth/LoginForm";
 import fetcher from "../fetcher";
 import { login, revokeRefreshToken } from "../services/auth";
@@ -63,7 +62,6 @@ export function UserProvider(props: PropsWithChildren<UserProviderProps>) {
     } catch (err) {
       console.error(err);
     }
-    // Router.reload();
   }
 
   useEffect(() => {

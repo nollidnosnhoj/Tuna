@@ -14,7 +14,7 @@ interface PictureProps {
 
 export default function UserPicture({
   user,
-  size = "2xl",
+  size = "full",
   name = "image",
   disabled = false,
   canReplace = false,
@@ -35,7 +35,7 @@ export default function UserPicture({
 
   return (
     <Box>
-      <Flex justify="center" marginBottom={4}>
+      <Flex justify="center">
         <Avatar name={user?.username} src={image} size={size} />
       </Flex>
       {canReplace && (

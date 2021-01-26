@@ -94,7 +94,13 @@ export default function RegisterForm() {
           I agree to the terms of service.
         </InputCheckbox>
         <Flex justify="flex-end">
-          <Button type="submit" mt={4} isLoading={isSubmitting}>
+          <Button
+            marginTop={4}
+            width="100%"
+            type="submit"
+            isLoading={isSubmitting}
+            colorScheme="primary"
+          >
             Register
           </Button>
         </Flex>
