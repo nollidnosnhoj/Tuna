@@ -3,9 +3,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Common.Extensions;
-using Audiochan.Core.Common.Mappings;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Entities;
+using Audiochan.Core.Features.Followers.Mappings;
 using Audiochan.Core.Features.Followers.Models;
 using Audiochan.Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -34,7 +34,7 @@ namespace Audiochan.Core.Features.Followers
                 .Include(u => u.Observer)
                 .ThenInclude(u => u.Followers)
                 .Where(u => u.Target.UserName == username)
-                .Select(MapProjections.FollowUser(currentUserId))
+                .Select(FollowUserMapping.Map(currentUserId))
                 .Paginate(paginationQuery, cancellationToken);
         }
 
@@ -49,7 +49,7 @@ namespace Audiochan.Core.Features.Followers
                 .Include(u => u.Target)
                 .ThenInclude(u => u.Followers)
                 .Where(u => u.Observer.UserName == username)
-                .Select(MapProjections.FollowUser(currentUserId))
+                .Select(FollowUserMapping.Map(currentUserId))
                 .Paginate(paginationQuery, cancellationToken);
         }
 

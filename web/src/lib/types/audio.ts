@@ -3,7 +3,7 @@ import { GenreDto } from "~/lib/types/genre"
 
 export type AudioSearchType = 'audios' | 'favorites' | 'user' | 'feed'
 
-export type AudioDetail = {
+export type AudioDetailModel = {
   id: string;
   title: string;
   description: string;
@@ -23,13 +23,16 @@ export type AudioDetail = {
   user: Creator;
 }
 
-export type AudioListItem = {
+export type AudioListModel = {
   id: string;
   title: string;
   isPublic: boolean;
   favoriteCount: number;
   isFavorited: boolean;
+  duration: number;
+  isLoop: boolean;
   genre: string;
+  pictureUrl: string;
   created: string;
   updated?: string;
   user: Creator;

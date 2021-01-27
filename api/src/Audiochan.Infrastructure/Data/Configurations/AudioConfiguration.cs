@@ -12,7 +12,7 @@ namespace Audiochan.Infrastructure.Data.Configurations
                 .IsRequired()
                 .HasMaxLength(100);
 
-            builder.Property(x => x.AudioFileExtension)
+            builder.Property(x => x.FileExt)
                 .HasMaxLength(10);
 
             builder.HasMany(a => a.Views)

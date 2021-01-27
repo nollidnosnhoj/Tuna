@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Audiochan.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20210125213817_InitialMigration")]
+    [Migration("20210127001254_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -43,19 +43,6 @@ namespace Audiochan.Infrastructure.Data.Migrations
                         .HasColumnType("TEXT")
                         .HasColumnName("id");
 
-                    b.Property<string>("AudioFileExtension")
-                        .HasMaxLength(10)
-                        .HasColumnType("TEXT")
-                        .HasColumnName("audio_file_extension");
-
-                    b.Property<long>("AudioFileSize")
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("audio_file_size");
-
-                    b.Property<string>("AudioUrl")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("audio_url");
-
                     b.Property<DateTime>("Created")
                         .HasColumnType("TEXT")
                         .HasColumnName("created");
@@ -67,6 +54,15 @@ namespace Audiochan.Infrastructure.Data.Migrations
                     b.Property<int>("Duration")
                         .HasColumnType("INTEGER")
                         .HasColumnName("duration");
+
+                    b.Property<string>("FileExt")
+                        .HasMaxLength(10)
+                        .HasColumnType("TEXT")
+                        .HasColumnName("file_ext");
+
+                    b.Property<long>("FileSize")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("file_size");
 
                     b.Property<long>("GenreId")
                         .HasColumnType("INTEGER")
@@ -87,6 +83,10 @@ namespace Audiochan.Infrastructure.Data.Migrations
                     b.Property<string>("PictureUrl")
                         .HasColumnType("TEXT")
                         .HasColumnName("picture_url");
+
+                    b.Property<string>("StreamUrl")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("stream_url");
 
                     b.Property<string>("Title")
                         .IsRequired()

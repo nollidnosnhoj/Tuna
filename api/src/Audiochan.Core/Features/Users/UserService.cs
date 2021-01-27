@@ -3,9 +3,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Common.Extensions;
-using Audiochan.Core.Common.Mappings;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Entities;
+using Audiochan.Core.Features.Users.Mappings;
 using Audiochan.Core.Features.Users.Models;
 using Audiochan.Core.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -49,7 +49,7 @@ namespace Audiochan.Core.Features.Users
             });
         }
 
-        public async Task<IResult<UserDetailsViewModel>> GetUserDetails(string username, CancellationToken cancellationToken = default)
+        public async Task<IResult<UserDetailsViewModel>> GetUserProfile(string username, CancellationToken cancellationToken = default)
         {
             var currentUserId = _currentUserService.GetUserId();
             
@@ -59,7 +59,7 @@ namespace Audiochan.Core.Features.Users
                 .Include(u => u.Followings)
                 .Include(u => u.Audios)
                 .Where(u => u.UserName == username)
-                .Select(MapProjections.UserDetails(currentUserId))
+                .Select(UserProfileMapping.Map(currentUserId))
                 .SingleOrDefaultAsync(cancellationToken);
 
             return profile == null

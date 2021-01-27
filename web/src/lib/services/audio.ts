@@ -4,7 +4,7 @@ import queryString from 'query-string'
 import { apiErrorToast } from '~/utils/toast';
 import request from '../request'
 import { ErrorResponse, PagedList, PaginatedOptions } from '../types';
-import { AudioDetail, AudioListItem, AudioSearchType } from '../types/audio'
+import { AudioDetailModel, AudioListModel, AudioSearchType } from '../types/audio'
 import usePagination from '../hooks/usePagination';
 import useInfinitePagination from '../hooks/useInfinitePagination';
 
@@ -13,15 +13,15 @@ interface FetchAudioByIdOptions {
 }
 
 export const fetchAudioById = async (id: string, options: FetchAudioByIdOptions = {}) => {
-  const { data } = await request<AudioDetail>(`audios/${id}`, { 
+  const { data } = await request<AudioDetailModel>(`audios/${id}`, { 
     method: 'get',
     accessToken: options.accessToken
   });
   return data;
 }
 
-export const useAudio = (id: string, options: UseQueryOptions<AudioDetail, ErrorResponse> = {}) => {
-  return useQuery<AudioDetail, ErrorResponse>(['audios', id], () => fetchAudioById(id), options);
+export const useAudio = (id: string, options: UseQueryOptions<AudioDetailModel, ErrorResponse> = {}) => {
+  return useQuery<AudioDetailModel, ErrorResponse>(['audios', id], () => fetchAudioById(id), options);
 }
 
 interface useAudiosPaginatedOptions extends PaginatedOptions {
@@ -53,7 +53,7 @@ export const useAudiosInfiniteQuery = (options: useAudiosPaginatedOptions = { ty
 
   const fetchAudios = async (page: number = 1) => {
     const qs = `?page=${page}&${queryString.stringify(params)}`
-    const { data } = await request<PagedList<AudioListItem>>(key + qs);
+    const { data } = await request<PagedList<AudioListModel>>(key + qs);
     return data;
   }
 
@@ -70,7 +70,7 @@ export const useAudiosPaginatedQuery = (options: useAudiosPaginatedOptions = { t
 
   const fetchAudios = async (page: number) => {
     const qs = `?page=${page}&${queryString.stringify(params)}`
-    const { data } = await request<PagedList<AudioListItem>>(key + qs);
+    const { data } = await request<PagedList<AudioListModel>>(key + qs);
     return data;
   }
 
@@ -110,7 +110,7 @@ export const useFavorite = (audioId: string, initialData?: boolean) => {
 export const useCreateAudio = () => {
   const queryClient = useQueryClient();
   const uploadAudio = async (formData: FormData) => {
-    const { data } = await request<AudioDetail>('audios', {
+    const { data } = await request<AudioDetailModel>('audios', {
       method: 'post',
       body: formData
     });
@@ -128,13 +128,13 @@ export const useCreateAudio = () => {
 export const useEditAudio = (id: string) => {
   const queryClient = useQueryClient();
   const updateAudio = async (input: object) => {
-    const { data } = await request<AudioDetail>(`audios/${id}`, { method: 'patch', body: input });
+    const { data } = await request<AudioDetailModel>(`audios/${id}`, { method: 'patch', body: input });
     return data;
   }
 
   return useMutation(updateAudio, {
     onSuccess: (data) => {
-      queryClient.setQueryData<AudioDetail>([`audios`, id], data);
+      queryClient.setQueryData<AudioDetailModel>([`audios`, id], data);
       queryClient.invalidateQueries(`audios`, { exact: true });
     }
   })

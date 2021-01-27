@@ -1,11 +1,11 @@
-import { Box, Flex, Image } from "@chakra-ui/react";
+import { AspectRatio, Box, Flex, Image } from "@chakra-ui/react";
 import { PropsWithChildren, useState } from "react";
 import PictureDropzone from "~/components/Shared/Picture/PictureDropzone";
-import { AudioDetail, AudioListItem } from "~/lib/types/audio";
+import { AudioDetailModel, AudioListModel } from "~/lib/types/audio";
 
 interface AudioPictureProps {
   name: string;
-  audio?: AudioDetail;
+  audio?: AudioDetailModel;
   disabled?: boolean;
   canReplace?: boolean;
   onChange?: (file: File) => Promise<void>;
@@ -33,18 +33,28 @@ export default function AudioPicture({
 
   return (
     <Box>
-      <Flex justify="center" align="center">
-        <Box textAlign="center">
-          <Image src={image} boxSize="250px" marginBottom={4} />
-          {canReplace && (
-            <PictureDropzone
-              name="image"
-              image={image}
-              disabled={disabled}
-              onChange={changeImage}
-            />
-          )}
-        </Box>
+      <Flex
+        direction="column"
+        justify="center"
+        align="center"
+        textAlign="center"
+      >
+        <AspectRatio boxSize="250px" ratio={1}>
+          <Image
+            src={image}
+            objectFit="cover"
+            marginBottom={4}
+            bgGradient="linear(to-r, green.200, pink.500)"
+          />
+        </AspectRatio>
+        {canReplace && (
+          <PictureDropzone
+            name="image"
+            image={image}
+            disabled={disabled}
+            onChange={changeImage}
+          />
+        )}
       </Flex>
     </Box>
   );

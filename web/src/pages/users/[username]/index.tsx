@@ -97,7 +97,11 @@ export default function ProfilePage() {
             </TabList>
             <TabPanels>
               <TabPanel>
-                <AudioList type="user" username={profile.username} />
+                <AudioList
+                  type="user"
+                  username={profile.username}
+                  removeArtistName
+                />
               </TabPanel>
               <TabPanel>
                 <AudioList type="favorites" username={profile.username} />

@@ -1,9 +1,9 @@
 ﻿using System.Linq;
 using Audiochan.Core.Entities;
 
-namespace Audiochan.Core.Features.Audios.Queryable
+namespace Audiochan.Core.Features.Audios.Extensions
 {
-    public static class AudioQueryableExtensions
+    public static class QueryableExtensions
     {
         /// <summary>
         /// Filter only public audio uploads, unless the audio belongs to the current user, then display regardless
