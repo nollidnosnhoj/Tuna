@@ -16,26 +16,12 @@ namespace Audiochan.Core.Features.Audios.Builders
         {
             _audio = new Audio {Id = Guid.NewGuid().ToString()};
         }
-        
-        public AudioBuilder(IFormFile file) : this()
-        {
-            _audio.Title = Path.GetFileNameWithoutExtension(file.FileName);
-            _audio.AudioFileSize = file.Length;
-            _audio.AudioFileExtension = Path.GetExtension(file.FileName);
-        }
 
         public string GetId()
         {
             return _audio.Id;
         }
 
-        public string GetBlobName()
-        {
-            if (string.IsNullOrWhiteSpace(_audio.AudioFileExtension))
-                return _audio.Id;
-            return _audio.Id + _audio.AudioFileExtension;
-        }
-        
         public AudioBuilder AddTitle(string title)
         {
             if (!string.IsNullOrWhiteSpace(title))
@@ -49,18 +35,12 @@ namespace Audiochan.Core.Features.Audios.Builders
             return this;
         }
 
-        public AudioBuilder AddAudioMetadata(AudioMetadataDto audioMetadata)
+        public AudioBuilder AddUploadResult(AudioUploadResult uploadResult)
         {
-            var (_, duration) = audioMetadata;
-            _audio.Duration = duration;
-            return this;
-        }
-
-        public AudioBuilder AddBlobInfo(BlobDto blobDto)
-        {
-            if (!blobDto.FoundBlob) return this;
-            _audio.AudioUrl = blobDto.Url;
-            if (_audio.AudioFileSize == 0) _audio.AudioFileSize = blobDto.Size;
+            _audio.Duration = uploadResult.Duration;
+            _audio.FileSize = uploadResult.FileSize;
+            _audio.FileExt = uploadResult.FileExt;
+            _audio.StreamUrl = uploadResult.StreamUrl;
             return this;
         }
 
@@ -110,7 +90,7 @@ namespace Audiochan.Core.Features.Audios.Builders
                 throw new BuilderException("User is required.");
             if (_audio.GenreId == 0)
                 throw new BuilderException("Genre is required.");
-            if (string.IsNullOrWhiteSpace(_audio.AudioUrl))
+            if (string.IsNullOrWhiteSpace(_audio.StreamUrl))
                 throw new BuilderException("Audio url is required.");
             return _audio;
         }

@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Constants;
 using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Models;
@@ -22,25 +21,22 @@ namespace Audiochan.Core.Features.Audios
     public class AudioService : IAudioService
     {
         private readonly IDatabaseContext _dbContext;
-        private readonly IAudioMetadataService _audioMetadataService;
-        private readonly IStorageService _storageService;
         private readonly ICurrentUserService _currentUserService;
         private readonly IGenreService _genreService;
         private readonly IImageService _imageService;
+        private readonly IAudioUploadService _uploadService;
 
         public AudioService(IDatabaseContext dbContext, 
-            ICurrentUserService currentUserService, 
-            IAudioMetadataService audioMetadataService, 
-            IStorageService storageService,
+            ICurrentUserService currentUserService,
             IGenreService genreService, 
-            IImageService imageService)
+            IImageService imageService, 
+            IAudioUploadService uploadService)
         {
             _dbContext = dbContext;
             _currentUserService = currentUserService;
-            _audioMetadataService = audioMetadataService;
-            _storageService = storageService;
             _genreService = genreService;
             _imageService = imageService;
+            _uploadService = uploadService;
         }
 
         public async Task<PagedList<AudioListViewModel>> GetFeed(string userId, PaginationQuery query,
@@ -140,7 +136,7 @@ namespace Audiochan.Core.Features.Audios
         public async Task<IResult<AudioDetailViewModel>> Create(UploadAudioRequest request, 
             CancellationToken cancellationToken = default)
         {
-            var audioBuilder = new AudioBuilder(request.File);
+            var audioBuilder = new AudioBuilder();
             await using var transaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
             try
             {
@@ -150,23 +146,18 @@ namespace Audiochan.Core.Features.Audios
                 var memoryStream = new MemoryStream();
                 await request.File.CopyToAsync(memoryStream, cancellationToken);
 
-                var audioMetadata = _audioMetadataService.GetMetadata(memoryStream, request.File.ContentType);
+                // upload audio to the cloud
+                var audioUploadResult = await _uploadService
+                    .UploadAudio(request.File, audioBuilder.GetId(), cancellationToken);
 
-                await _storageService.SaveBlobAsync(
-                    ContainerConstants.Audios,
-                    audioBuilder.GetBlobName(),
-                    memoryStream,
-                    cancellationToken: cancellationToken);
-
-                var audioBlob = await _storageService
-                    .GetBlobAsync(ContainerConstants.Audios, audioBuilder.GetBlobName(), cancellationToken);
-
+                // If image file exists, upload to the cloud
                 var imageBlob = request.Image != null
                     ? await _imageService.UploadAudioImage(request.Image, audioBuilder.GetId(), cancellationToken)
                     : null;
 
                 // Get Genre for audio
                 var genre = await _genreService.GetGenre(request.Genre ?? "misc", cancellationToken);
+                
                 if (genre == null)
                     return Result<AudioDetailViewModel>
                         .Fail(ResultStatus.BadRequest, "Genre does not exist.");
@@ -179,8 +170,7 @@ namespace Audiochan.Core.Features.Audios
                 audioBuilder = audioBuilder
                     .AddTitle(request.Title)
                     .AddDescription(request.Description)
-                    .AddAudioMetadata(audioMetadata)
-                    .AddBlobInfo(audioBlob)
+                    .AddUploadResult(audioUploadResult)
                     .AddImage(imageBlob)
                     .SetToPublic(request.IsPublic)
                     .SetToLoop(request.IsLoop)
@@ -198,7 +188,8 @@ namespace Audiochan.Core.Features.Audios
             {
                 if (ex is DbUpdateException)
                     await transaction.RollbackAsync(cancellationToken);
-                await _storageService.DeleteBlobAsync(ContainerConstants.Audios, audioBuilder.GetBlobName(), cancellationToken);
+                await _uploadService
+                    .DeleteAudio(audioBuilder.GetId(), Path.GetExtension(request.File.FileName), cancellationToken);
                 throw; 
             }
         }
@@ -277,12 +268,10 @@ namespace Audiochan.Core.Features.Audios
 
             if (audio.UserId != currentUserId)
                 return Result.Fail(ResultStatus.Forbidden);
-            
-            var blobName = audio.Id + audio.AudioFileExtension;
 
             _dbContext.Audios.Remove(audio);
             var task1 = _dbContext.SaveChangesAsync(cancellationToken);
-            var task2 = _storageService.DeleteBlobAsync(ContainerConstants.Audios, blobName, cancellationToken);
+            var task2 = _uploadService.DeleteAudio(audio.Id, audio.FileExt, cancellationToken);
             var task3 = _imageService.RemoveAudioImages(id, cancellationToken);
             await Task.WhenAll(task1, task2, task3);
             return Result.Success();
