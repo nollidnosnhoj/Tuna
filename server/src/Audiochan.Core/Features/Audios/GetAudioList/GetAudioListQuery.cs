@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Models.Requests;
 using Audiochan.Core.Common.Models.Responses;
-using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Interfaces;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
