@@ -28,18 +28,18 @@ import InputCheckbox from "../../../components/Form/Checkbox";
 import GenreSelect from "../../../components/Form/GenreSelect";
 import TextInput from "../../../components/Form/TextInput";
 import TagInput from "../../../components/Form/TagInput";
-import { Audio, AudioRequest } from "~/features/audio/types";
+import { Audio, AudioDetail, AudioRequest } from "~/features/audio/types";
 import { useEditAudio, useRemoveAudio } from "~/features/audio/hooks/mutations";
 import { editAudioSchema } from "~/features/audio/schemas";
 import { apiErrorToast, successfulToast } from "~/utils/toast";
 
 interface AudioEditProps {
-  audio: Audio;
+  audio: AudioDetail;
   isOpen: boolean;
   onClose: () => void;
 }
 
-function mapAudioToModifyInputs(audio: Audio): AudioRequest {
+function mapAudioToModifyInputs(audio: AudioDetail): AudioRequest {
   return {
     title: audio.title,
     description: audio.description,

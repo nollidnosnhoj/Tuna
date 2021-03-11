@@ -6,6 +6,7 @@ using Audiochan.Core.Common.Models;
 using Audiochan.Core.Common.Models.Requests;
 using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Features.Audios.GetAudio;
+using Audiochan.Core.Features.Audios.GetAudioList;
 using Audiochan.Core.Features.Favorites.Audios.GetFavoriteAudios;
 using Audiochan.Core.Features.Followers.GetFollowers;
 using Audiochan.Core.Features.Followers.GetFollowings;
@@ -46,8 +47,9 @@ namespace Audiochan.API.Controllers
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
         [SwaggerOperation(Summary = "Return a list of the user's audios.", OperationId = "GetUserAudios",
             Tags = new[] {"users"})]
-        public async Task<IActionResult> GetUserAudios(string username,
-            PaginationQueryRequest<AudioViewModel> paginationQuery, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetUserAudios(string username, 
+            [FromQuery] PaginationQuery paginationQuery, 
+            CancellationToken cancellationToken)
         {
             var query = new GetUserAudiosQuery
             {
@@ -62,11 +64,11 @@ namespace Audiochan.API.Controllers
         }
 
         [HttpGet("{username}/favorites/audios", Name = "GetUserFavoriteAudios")]
-        [ProducesResponseType(typeof(PagedList<AudioViewModel>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PagedList<AudioDetailViewModel>), StatusCodes.Status200OK)]
         [SwaggerOperation(Summary = "Return a list of the user's favorite audios.",
             OperationId = "GetUserFavoriteAudios", Tags = new[] {"users"})]
-        public async Task<IActionResult> GetUserFavorites(string username,
-            PaginationQueryRequest<AudioViewModel> paginationQuery,
+        public async Task<IActionResult> GetUserFavorites(string username, 
+            [FromQuery] PaginationQuery paginationQuery, 
             CancellationToken cancellationToken)
         {
             return Ok(await _mediator.Send(new GetFavoriteAudiosQuery
@@ -82,7 +84,7 @@ namespace Audiochan.API.Controllers
         [SwaggerOperation(Summary = "Return a list of the user's followers.", OperationId = "GetUserFollowers",
             Tags = new[] {"users"})]
         public async Task<IActionResult> GetFollowers(string username,
-            [FromQuery] PaginationQueryRequest<UserDto> query,
+            [FromQuery] PaginationQuery query,
             CancellationToken cancellationToken)
         {
             return Ok(await _mediator.Send(new GetFollowersQuery
@@ -98,7 +100,7 @@ namespace Audiochan.API.Controllers
         [SwaggerOperation(Summary = "Return a list of the user's followings.", OperationId = "GetUserFollowings",
             Tags = new[] {"users"})]
         public async Task<IActionResult> GetFollowings(string username,
-            [FromQuery] PaginationQueryRequest<UserDto> query,
+            [FromQuery] PaginationQuery query,
             CancellationToken cancellationToken)
         {
             return Ok(await _mediator.Send(new GetFollowingsQuery

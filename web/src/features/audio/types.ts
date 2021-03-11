@@ -6,6 +6,19 @@ export type AudioSearchType = 'audios' | 'favorites' | 'user' | 'feed'
 export type Audio = {
   id: number;
   title: string;
+  isPublic: boolean;
+  duration: number;
+  picture: string;
+  favoriteCount: number;
+  isFavorited: boolean;
+  created: string;
+  genre?: Genre;
+  user: Creator;
+}
+
+export type AudioDetail = {
+  id: number;
+  title: string;
   description: string;
   isPublic: boolean;
   tags: string[];

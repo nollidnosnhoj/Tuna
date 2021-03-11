@@ -39,7 +39,7 @@ namespace Audiochan.Core.UnitTests.Mappings
         }
 
         [Theory]
-        [InlineData(typeof(Audio), typeof(AudioViewModel))]
+        [InlineData(typeof(Audio), typeof(AudioDetailViewModel))]
         [InlineData(typeof(FollowedUser), typeof(FollowerViewModel))]
         [InlineData(typeof(FollowedUser), typeof(FollowingViewModel))]
         [InlineData(typeof(User), typeof(CurrentUserViewModel))]

@@ -22,7 +22,7 @@ export default function UserAudioList(
     <React.Fragment>
       {audios.length === 0 && <p>No uploads.</p>}
       {audios.map((audio, index) => (
-        <AudioListItem key={audio.id} audio={audio} listIndex={index} />
+        <AudioListItem key={audio.id} audio={audio} />
       ))}
       {hasNextPage && (
         <Button

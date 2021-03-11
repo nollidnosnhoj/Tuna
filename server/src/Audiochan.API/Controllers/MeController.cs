@@ -6,6 +6,7 @@ using Audiochan.Core.Common.Models.Requests;
 using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Features.Audios.GetAudioFeed;
+using Audiochan.Core.Features.Audios.GetAudioList;
 using Audiochan.Core.Features.Followers.CheckIfFollowing;
 using Audiochan.Core.Features.Followers.SetFollow;
 using Audiochan.Core.Features.Users.GetCurrentUser;
@@ -77,9 +78,7 @@ namespace Audiochan.API.Controllers
             OperationId = "GetAuthenticatedUserFeed",
             Tags = new[] {"me"}
         )]
-        public async Task<IActionResult> GetAuthenticatedUserFeed(
-            [FromQuery] PaginationQueryRequest<AudioViewModel> query,
-            CancellationToken cancellationToken)
+        public async Task<IActionResult> GetAuthenticatedUserFeed(CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new GetAudioFeedQuery
             {

@@ -22,7 +22,7 @@ export default function UserFavoriteAudioList(
     <React.Fragment>
       {audios.length === 0 && <p>No favorites.</p>}
       {audios.map((audio, index) => (
-        <AudioListItem key={audio.id} audio={audio} listIndex={index} />
+        <AudioListItem key={audio.id} audio={audio} />
       ))}
       {hasNextPage && (
         <Button

@@ -5,6 +5,7 @@ using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Models.Requests;
 using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Features.Audios.GetAudio;
+using Audiochan.Core.Features.Audios.GetAudioList;
 using Audiochan.Core.Interfaces;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
@@ -13,7 +14,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Audios.GetAudioFeed
 {
-    public record GetAudioFeedQuery : PaginationQueryRequest<AudioViewModel>
+    public record GetAudioFeedQuery : IRequest<PagedList<AudioViewModel>>
     {
         public string UserId { get; init; }
     }
@@ -43,7 +44,7 @@ namespace Audiochan.Core.Features.Audios.GetAudioFeed
                 .Where(a => followedIds.Contains(a.UserId))
                 .ProjectTo<AudioViewModel>(_mapper.ConfigurationProvider, new {currentUserId = request.UserId})
                 .OrderByDescending(a => a.Created)
-                .PaginateAsync(request, cancellationToken);
+                .PaginateAsync(cancellationToken);
         }
     }
 }

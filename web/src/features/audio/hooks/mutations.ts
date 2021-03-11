@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from 'react-query'
 import api from '~/utils/api';
 import { apiErrorToast, successfulToast } from '~/utils/toast';
 import { addAudioPicture } from '../services/addAudioPicture';
-import { Audio, CreateAudioRequest } from '../types'
+import { AudioDetail, CreateAudioRequest } from '../types'
 
 export const useAudioFavorite = (audioId: number, initialData?: boolean) => {
   const [isLoading, setLoading] = useState(false);
@@ -47,7 +47,7 @@ export const useAudioFavorite = (audioId: number, initialData?: boolean) => {
 export const useCreateAudio = () => {
   const queryClient = useQueryClient();
   const uploadAudio = async (request: CreateAudioRequest) => {
-    const { data } = await api.post<Audio>('audios', request);
+    const { data } = await api.post<AudioDetail>('audios', request);
     return data;
   }
 
@@ -57,13 +57,13 @@ export const useCreateAudio = () => {
 export const useEditAudio = (id: number) => {
   const queryClient = useQueryClient();
   const updateAudio = async (input: object) => {
-    const { data } = await api.put<Audio>(`audios/${id}`, input);
+    const { data } = await api.put<AudioDetail>(`audios/${id}`, input);
     return data;
   }
 
   return useMutation(updateAudio, {
     onSuccess: (data) => {
-      queryClient.setQueryData<Audio>([`audios`, id], data);
+      queryClient.setQueryData<AudioDetail>([`audios`, id], data);
       queryClient.invalidateQueries(`audios`);
     }
   })

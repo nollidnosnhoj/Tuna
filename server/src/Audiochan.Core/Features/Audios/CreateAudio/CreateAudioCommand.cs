@@ -21,7 +21,7 @@ using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Audios.CreateAudio
 {
-    public record CreateAudioCommand : AudioCommandRequest, IRequest<Result<AudioViewModel>>
+    public record CreateAudioCommand : AudioCommandRequest, IRequest<Result<AudioDetailViewModel>>
     {
         public string UploadId { get; init; }
         public string FileName { get; init; }
@@ -59,7 +59,7 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
         }
     }
 
-    public class CreateAudioCommandHandler : IRequestHandler<CreateAudioCommand, Result<AudioViewModel>>
+    public class CreateAudioCommandHandler : IRequestHandler<CreateAudioCommand, Result<AudioDetailViewModel>>
     {
         private readonly IApplicationDbContext _dbContext;
         private readonly IStorageService _storageService;
@@ -86,7 +86,7 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
             _tagRepository = tagRepository;
         }
 
-        public async Task<Result<AudioViewModel>> Handle(CreateAudioCommand request,
+        public async Task<Result<AudioDetailViewModel>> Handle(CreateAudioCommand request,
             CancellationToken cancellationToken)
         {
             var currentUserId = _currentUserService.GetUserId();
@@ -99,7 +99,7 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
             audio.UpdatePublicStatus(request.IsPublic ?? true);
 
             if (!await CheckIfAudioBlobExists(audio, cancellationToken))
-                return Result<AudioViewModel>.Fail(ResultError.BadRequest, "Cannot find audio in storage.");
+                return Result<AudioDetailViewModel>.Fail(ResultError.BadRequest, "Cannot find audio in storage.");
 
             try
             {
@@ -117,13 +117,13 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
                 var currentUser = await _dbContext.Users
                     .SingleOrDefaultAsync(u => u.Id == currentUserId, cancellationToken);
 
-                var viewModel = _mapper.Map<AudioViewModel>(audio) with
+                var viewModel = _mapper.Map<AudioDetailViewModel>(audio) with
                 {
                     User = new UserDto(currentUser.Id, currentUser.UserName, currentUser.Picture),
                     IsFavorited = audio.Favorited.Any(x => x.UserId == currentUserId)
                 };
 
-                return Result<AudioViewModel>.Success(viewModel);
+                return Result<AudioDetailViewModel>.Success(viewModel);
             }
             catch (Exception)
             {

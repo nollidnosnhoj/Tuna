@@ -13,7 +13,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Audios.UpdateAudio
 {
-    public record UpdateAudioCommand : AudioCommandRequest, IRequest<Result<AudioViewModel>>
+    public record UpdateAudioCommand : AudioCommandRequest, IRequest<Result<AudioDetailViewModel>>
     {
         [JsonIgnore] public long Id { get; init; }
     }
@@ -26,7 +26,7 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
         }
     }
 
-    public class UpdateAudioCommandHandler : IRequestHandler<UpdateAudioCommand, Result<AudioViewModel>>
+    public class UpdateAudioCommandHandler : IRequestHandler<UpdateAudioCommand, Result<AudioDetailViewModel>>
     {
         private readonly IApplicationDbContext _dbContext;
         private readonly ICurrentUserService _currentUserService;
@@ -47,7 +47,7 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
             _tagRepository = tagRepository;
         }
 
-        public async Task<Result<AudioViewModel>> Handle(UpdateAudioCommand request,
+        public async Task<Result<AudioDetailViewModel>> Handle(UpdateAudioCommand request,
             CancellationToken cancellationToken)
         {
             var currentUserId = _currentUserService.GetUserId();
@@ -60,17 +60,17 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
                 .SingleOrDefaultAsync(a => a.Id == request.Id, cancellationToken);
 
             if (audio == null)
-                return Result<AudioViewModel>.Fail(ResultError.NotFound);
+                return Result<AudioDetailViewModel>.Fail(ResultError.NotFound);
 
             if (!audio.CanModify(currentUserId))
-                return Result<AudioViewModel>.Fail(ResultError.Forbidden);
+                return Result<AudioDetailViewModel>.Fail(ResultError.Forbidden);
 
             if (!string.IsNullOrWhiteSpace(request.Genre) && (audio.Genre?.Slug ?? "") != request.Genre)
             {
                 var genre = await _genreRepository.GetByInput(request.Genre, cancellationToken);
 
                 if (genre == null)
-                    return Result<AudioViewModel>.Fail(ResultError.BadRequest, "Genre does not exist.");
+                    return Result<AudioDetailViewModel>.Fail(ResultError.BadRequest, "Genre does not exist.");
 
                 audio.UpdateGenre(genre);
             }
@@ -89,12 +89,12 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
             _dbContext.Audios.Update(audio);
             await _dbContext.SaveChangesAsync(cancellationToken);
 
-            var viewModel = _mapper.Map<AudioViewModel>(audio) with
+            var viewModel = _mapper.Map<AudioDetailViewModel>(audio) with
             {
                 IsFavorited = audio.Favorited.Any(x => x.UserId == currentUserId)
             };
 
-            return Result<AudioViewModel>.Success(viewModel);
+            return Result<AudioDetailViewModel>.Success(viewModel);
         }
     }
 }

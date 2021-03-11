@@ -28,7 +28,7 @@ import {
   useAddAudioPicture,
   useAudioFavorite,
 } from "~/features/audio/hooks/mutations";
-import { Audio } from "~/features/audio/types";
+import { Audio, AudioDetail } from "~/features/audio/types";
 import { formatDuration, relativeDate } from "~/utils/time";
 import useUser from "~/contexts/userContext";
 import { FaPlay } from "react-icons/fa";
@@ -38,7 +38,7 @@ import { mapToAudioListProps } from "~/utils";
 import PictureDropzone from "~/components/Picture/PictureDropzone";
 
 interface AudioDetailProps {
-  audio: Audio;
+  audio: AudioDetail;
 }
 
 const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {

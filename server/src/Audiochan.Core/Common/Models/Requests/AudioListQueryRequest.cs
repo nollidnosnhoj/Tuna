@@ -1,4 +1,4 @@
-﻿using Audiochan.Core.Features.Audios.GetAudio;
+﻿using Audiochan.Core.Features.Audios.GetAudioList;
 
 namespace Audiochan.Core.Common.Models.Requests
 {

@@ -57,7 +57,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             successResult.Should().NotBeNull();
             successResult.IsSuccess.Should().Be(true);
             successResult.Data.Should().NotBeNull();
-            successResult.Data.Should().BeOfType<AudioViewModel>();
+            successResult.Data.Should().BeOfType<AudioDetailViewModel>();
             failureResult.Should().NotBeNull();
             failureResult.IsSuccess.Should().Be(false);
             failureResult.ErrorCode.Should().Be(ResultError.NotFound);
@@ -86,7 +86,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             result.Should().NotBeNull();
             result.IsSuccess.Should().Be(true);
             result.Data.Should().NotBeNull();
-            result.Data.Should().BeOfType<AudioViewModel>();
+            result.Data.Should().BeOfType<AudioDetailViewModel>();
             result.Data.Should().NotBeNull();
             result.Data.Title.Should().Be(audio.Data.Title);
             result.Data.Description.Should().Be(audio.Data.Description);

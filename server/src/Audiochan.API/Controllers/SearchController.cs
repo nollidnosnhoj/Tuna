@@ -7,6 +7,7 @@ using Audiochan.Core.Features.Users.GetUser;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Audiochan.API.Controllers
 {
@@ -21,7 +22,8 @@ namespace Audiochan.API.Controllers
         }
 
         [HttpGet("audios")]
-        [ProducesResponseType(typeof(PagedList<AudioViewModel>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PagedList<AudioDetailViewModel>), StatusCodes.Status200OK)]
+        [SwaggerOperation(Summary = "Search for audios", OperationId = "SearchAudio", Tags = new []{"search"})]
         public async Task<IActionResult> SearchAudios([FromQuery] SearchAudiosQuery query,
             CancellationToken cancellationToken)
         {
@@ -31,6 +33,7 @@ namespace Audiochan.API.Controllers
 
         [HttpGet("users")]
         [ProducesResponseType(typeof(PagedList<UserViewModel>), StatusCodes.Status200OK)]
+        [SwaggerOperation(Summary = "Search for users", OperationId = "SearchUsers", Tags = new []{"search"})]
         public async Task<IActionResult> SearchUsers([FromQuery] SearchUsersQuery query,
             CancellationToken cancellationToken)
         {

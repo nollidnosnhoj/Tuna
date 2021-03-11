@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Models;
 using Audiochan.Core.Common.Models.Requests;
 using Audiochan.Core.Common.Models.Responses;
 using Microsoft.EntityFrameworkCore;
@@ -36,7 +37,8 @@ namespace Audiochan.Core.Common.Extensions
         public static async Task<PagedList<TResponse>> PaginateAsync<TResponse>(this IQueryable<TResponse> queryable,
             CancellationToken cancellationToken = default)
         {
-            return await queryable.PaginateAsync(1, 30, cancellationToken);
+            var paginationQuery = new PaginationQuery();
+            return await queryable.PaginateAsync(paginationQuery.Page, paginationQuery.Size, cancellationToken);
         }
     }
 }

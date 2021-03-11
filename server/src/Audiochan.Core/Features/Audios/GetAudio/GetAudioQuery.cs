@@ -10,11 +10,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Audios.GetAudio
 {
-    public record GetAudioQuery(long Id) : IRequest<Result<AudioViewModel>>
+    public record GetAudioQuery(long Id) : IRequest<Result<AudioDetailViewModel>>
     {
     }
 
-    public class GetAudioQueryHandler : IRequestHandler<GetAudioQuery, Result<AudioViewModel>>
+    public class GetAudioQueryHandler : IRequestHandler<GetAudioQuery, Result<AudioDetailViewModel>>
     {
         private readonly IApplicationDbContext _dbContext;
         private readonly ICurrentUserService _currentUserService;
@@ -28,19 +28,19 @@ namespace Audiochan.Core.Features.Audios.GetAudio
             _mapper = mapper;
         }
 
-        public async Task<Result<AudioViewModel>> Handle(GetAudioQuery request, CancellationToken cancellationToken)
+        public async Task<Result<AudioDetailViewModel>> Handle(GetAudioQuery request, CancellationToken cancellationToken)
         {
             var currentUserId = _currentUserService.GetUserId();
 
             var audio = await _dbContext.Audios
                 .DefaultQueryable(currentUserId)
                 .Where(x => x.Id == request.Id)
-                .ProjectTo<AudioViewModel>(_mapper.ConfigurationProvider, new {currentUserId})
+                .ProjectTo<AudioDetailViewModel>(_mapper.ConfigurationProvider, new {currentUserId})
                 .SingleOrDefaultAsync(cancellationToken);
 
             return audio == null
-                ? Result<AudioViewModel>.Fail(ResultError.NotFound)
-                : Result<AudioViewModel>.Success(audio);
+                ? Result<AudioDetailViewModel>.Fail(ResultError.NotFound)
+                : Result<AudioDetailViewModel>.Success(audio);
         }
     }
 }
