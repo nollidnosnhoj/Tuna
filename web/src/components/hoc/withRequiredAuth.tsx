@@ -1,7 +1,7 @@
 import { Box, Button, Flex, Heading } from "@chakra-ui/react";
 import React, { FC } from "react";
 import NextLink from "next/link";
-import useUser from "~/contexts/userContext";
+import useUser from "~/hooks/useUser";
 import Page from "../Page";
 
 export default function withRequiredAuth(Component: FC) {

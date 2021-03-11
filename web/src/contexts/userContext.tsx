@@ -1,7 +1,6 @@
 import React, {
   createContext,
   PropsWithChildren,
-  useContext,
   useEffect,
   useMemo,
   useState,
@@ -27,7 +26,9 @@ type UserContextType = {
   isLoggedIn: boolean;
 };
 
-const UserContext = createContext<UserContextType>({} as UserContextType);
+export const UserContext = createContext<UserContextType>(
+  {} as UserContextType
+);
 
 interface UserProviderProps {
   initialUser?: CurrentUser;
@@ -126,8 +127,4 @@ export function UserProvider(props: PropsWithChildren<UserProviderProps>) {
   return (
     <UserContext.Provider value={values}>{props.children}</UserContext.Provider>
   );
-}
-
-export default function useUser() {
-  return useContext(UserContext);
 }

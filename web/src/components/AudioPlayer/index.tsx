@@ -6,7 +6,7 @@ import ReactJkMusicPlayer, {
   ReactJkMusicPlayerTheme,
 } from "react-jinke-music-player";
 import "react-jinke-music-player/assets/index.css";
-import { useAudioPlayer } from "~/contexts/audioPlayerContext";
+import useAudioPlayer from "~/hooks/useAudioPlayer";
 import {
   AudioPlayerItemInfo,
   AudioPlayerListItem,

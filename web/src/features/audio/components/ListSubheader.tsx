@@ -2,7 +2,7 @@ import { HStack, Button } from "@chakra-ui/react";
 import NextLink from "next/link";
 import React from "react";
 import Container from "~/components/Container";
-import useUser from "~/contexts/userContext";
+import useUser from "~/hooks/useUser";
 
 export default function AudioListSubHeader(props: { current: string }) {
   const { isLoggedIn } = useUser();

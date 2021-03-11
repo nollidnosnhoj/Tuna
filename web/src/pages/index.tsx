@@ -1,5 +1,5 @@
 import React from "react";
-import useUser from "~/contexts/userContext";
+import useUser from "~/hooks/useUser";
 import Page from "~/components/Page";
 
 const Index = () => {

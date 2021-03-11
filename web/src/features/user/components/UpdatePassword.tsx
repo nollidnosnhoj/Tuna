@@ -7,7 +7,7 @@ import TextInput from "~/components/Form/TextInput";
 import api from "~/utils/api";
 import { apiErrorToast } from "~/utils/toast";
 import { validationMessages } from "~/utils";
-import useUser from "~/contexts/userContext";
+import useUser from "~/hooks/useUser";
 import { passwordRule } from "../schemas";
 
 type UpdatePasswordValues = {

@@ -2,7 +2,7 @@ import { Box, Flex } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import React, { useMemo } from "react";
 import Page from "~/components/Page";
-import useUser from "~/contexts/userContext";
+import useUser from "~/hooks/useUser";
 import RegisterForm from "~/features/auth/components/RegisterForm";
 
 export default function LoginPage() {

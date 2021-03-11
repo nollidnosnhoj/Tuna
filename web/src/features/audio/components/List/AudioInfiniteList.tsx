@@ -1,7 +1,7 @@
 import { Box, Button, Divider } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { FaPause } from "react-icons/fa";
-import { useAudioPlayer } from "~/contexts/audioPlayerContext";
+import useAudioPlayer from "~/hooks/useAudioPlayer";
 import { PagedList } from "~/lib/types";
 import { mapToAudioListProps } from "~/utils";
 import { useAudiosInfinite } from "../../hooks/queries";

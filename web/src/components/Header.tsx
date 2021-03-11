@@ -23,7 +23,7 @@ import { FaCloudUploadAlt, FaUserAlt } from "react-icons/fa";
 import { MdLibraryMusic } from "react-icons/md";
 import NextLink from "next/link";
 import Link from "./Link";
-import useUser from "~/contexts/userContext";
+import useUser from "~/hooks/useUser";
 import Container from "./Container";
 
 interface HeaderNavLinkProps {

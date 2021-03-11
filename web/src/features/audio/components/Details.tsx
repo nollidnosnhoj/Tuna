@@ -30,10 +30,10 @@ import {
 } from "~/features/audio/hooks/mutations";
 import { Audio, AudioDetail } from "~/features/audio/types";
 import { formatDuration, relativeDate } from "~/utils/time";
-import useUser from "~/contexts/userContext";
+import useUser from "~/hooks/useUser";
 import { FaPlay } from "react-icons/fa";
 import { MdQueueMusic } from "react-icons/md";
-import { useAudioPlayer } from "~/contexts/audioPlayerContext";
+import useAudioPlayer from "~/hooks/useAudioPlayer";
 import { mapToAudioListProps } from "~/utils";
 import PictureDropzone from "~/components/Picture/PictureDropzone";
 

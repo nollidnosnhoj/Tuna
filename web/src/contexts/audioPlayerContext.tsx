@@ -1,11 +1,9 @@
 import React, {
   createContext,
   PropsWithChildren,
-  useContext,
   useMemo,
   useState,
 } from "react";
-import { boolean } from "yup/lib/locale";
 import { AudioPlayerListItem } from "~/features/audio/types";
 
 type AudioPlayerContextType = {
@@ -22,7 +20,7 @@ type AudioPlayerContextType = {
   volumeChange: (level: number) => void;
 };
 
-const AudioPlayerContext = createContext<AudioPlayerContextType>(
+export const AudioPlayerContext = createContext<AudioPlayerContextType>(
   {} as AudioPlayerContextType
 );
 
@@ -116,5 +114,3 @@ export default function AudioPlayerProvider(props: PropsWithChildren<any>) {
     </AudioPlayerContext.Provider>
   );
 }
-
-export const useAudioPlayer = () => useContext(AudioPlayerContext);

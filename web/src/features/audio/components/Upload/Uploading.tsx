@@ -11,7 +11,7 @@ import {
 import React, { useCallback, useEffect, useState } from "react";
 import Router from "next/router";
 import { useCreateAudio } from "~/features/audio/hooks/mutations";
-import useUser from "~/contexts/userContext";
+import useUser from "~/hooks/useUser";
 import { AudioRequest, CreateAudioRequest } from "~/features/audio/types";
 import api from "~/utils/api";
 import { successfulToast } from "~/utils/toast";

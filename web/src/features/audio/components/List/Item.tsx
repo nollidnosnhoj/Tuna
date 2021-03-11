@@ -18,7 +18,7 @@ import Picture from "~/components/Picture";
 import { FaPause, FaPlay } from "react-icons/fa";
 import { useAudioFavorite } from "../../hooks/mutations";
 import { AiFillHeart } from "react-icons/ai";
-import useUser from "~/contexts/userContext";
+import useUser from "~/hooks/useUser";
 
 interface AudioListItemProps {
   audio: Audio;
