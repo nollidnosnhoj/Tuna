@@ -91,7 +91,7 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
             setPicture(data.image);
           }}
         >
-          <Picture source={picture} imageSize={250} />
+          <Picture source={picture} imageSize={250} borderWidth="1px" />
         </PictureDropzone>
       </Box>
       <Box flex="5">

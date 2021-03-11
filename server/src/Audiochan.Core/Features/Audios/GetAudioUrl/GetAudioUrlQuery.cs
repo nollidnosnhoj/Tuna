@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Models.Responses;
@@ -29,17 +30,14 @@ namespace Audiochan.Core.Features.Audios.GetAudioUrl
 
         public async Task<IResult<AudioUrlViewModel>> Handle(GetAudioUrlQuery request, CancellationToken cancellationToken)
         {
-            var viewModel = await _dbContext.Audios
+            var info = await _dbContext.Audios
                 .AsNoTracking()
                 .Where(a => a.Id == request.Id)
-                .Select(a => new AudioUrlViewModel
-                {
-                    Url = _audioStorageUrl + a.UploadId + a.FileExt
-                })
+                .Select(a => new {a.UploadId, a.FileExt})
                 .SingleOrDefaultAsync(cancellationToken);
 
-            return viewModel is not null
-                ? Result<AudioUrlViewModel>.Success(viewModel)
+            return info is not null 
+                ? Result<AudioUrlViewModel>.Success(new AudioUrlViewModel(_audioStorageUrl + info.UploadId + info.FileExt))
                 : Result<AudioUrlViewModel>.Fail(ResultError.NotFound);
         }
     }

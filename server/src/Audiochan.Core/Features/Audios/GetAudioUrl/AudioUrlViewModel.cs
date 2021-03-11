@@ -1,7 +1,6 @@
 ﻿namespace Audiochan.Core.Features.Audios.GetAudioUrl
 {
-    public record AudioUrlViewModel
+    public record AudioUrlViewModel(string Url)
     {
-        public string Url { get; init; }
     }
 }

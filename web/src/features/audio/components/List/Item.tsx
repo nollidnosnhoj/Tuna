@@ -57,8 +57,8 @@ const AudioListItem: React.FC<AudioListItemProps> = ({
       overflow="hidden"
       boxShadow="md"
     >
-      <Picture source={picture} imageSize={150} isLazy />
-      <Box width="100%" marginLeft={4} padding={4}>
+      <Picture source={picture} imageSize={150} isLazy borderRightWidth={1} />
+      <Flex width="100%" marginLeft={4} padding={4} direction="column">
         <Flex width="100%">
           <Flex flex="3">
             <Box marginRight={2}>
@@ -93,20 +93,22 @@ const AudioListItem: React.FC<AudioListItemProps> = ({
             </Stack>
           </Flex>
         </Flex>
-        <HStack marginTop={4}>
-          {currentUser && (
-            <Button
-              size="xs"
-              leftIcon={<AiFillHeart />}
-              colorScheme={isFavorite ? "primary" : "gray"}
-              onClick={favorite}
-              isLoading={isFavoriteLoading}
-            >
-              Favorite
-            </Button>
-          )}
-        </HStack>
-      </Box>
+        <Box marginTop={6}>
+          <HStack>
+            {currentUser && (
+              <Button
+                size="xs"
+                leftIcon={<AiFillHeart />}
+                colorScheme={isFavorite ? "primary" : "gray"}
+                onClick={favorite}
+                isLoading={isFavoriteLoading}
+              >
+                Favorite
+              </Button>
+            )}
+          </HStack>
+        </Box>
+      </Flex>
     </Box>
   );
 };
