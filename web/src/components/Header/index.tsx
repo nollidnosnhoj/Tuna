@@ -103,35 +103,39 @@ const Header: React.FC<HeaderProps> = (props) => {
           aria-label="Open menu"
           // display={{ md: !isOpen ? "none" : "inherit" }}
           onClick={isOpen ? onClose : onOpen}
+          position="relative"
+          marginRight={14}
         />
-        <Container py="3">
-          <Flex h={16} alignItems="center" justifyContent="space-between">
-            <HStack as="nav" spacing={8}>
-              <Heading display={{ base: "none", md: "flex" }}>
-                <Link
-                  href="/"
-                  _hover={{
-                    textDecoration: "none",
-                  }}
-                >
-                  Audiochan
-                </Link>
-              </Heading>
-            </HStack>
-            <Flex alignItems="center">
-              <HStack spacing={4}>
-                <IconButton
-                  aria-label="Change color mode"
-                  icon={<ColorModeIcon />}
-                  size="md"
-                  variant="ghost"
-                  onClick={toggleColorMode}
-                />
-                {UserMenu}
-              </HStack>
-            </Flex>
-          </Flex>
-        </Container>
+        <Flex
+          width="100%"
+          my={3}
+          h={16}
+          alignItems="center"
+          justifyContent="space-between"
+        >
+          <HStack as="nav" spacing={8}>
+            <Heading size="lg" display={{ base: "none", md: "flex" }}>
+              <Link
+                href="/"
+                _hover={{
+                  textDecoration: "none",
+                }}
+              >
+                Audiochan
+              </Link>
+            </Heading>
+          </HStack>
+          <HStack spacing={4} marginRight={{ base: 2, md: 8 }}>
+            <IconButton
+              aria-label="Change color mode"
+              icon={<ColorModeIcon />}
+              size="md"
+              variant="ghost"
+              onClick={toggleColorMode}
+            />
+            {UserMenu}
+          </HStack>
+        </Flex>
       </Flex>
       <Drawer
         placement="left"

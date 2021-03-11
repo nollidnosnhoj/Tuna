@@ -18,7 +18,7 @@ export default function Picture(props: PictureProps) {
     <Box
       bgGradient={`linear(to-r, ${color1}, ${color2})`}
       width={imageSize}
-      borderWidth={1}
+      borderRightWidth={1}
       _after={{
         content: '""',
         display: "block",

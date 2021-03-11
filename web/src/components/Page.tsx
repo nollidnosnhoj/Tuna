@@ -26,7 +26,7 @@ const Page: React.FC<PageProps> = ({
         {useHeader && <Header />}
         {beforeContainer}
       </Box>
-      <Container pb="120px" pt={8} px="5" {...props}>
+      <Container pb="120px" pt={8} {...props}>
         {children}
       </Container>
     </>

@@ -6,6 +6,7 @@ import {
   Heading,
   HStack,
   IconButton,
+  Spacer,
   Stack,
   Text,
   Tooltip,
@@ -48,10 +49,17 @@ const AudioListItem: React.FC<AudioListItemProps> = ({
   }, [audio.picture]);
 
   return (
-    <Box as="article" display="flex" marginBottom={4}>
-      <Picture source={picture} imageSize={125} isLazy />
-      <Box width="100%" marginLeft={8}>
-        <Flex>
+    <Box
+      as="article"
+      display="flex"
+      borderWidth="1px"
+      marginBottom={4}
+      overflow="hidden"
+      boxShadow="md"
+    >
+      <Picture source={picture} imageSize={150} isLazy />
+      <Box width="100%" marginLeft={4} padding={4}>
+        <Flex width="100%">
           <Flex flex="3">
             <Box marginRight={2}>
               <Tooltip label="Play" placement="top">
