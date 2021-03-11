@@ -2,6 +2,12 @@ import { CloseIcon, HamburgerIcon, MoonIcon, SunIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
+  Drawer,
+  DrawerBody,
+  DrawerCloseButton,
+  DrawerContent,
+  DrawerHeader,
+  DrawerOverlay,
   Flex,
   Heading,
   HStack,
@@ -18,32 +24,14 @@ import {
   useColorModeValue,
   useDisclosure,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { useRef } from "react";
 import { FaCloudUploadAlt, FaUserAlt } from "react-icons/fa";
 import { MdLibraryMusic } from "react-icons/md";
 import NextLink from "next/link";
-import Link from "./Link";
+import Link from "../Link";
 import useUser from "~/hooks/useUser";
-import Container from "./Container";
-
-interface HeaderNavLinkProps {
-  href: string;
-  color?: string;
-  icon?: React.ReactElement;
-}
-
-const HeaderNavLink: React.FC<HeaderNavLinkProps> = ({
-  href,
-  color,
-  icon,
-  children,
-}) => (
-  <NextLink href={href}>
-    <Button variant="ghost" colorScheme={color} size="md" leftIcon={icon}>
-      {children}
-    </Button>
-  </NextLink>
-);
+import Container from "../Container";
+import HeaderMenuLink from "./MenuLink";
 
 interface HeaderProps {}
 
@@ -51,24 +39,8 @@ const Header: React.FC<HeaderProps> = (props) => {
   const { user, logout } = useUser();
   const { toggleColorMode } = useColorMode();
   const ColorModeIcon = useColorModeValue(MoonIcon, SunIcon);
+  const menuButtonRef = useRef<any>();
   const { isOpen, onOpen, onClose } = useDisclosure();
-
-  const HeaderNavLinks = (
-    <HStack spacing={2}>
-      <HeaderNavLink href="/audios" icon={<MdLibraryMusic />}>
-        Browse
-      </HeaderNavLink>
-      {user && (
-        <HeaderNavLink
-          color="primary"
-          href="/upload"
-          icon={<FaCloudUploadAlt />}
-        >
-          Upload
-        </HeaderNavLink>
-      )}
-    </HStack>
-  );
 
   const UserMenu = user ? (
     <Box zIndex={4}>
@@ -117,18 +89,24 @@ const Header: React.FC<HeaderProps> = (props) => {
 
   return (
     <React.Fragment>
-      <Box as="header" px={4} borderColor="primary.500" borderBottomWidth={4}>
+      <Flex
+        align="center"
+        as="header"
+        px={4}
+        borderColor="primary.500"
+        borderBottomWidth={4}
+      >
+        <IconButton
+          variant="ghost"
+          size="lg"
+          icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
+          aria-label="Open menu"
+          // display={{ md: !isOpen ? "none" : "inherit" }}
+          onClick={isOpen ? onClose : onOpen}
+        />
         <Container py="3">
           <Flex h={16} alignItems="center" justifyContent="space-between">
-            <IconButton
-              variant="ghost"
-              size="lg"
-              icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
-              aria-label="Open menu"
-              display={{ md: !isOpen ? "none" : "inherit" }}
-              onClick={isOpen ? onClose : onOpen}
-            />
-            <HStack as="nav" spacing={8} display={{ base: "none", md: "flex" }}>
+            <HStack as="nav" spacing={8}>
               <Heading display={{ base: "none", md: "flex" }}>
                 <Link
                   href="/"
@@ -139,7 +117,6 @@ const Header: React.FC<HeaderProps> = (props) => {
                   Audiochan
                 </Link>
               </Heading>
-              {HeaderNavLinks}
             </HStack>
             <Flex alignItems="center">
               <HStack spacing={4}>
@@ -155,14 +132,37 @@ const Header: React.FC<HeaderProps> = (props) => {
             </Flex>
           </Flex>
         </Container>
-        {isOpen && (
-          <Box pb={4}>
-            <Stack as="nav" spacing={4}>
-              {HeaderNavLinks}
-            </Stack>
-          </Box>
-        )}
-      </Box>
+      </Flex>
+      <Drawer
+        placement="left"
+        onClose={onClose}
+        isOpen={isOpen}
+        initialFocusRef={menuButtonRef}
+      >
+        <DrawerOverlay>
+          <DrawerContent>
+            <DrawerCloseButton />
+            <DrawerHeader borderColor="primary.500" borderBottomWidth={4}>
+              Menu
+            </DrawerHeader>
+            <DrawerBody p={0}>
+              <HeaderMenuLink
+                label="Browse"
+                href="/audios"
+                icon={<MdLibraryMusic />}
+              />
+              <HeaderMenuLink
+                label="Upload"
+                href="/upload"
+                icon={<FaCloudUploadAlt />}
+                hidden={!user}
+                variant="solid"
+                colorScheme="primary"
+              />
+            </DrawerBody>
+          </DrawerContent>
+        </DrawerOverlay>
+      </Drawer>
     </React.Fragment>
   );
 };

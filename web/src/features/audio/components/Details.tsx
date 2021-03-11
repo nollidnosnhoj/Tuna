@@ -94,8 +94,20 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
           <Picture source={picture} imageSize={250} />
         </PictureDropzone>
       </Box>
-      <Box flex="4">
+      <Box flex="5">
         <Stack direction="row" marginBottom={4}>
+          <Tooltip label="Play" placement="top">
+            <span>
+              <IconButton
+                isRound
+                colorScheme="pink"
+                size="lg"
+                icon={<FaPlay />}
+                aria-label="Play"
+                onClick={() => startPlay([mapToAudioListProps(audio)], 0)}
+              />
+            </span>
+          </Tooltip>
           <Stack direction="column" spacing="0" fontSize="sm">
             <Link href={`/users/${audio.user.username}`}>
               <Text fontWeight="500">{audio.user.username}</Text>
@@ -104,18 +116,6 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
           </Stack>
           <Spacer />
           <HStack justifyContent="flex-end">
-            <Tooltip label="Play" placement="top">
-              <span>
-                <IconButton
-                  isRound
-                  colorScheme="pink"
-                  size="lg"
-                  icon={<FaPlay />}
-                  aria-label="Play"
-                  onClick={() => startPlay([mapToAudioListProps(audio)], 0)}
-                />
-              </span>
-            </Tooltip>
             <Tooltip label="Add to queue" placement="top">
               <span>
                 <IconButton
@@ -152,7 +152,7 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
           <Flex as="header">
             <Box>
               <Flex alignItems="center">
-                <Heading as="h1" fontSize="2xl">
+                <Heading as="h1" fontSize="3xl">
                   {audio.title}
                 </Heading>
                 <Box>
