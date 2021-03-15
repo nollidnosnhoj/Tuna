@@ -1,8 +1,7 @@
 import { useRouter } from "next/router";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import queryString from "query-string";
 import Page from "~/components/Page";
-import AudioPaginatedList from "~/features/audio/components/List/AudioPaginatedList";
 import { useFormik } from "formik";
 import { Box, Flex, HStack } from "@chakra-ui/layout";
 import GenreSelect from "~/components/Form/GenreSelect";
@@ -19,6 +18,7 @@ import {
 } from "@chakra-ui/react";
 import TextInput from "~/components/Form/TextInput";
 import TagInput from "~/components/Form/TagInput";
+import AudioInfiniteList from "~/features/audio/components/List/AudioInfiniteList";
 
 type AudioSearchQuery = {
   q?: string;
@@ -145,7 +145,7 @@ export default function AudioSearchPage() {
           </Flex>
         </form>
       </Box>
-      <AudioPaginatedList queryKey="search/audios" queryParams={queryParams} />
+      <AudioInfiniteList queryKey="search/audios" queryParams={queryParams} />
     </Page>
   );
 }
