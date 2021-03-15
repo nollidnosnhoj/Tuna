@@ -43,13 +43,13 @@ namespace Audiochan.Core.Entities
 
         public long Id { get; set; }
         public string Title { get; set; }
-        public string Description { get; set; }
+        public string Description { get; set; } = string.Empty;
         public int Duration { get; set; }
         public string UploadId { get; set; }
         public long FileSize { get; set; }
         public string FileExt { get; set; }
         public string Picture { get; set; }
-        public bool IsPublic { get; set; }
+        public bool IsPublic { get; set; } = true;
         public string UserId { get; set; }
         public User User { get; set; }
         public long? GenreId { get; set; }
