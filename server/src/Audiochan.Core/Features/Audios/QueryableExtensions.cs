@@ -48,7 +48,7 @@ namespace Audiochan.Core.Features.Audios
 
         public static IQueryable<Audio> Sort(this IQueryable<Audio> queryable, string sort)
         {
-            return sort.ToLower() switch
+            return (sort?.ToLower() ?? "") switch
             {
                 "favorites" => queryable.OrderByDescending(a => a.Favorited.Count)
                     .ThenByDescending(a => a.Created),

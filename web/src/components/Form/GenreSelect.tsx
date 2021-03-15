@@ -1,5 +1,6 @@
 import {
   FormControl,
+  FormControlProps,
   FormErrorMessage,
   FormLabel,
   Select,
@@ -21,7 +22,7 @@ interface GenreSelectProps {
   addAllGenres?: boolean;
 }
 
-const GenreSelect: React.FC<GenreSelectProps> = ({
+const GenreSelect: React.FC<GenreSelectProps & FormControlProps> = ({
   name,
   value,
   onChange,
@@ -32,6 +33,7 @@ const GenreSelect: React.FC<GenreSelectProps> = ({
   addAllGenres = false,
   required = false,
   disabled = false,
+  ...otherProps
 }) => {
   const [genres, setGenres] = useState<Genre[]>([]);
 
@@ -49,10 +51,10 @@ const GenreSelect: React.FC<GenreSelectProps> = ({
 
   return (
     <FormControl
-      paddingY={2}
       id={name}
       isRequired={required}
       isInvalid={!!error}
+      {...otherProps}
     >
       {label && <FormLabel>Genre</FormLabel>}
       <Select

@@ -6,13 +6,15 @@ import Container from "~/components/Container";
 
 interface PageProps {
   title?: string;
-  useHeader?: boolean;
+  removeHeader?: boolean;
+  removeSearchBar?: boolean;
   beforeContainer?: React.ReactNode;
 }
 
 const Page: React.FC<PageProps> = ({
   title = "Audiochan",
-  useHeader = true,
+  removeHeader = false,
+  removeSearchBar = false,
   beforeContainer,
   children,
   ...props
@@ -23,7 +25,7 @@ const Page: React.FC<PageProps> = ({
         <title>{title}</title>
       </Head>
       <Box boxShadow="md">
-        {useHeader && <Header />}
+        {!removeHeader && <Header removeSearchBar={removeSearchBar} />}
         {beforeContainer}
       </Box>
       <Container pb="120px" pt={8} {...props}>

@@ -33,14 +33,21 @@ namespace Audiochan.Infrastructure.Search
         {
             var currentUserId = _currentUserService.GetUserId();
 
-            return await _dbContext.Audios
+            var queryable = _dbContext.Audios
                 .DefaultQueryable(currentUserId)
-                .Where(a => EF.Functions.ILike(a.Title, $"%{query.Q}%"))
                 .FilterByGenre(query.Genre)
-                .FilterByTags(query.Tags, ",")
+                .FilterByTags(query.Tags, ",");
+
+            if (!string.IsNullOrWhiteSpace(query.Q))
+                queryable = queryable.Where(a => EF.Functions
+                    .ILike(a.Title, $"%{query.Q.Trim()}%"));
+
+            var result = await queryable
                 .Sort(query.Sort)
                 .ProjectTo<AudioViewModel>(_mapper.ConfigurationProvider, new {currentUserId})
                 .PaginateAsync(query, cancellationToken);
+
+            return result;
         }
 
         public async Task<PagedList<UserViewModel>> SearchUsers(SearchUsersQuery query,

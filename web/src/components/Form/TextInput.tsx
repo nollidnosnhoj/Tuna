@@ -11,6 +11,7 @@ interface InputFieldProps {
   name: string;
   value: string;
   onChange: (e: React.ChangeEvent) => void;
+  size?: (string & {}) | "lg" | "md" | "sm" | "xs";
   type?: string;
   error?: string;
   label?: string;
@@ -27,6 +28,7 @@ const TextInput: React.FC<InputFieldProps> = ({
   label,
   placeholder,
   error,
+  size,
   type = "text",
   required = false,
   textArea = false,
@@ -56,6 +58,7 @@ const TextInput: React.FC<InputFieldProps> = ({
           onChange={onChange}
           placeholder={placeholder}
           disabled={disabled}
+          size={size}
         />
       )}
       <FormErrorMessage>{error}</FormErrorMessage>

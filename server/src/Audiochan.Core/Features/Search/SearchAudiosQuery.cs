@@ -10,8 +10,8 @@ namespace Audiochan.Core.Features.Search
 {
     public record SearchAudiosQuery : AudioListQueryRequest
     {
-        public string Q { get; init; }
-        public string Tags { get; init; }
+        public string Q { get; init; } = string.Empty;
+        public string Tags { get; init; } = string.Empty;
     }
 
     public class SearchAudiosQueryHandler : IRequestHandler<SearchAudiosQuery, PagedList<AudioViewModel>>

@@ -90,6 +90,7 @@ export default function AudioUpload(props: AudioUploadProps) {
               onChange={handleChange}
               error={errors.genre}
               placeholder="No Genre Selected"
+              paddingY={2}
             />
             <TagInput
               name="tags"

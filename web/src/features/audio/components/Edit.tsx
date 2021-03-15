@@ -147,6 +147,7 @@ const AudioEditModal: React.FC<AudioEditProps> = ({
               error={errors.genre}
               placeholder="Select Genre"
               disabled={isSubmitting}
+              paddingY={2}
             />
             <TagInput
               name="tags"
