@@ -1,12 +1,13 @@
 import { Box, HStack, Spacer } from "@chakra-ui/layout";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import queryString from "query-string";
 import GenreSelect from "~/components/Form/GenreSelect";
 import Page from "~/components/Page";
-import AudioInfiniteList from "~/features/audio/components/List/AudioInfiniteList";
 import AudioListSubHeader from "~/features/audio/components/ListSubheader";
+import AudioList from "~/features/audio/components/List";
+import { useAudiosInfinite } from "~/features/audio/hooks/queries";
 
 type SortState = "latest" | "favorites";
 
@@ -73,6 +74,13 @@ export default function AudioListPage(props: AudioListPageProps) {
       "",
   }));
 
+  const {
+    items: audios,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useAudiosInfinite("audios", { ...listFilter, sort });
+
   const handleChange = useCallback((newFilter: AudioListFilter) => {
     const mergedFilter = { ...listFilter, ...newFilter };
     router.replace(
@@ -84,8 +92,6 @@ export default function AudioListPage(props: AudioListPageProps) {
     );
     setListFilter(mergedFilter);
   }, []);
-
-  useEffect(() => {});
 
   return (
     <Page
@@ -103,7 +109,13 @@ export default function AudioListPage(props: AudioListPageProps) {
           />
         </Box>
       </HStack>
-      <AudioInfiniteList queryParams={{ ...listFilter, sort }} size={15} />
+      <AudioList
+        audios={audios}
+        type="infinite"
+        fetchNext={fetchNextPage}
+        hasNext={hasNextPage}
+        isFetching={isFetchingNextPage}
+      />
     </Page>
   );
 }

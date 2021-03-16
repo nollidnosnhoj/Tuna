@@ -18,7 +18,8 @@ import {
 } from "@chakra-ui/react";
 import TextInput from "~/components/Form/TextInput";
 import TagInput from "~/components/Form/TagInput";
-import AudioInfiniteList from "~/features/audio/components/List/AudioInfiniteList";
+import AudioList from "~/features/audio/components/List";
+import { useAudiosInfinite } from "~/features/audio/hooks/queries";
 
 type AudioSearchQuery = {
   q?: string;
@@ -74,6 +75,13 @@ export default function AudioSearchPage() {
     }),
     [params]
   );
+
+  const {
+    items: audios,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useAudiosInfinite("search/audios", queryParams);
 
   return (
     <Page removeSearchBar>
@@ -145,7 +153,13 @@ export default function AudioSearchPage() {
           </Flex>
         </form>
       </Box>
-      <AudioInfiniteList queryKey="search/audios" queryParams={queryParams} />
+      <AudioList
+        type="infinite"
+        audios={audios}
+        fetchNext={fetchNextPage}
+        hasNext={hasNextPage}
+        isFetching={isFetchingNextPage}
+      />
     </Page>
   );
 }
