@@ -1,10 +1,11 @@
 import { ButtonGroup, IconButton } from "@chakra-ui/button";
-import { Box, Flex } from "@chakra-ui/layout";
+import { Box, Flex, SimpleGrid } from "@chakra-ui/layout";
 import { Tooltip } from "@chakra-ui/tooltip";
 import React, { useCallback, useState } from "react";
 import { FaList } from "react-icons/fa";
 import { IoMdGrid } from "react-icons/io";
 import { Audio } from "../../types";
+import AudioGridItem from "./GridItem";
 import AudioListItem from "./ListItem";
 
 type AudioListLayout = "list" | "grid";
@@ -59,15 +60,21 @@ export default function AudioList(props: AudioListProps) {
       )}
       <Box>
         {audios.length === 0 && notFoundContent}
-        {audios.length > 0 &&
-          audios.map((audio, index) => {
-            switch (layout) {
-              case "list":
-                return <AudioListItem key={index} audio={audio} />;
-              case "grid":
-                throw new Error("Grid item has not been implemented.");
-            }
-          })}
+        {audios.length > 0 && (
+          <React.Fragment>
+            {layout === "list" &&
+              audios.map((audio, index) => (
+                <AudioListItem key={index} audio={audio} />
+              ))}
+            {layout === "grid" && (
+              <SimpleGrid columns={[2, null, 5]} spacing={4}>
+                {audios.map((audio, index) => (
+                  <AudioGridItem key={index} audio={audio} />
+                ))}
+              </SimpleGrid>
+            )}
+          </React.Fragment>
+        )}
       </Box>
     </Box>
   );

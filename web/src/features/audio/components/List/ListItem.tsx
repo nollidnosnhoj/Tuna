@@ -12,7 +12,8 @@ import {
   Text,
   Tooltip,
 } from "@chakra-ui/react";
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
+import Router from "next/router";
 import { Audio } from "~/features/audio/types";
 import { formatDuration } from "~/utils/time";
 import Link from "~/components/Link";
@@ -22,8 +23,10 @@ import { useAudioFavorite } from "../../hooks/mutations";
 import { AiFillHeart } from "react-icons/ai";
 import { HiDotsVertical } from "react-icons/hi";
 import useUser from "~/hooks/useUser";
+import { errorToast } from "~/utils/toast";
+import { MdQueueMusic } from "react-icons/md";
 
-interface AudioListItemProps {
+export interface AudioListItemProps {
   audio: Audio;
   isPlaying?: boolean;
   onPlayClick?: () => void;
@@ -108,13 +111,16 @@ const AudioListItem: React.FC<AudioListItemProps> = ({
                 Actions
               </MenuButton>
               <MenuList>
-                <MenuItem
-                  onClick={() => favorite()}
-                  icon={<AiFillHeart />}
-                  disabled={isFavoriteLoading}
-                >
-                  {isFavorite ? "Unfavorite" : "Favorite"}
-                </MenuItem>
+                {currentUser && (
+                  <MenuItem
+                    onClick={() => favorite()}
+                    icon={<AiFillHeart />}
+                    disabled={isFavoriteLoading}
+                  >
+                    {isFavorite ? "Unfavorite" : "Favorite"}
+                  </MenuItem>
+                )}
+                <MenuItem icon={<MdQueueMusic />}>Add To Queue</MenuItem>
               </MenuList>
             </Menu>
           </Box>
