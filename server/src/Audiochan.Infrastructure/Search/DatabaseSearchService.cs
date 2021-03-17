@@ -6,6 +6,8 @@ using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Features.Audios;
 using Audiochan.Core.Features.Audios.GetAudioList;
 using Audiochan.Core.Features.Search;
+using Audiochan.Core.Features.Search.SearchAudios;
+using Audiochan.Core.Features.Search.SearchUsers;
 using Audiochan.Core.Features.Users.GetUser;
 using Audiochan.Core.Interfaces;
 using AutoMapper;

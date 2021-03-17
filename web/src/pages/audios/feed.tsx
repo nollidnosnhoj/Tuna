@@ -40,7 +40,7 @@ export default function AudioFeedPage(props: AudioFeedPageProps) {
         audios={audios}
         type="infinite"
         fetchNext={fetchNextPage}
-        hasNext={hasNextPage}
+        hasNextPage={hasNextPage}
         isFetching={isFetchingNextPage}
       />
     </Page>

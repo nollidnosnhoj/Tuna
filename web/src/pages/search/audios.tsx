@@ -1,9 +1,8 @@
 import { useRouter } from "next/router";
 import React, { useMemo, useState } from "react";
-import queryString from "query-string";
-import Page from "~/components/Page";
 import { useFormik } from "formik";
 import { Box, Flex, HStack } from "@chakra-ui/layout";
+import Page from "~/components/Page";
 import GenreSelect from "~/components/Form/GenreSelect";
 import {
   Accordion,
@@ -14,6 +13,7 @@ import {
   Button,
   FormControl,
   FormLabel,
+  Heading,
   Select,
 } from "@chakra-ui/react";
 import TextInput from "~/components/Form/TextInput";
@@ -21,7 +21,7 @@ import TagInput from "~/components/Form/TagInput";
 import AudioList from "~/features/audio/components/List";
 import { useAudiosInfinite } from "~/features/audio/hooks/queries";
 
-type AudioSearchQuery = {
+type AudioSearchValues = {
   q?: string;
   genre?: string;
   sort?: string;
@@ -32,7 +32,7 @@ export default function AudioSearchPage() {
   const router = useRouter();
   const { query } = router;
 
-  const [params, setParams] = useState<AudioSearchQuery>(() => ({
+  const [searchValues, setSearchValues] = useState<AudioSearchValues>(() => ({
     q: (Array.isArray(query["q"]) ? query["q"][0] : query["q"]) || "",
     genre:
       (Array.isArray(query["sort"]) ? query["sort"][0] : query["sort"]) || "",
@@ -45,35 +45,27 @@ export default function AudioSearchPage() {
       : [],
   }));
 
-  const formik = useFormik<AudioSearchQuery>({
-    initialValues: params,
+  const formik = useFormik<AudioSearchValues>({
+    initialValues: searchValues,
     onSubmit: (values) => {
-      setParams(values);
-      const qs = queryString.stringify({
-        ...values,
-        tags: values.tags?.join(","),
-      });
-      router.replace(`/search/audios?${qs}`, undefined, {
-        shallow: true,
-      });
+      setSearchValues(values);
     },
   });
 
   const {
     handleChange,
     handleSubmit,
-    values,
-    errors,
-    isSubmitting,
+    values: formValues,
+    errors: formErrors,
     setFieldValue,
   } = formik;
 
   const queryParams = useMemo(
     () => ({
-      ...params,
-      tags: params.tags?.join(","),
+      ...searchValues,
+      tags: searchValues.tags?.join(","),
     }),
-    [params]
+    [searchValues]
   );
 
   const {
@@ -84,13 +76,16 @@ export default function AudioSearchPage() {
   } = useAudiosInfinite("search/audios", queryParams);
 
   return (
-    <Page removeSearchBar>
+    <Page title="Search audios | Audiochan" removeSearchBar>
+      <Heading>
+        Search {searchValues.q ? `results for ${searchValues.q}` : ""}
+      </Heading>
       <Box>
         <form onSubmit={handleSubmit}>
           <FormControl id="q">
             <TextInput
               name="q"
-              value={values.q ?? ""}
+              value={formValues.q ?? ""}
               onChange={handleChange}
               placeholder="Search..."
               size="lg"
@@ -109,26 +104,26 @@ export default function AudioSearchPage() {
               <AccordionPanel>
                 <TagInput
                   name="tags"
-                  value={values.tags ?? []}
+                  value={formValues.tags ?? []}
                   onAdd={(tag) => {
-                    setFieldValue("tags", [...(values.tags ?? []), tag]);
+                    setFieldValue("tags", [...(formValues.tags ?? []), tag]);
                   }}
                   onRemove={(index) => {
                     setFieldValue(
                       "tags",
-                      values.tags?.filter((_, i) => i !== index)
+                      formValues.tags?.filter((_, i) => i !== index)
                     );
                   }}
-                  error={errors.tags}
+                  error={formErrors.tags}
                 />
                 <HStack spacing={4}>
                   <Box>
                     <GenreSelect
                       name="genre"
                       label="Genre"
-                      value={values.genre ?? ""}
+                      value={formValues.genre ?? ""}
                       onChange={handleChange}
-                      error={errors.genre}
+                      error={formErrors.genre}
                       placeholder="No Genre"
                     />
                   </Box>
@@ -137,7 +132,7 @@ export default function AudioSearchPage() {
                       <FormLabel>Sort</FormLabel>
                       <Select
                         name="sort"
-                        value={values.sort}
+                        value={formValues.sort}
                         onChange={handleChange}
                       >
                         <option value="latest">Latest</option>
@@ -156,7 +151,7 @@ export default function AudioSearchPage() {
       <AudioList
         type="infinite"
         audios={audios}
-        fetchNext={fetchNextPage}
+        fetchPage={fetchNextPage}
         hasNext={hasNextPage}
         isFetching={isFetchingNextPage}
       />

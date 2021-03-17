@@ -4,7 +4,7 @@ import React from "react";
 type InfiniteListControlsProps = {
   hasNext?: boolean;
   isFetching?: boolean;
-  fetchNext: () => void;
+  fetchNext?: () => void;
 };
 
 export default function InfiniteListControls(props: InfiniteListControlsProps) {

@@ -113,7 +113,7 @@ export default function AudioListPage(props: AudioListPageProps) {
         audios={audios}
         type="infinite"
         fetchNext={fetchNextPage}
-        hasNext={hasNextPage}
+        hasNextPage={hasNextPage}
         isFetching={isFetchingNextPage}
       />
     </Page>

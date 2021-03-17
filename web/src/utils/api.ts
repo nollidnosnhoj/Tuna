@@ -39,6 +39,11 @@ interface RequestConfiguration {
   skipAuthRefresh?: boolean;
 }
 
+function constructRouteWithQueryParams(route: string, params: Record<string, any> = {}) {
+  if (Object.keys(params).length === 0) return route;
+  return `${route}?${queryString.stringify(params)}`
+}
+
 function constructRequestConfiguration(config?: RequestConfiguration): AxiosAuthRefreshRequestConfig {
   function constructAuthorizationHeader(accessToken?: string) {
     if (!accessToken) return {};
@@ -58,8 +63,8 @@ function constructRequestConfiguration(config?: RequestConfiguration): AxiosAuth
   }
 }
 
-function getRequest<TResponse = any>(route: string, config?: RequestConfiguration) {
-  return backendApiClient.get<TResponse>(route, constructRequestConfiguration(config));
+function getRequest<TResponse = any>(route: string, params: Record<string,any> = {}, config?: RequestConfiguration) {
+  return backendApiClient.get<TResponse>(constructRouteWithQueryParams(route, params), constructRequestConfiguration(config));
 }
 
 function headRequest(route: string, config?: RequestConfiguration) {
@@ -95,18 +100,17 @@ export interface FetchAudioOptions {
   accessToken?: string;
 }
 
-export function fetch<TResponse>(route: string, options: FetchAudioOptions = {}) {
+export function fetch<TResponse>(route: string, params: Record<string, any> = {}, options: FetchAudioOptions = {}) {
   const accessToken = options.accessToken || getAccessToken();
   return new Promise<TResponse>((resolve, reject) => {
-    getRequest(route, {accessToken}).then(({ data }) => {
+    getRequest(route, params, {accessToken}).then(({ data }) => {
       resolve(data)
     }).catch(err => reject(err));
   })
 }
 
 export const fetchPages = async <TData>(key: string, params: Record<string, any>, page: number = 1, options: FetchAudioOptions = {}) => {
-  const qs = `?page=${page}&${queryString.stringify(params)}`
-  const { data } = await getRequest<PagedList<TData>>(key + qs, {
+  const { data } = await getRequest<PagedList<TData>>(key, { ...params, page }, {
     accessToken: options.accessToken
   });
   return data;

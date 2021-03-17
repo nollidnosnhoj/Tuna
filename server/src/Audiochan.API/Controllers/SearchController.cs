@@ -2,7 +2,9 @@
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Features.Audios.GetAudio;
-using Audiochan.Core.Features.Search;
+using Audiochan.Core.Features.Search.SearchAll;
+using Audiochan.Core.Features.Search.SearchAudios;
+using Audiochan.Core.Features.Search.SearchUsers;
 using Audiochan.Core.Features.Users.GetUser;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -19,6 +21,15 @@ namespace Audiochan.API.Controllers
         public SearchController(IMediator mediator)
         {
             _mediator = mediator;
+        }
+
+        [HttpGet]
+        [ProducesResponseType(typeof(PagedList<AudioDetailViewModel>), StatusCodes.Status200OK)]
+        [SwaggerOperation(Summary = "Search for all", OperationId = "SearchAll", Tags = new[] {"search"})]
+        public async Task<IActionResult> Search([FromQuery] SearchAllQuery query, CancellationToken cancellationToken)
+        {
+            var results = await _mediator.Send(query, cancellationToken);
+            return new JsonResult(results);
         }
 
         [HttpGet("audios")]

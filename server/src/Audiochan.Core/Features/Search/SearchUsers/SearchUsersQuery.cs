@@ -6,7 +6,7 @@ using Audiochan.Core.Features.Users.GetUser;
 using Audiochan.Core.Interfaces;
 using MediatR;
 
-namespace Audiochan.Core.Features.Search
+namespace Audiochan.Core.Features.Search.SearchUsers
 {
     public record SearchUsersQuery : PaginationQueryRequest<UserViewModel>
     {

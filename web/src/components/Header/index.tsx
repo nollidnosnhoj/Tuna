@@ -56,9 +56,10 @@ const Header: React.FC<HeaderProps> = (props) => {
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       e.preventDefault();
+      if (!searchTerm) return;
       const { query } = router;
       const qs = queryString.stringify({ ...query, q: searchTerm });
-      Router.push("/search/audios?" + qs);
+      Router.push("/search?" + qs);
     }
   };
 
@@ -146,21 +147,23 @@ const Header: React.FC<HeaderProps> = (props) => {
               </Heading>
             </Box>
           </Flex>
-          <Box marginX={8} width="full">
-            {!props.removeSearchBar && (
-              <Input
-                size="lg"
-                variant="filled"
-                placeholder="Search..."
-                value={searchTerm}
-                onChange={handleSearchChange}
-                onKeyDown={handleKeyDown}
-                _hover={{
-                  boxShadow: "md",
-                }}
-              />
-            )}
-          </Box>
+          <Flex marginX={8} justify="center" width="full">
+            <Box width="100%">
+              {!props.removeSearchBar && (
+                <Input
+                  size="lg"
+                  variant="filled"
+                  placeholder="Search..."
+                  value={searchTerm}
+                  onChange={handleSearchChange}
+                  onKeyDown={handleKeyDown}
+                  _hover={{
+                    boxShadow: "md",
+                  }}
+                />
+              )}
+            </Box>
+          </Flex>
           <HStack
             spacing={4}
             marginRight={{ base: 2, md: 8 }}

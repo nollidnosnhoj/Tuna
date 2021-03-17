@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Audiochan.Core.Common.Helpers;
 using Audiochan.Core.Features.Audios.CreateAudio;
 using Audiochan.Core.Features.Search;
+using Audiochan.Core.Features.Search.SearchAudios;
 using Audiochan.Core.UnitTests.Builders;
 using Bogus;
 using FluentAssertions;

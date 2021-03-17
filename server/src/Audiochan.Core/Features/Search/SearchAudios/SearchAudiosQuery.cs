@@ -6,7 +6,7 @@ using Audiochan.Core.Features.Audios.GetAudioList;
 using Audiochan.Core.Interfaces;
 using MediatR;
 
-namespace Audiochan.Core.Features.Search
+namespace Audiochan.Core.Features.Search.SearchAudios
 {
     public record SearchAudiosQuery : AudioListQueryRequest
     {

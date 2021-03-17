@@ -22,7 +22,7 @@ export default function UserFavoriteAudioList(
       type="infinite"
       audios={audios}
       fetchNext={fetchNextPage}
-      hasNext={hasNextPage}
+      hasNextPage={hasNextPage}
       isFetching={isFetchingNextPage}
     />
   );
