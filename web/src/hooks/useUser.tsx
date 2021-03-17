@@ -2,5 +2,7 @@ import { useContext } from "react";
 import { UserContext } from "../contexts/userContext";
 
 export default function useUser() {
-  return useContext(UserContext);
+  let context = useContext(UserContext);
+  if (!context) throw new Error("Please implement UserProvider.");
+  return context;
 }

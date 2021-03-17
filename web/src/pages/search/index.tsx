@@ -12,6 +12,7 @@ import { Profile } from "~/features/user/types";
 import { useFormik } from "formik";
 import { Button, Flex, FormControl } from "@chakra-ui/react";
 import TextInput from "~/components/Form/TextInput";
+import InfiniteListControls from "~/components/List/InfiniteListControls";
 
 type SearchValues = { q: string };
 
@@ -104,7 +105,7 @@ export default function SearchPage(props: SearchValues) {
                 <Heading as="h2" size="lg">
                   Audios
                 </Heading>
-                <AudioList audios={audios} isFetching={isFetching} />
+                <AudioList audios={audios} />
               </Box>
             )}
           </React.Fragment>

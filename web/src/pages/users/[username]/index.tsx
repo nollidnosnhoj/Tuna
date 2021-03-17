@@ -28,6 +28,7 @@ import { isAxiosError } from "~/utils/axios";
 import { ErrorResponse } from "~/lib/types";
 import { errorToast } from "~/utils/toast";
 import PictureDropzone from "~/components/Picture/PictureDropzone";
+import { Audio } from "~/features/audio/types";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const queryClient = new QueryClient();
@@ -71,19 +72,17 @@ export default function ProfilePage() {
   return (
     <Page title={`${profile.username} | Audiochan`}>
       <Flex direction="row">
-        <Flex flex="1" direction="column" justify="center">
+        <Flex flex="1" direction="column" align="center">
           <Box textAlign="center">
-            <VStack>
-              <PictureDropzone
-                disabled={isAddingPicture && user?.id === profile.id}
-                onChange={async (imageData) => {
-                  const { data } = await addPictureAsync(imageData);
-                  setPicture(data.image);
-                }}
-              >
-                <Picture source={picture} imageSize={250} />
-              </PictureDropzone>
-            </VStack>
+            <PictureDropzone
+              disabled={isAddingPicture && user?.id === profile.id}
+              onChange={async (imageData) => {
+                const { data } = await addPictureAsync(imageData);
+                setPicture(data.image);
+              }}
+            >
+              <Picture source={picture} imageSize={250} />
+            </PictureDropzone>
           </Box>
           <Box textAlign="center" marginY={4}>
             <Text fontSize="2xl" as="strong">

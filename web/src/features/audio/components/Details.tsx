@@ -83,7 +83,7 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
 
   return (
     <Flex marginBottom={4} justifyContent="center">
-      <Box flex="1">
+      <Box flex="1" marginRight={4}>
         <PictureDropzone
           disabled={isAddingArtwork && currentUser?.id === audio.user.id}
           onChange={async (croppedData) => {

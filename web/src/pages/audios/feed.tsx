@@ -1,5 +1,6 @@
 import { GetServerSideProps } from "next";
 import React from "react";
+import InfiniteListControls from "~/components/List/InfiniteListControls";
 import Page from "~/components/Page";
 import AudioList from "~/features/audio/components/List";
 import AudioListSubHeader from "~/features/audio/components/ListSubheader";
@@ -36,11 +37,10 @@ export default function AudioFeedPage(props: AudioFeedPageProps) {
       title="Your Feed"
       beforeContainer={<AudioListSubHeader current="feed" />}
     >
-      <AudioList
-        audios={audios}
-        type="infinite"
+      <AudioList audios={audios} />
+      <InfiniteListControls
         fetchNext={fetchNextPage}
-        hasNextPage={hasNextPage}
+        hasNext={hasNextPage}
         isFetching={isFetchingNextPage}
       />
     </Page>

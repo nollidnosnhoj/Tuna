@@ -20,6 +20,7 @@ import TextInput from "~/components/Form/TextInput";
 import TagInput from "~/components/Form/TagInput";
 import AudioList from "~/features/audio/components/List";
 import { useAudiosInfinite } from "~/features/audio/hooks/queries";
+import InfiniteListControls from "~/components/List/InfiniteListControls";
 
 type AudioSearchValues = {
   q?: string;
@@ -148,10 +149,9 @@ export default function AudioSearchPage() {
           </Flex>
         </form>
       </Box>
-      <AudioList
-        type="infinite"
-        audios={audios}
-        fetchPage={fetchNextPage}
+      <AudioList audios={audios} />
+      <InfiniteListControls
+        fetchNext={fetchNextPage}
         hasNext={hasNextPage}
         isFetching={isFetchingNextPage}
       />

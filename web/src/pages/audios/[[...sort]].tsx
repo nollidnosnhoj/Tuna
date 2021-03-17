@@ -8,6 +8,7 @@ import Page from "~/components/Page";
 import AudioListSubHeader from "~/features/audio/components/ListSubheader";
 import AudioList from "~/features/audio/components/List";
 import { useAudiosInfinite } from "~/features/audio/hooks/queries";
+import InfiniteListControls from "~/components/List/InfiniteListControls";
 
 type SortState = "latest" | "favorites";
 
@@ -109,11 +110,10 @@ export default function AudioListPage(props: AudioListPageProps) {
           />
         </Box>
       </HStack>
-      <AudioList
-        audios={audios}
-        type="infinite"
+      <AudioList audios={audios} />
+      <InfiniteListControls
         fetchNext={fetchNextPage}
-        hasNextPage={hasNextPage}
+        hasNext={hasNextPage}
         isFetching={isFetchingNextPage}
       />
     </Page>
