@@ -54,14 +54,7 @@ const AudioListItem: React.FC<AudioListItemProps> = ({
   }, [audio.picture]);
 
   return (
-    <Box
-      as="article"
-      display="flex"
-      borderWidth="1px"
-      marginBottom={4}
-      overflow="hidden"
-      boxShadow="md"
-    >
+    <Box as="article" display="flex" marginBottom={4}>
       <Picture source={picture} imageSize={100} isLazy borderRightWidth={1} />
       <Flex width="100%" align="center" mx={4}>
         <Flex flex="3">

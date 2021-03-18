@@ -1,6 +1,14 @@
-import { Box, Heading, Text } from "@chakra-ui/layout";
+import {
+  Button,
+  Flex,
+  FormControl,
+  useColorMode,
+  Box,
+  Heading,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
-import Router from "next/router";
 import React, { useMemo, useState } from "react";
 import { useQuery } from "react-query";
 import Page from "~/components/Page";
@@ -10,9 +18,8 @@ import { PagedList } from "~/lib/types";
 import { Audio } from "~/features/audio/types";
 import { Profile } from "~/features/user/types";
 import { useFormik } from "formik";
-import { Button, Flex, FormControl } from "@chakra-ui/react";
 import TextInput from "~/components/Form/TextInput";
-import InfiniteListControls from "~/components/List/InfiniteListControls";
+import { SearchIcon } from "@chakra-ui/icons";
 
 type SearchValues = { q: string };
 
@@ -38,6 +45,8 @@ type SearchResponse = {
 };
 
 export default function SearchPage(props: SearchValues) {
+  const { colorMode } = useColorMode();
+
   const [searchValues, setSearchValues] = useState<SearchValues>(props);
 
   const formik = useFormik<SearchValues>({
@@ -93,13 +102,14 @@ export default function SearchPage(props: SearchValues) {
           </form>
         </Box>
         {!searchValues.q && (
-          <Box>
-            <Text>Search for anything here.</Text>
-          </Box>
+          <VStack align="center" paddingTop={20}>
+            <SearchIcon fontSize={100} />
+            <Text fontSize={20}>Search for audios, users, etc. here</Text>
+          </VStack>
         )}
         {data && (
           <React.Fragment>
-            {noResultsFound && <Text>hahaha</Text>}
+            {noResultsFound && <Text>No results found.</Text>}
             {audios.length > 0 && (
               <Box>
                 <Heading as="h2" size="lg">
