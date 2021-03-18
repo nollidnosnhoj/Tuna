@@ -128,10 +128,9 @@ const Header: React.FC<HeaderProps> = (props) => {
             <IconButton
               variant="ghost"
               size="lg"
-              icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
+              icon={<HamburgerIcon />}
               aria-label="Open menu"
-              // display={{ md: !isOpen ? "none" : "inherit" }}
-              onClick={isOpen ? onClose : onOpen}
+              onClick={onOpen}
               position="relative"
             />
             <Box display={{ base: "none", md: "flex" }} marginLeft={14}>
