@@ -89,38 +89,34 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
         public async Task<Result<AudioDetailViewModel>> Handle(CreateAudioCommand request,
             CancellationToken cancellationToken)
         {
-            var currentUserId = _currentUserService.GetUserId();
+            var currentUser = await _dbContext.Users
+                .SingleOrDefaultAsync(u => u.Id == _currentUserService.GetUserId(), cancellationToken);
 
-            var audio = new Audio(request.UploadId, request.FileName, request.FileSize, request.Duration,
-                currentUserId);
+            if (currentUser is null)
+                return Result<AudioDetailViewModel>.Fail(ResultError.Unauthorized);
+
+            var audio = new Audio(request.UploadId, request.FileName, request.FileSize, request.Duration, currentUser.Id);
 
             audio.UpdateTitle(request.Title);
             audio.UpdateDescription(request.Description);
             audio.UpdatePublicStatus(request.IsPublic ?? true);
 
-            if (!await CheckIfAudioBlobExists(audio, cancellationToken))
-                return Result<AudioDetailViewModel>.Fail(ResultError.BadRequest, "Cannot find audio in storage.");
-
             try
             {
                 var genre = await _genreRepository.GetByInput(request.Genre, cancellationToken);
                 audio.UpdateGenre(genre);
-
-                var tags = request.Tags.Count > 0
+                
+                audio.UpdateTags(request.Tags.Count > 0
                     ? await _tagRepository.CreateTags(request.Tags, cancellationToken)
-                    : new List<Tag>();
-                audio.UpdateTags(tags);
+                    : new List<Tag>());
 
                 await _dbContext.Audios.AddAsync(audio, cancellationToken);
                 await _dbContext.SaveChangesAsync(cancellationToken);
 
-                var currentUser = await _dbContext.Users
-                    .SingleOrDefaultAsync(u => u.Id == currentUserId, cancellationToken);
-
                 var viewModel = _mapper.Map<AudioDetailViewModel>(audio) with
                 {
                     User = new UserDto(currentUser.Id, currentUser.UserName, currentUser.Picture),
-                    IsFavorited = audio.Favorited.Any(x => x.UserId == currentUserId)
+                    IsFavorited = audio.Favorited.Any(x => x.UserId == currentUser.Id)
                 };
 
                 return Result<AudioDetailViewModel>.Success(viewModel);
@@ -131,14 +127,6 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
                     cancellationToken);
                 throw;
             }
-        }
-
-        private async Task<bool> CheckIfAudioBlobExists(Audio audio, CancellationToken cancellationToken = default)
-        {
-            return await _storageService.ExistsAsync(
-                container: _audioStorageOptions.Container,
-                blobName: BlobHelpers.GetAudioBlobName(audio),
-                cancellationToken);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Helpers;
@@ -47,7 +48,12 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
             var blobName = BlobHelpers.GetPictureBlobName(_dateTimeService.Now);
             try
             {
-                var currentUserId = _currentUserService.GetUserId();
+                var currentUserId = await _dbContext.Users
+                    .Select(u => u.Id)
+                    .SingleOrDefaultAsync(id => id == _currentUserService.GetUserId(), cancellationToken);
+
+                if (string.IsNullOrEmpty(currentUserId))
+                    return Result<string>.Fail(ResultError.Unauthorized);
 
                 var audio = await _dbContext.Audios
                     .SingleOrDefaultAsync(a => a.Id == request.Id, cancellationToken);

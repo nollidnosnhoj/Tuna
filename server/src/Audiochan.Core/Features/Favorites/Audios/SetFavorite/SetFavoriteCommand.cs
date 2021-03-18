@@ -14,12 +14,10 @@ namespace Audiochan.Core.Features.Favorites.Audios.SetFavorite
     public class SetFavoriteCommandHandler : IRequestHandler<SetFavoriteCommand, IResult<bool>>
     {
         private readonly IApplicationDbContext _dbContext;
-        private readonly ICurrentUserService _currentUserService;
 
-        public SetFavoriteCommandHandler(IApplicationDbContext dbContext, ICurrentUserService currentUserService)
+        public SetFavoriteCommandHandler(IApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
-            _currentUserService = currentUserService;
         }
 
 

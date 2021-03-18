@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Helpers;
@@ -35,7 +36,12 @@ namespace Audiochan.Core.Features.Audios.RemoveAudio
 
         public async Task<IResult<bool>> Handle(RemoveAudioCommand request, CancellationToken cancellationToken)
         {
-            var currentUserId = _currentUserService.GetUserId();
+            var currentUserId = await _dbContext.Users
+                .Select(u => u.Id)
+                .SingleOrDefaultAsync(id => id == _currentUserService.GetUserId(), cancellationToken);
+
+            if (string.IsNullOrEmpty(currentUserId))
+                return Result<bool>.Fail(ResultError.Unauthorized);
 
             var audio = await _dbContext.Audios
                 .SingleOrDefaultAsync(a => a.Id == request.Id, cancellationToken);

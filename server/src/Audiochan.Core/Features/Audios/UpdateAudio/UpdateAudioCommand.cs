@@ -50,7 +50,12 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
         public async Task<Result<AudioDetailViewModel>> Handle(UpdateAudioCommand request,
             CancellationToken cancellationToken)
         {
-            var currentUserId = _currentUserService.GetUserId();
+            var currentUserId = await _dbContext.Users
+                .Select(u => u.Id)
+                .SingleOrDefaultAsync(id => id == _currentUserService.GetUserId(), cancellationToken);
+
+            if (string.IsNullOrEmpty(currentUserId))
+                return Result<AudioDetailViewModel>.Fail(ResultError.Unauthorized);
 
             var audio = await _dbContext.Audios
                 .Include(a => a.Favorited)
