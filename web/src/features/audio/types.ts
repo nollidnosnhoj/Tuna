@@ -1,7 +1,7 @@
 import { ReactJkMusicPlayerAudioInfo, ReactJkMusicPlayerAudioListProps } from "react-jinke-music-player"
 import { Creator } from "~/lib/types"
 
-export type AudioSearchType = 'audios' | 'favorites' | 'user' | 'feed'
+export type AudioSearchType = 'audios' | 'user' | 'feed'
 
 export type Audio = {
   id: number;
@@ -9,8 +9,6 @@ export type Audio = {
   isPublic: boolean;
   duration: number;
   picture: string;
-  favoriteCount: number;
-  isFavorited: boolean;
   created: string;
   user: Creator;
 }
@@ -26,8 +24,6 @@ export type AudioDetail = {
   fileExt: string;
   url: string;
   picture: string;
-  favoriteCount: number;
-  isFavorited: boolean;
   created: string;
   updated?: string;
   user: Creator;

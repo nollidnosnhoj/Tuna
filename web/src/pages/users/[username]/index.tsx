@@ -21,14 +21,9 @@ import { useProfile } from "~/features/user/hooks/queries";
 import useUser from "~/hooks/useUser";
 import { getAccessToken } from "~/utils/cookies";
 import UserAudioList from "~/features/user/components/UserAudioList";
-import UserFavoriteAudioList from "~/features/user/components/UserFavoriteAudioList";
 import { useAddUserPicture, useFollow } from "~/features/user/hooks/mutations";
 import { fetchUserProfile } from "~/features/user/services/fetch";
-import { isAxiosError } from "~/utils/axios";
-import { ErrorResponse } from "~/lib/types";
-import { errorToast } from "~/utils/toast";
 import PictureDropzone from "~/components/Picture/PictureDropzone";
-import { Audio } from "~/features/audio/types";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const queryClient = new QueryClient();
@@ -107,14 +102,10 @@ export default function ProfilePage() {
           <Tabs isLazy>
             <TabList>
               <Tab>Uploads</Tab>
-              <Tab>Favorites</Tab>
             </TabList>
             <TabPanels>
               <TabPanel>
                 <UserAudioList username={profile.username} />
-              </TabPanel>
-              <TabPanel>
-                <UserFavoriteAudioList username={profile.username} />
               </TabPanel>
             </TabPanels>
           </Tabs>

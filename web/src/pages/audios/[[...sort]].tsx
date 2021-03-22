@@ -9,11 +9,10 @@ import AudioList from "~/features/audio/components/List";
 import { useAudiosInfinite } from "~/features/audio/hooks/queries";
 import InfiniteListControls from "~/components/List/InfiniteListControls";
 
-type SortState = "latest" | "favorites";
+type SortState = "latest";
 
 const sortPageTitles: { [K in SortState]: string } = {
   latest: "Latest Audios",
-  favorites: "Most Liked Audios",
 };
 
 interface AudioListPageProps {
@@ -38,9 +37,6 @@ export const getServerSideProps: GetServerSideProps<AudioListPageProps> = async 
   switch (sortParam) {
     case "latest":
       sort = "latest";
-      break;
-    case "favorites":
-      sort = "favorites";
       break;
     default:
       return {

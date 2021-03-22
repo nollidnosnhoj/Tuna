@@ -18,15 +18,6 @@ export default function AudioListSubHeader(props: { current: string }) {
             Latest
           </Button>
         </NextLink>
-        <NextLink href="/audios/favorites">
-          <Button
-            size="lg"
-            variant="link"
-            colorScheme={props.current === "favorites" ? "primary" : undefined}
-          >
-            Favorites
-          </Button>
-        </NextLink>
         {isLoggedIn && (
           <NextLink href="/audios/feed">
             <Button
