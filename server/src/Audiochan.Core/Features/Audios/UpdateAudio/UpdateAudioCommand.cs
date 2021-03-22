@@ -2,6 +2,7 @@
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Common.Models.Requests;
 using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Features.Audios.GetAudio;
@@ -74,7 +75,12 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
 
             audio.UpdateTitle(request.Title);
             audio.UpdateDescription(request.Description);
-            audio.UpdatePublicStatus(request.IsPublic);
+            audio.UpdatePublicityStatus(request.Publicity);
+            
+            if (audio.Publicity == Publicity.Private)
+                audio.SetPrivateKey();
+            else
+                audio.ClearPrivateKey();
 
             _dbContext.Audios.Update(audio);
             await _dbContext.SaveChangesAsync(cancellationToken);

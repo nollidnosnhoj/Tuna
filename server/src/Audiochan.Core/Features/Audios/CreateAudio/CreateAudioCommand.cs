@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Helpers;
 using Audiochan.Core.Common.Models;
@@ -95,7 +96,10 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
 
             audio.UpdateTitle(request.Title);
             audio.UpdateDescription(request.Description);
-            audio.UpdatePublicStatus(request.IsPublic ?? true);
+            audio.UpdatePublicityStatus(request.Publicity);
+            
+            if (audio.Publicity == Publicity.Private)
+                audio.SetPrivateKey();
 
             try
             {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Common.Helpers;
 using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Features.Audios.CreateAudio;
@@ -26,7 +27,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
         {
             // Assign
             var (ownerId, _) = await _fixture.RunAsDefaultUserAsync();
-            var audio = new AudioBuilder("myaudio.mp3", ownerId).Build();
+            var audio = new AudioBuilder(ownerId, "myaudio.mp3").Build();
             await _fixture.InsertAsync(audio);
 
             // Act
@@ -43,8 +44,8 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
         {
             // Assign
             var (adminId, _) = await _fixture.RunAsAdministratorAsync();
-            var audio = new AudioBuilder(Guid.NewGuid() + ".mp3", adminId)
-                .Public(false)
+            var audio = new AudioBuilder(adminId, Guid.NewGuid() + ".mp3")
+                .Publicity(Publicity.Private)
                 .Build();
             await _fixture.InsertAsync(audio);
 
@@ -64,6 +65,61 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
         }
 
         [Fact]
+        public async Task ShouldGetAudio_WhenAudioIsPrivateAndPrivateKeyIsValid()
+        {
+            var (ownerId, _) = await _fixture.RunAsAdministratorAsync();
+            var privateKey = "test";
+            var audio = new AudioBuilder(ownerId)
+                .Publicity(Publicity.Private, privateKey)
+                .Build();
+            await _fixture.InsertAsync(audio);
+
+            await _fixture.RunAsDefaultUserAsync();
+            var result = await _fixture.SendAsync(new GetAudioQuery(audio.Id, privateKey));
+
+            result.Should().NotBeNull();
+            result.IsSuccess.Should().Be(true);
+            result.Data.Should().NotBeNull();
+            result.Data.Id.Should().Be(audio.Id);
+        }
+        
+        [Fact]
+        public async Task ShouldNotGetAudio_WhenAudioIsPrivateAndPrivateKeyIsInvalid()
+        {
+            var (ownerId, _) = await _fixture.RunAsAdministratorAsync();
+            var privateKey = "test";
+            var audio = new AudioBuilder(ownerId)
+                .Publicity(Publicity.Private, privateKey)
+                .Build();
+            await _fixture.InsertAsync(audio);
+
+            await _fixture.RunAsDefaultUserAsync();
+            var result = await _fixture.SendAsync(new GetAudioQuery(audio.Id));
+
+            result.Should().NotBeNull();
+            result.IsSuccess.Should().Be(false);
+            result.ErrorCode.Should().Be(ResultError.NotFound);
+        }
+
+        [Fact]
+        public async Task ShouldGetAudio_WhenAudioIsUnlisted()
+        {
+            var (ownerId, _) = await _fixture.RunAsAdministratorAsync();
+            var audio = new AudioBuilder(ownerId)
+                .Publicity(Publicity.Unlisted)
+                .Build();
+            await _fixture.InsertAsync(audio);
+
+            await _fixture.RunAsDefaultUserAsync();
+            var result = await _fixture.SendAsync(new GetAudioQuery(audio.Id));
+
+            result.Should().NotBeNull();
+            result.IsSuccess.Should().Be(true);
+            result.Data.Should().NotBeNull();
+            result.Data.Id.Should().Be(audio.Id);
+        }
+
+        [Fact]
         public async Task ShouldGetAudio()
         {
             // Assign
@@ -75,8 +131,8 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
                 FileName = "test.mp3",
                 Duration = 100,
                 FileSize = 100,
-                Genre = "dubstep",
-                Tags = new List<string> {"apples", "oranges"}
+                Tags = new List<string> {"apples", "oranges"},
+                Publicity = "unlisted"
             });
 
             // Act
@@ -90,8 +146,6 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             result.Data.Should().NotBeNull();
             result.Data.Title.Should().Be(audio.Data.Title);
             result.Data.Description.Should().Be(audio.Data.Description);
-            result.Data.Genre.Should().NotBeNull();
-            result.Data.Genre.Slug.Should().Be("dubstep");
             result.Data.Tags.Length.Should().Be(2);
             result.Data.Tags.Should().Contain("apples");
             result.Data.Tags.Should().Contain("oranges");

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Common.Helpers;
 using Audiochan.Core.Entities;
 using Bogus;
@@ -38,9 +39,11 @@ namespace Audiochan.Core.UnitTests.Builders
             return this;
         }
 
-        public AudioBuilder Public(bool isPublic)
+        public AudioBuilder Publicity(Publicity status, string privateKey = "")
         {
-            _audio.IsPublic = isPublic;
+            _audio.Publicity = status;
+            if (_audio.Publicity == Common.Enums.Publicity.Private && !string.IsNullOrEmpty(privateKey))
+                _audio.PrivateKey = privateKey;
             return this;
         }
 

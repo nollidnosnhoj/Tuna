@@ -43,9 +43,9 @@ namespace Audiochan.API.Controllers
         [ProducesResponseType(typeof(AudioDetailViewModel), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
         [SwaggerOperation(Summary = "Return an audio by ID.", OperationId = "GetAudio", Tags = new[] {"audios"})]
-        public async Task<IActionResult> Get(long audioId, CancellationToken cancellationToken)
+        public async Task<IActionResult> Get(long audioId, [FromQuery] string privateKey, CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(new GetAudioQuery(audioId), cancellationToken);
+            var result = await _mediator.Send(new GetAudioQuery(audioId, privateKey), cancellationToken);
             return result.IsSuccess ? Ok(result.Data) : result.ReturnErrorResponse();
         }
         

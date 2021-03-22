@@ -37,7 +37,7 @@ namespace Audiochan.Core.Features.Users.GetUserAudios
         {
             var currentUserId = _currentUserService.GetUserId();
             return await _dbContext.Audios
-                .DefaultQueryable(currentUserId)
+                .DefaultListQueryable(currentUserId)
                 .Where(a => a.User.UserName == request.Username.ToLower())
                 .Sort(request.Sort)
                 .ProjectTo<AudioViewModel>(_mapper.ConfigurationProvider)

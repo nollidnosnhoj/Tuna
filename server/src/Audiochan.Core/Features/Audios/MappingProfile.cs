@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Audios.GetAudio;
@@ -12,6 +13,8 @@ namespace Audiochan.Core.Features.Audios
         public AudioMappingProfile()
         {
             CreateMap<Audio, AudioDetailViewModel>()
+                .ForMember(dest => dest.PrivateKey, opts =>
+                    opts.MapFrom(src => src.Publicity == Publicity.Private ? src.PrivateKey : null))
                 .ForMember(dest => dest.Tags, opts =>
                     opts.MapFrom(src => src.Tags.Select(tag => tag.Id).ToArray()))
                 .ForMember(dest => dest.User, opts =>

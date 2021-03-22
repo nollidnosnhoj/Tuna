@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Entities.Base;
 
@@ -35,7 +36,6 @@ namespace Audiochan.Core.Entities
             this.FileSize = fileSize;
             this.Duration = duration;
             this.UserId = userId;
-            this.IsPublic = true;
 
             this.Title = Path.GetFileNameWithoutExtension(fileName).Truncate(30);
         }
@@ -48,7 +48,8 @@ namespace Audiochan.Core.Entities
         public long FileSize { get; set; }
         public string FileExt { get; set; }
         public string Picture { get; set; }
-        public bool IsPublic { get; set; } = true;
+        public Publicity Publicity { get; set; } = Publicity.Unlisted;
+        public string PrivateKey { get; set; }
         public string UserId { get; set; }
         public User User { get; set; }
         public ICollection<Tag> Tags { get; set; }
@@ -67,12 +68,28 @@ namespace Audiochan.Core.Entities
                 this.Description = description;
         }
 
-        public void UpdatePublicStatus(bool? status)
+        public void UpdatePublicityStatus(Publicity status)
         {
-            if (status.HasValue)
-                this.IsPublic = status.Value;
+            this.Publicity = status;
         }
-        
+
+        public void UpdatePublicityStatus(string status)
+        {
+            var publicity = status.ParseToEnumOrDefault<Publicity>();
+            this.Publicity = publicity;
+        }
+
+        public void SetPrivateKey()
+        {
+            // TODO: Use Nano-id (or shortid)
+            this.PrivateKey = Guid.NewGuid().ToString("N");
+        }
+
+        public void ClearPrivateKey()
+        {
+            this.PrivateKey = null;
+        }
+
         public void UpdateTags(List<Tag> tags)
         {
             if (this.Tags.Count > 0)

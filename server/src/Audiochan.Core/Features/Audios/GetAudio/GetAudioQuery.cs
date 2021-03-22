@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Audios.GetAudio
 {
-    public record GetAudioQuery(long Id) : IRequest<Result<AudioDetailViewModel>>
+    public record GetAudioQuery(long Id, string PrivateKey = "") : IRequest<Result<AudioDetailViewModel>>
     {
     }
 
@@ -33,7 +33,7 @@ namespace Audiochan.Core.Features.Audios.GetAudio
             var currentUserId = _currentUserService.GetUserId();
 
             var audio = await _dbContext.Audios
-                .DefaultQueryable(currentUserId)
+                .DefaultSingleQueryable(request.PrivateKey, currentUserId)
                 .Where(x => x.Id == request.Id)
                 .ProjectTo<AudioDetailViewModel>(_mapper.ConfigurationProvider)
                 .SingleOrDefaultAsync(cancellationToken);

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Constants;
+using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Interfaces;
 using Microsoft.AspNetCore.Identity;
@@ -46,7 +47,8 @@ namespace Audiochan.Infrastructure.Persistence
                     FileExt = ".mp3",
                     FileSize = 9335255,
                     UserId = user.Id,
-                    Tags = await tagRepository.CreateTags(new[] {"chillout", "lucid-dreams"})
+                    Tags = await tagRepository.CreateTags(new[] {"chillout", "lucid-dreams"}),
+                    Publicity = Publicity.Public
                 };
                 var audio2 = new Audio
                 {
@@ -56,7 +58,8 @@ namespace Audiochan.Infrastructure.Persistence
                     FileExt = ".mp3",
                     FileSize = 6239211,
                     UserId = user.Id,
-                    Tags = await tagRepository.CreateTags(new[] {"newgrounds", "piano", "rave"})
+                    Tags = await tagRepository.CreateTags(new[] {"newgrounds", "piano", "rave"}),
+                    Publicity = Publicity.Public
                 };
                 var audio3 = new Audio
                 {
@@ -66,7 +69,8 @@ namespace Audiochan.Infrastructure.Persistence
                     FileExt = ".mp3",
                     FileSize = 1823391,
                     UserId = user.Id,
-                    Tags = await tagRepository.CreateTags(new[] {"happy", "anime", "hardcore", "nightcore"})
+                    Tags = await tagRepository.CreateTags(new[] {"happy", "anime", "hardcore", "nightcore"}),
+                    Publicity = Publicity.Public
                 };
                 var audio4 = new Audio
                 {
@@ -76,7 +80,8 @@ namespace Audiochan.Infrastructure.Persistence
                     FileExt = ".mp3",
                     FileSize = 3952556,
                     UserId = user.Id,
-                    Tags = await tagRepository.CreateTags(new[] {"hard-dance"})
+                    Tags = await tagRepository.CreateTags(new[] {"hard-dance"}),
+                    Publicity = Publicity.Unlisted
                 };
                 var audio5 = new Audio
                 {
@@ -86,7 +91,8 @@ namespace Audiochan.Infrastructure.Persistence
                     FileExt = ".mp3",
                     FileSize = 8788667,
                     UserId = user.Id,
-                    Tags = await tagRepository.CreateTags(new[] {"vocals"})
+                    Tags = await tagRepository.CreateTags(new[] {"vocals"}),
+                    Publicity = Publicity.Unlisted
                 };
                 await context.Audios.AddRangeAsync(audio1, audio2, audio3, audio4, audio5);
                 await context.SaveChangesAsync();

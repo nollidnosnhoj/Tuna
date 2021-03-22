@@ -34,7 +34,7 @@ namespace Audiochan.Core.Features.Audios.GetAudioList
             var currentUserId = _currentUserService.GetUserId();
 
             return await _dbContext.Audios
-                .DefaultQueryable(currentUserId)
+                .DefaultListQueryable(currentUserId)
                 .Sort(request.Sort)
                 .ProjectTo<AudioViewModel>(_mapper.ConfigurationProvider)
                 .PaginateAsync(request, cancellationToken);

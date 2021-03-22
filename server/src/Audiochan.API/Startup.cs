@@ -1,3 +1,5 @@
+using System;
+using System.Text.Json;
 using Audiochan.API.Configurations;
 using Audiochan.API.Middlewares;
 using Audiochan.API.Services;
@@ -31,17 +33,31 @@ namespace Audiochan.API
             services.Configure<AudiochanOptions>(Configuration.GetSection(nameof(AudiochanOptions)));
             services.Configure<JwtOptions>(Configuration.GetSection(nameof(JwtOptions)));
             services.Configure<IdentityOptions>(Configuration.GetSection(nameof(IdentityOptions)));
+            
+            var jsonSerializerOptions = new JsonSerializerOptions()
+            {
+                
+                IgnoreNullValues = false,
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                PropertyNameCaseInsensitive = false
+            };
 
             services
                 .AddMemoryCache()
-                .AddCoreServices()
+                .AddCoreServices(jsonSerializerOptions)
                 .AddInfraServices(Configuration, Environment.IsDevelopment())
+                .Configure<JsonSerializerOptions>(options =>
+                {
+                    options.IgnoreNullValues = jsonSerializerOptions.IgnoreNullValues;
+                    options.PropertyNamingPolicy = jsonSerializerOptions.PropertyNamingPolicy;
+                    options.PropertyNameCaseInsensitive = jsonSerializerOptions.PropertyNameCaseInsensitive;
+                })
                 .ConfigureIdentity(Configuration)
                 .ConfigureAuthentication(Configuration)
                 .ConfigureAuthorization()
                 .AddHttpContextAccessor()
                 .AddScoped<ICurrentUserService, CurrentUserService>()
-                .ConfigureControllers()
+                .ConfigureControllers(jsonSerializerOptions)
                 .ConfigureRouting()
                 .ConfigureRateLimiting(Configuration)
                 .ConfigureCors()

@@ -35,7 +35,7 @@ namespace Audiochan.Infrastructure.Search
             var currentUserId = _currentUserService.GetUserId();
 
             var queryable = _dbContext.Audios
-                .DefaultQueryable(currentUserId)
+                .DefaultListQueryable(currentUserId)
                 .FilterByTags(query.Tags, ",");
 
             if (!string.IsNullOrWhiteSpace(query.Q))

@@ -28,7 +28,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             var (ownerId, _) = await _fixture
                 .RunAsUserAsync("kopacetic", Guid.NewGuid().ToString(), Array.Empty<string>());
 
-            var audio = new AudioBuilder("testaudio.mp3", ownerId).Build();
+            var audio = new AudioBuilder(ownerId, "testaudio.mp3").Build();
 
             await _fixture.InsertAsync(audio);
 
@@ -56,7 +56,10 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             var (ownerId, _) = await _fixture
                 .RunAsUserAsync("kopacetic", Guid.NewGuid().ToString(), Array.Empty<string>());
 
-            var audio = new AudioBuilder("testaudio.mp3", ownerId).Build();
+            var audio = new AudioBuilder(ownerId, "testaudio.mp3")
+                .Build();
+
+            await _fixture.InsertAsync(audio);
             
             // Act
             var command = new UpdateAudioCommand
@@ -64,7 +67,6 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
                 Id = audio.Id,
                 Title = "This is a new Title",
                 Description = "This is a test description",
-                Genre = "dubstep",
                 Tags = new List<string> {"apples", "oranges", "caramel"},
             };
 
@@ -86,8 +88,6 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             result.Data.Should().NotBeNull();
             result.Data.Title.Should().Be(command.Title);
             result.Data.Description.Should().Be(command.Description);
-            result.Data.Genre.Should().NotBeNull();
-            result.Data.Genre.Slug.Should().Be(command.Genre.ToLower());
             result.Data.Tags.Length.Should().Be(3);
             result.Data.Tags.Should().Contain(x => x == "apples");
             result.Data.Tags.Should().Contain(x => x == "oranges");

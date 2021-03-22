@@ -84,10 +84,10 @@ namespace Audiochan.Core.Entities
             if (string.IsNullOrWhiteSpace(userId))
                 throw new ArgumentNullException(nameof(userId));
 
-            var favorite = GetFollower(userId);
+            var follower = GetFollower(userId);
 
-            if (favorite is not null)
-                this.Followers.Remove(favorite);
+            if (follower is not null)
+                this.Followers.Remove(follower);
 
             return false;
         }
