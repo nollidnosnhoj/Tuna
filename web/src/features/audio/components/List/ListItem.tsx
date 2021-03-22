@@ -82,6 +82,7 @@ const AudioListItem: React.FC<AudioListItemProps> = ({
         <HStack flex="1" justify="flex-end" spacing={4}>
           <Stack direction="column" spacing={1} textAlign="right">
             <Text fontSize="sm">{formatDuration(audio.duration)}</Text>
+            {audio.publicity !== "public" && <Badge>{audio.publicity}</Badge>}
           </Stack>
           <Box>
             <Menu placement="bottom-end">

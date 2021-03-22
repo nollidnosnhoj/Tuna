@@ -1,9 +1,20 @@
-import { Box, Button, Flex, Spacer, Text, VStack } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Flex,
+  FormControl,
+  FormHelperText,
+  FormLabel,
+  ListItem,
+  Select,
+  Spacer,
+  Text,
+  UnorderedList,
+} from "@chakra-ui/react";
 import React, { useState } from "react";
 import { useFormik } from "formik";
 import AudioUploadDropzone from "./Dropzone";
 import AudioUploading from "./Uploading";
-import InputCheckbox from "~/components/Form/Checkbox";
 import TagInput from "~/components/Form/TagInput";
 import TextInput from "~/components/Form/TextInput";
 import { AudioRequest } from "~/features/audio/types";
@@ -27,7 +38,7 @@ export default function AudioUpload(props: AudioUploadProps) {
       title: "",
       description: "",
       tags: [],
-      isPublic: true,
+      publicity: "unlisted",
     },
     onSubmit: (values) => {
       setValue(values);
@@ -95,15 +106,34 @@ export default function AudioUpload(props: AudioUploadProps) {
               }}
               error={errors.tags}
             />
-            <InputCheckbox
-              name="isPublic"
-              value={values.isPublic}
-              onChange={() => setFieldValue("isPublic", !values.isPublic)}
-              error={errors.isPublic}
-              label="Public?"
-              required
-              toggleSwitch
-            />
+            <FormControl id="publicity">
+              <FormLabel>Publicity</FormLabel>
+              <Select
+                name="publicity"
+                value={values.publicity}
+                onChange={handleChange}
+              >
+                <option value="unlisted">Unlisted</option>
+                <option value="public">Public</option>
+                <option value="private">Private</option>
+              </Select>
+              <FormHelperText>
+                <UnorderedList>
+                  <ListItem>
+                    <strong>Public</strong> - Audio will be shown in lists and
+                    searches.
+                  </ListItem>
+                  <ListItem>
+                    <strong>Unlisted</strong> - Audio will not be in lists or
+                    searches.
+                  </ListItem>
+                  <ListItem>
+                    <strong>Private</strong> - Audio can only be seen if a
+                    private key is provided.
+                  </ListItem>
+                </UnorderedList>
+              </FormHelperText>
+            </FormControl>
           </Box>
         </Flex>
         <Flex marginY={4} alignItems="center">
