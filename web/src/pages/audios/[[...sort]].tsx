@@ -3,7 +3,6 @@ import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import React, { useCallback, useState } from "react";
 import queryString from "query-string";
-import GenreSelect from "~/components/Form/GenreSelect";
 import Page from "~/components/Page";
 import AudioListSubHeader from "~/features/audio/components/ListSubheader";
 import AudioList from "~/features/audio/components/List";
@@ -59,21 +58,13 @@ export const getServerSideProps: GetServerSideProps<AudioListPageProps> = async 
   };
 };
 
-interface AudioListFilter {
-  genre?: string;
-}
+interface AudioListFilter {}
 
 export default function AudioListPage(props: AudioListPageProps) {
   const router = useRouter();
   const { sort, filter } = props;
 
-  const [listFilter, setListFilter] = useState<AudioListFilter>(() => ({
-    genre:
-      (filter &&
-        filter.genre &&
-        (Array.isArray(filter.genre) ? filter.genre[0] : filter.genre)) ||
-      "",
-  }));
+  const [listFilter, setListFilter] = useState<AudioListFilter>({});
 
   const {
     items: audios,
@@ -99,17 +90,6 @@ export default function AudioListPage(props: AudioListPageProps) {
       title={sortPageTitles[sort]}
       beforeContainer={<AudioListSubHeader current={sort} />}
     >
-      <HStack>
-        <Box>
-          <GenreSelect
-            name="genre"
-            size="sm"
-            value={listFilter.genre || ""}
-            onChange={(e) => handleChange({ genre: e.target.value })}
-            addAllGenres
-          />
-        </Box>
-      </HStack>
       <AudioList audios={audios} />
       <InfiniteListControls
         fetchNext={fetchNextPage}

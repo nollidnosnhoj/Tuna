@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Extensions;
@@ -65,7 +64,6 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
         private readonly IStorageService _storageService;
         private readonly ICurrentUserService _currentUserService;
         private readonly IMapper _mapper;
-        private readonly IGenreRepository _genreRepository;
         private readonly ITagRepository _tagRepository;
         private readonly AudiochanOptions.StorageOptions _audioStorageOptions;
 
@@ -74,7 +72,6 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
             IStorageService storageService,
             ICurrentUserService currentUserService,
             IMapper mapper,
-            IGenreRepository genreRepository,
             ITagRepository tagRepository)
         {
             _audioStorageOptions = options.Value.AudioStorageOptions;
@@ -82,7 +79,6 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
             _storageService = storageService;
             _currentUserService = currentUserService;
             _mapper = mapper;
-            _genreRepository = genreRepository;
             _tagRepository = tagRepository;
         }
 
@@ -103,9 +99,6 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
 
             try
             {
-                var genre = await _genreRepository.GetByInput(request.Genre, cancellationToken);
-                audio.UpdateGenre(genre);
-                
                 audio.UpdateTags(request.Tags.Count > 0
                     ? await _tagRepository.CreateTags(request.Tags, cancellationToken)
                     : new List<Tag>());
@@ -116,7 +109,6 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
                 var viewModel = _mapper.Map<AudioDetailViewModel>(audio) with
                 {
                     User = new UserDto(currentUser.Id, currentUser.UserName, currentUser.Picture),
-                    IsFavorited = audio.Favorited.Any(x => x.UserId == currentUser.Id)
                 };
 
                 return Result<AudioDetailViewModel>.Success(viewModel);

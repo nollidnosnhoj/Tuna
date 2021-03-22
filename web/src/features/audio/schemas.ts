@@ -21,9 +21,6 @@ export const editAudioSchema: SchemaOf<AudioRequest> = object().shape({
     .max(10, validationMessages.max("Tags", 10))
     .ensure()
     .defined(),
-  genre: string()
-    .ensure()
-    .defined(),
   isPublic: boolean()
     .defined()
 }).defined();
@@ -39,9 +36,6 @@ export const uploadAudioSchema: SchemaOf<AudioRequest> = object().shape({
     .defined(),
   tags: array(string())
     .max(10, validationMessages.max("Tags", 10))
-    .ensure()
-    .defined(),
-  genre: string()
     .ensure()
     .defined(),
   isPublic: boolean()

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Models.Responses;
-using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Features.Audios.UpdateAudio;
 using Audiochan.Core.UnitTests.Builders;
@@ -58,11 +57,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
                 .RunAsUserAsync("kopacetic", Guid.NewGuid().ToString(), Array.Empty<string>());
 
             var audio = new AudioBuilder("testaudio.mp3", ownerId).Build();
-
-            var genre = new Genre {Name = "Dubstep", Slug = "dubstep"};
-
-            await _fixture.InsertAsync(audio, genre);
-
+            
             // Act
             var command = new UpdateAudioCommand
             {
@@ -78,7 +73,6 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             var created = await _fixture.ExecuteDbContextAsync(database =>
             {
                 return database.Audios
-                    .Include(a => a.Genre)
                     .Include(a => a.Tags)
                     .Include(a => a.User)
                     .SingleOrDefaultAsync(a => a.Id == audio.Id);
@@ -102,8 +96,6 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             created.Should().NotBeNull();
             created.Title.Should().Be(command.Title);
             created.Description.Should().Be(command.Description);
-            created.Genre.Should().NotBeNull();
-            created.Genre.Slug.Should().Be(command.Genre.ToLower());
             created.Tags.Count.Should().Be(3);
             created.Tags.Should().Contain(x => x.Id == "apples");
             created.Tags.Should().Contain(x => x.Id == "oranges");

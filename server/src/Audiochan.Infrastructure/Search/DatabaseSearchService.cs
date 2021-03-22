@@ -5,7 +5,6 @@ using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Features.Audios;
 using Audiochan.Core.Features.Audios.GetAudioList;
-using Audiochan.Core.Features.Search;
 using Audiochan.Core.Features.Search.SearchAudios;
 using Audiochan.Core.Features.Search.SearchUsers;
 using Audiochan.Core.Features.Users.GetUser;
@@ -37,7 +36,6 @@ namespace Audiochan.Infrastructure.Search
 
             var queryable = _dbContext.Audios
                 .DefaultQueryable(currentUserId)
-                .FilterByGenre(query.Genre)
                 .FilterByTags(query.Tags, ",");
 
             if (!string.IsNullOrWhiteSpace(query.Q))

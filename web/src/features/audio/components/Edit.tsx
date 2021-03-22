@@ -21,14 +21,13 @@ import {
   Spacer,
 } from "@chakra-ui/react";
 import { DeleteIcon } from "@chakra-ui/icons";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import Router from "next/router";
 import { useFormik } from "formik";
 import InputCheckbox from "../../../components/Form/Checkbox";
-import GenreSelect from "../../../components/Form/GenreSelect";
 import TextInput from "../../../components/Form/TextInput";
 import TagInput from "../../../components/Form/TagInput";
-import { Audio, AudioDetail, AudioRequest } from "~/features/audio/types";
+import { AudioDetail, AudioRequest } from "~/features/audio/types";
 import { useEditAudio, useRemoveAudio } from "~/features/audio/hooks/mutations";
 import { editAudioSchema } from "~/features/audio/schemas";
 import { apiErrorToast, successfulToast } from "~/utils/toast";
@@ -45,7 +44,6 @@ function mapAudioToModifyInputs(audio: AudioDetail): AudioRequest {
     description: audio.description,
     tags: audio.tags,
     isPublic: audio.isPublic,
-    genre: audio.genre?.slug,
   };
 }
 
@@ -138,16 +136,6 @@ const AudioEditModal: React.FC<AudioEditProps> = ({
               error={errors.description}
               disabled={isSubmitting || deleting}
               textArea
-            />
-            <GenreSelect
-              name="genre"
-              label="Genre"
-              value={values.genre ?? ""}
-              onChange={handleChange}
-              error={errors.genre}
-              placeholder="Select Genre"
-              disabled={isSubmitting}
-              paddingY={2}
             />
             <TagInput
               name="tags"

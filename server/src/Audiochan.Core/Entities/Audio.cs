@@ -12,7 +12,6 @@ namespace Audiochan.Core.Entities
         public Audio()
         {
             this.Tags = new HashSet<Tag>();
-            this.Favorited = new HashSet<FavoriteAudio>();
         }
 
         public Audio(string uploadId, string fileName, long fileSize, int duration, string userId) : this()
@@ -52,10 +51,7 @@ namespace Audiochan.Core.Entities
         public bool IsPublic { get; set; } = true;
         public string UserId { get; set; }
         public User User { get; set; }
-        public long? GenreId { get; set; }
-        public Genre Genre { get; set; }
         public ICollection<Tag> Tags { get; set; }
-        public ICollection<FavoriteAudio> Favorited { get; set; }
 
         public void UpdateTitle(string title)
         {
@@ -76,13 +72,7 @@ namespace Audiochan.Core.Entities
             if (status.HasValue)
                 this.IsPublic = status.Value;
         }
-
-        public void UpdateGenre(Genre genre)
-        {
-            this.GenreId = genre?.Id;
-            this.Genre = genre;
-        }
-
+        
         public void UpdateTags(List<Tag> tags)
         {
             if (this.Tags.Count > 0)
@@ -119,43 +109,6 @@ namespace Audiochan.Core.Entities
         public bool CanModify(string userId)
         {
             return this.UserId == userId;
-        }
-
-        public bool AddFavorite(string userId)
-        {
-            if (string.IsNullOrWhiteSpace(userId))
-                throw new ArgumentNullException(nameof(userId));
-
-            var favorite = GetFavorite(userId);
-
-            if (favorite is null)
-            {
-                favorite = new FavoriteAudio {AudioId = this.Id, UserId = userId};
-                this.Favorited.Add(favorite);
-            }
-
-            return true;
-        }
-
-        public bool RemoveFavorite(string userId)
-        {
-            if (string.IsNullOrWhiteSpace(userId))
-                throw new ArgumentNullException(nameof(userId));
-
-            var favorite = GetFavorite(userId);
-
-            if (favorite is not null)
-                this.Favorited.Remove(favorite);
-
-            return false;
-        }
-
-        private FavoriteAudio GetFavorite(string userId)
-        {
-            if (string.IsNullOrWhiteSpace(userId))
-                throw new ArgumentNullException(nameof(userId));
-
-            return this.Favorited.FirstOrDefault(f => f.UserId == userId);
         }
     }
 }

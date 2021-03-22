@@ -6,7 +6,6 @@ using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Features.Audios.CreateAudio;
 using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Features.Audios.GetAudioList;
-using Audiochan.Core.Features.Audios.GetAudioUrl;
 using Audiochan.Core.Features.Audios.GetRandomAudio;
 using Audiochan.Core.Features.Audios.RemoveAudio;
 using Audiochan.Core.Features.Audios.UpdateAudio;
@@ -49,20 +48,7 @@ namespace Audiochan.API.Controllers
             var result = await _mediator.Send(new GetAudioQuery(audioId), cancellationToken);
             return result.IsSuccess ? Ok(result.Data) : result.ReturnErrorResponse();
         }
-
-        [HttpGet("{audioId}/url")]
-        [AllowAnonymous]
-        [ProducesResponseType(typeof(AudioUrlViewModel), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [SwaggerOperation(Summary = "Return the audio's stream URL", OperationId = "GetStreamUrl", Tags = new[]{"audios"})]
-        public async Task<IActionResult> GetStreamUrl(long audioId, CancellationToken cancellationToken)
-        {
-            var result = await _mediator.Send(new GetAudioUrlQuery {Id = audioId}, cancellationToken);
-            return result.IsSuccess 
-                ? new JsonResult(result.Data) 
-                : result.ReturnErrorResponse();
-        }
-
+        
         [HttpGet("random", Name = "GetRandomAudio")]
         [AllowAnonymous]
         [ProducesResponseType(typeof(AudioDetailViewModel), StatusCodes.Status200OK)]

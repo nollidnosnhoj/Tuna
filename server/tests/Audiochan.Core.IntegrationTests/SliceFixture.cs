@@ -301,9 +301,7 @@ namespace Audiochan.Core.IntegrationTests
                 await conn.OpenAsync();
                 await _checkpoint.Reset(conn);
             }
-
-            await ExecuteDbContextAsync(ApplicationDbSeeder.AddDefaultGenresAsync);
-
+            
             _currentUserId = null;
         }
 

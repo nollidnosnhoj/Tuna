@@ -5,7 +5,6 @@ using Audiochan.Core.Features.Audios;
 using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Features.Followers.GetFollowers;
 using Audiochan.Core.Features.Followers.GetFollowings;
-using Audiochan.Core.Features.Genres.ListGenre;
 using Audiochan.Core.Features.Users.GetCurrentUser;
 using Audiochan.Core.Features.Users.GetUser;
 using AutoMapper;
@@ -27,7 +26,6 @@ namespace Audiochan.Core.UnitTests.Mappings
                 cfg.AddProfile<GetFollowersMappingProfile>();
                 cfg.AddProfile<CurrentUserMappingProfile>();
                 cfg.AddProfile<UserMappingProfile>();
-                cfg.AddProfile<ListGenreMappingProfile>();
             });
             _mapper = _configuration.CreateMapper();
         }
@@ -44,7 +42,6 @@ namespace Audiochan.Core.UnitTests.Mappings
         [InlineData(typeof(FollowedUser), typeof(FollowingViewModel))]
         [InlineData(typeof(User), typeof(CurrentUserViewModel))]
         [InlineData(typeof(User), typeof(UserViewModel))]
-        [InlineData(typeof(Genre), typeof(GenreViewModel))]
         public void ShouldSupportMappingFromSourceToDestination(Type source, Type destination)
         {
             var instance = GetInstanceOf(source);

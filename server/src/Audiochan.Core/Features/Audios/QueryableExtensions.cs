@@ -11,9 +11,7 @@ namespace Audiochan.Core.Features.Audios
             return dbSet
                 .AsNoTracking()
                 .Include(a => a.Tags)
-                .Include(a => a.Favorited)
                 .Include(a => a.User)
-                .Include(a => a.Genre)
                 .Where(a => a.UserId == currentUserId || a.IsPublic);
         }
 
@@ -30,28 +28,11 @@ namespace Audiochan.Core.Features.Audios
 
             return queryable;
         }
-
-        public static IQueryable<Audio> FilterByGenre(this IQueryable<Audio> queryable, string input)
-        {
-            if (!string.IsNullOrWhiteSpace(input))
-            {
-                long genreId = 0;
-
-                if (long.TryParse(input, out var parsedId))
-                    genreId = parsedId;
-
-                queryable = queryable.Where(a => a.GenreId == genreId || a.Genre.Slug == input.Trim().ToLower());
-            }
-
-            return queryable;
-        }
-
+        
         public static IQueryable<Audio> Sort(this IQueryable<Audio> queryable, string sort)
         {
             return (sort?.ToLower() ?? "") switch
             {
-                "favorites" => queryable.OrderByDescending(a => a.Favorited.Count)
-                    .ThenByDescending(a => a.Created),
                 "latest" => queryable.OrderByDescending(a => a.Created),
                 _ => queryable.OrderByDescending(a => a.Created)
             };

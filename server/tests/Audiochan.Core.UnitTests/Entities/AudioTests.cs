@@ -96,34 +96,5 @@ namespace Audiochan.Core.UnitTests.Entities
             audio.Tags.Count.Should().Be(3);
             audio.Tags.Count(t => t.Id == "apples").Should().Be(1);
         }
-
-        [Fact]
-        public void AudioShouldHaveFavorited()
-        {
-            // Assign
-            const string currentUserId = "testId";
-            var audio = new Audio(UploadHelpers.GenerateUploadId(), "filename.mp3", 0, 0, "ValidUserId");
-
-            // Act
-            audio.AddFavorite(currentUserId);
-
-            // Assert
-            audio.Favorited.Any(x => x.UserId == currentUserId).Should().Be(true);
-        }
-
-        [Fact]
-        public void AudioShouldHaveUnfavorited()
-        {
-            // Assign
-            const string currentUserId = "testId";
-            var audio = new Audio(UploadHelpers.GenerateUploadId(), "filename.mp3", 0, 0, "ValidUserId");
-            audio.Favorited.Add(new FavoriteAudio {AudioId = audio.Id, UserId = currentUserId});
-
-            // Act
-            audio.RemoveFavorite(currentUserId);
-
-            // Assert
-            audio.Favorited.Any(x => x.UserId == currentUserId).Should().Be(false);
-        }
     }
 }

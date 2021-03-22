@@ -21,13 +21,7 @@ namespace Audiochan.Infrastructure.Persistence.Configurations
             builder.HasMany(a => a.Tags)
                 .WithMany(t => t.Audios)
                 .UsingEntity(j => j.ToTable("audio_tags"));
-
-            builder.HasOne(x => x.Genre)
-                .WithMany(x => x.Audios)
-                .HasForeignKey(x => x.GenreId)
-                .IsRequired(false)
-                .OnDelete(DeleteBehavior.SetNull);
-
+            
             builder.HasOne(x => x.User)
                 .WithMany(x => x.Audios)
                 .IsRequired()

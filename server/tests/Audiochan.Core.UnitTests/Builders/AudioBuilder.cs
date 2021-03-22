@@ -38,19 +38,6 @@ namespace Audiochan.Core.UnitTests.Builders
             return this;
         }
 
-        public AudioBuilder Genre(Genre genre)
-        {
-            _audio.GenreId = genre.Id;
-            _audio.Genre = genre;
-            return this;
-        }
-
-        public AudioBuilder GenreId(long id)
-        {
-            _audio.GenreId = id;
-            return this;
-        }
-
         public AudioBuilder Public(bool isPublic)
         {
             _audio.IsPublic = isPublic;

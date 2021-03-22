@@ -24,11 +24,8 @@ import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 import AudioEdit from "./Edit";
 import Link from "../../../components/Link";
 import Picture from "../../../components/Picture";
-import {
-  useAddAudioPicture,
-  useAudioFavorite,
-} from "~/features/audio/hooks/mutations";
-import { Audio, AudioDetail } from "~/features/audio/types";
+import { useAddAudioPicture } from "~/features/audio/hooks/mutations";
+import { AudioDetail } from "~/features/audio/types";
 import { formatDuration, relativeDate } from "~/utils/time";
 import useUser from "~/hooks/useUser";
 import { FaPlay } from "react-icons/fa";
@@ -45,12 +42,6 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
   const secondaryColor = useColorModeValue("black.300", "gray.300");
   const { user: currentUser } = useUser();
   const { startPlay, addToQueue } = useAudioPlayer();
-
-  const {
-    isFavorite,
-    onFavorite: favorite,
-    isLoading: isFavoriteLoading,
-  } = useAudioFavorite(audio.id, audio.isFavorited);
 
   const {
     mutateAsync: uploadArtwork,
@@ -127,25 +118,6 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
                 />
               </span>
             </Tooltip>
-            {currentUser && currentUser.id !== audio.user.id && (
-              <Tooltip
-                label={isFavorite ? "Unfavorite" : "Favorite"}
-                placement="top"
-              >
-                <span>
-                  <IconButton
-                    isRound
-                    colorScheme="pink"
-                    variant="ghost"
-                    size="lg"
-                    icon={isFavorite ? <AiFillHeart /> : <AiOutlineHeart />}
-                    aria-label={isFavorite ? "Unfavorite" : "Favorite"}
-                    onClick={favorite}
-                    isLoading={isFavoriteLoading}
-                  />
-                </span>
-              </Tooltip>
-            )}
           </HStack>
         </Stack>
         <Stack direction="column" spacing={2} width="100%">
@@ -178,13 +150,6 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
             </Box>
             <Spacer />
             <VStack spacing={2} alignItems="normal" textAlign="right">
-              <Box>
-                {audio.genre && (
-                  <Badge fontSize="sm" letterSpacing="1.1" fontWeight="800">
-                    {audio.genre.name}
-                  </Badge>
-                )}
-              </Box>
               <Box color={secondaryColor}>{audioDurationFormatted}</Box>
             </VStack>
           </Flex>

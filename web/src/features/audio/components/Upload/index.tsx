@@ -4,7 +4,6 @@ import { useFormik } from "formik";
 import AudioUploadDropzone from "./Dropzone";
 import AudioUploading from "./Uploading";
 import InputCheckbox from "~/components/Form/Checkbox";
-import GenreSelect from "~/components/Form/GenreSelect";
 import TagInput from "~/components/Form/TagInput";
 import TextInput from "~/components/Form/TextInput";
 import { AudioRequest } from "~/features/audio/types";
@@ -29,7 +28,6 @@ export default function AudioUpload(props: AudioUploadProps) {
       description: "",
       tags: [],
       isPublic: true,
-      genre: "",
     },
     onSubmit: (values) => {
       setValue(values);
@@ -82,15 +80,6 @@ export default function AudioUpload(props: AudioUploadProps) {
               error={errors.description}
               label="Description"
               textArea
-            />
-            <GenreSelect
-              name="genre"
-              label="Genre"
-              value={values.genre ?? ""}
-              onChange={handleChange}
-              error={errors.genre}
-              placeholder="No Genre Selected"
-              paddingY={2}
             />
             <TagInput
               name="tags"

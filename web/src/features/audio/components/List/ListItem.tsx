@@ -12,18 +12,15 @@ import {
   Text,
   Tooltip,
 } from "@chakra-ui/react";
-import React, { useCallback, useMemo } from "react";
-import Router from "next/router";
+import React, { useMemo } from "react";
 import { Audio } from "~/features/audio/types";
 import { formatDuration } from "~/utils/time";
 import Link from "~/components/Link";
 import Picture from "~/components/Picture";
 import { FaPause, FaPlay } from "react-icons/fa";
-import { useAudioFavorite } from "../../hooks/mutations";
 import { AiFillHeart } from "react-icons/ai";
 import { HiDotsVertical } from "react-icons/hi";
 import useUser from "~/hooks/useUser";
-import { errorToast } from "~/utils/toast";
 import { MdQueueMusic } from "react-icons/md";
 
 export interface AudioListItemProps {
@@ -40,12 +37,6 @@ const AudioListItem: React.FC<AudioListItemProps> = ({
   removeArtistName = false,
 }) => {
   const { user: currentUser } = useUser();
-
-  const {
-    isFavorite,
-    onFavorite: favorite,
-    isLoading: isFavoriteLoading,
-  } = useAudioFavorite(audio.id, audio.isFavorited);
 
   const picture = useMemo(() => {
     return audio?.picture
@@ -91,7 +82,6 @@ const AudioListItem: React.FC<AudioListItemProps> = ({
         <HStack flex="1" justify="flex-end" spacing={4}>
           <Stack direction="column" spacing={1} textAlign="right">
             <Text fontSize="sm">{formatDuration(audio.duration)}</Text>
-            <Badge>{audio.genre?.name}</Badge>
           </Stack>
           <Box>
             <Menu placement="bottom-end">
@@ -104,15 +94,6 @@ const AudioListItem: React.FC<AudioListItemProps> = ({
                 Actions
               </MenuButton>
               <MenuList>
-                {currentUser && (
-                  <MenuItem
-                    onClick={() => favorite()}
-                    icon={<AiFillHeart />}
-                    disabled={isFavoriteLoading}
-                  >
-                    {isFavorite ? "Unfavorite" : "Favorite"}
-                  </MenuItem>
-                )}
                 <MenuItem icon={<MdQueueMusic />}>Add To Queue</MenuItem>
               </MenuList>
             </Menu>

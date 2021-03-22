@@ -39,9 +39,8 @@ namespace Audiochan.Core.Features.Users.GetUserAudios
             return await _dbContext.Audios
                 .DefaultQueryable(currentUserId)
                 .Where(a => a.User.UserName == request.Username.ToLower())
-                .FilterByGenre(request.Genre)
                 .Sort(request.Sort)
-                .ProjectTo<AudioViewModel>(_mapper.ConfigurationProvider, new {currentUserId})
+                .ProjectTo<AudioViewModel>(_mapper.ConfigurationProvider)
                 .PaginateAsync(request, cancellationToken);
         }
     }

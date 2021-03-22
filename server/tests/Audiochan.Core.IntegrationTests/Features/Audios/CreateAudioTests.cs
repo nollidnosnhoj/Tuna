@@ -44,7 +44,6 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             var created = await _fixture.ExecuteDbContextAsync(database =>
             {
                 return database.Audios
-                    .Include(a => a.Genre)
                     .Include(a => a.Tags)
                     .Where(a => a.Id == result.Data.Id).SingleOrDefaultAsync();
             });
@@ -77,7 +76,6 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             created.Tags.Should().Contain(x => x.Id == "apples");
             created.Tags.Should().Contain(x => x.Id == "oranges");
             created.Tags.Should().Contain(x => x.Id == "banana");
-            created.Genre.Name.Should().Be("Dubstep");
             created.IsPublic.Should().Be(false);
             created.UserId.Should().Be(userId);
         }

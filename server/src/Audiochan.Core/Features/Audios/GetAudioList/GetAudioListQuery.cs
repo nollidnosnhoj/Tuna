@@ -35,9 +35,8 @@ namespace Audiochan.Core.Features.Audios.GetAudioList
 
             return await _dbContext.Audios
                 .DefaultQueryable(currentUserId)
-                .FilterByGenre(request.Genre)
                 .Sort(request.Sort)
-                .ProjectTo<AudioViewModel>(_mapper.ConfigurationProvider, new {currentUserId})
+                .ProjectTo<AudioViewModel>(_mapper.ConfigurationProvider)
                 .PaginateAsync(request, cancellationToken);
         }
     }

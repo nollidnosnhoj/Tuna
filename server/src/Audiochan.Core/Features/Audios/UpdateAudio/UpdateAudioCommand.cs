@@ -31,19 +31,16 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
         private readonly IApplicationDbContext _dbContext;
         private readonly ICurrentUserService _currentUserService;
         private readonly IMapper _mapper;
-        private readonly IGenreRepository _genreRepository;
         private readonly ITagRepository _tagRepository;
 
         public UpdateAudioCommandHandler(IApplicationDbContext dbContext,
             ICurrentUserService currentUserService,
             IMapper mapper,
-            IGenreRepository genreRepository,
             ITagRepository tagRepository)
         {
             _dbContext = dbContext;
             _currentUserService = currentUserService;
             _mapper = mapper;
-            _genreRepository = genreRepository;
             _tagRepository = tagRepository;
         }
 
@@ -58,10 +55,8 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
                 return Result<AudioDetailViewModel>.Fail(ResultError.Unauthorized);
 
             var audio = await _dbContext.Audios
-                .Include(a => a.Favorited)
                 .Include(a => a.User)
                 .Include(a => a.Tags)
-                .Include(a => a.Genre)
                 .SingleOrDefaultAsync(a => a.Id == request.Id, cancellationToken);
 
             if (audio == null)
@@ -69,17 +64,7 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
 
             if (!audio.CanModify(currentUserId))
                 return Result<AudioDetailViewModel>.Fail(ResultError.Forbidden);
-
-            if (!string.IsNullOrWhiteSpace(request.Genre) && (audio.Genre?.Slug ?? "") != request.Genre)
-            {
-                var genre = await _genreRepository.GetByInput(request.Genre, cancellationToken);
-
-                if (genre == null)
-                    return Result<AudioDetailViewModel>.Fail(ResultError.BadRequest, "Genre does not exist.");
-
-                audio.UpdateGenre(genre);
-            }
-
+            
             if (request.Tags.Count > 0)
             {
                 var newTags = await _tagRepository.CreateTags(request.Tags, cancellationToken);
@@ -94,10 +79,7 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
             _dbContext.Audios.Update(audio);
             await _dbContext.SaveChangesAsync(cancellationToken);
 
-            var viewModel = _mapper.Map<AudioDetailViewModel>(audio) with
-            {
-                IsFavorited = audio.Favorited.Any(x => x.UserId == currentUserId)
-            };
+            var viewModel = _mapper.Map<AudioDetailViewModel>(audio);
 
             return Result<AudioDetailViewModel>.Success(viewModel);
         }

@@ -3,7 +3,6 @@ import React, { useMemo, useState } from "react";
 import { useFormik } from "formik";
 import { Box, Flex, HStack } from "@chakra-ui/layout";
 import Page from "~/components/Page";
-import GenreSelect from "~/components/Form/GenreSelect";
 import {
   Accordion,
   AccordionButton,
@@ -24,7 +23,6 @@ import InfiniteListControls from "~/components/List/InfiniteListControls";
 
 type AudioSearchValues = {
   q?: string;
-  genre?: string;
   sort?: string;
   tags?: string[];
 };
@@ -35,8 +33,6 @@ export default function AudioSearchPage() {
 
   const [searchValues, setSearchValues] = useState<AudioSearchValues>(() => ({
     q: (Array.isArray(query["q"]) ? query["q"][0] : query["q"]) || "",
-    genre:
-      (Array.isArray(query["sort"]) ? query["sort"][0] : query["sort"]) || "",
     sort:
       (Array.isArray(query["sort"]) ? query["sort"][0] : query["sort"]) || "",
     tags: Array.isArray(query["tags"])
@@ -118,16 +114,6 @@ export default function AudioSearchPage() {
                   error={formErrors.tags}
                 />
                 <HStack spacing={4}>
-                  <Box>
-                    <GenreSelect
-                      name="genre"
-                      label="Genre"
-                      value={formValues.genre ?? ""}
-                      onChange={handleChange}
-                      error={formErrors.genre}
-                      placeholder="No Genre"
-                    />
-                  </Box>
                   <Box>
                     <FormControl id="sort">
                       <FormLabel>Sort</FormLabel>
