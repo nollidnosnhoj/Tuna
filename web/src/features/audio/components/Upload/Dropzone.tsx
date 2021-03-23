@@ -2,7 +2,7 @@ import { Box, Flex, Icon, Text, VStack } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import { useDropzone } from "react-dropzone";
 import { FaCloudUploadAlt, FaRegFileAudio } from "react-icons/fa";
-import SETTINGS from "~/constants/settings";
+import SETTINGS from "~/lib/config";
 import { formatFileSize } from "~/utils/format";
 import { errorToast } from "~/utils/toast";
 

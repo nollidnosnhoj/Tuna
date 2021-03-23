@@ -3,7 +3,7 @@ import React, { ReactElement, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import { PictureProps } from "~/components/Picture";
 import PictureCropModal from "./PictureCropModal";
-import SETTINGS from "~/constants/settings";
+import SETTINGS from "~/lib/config";
 import { errorToast, successfulToast } from "~/utils/toast";
 import { isAxiosError } from "~/utils/axios";
 import { ErrorResponse } from "~/lib/types";
