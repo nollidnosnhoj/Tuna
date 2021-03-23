@@ -13,7 +13,7 @@ namespace Audiochan.Core.Features.Audios
                 .AsNoTracking()
                 .Include(a => a.Tags)
                 .Include(a => a.User)
-                .Where(a => a.UserId == currentUserId || a.Publicity == Publicity.Public);
+                .Where(a => a.UserId == currentUserId || a.Visibility == Visibility.Public);
         }
 
         public static IQueryable<Audio> DefaultSingleQueryable(this DbSet<Audio> dbSet, string privateKey = "", string currentUserId = "")
@@ -23,9 +23,9 @@ namespace Audiochan.Core.Features.Audios
                 .Include(a => a.Tags)
                 .Include(a => a.User)
                 .Where(a => a.UserId == currentUserId 
-                            || a.Publicity != Publicity.Private
+                            || a.Visibility != Visibility.Private
                             || (a.PrivateKey == privateKey 
-                            && a.Publicity == Publicity.Private));
+                            && a.Visibility == Visibility.Private));
         }
 
         public static IQueryable<Audio> FilterByTags(this IQueryable<Audio> queryable, string tags, string delimiter)

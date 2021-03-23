@@ -45,7 +45,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             // Assign
             var (adminId, _) = await _fixture.RunAsAdministratorAsync();
             var audio = new AudioBuilder(adminId, Guid.NewGuid() + ".mp3")
-                .Publicity(Publicity.Private)
+                .Publicity(Visibility.Private)
                 .Build();
             await _fixture.InsertAsync(audio);
 
@@ -70,7 +70,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             var (ownerId, _) = await _fixture.RunAsAdministratorAsync();
             var privateKey = "test";
             var audio = new AudioBuilder(ownerId)
-                .Publicity(Publicity.Private, privateKey)
+                .Publicity(Visibility.Private, privateKey)
                 .Build();
             await _fixture.InsertAsync(audio);
 
@@ -89,7 +89,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             var (ownerId, _) = await _fixture.RunAsAdministratorAsync();
             var privateKey = "test";
             var audio = new AudioBuilder(ownerId)
-                .Publicity(Publicity.Private, privateKey)
+                .Publicity(Visibility.Private, privateKey)
                 .Build();
             await _fixture.InsertAsync(audio);
 
@@ -106,7 +106,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
         {
             var (ownerId, _) = await _fixture.RunAsAdministratorAsync();
             var audio = new AudioBuilder(ownerId)
-                .Publicity(Publicity.Unlisted)
+                .Publicity(Visibility.Unlisted)
                 .Build();
             await _fixture.InsertAsync(audio);
 

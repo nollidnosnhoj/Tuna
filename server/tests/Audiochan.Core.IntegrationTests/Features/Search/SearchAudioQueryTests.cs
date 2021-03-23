@@ -41,7 +41,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Search
                 }
                 var audio = new AudioBuilder(userId)
                     .Title(title)
-                    .Publicity(Publicity.Public)
+                    .Publicity(Visibility.Public)
                     .Build();
                 await _fixture.InsertAsync(audio);
             }

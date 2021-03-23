@@ -48,7 +48,7 @@ namespace Audiochan.Core.Entities
         public long FileSize { get; set; }
         public string FileExt { get; set; }
         public string Picture { get; set; }
-        public Publicity Publicity { get; set; } = Publicity.Unlisted;
+        public Visibility Visibility { get; set; } = Visibility.Unlisted;
         public string PrivateKey { get; set; }
         public string UserId { get; set; }
         public User User { get; set; }
@@ -68,15 +68,15 @@ namespace Audiochan.Core.Entities
                 this.Description = description;
         }
 
-        public void UpdatePublicityStatus(Publicity status)
+        public void UpdatePublicityStatus(Visibility status)
         {
-            this.Publicity = status;
+            this.Visibility = status;
         }
 
         public void UpdatePublicityStatus(string status)
         {
-            var publicity = status.ParseToEnumOrDefault<Publicity>();
-            this.Publicity = publicity;
+            var publicity = status.ParseToEnumOrDefault<Visibility>();
+            this.Visibility = publicity;
         }
 
         public void SetPrivateKey()

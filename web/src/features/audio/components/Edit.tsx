@@ -49,7 +49,7 @@ function mapAudioToModifyInputs(audio: AudioDetail): AudioRequest {
     title: audio.title,
     description: audio.description,
     tags: audio.tags,
-    publicity: audio.publicity,
+    visibility: audio.visibility,
   };
 }
 
@@ -128,7 +128,7 @@ const AudioEditModal: React.FC<AudioEditProps> = ({
               name="title"
               type="text"
               label="Title"
-              value={values.title}
+              value={values.title ?? ""}
               onChange={handleChange}
               error={errors.title}
               disabled={isSubmitting || deleting}
@@ -158,11 +158,11 @@ const AudioEditModal: React.FC<AudioEditProps> = ({
               error={errors.tags}
               disabled={isSubmitting || deleting}
             />
-            <FormControl id="publicity">
-              <FormLabel>Publicity</FormLabel>
+            <FormControl id="visibility">
+              <FormLabel>Visibility</FormLabel>
               <Select
-                name="publicity"
-                value={values.publicity}
+                name="visibility"
+                value={values.visibility}
                 onChange={handleChange}
               >
                 <option value="unlisted">Unlisted</option>

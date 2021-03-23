@@ -48,7 +48,7 @@ namespace Audiochan.Infrastructure.Persistence
                     FileSize = 9335255,
                     UserId = user.Id,
                     Tags = await tagRepository.CreateTags(new[] {"chillout", "lucid-dreams"}),
-                    Publicity = Publicity.Public
+                    Visibility = Visibility.Public
                 };
                 var audio2 = new Audio
                 {
@@ -59,7 +59,7 @@ namespace Audiochan.Infrastructure.Persistence
                     FileSize = 6239211,
                     UserId = user.Id,
                     Tags = await tagRepository.CreateTags(new[] {"newgrounds", "piano", "rave"}),
-                    Publicity = Publicity.Public
+                    Visibility = Visibility.Public
                 };
                 var audio3 = new Audio
                 {
@@ -70,7 +70,7 @@ namespace Audiochan.Infrastructure.Persistence
                     FileSize = 1823391,
                     UserId = user.Id,
                     Tags = await tagRepository.CreateTags(new[] {"happy", "anime", "hardcore", "nightcore"}),
-                    Publicity = Publicity.Public
+                    Visibility = Visibility.Public
                 };
                 var audio4 = new Audio
                 {
@@ -81,7 +81,7 @@ namespace Audiochan.Infrastructure.Persistence
                     FileSize = 3952556,
                     UserId = user.Id,
                     Tags = await tagRepository.CreateTags(new[] {"hard-dance"}),
-                    Publicity = Publicity.Unlisted
+                    Visibility = Visibility.Unlisted
                 };
                 var audio5 = new Audio
                 {
@@ -92,7 +92,7 @@ namespace Audiochan.Infrastructure.Persistence
                     FileSize = 8788667,
                     UserId = user.Id,
                     Tags = await tagRepository.CreateTags(new[] {"vocals"}),
-                    Publicity = Publicity.Unlisted
+                    Visibility = Visibility.Unlisted
                 };
                 await context.Audios.AddRangeAsync(audio1, audio2, audio3, audio4, audio5);
                 await context.SaveChangesAsync();

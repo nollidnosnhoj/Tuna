@@ -39,10 +39,10 @@ namespace Audiochan.Core.UnitTests.Builders
             return this;
         }
 
-        public AudioBuilder Publicity(Publicity status, string privateKey = "")
+        public AudioBuilder Publicity(Visibility status, string privateKey = "")
         {
-            _audio.Publicity = status;
-            if (_audio.Publicity == Common.Enums.Publicity.Private && !string.IsNullOrEmpty(privateKey))
+            _audio.Visibility = status;
+            if (_audio.Visibility == Common.Enums.Visibility.Private && !string.IsNullOrEmpty(privateKey))
                 _audio.PrivateKey = privateKey;
             return this;
         }

@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Audiochan.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210322202247_InitialMigration")]
+    [Migration("20210323191658_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -82,10 +82,6 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                         .HasColumnType("text")
                         .HasColumnName("private_key");
 
-                    b.Property<int>("Publicity")
-                        .HasColumnType("integer")
-                        .HasColumnName("publicity");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -101,6 +97,10 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("user_id");
+
+                    b.Property<int>("Visibility")
+                        .HasColumnType("integer")
+                        .HasColumnName("visibility");
 
                     b.HasKey("Id")
                         .HasName("pk_audios");

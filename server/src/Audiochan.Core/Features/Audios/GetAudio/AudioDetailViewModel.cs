@@ -9,7 +9,7 @@ namespace Audiochan.Core.Features.Audios.GetAudio
         public long Id { get; init; }
         public string Title { get; init; }
         public string Description { get; init; }
-        public Publicity Publicity { get; init; }
+        public Visibility Visibility { get; init; }
         public string PrivateKey { get; init; }
         public string[] Tags { get; init; }
         public int Duration { get; init; }

@@ -1,6 +1,6 @@
 ﻿namespace Audiochan.Core.Common.Enums
 {
-    public enum Publicity
+    public enum Visibility
     {
         Unlisted, 
         Public,

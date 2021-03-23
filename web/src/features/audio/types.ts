@@ -3,12 +3,12 @@ import { Creator } from "~/lib/types"
 
 export type AudioSearchType = 'audios' | 'user' | 'feed'
 
-export type Publicity = 'unlisted' | 'public' | 'private'
+export type Visibility = 'unlisted' | 'public' | 'private'
 
 export type Audio = {
   id: number;
   title: string;
-  publicity: Publicity;
+  visibility: Visibility;
   duration: number;
   picture: string;
   created: string;
@@ -19,7 +19,7 @@ export type AudioDetail = {
   id: number;
   title: string;
   description: string;
-  publicity: Publicity;
+  visibility: Visibility;
   privateKey?: string;
   tags: string[];
   duration: number;
@@ -33,10 +33,10 @@ export type AudioDetail = {
 }
 
 export interface AudioRequest {
-  title: string;
+  title?: string;
   description?: string;
   tags: string[];
-  publicity: Publicity;
+  visibility: Visibility;
 };
 
 export interface CreateAudioRequest extends AudioRequest {

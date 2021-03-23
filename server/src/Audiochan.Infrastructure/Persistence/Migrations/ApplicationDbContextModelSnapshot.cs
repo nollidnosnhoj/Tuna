@@ -80,10 +80,6 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                         .HasColumnType("text")
                         .HasColumnName("private_key");
 
-                    b.Property<int>("Publicity")
-                        .HasColumnType("integer")
-                        .HasColumnName("publicity");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -99,6 +95,10 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("user_id");
+
+                    b.Property<int>("Visibility")
+                        .HasColumnType("integer")
+                        .HasColumnName("visibility");
 
                     b.HasKey("Id")
                         .HasName("pk_audios");

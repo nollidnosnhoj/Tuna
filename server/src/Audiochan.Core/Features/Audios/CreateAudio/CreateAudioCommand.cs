@@ -98,7 +98,7 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
             audio.UpdateDescription(request.Description);
             audio.UpdatePublicityStatus(request.Publicity);
             
-            if (audio.Publicity == Publicity.Private)
+            if (audio.Visibility == Visibility.Private)
                 audio.SetPrivateKey();
 
             try

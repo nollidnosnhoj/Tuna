@@ -14,7 +14,7 @@ namespace Audiochan.Core.Features.Audios
         {
             CreateMap<Audio, AudioDetailViewModel>()
                 .ForMember(dest => dest.PrivateKey, opts =>
-                    opts.MapFrom(src => src.Publicity == Publicity.Private ? src.PrivateKey : null))
+                    opts.MapFrom(src => src.Visibility == Visibility.Private ? src.PrivateKey : null))
                 .ForMember(dest => dest.Tags, opts =>
                     opts.MapFrom(src => src.Tags.Select(tag => tag.Id).ToArray()))
                 .ForMember(dest => dest.User, opts =>

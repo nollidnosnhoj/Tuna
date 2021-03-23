@@ -6,7 +6,7 @@ import {
   SchemaOf,
 } from 'yup'
 import { validationMessages } from '~/utils'
-import { AudioRequest } from './types';
+import { AudioRequest, Visibility } from './types';
 
 export const editAudioSchema: SchemaOf<AudioRequest> = object().shape({
   title: string()
@@ -22,7 +22,8 @@ export const editAudioSchema: SchemaOf<AudioRequest> = object().shape({
     .ensure()
     .defined(),
   isPublic: boolean()
-    .defined()
+    .defined(),
+  visibility: string().defined()
 }).defined();
 
 export const uploadAudioSchema: SchemaOf<AudioRequest> = object().shape({
@@ -39,5 +40,6 @@ export const uploadAudioSchema: SchemaOf<AudioRequest> = object().shape({
     .ensure()
     .defined(),
   isPublic: boolean()
-    .defined()
+    .defined(),
+  visibility: string().defined()
 }).defined();
