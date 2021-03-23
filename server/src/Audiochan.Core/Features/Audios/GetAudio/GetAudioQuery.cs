@@ -2,9 +2,11 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Models.Responses;
+using Audiochan.Core.Common.Options;
 using Audiochan.Core.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Audios.GetAudio
 {
@@ -16,11 +18,13 @@ namespace Audiochan.Core.Features.Audios.GetAudio
     {
         private readonly IApplicationDbContext _dbContext;
         private readonly ICurrentUserService _currentUserService;
+        private readonly AudiochanOptions _audiochanOptions;
 
-        public GetAudioQueryHandler(IApplicationDbContext dbContext, ICurrentUserService currentUserService)
+        public GetAudioQueryHandler(IApplicationDbContext dbContext, ICurrentUserService currentUserService, IOptions<AudiochanOptions> options)
         {
             _dbContext = dbContext;
             _currentUserService = currentUserService;
+            _audiochanOptions = options.Value;
         }
 
         public async Task<Result<AudioDetailViewModel>> Handle(GetAudioQuery request, CancellationToken cancellationToken)
@@ -30,7 +34,7 @@ namespace Audiochan.Core.Features.Audios.GetAudio
             var audio = await _dbContext.Audios
                 .DefaultSingleQueryable(request.PrivateKey, currentUserId)
                 .Where(x => x.Id == request.Id)
-                .Select(AudioMappingExtensions.AudioToDetailProjection())
+                .Select(AudioMappingExtensions.AudioToDetailProjection(_audiochanOptions))
                 .SingleOrDefaultAsync(cancellationToken);
 
             return audio == null

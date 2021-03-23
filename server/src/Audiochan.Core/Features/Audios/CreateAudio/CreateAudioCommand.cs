@@ -64,7 +64,7 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
         private readonly IStorageService _storageService;
         private readonly ICurrentUserService _currentUserService;
         private readonly ITagRepository _tagRepository;
-        private readonly AudiochanOptions.StorageOptions _audioStorageOptions;
+        private readonly AudiochanOptions _audiochanOptions;
 
         public CreateAudioCommandHandler(IOptions<AudiochanOptions> options,
             IApplicationDbContext dbContext,
@@ -72,7 +72,7 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
             ICurrentUserService currentUserService,
             ITagRepository tagRepository)
         {
-            _audioStorageOptions = options.Value.AudioStorageOptions;
+            _audiochanOptions = options.Value;
             _dbContext = dbContext;
             _storageService = storageService;
             _currentUserService = currentUserService;
@@ -106,7 +106,7 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
                 await _dbContext.Audios.AddAsync(audio, cancellationToken);
                 await _dbContext.SaveChangesAsync(cancellationToken);
                 
-                var viewModel = AudioDetailViewModel.MapFrom(audio) with
+                var viewModel = AudioDetailViewModel.MapFrom(audio, _audiochanOptions) with
                 {
                     User = new MetaUserDto(currentUser),
                 };
@@ -115,7 +115,7 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
             }
             catch (Exception)
             {
-                await _storageService.RemoveAsync(_audioStorageOptions.Container, BlobHelpers.GetAudioBlobName(audio),
+                await _storageService.RemoveAsync(_audiochanOptions.AudioStorageOptions.Container, BlobHelpers.GetAudioBlobName(audio),
                     cancellationToken);
                 throw;
             }

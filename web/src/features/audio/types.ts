@@ -11,6 +11,7 @@ export type Audio = {
   visibility: Visibility;
   duration: number;
   picture: string;
+  audioUrl: string;
   created: string;
   user: Creator;
 }
@@ -25,7 +26,7 @@ export type AudioDetail = {
   duration: number;
   fileSize: number;
   fileExt: string;
-  url: string;
+  audioUrl: string;
   picture: string;
   created: string;
   updated?: string;

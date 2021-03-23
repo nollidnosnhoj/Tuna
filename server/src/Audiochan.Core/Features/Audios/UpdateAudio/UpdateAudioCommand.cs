@@ -5,11 +5,13 @@ using System.Threading.Tasks;
 using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Common.Models.Requests;
 using Audiochan.Core.Common.Models.Responses;
+using Audiochan.Core.Common.Options;
 using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Interfaces;
 using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Audios.UpdateAudio
 {
@@ -31,14 +33,17 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
         private readonly IApplicationDbContext _dbContext;
         private readonly ICurrentUserService _currentUserService;
         private readonly ITagRepository _tagRepository;
+        private readonly AudiochanOptions _audiochanOptions;
 
         public UpdateAudioCommandHandler(IApplicationDbContext dbContext,
             ICurrentUserService currentUserService,
-            ITagRepository tagRepository)
+            ITagRepository tagRepository,
+            IOptions<AudiochanOptions> options)
         {
             _dbContext = dbContext;
             _currentUserService = currentUserService;
             _tagRepository = tagRepository;
+            _audiochanOptions = options.Value;
         }
 
         public async Task<Result<AudioDetailViewModel>> Handle(UpdateAudioCommand request,
@@ -81,7 +86,7 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
             _dbContext.Audios.Update(audio);
             await _dbContext.SaveChangesAsync(cancellationToken);
 
-            var viewModel = AudioDetailViewModel.MapFrom(audio);
+            var viewModel = AudioDetailViewModel.MapFrom(audio, _audiochanOptions);
 
             return Result<AudioDetailViewModel>.Success(viewModel);
         }
