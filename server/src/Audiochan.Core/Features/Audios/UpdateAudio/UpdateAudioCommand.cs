@@ -7,7 +7,6 @@ using Audiochan.Core.Common.Models.Requests;
 using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Interfaces;
-using AutoMapper;
 using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -31,17 +30,14 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
     {
         private readonly IApplicationDbContext _dbContext;
         private readonly ICurrentUserService _currentUserService;
-        private readonly IMapper _mapper;
         private readonly ITagRepository _tagRepository;
 
         public UpdateAudioCommandHandler(IApplicationDbContext dbContext,
             ICurrentUserService currentUserService,
-            IMapper mapper,
             ITagRepository tagRepository)
         {
             _dbContext = dbContext;
             _currentUserService = currentUserService;
-            _mapper = mapper;
             _tagRepository = tagRepository;
         }
 
@@ -85,7 +81,7 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
             _dbContext.Audios.Update(audio);
             await _dbContext.SaveChangesAsync(cancellationToken);
 
-            var viewModel = _mapper.Map<AudioDetailViewModel>(audio);
+            var viewModel = AudioDetailViewModel.MapFrom(audio);
 
             return Result<AudioDetailViewModel>.Success(viewModel);
         }

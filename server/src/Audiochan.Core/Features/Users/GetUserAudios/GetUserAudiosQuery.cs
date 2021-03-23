@@ -7,8 +7,6 @@ using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Features.Audios;
 using Audiochan.Core.Features.Audios.GetAudioList;
 using Audiochan.Core.Interfaces;
-using AutoMapper;
-using AutoMapper.QueryableExtensions;
 using MediatR;
 
 namespace Audiochan.Core.Features.Users.GetUserAudios
@@ -22,14 +20,11 @@ namespace Audiochan.Core.Features.Users.GetUserAudios
     {
         private readonly IApplicationDbContext _dbContext;
         private readonly ICurrentUserService _currentUserService;
-        private readonly IMapper _mapper;
 
-        public GetUserAudiosQueryHandler(IApplicationDbContext dbContext, ICurrentUserService currentUserService,
-            IMapper mapper)
+        public GetUserAudiosQueryHandler(IApplicationDbContext dbContext, ICurrentUserService currentUserService)
         {
             _dbContext = dbContext;
             _currentUserService = currentUserService;
-            _mapper = mapper;
         }
 
         public async Task<PagedList<AudioViewModel>> Handle(GetUserAudiosQuery request,
@@ -40,7 +35,7 @@ namespace Audiochan.Core.Features.Users.GetUserAudios
                 .DefaultListQueryable(currentUserId)
                 .Where(a => a.User.UserName == request.Username.ToLower())
                 .Sort(request.Sort)
-                .ProjectTo<AudioViewModel>(_mapper.ConfigurationProvider)
+                .Select(AudioMappingExtensions.AudioToListProjection())
                 .PaginateAsync(request, cancellationToken);
         }
     }

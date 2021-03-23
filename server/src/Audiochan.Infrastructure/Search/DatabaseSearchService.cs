@@ -7,10 +7,9 @@ using Audiochan.Core.Features.Audios;
 using Audiochan.Core.Features.Audios.GetAudioList;
 using Audiochan.Core.Features.Search.SearchAudios;
 using Audiochan.Core.Features.Search.SearchUsers;
+using Audiochan.Core.Features.Users;
 using Audiochan.Core.Features.Users.GetUser;
 using Audiochan.Core.Interfaces;
-using AutoMapper;
-using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Infrastructure.Search
@@ -19,14 +18,11 @@ namespace Audiochan.Infrastructure.Search
     {
         private readonly IApplicationDbContext _dbContext;
         private readonly ICurrentUserService _currentUserService;
-        private readonly IMapper _mapper;
 
-        public DatabaseSearchService(IApplicationDbContext dbContext, ICurrentUserService currentUserService,
-            IMapper mapper)
+        public DatabaseSearchService(IApplicationDbContext dbContext, ICurrentUserService currentUserService)
         {
             _dbContext = dbContext;
             _currentUserService = currentUserService;
-            _mapper = mapper;
         }
 
         public async Task<PagedList<AudioViewModel>> SearchAudios(SearchAudiosQuery query,
@@ -44,7 +40,7 @@ namespace Audiochan.Infrastructure.Search
 
             var result = await queryable
                 .Sort(query.Sort)
-                .ProjectTo<AudioViewModel>(_mapper.ConfigurationProvider, new {currentUserId})
+                .Select(AudioMappingExtensions.AudioToListProjection())
                 .PaginateAsync(query, cancellationToken);
 
             return result;
@@ -56,7 +52,7 @@ namespace Audiochan.Infrastructure.Search
             var currentUserId = _currentUserService.GetUserId();
             return await _dbContext.Users
                 .Where(u => EF.Functions.ILike(u.UserName, $"%{query.Q}%"))
-                .ProjectTo<UserViewModel>(_mapper.ConfigurationProvider, new {currentUserId})
+                .Select(UserMappingExtensions.UserProjection(currentUserId))
                 .PaginateAsync(query, cancellationToken);
         }
     }

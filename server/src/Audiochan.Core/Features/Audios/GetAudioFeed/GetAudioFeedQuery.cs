@@ -5,8 +5,6 @@ using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Features.Audios.GetAudioList;
 using Audiochan.Core.Interfaces;
-using AutoMapper;
-using AutoMapper.QueryableExtensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,12 +18,10 @@ namespace Audiochan.Core.Features.Audios.GetAudioFeed
     public class GetAudioFeedQueryHandler : IRequestHandler<GetAudioFeedQuery, PagedList<AudioViewModel>>
     {
         private readonly IApplicationDbContext _dbContext;
-        private readonly IMapper _mapper;
 
-        public GetAudioFeedQueryHandler(IApplicationDbContext dbContext, IMapper mapper)
+        public GetAudioFeedQueryHandler(IApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
-            _mapper = mapper;
         }
 
         public async Task<PagedList<AudioViewModel>> Handle(GetAudioFeedQuery request,
@@ -40,7 +36,7 @@ namespace Audiochan.Core.Features.Audios.GetAudioFeed
             return await _dbContext.Audios
                 .DefaultListQueryable(request.UserId)
                 .Where(a => followedIds.Contains(a.UserId))
-                .ProjectTo<AudioViewModel>(_mapper.ConfigurationProvider)
+                .Select(AudioMappingExtensions.AudioToListProjection())
                 .OrderByDescending(a => a.Created)
                 .PaginateAsync(cancellationToken);
         }

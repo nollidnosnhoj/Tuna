@@ -61,7 +61,7 @@ namespace Audiochan.API.Controllers
         }
 
         [HttpGet("{username}/followers", Name = "GetUserFollowers")]
-        [ProducesResponseType(typeof(PagedList<UserDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PagedList<MetaUserDto>), StatusCodes.Status200OK)]
         [SwaggerOperation(Summary = "Return a list of the user's followers.", OperationId = "GetUserFollowers",
             Tags = new[] {"users"})]
         public async Task<IActionResult> GetFollowers(string username,
@@ -77,7 +77,7 @@ namespace Audiochan.API.Controllers
         }
 
         [HttpGet("{username}/followings", Name = "GetUserFollowings")]
-        [ProducesResponseType(typeof(PagedList<UserDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PagedList<MetaUserDto>), StatusCodes.Status200OK)]
         [SwaggerOperation(Summary = "Return a list of the user's followings.", OperationId = "GetUserFollowings",
             Tags = new[] {"users"})]
         public async Task<IActionResult> GetFollowings(string username,

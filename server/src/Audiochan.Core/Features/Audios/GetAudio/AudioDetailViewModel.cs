@@ -1,6 +1,7 @@
 ﻿using System;
 using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Common.Models;
+using Audiochan.Core.Entities;
 
 namespace Audiochan.Core.Features.Audios.GetAudio
 {
@@ -18,6 +19,9 @@ namespace Audiochan.Core.Features.Audios.GetAudio
         public string Picture { get; init; }
         public DateTime Created { get; init; }
         public DateTime? LastModified { get; init; }
-        public UserDto User { get; init; }
+        public MetaUserDto User { get; init; }
+
+        public static AudioDetailViewModel MapFrom(Audio audio) =>
+            AudioMappingExtensions.AudioToDetailProjection().Compile().Invoke(audio);
     }
 }

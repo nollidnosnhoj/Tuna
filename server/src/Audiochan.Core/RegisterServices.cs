@@ -14,7 +14,6 @@ namespace Audiochan.Core
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
             services.AddMediatR(Assembly.GetExecutingAssembly());
             services.AddScoped(typeof(IPipelineBehavior<,>), typeof(DbContextTransactionPipelineBehavior<,>));
-            services.AddAutoMapper(Assembly.GetExecutingAssembly());
             return services;
         }
     }

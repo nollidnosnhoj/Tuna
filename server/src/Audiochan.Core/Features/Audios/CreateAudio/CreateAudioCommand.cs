@@ -13,7 +13,6 @@ using Audiochan.Core.Common.Options;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Interfaces;
-using AutoMapper;
 using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -64,7 +63,6 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
         private readonly IApplicationDbContext _dbContext;
         private readonly IStorageService _storageService;
         private readonly ICurrentUserService _currentUserService;
-        private readonly IMapper _mapper;
         private readonly ITagRepository _tagRepository;
         private readonly AudiochanOptions.StorageOptions _audioStorageOptions;
 
@@ -72,14 +70,12 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
             IApplicationDbContext dbContext,
             IStorageService storageService,
             ICurrentUserService currentUserService,
-            IMapper mapper,
             ITagRepository tagRepository)
         {
             _audioStorageOptions = options.Value.AudioStorageOptions;
             _dbContext = dbContext;
             _storageService = storageService;
             _currentUserService = currentUserService;
-            _mapper = mapper;
             _tagRepository = tagRepository;
         }
 
@@ -109,12 +105,12 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
 
                 await _dbContext.Audios.AddAsync(audio, cancellationToken);
                 await _dbContext.SaveChangesAsync(cancellationToken);
-
-                var viewModel = _mapper.Map<AudioDetailViewModel>(audio) with
+                
+                var viewModel = AudioDetailViewModel.MapFrom(audio) with
                 {
-                    User = new UserDto(currentUser.Id, currentUser.UserName, currentUser.Picture),
+                    User = new MetaUserDto(currentUser),
                 };
-
+                
                 return Result<AudioDetailViewModel>.Success(viewModel);
             }
             catch (Exception)
