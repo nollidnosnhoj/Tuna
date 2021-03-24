@@ -1,4 +1,3 @@
-import { ReactJkMusicPlayerAudioInfo, ReactJkMusicPlayerAudioListProps } from "react-jinke-music-player"
 import { Creator } from "~/lib/types"
 
 export type AudioSearchType = 'audios' | 'user' | 'feed'
@@ -47,10 +46,11 @@ export interface CreateAudioRequest extends AudioRequest {
   fileSize: number;
 }
 
-export interface AudioPlayerListItem extends ReactJkMusicPlayerAudioListProps {
-  audioId?: number;
-}
-
-export interface AudioPlayerItemInfo extends ReactJkMusicPlayerAudioInfo {
-  audioId?: number;
+export type AudioPlayerItem = {
+  audioId: number;
+  title: string;
+  artist: string;
+  duration: number;
+  cover: string;
+  source: string;
 }

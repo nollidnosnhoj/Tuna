@@ -4,7 +4,12 @@ import NextLink from "next/link";
 import useUser from "~/hooks/useUser";
 import Page from "../Page";
 
-export default function withRequiredAuth(Component: FC) {
+export default function withRequiredAuth(
+  Component: FC,
+  initialLoggedIn?: boolean
+) {
+  if (initialLoggedIn) return () => <Component />;
+
   return function RequireAuthWrapperComponent() {
     const { isLoggedIn } = useUser();
 

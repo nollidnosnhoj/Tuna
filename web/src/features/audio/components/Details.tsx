@@ -33,7 +33,7 @@ import useUser from "~/hooks/useUser";
 import { FaHashtag, FaPlay } from "react-icons/fa";
 import { MdQueueMusic } from "react-icons/md";
 import useAudioPlayer from "~/hooks/useAudioPlayer";
-import { mapToAudioListProps } from "~/utils";
+import { mapSingleAudioForPlayer } from "~/utils";
 import PictureDropzone from "~/components/Picture/PictureDropzone";
 
 interface AudioDetailProps {
@@ -97,7 +97,7 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
                 size="lg"
                 icon={<FaPlay />}
                 aria-label="Play"
-                onClick={() => startPlay([mapToAudioListProps(audio)], 0)}
+                onClick={() => startPlay(mapSingleAudioForPlayer(audio), 0)}
               />
             </span>
           </Tooltip>
@@ -116,7 +116,7 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
                   size="lg"
                   icon={<MdQueueMusic />}
                   aria-label="Add to queue"
-                  onClick={() => addToQueue(mapToAudioListProps(audio))}
+                  onClick={() => addToQueue(mapSingleAudioForPlayer(audio)[0])}
                 />
               </span>
             </Tooltip>

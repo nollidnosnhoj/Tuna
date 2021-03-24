@@ -4,19 +4,19 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { AudioPlayerListItem } from "~/features/audio/types";
+import { AudioPlayerItem } from "~/features/audio/types";
 
 type AudioPlayerContextType = {
   isPlaying: boolean;
-  audioList: AudioPlayerListItem[];
+  audioList: AudioPlayerItem[];
   clearPriorAudioList: boolean;
   playIndex: number | undefined;
   volume: number;
-  addToQueue: (item: AudioPlayerListItem) => void;
+  addToQueue: (item: AudioPlayerItem) => void;
   clearQueue: () => void;
-  startPlay: (list: AudioPlayerListItem[], index: number) => void;
+  startPlay: (list: AudioPlayerItem[], index: number) => void;
   setPlaying: (state?: boolean) => void;
-  syncQueue: (list: AudioPlayerListItem[]) => void;
+  syncQueue: (list: AudioPlayerItem[]) => void;
   volumeChange: (level: number) => void;
   setPlayIndex: (index: number) => void;
   playPrevious: () => void;
@@ -28,7 +28,7 @@ export const AudioPlayerContext = createContext<AudioPlayerContextType>(
 );
 
 export default function AudioPlayerProvider(props: PropsWithChildren<any>) {
-  const [audioList, setAudioList] = useState<AudioPlayerListItem[]>([]);
+  const [audioList, setAudioList] = useState<AudioPlayerItem[]>([]);
   const [isPlaying, setIsPlaying] = useState(false);
   const [playIndex, setPlayIndex] = useState<number | undefined>(undefined);
   const [volume, setVolume] = useState<number>(() => {
@@ -42,13 +42,13 @@ export default function AudioPlayerProvider(props: PropsWithChildren<any>) {
   });
   const [clearPriorAudioList, setClearPriorAudioList] = useState(true);
 
-  const startPlay = (list: AudioPlayerListItem[], index: number = 0) => {
+  const startPlay = (list: AudioPlayerItem[], index: number = 0) => {
     setAudioList(() => list.slice(index, Math.min(list.length, 50)));
     setPlayIndex(0);
     setClearPriorAudioList(true);
   };
 
-  const addToQueue = (item: AudioPlayerListItem) => {
+  const addToQueue = (item: AudioPlayerItem) => {
     if (audioList.some((x) => x.audioId == item.audioId)) return;
     setAudioList((previousList) => [...previousList, item]);
     setClearPriorAudioList(false);
@@ -68,7 +68,7 @@ export default function AudioPlayerProvider(props: PropsWithChildren<any>) {
     setPlaying(false);
   };
 
-  const syncQueue = (list: AudioPlayerListItem[]) => {
+  const syncQueue = (list: AudioPlayerItem[]) => {
     setAudioList(list);
   };
 

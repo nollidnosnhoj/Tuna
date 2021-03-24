@@ -12,7 +12,7 @@ import React, { useCallback, useState } from "react";
 import { FaList } from "react-icons/fa";
 import { IoMdGrid } from "react-icons/io";
 import useAudioPlayer from "~/hooks/useAudioPlayer";
-import { mapToAudioListProps } from "~/utils";
+import { mapToAudioListForPlayer } from "~/utils";
 import { Audio } from "../../types";
 import AudioGridItem from "./GridItem";
 import AudioListItem from "./ListItem";
@@ -83,10 +83,7 @@ export default function AudioList(props: AudioListProps) {
                     <AudioListItem
                       audio={audio}
                       onPlayClick={() =>
-                        startPlay(
-                          audios.map((a) => mapToAudioListProps(a)),
-                          index
-                        )
+                        startPlay(mapToAudioListForPlayer(audios), index)
                       }
                     />
                   </ListItem>

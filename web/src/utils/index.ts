@@ -1,7 +1,5 @@
-import { ReactJkMusicPlayerAudioListProps } from "react-jinke-music-player";
 import slugify from "slugify";
-import api from '~/utils/api'
-import { Audio } from "~/features/audio/types";
+import { Audio, AudioDetail, AudioPlayerItem } from "~/features/audio/types";
 
 export const validationMessages = {
   required: function (field: string) {
@@ -41,13 +39,39 @@ export function objectToFormData(values: object): FormData {
   return formData;
 }
 
-export function mapToAudioListProps(audio: Audio): ReactJkMusicPlayerAudioListProps {
-  return {
+export function mapToAudioListForPlayer(audios: Audio[]): AudioPlayerItem[] {
+  return audios.map(audio => ({
     audioId: audio.id,
-    name: audio.title,
-    singer: audio.user.username,
+    title: audio.title,
+    artist: audio.user.username,
     cover: !!audio.picture ? `https://audiochan-public.s3.amazonaws.com/${audio.picture}` : '',
     duration: audio.duration,
-    musicSrc: audio.audioUrl
+    source: audio.audioUrl
+  }))
+}
+
+export function mapSingleAudioForPlayer(audio: AudioDetail, relatedAudios: Audio[] = []): AudioPlayerItem[] {
+  let list: AudioPlayerItem[] = []
+
+  list.push({
+    audioId: audio.id,
+    title: audio.title,
+    artist: audio.user.username,
+    cover: !!audio.picture ? `https://audiochan-public.s3.amazonaws.com/${audio.picture}` : '',
+    duration: audio.duration,
+    source: audio.audioUrl
+  });
+
+  if (relatedAudios.length > 0) {
+    list = [...list, ...relatedAudios.map(a => ({
+      audioId: a.id,
+      title: a.title,
+      artist: a.user.username,
+      cover: !!a.picture ? `https://audiochan-public.s3.amazonaws.com/${audio.picture}` : '',
+      duration: a.duration,
+      source: a.audioUrl
+    }))]
   }
+
+  return list
 }
