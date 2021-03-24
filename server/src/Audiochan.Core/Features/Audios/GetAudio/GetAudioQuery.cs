@@ -2,15 +2,15 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Models.Responses;
+using Audiochan.Core.Common.Options;
 using Audiochan.Core.Interfaces;
-using AutoMapper;
-using AutoMapper.QueryableExtensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Audios.GetAudio
 {
-    public record GetAudioQuery(long Id) : IRequest<Result<AudioDetailViewModel>>
+    public record GetAudioQuery(long Id, string PrivateKey = "") : IRequest<Result<AudioDetailViewModel>>
     {
     }
 
@@ -18,14 +18,13 @@ namespace Audiochan.Core.Features.Audios.GetAudio
     {
         private readonly IApplicationDbContext _dbContext;
         private readonly ICurrentUserService _currentUserService;
-        private readonly IMapper _mapper;
+        private readonly AudiochanOptions _audiochanOptions;
 
-        public GetAudioQueryHandler(IApplicationDbContext dbContext, ICurrentUserService currentUserService,
-            IMapper mapper)
+        public GetAudioQueryHandler(IApplicationDbContext dbContext, ICurrentUserService currentUserService, IOptions<AudiochanOptions> options)
         {
             _dbContext = dbContext;
             _currentUserService = currentUserService;
-            _mapper = mapper;
+            _audiochanOptions = options.Value;
         }
 
         public async Task<Result<AudioDetailViewModel>> Handle(GetAudioQuery request, CancellationToken cancellationToken)
@@ -33,9 +32,9 @@ namespace Audiochan.Core.Features.Audios.GetAudio
             var currentUserId = _currentUserService.GetUserId();
 
             var audio = await _dbContext.Audios
-                .DefaultQueryable(currentUserId)
+                .DefaultSingleQueryable(request.PrivateKey, currentUserId)
                 .Where(x => x.Id == request.Id)
-                .ProjectTo<AudioDetailViewModel>(_mapper.ConfigurationProvider, new {currentUserId})
+                .Select(AudioMappingExtensions.AudioToDetailProjection(_audiochanOptions))
                 .SingleOrDefaultAsync(cancellationToken);
 
             return audio == null

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Entities.Base;
 
@@ -12,7 +13,6 @@ namespace Audiochan.Core.Entities
         public Audio()
         {
             this.Tags = new HashSet<Tag>();
-            this.Favorited = new HashSet<FavoriteAudio>();
         }
 
         public Audio(string uploadId, string fileName, long fileSize, int duration, string userId) : this()
@@ -36,7 +36,6 @@ namespace Audiochan.Core.Entities
             this.FileSize = fileSize;
             this.Duration = duration;
             this.UserId = userId;
-            this.IsPublic = true;
 
             this.Title = Path.GetFileNameWithoutExtension(fileName).Truncate(30);
         }
@@ -49,13 +48,11 @@ namespace Audiochan.Core.Entities
         public long FileSize { get; set; }
         public string FileExt { get; set; }
         public string Picture { get; set; }
-        public bool IsPublic { get; set; } = true;
+        public Visibility Visibility { get; set; } = Visibility.Unlisted;
+        public string PrivateKey { get; set; }
         public string UserId { get; set; }
         public User User { get; set; }
-        public long? GenreId { get; set; }
-        public Genre Genre { get; set; }
         public ICollection<Tag> Tags { get; set; }
-        public ICollection<FavoriteAudio> Favorited { get; set; }
 
         public void UpdateTitle(string title)
         {
@@ -71,16 +68,26 @@ namespace Audiochan.Core.Entities
                 this.Description = description;
         }
 
-        public void UpdatePublicStatus(bool? status)
+        public void UpdatePublicityStatus(Visibility status)
         {
-            if (status.HasValue)
-                this.IsPublic = status.Value;
+            this.Visibility = status;
         }
 
-        public void UpdateGenre(Genre genre)
+        public void UpdatePublicityStatus(string status)
         {
-            this.GenreId = genre?.Id;
-            this.Genre = genre;
+            var publicity = status.ParseToEnumOrDefault<Visibility>();
+            this.Visibility = publicity;
+        }
+
+        public void SetPrivateKey()
+        {
+            // TODO: Use Nano-id (or shortid)
+            this.PrivateKey = Guid.NewGuid().ToString("N");
+        }
+
+        public void ClearPrivateKey()
+        {
+            this.PrivateKey = null;
         }
 
         public void UpdateTags(List<Tag> tags)
@@ -119,43 +126,6 @@ namespace Audiochan.Core.Entities
         public bool CanModify(string userId)
         {
             return this.UserId == userId;
-        }
-
-        public bool AddFavorite(string userId)
-        {
-            if (string.IsNullOrWhiteSpace(userId))
-                throw new ArgumentNullException(nameof(userId));
-
-            var favorite = GetFavorite(userId);
-
-            if (favorite is null)
-            {
-                favorite = new FavoriteAudio {AudioId = this.Id, UserId = userId};
-                this.Favorited.Add(favorite);
-            }
-
-            return true;
-        }
-
-        public bool RemoveFavorite(string userId)
-        {
-            if (string.IsNullOrWhiteSpace(userId))
-                throw new ArgumentNullException(nameof(userId));
-
-            var favorite = GetFavorite(userId);
-
-            if (favorite is not null)
-                this.Favorited.Remove(favorite);
-
-            return false;
-        }
-
-        private FavoriteAudio GetFavorite(string userId)
-        {
-            if (string.IsNullOrWhiteSpace(userId))
-                throw new ArgumentNullException(nameof(userId));
-
-            return this.Favorited.FirstOrDefault(f => f.UserId == userId);
         }
     }
 }

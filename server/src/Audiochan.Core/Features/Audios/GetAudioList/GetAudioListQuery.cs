@@ -1,12 +1,13 @@
-﻿using System.Threading;
+﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Models.Requests;
 using Audiochan.Core.Common.Models.Responses;
+using Audiochan.Core.Common.Options;
 using Audiochan.Core.Interfaces;
-using AutoMapper;
-using AutoMapper.QueryableExtensions;
 using MediatR;
+using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Audios.GetAudioList
 {
@@ -18,14 +19,13 @@ namespace Audiochan.Core.Features.Audios.GetAudioList
     {
         private readonly IApplicationDbContext _dbContext;
         private readonly ICurrentUserService _currentUserService;
-        private readonly IMapper _mapper;
+        private readonly AudiochanOptions _audiochanOptions;
 
-        public GetAudioListQueryHandler(IApplicationDbContext dbContext, ICurrentUserService currentUserService,
-            IMapper mapper)
+        public GetAudioListQueryHandler(IApplicationDbContext dbContext, ICurrentUserService currentUserService, IOptions<AudiochanOptions> options)
         {
             _dbContext = dbContext;
             _currentUserService = currentUserService;
-            _mapper = mapper;
+            _audiochanOptions = options.Value;
         }
 
         public async Task<PagedList<AudioViewModel>> Handle(GetAudioListQuery request,
@@ -34,10 +34,9 @@ namespace Audiochan.Core.Features.Audios.GetAudioList
             var currentUserId = _currentUserService.GetUserId();
 
             return await _dbContext.Audios
-                .DefaultQueryable(currentUserId)
-                .FilterByGenre(request.Genre)
+                .DefaultListQueryable(currentUserId)
                 .Sort(request.Sort)
-                .ProjectTo<AudioViewModel>(_mapper.ConfigurationProvider, new {currentUserId})
+                .Select(AudioMappingExtensions.AudioToListProjection(_audiochanOptions))
                 .PaginateAsync(request, cancellationToken);
         }
     }

@@ -1,18 +1,18 @@
 import { ReactJkMusicPlayerAudioInfo, ReactJkMusicPlayerAudioListProps } from "react-jinke-music-player"
-import { Creator, Genre } from "~/lib/types"
+import { Creator } from "~/lib/types"
 
-export type AudioSearchType = 'audios' | 'favorites' | 'user' | 'feed'
+export type AudioSearchType = 'audios' | 'user' | 'feed'
+
+export type Visibility = 'unlisted' | 'public' | 'private'
 
 export type Audio = {
   id: number;
   title: string;
-  isPublic: boolean;
+  visibility: Visibility;
   duration: number;
   picture: string;
-  favoriteCount: number;
-  isFavorited: boolean;
+  audioUrl: string;
   created: string;
-  genre?: Genre;
   user: Creator;
 }
 
@@ -20,27 +20,24 @@ export type AudioDetail = {
   id: number;
   title: string;
   description: string;
-  isPublic: boolean;
+  visibility: Visibility;
+  privateKey?: string;
   tags: string[];
   duration: number;
   fileSize: number;
   fileExt: string;
-  url: string;
+  audioUrl: string;
   picture: string;
-  favoriteCount: number;
-  isFavorited: boolean;
   created: string;
   updated?: string;
-  genre?: Genre;
   user: Creator;
 }
 
 export interface AudioRequest {
-  title: string;
+  title?: string;
   description?: string;
   tags: string[];
-  isPublic: boolean;
-  genre?: string;
+  visibility: Visibility;
 };
 
 export interface CreateAudioRequest extends AudioRequest {

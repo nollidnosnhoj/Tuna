@@ -24,10 +24,3 @@ export interface PaginatedOptions {
   size?: number;
   params?: Record<string, any>
 }
-
-export type Genre = {
-  id: number;
-  name: string;
-  slug: string;
-  count?: number;
-}

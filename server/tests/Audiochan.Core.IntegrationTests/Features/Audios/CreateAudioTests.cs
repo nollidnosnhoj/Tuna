@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Common.Helpers;
 using Audiochan.Core.Features.Audios.CreateAudio;
 using FluentAssertions;
@@ -37,14 +38,11 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
                 Title = "Test Audio",
                 Description = "This is a test audio",
                 Tags = new List<string> {"apples", "oranges", "banana"},
-                Genre = "dubstep",
-                IsPublic = false
             });
 
             var created = await _fixture.ExecuteDbContextAsync(database =>
             {
                 return database.Audios
-                    .Include(a => a.Genre)
                     .Include(a => a.Tags)
                     .Where(a => a.Id == result.Data.Id).SingleOrDefaultAsync();
             });
@@ -61,8 +59,6 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             result.Data.Tags.Should().Contain(x => x == "apples");
             result.Data.Tags.Should().Contain(x => x == "oranges");
             result.Data.Tags.Should().Contain(x => x == "banana");
-            result.Data.Genre.Name.Should().Be("Dubstep");
-            result.Data.IsPublic.Should().Be(false);
             result.Data.User.Should().NotBeNull();
             result.Data.User.Id.Should().Be(userId);
 
@@ -77,8 +73,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             created.Tags.Should().Contain(x => x.Id == "apples");
             created.Tags.Should().Contain(x => x.Id == "oranges");
             created.Tags.Should().Contain(x => x.Id == "banana");
-            created.Genre.Name.Should().Be("Dubstep");
-            created.IsPublic.Should().Be(false);
+            created.Visibility.Should().BeEquivalentTo(Visibility.Unlisted);
             created.UserId.Should().Be(userId);
         }
     }

@@ -1,7 +1,7 @@
 import {
   string,
 } from 'yup'
-import SETTINGS from '~/constants/settings'
+import SETTINGS from '~/lib/config'
 import { validationMessages } from '~/utils'
 
 const { 

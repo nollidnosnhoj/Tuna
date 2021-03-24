@@ -3,12 +3,12 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Models.Responses;
+using Audiochan.Core.Common.Options;
 using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Interfaces;
-using AutoMapper;
-using AutoMapper.QueryableExtensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Audios.GetRandomAudio
 {
@@ -20,14 +20,14 @@ namespace Audiochan.Core.Features.Audios.GetRandomAudio
     {
         private readonly IApplicationDbContext _dbContext;
         private readonly ICurrentUserService _currentUserService;
-        private readonly IMapper _mapper;
+        private readonly AudiochanOptions _audiochanOptions;
 
         public GetRandomAudioQueryHandler(IApplicationDbContext dbContext, ICurrentUserService currentUserService,
-            IMapper mapper)
+            IOptions<AudiochanOptions> options)
         {
             _dbContext = dbContext;
             _currentUserService = currentUserService;
-            _mapper = mapper;
+            _audiochanOptions = options.Value;
         }
 
         public async Task<Result<AudioDetailViewModel>> Handle(GetRandomAudioQuery request,
@@ -35,9 +35,9 @@ namespace Audiochan.Core.Features.Audios.GetRandomAudio
         {
             var currentUserId = _currentUserService.GetUserId();
             var audio = await _dbContext.Audios
-                .DefaultQueryable(currentUserId)
+                .DefaultListQueryable(currentUserId)
                 .OrderBy(a => Guid.NewGuid())
-                .ProjectTo<AudioDetailViewModel>(_mapper.ConfigurationProvider, new {currentUserId})
+                .Select(AudioMappingExtensions.AudioToDetailProjection(_audiochanOptions))
                 .SingleOrDefaultAsync(cancellationToken);
 
             return audio == null

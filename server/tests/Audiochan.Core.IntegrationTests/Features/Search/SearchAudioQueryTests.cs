@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Common.Helpers;
 using Audiochan.Core.Features.Audios.CreateAudio;
 using Audiochan.Core.Features.Search;
@@ -29,18 +30,20 @@ namespace Audiochan.Core.IntegrationTests.Features.Search
 
             for (var i = 0; i < 10; i++)
             {
+                var title = "testaudio" + i;
                 if (i > 0 && i % 3 == 0)
                 {
-                    var title = "EXAMPLE";
+                    title = "EXAMPLE";
                     if (random.Int(1, 10) % 2 == 0)
                         title = "ABC123 " + title;
                     if (random.Int(1, 10) % 2 == 0)
                         title += " ABC123";
-                    var audio = new AudioBuilder(userId)
-                        .Title(title)
-                        .Build();
-                    await _fixture.InsertAsync(audio);
                 }
+                var audio = new AudioBuilder(userId)
+                    .Title(title)
+                    .Publicity(Visibility.Public)
+                    .Build();
+                await _fixture.InsertAsync(audio);
             }
 
             var result = await _fixture.SendAsync(new SearchAudiosQuery
@@ -75,7 +78,8 @@ namespace Audiochan.Core.IntegrationTests.Features.Search
                     FileName = "test.mp3",
                     Duration = 100,
                     FileSize = 100,
-                    Tags = tags
+                    Tags = tags,
+                    Publicity = "public"
                 });
             }
 

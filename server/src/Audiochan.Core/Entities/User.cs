@@ -10,7 +10,6 @@ namespace Audiochan.Core.Entities
         public User()
         {
             Audios = new HashSet<Audio>();
-            FavoriteAudios = new HashSet<FavoriteAudio>();
             Followings = new HashSet<FollowedUser>();
             Followers = new HashSet<FollowedUser>();
             RefreshTokens = new HashSet<RefreshToken>();
@@ -30,7 +29,6 @@ namespace Audiochan.Core.Entities
         public string Website { get; set; }
         public DateTime Joined { get; set; }
         public ICollection<Audio> Audios { get; set; }
-        public ICollection<FavoriteAudio> FavoriteAudios { get; set; }
         public ICollection<FollowedUser> Followings { get; set; }
         public ICollection<FollowedUser> Followers { get; set; }
         public ICollection<RefreshToken> RefreshTokens { get; set; }
@@ -86,10 +84,10 @@ namespace Audiochan.Core.Entities
             if (string.IsNullOrWhiteSpace(userId))
                 throw new ArgumentNullException(nameof(userId));
 
-            var favorite = GetFollower(userId);
+            var follower = GetFollower(userId);
 
-            if (favorite is not null)
-                this.Followers.Remove(favorite);
+            if (follower is not null)
+                this.Followers.Remove(follower);
 
             return false;
         }

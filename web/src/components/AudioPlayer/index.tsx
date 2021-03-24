@@ -22,6 +22,7 @@ export default function AudioPlayer() {
     volume,
     volumeChange,
     setPlaying,
+    setPlayIndex,
   } = useAudioPlayer();
   const { colorMode, setColorMode } = useColorMode();
 
@@ -46,7 +47,9 @@ export default function AudioPlayer() {
       currentPlayId: string,
       audioLists: AudioPlayerListItem[],
       audioInfo: AudioPlayerItemInfo
-    ) => {},
+    ) => {
+      setPlayIndex(audioInfo.playIndex);
+    },
     []
   );
 

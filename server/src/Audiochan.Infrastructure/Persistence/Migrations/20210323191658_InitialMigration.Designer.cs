@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Audiochan.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210309054906_InitialMigration")]
+    [Migration("20210323191658_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -70,14 +70,6 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("file_size");
 
-                    b.Property<long?>("GenreId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("genre_id");
-
-                    b.Property<bool>("IsPublic")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_public");
-
                     b.Property<DateTime?>("LastModified")
                         .HasColumnType("timestamp without time zone")
                         .HasColumnName("last_modified");
@@ -85,6 +77,10 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                     b.Property<string>("Picture")
                         .HasColumnType("text")
                         .HasColumnName("picture");
+
+                    b.Property<string>("PrivateKey")
+                        .HasColumnType("text")
+                        .HasColumnName("private_key");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -102,11 +98,12 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                         .HasColumnType("text")
                         .HasColumnName("user_id");
 
+                    b.Property<int>("Visibility")
+                        .HasColumnType("integer")
+                        .HasColumnName("visibility");
+
                     b.HasKey("Id")
                         .HasName("pk_audios");
-
-                    b.HasIndex("GenreId")
-                        .HasDatabaseName("ix_audios_genre_id");
 
                     b.HasIndex("Title")
                         .HasDatabaseName("ix_audios_title");
@@ -118,33 +115,6 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                         .HasDatabaseName("ix_audios_user_id");
 
                     b.ToTable("audios");
-                });
-
-            modelBuilder.Entity("Audiochan.Core.Entities.FavoriteAudio", b =>
-                {
-                    b.Property<string>("UserId")
-                        .HasColumnType("text")
-                        .HasColumnName("user_id");
-
-                    b.Property<long>("AudioId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("audio_id");
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("created");
-
-                    b.Property<DateTime?>("LastModified")
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("last_modified");
-
-                    b.HasKey("UserId", "AudioId")
-                        .HasName("pk_favorite_audios");
-
-                    b.HasIndex("AudioId")
-                        .HasDatabaseName("ix_favorite_audios_audio_id");
-
-                    b.ToTable("favorite_audios");
                 });
 
             modelBuilder.Entity("Audiochan.Core.Entities.FollowedUser", b =>
@@ -172,32 +142,6 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                         .HasDatabaseName("ix_followed_users_target_id");
 
                     b.ToTable("followed_users");
-                });
-
-            modelBuilder.Entity("Audiochan.Core.Entities.Genre", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasColumnName("id")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("name");
-
-                    b.Property<string>("Slug")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("slug");
-
-                    b.HasKey("Id")
-                        .HasName("pk_genres");
-
-                    b.ToTable("genres");
                 });
 
             modelBuilder.Entity("Audiochan.Core.Entities.Role", b =>
@@ -495,41 +439,12 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Audiochan.Core.Entities.Audio", b =>
                 {
-                    b.HasOne("Audiochan.Core.Entities.Genre", "Genre")
-                        .WithMany("Audios")
-                        .HasForeignKey("GenreId")
-                        .HasConstraintName("fk_audios_genres_genre_id")
-                        .OnDelete(DeleteBehavior.SetNull);
-
                     b.HasOne("Audiochan.Core.Entities.User", "User")
                         .WithMany("Audios")
                         .HasForeignKey("UserId")
                         .HasConstraintName("fk_audios_users_user_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Genre");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Audiochan.Core.Entities.FavoriteAudio", b =>
-                {
-                    b.HasOne("Audiochan.Core.Entities.Audio", "Audio")
-                        .WithMany("Favorited")
-                        .HasForeignKey("AudioId")
-                        .HasConstraintName("fk_favorite_audios_audios_audio_id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Audiochan.Core.Entities.User", "User")
-                        .WithMany("FavoriteAudios")
-                        .HasForeignKey("UserId")
-                        .HasConstraintName("fk_favorite_audios_users_user_id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Audio");
 
                     b.Navigation("User");
                 });
@@ -664,21 +579,9 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Audiochan.Core.Entities.Audio", b =>
-                {
-                    b.Navigation("Favorited");
-                });
-
-            modelBuilder.Entity("Audiochan.Core.Entities.Genre", b =>
-                {
-                    b.Navigation("Audios");
-                });
-
             modelBuilder.Entity("Audiochan.Core.Entities.User", b =>
                 {
                     b.Navigation("Audios");
-
-                    b.Navigation("FavoriteAudios");
 
                     b.Navigation("Followers");
 

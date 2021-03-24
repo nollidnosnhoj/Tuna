@@ -4,9 +4,7 @@ using Audiochan.API.Extensions;
 using Audiochan.API.Models;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Common.Models.Responses;
-using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Features.Audios.GetAudioList;
-using Audiochan.Core.Features.Favorites.Audios.GetFavoriteAudios;
 using Audiochan.Core.Features.Followers.GetFollowers;
 using Audiochan.Core.Features.Followers.GetFollowings;
 using Audiochan.Core.Features.Users.GetUser;
@@ -62,24 +60,8 @@ namespace Audiochan.API.Controllers
             return Ok(list);
         }
 
-        [HttpGet("{username}/favorites/audios", Name = "GetUserFavoriteAudios")]
-        [ProducesResponseType(typeof(PagedList<AudioDetailViewModel>), StatusCodes.Status200OK)]
-        [SwaggerOperation(Summary = "Return a list of the user's favorite audios.",
-            OperationId = "GetUserFavoriteAudios", Tags = new[] {"users"})]
-        public async Task<IActionResult> GetUserFavorites(string username, 
-            [FromQuery] PaginationQuery paginationQuery, 
-            CancellationToken cancellationToken)
-        {
-            return Ok(await _mediator.Send(new GetFavoriteAudiosQuery
-            {
-                Username = username,
-                Page = paginationQuery.Page,
-                Size = paginationQuery.Size
-            }, cancellationToken));
-        }
-
         [HttpGet("{username}/followers", Name = "GetUserFollowers")]
-        [ProducesResponseType(typeof(PagedList<UserDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PagedList<MetaUserDto>), StatusCodes.Status200OK)]
         [SwaggerOperation(Summary = "Return a list of the user's followers.", OperationId = "GetUserFollowers",
             Tags = new[] {"users"})]
         public async Task<IActionResult> GetFollowers(string username,
@@ -95,7 +77,7 @@ namespace Audiochan.API.Controllers
         }
 
         [HttpGet("{username}/followings", Name = "GetUserFollowings")]
-        [ProducesResponseType(typeof(PagedList<UserDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PagedList<MetaUserDto>), StatusCodes.Status200OK)]
         [SwaggerOperation(Summary = "Return a list of the user's followings.", OperationId = "GetUserFollowings",
             Tags = new[] {"users"})]
         public async Task<IActionResult> GetFollowings(string username,

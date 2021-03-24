@@ -19,16 +19,21 @@ import {
   PopoverHeader,
   PopoverTrigger,
   Spacer,
+  FormControl,
+  FormLabel,
+  Select,
+  FormHelperText,
+  ListItem,
+  UnorderedList,
 } from "@chakra-ui/react";
 import { DeleteIcon } from "@chakra-ui/icons";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import Router from "next/router";
 import { useFormik } from "formik";
 import InputCheckbox from "../../../components/Form/Checkbox";
-import GenreSelect from "../../../components/Form/GenreSelect";
 import TextInput from "../../../components/Form/TextInput";
 import TagInput from "../../../components/Form/TagInput";
-import { Audio, AudioDetail, AudioRequest } from "~/features/audio/types";
+import { AudioDetail, AudioRequest } from "~/features/audio/types";
 import { useEditAudio, useRemoveAudio } from "~/features/audio/hooks/mutations";
 import { editAudioSchema } from "~/features/audio/schemas";
 import { apiErrorToast, successfulToast } from "~/utils/toast";
@@ -44,8 +49,7 @@ function mapAudioToModifyInputs(audio: AudioDetail): AudioRequest {
     title: audio.title,
     description: audio.description,
     tags: audio.tags,
-    isPublic: audio.isPublic,
-    genre: audio.genre?.slug,
+    visibility: audio.visibility,
   };
 }
 
@@ -124,7 +128,7 @@ const AudioEditModal: React.FC<AudioEditProps> = ({
               name="title"
               type="text"
               label="Title"
-              value={values.title}
+              value={values.title ?? ""}
               onChange={handleChange}
               error={errors.title}
               disabled={isSubmitting || deleting}
@@ -138,16 +142,6 @@ const AudioEditModal: React.FC<AudioEditProps> = ({
               error={errors.description}
               disabled={isSubmitting || deleting}
               textArea
-            />
-            <GenreSelect
-              name="genre"
-              label="Genre"
-              value={values.genre ?? ""}
-              onChange={handleChange}
-              error={errors.genre}
-              placeholder="Select Genre"
-              disabled={isSubmitting}
-              paddingY={2}
             />
             <TagInput
               name="tags"
@@ -164,16 +158,34 @@ const AudioEditModal: React.FC<AudioEditProps> = ({
               error={errors.tags}
               disabled={isSubmitting || deleting}
             />
-            <InputCheckbox
-              name="isPublic"
-              label="Public?"
-              value={values.isPublic}
-              onChange={() => setFieldValue("isPublic", !values.isPublic)}
-              error={errors.isPublic}
-              disabled={isSubmitting || deleting}
-              required
-              toggleSwitch
-            />
+            <FormControl id="visibility">
+              <FormLabel>Visibility</FormLabel>
+              <Select
+                name="visibility"
+                value={values.visibility}
+                onChange={handleChange}
+              >
+                <option value="unlisted">Unlisted</option>
+                <option value="public">Public</option>
+                <option value="private">Private</option>
+              </Select>
+              <FormHelperText>
+                <UnorderedList>
+                  <ListItem>
+                    <strong>Public</strong> - Audio will be shown in lists and
+                    searches.
+                  </ListItem>
+                  <ListItem>
+                    <strong>Unlisted</strong> - Audio will not be in lists or
+                    searches.
+                  </ListItem>
+                  <ListItem>
+                    <strong>Private</strong> - Audio can only be seen if a
+                    private key is provided.
+                  </ListItem>
+                </UnorderedList>
+              </FormHelperText>
+            </FormControl>
             <Flex marginY={4}>
               <Box>
                 <Popover>

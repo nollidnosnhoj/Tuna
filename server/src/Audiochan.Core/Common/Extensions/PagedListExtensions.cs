@@ -19,7 +19,7 @@ namespace Audiochan.Core.Common.Extensions
         {
             var count = await queryable.CountAsync(cancellationToken);
             var pageNumber = Math.Max(1, page);
-            var pageLimit = Math.Min(30, Math.Max(0, limit));
+            var pageLimit = Math.Max(0, Math.Min(limit, 30));
             var list = await queryable
                 .Skip((pageNumber - 1) * pageLimit)
                 .Take(pageLimit)

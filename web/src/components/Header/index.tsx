@@ -1,4 +1,10 @@
-import { CloseIcon, HamburgerIcon, MoonIcon, SunIcon } from "@chakra-ui/icons";
+import {
+  CloseIcon,
+  HamburgerIcon,
+  MoonIcon,
+  SearchIcon,
+  SunIcon,
+} from "@chakra-ui/icons";
 import {
   Box,
   Button,
@@ -197,6 +203,11 @@ const Header: React.FC<HeaderProps> = (props) => {
                 label="Browse"
                 href="/audios"
                 icon={<MdLibraryMusic />}
+              />
+              <HeaderMenuLink
+                label="Search"
+                href="/search"
+                icon={<SearchIcon />}
               />
               <HeaderMenuLink
                 label="Upload"

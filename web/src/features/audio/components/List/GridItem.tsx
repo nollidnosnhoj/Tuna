@@ -3,19 +3,12 @@ import React, { useMemo } from "react";
 import Picture from "~/components/Picture";
 import Link from "~/components/Link";
 import useUser from "~/hooks/useUser";
-import { useAudioFavorite } from "../../hooks/mutations";
 import { AudioListItemProps } from "./ListItem";
 
 export default function AudioGridItem(props: AudioListItemProps) {
   const { audio, onPlayClick, isPlaying, removeArtistName = false } = props;
 
   const { user: currentUser } = useUser();
-
-  const {
-    isFavorite,
-    onFavorite: favorite,
-    isLoading: isFavoriteLoading,
-  } = useAudioFavorite(audio.id, audio.isFavorited);
 
   const picture = useMemo(() => {
     return audio?.picture

@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Interfaces;
 using Audiochan.Infrastructure.Persistence;
-using MediatR;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -33,7 +32,7 @@ namespace Audiochan.API
                         var userManager = services.GetRequiredService<UserManager<User>>();
                         var roleManager = services.GetRequiredService<RoleManager<Role>>();
                         var tagRepo = services.GetRequiredService<ITagRepository>();
-                        await ApplicationDbSeeder.UserSeedAsync(context, userManager, roleManager);
+                        await ApplicationDbSeeder.UserSeedAsync(userManager, roleManager);
                         await ApplicationDbSeeder.AddDefaultAudioForDemo(context, userManager, tagRepo);
                     }
                 }

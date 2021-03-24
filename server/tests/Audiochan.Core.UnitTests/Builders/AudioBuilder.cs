@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Common.Helpers;
 using Audiochan.Core.Entities;
 using Bogus;
@@ -38,22 +39,11 @@ namespace Audiochan.Core.UnitTests.Builders
             return this;
         }
 
-        public AudioBuilder Genre(Genre genre)
+        public AudioBuilder Publicity(Visibility status, string privateKey = "")
         {
-            _audio.GenreId = genre.Id;
-            _audio.Genre = genre;
-            return this;
-        }
-
-        public AudioBuilder GenreId(long id)
-        {
-            _audio.GenreId = id;
-            return this;
-        }
-
-        public AudioBuilder Public(bool isPublic)
-        {
-            _audio.IsPublic = isPublic;
+            _audio.Visibility = status;
+            if (_audio.Visibility == Common.Enums.Visibility.Private && !string.IsNullOrEmpty(privateKey))
+                _audio.PrivateKey = privateKey;
             return this;
         }
 

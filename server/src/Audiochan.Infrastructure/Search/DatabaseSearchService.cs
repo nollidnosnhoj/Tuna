@@ -3,16 +3,16 @@ using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Models.Responses;
+using Audiochan.Core.Common.Options;
 using Audiochan.Core.Features.Audios;
 using Audiochan.Core.Features.Audios.GetAudioList;
-using Audiochan.Core.Features.Search;
 using Audiochan.Core.Features.Search.SearchAudios;
 using Audiochan.Core.Features.Search.SearchUsers;
+using Audiochan.Core.Features.Users;
 using Audiochan.Core.Features.Users.GetUser;
 using Audiochan.Core.Interfaces;
-using AutoMapper;
-using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace Audiochan.Infrastructure.Search
 {
@@ -20,14 +20,13 @@ namespace Audiochan.Infrastructure.Search
     {
         private readonly IApplicationDbContext _dbContext;
         private readonly ICurrentUserService _currentUserService;
-        private readonly IMapper _mapper;
+        private readonly AudiochanOptions _audiochanOptions;
 
-        public DatabaseSearchService(IApplicationDbContext dbContext, ICurrentUserService currentUserService,
-            IMapper mapper)
+        public DatabaseSearchService(IApplicationDbContext dbContext, ICurrentUserService currentUserService, IOptions<AudiochanOptions> options)
         {
             _dbContext = dbContext;
             _currentUserService = currentUserService;
-            _mapper = mapper;
+            _audiochanOptions = options.Value;
         }
 
         public async Task<PagedList<AudioViewModel>> SearchAudios(SearchAudiosQuery query,
@@ -36,8 +35,7 @@ namespace Audiochan.Infrastructure.Search
             var currentUserId = _currentUserService.GetUserId();
 
             var queryable = _dbContext.Audios
-                .DefaultQueryable(currentUserId)
-                .FilterByGenre(query.Genre)
+                .DefaultListQueryable(currentUserId)
                 .FilterByTags(query.Tags, ",");
 
             if (!string.IsNullOrWhiteSpace(query.Q))
@@ -46,7 +44,7 @@ namespace Audiochan.Infrastructure.Search
 
             var result = await queryable
                 .Sort(query.Sort)
-                .ProjectTo<AudioViewModel>(_mapper.ConfigurationProvider, new {currentUserId})
+                .Select(AudioMappingExtensions.AudioToListProjection(_audiochanOptions))
                 .PaginateAsync(query, cancellationToken);
 
             return result;
@@ -58,7 +56,7 @@ namespace Audiochan.Infrastructure.Search
             var currentUserId = _currentUserService.GetUserId();
             return await _dbContext.Users
                 .Where(u => EF.Functions.ILike(u.UserName, $"%{query.Q}%"))
-                .ProjectTo<UserViewModel>(_mapper.ConfigurationProvider, new {currentUserId})
+                .Select(UserMappingExtensions.UserProjection(currentUserId))
                 .PaginateAsync(query, cancellationToken);
         }
     }

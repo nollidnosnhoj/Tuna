@@ -12,18 +12,15 @@ import {
   Text,
   Tooltip,
 } from "@chakra-ui/react";
-import React, { useCallback, useMemo } from "react";
-import Router from "next/router";
+import React, { useMemo } from "react";
 import { Audio } from "~/features/audio/types";
 import { formatDuration } from "~/utils/time";
 import Link from "~/components/Link";
 import Picture from "~/components/Picture";
 import { FaPause, FaPlay } from "react-icons/fa";
-import { useAudioFavorite } from "../../hooks/mutations";
 import { AiFillHeart } from "react-icons/ai";
 import { HiDotsVertical } from "react-icons/hi";
 import useUser from "~/hooks/useUser";
-import { errorToast } from "~/utils/toast";
 import { MdQueueMusic } from "react-icons/md";
 
 export interface AudioListItemProps {
@@ -41,12 +38,6 @@ const AudioListItem: React.FC<AudioListItemProps> = ({
 }) => {
   const { user: currentUser } = useUser();
 
-  const {
-    isFavorite,
-    onFavorite: favorite,
-    isLoading: isFavoriteLoading,
-  } = useAudioFavorite(audio.id, audio.isFavorited);
-
   const picture = useMemo(() => {
     return audio?.picture
       ? `https://audiochan-public.s3.amazonaws.com/${audio.picture}`
@@ -54,9 +45,9 @@ const AudioListItem: React.FC<AudioListItemProps> = ({
   }, [audio.picture]);
 
   return (
-    <Box as="article" display="flex" marginBottom={4}>
-      <Picture source={picture} imageSize={100} isLazy borderRightWidth={1} />
-      <Flex width="100%" align="center" mx={4}>
+    <Box as="article" display="flex">
+      <Picture source={picture} imageSize={100} isLazy borderWidth="1px" />
+      <Flex width="100%" mx={4} marginTop={2}>
         <Flex flex="3">
           <Box marginRight={4}>
             <Tooltip label="Play" placement="top">
@@ -73,14 +64,17 @@ const AudioListItem: React.FC<AudioListItemProps> = ({
             </Tooltip>
           </Box>
           <Box>
-            <Box>
+            <Flex align="center">
               <Link
                 href={`/audios/view/${audio.id}`}
                 _hover={{ textDecoration: "none" }}
               >
                 <Text as="b">{audio.title}</Text>
               </Link>
-            </Box>
+              <Text fontSize="sm" marginLeft={2}>
+                {formatDuration(audio.duration)}
+              </Text>
+            </Flex>
             {!removeArtistName && (
               <Link href={`/users/${audio.user.username}`}>
                 <Text as="i">{audio.user.username}</Text>
@@ -88,37 +82,25 @@ const AudioListItem: React.FC<AudioListItemProps> = ({
             )}
           </Box>
         </Flex>
-        <HStack flex="1" justify="flex-end" spacing={4}>
+        <Flex flex="1" justify="flex-end">
           <Stack direction="column" spacing={1} textAlign="right">
-            <Text fontSize="sm">{formatDuration(audio.duration)}</Text>
-            <Badge>{audio.genre?.name}</Badge>
+            {audio.visibility !== "public" && <Badge>{audio.visibility}</Badge>}
           </Stack>
-          <Box>
-            <Menu placement="bottom-end">
-              <MenuButton
-                as={IconButton}
-                aria-label="Show actions"
-                icon={<HiDotsVertical />}
-                variant="ghost"
-              >
-                Actions
-              </MenuButton>
-              <MenuList>
-                {currentUser && (
-                  <MenuItem
-                    onClick={() => favorite()}
-                    icon={<AiFillHeart />}
-                    disabled={isFavoriteLoading}
-                  >
-                    {isFavorite ? "Unfavorite" : "Favorite"}
-                  </MenuItem>
-                )}
-                <MenuItem icon={<MdQueueMusic />}>Add To Queue</MenuItem>
-              </MenuList>
-            </Menu>
-          </Box>
-        </HStack>
+        </Flex>
       </Flex>
+      <Menu placement="bottom-end">
+        <MenuButton
+          as={IconButton}
+          aria-label="Show actions"
+          icon={<HiDotsVertical />}
+          variant="ghost"
+        >
+          Actions
+        </MenuButton>
+        <MenuList>
+          <MenuItem icon={<MdQueueMusic />}>Add To Queue</MenuItem>
+        </MenuList>
+      </Menu>
     </Box>
   );
 };
