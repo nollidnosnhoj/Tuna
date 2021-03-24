@@ -3133,7 +3133,7 @@ react-is@16.13.1, react-is@^16.12.0, react-is@^16.7.0, react-is@^16.8.1:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
 
-react-jinke-music-player@^4.22.1:
+react-jinke-music-player@^4.23.0:
   version "4.23.0"
   resolved "https://registry.yarnpkg.com/react-jinke-music-player/-/react-jinke-music-player-4.23.0.tgz#ed01b1a72684e8fbabe2d6cf6992a53df534dda5"
   integrity sha512-zUns+Us1QKIJ1vvzzrGRgJ9Q1D+PboNelIpEwk5kZPZaEBoydDW2UbRixwOlphWgysbXMs/CXgsXKHNdHx1FJA==

@@ -45,9 +45,9 @@ const AudioListItem: React.FC<AudioListItemProps> = ({
   }, [audio.picture]);
 
   return (
-    <Box as="article" display="flex" marginBottom={4}>
-      <Picture source={picture} imageSize={100} isLazy borderRightWidth={1} />
-      <Flex width="100%" align="center" mx={4}>
+    <Box as="article" display="flex">
+      <Picture source={picture} imageSize={100} isLazy borderWidth="1px" />
+      <Flex width="100%" mx={4} marginTop={2}>
         <Flex flex="3">
           <Box marginRight={4}>
             <Tooltip label="Play" placement="top">
@@ -64,14 +64,17 @@ const AudioListItem: React.FC<AudioListItemProps> = ({
             </Tooltip>
           </Box>
           <Box>
-            <Box>
+            <Flex align="center">
               <Link
                 href={`/audios/view/${audio.id}`}
                 _hover={{ textDecoration: "none" }}
               >
                 <Text as="b">{audio.title}</Text>
               </Link>
-            </Box>
+              <Text fontSize="sm" marginLeft={2}>
+                {formatDuration(audio.duration)}
+              </Text>
+            </Flex>
             {!removeArtistName && (
               <Link href={`/users/${audio.user.username}`}>
                 <Text as="i">{audio.user.username}</Text>
@@ -79,28 +82,25 @@ const AudioListItem: React.FC<AudioListItemProps> = ({
             )}
           </Box>
         </Flex>
-        <HStack flex="1" justify="flex-end" spacing={4}>
+        <Flex flex="1" justify="flex-end">
           <Stack direction="column" spacing={1} textAlign="right">
-            <Text fontSize="sm">{formatDuration(audio.duration)}</Text>
             {audio.visibility !== "public" && <Badge>{audio.visibility}</Badge>}
           </Stack>
-          <Box>
-            <Menu placement="bottom-end">
-              <MenuButton
-                as={IconButton}
-                aria-label="Show actions"
-                icon={<HiDotsVertical />}
-                variant="ghost"
-              >
-                Actions
-              </MenuButton>
-              <MenuList>
-                <MenuItem icon={<MdQueueMusic />}>Add To Queue</MenuItem>
-              </MenuList>
-            </Menu>
-          </Box>
-        </HStack>
+        </Flex>
       </Flex>
+      <Menu placement="bottom-end">
+        <MenuButton
+          as={IconButton}
+          aria-label="Show actions"
+          icon={<HiDotsVertical />}
+          variant="ghost"
+        >
+          Actions
+        </MenuButton>
+        <MenuList>
+          <MenuItem icon={<MdQueueMusic />}>Add To Queue</MenuItem>
+        </MenuList>
+      </Menu>
     </Box>
   );
 };

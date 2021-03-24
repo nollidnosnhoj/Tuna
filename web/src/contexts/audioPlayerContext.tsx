@@ -18,6 +18,9 @@ type AudioPlayerContextType = {
   setPlaying: (state?: boolean) => void;
   syncQueue: (list: AudioPlayerListItem[]) => void;
   volumeChange: (level: number) => void;
+  setPlayIndex: (index: number) => void;
+  playPrevious: () => void;
+  playNext: () => void;
 };
 
 export const AudioPlayerContext = createContext<AudioPlayerContextType>(
@@ -40,8 +43,8 @@ export default function AudioPlayerProvider(props: PropsWithChildren<any>) {
   const [clearPriorAudioList, setClearPriorAudioList] = useState(true);
 
   const startPlay = (list: AudioPlayerListItem[], index: number = 0) => {
-    setAudioList(list);
-    setPlayIndex(index);
+    setAudioList(() => list.slice(index, Math.min(list.length, 50)));
+    setPlayIndex(0);
     setClearPriorAudioList(true);
   };
 
@@ -79,6 +82,19 @@ export default function AudioPlayerProvider(props: PropsWithChildren<any>) {
     }
   };
 
+  const setIndex = (index: number) => {
+    console.log(index);
+    setPlayIndex(() => Math.max(0, Math.min(index, audioList.length - 1)));
+  };
+
+  const playPrevious = () => {
+    setPlayIndex((prev) => Math.max(0, (prev ?? 0) - 1));
+  };
+
+  const playNext = () => {
+    setPlayIndex((prev) => Math.min(audioList.length, (prev ?? 0) + 1));
+  };
+
   const values: AudioPlayerContextType = useMemo(
     () => ({
       isPlaying: isPlaying,
@@ -92,6 +108,9 @@ export default function AudioPlayerProvider(props: PropsWithChildren<any>) {
       syncQueue: syncQueue,
       volumeChange: volumeChange,
       setPlaying: setPlaying,
+      setPlayIndex: setIndex,
+      playPrevious: playPrevious,
+      playNext: playNext,
     }),
     [
       isPlaying,
@@ -105,6 +124,9 @@ export default function AudioPlayerProvider(props: PropsWithChildren<any>) {
       startPlay,
       addToQueue,
       setPlaying,
+      setIndex,
+      playPrevious,
+      playNext,
     ]
   );
 

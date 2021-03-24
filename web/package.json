@@ -25,7 +25,7 @@
     "react-dom": "^17.0.1",
     "react-dropzone": "^11.3.0",
     "react-icons": "^4.1.0",
-    "react-jinke-music-player": "^4.22.1",
+    "react-jinke-music-player": "^4.23.0",
     "react-query": "^3.9.0",
     "slugify": "^1.4.6",
     "yup": "^0.32.8"

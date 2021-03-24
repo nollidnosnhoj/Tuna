@@ -16,11 +16,13 @@ import {
   Wrap,
   WrapItem,
   chakra,
+  TagLabel,
+  TagLeftIcon,
 } from "@chakra-ui/react";
 import Router from "next/router";
 import React, { useEffect, useMemo, useState } from "react";
 import { EditIcon } from "@chakra-ui/icons";
-import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
+import NextLink from "next/link";
 import AudioEdit from "./Edit";
 import Link from "../../../components/Link";
 import Picture from "../../../components/Picture";
@@ -28,7 +30,7 @@ import { useAddAudioPicture } from "~/features/audio/hooks/mutations";
 import { AudioDetail } from "~/features/audio/types";
 import { formatDuration, relativeDate } from "~/utils/time";
 import useUser from "~/hooks/useUser";
-import { FaPlay } from "react-icons/fa";
+import { FaHashtag, FaPlay } from "react-icons/fa";
 import { MdQueueMusic } from "react-icons/md";
 import useAudioPlayer from "~/hooks/useAudioPlayer";
 import { mapToAudioListProps } from "~/utils";
@@ -157,15 +159,20 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
             </VStack>
           </Flex>
           {audio.tags && (
-            <Box>
+            <Flex alignItems="flex-end">
               <Wrap marginTop={2}>
                 {audio.tags.map((tag, idx) => (
                   <WrapItem key={idx}>
-                    <Tag size="sm">{tag}</Tag>
+                    <NextLink href={`/search/audios?tag=${tag}`}>
+                      <Tag size="sm" cursor="pointer">
+                        <TagLeftIcon as={FaHashtag} />
+                        <TagLabel>{tag}</TagLabel>
+                      </Tag>
+                    </NextLink>
                   </WrapItem>
                 ))}
               </Wrap>
-            </Box>
+            </Flex>
           )}
         </Stack>
       </Box>

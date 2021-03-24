@@ -1,9 +1,18 @@
 import { ButtonGroup, IconButton } from "@chakra-ui/button";
-import { Box, Flex, SimpleGrid } from "@chakra-ui/layout";
+import {
+  Box,
+  Divider,
+  Flex,
+  List,
+  ListItem,
+  SimpleGrid,
+} from "@chakra-ui/layout";
 import { Tooltip } from "@chakra-ui/tooltip";
 import React, { useCallback, useState } from "react";
 import { FaList } from "react-icons/fa";
 import { IoMdGrid } from "react-icons/io";
+import useAudioPlayer from "~/hooks/useAudioPlayer";
+import { mapToAudioListProps } from "~/utils";
 import { Audio } from "../../types";
 import AudioGridItem from "./GridItem";
 import AudioListItem from "./ListItem";
@@ -24,6 +33,7 @@ export default function AudioList(props: AudioListProps) {
     defaultLayout = "list",
     hideLayoutToggle = false,
   } = props;
+  const { startPlay } = useAudioPlayer();
   const [layout, setLayout] = useState<AudioListLayout>(defaultLayout);
 
   const onLayoutChange = useCallback(
@@ -62,10 +72,27 @@ export default function AudioList(props: AudioListProps) {
         {audios.length === 0 && notFoundContent}
         {audios.length > 0 && (
           <React.Fragment>
-            {layout === "list" &&
-              audios.map((audio, index) => (
-                <AudioListItem key={index} audio={audio} />
-              ))}
+            {layout === "list" && (
+              <List spacing={4}>
+                {audios.map((audio, index) => (
+                  <ListItem
+                    _notLast={{ borderBottomWidth: 1 }}
+                    paddingBottom={4}
+                    key={index}
+                  >
+                    <AudioListItem
+                      audio={audio}
+                      onPlayClick={() =>
+                        startPlay(
+                          audios.map((a) => mapToAudioListProps(a)),
+                          index
+                        )
+                      }
+                    />
+                  </ListItem>
+                ))}
+              </List>
+            )}
             {layout === "grid" && (
               <SimpleGrid columns={[2, null, 5]} spacing={4}>
                 {audios.map((audio, index) => (

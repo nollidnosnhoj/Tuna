@@ -20,6 +20,7 @@ import { Profile } from "~/features/user/types";
 import { useFormik } from "formik";
 import TextInput from "~/components/Form/TextInput";
 import { SearchIcon } from "@chakra-ui/icons";
+import usePagination from "~/hooks/usePagination";
 
 type SearchValues = { q: string };
 
@@ -39,15 +40,18 @@ export const getServerSideProps: GetServerSideProps<SearchValues> = async ({
   };
 };
 
-type SearchResponse = {
-  audios: PagedList<Audio>;
-  users: PagedList<Profile>;
-};
+function fetchSummaryResults(key: string, query: Record<string, any>) {
+  return fetch<PagedList<Audio>>(key, query);
+}
 
 export default function SearchPage(props: SearchValues) {
   const { colorMode } = useColorMode();
 
   const [searchValues, setSearchValues] = useState<SearchValues>(props);
+
+  const fetchQueryParams = useMemo(() => ({ ...searchValues, size: 3 }), [
+    searchValues,
+  ]);
 
   const formik = useFormik<SearchValues>({
     initialValues: searchValues,
@@ -59,25 +63,27 @@ export default function SearchPage(props: SearchValues) {
 
   const { handleChange, handleSubmit, values: formValues } = formik;
 
-  const { data, isFetching } = useQuery<SearchResponse>(
-    ["search", searchValues],
-    () => fetch<SearchResponse>("search", searchValues),
+  const { items: audios, isFetching: isFetchingAudios } = usePagination<Audio>(
+    "search/audios",
+    () => fetch<PagedList<Audio>>("search/audios", fetchQueryParams),
+    fetchQueryParams,
     {
       enabled: !!searchValues.q,
     }
   );
 
-  const [audios, audiosCount] = useMemo(() => {
-    return [data?.audios.items ?? [], data?.audios.count ?? 0];
-  }, [data]);
-
-  const [users, usersCount] = useMemo(() => {
-    return [data?.users.items ?? [], data?.users.count ?? 0];
-  }, [data]);
+  const { items: users, isFetching: isFetchingUsers } = usePagination<Profile>(
+    "search/users",
+    () => fetch<PagedList<Profile>>("search/users", fetchQueryParams),
+    fetchQueryParams,
+    {
+      enabled: !!searchValues.q,
+    }
+  );
 
   const noResultsFound = useMemo(() => {
-    return !audiosCount && !usersCount;
-  }, [audiosCount, usersCount]);
+    return !users && !audios && !isFetchingAudios && !isFetchingUsers;
+  }, [audios, users, isFetchingAudios, isFetchingUsers]);
 
   return (
     <Page title={`Search everything | Audiochan`} removeSearchBar>
@@ -107,7 +113,7 @@ export default function SearchPage(props: SearchValues) {
             <Text fontSize={20}>Search for audios, users, etc. here</Text>
           </VStack>
         )}
-        {data && (
+        {audios && (
           <React.Fragment>
             {noResultsFound && <Text>No results found.</Text>}
             {audios.length > 0 && (

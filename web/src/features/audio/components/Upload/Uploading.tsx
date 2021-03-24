@@ -1,28 +1,17 @@
 import axios from "axios";
-import {
-  Box,
-  Flex,
-  Heading,
-  Progress,
-  Stack,
-  Text,
-  useToast,
-} from "@chakra-ui/react";
+import { Box, Flex, Heading, Progress, Stack, Text } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useState } from "react";
 import Router from "next/router";
 import { useCreateAudio } from "~/features/audio/hooks/mutations";
 import useUser from "~/hooks/useUser";
-import { AudioRequest, CreateAudioRequest } from "~/features/audio/types";
+import { CreateAudioRequest } from "~/features/audio/types";
 import api from "~/utils/api";
 import { successfulToast } from "~/utils/toast";
 import { isAxiosError } from "~/utils/axios";
 import { ErrorResponse } from "~/lib/types";
-import { addAudioPicture } from "../../services/addAudioPicture";
 
 interface AudioUploadingProps {
   file: File;
-  form?: AudioRequest;
-  picture?: string;
 }
 
 type S3PresignedUrl = {
@@ -38,15 +27,15 @@ const STAGE_MESSAGES = [
 ];
 
 export default function AudioUploading(props: AudioUploadingProps) {
-  const { file, form, picture } = props;
-  const toast = useToast();
+  const { file } = props;
   const { user } = useUser();
   const [stage, setStage] = useState(0);
   const [uploadAudioProgress, setUploadAudioProgress] = useState(0);
   const [audioId, setAudioId] = useState(0);
-  const [completed, setCompleted] = useState(false);
   const [error, setError] = useState("");
   const { mutateAsync: createAudio } = useCreateAudio();
+
+  const completed = audioId > 0;
 
   const getUploadUrl = useCallback(() => {
     return new Promise<S3PresignedUrl>((resolve, reject) => {
@@ -105,12 +94,8 @@ export default function AudioUploading(props: AudioUploadingProps) {
             fileName: file.name,
             duration: Math.round(audio.duration),
             fileSize: file.size,
-            ...(form ?? {
-              title: "",
-              description: "",
-              tags: [],
-              isPublic: true,
-            }),
+            tags: [],
+            visibility: "unlisted",
           };
 
           createAudio(body)
@@ -132,23 +117,6 @@ export default function AudioUploading(props: AudioUploadingProps) {
     [file]
   );
 
-  const addPictureAfterAudioCreation = useCallback(() => {
-    return new Promise<string>((resolve) => {
-      if (audioId > 0 && picture) {
-        addAudioPicture(audioId, picture)
-          .then(({ data }) => {
-            resolve(data.image);
-          })
-          .catch((err) => {
-            // TODO: Add warning toast notifying that the image cannot be uploaded, but still resolve the promise.
-            resolve("");
-          });
-      } else {
-        resolve("");
-      }
-    });
-  }, [audioId, picture]);
-
   // The process of creating the audio
   useEffect(() => {
     (async () => {
@@ -165,29 +133,9 @@ export default function AudioUploading(props: AudioUploadingProps) {
     })();
   }, [file, user]);
 
-  // When the audio is created, upload the picture if applicable
-  useEffect(() => {
-    if (audioId > 0 && picture) {
-      addPictureAfterAudioCreation()
-        .catch(() => {
-          toast({
-            title: "Unable to upload picture.",
-            description: "Try again later.",
-            status: "warning",
-            duration: 1000,
-          });
-        })
-        .finally(() => {
-          setCompleted(true);
-        });
-    } else if (audioId > 0) {
-      setCompleted(true);
-    }
-  }, [audioId, picture]);
-
   // Once completed, push the route to the newly created audio
   useEffect(() => {
-    if (completed && audioId > 0) {
+    if (completed) {
       Router.push(`audios/view/${audioId}`).then(() => {
         successfulToast({
           title: "Audio uploaded",
