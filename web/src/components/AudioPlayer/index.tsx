@@ -1,5 +1,5 @@
 import H5AudioPlayer from "react-h5-audio-player";
-import React, { useCallback, useMemo, useRef } from "react";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import useAudioPlayer from "~/hooks/useAudioPlayer";
 import { Box } from "@chakra-ui/react";
 import { REPEAT_MODE } from "~/contexts/audioPlayerContext";
@@ -13,8 +13,7 @@ export default function AudioPlayer() {
     ["Disable", REPEAT_MODE.REPEAT_SINGLE],
   ];
   const {
-    audioList,
-    playIndex,
+    nowPlaying: currentPlaying,
     volume,
     changeVolume,
     repeatMode,
@@ -22,12 +21,8 @@ export default function AudioPlayer() {
     playPrevious,
     playNext,
     changePlaying,
+    isPlaying,
   } = useAudioPlayer();
-
-  const currentAudio = useMemo(() => {
-    if (playIndex === undefined) return undefined;
-    return audioList[playIndex];
-  }, [audioList, playIndex]);
 
   const repeatTuple = useMemo(() => {
     let tuple = repeatModeOrder.find(([_, x]) => x === repeatMode);
@@ -48,7 +43,11 @@ export default function AudioPlayer() {
   }, [playPrevious]);
 
   const handleClickNext = useCallback(() => {
-    playNext();
+    playNext(false);
+  }, [playNext]);
+
+  const handleEndAudio = useCallback(() => {
+    playNext(true);
   }, [playNext]);
 
   const handleVolumeChange = useCallback(() => {
@@ -66,6 +65,16 @@ export default function AudioPlayer() {
     if (newIndex > repeatModeOrder.length - 1) newIndex = 0;
     changeRepeatMode(repeatModeOrder[newIndex][1]);
   }, [repeatMode, changeRepeatMode]);
+
+  useEffect(() => {
+    if (audioPlayerRef.current) {
+      if (isPlaying) {
+        audioPlayerRef.current.playAudioPromise();
+      } else {
+        audioPlayerRef.current.audio.current?.pause();
+      }
+    }
+  }, [isPlaying]);
 
   return (
     <React.Fragment>
@@ -92,13 +101,15 @@ export default function AudioPlayer() {
               onClick={handleRepeatModeChange}
             />,
           ]}
-          src={currentAudio?.source || ""}
+          src={currentPlaying?.source}
           onClickPrevious={handleClickPrevious}
           onClickNext={handleClickNext}
           volume={volume}
           onVolumeChange={handleVolumeChange}
           onPlay={handlePlay}
           onPause={handlePause}
+          onEnded={handleEndAudio}
+          onPlayError={(err) => console.log(err)}
         />
       </Box>
     </React.Fragment>

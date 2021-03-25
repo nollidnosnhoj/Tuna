@@ -20,7 +20,7 @@ import {
   TagLeftIcon,
 } from "@chakra-ui/react";
 import Router from "next/router";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { EditIcon } from "@chakra-ui/icons";
 import NextLink from "next/link";
 import AudioEdit from "./Edit";
@@ -30,11 +30,11 @@ import { useAddAudioPicture } from "~/features/audio/hooks/mutations";
 import { AudioDetail } from "~/features/audio/types";
 import { formatDuration, relativeDate } from "~/utils/time";
 import useUser from "~/hooks/useUser";
-import { FaHashtag, FaPlay } from "react-icons/fa";
+import { FaHashtag, FaPause, FaPlay } from "react-icons/fa";
 import { MdQueueMusic } from "react-icons/md";
 import useAudioPlayer from "~/hooks/useAudioPlayer";
-import { mapSingleAudioForPlayer } from "~/utils";
 import PictureDropzone from "~/components/Picture/PictureDropzone";
+import { mapToAudioListForPlayer } from "~/utils";
 
 interface AudioDetailProps {
   audio: AudioDetail;
@@ -43,7 +43,25 @@ interface AudioDetailProps {
 const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
   const secondaryColor = useColorModeValue("black.300", "gray.300");
   const { user: currentUser } = useUser();
-  const { startPlay, addToQueue } = useAudioPlayer();
+  const {
+    startPlay,
+    addToQueue,
+    nowPlaying,
+    isPlaying,
+    changePlaying,
+  } = useAudioPlayer();
+
+  const isAudioNowPlaying = useMemo(() => {
+    return nowPlaying && nowPlaying.audioId === audio.id;
+  }, [nowPlaying, audio]);
+
+  const clickPlayButton = useCallback(() => {
+    if (isAudioNowPlaying) {
+      changePlaying();
+    } else {
+      startPlay(mapToAudioListForPlayer([audio]), 0);
+    }
+  }, [isAudioNowPlaying, changePlaying, startPlay, audio]);
 
   const {
     mutateAsync: uploadArtwork,
@@ -95,9 +113,11 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
                 isRound
                 colorScheme="pink"
                 size="lg"
-                icon={<FaPlay />}
+                icon={
+                  !!isAudioNowPlaying && isPlaying ? <FaPause /> : <FaPlay />
+                }
                 aria-label="Play"
-                onClick={() => startPlay(mapSingleAudioForPlayer(audio), 0)}
+                onClick={clickPlayButton}
               />
             </span>
           </Tooltip>
@@ -116,7 +136,7 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
                   size="lg"
                   icon={<MdQueueMusic />}
                   aria-label="Add to queue"
-                  onClick={() => addToQueue(mapSingleAudioForPlayer(audio)[0])}
+                  onClick={() => addToQueue(mapToAudioListForPlayer([audio]))}
                 />
               </span>
             </Tooltip>

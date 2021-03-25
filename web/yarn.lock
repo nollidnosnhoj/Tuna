@@ -970,6 +970,11 @@
   resolved "https://registry.yarnpkg.com/@types/tinycolor2/-/tinycolor2-1.4.2.tgz#721ca5c5d1a2988b4a886e35c2ffc5735b6afbdf"
   integrity sha512-PeHg/AtdW6aaIO2a+98Xj7rWY4KC1E6yOy7AFknJQ7VXUGNrMlyxDFxJo7HqLtjQms/ZhhQX52mLVW/EX3JGOw==
 
+"@types/uuid@^8.3.0":
+  version "8.3.0"
+  resolved "https://registry.yarnpkg.com/@types/uuid/-/uuid-8.3.0.tgz#215c231dff736d5ba92410e6d602050cce7e273f"
+  integrity sha512-eQ9qFW/fhfGJF8WKHGEHZEyVWfZxrT+6CLIJGBcZPfxUh/+BnEj+UCGYMlr9qZuX/2AltsvwrGqp0LhEW8D0zQ==
+
 "@types/warning@^3.0.0":
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/@types/warning/-/warning-3.0.0.tgz#0d2501268ad8f9962b740d387c4654f5f8e23e52"
@@ -2990,6 +2995,11 @@ react-clientside-effect@^1.2.2:
   dependencies:
     "@babel/runtime" "^7.12.13"
 
+react-context-mutex@^1.0.8:
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/react-context-mutex/-/react-context-mutex-1.0.8.tgz#6e85eb5d39e3f2d419576f6b442e17f9f5526a07"
+  integrity sha512-K8leNq+d8p4DE7PY2IFMJs17abR3myYzTsnng4zUPQtN3mfaqwn6xiPnpGn6YgfYWTKQiphqdke1bIuEYhTVbw==
+
 react-cropper@^2.1.4:
   version "2.1.7"
   resolved "https://registry.yarnpkg.com/react-cropper/-/react-cropper-2.1.7.tgz#f9f8127b9516fecc44f918dd331107bfc32adfaf"
@@ -3707,6 +3717,11 @@ util@^0.11.0:
   integrity sha512-HShAsny+zS2TZfaXxD9tYj4HQGlBezXZMZuM/S5PKLLoZkShZiGk9o5CzukI1LVHZvjdvZ2Sj1aW/Ndn2NB/HQ==
   dependencies:
     inherits "2.0.3"
+
+uuid@^8.3.2:
+  version "8.3.2"
+  resolved "https://registry.yarnpkg.com/uuid/-/uuid-8.3.2.tgz#80d5b5ced271bb9af6c445f21a1a04c606cefbe2"
+  integrity sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==
 
 vm-browserify@1.1.2, vm-browserify@^1.0.1:
   version "1.1.2"

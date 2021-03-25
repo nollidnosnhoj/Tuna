@@ -47,10 +47,12 @@ export interface CreateAudioRequest extends AudioRequest {
 }
 
 export type AudioPlayerItem = {
+  queueId: string;
   audioId: number;
   title: string;
   artist: string;
   duration: number;
   cover: string;
   source: string;
+  related: boolean;
 }

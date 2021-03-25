@@ -33,8 +33,27 @@ export default function AudioList(props: AudioListProps) {
     defaultLayout = "list",
     hideLayoutToggle = false,
   } = props;
-  const { startPlay } = useAudioPlayer();
+  const { startPlay, nowPlaying, changePlaying, isPlaying } = useAudioPlayer();
   const [layout, setLayout] = useState<AudioListLayout>(defaultLayout);
+
+  const isAudioPlaying = useCallback(
+    (audio: Audio) => {
+      return nowPlaying && nowPlaying.audioId === audio.id && isPlaying;
+    },
+    [nowPlaying, isPlaying]
+  );
+
+  const onPlayClick = useCallback(
+    (audio: Audio, index: number) => {
+      const isNowPlaying = nowPlaying && nowPlaying.audioId === audio.id;
+      if (isNowPlaying) {
+        changePlaying();
+      } else {
+        startPlay(mapToAudioListForPlayer(audios), index);
+      }
+    },
+    [nowPlaying, audios]
+  );
 
   const onLayoutChange = useCallback(
     (type: AudioListLayout) => {
@@ -82,9 +101,8 @@ export default function AudioList(props: AudioListProps) {
                   >
                     <AudioListItem
                       audio={audio}
-                      onPlayClick={() =>
-                        startPlay(mapToAudioListForPlayer(audios), index)
-                      }
+                      isPlaying={isAudioPlaying(audio)}
+                      onPlayClick={() => onPlayClick(audio, index)}
                     />
                   </ListItem>
                 ))}
