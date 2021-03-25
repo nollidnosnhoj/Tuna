@@ -10,6 +10,7 @@ import { UserProvider } from "~/contexts/userContext";
 import theme from "~/lib/theme";
 import { CurrentUser } from "~/features/user/types";
 import AudioPlayerProvider from "~/contexts/audioPlayerContext";
+import "react-h5-audio-player/lib/styles.css";
 
 interface AppProps extends NextAppProps {
   user?: CurrentUser;
@@ -43,7 +44,6 @@ function App({ Component, user, pageProps }: AppProps) {
                 <PageLoader color={theme.colors.primary[500]} />
                 <Component {...pageProps} />
                 <AudioPlayer />
-                <ReactQueryDevtools initialIsOpen={false} />
               </AudioPlayerProvider>
             </UserProvider>
           </ChakraProvider>

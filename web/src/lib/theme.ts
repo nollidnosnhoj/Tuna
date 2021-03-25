@@ -38,6 +38,18 @@ const theme = extendTheme({
       a: {
         color: props.colorMode === "dark" ? "primary.300" : "primary.500",
       },
+      ".rhap_container": {
+        backgroundColor: props.colorMode === "dark" ? "gray.800" : "gray.100"
+      },
+      ".rhap_progress-filled": {
+        backgroundColor: "primary.400"
+      },
+      ".rhap_progress-indicator, .rhap_volume-indicator, .rhap_volume-filled": {
+        backgroundColor: props.colorMode === 'dark' ? "gray.100" : "gray.700"
+      },
+      ".rhap_time, .rhap_repeat-button, .rhap_main-controls-button, .rhap_volume-button": {
+        color: props.colorMode === 'dark' ? "gray.100" : "gray.700"
+      }
     }),
   },
 });
