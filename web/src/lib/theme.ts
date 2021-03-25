@@ -39,7 +39,8 @@ const theme = extendTheme({
         color: props.colorMode === "dark" ? "primary.300" : "primary.500",
       },
       ".rhap_container": {
-        backgroundColor: props.colorMode === "dark" ? "gray.800" : "gray.100"
+        backgroundColor: props.colorMode === "dark" ? "gray.800" : "gray.100",
+        boxShadow: "none"
       },
       ".rhap_progress-filled": {
         backgroundColor: "primary.400"
