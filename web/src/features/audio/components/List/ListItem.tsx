@@ -22,6 +22,8 @@ import { AiFillHeart } from "react-icons/ai";
 import { HiDotsVertical } from "react-icons/hi";
 import useUser from "~/hooks/useUser";
 import { MdQueueMusic } from "react-icons/md";
+import useAudioQueue from "~/hooks/useAudioQueue";
+import { mapToAudioListForPlayer } from "~/utils";
 
 export interface AudioListItemProps {
   audio: Audio;
@@ -36,7 +38,7 @@ const AudioListItem: React.FC<AudioListItemProps> = ({
   isPlaying,
   removeArtistName = false,
 }) => {
-  const { user: currentUser } = useUser();
+  const { addToQueue } = useAudioQueue();
 
   const picture = useMemo(() => {
     return audio?.picture
@@ -98,7 +100,12 @@ const AudioListItem: React.FC<AudioListItemProps> = ({
           Actions
         </MenuButton>
         <MenuList>
-          <MenuItem icon={<MdQueueMusic />}>Add To Queue</MenuItem>
+          <MenuItem
+            icon={<MdQueueMusic />}
+            onClick={() => addToQueue(mapToAudioListForPlayer([audio]))}
+          >
+            Add To Queue
+          </MenuItem>
         </MenuList>
       </Menu>
     </Box>

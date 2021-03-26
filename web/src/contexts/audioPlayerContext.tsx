@@ -1,55 +1,47 @@
 import React, {
   createContext,
   PropsWithChildren,
+  useCallback,
   useEffect,
   useMemo,
   useState,
 } from "react";
 import { useMutex } from "react-context-mutex";
 import { AudioPlayerItem } from "~/features/audio/types";
+import useAudioQueue from "~/hooks/useAudioQueue";
 
 export enum REPEAT_MODE {
-  DISABLE,
-  REPEAT,
-  REPEAT_SINGLE,
+  DISABLE = "disable",
+  REPEAT = "repeat",
+  REPEAT_SINGLE = "repeat-one",
 }
 
-interface IAudioPlayerContext {
+type AudioPlayerContexType = {
   nowPlaying: AudioPlayerItem | undefined;
   isPlaying: boolean;
-  audioList: AudioPlayerItem[];
-  playIndex: number | undefined;
   volume: number;
   repeatMode: REPEAT_MODE;
-  addToQueue: (newAudiosInQueue: AudioPlayerItem[]) => void;
-  clearQueue: () => void;
-  startPlay: (newRelatedAudios: AudioPlayerItem[], index: number) => void;
-  playPrevious: () => void;
-  playNext: (onEnded: boolean) => void;
+  playPrevious: () => Promise<void>;
+  playNext: () => Promise<void>;
   changePlaying: (state?: boolean) => void;
   changeVolume: (volumeLevel: number) => void;
-  changePlayIndex: (index: number) => void;
   changeRepeatMode: (mode: REPEAT_MODE) => void;
-}
+};
 
-export const AudioPlayerContext = createContext<IAudioPlayerContext>(
-  {} as IAudioPlayerContext
+export const AudioPlayerContext = createContext<AudioPlayerContexType>(
+  {} as AudioPlayerContexType
 );
 
 export default function AudioPlayerProvider(props: PropsWithChildren<any>) {
-  const MutexRunner = useMutex();
-  const mutex = new MutexRunner("audio_player");
+  const { audioList, playIndex, setNewQueue, goToIndex } = useAudioQueue();
   const [repeatMode, setRepeatMode] = useState<REPEAT_MODE>(
     REPEAT_MODE.DISABLE
   );
-  const [audioList, setAudioList] = useState<AudioPlayerItem[]>([]);
-
   const [isPlaying, setIsPlaying] = useState(false);
-  const [playIndex, setPlayIndex] = useState<number | undefined>(undefined);
   const [volume, setVolume] = useState<number>(() => {
     if (typeof window !== "undefined") {
       return (
-        parseInt(window.localStorage.getItem("playerVolume") || "0.5") || 0.5
+        parseFloat(window.localStorage.getItem("playerVolume") || "0.5") || 0.5
       );
     }
 
@@ -61,38 +53,11 @@ export default function AudioPlayerProvider(props: PropsWithChildren<any>) {
     return audioList[playIndex];
   }, [audioList, playIndex]);
 
-  const startPlay = (audios: AudioPlayerItem[], index: number) => {
-    mutex.run(() => {
-      mutex.lock();
-      const boundedIndex = Math.max(0, Math.min(index, audios.length - 1));
-      setAudioList(audios);
-      setPlayIndex(boundedIndex);
-      mutex.unlock();
-    });
-  };
-
-  const addToQueue = (audios: AudioPlayerItem[]) => {
-    mutex.run(() => {
-      mutex.lock();
-      setAudioList((prev) => [...prev, ...audios]);
-      mutex.unlock();
-    });
-  };
-
   const changeVolume = (level: number) => {
     setVolume(level);
     if (typeof window !== "undefined") {
       localStorage.setItem("playerVolume", level + "");
     }
-  };
-
-  const clearQueue = () => {
-    mutex.run(() => {
-      mutex.lock();
-      setAudioList((prev) => prev.filter((_, i) => i === playIndex));
-      setPlayIndex(0);
-      mutex.unlock();
-    });
   };
 
   const changePlayingState = (state?: boolean) => {
@@ -105,120 +70,51 @@ export default function AudioPlayerProvider(props: PropsWithChildren<any>) {
     }
   };
 
-  const playPrevious = () => {
+  const playPrevious = useCallback(async () => {
     if (playIndex === undefined) return;
-    mutex.run(() => {
-      mutex.lock();
-      let newIndex = Math.max(0, Math.min(audioList.length - 1, playIndex - 1));
-      setPlayIndex(newIndex);
-      mutex.unlock();
-    });
-  };
+    let newIndex = Math.max(0, Math.min(audioList.length - 1, playIndex - 1));
+    await goToIndex(newIndex);
+  }, [audioList, goToIndex, playIndex]);
 
-  const playNext = (onEnded: boolean) => {
+  const playNext = useCallback(async () => {
     if (playIndex === undefined) return;
-    mutex.run(() => {
-      mutex.lock();
-      let newIndex: number | undefined = playIndex;
-      switch (repeatMode) {
-        case REPEAT_MODE.REPEAT_SINGLE:
-        case REPEAT_MODE.DISABLE:
-          if (!onEnded) {
-            newIndex = playIndex + 1;
-          }
-          break;
-        case REPEAT_MODE.REPEAT:
-          newIndex = playIndex + 1;
-          break;
-      }
+    let newIndex = playIndex + 1;
 
-      if (
-        newIndex > audioList.length - 1 &&
-        repeatMode === REPEAT_MODE.REPEAT
-      ) {
-        newIndex = 0;
-      }
+    if (newIndex > audioList.length - 1) {
+      newIndex = repeatMode === REPEAT_MODE.REPEAT ? 0 : audioList.length - 1;
+    }
 
-      setPlayIndex(newIndex);
-      mutex.unlock();
-    });
-  };
-
-  const changePlayIndex = (index: number) => {
-    if (playIndex === undefined) return;
-    let newIndex = Math.max(0, Math.min(audioList.length - 1, index));
-    setPlayIndex(newIndex);
-  };
-
-  const removeAudioFromList = (index: number) => {
-    const boundedIndex = Math.max(0, Math.min(index, audioList.length - 1));
-    // Do not remove audio that is currently playing
-    if (playIndex === boundedIndex) return;
-
-    mutex.run(() => {
-      mutex.lock();
-      // Get the queue Id of the audio that is currently playing, so we can get the index in the new filtered list
-      const currentPlayingQueueId =
-        audioList.find((_, i) => i === playIndex)?.queueId ?? "";
-      const newList = audioList.filter((_, i) => i !== boundedIndex);
-      let newIndex = newList.findIndex(
-        (a) => a.queueId == currentPlayingQueueId
-      );
-      if (newIndex === -1) {
-        throw new Error(
-          "Cannot find the index of which the audio is currently playing. Check your algorithm haha."
-        );
-      } else {
-        setPlayIndex(newIndex);
-        setAudioList(newList);
-      }
-      mutex.unlock();
-    });
-  };
+    await goToIndex(newIndex);
+  }, [audioList, playIndex, goToIndex]);
 
   const changeRepeat = (mode: REPEAT_MODE) => {
     setRepeatMode(mode);
   };
 
-  // If there's nothing in the list, play index should be undefined
   useEffect(() => {
-    if (audioList.length === 0) {
-      setPlayIndex(undefined);
-    }
-  }, [audioList.length, setPlayIndex]);
+    window.localStorage.setItem("playerVolume", volume + "");
+  }, [volume]);
 
-  const values: IAudioPlayerContext = useMemo(
+  const values: AudioPlayerContexType = useMemo(
     () => ({
       nowPlaying: nowPlaying,
       isPlaying: isPlaying,
-      audioList: audioList,
-      playIndex: playIndex,
       volume: volume,
       repeatMode: repeatMode,
-      addToQueue: addToQueue,
-      clearQueue: clearQueue,
-      startPlay: startPlay,
       playPrevious: playPrevious,
       playNext: playNext,
       changePlaying: changePlayingState,
       changeVolume: changeVolume,
-      changePlayIndex: changePlayIndex,
       changeRepeatMode: changeRepeat,
     }),
     [
       isPlaying,
-      audioList,
-      playIndex,
       volume,
       repeatMode,
-      addToQueue,
-      clearQueue,
-      startPlay,
       playPrevious,
       playNext,
       changePlayingState,
       changeVolume,
-      changePlayIndex,
       changeRepeat,
       nowPlaying,
     ]

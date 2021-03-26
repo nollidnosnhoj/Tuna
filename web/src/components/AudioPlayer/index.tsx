@@ -13,7 +13,7 @@ export default function AudioPlayer() {
     ["Disable", REPEAT_MODE.REPEAT_SINGLE],
   ];
   const {
-    nowPlaying: currentPlaying,
+    nowPlaying,
     volume,
     changeVolume,
     repeatMode,
@@ -42,28 +42,33 @@ export default function AudioPlayer() {
     playPrevious();
   }, [playPrevious]);
 
-  const handleClickNext = useCallback(() => {
-    playNext(false);
+  const handleClickNext = useCallback(async () => {
+    await playNext();
   }, [playNext]);
 
-  const handleEndAudio = useCallback(() => {
-    playNext(true);
-  }, [playNext]);
+  const handleEndAudio = useCallback(async () => {
+    if (repeatMode === REPEAT_MODE.REPEAT) {
+      await playNext();
+    }
+  }, [playNext, repeatMode]);
 
   const handleVolumeChange = useCallback(() => {
     const audio = audioPlayerRef.current?.audio.current;
     if (audio) {
-      console.log("CHANGING VOLUME STATE", audio.volume);
       changeVolume(audio.volume);
     }
   }, [changeVolume]);
 
   const handleRepeatModeChange = useCallback(() => {
-    const i = repeatModeOrder.findIndex(([_, m]) => m === repeatMode);
-    if (i === -1) return;
-    let newIndex = i + 1;
-    if (newIndex > repeatModeOrder.length - 1) newIndex = 0;
-    changeRepeatMode(repeatModeOrder[newIndex][1]);
+    return new Promise<REPEAT_MODE>((resolve, reject) => {
+      let newIndex =
+        repeatModeOrder.findIndex(([_, m]) => m === repeatMode) + 1;
+      // If it's zero, then before it was -1, which means the repeat mode was not found in list
+      if (newIndex === 0) return reject("Cannot find repeat mode.");
+      if (newIndex > repeatModeOrder.length - 1) newIndex = 0;
+      changeRepeatMode(repeatModeOrder[newIndex][1]);
+      return resolve(repeatModeOrder[newIndex][1]);
+    });
   }, [repeatMode, changeRepeatMode]);
 
   useEffect(() => {
@@ -75,6 +80,15 @@ export default function AudioPlayer() {
       }
     }
   }, [isPlaying]);
+
+  const loop = audioPlayerRef.current?.audio.current?.loop ?? false;
+
+  useEffect(() => {
+    const audio = audioPlayerRef.current?.audio.current;
+    if (audio) {
+      audio.loop = repeatMode === REPEAT_MODE.REPEAT_SINGLE;
+    }
+  }, [repeatMode]);
 
   return (
     <React.Fragment>
@@ -90,7 +104,7 @@ export default function AudioPlayer() {
       >
         <H5AudioPlayer
           ref={audioPlayerRef}
-          loop={repeatMode === REPEAT_MODE.REPEAT_SINGLE}
+          loop={loop}
           autoPlayAfterSrcChange={true}
           showSkipControls={true}
           showJumpControls={false}
@@ -101,7 +115,7 @@ export default function AudioPlayer() {
               onClick={handleRepeatModeChange}
             />,
           ]}
-          src={currentPlaying?.source}
+          src={nowPlaying?.source}
           onClickPrevious={handleClickPrevious}
           onClickNext={handleClickNext}
           volume={volume}
@@ -110,6 +124,7 @@ export default function AudioPlayer() {
           onPause={handlePause}
           onEnded={handleEndAudio}
           onPlayError={(err) => console.log(err)}
+          volumeJumpStep={1}
         />
       </Box>
     </React.Fragment>

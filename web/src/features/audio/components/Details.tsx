@@ -35,6 +35,7 @@ import { MdQueueMusic } from "react-icons/md";
 import useAudioPlayer from "~/hooks/useAudioPlayer";
 import PictureDropzone from "~/components/Picture/PictureDropzone";
 import { mapToAudioListForPlayer } from "~/utils";
+import useAudioQueue from "~/hooks/useAudioQueue";
 
 interface AudioDetailProps {
   audio: AudioDetail;
@@ -43,13 +44,8 @@ interface AudioDetailProps {
 const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
   const secondaryColor = useColorModeValue("black.300", "gray.300");
   const { user: currentUser } = useUser();
-  const {
-    startPlay,
-    addToQueue,
-    nowPlaying,
-    isPlaying,
-    changePlaying,
-  } = useAudioPlayer();
+  const { setNewQueue, addToQueue } = useAudioQueue();
+  const { nowPlaying, isPlaying, changePlaying } = useAudioPlayer();
 
   const isAudioNowPlaying = useMemo(() => {
     return nowPlaying && nowPlaying.audioId === audio.id;
@@ -59,9 +55,9 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
     if (isAudioNowPlaying) {
       changePlaying();
     } else {
-      startPlay(mapToAudioListForPlayer([audio]), 0);
+      setNewQueue(mapToAudioListForPlayer([audio]), 0);
     }
-  }, [isAudioNowPlaying, changePlaying, startPlay, audio]);
+  }, [isAudioNowPlaying, changePlaying, setNewQueue, audio]);
 
   const {
     mutateAsync: uploadArtwork,

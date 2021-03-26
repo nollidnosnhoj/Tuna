@@ -1,4 +1,4 @@
-import { IconButton } from "@chakra-ui/react";
+import { IconButton, Tooltip } from "@chakra-ui/react";
 import React from "react";
 import { MdRepeat, MdRepeatOne } from "react-icons/md";
 import { REPEAT_MODE } from "~/contexts/audioPlayerContext";
@@ -12,9 +12,11 @@ interface RepeatButtonProps {
 export default function RepeatButton(props: RepeatButtonProps) {
   const { mode, label, onClick } = props;
 
+  let icon: React.ReactNode;
+
   switch (mode) {
     case REPEAT_MODE.DISABLE:
-      return (
+      icon = (
         <IconButton
           opacity="0.5"
           icon={<MdRepeat />}
@@ -24,8 +26,9 @@ export default function RepeatButton(props: RepeatButtonProps) {
           onClick={onClick}
         />
       );
+      break;
     case REPEAT_MODE.REPEAT:
-      return (
+      icon = (
         <IconButton
           icon={<MdRepeat />}
           aria-label={label}
@@ -34,8 +37,9 @@ export default function RepeatButton(props: RepeatButtonProps) {
           onClick={onClick}
         />
       );
+      break;
     case REPEAT_MODE.REPEAT_SINGLE:
-      return (
+      icon = (
         <IconButton
           icon={<MdRepeatOne />}
           aria-label={label}
@@ -44,5 +48,8 @@ export default function RepeatButton(props: RepeatButtonProps) {
           onClick={onClick}
         />
       );
+      break;
   }
+
+  return <Tooltip label={label}>{icon}</Tooltip>;
 }

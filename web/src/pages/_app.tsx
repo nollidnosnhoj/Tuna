@@ -11,6 +11,7 @@ import theme from "~/lib/theme";
 import { CurrentUser } from "~/features/user/types";
 import AudioPlayerProvider from "~/contexts/audioPlayerContext";
 import "react-h5-audio-player/lib/styles.css";
+import AudioQueueProvider from "~/contexts/audioQueueContext";
 
 interface AppProps extends NextAppProps {
   user?: CurrentUser;
@@ -40,11 +41,13 @@ function App({ Component, user, pageProps }: AppProps) {
         <Hydrate state={pageProps.dehydratedState}>
           <ChakraProvider resetCSS theme={theme}>
             <UserProvider initialUser={user}>
-              <AudioPlayerProvider>
-                <PageLoader color={theme.colors.primary[500]} />
-                <Component {...pageProps} />
-                <AudioPlayer />
-              </AudioPlayerProvider>
+              <AudioQueueProvider>
+                <AudioPlayerProvider>
+                  <PageLoader color={theme.colors.primary[500]} />
+                  <Component {...pageProps} />
+                  <AudioPlayer />
+                </AudioPlayerProvider>
+              </AudioQueueProvider>
             </UserProvider>
           </ChakraProvider>
         </Hydrate>

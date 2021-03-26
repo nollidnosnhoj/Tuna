@@ -12,6 +12,7 @@ import React, { useCallback, useState } from "react";
 import { FaList } from "react-icons/fa";
 import { IoMdGrid } from "react-icons/io";
 import useAudioPlayer from "~/hooks/useAudioPlayer";
+import useAudioQueue from "~/hooks/useAudioQueue";
 import { mapToAudioListForPlayer } from "~/utils";
 import { Audio } from "../../types";
 import AudioGridItem from "./GridItem";
@@ -33,7 +34,8 @@ export default function AudioList(props: AudioListProps) {
     defaultLayout = "list",
     hideLayoutToggle = false,
   } = props;
-  const { startPlay, nowPlaying, changePlaying, isPlaying } = useAudioPlayer();
+  const { setNewQueue, addToQueue } = useAudioQueue();
+  const { nowPlaying, changePlaying, isPlaying } = useAudioPlayer();
   const [layout, setLayout] = useState<AudioListLayout>(defaultLayout);
 
   const isAudioPlaying = useCallback(
@@ -49,7 +51,7 @@ export default function AudioList(props: AudioListProps) {
       if (isNowPlaying) {
         changePlaying();
       } else {
-        startPlay(mapToAudioListForPlayer(audios), index);
+        setNewQueue(mapToAudioListForPlayer(audios), index);
       }
     },
     [nowPlaying, audios]
