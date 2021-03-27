@@ -28,12 +28,12 @@ namespace Audiochan.Core.Features.Auth.Login
     public class LoginCommandHandler : IRequestHandler<LoginCommand, IResult<AuthResultViewModel>>
     {
         private readonly UserManager<User> _userManager;
-        private readonly ITokenService _tokenService;
+        private readonly ITokenProvider _tokenProvider;
 
-        public LoginCommandHandler(UserManager<User> userManager, ITokenService tokenService)
+        public LoginCommandHandler(UserManager<User> userManager, ITokenProvider tokenProvider)
         {
             _userManager = userManager;
-            _tokenService = tokenService;
+            _tokenProvider = tokenProvider;
         }
 
         public async Task<IResult<AuthResultViewModel>> Handle(LoginCommand request,
@@ -46,9 +46,9 @@ namespace Audiochan.Core.Features.Auth.Login
             if (user == null || !await _userManager.CheckPasswordAsync(user, request.Password))
                 return Result<AuthResultViewModel>.Fail(ResultError.BadRequest, "Invalid Username/Password");
 
-            var (token, tokenExpiration) = await _tokenService.GenerateAccessToken(user);
+            var (token, tokenExpiration) = await _tokenProvider.GenerateAccessToken(user);
 
-            var refreshToken = _tokenService.GenerateRefreshToken(user.Id);
+            var refreshToken = _tokenProvider.GenerateRefreshToken(user.Id);
 
             user.RefreshTokens.Add(refreshToken);
             await _userManager.UpdateAsync(user);
@@ -58,7 +58,7 @@ namespace Audiochan.Core.Features.Auth.Login
                 AccessToken = token,
                 AccessTokenExpires = tokenExpiration,
                 RefreshToken = refreshToken.Token,
-                RefreshTokenExpires = _tokenService.DateTimeToUnixEpoch(refreshToken.Expiry)
+                RefreshTokenExpires = _tokenProvider.DateTimeToUnixEpoch(refreshToken.Expiry)
             };
 
             return Result<AuthResultViewModel>.Success(result);

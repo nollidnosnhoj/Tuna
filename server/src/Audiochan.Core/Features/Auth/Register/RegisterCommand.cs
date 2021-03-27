@@ -36,17 +36,17 @@ namespace Audiochan.Core.Features.Auth.Register
     public class RegisterCommandHandler : IRequestHandler<RegisterCommand, IResult<bool>>
     {
         private readonly UserManager<User> _userManager;
-        private readonly IDateTimeService _dateTimeService;
+        private readonly IDateTimeProvider _dateTimeProvider;
 
-        public RegisterCommandHandler(UserManager<User> userManager, IDateTimeService dateTimeService)
+        public RegisterCommandHandler(UserManager<User> userManager, IDateTimeProvider dateTimeProvider)
         {
             _userManager = userManager;
-            _dateTimeService = dateTimeService;
+            _dateTimeProvider = dateTimeProvider;
         }
 
         public async Task<IResult<bool>> Handle(RegisterCommand request, CancellationToken cancellationToken)
         {
-            var user = new User(request.Username.Trim().ToLower(), request.Email, _dateTimeService.Now);
+            var user = new User(request.Username.Trim().ToLower(), request.Email, _dateTimeProvider.Now);
             var identityResult = await _userManager.CreateAsync(user, request.Password);
             return identityResult.ToResult();
         }

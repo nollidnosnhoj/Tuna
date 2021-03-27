@@ -19,15 +19,15 @@ namespace Audiochan.Core.Features.Auth.Refresh
     public class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommand, IResult<AuthResultViewModel>>
     {
         private readonly UserManager<User> _userManager;
-        private readonly ITokenService _tokenService;
-        private readonly IDateTimeService _dateTimeService;
+        private readonly ITokenProvider _tokenProvider;
+        private readonly IDateTimeProvider _dateTimeProvider;
 
-        public RefreshTokenCommandHandler(UserManager<User> userManager, ITokenService tokenService,
-            IDateTimeService dateTimeService)
+        public RefreshTokenCommandHandler(UserManager<User> userManager, ITokenProvider tokenProvider,
+            IDateTimeProvider dateTimeProvider)
         {
             _userManager = userManager;
-            _tokenService = tokenService;
-            _dateTimeService = dateTimeService;
+            _tokenProvider = tokenProvider;
+            _dateTimeProvider = dateTimeProvider;
         }
 
         public async Task<IResult<AuthResultViewModel>> Handle(RefreshTokenCommand request,
@@ -49,24 +49,24 @@ namespace Audiochan.Core.Features.Auth.Refresh
             var existingRefreshToken = user.RefreshTokens
                 .Single(r => r.Token == request.RefreshToken);
 
-            if (!_tokenService.IsRefreshTokenValid(existingRefreshToken))
+            if (!_tokenProvider.IsRefreshTokenValid(existingRefreshToken))
                 return Result<AuthResultViewModel>.Fail(ResultError.BadRequest,
                     "Refresh token is invalid/expired.");
 
-            var newRefreshToken = _tokenService.GenerateRefreshToken(user.Id);
-            existingRefreshToken.Revoked = _dateTimeService.Now;
+            var newRefreshToken = _tokenProvider.GenerateRefreshToken(user.Id);
+            existingRefreshToken.Revoked = _dateTimeProvider.Now;
             existingRefreshToken.ReplacedByToken = newRefreshToken.Token;
             user.RefreshTokens.Add(newRefreshToken);
             await _userManager.UpdateAsync(user);
 
-            var (token, tokenExpiration) = await _tokenService.GenerateAccessToken(user);
+            var (token, tokenExpiration) = await _tokenProvider.GenerateAccessToken(user);
 
             return Result<AuthResultViewModel>.Success(new AuthResultViewModel
             {
                 AccessToken = token,
                 AccessTokenExpires = tokenExpiration,
                 RefreshToken = newRefreshToken.Token,
-                RefreshTokenExpires = _tokenService.DateTimeToUnixEpoch(newRefreshToken.Expiry)
+                RefreshTokenExpires = _tokenProvider.DateTimeToUnixEpoch(newRefreshToken.Expiry)
             });
         }
     }

@@ -21,7 +21,7 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
     {
         private readonly AudiochanOptions.StorageOptions _pictureStorageOptions;
         private readonly IApplicationDbContext _dbContext;
-        private readonly IDateTimeService _dateTimeService;
+        private readonly IDateTimeProvider _dateTimeProvider;
         private readonly IStorageService _storageService;
         private readonly ICurrentUserService _currentUserService;
         private readonly IImageService _imageService;
@@ -31,21 +31,21 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
             IStorageService storageService,
             ICurrentUserService currentUserService,
             IImageService imageService,
-            IDateTimeService dateTimeService)
+            IDateTimeProvider dateTimeProvider)
         {
             _pictureStorageOptions = options.Value.ImageStorageOptions;
             _dbContext = dbContext;
             _storageService = storageService;
             _currentUserService = currentUserService;
             _imageService = imageService;
-            _dateTimeService = dateTimeService;
+            _dateTimeProvider = dateTimeProvider;
         }
 
         public async Task<IResult<string>> Handle(UpdateAudioPictureCommand request,
             CancellationToken cancellationToken)
         {
             var container = Path.Combine(_pictureStorageOptions.Container, "audios");
-            var blobName = BlobHelpers.GetPictureBlobName(_dateTimeService.Now);
+            var blobName = BlobHelpers.GetPictureBlobName(_dateTimeProvider.Now);
             try
             {
                 var currentUserId = await _dbContext.Users

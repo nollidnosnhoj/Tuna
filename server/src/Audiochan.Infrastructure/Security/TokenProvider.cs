@@ -15,18 +15,18 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Audiochan.Infrastructure.Security
 {
-    public class TokenService : ITokenService
+    public class TokenProvider : ITokenProvider
     {
         private readonly JwtOptions _jwtOptions;
-        private readonly IDateTimeService _dateTimeService;
+        private readonly IDateTimeProvider _dateTimeProvider;
         private readonly UserManager<User> _userManager;
 
-        public TokenService(IOptions<JwtOptions> jwtOptions, UserManager<User> userManager,
-            IDateTimeService dateTimeService)
+        public TokenProvider(IOptions<JwtOptions> jwtOptions, UserManager<User> userManager,
+            IDateTimeProvider dateTimeProvider)
         {
             _jwtOptions = jwtOptions.Value;
             _userManager = userManager;
-            _dateTimeService = dateTimeService;
+            _dateTimeProvider = dateTimeProvider;
         }
 
         public async Task<(string, long)> GenerateAccessToken(User user)
@@ -35,7 +35,7 @@ namespace Audiochan.Infrastructure.Security
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.Secret));
 
-            var createdDate = _dateTimeService.Now;
+            var createdDate = _dateTimeProvider.Now;
             var expirationDate = createdDate.Add(_jwtOptions.AccessTokenExpiration);
 
             var tokenDescriptor = new SecurityTokenDescriptor
@@ -76,8 +76,8 @@ namespace Audiochan.Infrastructure.Security
             return new RefreshToken
             {
                 Token = Convert.ToBase64String(randomBytes),
-                Expiry = _dateTimeService.Now.Add(_jwtOptions.RefreshTokenExpiration),
-                Created = _dateTimeService.Now,
+                Expiry = _dateTimeProvider.Now.Add(_jwtOptions.RefreshTokenExpiration),
+                Created = _dateTimeProvider.Now,
                 UserId = userId
             };
         }
@@ -94,7 +94,7 @@ namespace Audiochan.Infrastructure.Security
                 return false;
             }
 
-            if (existingToken.Expiry <= _dateTimeService.Now)
+            if (existingToken.Expiry <= _dateTimeProvider.Now)
             {
                 return false;
             }

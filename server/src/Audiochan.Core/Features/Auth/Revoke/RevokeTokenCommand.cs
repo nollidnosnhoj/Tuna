@@ -18,15 +18,15 @@ namespace Audiochan.Core.Features.Auth.Revoke
     public class RevokeTokenCommandHandler : IRequestHandler<RevokeTokenCommand, IResult<bool>>
     {
         private readonly UserManager<User> _userManager;
-        private readonly ITokenService _tokenService;
-        private readonly IDateTimeService _dateTimeService;
+        private readonly ITokenProvider _tokenProvider;
+        private readonly IDateTimeProvider _dateTimeProvider;
 
-        public RevokeTokenCommandHandler(UserManager<User> userManager, ITokenService tokenService,
-            IDateTimeService dateTimeService)
+        public RevokeTokenCommandHandler(UserManager<User> userManager, ITokenProvider tokenProvider,
+            IDateTimeProvider dateTimeProvider)
         {
             _userManager = userManager;
-            _tokenService = tokenService;
-            _dateTimeService = dateTimeService;
+            _tokenProvider = tokenProvider;
+            _dateTimeProvider = dateTimeProvider;
         }
 
         public async Task<IResult<bool>> Handle(RevokeTokenCommand request, CancellationToken cancellationToken)
@@ -46,9 +46,9 @@ namespace Audiochan.Core.Features.Auth.Revoke
             var existingRefreshToken = user.RefreshTokens
                 .Single(r => r.Token == request.RefreshToken);
 
-            if (_tokenService.IsRefreshTokenValid(existingRefreshToken))
+            if (_tokenProvider.IsRefreshTokenValid(existingRefreshToken))
             {
-                existingRefreshToken.Revoked = _dateTimeService.Now;
+                existingRefreshToken.Revoked = _dateTimeProvider.Now;
                 await _userManager.UpdateAsync(user);
             }
 

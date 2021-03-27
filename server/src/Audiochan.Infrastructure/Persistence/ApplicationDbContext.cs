@@ -15,13 +15,13 @@ namespace Audiochan.Infrastructure.Persistence
 {
     public class ApplicationDbContext : IdentityDbContext<User, Role, string>, IApplicationDbContext
     {
-        private readonly IDateTimeService _dateTimeService;
+        private readonly IDateTimeProvider _dateTimeProvider;
         private IDbContextTransaction _currentTransaction;
 
         public ApplicationDbContext(DbContextOptions options,
-            IDateTimeService dateTimeService) : base(options)
+            IDateTimeProvider dateTimeProvider) : base(options)
         {
-            _dateTimeService = dateTimeService;
+            _dateTimeProvider = dateTimeProvider;
         }
 
         public DbSet<Audio> Audios { get; set; }
@@ -35,11 +35,11 @@ namespace Audiochan.Infrastructure.Persistence
                 switch (entry.State)
                 {
                     case EntityState.Added:
-                        entry.Entity.Created = _dateTimeService.Now;
+                        entry.Entity.Created = _dateTimeProvider.Now;
                         break;
 
                     case EntityState.Modified:
-                        entry.Entity.LastModified = _dateTimeService.Now;
+                        entry.Entity.LastModified = _dateTimeProvider.Now;
                         break;
                 }
             }

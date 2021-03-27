@@ -22,14 +22,14 @@ namespace Audiochan.Infrastructure.Storage
     public class AmazonS3Service : IStorageService
     {
         private readonly IAmazonS3 _client;
-        private readonly IDateTimeService _dateTimeService;
+        private readonly IDateTimeProvider _dateTimeProvider;
         private readonly string _bucket;
         private readonly long _chunkThreshold;
         private readonly string _url;
 
-        public AmazonS3Service(IOptions<AmazonS3Options> amazonS3Options, IDateTimeService dateTimeService)
+        public AmazonS3Service(IOptions<AmazonS3Options> amazonS3Options, IDateTimeProvider dateTimeProvider)
         {
-            _dateTimeService = dateTimeService;
+            _dateTimeProvider = dateTimeProvider;
             _bucket = amazonS3Options.Value.Bucket;
             var region = RegionEndpoint.GetBySystemName(amazonS3Options.Value.Region);
 
@@ -172,7 +172,7 @@ namespace Audiochan.Infrastructure.Storage
         {
             try
             {
-                var expiration = _dateTimeService.Now.AddMinutes(5);
+                var expiration = _dateTimeProvider.Now.AddMinutes(5);
                 var key = GetKeyName(container, blobName);
                 var contentType = key.GetContentType();
                 var presignedUrlRequest = new GetPreSignedUrlRequest

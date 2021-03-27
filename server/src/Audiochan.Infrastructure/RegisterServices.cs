@@ -26,8 +26,8 @@ namespace Audiochan.Infrastructure
             services.AddTransient<IStorageService, AmazonS3Service>();
             services.AddTransient<ISearchService, DatabaseSearchService>();
             services.AddTransient<IImageService, ImageService>();
-            services.AddTransient<ITokenService, TokenService>();
-            services.AddTransient<IDateTimeService, DateTimeService>();
+            services.AddTransient<ITokenProvider, TokenProvider>();
+            services.AddTransient<IDateTimeProvider, DateTimeProvider>();
             services.AddTransient<IUploadService, UploadService>();
             return services;
         }

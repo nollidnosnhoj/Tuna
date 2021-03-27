@@ -2,7 +2,7 @@
 
 namespace Audiochan.Core.Interfaces
 {
-    public interface IDateTimeService
+    public interface IDateTimeProvider
     {
         DateTime Now { get; }
     }
