@@ -1,16 +1,22 @@
 import H5AudioPlayer from "react-h5-audio-player";
 import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import useAudioPlayer from "~/hooks/useAudioPlayer";
-import { Box } from "@chakra-ui/react";
+import { Box, Icon, chakra } from "@chakra-ui/react";
 import { REPEAT_MODE } from "~/contexts/audioPlayerContext";
 import RepeatButton from "./RepeatButton";
+import {
+  MdPause,
+  MdPlayArrow,
+  MdSkipNext,
+  MdSkipPrevious,
+} from "react-icons/md";
 
 export default function AudioPlayer() {
   const audioPlayerRef = useRef<H5AudioPlayer | null>(null);
   const repeatModeOrder: [string, REPEAT_MODE][] = [
     ["Repeat", REPEAT_MODE.DISABLE],
     ["Repeat One", REPEAT_MODE.REPEAT],
-    ["Disable", REPEAT_MODE.REPEAT_SINGLE],
+    ["Disable Repeat", REPEAT_MODE.REPEAT_SINGLE],
   ];
   const {
     nowPlaying,
@@ -24,11 +30,35 @@ export default function AudioPlayer() {
     isPlaying,
   } = useAudioPlayer();
 
-  const repeatTuple = useMemo(() => {
+  const [currentRepeatModeLabel, currentRepeatMode] = useMemo(() => {
     let tuple = repeatModeOrder.find(([_, x]) => x === repeatMode);
     if (!tuple) tuple = repeatModeOrder[0];
     return tuple;
   }, [repeatMode]);
+
+  const PlayerHeader = useMemo(() => {
+    if (!nowPlaying) {
+      return <chakra.span>Nothing is playing!</chakra.span>;
+    }
+
+    const { title, artist } = nowPlaying;
+
+    return (
+      <chakra.span>
+        Now playing: {title} by {artist}
+      </chakra.span>
+    );
+  }, [nowPlaying]);
+
+  const playerIcons = useMemo(
+    () => ({
+      play: <Icon as={MdPlayArrow} aria-label="Play" size="lg" />,
+      pause: <Icon as={MdPause} aria-label="Pause" size="lg" />,
+      previous: <Icon as={MdSkipPrevious} aria-label="Previous" />,
+      next: <Icon as={MdSkipNext} aria-label="Previous" />,
+    }),
+    [nowPlaying]
+  );
 
   const handlePlay = useCallback(() => {
     changePlaying(true);
@@ -98,9 +128,7 @@ export default function AudioPlayer() {
         bottom="0"
         left="0"
         width="100%"
-        height="120px"
         zIndex="99"
-        paddingY={4}
       >
         <H5AudioPlayer
           ref={audioPlayerRef}
@@ -110,11 +138,12 @@ export default function AudioPlayer() {
           showJumpControls={false}
           customAdditionalControls={[
             <RepeatButton
-              label={repeatTuple[0]}
-              mode={repeatTuple[1]}
+              label={currentRepeatModeLabel}
+              mode={currentRepeatMode}
               onClick={handleRepeatModeChange}
             />,
           ]}
+          customIcons={playerIcons}
           src={nowPlaying?.source}
           onClickPrevious={handleClickPrevious}
           onClickNext={handleClickNext}
@@ -125,6 +154,7 @@ export default function AudioPlayer() {
           onEnded={handleEndAudio}
           onPlayError={(err) => console.log(err)}
           volumeJumpStep={1}
+          header={PlayerHeader}
         />
       </Box>
     </React.Fragment>

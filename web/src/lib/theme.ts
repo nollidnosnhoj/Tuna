@@ -51,6 +51,9 @@ const theme = extendTheme({
       },
       ".rhap_time, .rhap_repeat-button, .rhap_main-controls-button, .rhap_volume-button": {
         color: props.colorMode === 'dark' ? "gray.100" : "gray.700"
+      },
+      ".rhap_main-controls-button:hover": {
+        color: props.colorMode  === 'dark' ? 'gray.300' : "gray.600"
       }
     }),
   },
