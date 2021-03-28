@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using Audiochan.Core.Common.Helpers;
+using Audiochan.Core.Common.Models.Requests;
+using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Common.Options;
 using Audiochan.Core.Interfaces;
 using Microsoft.Extensions.Options;
@@ -22,15 +24,18 @@ namespace Audiochan.Infrastructure.Upload
             _currentUserService = currentUserService;
         }
 
-        public (string UploadId, string Url) GetUploadUrl(string fileName)
+        public GetUploadAudioUrlResponse GetUploadAudioUrl(GetUploadAudioUrlRequest request)
         {
             var userId = _currentUserService.GetUserId();
             var uploadId = UploadHelpers.GenerateUploadId();
-            var blobName = uploadId + Path.GetExtension(fileName);
-            var metadata = new Dictionary<string, string> {{"UserId", userId}, {"OriginalFilename", fileName}};
-            var uploadLink =
-                _storageService.GetPresignedUrl(_audioStorageOptions.Container, blobName, fileName, 5, metadata);
-            return (uploadId, uploadLink);
+            var blobName = uploadId + Path.GetExtension(request.FileName);
+            var metadata = new Dictionary<string, string> {{"UserId", userId}, {"OriginalFilename", request.FileName}};
+            var presignedUrlResponse = _storageService.GetPresignedUrl(
+                _audioStorageOptions.Container, 
+                blobName,
+                5, 
+                metadata);
+            return new GetUploadAudioUrlResponse{Url = presignedUrlResponse.Url, UploadId = uploadId};
         }
     }
 }

@@ -1,7 +1,10 @@
-﻿namespace Audiochan.Core.Interfaces
+﻿using Audiochan.Core.Common.Models.Requests;
+using Audiochan.Core.Common.Models.Responses;
+
+namespace Audiochan.Core.Interfaces
 {
     public interface IUploadService
     {
-        (string UploadId, string Url) GetUploadUrl(string fileName);
+        GetUploadAudioUrlResponse GetUploadAudioUrl(GetUploadAudioUrlRequest request);
     }
 }

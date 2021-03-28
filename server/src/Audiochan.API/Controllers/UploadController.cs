@@ -1,4 +1,4 @@
-﻿using Audiochan.API.Models;
+﻿using Audiochan.Core.Common.Models.Requests;
 using Audiochan.Core.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -23,10 +23,10 @@ namespace Audiochan.API.Controllers
             OperationId = "GetPresignedUrl",
             Tags = new[] {"upload"}
         )]
-        public IActionResult GetUploadUrl([FromBody] UploadAudioRequest request)
+        public IActionResult GetUploadUrl([FromBody] GetUploadAudioUrlRequest request)
         {
-            var (uploadId, uploadLink) = _uploadService.GetUploadUrl(request.FileName);
-            return new JsonResult(new UploadAudioResponse(uploadId, uploadLink));
+            var response = _uploadService.GetUploadAudioUrl(request);
+            return new JsonResult(response);
         }
     }
 }
