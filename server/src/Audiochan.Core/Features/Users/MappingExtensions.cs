@@ -9,7 +9,13 @@ namespace Audiochan.Core.Features.Users
 {
     public static class UserMappingExtensions
     {
-        public static Expression<Func<User, CurrentUserViewModel>> CurrentUserProjection()
+        public static IQueryable<CurrentUserViewModel> ProjectToCurrentUser(this IQueryable<User> queryable) =>
+            queryable.Select(CurrentUserProjection());
+
+        public static IQueryable<UserViewModel> ProjectToUser(this IQueryable<User> queryable, string userId) =>
+            queryable.Select(UserProjection(userId));
+        
+        private static Expression<Func<User, CurrentUserViewModel>> CurrentUserProjection()
         {
             return user => new CurrentUserViewModel
             {
@@ -19,7 +25,7 @@ namespace Audiochan.Core.Features.Users
             };
         }
 
-        public static Expression<Func<User, UserViewModel>> UserProjection(string userId)
+        private static Expression<Func<User, UserViewModel>> UserProjection(string userId)
         {
             return user => new UserViewModel
             {

@@ -40,7 +40,7 @@ namespace Audiochan.Core.Features.Users.GetUserAudios
                 .DefaultListQueryable(currentUserId)
                 .Where(a => a.User.UserName == request.Username.ToLower())
                 .Sort(request.Sort)
-                .Select(AudioMappingExtensions.AudioToListProjection(_audiochanOptions))
+                .ProjectToList(_audiochanOptions)
                 .PaginateAsync(request, cancellationToken);
         }
     }

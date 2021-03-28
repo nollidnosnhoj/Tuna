@@ -36,7 +36,7 @@ namespace Audiochan.Core.Features.Audios.GetAudioList
             return await _dbContext.Audios
                 .DefaultListQueryable(currentUserId)
                 .Sort(request.Sort)
-                .Select(AudioMappingExtensions.AudioToListProjection(_audiochanOptions))
+                .ProjectToList(_audiochanOptions)
                 .PaginateAsync(request, cancellationToken);
         }
     }

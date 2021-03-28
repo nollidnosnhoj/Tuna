@@ -33,7 +33,7 @@ namespace Audiochan.Core.Features.Users.GetUser
                 .Include(u => u.Followings)
                 .Include(u => u.Audios)
                 .Where(u => u.UserName == request.Username.Trim().ToLower())
-                .Select(UserMappingExtensions.UserProjection(currentUserId))
+                .ProjectToUser(currentUserId)
                 .SingleOrDefaultAsync(cancellationToken);
 
             return profile == null

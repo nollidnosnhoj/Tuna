@@ -44,7 +44,7 @@ namespace Audiochan.Infrastructure.Search
 
             var result = await queryable
                 .Sort(query.Sort)
-                .Select(AudioMappingExtensions.AudioToListProjection(_audiochanOptions))
+                .ProjectToList(_audiochanOptions)
                 .PaginateAsync(query, cancellationToken);
 
             return result;
@@ -56,7 +56,7 @@ namespace Audiochan.Infrastructure.Search
             var currentUserId = _currentUserService.GetUserId();
             return await _dbContext.Users
                 .Where(u => EF.Functions.ILike(u.UserName, $"%{query.Q}%"))
-                .Select(UserMappingExtensions.UserProjection(currentUserId))
+                .ProjectToUser(currentUserId)
                 .PaginateAsync(query, cancellationToken);
         }
     }

@@ -31,7 +31,7 @@ namespace Audiochan.Core.Features.Users.GetCurrentUser
             var user = await _dbContext.Users
                 .AsNoTracking()
                 .Where(u => u.Id == currentUserId)
-                .Select(UserMappingExtensions.CurrentUserProjection())
+                .ProjectToCurrentUser()
                 .SingleOrDefaultAsync(cancellationToken);
 
             return user == null

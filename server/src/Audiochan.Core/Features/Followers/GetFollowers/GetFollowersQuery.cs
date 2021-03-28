@@ -32,7 +32,7 @@ namespace Audiochan.Core.Features.Followers.GetFollowers
                 .Include(u => u.Target)
                 .Include(u => u.Observer)
                 .Where(u => u.Target.UserName == request.Username.Trim().ToLower())
-                .Select(FollowerMappingExtensions.FollowerToListProjection())
+                .ProjectToFollower()
                 .PaginateAsync(request, cancellationToken);
         }
     }

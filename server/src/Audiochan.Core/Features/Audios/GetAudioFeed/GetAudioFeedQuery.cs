@@ -40,7 +40,7 @@ namespace Audiochan.Core.Features.Audios.GetAudioFeed
             return await _dbContext.Audios
                 .DefaultListQueryable(request.UserId)
                 .Where(a => followedIds.Contains(a.UserId))
-                .Select(AudioMappingExtensions.AudioToListProjection(_audiochanOptions))
+                .ProjectToList(_audiochanOptions)
                 .OrderByDescending(a => a.Created)
                 .PaginateAsync(cancellationToken);
         }

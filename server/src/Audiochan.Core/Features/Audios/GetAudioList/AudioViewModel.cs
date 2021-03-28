@@ -16,8 +16,5 @@ namespace Audiochan.Core.Features.Audios.GetAudioList
         public DateTime Created { get; init; }
         public string AudioUrl { get; init; }
         public MetaUserDto User { get; init; }
-        
-        public static AudioViewModel MapFrom(Audio audio, AudiochanOptions options) =>
-            AudioMappingExtensions.AudioToListProjection(options).Compile().Invoke(audio);
     }
 }

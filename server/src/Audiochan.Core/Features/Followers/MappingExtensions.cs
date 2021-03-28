@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Linq.Expressions;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Followers.GetFollowers;
@@ -8,7 +9,13 @@ namespace Audiochan.Core.Features.Followers
 {
     public static class FollowerMappingExtensions
     {
-        public static Expression<Func<FollowedUser, FollowerViewModel>> FollowerToListProjection()
+        public static IQueryable<FollowerViewModel> ProjectToFollower(this IQueryable<FollowedUser> queryable) =>
+            queryable.Select(FollowerToListProjection());
+
+        public static IQueryable<FollowingViewModel> ProjectToFollowing(this IQueryable<FollowedUser> queryable) =>
+            queryable.Select(FollowingToListProjection());
+        
+        private static Expression<Func<FollowedUser, FollowerViewModel>> FollowerToListProjection()
         {
             return user => new FollowerViewModel
             {
@@ -17,7 +24,7 @@ namespace Audiochan.Core.Features.Followers
             };
         }
 
-        public static Expression<Func<FollowedUser, FollowingViewModel>> FollowingToListProjection()
+        private static Expression<Func<FollowedUser, FollowingViewModel>> FollowingToListProjection()
         {
             return user => new FollowingViewModel
             {

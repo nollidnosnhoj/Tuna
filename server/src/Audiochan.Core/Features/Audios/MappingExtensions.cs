@@ -12,7 +12,7 @@ namespace Audiochan.Core.Features.Audios
 {
     public static class AudioMappingExtensions
     {
-        public static Expression<Func<Audio, AudioDetailViewModel>> AudioToDetailProjection(AudiochanOptions options)
+        private static Expression<Func<Audio, AudioDetailViewModel>> AudioToDetailProjection(AudiochanOptions options)
         {
             return audio => new AudioDetailViewModel
             {
@@ -33,7 +33,7 @@ namespace Audiochan.Core.Features.Audios
             };
         }
 
-        public static Expression<Func<Audio, AudioViewModel>> AudioToListProjection(AudiochanOptions options)
+        private static Expression<Func<Audio, AudioViewModel>> AudioToListProjection(AudiochanOptions options)
         {
             return audio => new AudioViewModel
             {
@@ -47,5 +47,14 @@ namespace Audiochan.Core.Features.Audios
                 User = new MetaUserDto(audio.User)
             };
         }
+
+        public static IQueryable<AudioDetailViewModel> ProjectToDetail(this IQueryable<Audio> queryable,
+            AudiochanOptions options) => queryable.Select(AudioToDetailProjection(options));
+
+        public static IQueryable<AudioViewModel> ProjectToList(this IQueryable<Audio> queryable, AudiochanOptions options) =>
+            queryable.Select(AudioToListProjection(options));
+
+        public static AudioDetailViewModel MapToDetail(this Audio audio, AudiochanOptions options) =>
+            AudioToDetailProjection(options).Compile().Invoke(audio);
     }
 }

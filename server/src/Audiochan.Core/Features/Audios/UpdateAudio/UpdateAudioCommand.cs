@@ -86,7 +86,7 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
             _dbContext.Audios.Update(audio);
             await _dbContext.SaveChangesAsync(cancellationToken);
 
-            var viewModel = AudioDetailViewModel.MapFrom(audio, _audiochanOptions);
+            var viewModel = audio.MapToDetail(_audiochanOptions);
 
             return Result<AudioDetailViewModel>.Success(viewModel);
         }

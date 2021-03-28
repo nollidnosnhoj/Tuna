@@ -106,7 +106,7 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
                 await _dbContext.Audios.AddAsync(audio, cancellationToken);
                 await _dbContext.SaveChangesAsync(cancellationToken);
                 
-                var viewModel = AudioDetailViewModel.MapFrom(audio, _audiochanOptions) with
+                var viewModel = audio.MapToDetail(_audiochanOptions) with
                 {
                     User = new MetaUserDto(currentUser),
                 };
