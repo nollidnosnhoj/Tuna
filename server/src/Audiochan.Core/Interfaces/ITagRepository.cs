@@ -7,6 +7,6 @@ namespace Audiochan.Core.Interfaces
 {
     public interface ITagRepository
     {
-        Task<List<Tag>> CreateTags(IEnumerable<string> tags, CancellationToken cancellationToken = default);
+        Task<List<Tag>> GetListAsync(IEnumerable<string> tags, CancellationToken cancellationToken = default);
     }
 }

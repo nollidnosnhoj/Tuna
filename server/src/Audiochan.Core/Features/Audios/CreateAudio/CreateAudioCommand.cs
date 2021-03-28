@@ -100,7 +100,7 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
             try
             {
                 audio.UpdateTags(request.Tags.Count > 0
-                    ? await _tagRepository.CreateTags(request.Tags, cancellationToken)
+                    ? await _tagRepository.GetListAsync(request.Tags, cancellationToken)
                     : new List<Tag>());
 
                 await _dbContext.Audios.AddAsync(audio, cancellationToken);

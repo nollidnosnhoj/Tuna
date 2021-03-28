@@ -47,7 +47,7 @@ namespace Audiochan.Infrastructure.Persistence
                     FileExt = ".mp3",
                     FileSize = 9335255,
                     UserId = user.Id,
-                    Tags = await tagRepository.CreateTags(new[] {"chillout", "lucid-dreams"}),
+                    Tags = await tagRepository.GetListAsync(new[] {"chillout", "lucid-dreams"}),
                     Visibility = Visibility.Public
                 };
                 var audio2 = new Audio
@@ -58,7 +58,7 @@ namespace Audiochan.Infrastructure.Persistence
                     FileExt = ".mp3",
                     FileSize = 6239211,
                     UserId = user.Id,
-                    Tags = await tagRepository.CreateTags(new[] {"newgrounds", "piano", "rave"}),
+                    Tags = await tagRepository.GetListAsync(new[] {"newgrounds", "piano", "rave"}),
                     Visibility = Visibility.Public
                 };
                 var audio3 = new Audio
@@ -69,7 +69,7 @@ namespace Audiochan.Infrastructure.Persistence
                     FileExt = ".mp3",
                     FileSize = 1823391,
                     UserId = user.Id,
-                    Tags = await tagRepository.CreateTags(new[] {"happy", "anime", "hardcore", "nightcore"}),
+                    Tags = await tagRepository.GetListAsync(new[] {"happy", "anime", "hardcore", "nightcore"}),
                     Visibility = Visibility.Public
                 };
                 var audio4 = new Audio
@@ -80,7 +80,7 @@ namespace Audiochan.Infrastructure.Persistence
                     FileExt = ".mp3",
                     FileSize = 3952556,
                     UserId = user.Id,
-                    Tags = await tagRepository.CreateTags(new[] {"hard-dance"}),
+                    Tags = await tagRepository.GetListAsync(new[] {"hard-dance"}),
                     Visibility = Visibility.Unlisted
                 };
                 var audio5 = new Audio
@@ -91,7 +91,7 @@ namespace Audiochan.Infrastructure.Persistence
                     FileExt = ".mp3",
                     FileSize = 8788667,
                     UserId = user.Id,
-                    Tags = await tagRepository.CreateTags(new[] {"vocals"}),
+                    Tags = await tagRepository.GetListAsync(new[] {"vocals"}),
                     Visibility = Visibility.Unlisted
                 };
                 await context.Audios.AddRangeAsync(audio1, audio2, audio3, audio4, audio5);

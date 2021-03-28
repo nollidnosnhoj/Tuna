@@ -69,7 +69,7 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
             
             if (request.Tags.Count > 0)
             {
-                var newTags = await _tagRepository.CreateTags(request.Tags, cancellationToken);
+                var newTags = await _tagRepository.GetListAsync(request.Tags, cancellationToken);
 
                 audio.UpdateTags(newTags);
             }
