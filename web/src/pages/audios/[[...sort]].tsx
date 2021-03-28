@@ -1,28 +1,11 @@
 import { GetServerSideProps } from "next";
-import { useRouter } from "next/router";
-import React, { useCallback, useState } from "react";
-import queryString from "query-string";
-import Page from "~/components/Page";
-import AudioListSubHeader from "~/features/audio/components/ListSubheader";
-import AudioList from "~/features/audio/components/List";
-import { useAudiosInfinite } from "~/features/audio/hooks/queries";
-import InfiniteListControls from "~/components/List/InfiniteListControls";
 import { fetchPages } from "~/utils/api";
 import { getAccessToken } from "~/utils/cookies";
-import { PagedList } from "~/lib/types";
 import { Audio } from "~/features/audio/types";
-
-type SortState = "latest";
-
-const sortPageTitles: { [K in SortState]: string } = {
-  latest: "Latest Audios",
-};
-
-interface AudioListPageProps {
-  sort: SortState;
-  filter: Record<string, string | string[] | undefined>;
-  initialPage: PagedList<Audio>;
-}
+import AudioListPage, {
+  AudioListPageProps,
+  SortState,
+} from "../../features/audio/components/Pages/AudioListPage";
 
 export const getServerSideProps: GetServerSideProps<AudioListPageProps> = async ({
   query,
@@ -65,50 +48,6 @@ export const getServerSideProps: GetServerSideProps<AudioListPageProps> = async 
   };
 };
 
-interface AudioListFilter {}
-
-export default function AudioListPage(props: AudioListPageProps) {
-  const router = useRouter();
-  const { sort, filter, initialPage } = props;
-
-  const [listFilter, setListFilter] = useState<AudioListFilter>({});
-
-  const {
-    items: audios,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-  } = useAudiosInfinite("audios", { ...listFilter, sort }, undefined, {
-    staleTime: 1000, // Prevent double fetching
-    initialData: {
-      pages: [initialPage],
-      pageParams: [1],
-    },
-  });
-
-  const handleChange = useCallback((newFilter: AudioListFilter) => {
-    const mergedFilter = { ...listFilter, ...newFilter };
-    router.replace(
-      `/audios?${queryString.stringify(mergedFilter)}`,
-      undefined,
-      {
-        shallow: true,
-      }
-    );
-    setListFilter(mergedFilter);
-  }, []);
-
-  return (
-    <Page
-      title={sortPageTitles[sort]}
-      beforeContainer={<AudioListSubHeader current={sort} />}
-    >
-      <AudioList audios={audios} />
-      <InfiniteListControls
-        fetchNext={fetchNextPage}
-        hasNext={hasNextPage}
-        isFetching={isFetchingNextPage}
-      />
-    </Page>
-  );
+export default function (props: AudioListPageProps) {
+  return <AudioListPage {...props} />;
 }

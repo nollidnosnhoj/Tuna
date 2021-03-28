@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import { useQueryClient, useMutation } from "react-query";
 import useUser from "~/hooks/useUser";
 import api from "~/utils/api";
 import { apiErrorToast } from "~/utils/toast";
 
-export const useFollow = (username: string, initialData?: boolean) => {
+
+export function useFollow(username: string, initialData?: boolean) {
   const { user } = useUser();
   const [isFollowing, setIsFollowing] = useState<boolean | undefined>(initialData);
 
@@ -25,21 +25,7 @@ export const useFollow = (username: string, initialData?: boolean) => {
     api.request(`me/followings/${username}`, method)
       .then(() => setIsFollowing(!isFollowing))
       .catch(err => apiErrorToast(err));
-  }
+  };
 
   return { isFollowing, follow: followHandler };
-}
-
-export const useAddUserPicture = (username: string) => {
-  const queryClient = useQueryClient();
-  const uploadArtwork = async (data: string) => 
-    await api.patch<{ image: string}>(`me/picture`, { data });
-
-  return useMutation(uploadArtwork, {
-    onSuccess() {
-      queryClient.invalidateQueries(`me`);
-      queryClient.invalidateQueries(`users`);
-      queryClient.invalidateQueries([`users`, username], { exact: true })
-    }
-  })
 }

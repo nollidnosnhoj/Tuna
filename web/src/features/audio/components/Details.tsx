@@ -26,7 +26,7 @@ import NextLink from "next/link";
 import AudioEdit from "./Edit";
 import Link from "../../../components/Link";
 import Picture from "../../../components/Picture";
-import { useAddAudioPicture } from "~/features/audio/hooks/mutations";
+import { useAddAudioPicture } from "~/features/audio/hooks/mutations/useAddAudioPicture";
 import { AudioDetail } from "~/features/audio/types";
 import { formatDuration, relativeDate } from "~/utils/time";
 import useUser from "~/hooks/useUser";

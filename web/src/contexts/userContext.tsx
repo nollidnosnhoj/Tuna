@@ -6,11 +6,9 @@ import React, {
   useState,
 } from "react";
 import { LoginFormValues } from "~/features/auth/components/LoginForm";
-import {
-  login,
-  refreshAccessToken,
-  revokeRefreshToken,
-} from "../features/auth/services";
+import { revokeRefreshToken } from "../features/auth/revokeRefreshToken";
+import { refreshAccessToken } from "../features/auth/refreshAccessToken";
+import { login } from "../features/auth/login";
 import { CurrentUser } from "../features/user/types";
 import api from "~/utils/api";
 import { getAccessToken } from "~/utils/cookies";

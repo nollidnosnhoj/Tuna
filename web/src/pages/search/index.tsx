@@ -10,7 +10,6 @@ import {
 } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
 import React, { useMemo, useState } from "react";
-import { useQuery } from "react-query";
 import Page from "~/components/Page";
 import AudioList from "~/features/audio/components/List";
 import { fetch } from "~/utils/api";

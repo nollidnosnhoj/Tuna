@@ -30,11 +30,10 @@ import { DeleteIcon } from "@chakra-ui/icons";
 import React, { useMemo, useState } from "react";
 import Router from "next/router";
 import { useFormik } from "formik";
-import InputCheckbox from "../../../components/Form/Checkbox";
 import TextInput from "../../../components/Form/TextInput";
 import TagInput from "../../../components/Form/TagInput";
 import { AudioDetail, AudioRequest } from "~/features/audio/types";
-import { useEditAudio, useRemoveAudio } from "~/features/audio/hooks/mutations";
+import { useRemoveAudio, useEditAudio } from "~/features/audio/hooks/mutations";
 import { editAudioSchema } from "~/features/audio/schemas";
 import { apiErrorToast, successfulToast } from "~/utils/toast";
 
