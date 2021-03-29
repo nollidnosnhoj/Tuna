@@ -1,9 +1,8 @@
-﻿using Audiochan.Core.Common.Models.Responses;
-using MediatR;
-
-namespace Audiochan.Core.Common.Models.Requests
+﻿namespace Audiochan.Core.Common.Models.Requests
 {
-    public record PaginationQueryRequest<TResponse> : PaginationQuery, IRequest<PagedList<TResponse>>
+    public record PaginationQueryRequest
     {
+        public int Page { get; init; } = 1;
+        public int Size { get; init; } = 30;
     }
 }

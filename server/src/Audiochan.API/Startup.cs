@@ -1,4 +1,3 @@
-using System;
 using System.Text.Json;
 using Audiochan.API.Configurations;
 using Audiochan.API.Middlewares;

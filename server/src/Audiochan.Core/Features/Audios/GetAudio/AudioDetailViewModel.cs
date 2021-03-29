@@ -1,8 +1,6 @@
 ﻿using System;
 using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Common.Models;
-using Audiochan.Core.Common.Options;
-using Audiochan.Core.Entities;
 
 namespace Audiochan.Core.Features.Audios.GetAudio
 {

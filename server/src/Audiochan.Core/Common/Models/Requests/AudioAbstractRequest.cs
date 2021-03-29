@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using FluentValidation;
 
 namespace Audiochan.Core.Common.Models.Requests
 {
@@ -9,27 +8,5 @@ namespace Audiochan.Core.Common.Models.Requests
         public string Description { get; init; }
         public string Publicity { get; init; }
         public List<string> Tags { get; init; } = new();
-    }
-
-    public class AudioAbstractRequestValidator : AbstractValidator<AudioAbstractRequest>
-    {
-        public AudioAbstractRequestValidator()
-        {
-            // When the title is present, it must be at most 30 characters long.
-            RuleFor(req => req.Title)
-                .MaximumLength(30)
-                .When(req => !string.IsNullOrWhiteSpace(req.Title))
-                .WithMessage("Title cannot be no more than 30 characters long.");
-
-            // Description must be at most 500 characters long.
-            RuleFor(req => req.Description)
-                .MaximumLength(500)
-                .WithMessage("Description cannot be more than 500 characters long.");
-
-            // Must be at most 10 tags.
-            RuleFor(req => req.Tags)
-                .Must(u => u!.Count <= 10)
-                .WithMessage("Can only have up to 10 tags per audio upload.");
-        }
     }
 }
