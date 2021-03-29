@@ -7,7 +7,7 @@ namespace Audiochan.Core.Features.Audios
 {
     public static class QueryableExtensions
     {
-        public static IQueryable<Audio> DefaultListQueryable(this DbSet<Audio> dbSet, string currentUserId = "")
+        public static IQueryable<Audio> DefaultListQueryable(this IQueryable<Audio> dbSet, string currentUserId = "")
         {
             return dbSet
                 .AsNoTracking()
@@ -16,7 +16,7 @@ namespace Audiochan.Core.Features.Audios
                 .Where(a => a.UserId == currentUserId || a.Visibility == Visibility.Public);
         }
 
-        public static IQueryable<Audio> DefaultSingleQueryable(this DbSet<Audio> dbSet, string privateKey = "", string currentUserId = "")
+        public static IQueryable<Audio> DefaultSingleQueryable(this IQueryable<Audio> dbSet, string privateKey = "", string currentUserId = "")
         {
             return dbSet
                 .AsNoTracking()
@@ -36,7 +36,7 @@ namespace Audiochan.Core.Features.Audios
                     .Select(t => t.Trim().ToLower())
                     .ToArray();
 
-                queryable = queryable.Where(a => a.Tags.Any(t => parsedTags.Contains(t.Id)));
+                queryable = queryable.Where(a => a.Tags.Any(t => parsedTags.Contains(t.Name)));
             }
 
             return queryable;

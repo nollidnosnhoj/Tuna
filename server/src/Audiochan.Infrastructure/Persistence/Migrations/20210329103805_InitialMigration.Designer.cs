@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Audiochan.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210323191658_InitialMigration")]
+    [Migration("20210329103805_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -28,8 +28,8 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("audios_id");
 
-                    b.Property<string>("TagsId")
-                        .HasColumnType("text")
+                    b.Property<long>("TagsId")
+                        .HasColumnType("bigint")
                         .HasColumnName("tags_id");
 
                     b.HasKey("AudiosId", "TagsId")
@@ -127,13 +127,9 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                         .HasColumnType("text")
                         .HasColumnName("target_id");
 
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("created");
-
-                    b.Property<DateTime?>("LastModified")
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("last_modified");
+                    b.Property<long>("Id")
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
 
                     b.HasKey("ObserverId", "TargetId")
                         .HasName("pk_followed_users");
@@ -177,9 +173,15 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Audiochan.Core.Entities.Tag", b =>
                 {
-                    b.Property<string>("Id")
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("Name")
                         .HasColumnType("text")
-                        .HasColumnName("id");
+                        .HasColumnName("name");
 
                     b.HasKey("Id")
                         .HasName("pk_tags");

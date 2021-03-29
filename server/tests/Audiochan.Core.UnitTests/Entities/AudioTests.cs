@@ -69,7 +69,7 @@ namespace Audiochan.Core.UnitTests.Entities
         public void NewAudio_ShouldHaveCorrectTagValues(params string[] tags)
         {
             // Assign
-            var tagEntities = tags.Select(tag => new Tag {Id = tag}).ToList();
+            var tagEntities = tags.Select(tag => new Tag {Name = tag}).ToList();
             var audio = new Audio();
 
             // Act
@@ -77,7 +77,7 @@ namespace Audiochan.Core.UnitTests.Entities
 
             // Assert
             audio.Tags.Count.Should().Be(3);
-            audio.Tags.Count(t => t.Id == "apples").Should().Be(1);
+            audio.Tags.Count(t => t.Name == "apples").Should().Be(1);
         }
 
         [Theory]
@@ -85,16 +85,15 @@ namespace Audiochan.Core.UnitTests.Entities
         public void UpdateAudio_ShouldHaveCorrectTagValues(params string[] tags)
         {
             // Assign
-            var tagEntities = tags.Select(tag => new Tag {Id = tag}).ToList();
+            var tagEntities = tags.Select(tag => new Tag {Name = tag}).ToList();
             var audio = new Audio();
-            audio.Tags.Add(new Tag {Id = "apples"});
 
             // Act
             audio.UpdateTags(tagEntities);
 
             // Assert
             audio.Tags.Count.Should().Be(3);
-            audio.Tags.Count(t => t.Id == "apples").Should().Be(1);
+            audio.Tags.Count(t => t.Name == "apples").Should().Be(1);
         }
     }
 }

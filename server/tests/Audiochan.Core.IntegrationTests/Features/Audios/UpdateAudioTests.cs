@@ -97,9 +97,9 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             created.Title.Should().Be(command.Title);
             created.Description.Should().Be(command.Description);
             created.Tags.Count.Should().Be(3);
-            created.Tags.Should().Contain(x => x.Id == "apples");
-            created.Tags.Should().Contain(x => x.Id == "oranges");
-            created.Tags.Should().Contain(x => x.Id == "caramel");
+            created.Tags.Should().Contain(x => x.Name == "apples");
+            created.Tags.Should().Contain(x => x.Name == "oranges");
+            created.Tags.Should().Contain(x => x.Name == "caramel");
         }
     }
 }

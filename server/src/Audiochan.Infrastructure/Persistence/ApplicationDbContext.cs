@@ -30,16 +30,15 @@ namespace Audiochan.Infrastructure.Persistence
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new())
         {
-            foreach (var entry in ChangeTracker.Entries<BaseEntity>())
+            foreach (var entry in ChangeTracker.Entries<IAudited>())
             {
                 switch (entry.State)
                 {
                     case EntityState.Added:
-                        entry.Entity.Created = _dateTimeProvider.Now;
+                        entry.Property(nameof(IAudited.Created)).CurrentValue = _dateTimeProvider.Now;
                         break;
-
                     case EntityState.Modified:
-                        entry.Entity.LastModified = _dateTimeProvider.Now;
+                        entry.Property(nameof(IAudited.LastModified)).CurrentValue = _dateTimeProvider.Now;
                         break;
                 }
             }

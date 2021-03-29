@@ -29,7 +29,9 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                 name: "tags",
                 columns: table => new
                 {
-                    id = table.Column<string>(type: "text", nullable: false)
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    name = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -123,8 +125,7 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                 {
                     observer_id = table.Column<string>(type: "text", nullable: false),
                     target_id = table.Column<string>(type: "text", nullable: false),
-                    created = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    last_modified = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                    id = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -257,7 +258,7 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                 columns: table => new
                 {
                     audios_id = table.Column<long>(type: "bigint", nullable: false),
-                    tags_id = table.Column<string>(type: "text", nullable: false)
+                    tags_id = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {

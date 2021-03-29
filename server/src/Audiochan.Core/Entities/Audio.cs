@@ -40,7 +40,6 @@ namespace Audiochan.Core.Entities
             this.Title = Path.GetFileNameWithoutExtension(fileName).Truncate(30);
         }
 
-        public long Id { get; set; }
         public string Title { get; set; }
         public string Description { get; set; } = string.Empty;
         public int Duration { get; set; }

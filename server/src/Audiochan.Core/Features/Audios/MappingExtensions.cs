@@ -22,7 +22,7 @@ namespace Audiochan.Core.Features.Audios
                 Duration = audio.Duration,
                 Picture = audio.Picture,
                 Created = audio.Created,
-                Tags = audio.Tags.Select(t => t.Id).ToArray(),
+                Tags = audio.Tags.Select(t => t.Name).ToArray(),
                 Visibility = audio.Visibility,
                 FileExt = audio.FileExt,
                 FileSize = audio.FileSize,

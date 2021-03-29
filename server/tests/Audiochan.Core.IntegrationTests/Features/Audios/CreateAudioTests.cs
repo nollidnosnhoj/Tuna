@@ -70,9 +70,9 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             created.Duration.Should().Be(100);
             created.FileSize.Should().Be(10000);
             created.Tags.Count.Should().Be(3);
-            created.Tags.Should().Contain(x => x.Id == "apples");
-            created.Tags.Should().Contain(x => x.Id == "oranges");
-            created.Tags.Should().Contain(x => x.Id == "banana");
+            created.Tags.Should().Contain(x => x.Name == "apples");
+            created.Tags.Should().Contain(x => x.Name == "oranges");
+            created.Tags.Should().Contain(x => x.Name == "banana");
             created.Visibility.Should().BeEquivalentTo(Visibility.Unlisted);
             created.UserId.Should().Be(userId);
         }
