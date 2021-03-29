@@ -164,7 +164,7 @@ namespace Audiochan.Infrastructure.Storage
             }
         }
 
-        public GetPresignedUrlResponse GetPresignedUrl(string container,
+        public string GetPresignedUrl(string container,
             string blobName,
             int expirationInMinutes,
             Dictionary<string, string> metadata = null)
@@ -185,12 +185,7 @@ namespace Audiochan.Infrastructure.Storage
 
                 presignedUrlRequest.AddMetadataCollection(metadata);
 
-                var presignedUrl = _client.GetPreSignedURL(presignedUrlRequest);
-
-                return new GetPresignedUrlResponse
-                {
-                    Url = presignedUrl
-                };
+                return _client.GetPreSignedURL(presignedUrlRequest);
             }
             catch (AmazonS3Exception ex)
             {

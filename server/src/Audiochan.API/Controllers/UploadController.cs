@@ -1,5 +1,7 @@
-﻿using Audiochan.Core.Common.Models.Requests;
-using Audiochan.Core.Interfaces;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using Audiochan.Core.Features.Upload.GetUploadAudioUrl;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -10,11 +12,10 @@ namespace Audiochan.API.Controllers
     [Route("[controller]")]
     public class UploadController : ControllerBase
     {
-        private readonly IUploadService _uploadService;
-
-        public UploadController(IUploadService uploadService)
+        private readonly IMediator _mediator;
+        public UploadController(IMediator mediator)
         {
-            _uploadService = uploadService;
+            _mediator = mediator;
         }
 
         [HttpPost]
@@ -23,9 +24,9 @@ namespace Audiochan.API.Controllers
             OperationId = "GetPresignedUrl",
             Tags = new[] {"upload"}
         )]
-        public IActionResult GetUploadUrl([FromBody] GetUploadAudioUrlRequest request)
+        public async Task<IActionResult> GetUploadUrl([FromBody] GetUploadAudioUrl request, CancellationToken cancellationToken)
         {
-            var response = _uploadService.GetUploadAudioUrl(request);
+            var response = await _mediator.Send(request, cancellationToken);
             return new JsonResult(response);
         }
     }
