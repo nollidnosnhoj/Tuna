@@ -66,7 +66,12 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
                 
                 var viewModel = audio.MapToDetail(_audiochanOptions) with
                 {
-                    User = new MetaUserDto(currentUser),
+                    User = new MetaUserDto
+                    {
+                        Id = currentUser.Id,
+                        Picture = currentUser.Picture,
+                        Username = currentUser.UserName
+                    },
                 };
                 
                 return Result<AudioDetailViewModel>.Success(viewModel);

@@ -29,7 +29,12 @@ namespace Audiochan.Core.Features.Audios
                 LastModified = audio.LastModified,
                 PrivateKey = audio.Visibility == Visibility.Private ? audio.PrivateKey : null,
                 AudioUrl = $"{options.StorageUrl}/{options.AudioStorageOptions.Container}/{audio.UploadId + audio.FileExt}",
-                User = new MetaUserDto(audio.User)
+                User = new MetaUserDto
+                {
+                    Id = audio.User.Id,
+                    Picture = audio.User.Picture,
+                    Username = audio.User.UserName
+                }
             };
         }
 
@@ -44,7 +49,12 @@ namespace Audiochan.Core.Features.Audios
                 Created = audio.Created,
                 Visibility = audio.Visibility,
                 AudioUrl = $"{options.StorageUrl}/{options.AudioStorageOptions.Container}/{audio.UploadId + audio.FileExt}",
-                User = new MetaUserDto(audio.User)
+                User = new MetaUserDto
+                {
+                    Id = audio.User.Id,
+                    Picture = audio.User.Picture,
+                    Username = audio.User.UserName
+                }
             };
         }
 
