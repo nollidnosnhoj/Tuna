@@ -29,7 +29,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             var uploadId = UploadHelpers.GenerateUploadId();
 
             // ACT
-            var result = await _fixture.SendAsync(new CreateAudioCommand
+            var result = await _fixture.SendAsync(new CreateAudioRequest
             {
                 UploadId = uploadId,
                 FileName = "testaudio.mp3",

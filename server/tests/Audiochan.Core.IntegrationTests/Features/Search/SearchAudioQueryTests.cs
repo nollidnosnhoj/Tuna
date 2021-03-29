@@ -46,7 +46,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Search
                 await _fixture.InsertAsync(audio);
             }
 
-            var result = await _fixture.SendAsync(new SearchAudiosQuery
+            var result = await _fixture.SendAsync(new SearchAudiosRequest
             {
                 Q = "example"
             });
@@ -72,7 +72,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Search
                 if (i > 0 && i % 3 == 0)
                     tags.Add("testtag2");
 
-                await _fixture.SendAsync(new CreateAudioCommand
+                await _fixture.SendAsync(new CreateAudioRequest
                 {
                     UploadId = UploadHelpers.GenerateUploadId(),
                     FileName = "test.mp3",
@@ -83,7 +83,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Search
                 });
             }
 
-            var result = await _fixture.SendAsync(new SearchAudiosQuery
+            var result = await _fixture.SendAsync(new SearchAudiosRequest
             {
                 Tags = "testtag1, testtag2"
             });

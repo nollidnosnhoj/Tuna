@@ -10,7 +10,7 @@ namespace Audiochan.Core.UnitTests.Validations
 {
     public class CreateUserValidationTests
     {
-        private readonly IValidator<RegisterCommand> _validator;
+        private readonly IValidator<RegisterUserRequest> _validator;
 
         public CreateUserValidationTests()
         {
@@ -22,13 +22,13 @@ namespace Audiochan.Core.UnitTests.Validations
                 PasswordRequiresNonAlphanumeric = true,
                 PasswordMinimumLength = 5
             });
-            _validator = new RegisterCommandValidator(options);
+            _validator = new RegisterUserRequestValidator(options);
         }
 
         [Fact]
         public void UsernameRequired()
         {
-            var req = new RegisterCommand();
+            var req = new RegisterUserRequest();
             _validator.TestValidate(req)
                 .ShouldHaveValidationErrorFor(x => x.Username);
         }
@@ -36,7 +36,7 @@ namespace Audiochan.Core.UnitTests.Validations
         [Fact]
         public void UsernameRequiredCharacters()
         {
-            var req = new RegisterCommand {Username = "@pplesAnd&&&&"};
+            var req = new RegisterUserRequest {Username = "@pplesAnd&&&&"};
             _validator.TestValidate(req)
                 .ShouldHaveValidationErrorFor(x => x.Username)
                 .WithErrorCode(ValidationErrorCodes.Username.RequireCharacters);
@@ -45,7 +45,7 @@ namespace Audiochan.Core.UnitTests.Validations
         [Fact]
         public void PasswordRequired()
         {
-            var req = new RegisterCommand();
+            var req = new RegisterUserRequest();
             var validationResult = _validator.TestValidate(req);
             validationResult
                 .ShouldHaveValidationErrorFor(x => x.Password);
@@ -54,7 +54,7 @@ namespace Audiochan.Core.UnitTests.Validations
         [Fact]
         public void PasswordRequireDigits()
         {
-            var req = new RegisterCommand {Password = "thisdoesnothavedigits"};
+            var req = new RegisterUserRequest {Password = "thisdoesnothavedigits"};
 
             var validationResult = _validator.TestValidate(req);
 
@@ -66,7 +66,7 @@ namespace Audiochan.Core.UnitTests.Validations
         [Fact]
         public void PasswordRequireLowercase()
         {
-            var req = new RegisterCommand {Password = "OMEGALUL4HEAD"};
+            var req = new RegisterUserRequest {Password = "OMEGALUL4HEAD"};
 
             var validationResult = _validator.TestValidate(req);
 
@@ -78,7 +78,7 @@ namespace Audiochan.Core.UnitTests.Validations
         [Fact]
         public void PasswordRequireUppercase()
         {
-            var req = new RegisterCommand {Password = "omegalul4head"};
+            var req = new RegisterUserRequest {Password = "omegalul4head"};
 
             var validationResult = _validator.TestValidate(req);
 
@@ -90,7 +90,7 @@ namespace Audiochan.Core.UnitTests.Validations
         [Fact]
         public void PasswordRequireNonAlphanumeric()
         {
-            var req = new RegisterCommand {Password = "lkdsfhlksdjflksdjflks"};
+            var req = new RegisterUserRequest {Password = "lkdsfhlksdjflksdjflks"};
 
             var validationResult = _validator.TestValidate(req);
 
@@ -102,7 +102,7 @@ namespace Audiochan.Core.UnitTests.Validations
         [Fact]
         public void PasswordRequireLength()
         {
-            var req = new RegisterCommand {Password = "no"};
+            var req = new RegisterUserRequest {Password = "no"};
 
             var validationResult = _validator.TestValidate(req);
 

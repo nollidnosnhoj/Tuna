@@ -10,10 +10,10 @@ namespace Audiochan.Core.Interfaces
 {
     public interface ISearchService
     {
-        Task<PagedList<AudioViewModel>> SearchAudios(SearchAudiosQuery query,
+        Task<PagedList<AudioViewModel>> SearchAudios(SearchAudiosRequest request,
             CancellationToken cancellationToken = default);
 
-        Task<PagedList<UserViewModel>> SearchUsers(SearchUsersQuery query,
+        Task<PagedList<UserViewModel>> SearchUsers(SearchUsersRequest request,
             CancellationToken cancellationToken = default);
     }
 }

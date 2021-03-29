@@ -31,7 +31,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             await _fixture.InsertAsync(audio);
 
             // Act
-            var result = await _fixture.SendAsync(new GetAudioQuery(0));
+            var result = await _fixture.SendAsync(new GetAudioRequest(0));
 
             // Assert
             result.Should().NotBeNull();
@@ -50,9 +50,9 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             await _fixture.InsertAsync(audio);
 
             // Act
-            var successResult = await _fixture.SendAsync(new GetAudioQuery(audio.Id));
+            var successResult = await _fixture.SendAsync(new GetAudioRequest(audio.Id));
             await _fixture.RunAsDefaultUserAsync();
-            var failureResult = await _fixture.SendAsync(new GetAudioQuery(audio.Id));
+            var failureResult = await _fixture.SendAsync(new GetAudioRequest(audio.Id));
 
             // Assert
             successResult.Should().NotBeNull();
@@ -75,7 +75,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             await _fixture.InsertAsync(audio);
 
             await _fixture.RunAsDefaultUserAsync();
-            var result = await _fixture.SendAsync(new GetAudioQuery(audio.Id, privateKey));
+            var result = await _fixture.SendAsync(new GetAudioRequest(audio.Id, privateKey));
 
             result.Should().NotBeNull();
             result.IsSuccess.Should().Be(true);
@@ -94,7 +94,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             await _fixture.InsertAsync(audio);
 
             await _fixture.RunAsDefaultUserAsync();
-            var result = await _fixture.SendAsync(new GetAudioQuery(audio.Id));
+            var result = await _fixture.SendAsync(new GetAudioRequest(audio.Id));
 
             result.Should().NotBeNull();
             result.IsSuccess.Should().Be(false);
@@ -111,7 +111,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             await _fixture.InsertAsync(audio);
 
             await _fixture.RunAsDefaultUserAsync();
-            var result = await _fixture.SendAsync(new GetAudioQuery(audio.Id));
+            var result = await _fixture.SendAsync(new GetAudioRequest(audio.Id));
 
             result.Should().NotBeNull();
             result.IsSuccess.Should().Be(true);
@@ -125,7 +125,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             // Assign
             await _fixture.RunAsDefaultUserAsync();
 
-            var audio = await _fixture.SendAsync(new CreateAudioCommand
+            var audio = await _fixture.SendAsync(new CreateAudioRequest
             {
                 UploadId = UploadHelpers.GenerateUploadId(),
                 FileName = "test.mp3",
@@ -136,7 +136,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             });
 
             // Act
-            var result = await _fixture.SendAsync(new GetAudioQuery(audio.Data.Id));
+            var result = await _fixture.SendAsync(new GetAudioRequest(audio.Data.Id));
 
             // Assert
             result.Should().NotBeNull();

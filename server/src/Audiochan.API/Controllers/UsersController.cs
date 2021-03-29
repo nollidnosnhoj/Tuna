@@ -32,7 +32,7 @@ namespace Audiochan.API.Controllers
         [SwaggerOperation(Summary = "Return user's profile.", OperationId = "GetProfile", Tags = new[] {"users"})]
         public async Task<IActionResult> GetUser(string username, CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(new GetUserQuery(username), cancellationToken);
+            var result = await _mediator.Send(new GetUserRequest(username), cancellationToken);
 
             return result.IsSuccess
                 ? Ok(result.Data)
@@ -48,7 +48,7 @@ namespace Audiochan.API.Controllers
             [FromQuery] PaginationQuery paginationQuery, 
             CancellationToken cancellationToken)
         {
-            var query = new GetUserAudiosQuery
+            var query = new GetUserAudiosRequest
             {
                 Username = username,
                 Page = paginationQuery.Page,
@@ -68,7 +68,7 @@ namespace Audiochan.API.Controllers
             [FromQuery] PaginationQuery query,
             CancellationToken cancellationToken)
         {
-            return Ok(await _mediator.Send(new GetFollowersQuery
+            return Ok(await _mediator.Send(new GetUserFollowersRequest
             {
                 Username = username,
                 Page = query.Page,
@@ -84,7 +84,7 @@ namespace Audiochan.API.Controllers
             [FromQuery] PaginationQuery query,
             CancellationToken cancellationToken)
         {
-            return Ok(await _mediator.Send(new GetFollowingsQuery
+            return Ok(await _mediator.Send(new GetUserFollowingsRequest
             {
                 Username = username,
                 Page = query.Page,

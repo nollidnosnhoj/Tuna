@@ -24,7 +24,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Followers
             var (observerId, _) =
                 await _sliceFixture.RunAsUserAsync("kopacetic", "kopacetic123!", Array.Empty<string>());
 
-            await _sliceFixture.SendAsync(new SetFollowCommand(observerId, targetUsername, true));
+            await _sliceFixture.SendAsync(new SetFollowRequest(observerId, targetUsername, true));
 
             var user = await _sliceFixture.ExecuteDbContextAsync(database =>
             {

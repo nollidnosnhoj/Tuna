@@ -31,7 +31,7 @@ namespace Audiochan.API.Controllers
             OperationId = "Login",
             Tags = new[] {"auth"}
         )]
-        public async Task<IActionResult> Login([FromBody] LoginCommand request,
+        public async Task<IActionResult> Login([FromBody] LoginRequest request,
             CancellationToken cancellationToken)
         {
             var authResult = await _mediator.Send(request, cancellationToken);
@@ -49,7 +49,7 @@ namespace Audiochan.API.Controllers
             OperationId = "CreateAccount",
             Tags = new[] {"auth"}
         )]
-        public async Task<IActionResult> Register([FromBody] RegisterCommand request,
+        public async Task<IActionResult> Register([FromBody] RegisterUserRequest request,
             CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(request, cancellationToken);
@@ -68,7 +68,7 @@ namespace Audiochan.API.Controllers
             OperationId = "RefreshAccessToken",
             Tags = new[] {"auth"}
         )]
-        public async Task<IActionResult> Refresh([FromBody] RefreshTokenCommand request,
+        public async Task<IActionResult> Refresh([FromBody] RefreshTokenRequest request,
             CancellationToken cancellationToken)
         {
             var authResult = await _mediator.Send(request, cancellationToken);
@@ -85,7 +85,7 @@ namespace Audiochan.API.Controllers
             OperationId = "RevokeRefreshToken",
             Tags = new[] {"auth"}
         )]
-        public async Task<IActionResult> Revoke([FromBody] RevokeTokenCommand request,
+        public async Task<IActionResult> Revoke([FromBody] RevokeTokenRequest request,
             CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(request, cancellationToken);

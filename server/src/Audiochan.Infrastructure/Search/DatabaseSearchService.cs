@@ -29,35 +29,35 @@ namespace Audiochan.Infrastructure.Search
             _audiochanOptions = options.Value;
         }
 
-        public async Task<PagedList<AudioViewModel>> SearchAudios(SearchAudiosQuery query,
+        public async Task<PagedList<AudioViewModel>> SearchAudios(SearchAudiosRequest request,
             CancellationToken cancellationToken = default)
         {
             var currentUserId = _currentUserService.GetUserId();
 
             var queryable = _dbContext.Audios
                 .DefaultListQueryable(currentUserId)
-                .FilterByTags(query.Tags, ",");
+                .FilterByTags(request.Tags, ",");
 
-            if (!string.IsNullOrWhiteSpace(query.Q))
+            if (!string.IsNullOrWhiteSpace(request.Q))
                 queryable = queryable.Where(a => EF.Functions
-                    .ILike(a.Title, $"%{query.Q.Trim()}%"));
+                    .ILike(a.Title, $"%{request.Q.Trim()}%"));
 
             var result = await queryable
-                .Sort(query.Sort)
+                .Sort(request.Sort)
                 .ProjectToList(_audiochanOptions)
-                .PaginateAsync(query, cancellationToken);
+                .PaginateAsync(request, cancellationToken);
 
             return result;
         }
 
-        public async Task<PagedList<UserViewModel>> SearchUsers(SearchUsersQuery query,
+        public async Task<PagedList<UserViewModel>> SearchUsers(SearchUsersRequest request,
             CancellationToken cancellationToken = default)
         {
             var currentUserId = _currentUserService.GetUserId();
             return await _dbContext.Users
-                .Where(u => EF.Functions.ILike(u.UserName, $"%{query.Q}%"))
+                .Where(u => EF.Functions.ILike(u.UserName, $"%{request.Q}%"))
                 .ProjectToUser(currentUserId)
-                .PaginateAsync(query, cancellationToken);
+                .PaginateAsync(request, cancellationToken);
         }
     }
 }

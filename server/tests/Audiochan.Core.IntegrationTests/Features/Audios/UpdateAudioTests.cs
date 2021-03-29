@@ -35,7 +35,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             // Act
             await _fixture.RunAsDefaultUserAsync();
 
-            var command = new UpdateAudioCommand
+            var command = new UpdateAudioRequest
             {
                 Id = audio.Id,
                 Title = "New Audio Title PogChamp"
@@ -62,7 +62,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             await _fixture.InsertAsync(audio);
             
             // Act
-            var command = new UpdateAudioCommand
+            var command = new UpdateAudioRequest
             {
                 Id = audio.Id,
                 Title = "This is a new Title",
