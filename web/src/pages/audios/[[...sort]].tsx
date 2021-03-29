@@ -48,6 +48,6 @@ export const getServerSideProps: GetServerSideProps<AudioListPageProps> = async 
   };
 };
 
-export default function (props: AudioListPageProps) {
+export default function BrowseAudioNextPage(props: AudioListPageProps) {
   return <AudioListPage {...props} />;
 }

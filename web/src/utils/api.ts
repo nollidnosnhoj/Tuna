@@ -2,7 +2,7 @@ import axios, { Method } from 'axios'
 import createAuthRefreshInterceptor, { AxiosAuthRefreshRequestConfig } from 'axios-auth-refresh';
 import queryString from 'query-string'
 import config from '~/lib/config';
-import { refreshAccessToken } from "~/features/auth/refreshAccessToken";
+import { refreshAccessToken } from "~/features/auth/services";
 import { isAxiosError } from './axios';
 import { getAccessToken } from './cookies';
 import { PagedList } from '~/lib/types';

@@ -25,6 +25,6 @@ export const getServerSideProps: GetServerSideProps<AudioFeedPageProps> = async 
   };
 };
 
-export default function (props: AudioFeedPageProps) {
+export default function UserAudioFeedNextPage(props: AudioFeedPageProps) {
   return <AudioFeedPage {...props} />;
 }

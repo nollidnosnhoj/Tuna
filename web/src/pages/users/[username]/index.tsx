@@ -25,6 +25,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 };
 
-export default function () {
+export default function UserProfileNextPage() {
   return <ProfilePage />;
 }

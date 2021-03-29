@@ -27,6 +27,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 };
 
-export default function () {
+export default function ViewAudioNextPage() {
   return <AudioDetailsPage />;
 }
