@@ -6,9 +6,11 @@ import React, {
   useState,
 } from "react";
 import { LoginFormValues } from "~/features/auth/components/LoginForm";
-import { revokeRefreshToken } from "../features/auth/revokeRefreshToken";
-import { refreshAccessToken } from "../features/auth/refreshAccessToken";
-import { login } from "../features/auth/login";
+import {
+  authenticateUser,
+  revokeRefreshToken,
+  refreshAccessToken,
+} from "../features/auth/services";
 import { CurrentUser } from "../features/user/types";
 import api from "~/utils/api";
 import { getAccessToken } from "~/utils/cookies";
@@ -38,7 +40,7 @@ export function UserProvider(props: PropsWithChildren<UserProviderProps>) {
   const [loadingUser, setLoadingUser] = useState(false);
 
   async function authenticate(inputs: LoginFormValues) {
-    const result = await login(inputs);
+    const result = await authenticateUser(inputs);
     setExpirationToLocalStorage(result.accessTokenExpires);
     await fetchAuthenticatedUser();
   }

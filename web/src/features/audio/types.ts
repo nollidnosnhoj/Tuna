@@ -10,9 +10,9 @@ export type Audio = {
   visibility: Visibility;
   duration: number;
   picture: string;
-  audioUrl: string;
   created: string;
   user: Creator;
+  audioUrl?: string;
 }
 
 export type AudioDetail = {
@@ -25,11 +25,11 @@ export type AudioDetail = {
   duration: number;
   fileSize: number;
   fileExt: string;
-  audioUrl: string;
   picture: string;
   created: string;
   updated?: string;
   user: Creator;
+  audioUrl?: string;
 }
 
 export interface AudioRequest {
@@ -53,6 +53,7 @@ export type AudioPlayerItem = {
   artist: string;
   duration: number;
   cover: string;
-  source: string;
+  source?: string;
+  privateKey?: string
   related: boolean;
 }

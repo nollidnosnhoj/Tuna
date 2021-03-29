@@ -13,7 +13,7 @@ import { FaList } from "react-icons/fa";
 import { IoMdGrid } from "react-icons/io";
 import useAudioPlayer from "~/hooks/useAudioPlayer";
 import useAudioQueue from "~/hooks/useAudioQueue";
-import { mapToAudioListForPlayer } from "~/utils";
+import { mapAudiosForAudioQueue } from "~/utils";
 import { Audio } from "../../types";
 import AudioGridItem from "./GridItem";
 import AudioListItem from "./ListItem";
@@ -51,7 +51,7 @@ export default function AudioList(props: AudioListProps) {
       if (isNowPlaying) {
         changePlaying();
       } else {
-        setNewQueue(mapToAudioListForPlayer(audios), index);
+        setNewQueue(mapAudiosForAudioQueue(audios), index);
       }
     },
     [nowPlaying, audios]

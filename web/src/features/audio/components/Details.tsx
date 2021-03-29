@@ -34,7 +34,7 @@ import { FaHashtag, FaPause, FaPlay } from "react-icons/fa";
 import { MdQueueMusic } from "react-icons/md";
 import useAudioPlayer from "~/hooks/useAudioPlayer";
 import PictureDropzone from "~/components/Picture/PictureDropzone";
-import { mapToAudioListForPlayer } from "~/utils";
+import { mapAudioForAudioQueue, mapAudiosForAudioQueue } from "~/utils";
 import useAudioQueue from "~/hooks/useAudioQueue";
 
 interface AudioDetailProps {
@@ -55,7 +55,7 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
     if (isAudioNowPlaying) {
       changePlaying();
     } else {
-      setNewQueue(mapToAudioListForPlayer([audio]), 0);
+      setNewQueue(mapAudioForAudioQueue(audio), 0);
     }
   }, [isAudioNowPlaying, changePlaying, setNewQueue, audio]);
 
@@ -132,7 +132,7 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
                   size="lg"
                   icon={<MdQueueMusic />}
                   aria-label="Add to queue"
-                  onClick={() => addToQueue(mapToAudioListForPlayer([audio]))}
+                  onClick={() => addToQueue(mapAudioForAudioQueue(audio))}
                 />
               </span>
             </Tooltip>

@@ -23,7 +23,7 @@ import { HiDotsVertical } from "react-icons/hi";
 import useUser from "~/hooks/useUser";
 import { MdQueueMusic } from "react-icons/md";
 import useAudioQueue from "~/hooks/useAudioQueue";
-import { mapToAudioListForPlayer } from "~/utils";
+import { mapAudiosForAudioQueue } from "~/utils";
 
 export interface AudioListItemProps {
   audio: Audio;
@@ -102,7 +102,7 @@ const AudioListItem: React.FC<AudioListItemProps> = ({
         <MenuList>
           <MenuItem
             icon={<MdQueueMusic />}
-            onClick={() => addToQueue(mapToAudioListForPlayer([audio]))}
+            onClick={() => addToQueue(mapAudiosForAudioQueue([audio]))}
           >
             Add To Queue
           </MenuItem>

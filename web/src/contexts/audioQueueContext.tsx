@@ -5,8 +5,8 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { useMutex } from "react-context-mutex";
 import { AudioPlayerItem } from "~/features/audio/types";
+import api from "~/utils/api";
 
 type AudioQueueContexType = {
   audioList: AudioPlayerItem[];
@@ -84,9 +84,6 @@ export default function AudioQueueProvider(props: PropsWithChildren<any>) {
       return resolve(newIndex);
     });
   };
-
-  // DEBUG
-  useEffect(() => console.log(audioList), [audioList.length]);
 
   // If there's nothing in the list, play index should be undefined
   useEffect(() => {

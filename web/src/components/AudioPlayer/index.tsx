@@ -10,6 +10,7 @@ import {
   MdSkipNext,
   MdSkipPrevious,
 } from "react-icons/md";
+import AudioQueue from "./AudioQueue";
 
 export default function AudioPlayer() {
   const audioPlayerRef = useRef<H5AudioPlayer | null>(null);
@@ -52,8 +53,8 @@ export default function AudioPlayer() {
 
   const playerIcons = useMemo(
     () => ({
-      play: <Icon as={MdPlayArrow} aria-label="Play" size="lg" />,
-      pause: <Icon as={MdPause} aria-label="Pause" size="lg" />,
+      play: <Icon as={MdPlayArrow} aria-label="Play" />,
+      pause: <Icon as={MdPause} aria-label="Pause" />,
       previous: <Icon as={MdSkipPrevious} aria-label="Previous" />,
       next: <Icon as={MdSkipNext} aria-label="Previous" />,
     }),
@@ -122,6 +123,7 @@ export default function AudioPlayer() {
 
   return (
     <React.Fragment>
+      {/* <AudioQueue /> */}
       <Box
         borderTopWidth="1px"
         pos="fixed"
