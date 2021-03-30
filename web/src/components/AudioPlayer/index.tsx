@@ -1,7 +1,7 @@
-import H5AudioPlayer from "react-h5-audio-player";
+import H5AudioPlayer, { RHAP_UI } from "react-h5-audio-player";
 import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import useAudioPlayer from "~/hooks/useAudioPlayer";
-import { Box, Icon, chakra } from "@chakra-ui/react";
+import { Box, Icon, chakra, useDisclosure, Slide } from "@chakra-ui/react";
 import { REPEAT_MODE } from "~/contexts/audioPlayerContext";
 import RepeatButton from "./RepeatButton";
 import {
@@ -11,6 +11,7 @@ import {
   MdSkipPrevious,
 } from "react-icons/md";
 import AudioQueue from "./AudioQueue";
+import QueueButton from "./QueueButton";
 
 export default function AudioPlayer() {
   const audioPlayerRef = useRef<H5AudioPlayer | null>(null);
@@ -30,6 +31,8 @@ export default function AudioPlayer() {
     changePlaying,
     isPlaying,
   } = useAudioPlayer();
+
+  const { isOpen, onToggle, onClose } = useDisclosure();
 
   const [currentRepeatModeLabel, currentRepeatMode] = useMemo(() => {
     let tuple = repeatModeOrder.find(([_, x]) => x === repeatMode);
@@ -69,8 +72,8 @@ export default function AudioPlayer() {
     changePlaying(false);
   }, [changePlaying]);
 
-  const handleClickPrevious = useCallback(() => {
-    playPrevious();
+  const handleClickPrevious = useCallback(async () => {
+    await playPrevious();
   }, [playPrevious]);
 
   const handleClickNext = useCallback(async () => {
@@ -123,13 +126,16 @@ export default function AudioPlayer() {
 
   return (
     <React.Fragment>
-      {/* <AudioQueue /> */}
+      <Slide direction="bottom" in={isOpen}>
+        <AudioQueue isOpen={isOpen} onClose={onClose} />
+      </Slide>
       <Box
         borderTopWidth="1px"
         pos="fixed"
         bottom="0"
         left="0"
         width="100%"
+        height="120px"
         zIndex="99"
       >
         <H5AudioPlayer
@@ -144,6 +150,10 @@ export default function AudioPlayer() {
               mode={currentRepeatMode}
               onClick={handleRepeatModeChange}
             />,
+          ]}
+          customVolumeControls={[
+            <QueueButton isOpen={isOpen} onToggle={onToggle} />,
+            RHAP_UI.VOLUME,
           ]}
           customIcons={playerIcons}
           src={nowPlaying?.source}

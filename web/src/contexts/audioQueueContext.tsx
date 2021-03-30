@@ -1,6 +1,7 @@
 import React, {
   createContext,
   PropsWithChildren,
+  useCallback,
   useEffect,
   useMemo,
   useState,
@@ -53,6 +54,7 @@ export default function AudioQueueProvider(props: PropsWithChildren<any>) {
   };
 
   const goToIndex = (index: number) => {
+    console.log("!!!!!!!!!!!!!!!!!!!");
     return new Promise<number>((resolve) => {
       let newIndex = Math.max(0, Math.min(audioList.length - 1, index));
       setPlayIndex(newIndex);
@@ -60,30 +62,31 @@ export default function AudioQueueProvider(props: PropsWithChildren<any>) {
     });
   };
 
-  const removeFromQueue = (index: number) => {
-    return new Promise<number>((resolve, reject) => {
-      const boundedIndex = Math.max(0, Math.min(index, audioList.length - 1));
-      // Do not remove audio that is currently playing
-      if (playIndex === boundedIndex)
-        return reject("Cannot remove audio that is now playing.");
+  const removeFromQueue = useCallback(
+    (index: number) => {
+      return new Promise<number>((resolve, reject) => {
+        const boundedIndex = Math.max(0, Math.min(index, audioList.length - 1));
+        // Do not remove audio that is currently playing
+        if (playIndex === boundedIndex)
+          return reject("Cannot remove audio that is now playing.");
 
-      // Get the queue Id of the audio that is currently playing, so we can get the index in the new filtered list
-      const nowPlayingQueueId =
-        audioList.find((_, i) => i === playIndex)?.queueId ?? "";
-      const newList = audioList.filter((_, i) => i !== boundedIndex);
-      let newIndex = newList.findIndex((a) => a.queueId == nowPlayingQueueId);
-      if (newIndex === -1) {
-        throw new Error(
-          "Cannot find the index of which the audio is currently playing. Check your algorithm haha."
-        );
-      } else {
+        const nowQueueId = audioList.find((_, i) => i === playIndex)?.queueId;
+        const newList = audioList.filter((_, i) => i !== boundedIndex);
+        let newIndex = newList.findIndex((a) => a.queueId == nowQueueId);
+        if (newIndex === -1) {
+          return reject(
+            "Cannot find the index of which the audio is currently playing. Check your algorithm haha."
+          );
+        }
+
         setPlayIndex(newIndex);
         setAudioList(newList);
-      }
 
-      return resolve(newIndex);
-    });
-  };
+        return resolve(newIndex);
+      });
+    },
+    [audioList, playIndex]
+  );
 
   // If there's nothing in the list, play index should be undefined
   useEffect(() => {
