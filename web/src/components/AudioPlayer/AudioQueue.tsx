@@ -18,21 +18,21 @@ interface AudioQueueProps {
 export default function AudioQueue(props: AudioQueueProps) {
   const { isOpen, onClose } = props;
   const { audioList, playIndex, removeFromQueue, goToIndex } = useAudioQueue();
-  const bgColor = useColorModeValue("gray.200", "gray.800");
+  const bgColor = useColorModeValue("white", "gray.800");
+  const hoverColor = useColorModeValue("gray.300", "gray.900");
 
   return (
     <Box
       overflow="hidden"
       position="fixed"
       right="33px"
-      bottom="120px"
+      bottom="65px"
       display={isOpen ? "block" : "none"}
       width="480px"
       height="410px"
       borderWidth="1px"
       borderBottomWidth="0"
       bgColor={bgColor}
-      boxShadow="inner"
     >
       <Flex
         paddingX={4}
@@ -41,7 +41,7 @@ export default function AudioQueue(props: AudioQueueProps) {
         borderBottomWidth="1px"
       >
         <Heading as="h2" size="md" flex="1">
-          Queue (playIndex: {playIndex})
+          Queue
         </Heading>
         <CloseButton onClick={onClose} />
       </Flex>
@@ -72,10 +72,8 @@ export default function AudioQueue(props: AudioQueueProps) {
               onClick={() => {
                 playIndex !== index && goToIndex(index);
               }}
-              bgColor={playIndex === index ? "gray.900" : undefined}
-              _hover={{
-                bgColor: "gray.900",
-              }}
+              bgColor={playIndex === index ? hoverColor : undefined}
+              _hover={{ bgColor: hoverColor }}
               width="100%"
             >
               <Box flex="1">{audio.title}</Box>

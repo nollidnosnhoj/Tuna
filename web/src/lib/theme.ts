@@ -40,11 +40,39 @@ const theme = extendTheme({
       },
       ".rhap_container": {
         fontFamily: "system-ui, sans-serif",
-        backgroundColor: props.colorMode === "dark" ? "gray.800" : "gray.100",
-        boxShadow: "none"
+        backgroundColor: props.colorMode === "dark" ? "gray.800" : "white",
+        boxShadow: "none",
+        padding: 0
+      },
+      ".rhap_controls-section": {
+        alignItems: 'normal',
+        marginX: 4,
+        marginY: 2
+      },
+      ".rhap_progress-container": {
+        marginX: 0,
+        height: "10px",
+        alignItems: 'flex-start'
+      },
+      ".rhap_progress-bar": {
+        borderRadius: 0,
+        height: "none"
       },
       ".rhap_progress-filled": {
         backgroundColor: "primary.400"
+      },
+      ".rhap_time": {
+        display: 'flex',
+        alignItems: 'center',
+        marginX: 2
+      },
+      ".rhap_nowPlaying": {
+        a: {
+          color: props.colorMode === 'dark' ? "gray.100" : "gray.700",
+        },
+        'a:hover': {
+          textDecoration: 'underline'
+        }
       },
       ".rhap_progress-indicator, .rhap_volume-indicator, .rhap_volume-filled": {
         backgroundColor: props.colorMode === 'dark' ? "gray.100" : "gray.700"

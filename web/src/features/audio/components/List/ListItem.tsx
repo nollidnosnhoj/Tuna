@@ -78,8 +78,8 @@ const AudioListItem: React.FC<AudioListItemProps> = ({
               </Text>
             </Flex>
             {!removeArtistName && (
-              <Link href={`/users/${audio.user.username}`}>
-                <Text as="i">{audio.user.username}</Text>
+              <Link href={`/users/${audio.author.username}`}>
+                <Text as="i">{audio.author.username}</Text>
               </Link>
             )}
           </Box>

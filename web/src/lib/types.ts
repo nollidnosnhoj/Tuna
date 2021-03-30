@@ -1,4 +1,4 @@
-export type Creator = {
+export type MetaAuthor = {
   id: number;
   username: string;
   displayName: string;

@@ -21,7 +21,7 @@ namespace Audiochan.Core.Features.Audios
                 Description = audio.Description,
                 Duration = audio.Duration,
                 Picture = audio.Picture,
-                Created = audio.Created,
+                Uploaded = audio.Created,
                 Tags = audio.Tags.Select(t => t.Name).ToArray(),
                 Visibility = audio.Visibility,
                 FileExt = audio.FileExt,
@@ -29,7 +29,7 @@ namespace Audiochan.Core.Features.Audios
                 LastModified = audio.LastModified,
                 PrivateKey = audio.Visibility == Visibility.Private ? audio.PrivateKey : null,
                 AudioUrl = $"{options.StorageUrl}/{options.AudioStorageOptions.Container}/{audio.UploadId + audio.FileExt}",
-                User = new MetaUserDto
+                Author = new MetaAuthorDto
                 {
                     Id = audio.User.Id,
                     Picture = audio.User.Picture,
@@ -46,10 +46,10 @@ namespace Audiochan.Core.Features.Audios
                 Title = audio.Title,
                 Duration = audio.Duration,
                 Picture = audio.Picture,
-                Created = audio.Created,
+                Uploaded = audio.Created,
                 Visibility = audio.Visibility,
                 AudioUrl = $"{options.StorageUrl}/{options.AudioStorageOptions.Container}/{audio.UploadId + audio.FileExt}",
-                User = new MetaUserDto
+                Author = new MetaAuthorDto
                 {
                     Id = audio.User.Id,
                     Picture = audio.User.Picture,

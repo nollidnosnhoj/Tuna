@@ -59,8 +59,8 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             result.Data.Tags.Should().Contain(x => x == "apples");
             result.Data.Tags.Should().Contain(x => x == "oranges");
             result.Data.Tags.Should().Contain(x => x == "banana");
-            result.Data.User.Should().NotBeNull();
-            result.Data.User.Id.Should().Be(userId);
+            result.Data.Author.Should().NotBeNull();
+            result.Data.Author.Id.Should().Be(userId);
 
             created.Should().NotBeNull();
             created.UploadId.Should().Be(uploadId);

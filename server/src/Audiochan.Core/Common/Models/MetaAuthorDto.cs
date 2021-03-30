@@ -2,7 +2,7 @@
 
 namespace Audiochan.Core.Common.Models
 {
-    public record MetaUserDto
+    public record MetaAuthorDto
     {
         public string Id { get; init; }
         public string Username { get; init; }

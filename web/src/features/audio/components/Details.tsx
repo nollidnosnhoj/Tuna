@@ -81,18 +81,18 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
   }, [audio.duration]);
 
   const audioCreatedDateRelative = useMemo(() => {
-    return relativeDate(audio.created);
-  }, [audio.created]);
+    return relativeDate(audio.uploaded);
+  }, [audio.uploaded]);
 
   useEffect(() => {
-    Router.prefetch(`/users/${audio.user.username}`);
+    Router.prefetch(`/users/${audio.author.username}`);
   }, []);
 
   return (
     <Flex marginBottom={4} justifyContent="center">
       <Box flex="1" marginRight={4}>
         <PictureDropzone
-          disabled={isAddingArtwork && currentUser?.id === audio.user.id}
+          disabled={isAddingArtwork && currentUser?.id === audio.author.id}
           onChange={async (croppedData) => {
             const { data } = await uploadArtwork(croppedData);
             setPicture(data.image);
@@ -118,8 +118,8 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
             </span>
           </Tooltip>
           <Stack direction="column" spacing="0" fontSize="sm">
-            <Link href={`/users/${audio.user.username}`}>
-              <Text fontWeight="500">{audio.user.username}</Text>
+            <Link href={`/users/${audio.author.username}`}>
+              <Text fontWeight="500">{audio.author.username}</Text>
             </Link>
             <Text color={secondaryColor}>{audioCreatedDateRelative}</Text>
           </Stack>
@@ -146,7 +146,7 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
                   {audio.title}
                 </Heading>
                 <Box>
-                  {audio.user.id === currentUser?.id && (
+                  {audio.author.id === currentUser?.id && (
                     <Tooltip label="Edit" placement="top">
                       <chakra.span marginLeft={4}>
                         <IconButton

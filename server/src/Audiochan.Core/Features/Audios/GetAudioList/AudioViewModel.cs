@@ -4,15 +4,15 @@ using Audiochan.Core.Common.Models;
 
 namespace Audiochan.Core.Features.Audios.GetAudioList
 {
-    public class AudioViewModel
+    public record AudioViewModel
     {
         public long Id { get; init; }
         public string Title { get; init; }
         public Visibility Visibility { get; init; }
         public int Duration { get; init; }
         public string Picture { get; init; }
-        public DateTime Created { get; init; }
+        public DateTime Uploaded { get; init; }
         public string AudioUrl { get; init; }
-        public MetaUserDto User { get; init; }
+        public MetaAuthorDto Author { get; init; }
     }
 }

@@ -1,4 +1,4 @@
-import { Creator } from "~/lib/types"
+import { MetaAuthor } from "~/lib/types"
 
 export type AudioSearchType = 'audios' | 'user' | 'feed'
 
@@ -9,27 +9,27 @@ export type Audio = {
   title: string;
   visibility: Visibility;
   duration: number;
-  picture: string;
-  created: string;
-  user: Creator;
-  audioUrl?: string;
+  picture?: string;
+  uploaded: string;
+  audioUrl: string;
+  author: MetaAuthor;
 }
 
 export type AudioDetail = {
   id: number;
   title: string;
-  description: string;
+  description?: string;
   visibility: Visibility;
   privateKey?: string;
   tags: string[];
   duration: number;
   fileSize: number;
   fileExt: string;
-  picture: string;
-  created: string;
-  updated?: string;
-  user: Creator;
-  audioUrl?: string;
+  picture?: string;
+  uploaded: string;
+  lastModified?: string;
+  audioUrl: string;
+  author: MetaAuthor;
 }
 
 export interface AudioRequest {

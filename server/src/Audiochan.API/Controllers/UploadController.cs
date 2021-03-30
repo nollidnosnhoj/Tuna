@@ -10,6 +10,7 @@ namespace Audiochan.API.Controllers
 {
     [Authorize]
     [Route("[controller]")]
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class UploadController : ControllerBase
     {
         private readonly IMediator _mediator;

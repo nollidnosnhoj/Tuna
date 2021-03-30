@@ -14,7 +14,6 @@ namespace Audiochan.API.Configurations
             services.AddSwaggerGen(options =>
             {
                 options.SwaggerDoc("v1", new OpenApiInfo {Title = "Audiochan API Version 1"});
-                options.AddFluentValidationRules();
 
                 options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
@@ -50,7 +49,6 @@ namespace Audiochan.API.Configurations
             app.UseSwaggerUI(options =>
             {
                 options.SwaggerEndpoint("/swagger/v1/swagger.json", "Audiochan API Version 1");
-                options.DefaultModelsExpandDepth(-1);
             });
         }
     }

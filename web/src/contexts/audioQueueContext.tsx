@@ -54,7 +54,6 @@ export default function AudioQueueProvider(props: PropsWithChildren<any>) {
   };
 
   const goToIndex = (index: number) => {
-    console.log("!!!!!!!!!!!!!!!!!!!");
     return new Promise<number>((resolve) => {
       let newIndex = Math.max(0, Math.min(audioList.length - 1, index));
       setPlayIndex(newIndex);
@@ -94,6 +93,10 @@ export default function AudioQueueProvider(props: PropsWithChildren<any>) {
       setPlayIndex(undefined);
     }
   }, [audioList.length, setPlayIndex]);
+
+  useEffect(() => {
+    console.log(playIndex);
+  }, [playIndex]);
 
   const values: AudioQueueContexType = useMemo(
     () => ({

@@ -66,7 +66,7 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
                 
                 var viewModel = audio.MapToDetail(_audiochanOptions) with
                 {
-                    User = new MetaUserDto
+                    Author = new MetaAuthorDto
                     {
                         Id = currentUser.Id,
                         Picture = currentUser.Picture,

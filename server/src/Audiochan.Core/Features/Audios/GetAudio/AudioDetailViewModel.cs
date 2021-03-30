@@ -16,9 +16,9 @@ namespace Audiochan.Core.Features.Audios.GetAudio
         public long FileSize { get; init; }
         public string FileExt { get; init; }
         public string Picture { get; init; }
-        public DateTime Created { get; init; }
+        public DateTime Uploaded { get; init; }
         public DateTime? LastModified { get; init; }
         public string AudioUrl { get; init; }
-        public MetaUserDto User { get; init; }
+        public MetaAuthorDto Author { get; init; }
     }
 }
