@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models.Requests;
 using Audiochan.Core.Common.Models.Responses;
 using Microsoft.EntityFrameworkCore;
@@ -12,8 +16,8 @@ namespace Audiochan.Core.Common.Extensions
     {
         public static async Task<PagedList<TResponse>> PaginateAsync<TResponse>(
             this IQueryable<TResponse> queryable,
-            int page,
-            int limit,
+            int page = 1,
+            int limit = 30,
             CancellationToken cancellationToken = default)
         {
             var count = await queryable.CountAsync(cancellationToken);
@@ -27,17 +31,30 @@ namespace Audiochan.Core.Common.Extensions
         }
 
         public static async Task<PagedList<TResponse>> PaginateAsync<TResponse>(this IQueryable<TResponse> queryable
-            , PaginationQueryRequest paginationQuery
+            , IHasPage paginationQuery
             , CancellationToken cancellationToken = default)
         {
             return await queryable.PaginateAsync(paginationQuery.Page, paginationQuery.Size, cancellationToken);
         }
 
-        public static async Task<PagedList<TResponse>> PaginateAsync<TResponse>(this IQueryable<TResponse> queryable,
-            CancellationToken cancellationToken = default)
+        public static async Task<CursorList<TResponse, long?>> CursorPaginateAsync<TResponse>(
+            this IQueryable<TResponse> queryable,
+            IHasCursor request,
+            CancellationToken cancellationToken = default) where TResponse : IBaseViewModel
         {
-            var paginationQuery = new PaginationQueryRequest();
-            return await queryable.PaginateAsync(paginationQuery.Page, paginationQuery.Size, cancellationToken);
+            queryable = queryable.OrderByDescending(x => x.Id);
+            
+            if (request.Cursor.HasValue)
+                queryable = queryable.Where(x => x.Id < request.Cursor);
+            
+            var items = await queryable
+                .Take(request.Size ?? 30)
+                .ToListAsync(cancellationToken);
+
+            var prev = items.FirstOrDefault()?.Id;
+            var next = items.LastOrDefault()?.Id;
+
+            return new CursorList<TResponse, long?>(items, prev, next);
         }
     }
 }

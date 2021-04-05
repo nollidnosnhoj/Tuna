@@ -5,27 +5,20 @@ import Page from "~/components/Page";
 import AudioListSubHeader from "~/features/audio/components/ListSubheader";
 import AudioList from "~/features/audio/components/List";
 import { Audio } from "~/features/audio/types";
-import { useGetAudioListInfinite } from "~/features/audio/hooks/queries/useAudiosInfinite";
+import useAudioList from "~/features/audio/hooks/queries/useAudioList";
 import InfiniteListControls from "~/components/List/InfiniteListControls";
-import { PagedList } from "~/lib/types";
-
-export type SortState = "latest";
-
-const sortPageTitles: { [K in SortState]: string } = {
-  latest: "Latest Audios",
-};
+import { CursorPagedList } from "~/lib/types";
 
 export interface AudioListPageProps {
-  sort: SortState;
   filter: Record<string, string | string[] | undefined>;
-  initialPage?: PagedList<Audio>;
+  initialPage?: CursorPagedList<Audio>;
 }
 
 interface AudioListFilter {}
 
 export default function AudioListPage(props: AudioListPageProps) {
   const router = useRouter();
-  const { sort, filter, initialPage } = props;
+  const { filter, initialPage } = props;
 
   const [listFilter, setListFilter] = useState<AudioListFilter>({});
 
@@ -34,11 +27,11 @@ export default function AudioListPage(props: AudioListPageProps) {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useGetAudioListInfinite("audios", { ...listFilter, sort }, undefined, {
+  } = useAudioList({ ...listFilter }, undefined, {
     staleTime: 1000,
     initialData: initialPage && {
       pages: [initialPage],
-      pageParams: [1],
+      pageParams: [0],
     },
   });
 
@@ -56,8 +49,8 @@ export default function AudioListPage(props: AudioListPageProps) {
 
   return (
     <Page
-      title={sortPageTitles[sort]}
-      beforeContainer={<AudioListSubHeader current={sort} />}
+      title="Browse Latest Public Audios"
+      beforeContainer={<AudioListSubHeader current="latest" />}
     >
       <AudioList audios={audios} />
       <InfiniteListControls

@@ -1,10 +1,11 @@
 ﻿using System;
 using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Common.Models;
+using Audiochan.Core.Common.Models.Responses;
 
 namespace Audiochan.Core.Features.Audios.GetAudio
 {
-    public record AudioDetailViewModel
+    public record AudioDetailViewModel : IBaseViewModel
     {
         public long Id { get; init; }
         public string Title { get; init; }

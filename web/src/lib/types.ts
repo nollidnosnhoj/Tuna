@@ -20,6 +20,12 @@ export type PagedList<T> = {
   hasNext: boolean;
 }
 
+export type CursorPagedList<T> = {
+  items: T[],
+  previous?: number;
+  next?: number;
+}
+
 export interface PaginatedOptions {
   size?: number;
   params?: Record<string, any>
