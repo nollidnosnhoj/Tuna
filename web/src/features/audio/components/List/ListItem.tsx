@@ -2,7 +2,6 @@ import {
   Badge,
   Box,
   Flex,
-  HStack,
   IconButton,
   Menu,
   MenuButton,
@@ -12,18 +11,16 @@ import {
   Text,
   Tooltip,
 } from "@chakra-ui/react";
-import React, { useMemo } from "react";
+import React, { useContext, useMemo } from "react";
 import { Audio } from "~/features/audio/types";
-import { formatDuration } from "~/utils/time";
+import { formatDuration } from "~/utils/format";
 import Link from "~/components/Link";
 import Picture from "~/components/Picture";
 import { FaPause, FaPlay } from "react-icons/fa";
-import { AiFillHeart } from "react-icons/ai";
 import { HiDotsVertical } from "react-icons/hi";
-import useUser from "~/hooks/useUser";
 import { MdQueueMusic } from "react-icons/md";
-import useAudioQueue from "~/hooks/useAudioQueue";
-import { mapAudiosForAudioQueue } from "~/utils";
+import { AudioPlayerContext } from "~/contexts/AudioPlayerContext";
+import { mapAudiosForAudioQueue } from "~/components/AudioPlayer/utils";
 
 export interface AudioListItemProps {
   audio: Audio;
@@ -38,7 +35,7 @@ const AudioListItem: React.FC<AudioListItemProps> = ({
   isPlaying,
   removeArtistName = false,
 }) => {
-  const { addToQueue } = useAudioQueue();
+  const { dispatch } = useContext(AudioPlayerContext);
 
   const picture = useMemo(() => {
     return audio?.picture
@@ -102,7 +99,12 @@ const AudioListItem: React.FC<AudioListItemProps> = ({
         <MenuList>
           <MenuItem
             icon={<MdQueueMusic />}
-            onClick={() => addToQueue(mapAudiosForAudioQueue([audio]))}
+            onClick={() =>
+              dispatch({
+                type: "ADD_TO_QUEUE",
+                payload: mapAudiosForAudioQueue([audio]),
+              })
+            }
           >
             Add To Queue
           </MenuItem>

@@ -6,12 +6,11 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { Hydrate } from "react-query/hydration";
 import PageLoader from "~/components/PageLoader";
 import { UserProvider } from "~/contexts/userContext";
+import AudioPlayerProvider from "~/contexts/AudioPlayerContext";
 import theme from "~/lib/theme";
 import queryClient from "~/lib/queryClient";
 import { CurrentUser } from "~/features/user/types";
-import AudioPlayerProvider from "~/contexts/audioPlayerContext";
-import "react-h5-audio-player/lib/styles.css";
-import AudioQueueProvider from "~/contexts/audioQueueContext";
+import "rc-slider/assets/index.css";
 
 interface AppProps extends NextAppProps {
   user?: CurrentUser;
@@ -33,13 +32,11 @@ function App({ Component, user, pageProps }: AppProps) {
         <Hydrate state={pageProps.dehydratedState}>
           <ChakraProvider resetCSS theme={theme}>
             <UserProvider initialUser={user}>
-              <AudioQueueProvider>
-                <AudioPlayerProvider>
-                  <PageLoader color={theme.colors.primary[500]} />
-                  <Component {...pageProps} />
-                  <AudioPlayer />
-                </AudioPlayerProvider>
-              </AudioQueueProvider>
+              <AudioPlayerProvider>
+                <PageLoader color={theme.colors.primary[500]} />
+                <Component {...pageProps} />
+                <AudioPlayer />
+              </AudioPlayerProvider>
             </UserProvider>
           </ChakraProvider>
         </Hydrate>

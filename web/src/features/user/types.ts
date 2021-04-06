@@ -1,12 +1,12 @@
 export type CurrentUser = {
-  id: number;
+  id: string;
   username: string;
   email: string;
   roles?: string[];
 }
 
 export type Profile = {
-  id: number;
+  id: string;
   username: string;
   aboutMe: string;
   audioCount: number;

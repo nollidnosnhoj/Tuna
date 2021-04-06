@@ -45,15 +45,3 @@ export interface CreateAudioRequest extends AudioRequest {
   duration: number;
   fileSize: number;
 }
-
-export type AudioPlayerItem = {
-  queueId: string;
-  audioId: number;
-  title: string;
-  artist: string;
-  duration: number;
-  cover: string;
-  source?: string;
-  privateKey?: string
-  related: boolean;
-}

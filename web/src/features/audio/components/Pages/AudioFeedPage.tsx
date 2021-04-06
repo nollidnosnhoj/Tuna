@@ -29,10 +29,7 @@ export default function AudioFeedPage(props: AudioFeedPageProps) {
   });
 
   return (
-    <Page
-      title="Your Feed"
-      beforeContainer={<AudioListSubHeader current="feed" />}
-    >
+    <Page title="Your Feed">
       <AudioList audios={audios} />
       <InfiniteListControls
         fetchNext={fetchNextPage}

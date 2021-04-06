@@ -48,10 +48,7 @@ export default function AudioListPage(props: AudioListPageProps) {
   }, []);
 
   return (
-    <Page
-      title="Browse Latest Public Audios"
-      beforeContainer={<AudioListSubHeader current="latest" />}
-    >
+    <Page title="Browse Latest Public Audios">
       <AudioList audios={audios} />
       <InfiniteListControls
         fetchNext={fetchNextPage}

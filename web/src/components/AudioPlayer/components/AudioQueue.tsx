@@ -7,8 +7,8 @@ import {
   ListItem,
   useColorModeValue,
 } from "@chakra-ui/react";
-import React from "react";
-import useAudioQueue from "~/hooks/useAudioQueue";
+import React, { useContext } from "react";
+import { AudioPlayerContext } from "~/contexts/AudioPlayerContext";
 
 interface AudioQueueProps {
   isOpen: boolean;
@@ -17,7 +17,8 @@ interface AudioQueueProps {
 
 export default function AudioQueue(props: AudioQueueProps) {
   const { isOpen, onClose } = props;
-  const { audioList, playIndex, removeFromQueue, goToIndex } = useAudioQueue();
+  const { state, dispatch } = useContext(AudioPlayerContext);
+  const { queue, playIndex } = state;
   const bgColor = useColorModeValue("white", "gray.800");
   const hoverColor = useColorModeValue("gray.300", "gray.900");
 
@@ -25,14 +26,15 @@ export default function AudioQueue(props: AudioQueueProps) {
     <Box
       overflow="hidden"
       position="fixed"
-      right="33px"
+      right={{ base: "0px", md: "33px" }}
       bottom="65px"
       display={isOpen ? "block" : "none"}
-      width="480px"
-      height="410px"
+      width={{ base: "100%", md: "480px" }}
+      height={{ base: "750px", md: "410px" }}
       borderWidth="1px"
       borderBottomWidth="0"
       bgColor={bgColor}
+      boxShadow="base"
     >
       <Flex
         paddingX={4}
@@ -47,7 +49,7 @@ export default function AudioQueue(props: AudioQueueProps) {
       </Flex>
       <Box overflowX="hidden" overflowY="auto" height="359px">
         <List>
-          {audioList.length === 0 && (
+          {queue.length === 0 && (
             <ListItem
               lineHeight="40px"
               display="flex"
@@ -60,7 +62,7 @@ export default function AudioQueue(props: AudioQueueProps) {
               No audio queued.
             </ListItem>
           )}
-          {audioList.map((audio, index) => (
+          {queue.map((audio, index) => (
             <ListItem
               key={index}
               lineHeight="40px"
@@ -70,7 +72,8 @@ export default function AudioQueue(props: AudioQueueProps) {
               paddingX={4}
               paddingY={2}
               onClick={() => {
-                playIndex !== index && goToIndex(index);
+                playIndex !== index &&
+                  dispatch({ type: "SET_PLAY_INDEX", payload: index });
               }}
               bgColor={playIndex === index ? hoverColor : undefined}
               _hover={{ bgColor: hoverColor }}
@@ -82,7 +85,7 @@ export default function AudioQueue(props: AudioQueueProps) {
                   <CloseButton
                     onClick={(e) => {
                       e.stopPropagation();
-                      removeFromQueue(index);
+                      dispatch({ type: "REMOVE_FROM_QUEUE", payload: index });
                     }}
                   />
                 )}

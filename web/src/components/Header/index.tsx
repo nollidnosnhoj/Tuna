@@ -49,7 +49,7 @@ const Header: React.FC<HeaderProps> = (props) => {
   const { toggleColorMode } = useColorMode();
   const ColorModeIcon = useColorModeValue(MoonIcon, SunIcon);
   const menuButtonRef = useRef<any>();
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen, onOpen, onClose, onToggle } = useDisclosure();
   const [searchTerm, setSearchTerm] = useState("");
 
   const handleSearchChange = useCallback(
@@ -122,6 +122,12 @@ const Header: React.FC<HeaderProps> = (props) => {
         px={4}
         borderColor="primary.500"
         borderBottomWidth={4}
+        position="fixed"
+        top={0}
+        left={0}
+        width="100%"
+        boxShadow="md"
+        zIndex={1450}
       >
         <Flex
           width="100%"
@@ -136,8 +142,9 @@ const Header: React.FC<HeaderProps> = (props) => {
               size="lg"
               icon={<HamburgerIcon />}
               aria-label="Open menu"
-              onClick={onOpen}
+              onClick={onToggle}
               position="relative"
+              ref={menuButtonRef}
             />
             <Box display={{ base: "none", md: "flex" }} marginLeft={14}>
               <Heading size="lg">
@@ -194,11 +201,7 @@ const Header: React.FC<HeaderProps> = (props) => {
       >
         <DrawerOverlay>
           <DrawerContent>
-            <DrawerCloseButton />
-            <DrawerHeader borderColor="primary.500" borderBottomWidth={4}>
-              Menu
-            </DrawerHeader>
-            <DrawerBody p={0}>
+            <DrawerBody p={0} marginTop="120px">
               <HeaderMenuLink
                 label="Browse"
                 href="/audios"

@@ -8,14 +8,12 @@ interface PageProps {
   title?: string;
   removeHeader?: boolean;
   removeSearchBar?: boolean;
-  beforeContainer?: React.ReactNode;
 }
 
 const Page: React.FC<PageProps> = ({
   title = "Audiochan",
   removeHeader = false,
   removeSearchBar = false,
-  beforeContainer,
   children,
   ...props
 }) => {
@@ -24,11 +22,8 @@ const Page: React.FC<PageProps> = ({
       <Head>
         <title>{title}</title>
       </Head>
-      <Box boxShadow="md">
-        {!removeHeader && <Header removeSearchBar={removeSearchBar} />}
-        {beforeContainer}
-      </Box>
-      <Container pb="120px" pt={8} {...props}>
+      {!removeHeader && <Header removeSearchBar={removeSearchBar} />}
+      <Container mt="120px" mb="100px" {...props}>
         {children}
       </Container>
     </>

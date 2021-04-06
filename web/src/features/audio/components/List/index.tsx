@@ -8,12 +8,11 @@ import {
   SimpleGrid,
 } from "@chakra-ui/layout";
 import { Tooltip } from "@chakra-ui/tooltip";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useContext, useState } from "react";
 import { FaList } from "react-icons/fa";
 import { IoMdGrid } from "react-icons/io";
-import useAudioPlayer from "~/hooks/useAudioPlayer";
-import useAudioQueue from "~/hooks/useAudioQueue";
-import { mapAudiosForAudioQueue } from "~/utils";
+import { mapAudiosForAudioQueue } from "~/components/AudioPlayer/utils";
+import { AudioPlayerContext } from "~/contexts/AudioPlayerContext";
 import { Audio } from "../../types";
 import AudioGridItem from "./GridItem";
 import AudioListItem from "./ListItem";
@@ -34,27 +33,29 @@ export default function AudioList(props: AudioListProps) {
     defaultLayout = "list",
     hideLayoutToggle = false,
   } = props;
-  const { setNewQueue, addToQueue } = useAudioQueue();
-  const { nowPlaying, changePlaying, isPlaying } = useAudioPlayer();
+  const { state, dispatch } = useContext(AudioPlayerContext);
+  const { currentPlaying, isPlaying } = state;
+
   const [layout, setLayout] = useState<AudioListLayout>(defaultLayout);
 
   const isAudioPlaying = useCallback(
-    (audio: Audio) => {
-      return nowPlaying && nowPlaying.audioId === audio.id && isPlaying;
-    },
-    [nowPlaying, isPlaying]
+    (audio: Audio) => !!currentPlaying && currentPlaying.audioId === audio.id,
+    [currentPlaying?.queueId]
   );
 
   const onPlayClick = useCallback(
     (audio: Audio, index: number) => {
-      const isNowPlaying = nowPlaying && nowPlaying.audioId === audio.id;
-      if (isNowPlaying) {
-        changePlaying();
+      if (isAudioPlaying(audio)) {
+        dispatch({ type: "SET_PLAYING", payload: !isPlaying });
       } else {
-        setNewQueue(mapAudiosForAudioQueue(audios), index);
+        dispatch({
+          type: "SET_NEW_QUEUE",
+          payload: mapAudiosForAudioQueue(audios),
+          index: index,
+        });
       }
     },
-    [nowPlaying, audios]
+    [isAudioPlaying, audios, isPlaying]
   );
 
   const onLayoutChange = useCallback(
@@ -103,7 +104,7 @@ export default function AudioList(props: AudioListProps) {
                   >
                     <AudioListItem
                       audio={audio}
-                      isPlaying={isAudioPlaying(audio)}
+                      isPlaying={isAudioPlaying(audio) && isPlaying}
                       onPlayClick={() => onPlayClick(audio, index)}
                     />
                   </ListItem>

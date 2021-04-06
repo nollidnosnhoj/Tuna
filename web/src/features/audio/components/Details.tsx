@@ -20,7 +20,13 @@ import {
   TagLeftIcon,
 } from "@chakra-ui/react";
 import Router from "next/router";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { EditIcon } from "@chakra-ui/icons";
 import NextLink from "next/link";
 import AudioEdit from "./Edit";
@@ -28,14 +34,18 @@ import Link from "../../../components/Link";
 import Picture from "../../../components/Picture";
 import { useAddAudioPicture } from "~/features/audio/hooks/mutations/useAddAudioPicture";
 import { AudioDetail } from "~/features/audio/types";
-import { formatDuration, relativeDate } from "~/utils/time";
+import { formatDuration } from "~/utils/format";
+import { relativeDate } from "~/utils/time";
 import useUser from "~/hooks/useUser";
 import { FaHashtag, FaPause, FaPlay } from "react-icons/fa";
 import { MdQueueMusic } from "react-icons/md";
-import useAudioPlayer from "~/hooks/useAudioPlayer";
 import PictureDropzone from "~/components/Picture/PictureDropzone";
-import { mapAudioForAudioQueue, mapAudiosForAudioQueue } from "~/utils";
-import useAudioQueue from "~/hooks/useAudioQueue";
+// import {
+//   mapAudioForAudioQueue,
+//   mapAudiosForAudioQueue,
+// } from "~/components/AudioPlayer/utils";
+import { AudioPlayerContext } from "~/contexts/AudioPlayerContext";
+import { mapAudioForAudioQueue } from "~/components/AudioPlayer/utils";
 
 interface AudioDetailProps {
   audio: AudioDetail;
@@ -44,20 +54,25 @@ interface AudioDetailProps {
 const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
   const secondaryColor = useColorModeValue("black.300", "gray.300");
   const { user: currentUser } = useUser();
-  const { setNewQueue, addToQueue } = useAudioQueue();
-  const { nowPlaying, isPlaying, changePlaying } = useAudioPlayer();
+  const { state, dispatch } = useContext(AudioPlayerContext);
+  const { currentPlaying, isPlaying } = state;
 
-  const isAudioNowPlaying = useMemo(() => {
-    return nowPlaying && nowPlaying.audioId === audio.id;
-  }, [nowPlaying, audio]);
+  const isAudioNowPlaying = useMemo(
+    () => !!currentPlaying && currentPlaying.audioId === audio.id,
+    [currentPlaying?.audioId, audio]
+  );
 
   const clickPlayButton = useCallback(() => {
     if (isAudioNowPlaying) {
-      changePlaying();
+      dispatch({ type: "SET_PLAYING", payload: !isPlaying });
     } else {
-      setNewQueue(mapAudioForAudioQueue(audio), 0);
+      dispatch({
+        type: "SET_NEW_QUEUE",
+        payload: mapAudioForAudioQueue(audio),
+        index: 0,
+      });
     }
-  }, [isAudioNowPlaying, changePlaying, setNewQueue, audio]);
+  }, [isAudioNowPlaying, isPlaying]);
 
   const {
     mutateAsync: uploadArtwork,
@@ -109,9 +124,7 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
                 isRound
                 colorScheme="pink"
                 size="lg"
-                icon={
-                  !!isAudioNowPlaying && isPlaying ? <FaPause /> : <FaPlay />
-                }
+                icon={isAudioNowPlaying && isPlaying ? <FaPause /> : <FaPlay />}
                 aria-label="Play"
                 onClick={clickPlayButton}
               />
@@ -132,7 +145,12 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
                   size="lg"
                   icon={<MdQueueMusic />}
                   aria-label="Add to queue"
-                  onClick={() => addToQueue(mapAudioForAudioQueue(audio))}
+                  onClick={() =>
+                    dispatch({
+                      type: "ADD_TO_QUEUE",
+                      payload: mapAudioForAudioQueue(audio),
+                    })
+                  }
                 />
               </span>
             </Tooltip>

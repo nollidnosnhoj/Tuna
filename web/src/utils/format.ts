@@ -65,3 +65,16 @@ export const formatFileSize = (size: number) => {
   size = Number((size / Math.pow(1024, e)).toPrecision(3));
   return size.toLocaleString() + ' ' + units[e];
 }
+
+export const formatDuration = (seconds?: number) => {
+  const addHeadingZero = (num: number) => {
+    return num > 9 ? num.toString() : `0${num}`
+  }
+
+  if (seconds === undefined || !isFinite(seconds)) return null;
+  const minutes = Math.floor(seconds / 60);
+  const minuteStr = addHeadingZero(minutes);
+  const secondStr = addHeadingZero(Math.floor(seconds % 60));
+
+  return `${minuteStr}:${secondStr}`
+}
