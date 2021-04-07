@@ -125,7 +125,6 @@ const Header: React.FC<HeaderProps> = (props) => {
         left={0}
         width="100%"
         boxShadow="md"
-        zIndex={1450}
       >
         <Flex
           width="100%"
@@ -200,7 +199,8 @@ const Header: React.FC<HeaderProps> = (props) => {
       >
         <DrawerOverlay>
           <DrawerContent>
-            <DrawerBody p={0} marginTop="100px">
+            <DrawerCloseButton />
+            <DrawerBody p={0} marginTop={12}>
               <HeaderMenuLink
                 label="Browse"
                 href="/audios"
