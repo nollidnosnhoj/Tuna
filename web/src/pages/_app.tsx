@@ -10,7 +10,6 @@ import AudioPlayerProvider from "~/contexts/AudioPlayerContext";
 import theme from "~/lib/theme";
 import queryClient from "~/lib/queryClient";
 import { CurrentUser } from "~/features/user/types";
-import "rc-slider/assets/index.css";
 
 interface AppProps extends NextAppProps {
   user?: CurrentUser;
