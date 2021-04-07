@@ -1,5 +1,6 @@
 import {
   Box,
+  chakra,
   CloseButton,
   Flex,
   Heading,
@@ -27,10 +28,10 @@ export default function AudioQueue(props: AudioQueueProps) {
       overflow="hidden"
       position="fixed"
       right={{ base: "0px", md: "33px" }}
-      bottom="65px"
+      bottom="100px"
       display={isOpen ? "block" : "none"}
       width={{ base: "100%", md: "480px" }}
-      height={{ base: "750px", md: "410px" }}
+      height={{ base: "750px", md: "425px" }}
       borderWidth="1px"
       borderBottomWidth="0"
       bgColor={bgColor}
@@ -48,7 +49,7 @@ export default function AudioQueue(props: AudioQueueProps) {
         <CloseButton onClick={onClose} />
       </Flex>
       <Box overflowX="hidden" overflowY="auto" height="359px">
-        <List>
+        <List fontSize="sm">
           {queue.length === 0 && (
             <ListItem
               lineHeight="40px"
@@ -65,7 +66,7 @@ export default function AudioQueue(props: AudioQueueProps) {
           {queue.map((audio, index) => (
             <ListItem
               key={index}
-              lineHeight="40px"
+              lineHeight="30px"
               display="flex"
               alignItems="center"
               cursor="pointer"
@@ -79,8 +80,13 @@ export default function AudioQueue(props: AudioQueueProps) {
               _hover={{ bgColor: hoverColor }}
               width="100%"
             >
-              <Box flex="1">{audio.title}</Box>
-              <Flex justifyContent="flex-end">
+              <Box flex="2">
+                <chakra.strong>{audio.title}</chakra.strong>
+              </Box>
+              <Box flex="2">
+                <chakra.span>{audio.artist}</chakra.span>
+              </Box>
+              <Flex flex="1" justifyContent="flex-end" width="50px">
                 {playIndex !== index && (
                   <CloseButton
                     onClick={(e) => {
