@@ -62,9 +62,9 @@ namespace Audiochan.API.Controllers
         public async Task<IActionResult> GetAuthenticatedUser(CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new GetCurrentUserRequest(), cancellationToken);
-            return result.IsSuccess
-                ? Ok(result.Data)
-                : result.ReturnErrorResponse();
+            return result != null
+                ? Ok(result)
+                : Unauthorized(ErrorViewModel.Unauthorized("You are not authorized access."));
         }
 
         [HttpGet("feed", Name = "GetAuthenticatedUserFeed")]

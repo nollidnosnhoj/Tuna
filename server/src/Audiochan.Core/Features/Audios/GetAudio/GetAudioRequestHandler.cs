@@ -10,7 +10,7 @@ using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Audios.GetAudio
 {
-    public class GetAudioRequestHandler : IRequestHandler<GetAudioRequest, Result<AudioDetailViewModel>>
+    public class GetAudioRequestHandler : IRequestHandler<GetAudioRequest, AudioDetailViewModel>
     {
         private readonly IApplicationDbContext _dbContext;
         private readonly ICurrentUserService _currentUserService;
@@ -23,19 +23,15 @@ namespace Audiochan.Core.Features.Audios.GetAudio
             _audiochanOptions = options.Value;
         }
 
-        public async Task<Result<AudioDetailViewModel>> Handle(GetAudioRequest request, CancellationToken cancellationToken)
+        public async Task<AudioDetailViewModel> Handle(GetAudioRequest request, CancellationToken cancellationToken)
         {
             var currentUserId = _currentUserService.GetUserId();
 
-            var audio = await _dbContext.Audios
+            return await _dbContext.Audios
                 .DefaultSingleQueryable(request.PrivateKey, currentUserId)
                 .Where(x => x.Id == request.Id)
                 .ProjectToDetail(_audiochanOptions)
                 .SingleOrDefaultAsync(cancellationToken);
-
-            return audio == null
-                ? Result<AudioDetailViewModel>.Fail(ResultError.NotFound)
-                : Result<AudioDetailViewModel>.Success(audio);
         }
     }
 }

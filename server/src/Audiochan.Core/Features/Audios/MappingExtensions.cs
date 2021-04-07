@@ -3,6 +3,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Common.Models;
+using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Common.Options;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Audios.GetAudio;

@@ -35,9 +35,9 @@ namespace Audiochan.API.Controllers
         {
             var result = await _mediator.Send(new GetUserRequest(username), cancellationToken);
 
-            return result.IsSuccess
-                ? Ok(result.Data)
-                : result.ReturnErrorResponse();
+            return result != null
+                ? Ok(result)
+                : NotFound(ErrorViewModel.NotFound("User was not found."));
         }
 
         [HttpGet("{username}/audios", Name = "GetUserAudios")]

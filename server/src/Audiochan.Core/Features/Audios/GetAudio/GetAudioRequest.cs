@@ -3,7 +3,7 @@ using MediatR;
 
 namespace Audiochan.Core.Features.Audios.GetAudio
 {
-    public record GetAudioRequest(long Id, string PrivateKey = "") : IRequest<Result<AudioDetailViewModel>>
+    public record GetAudioRequest(long Id, string PrivateKey = "") : IRequest<AudioDetailViewModel>
     {
     }
 }

@@ -1,4 +1,5 @@
-﻿using Audiochan.Core.Common.Models.Responses;
+﻿using Audiochan.Core.Common.Models.Interfaces;
+using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Features.Auth.Login;
 using MediatR;
 

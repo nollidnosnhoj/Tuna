@@ -46,7 +46,9 @@ namespace Audiochan.API.Controllers
         public async Task<IActionResult> Get(long audioId, [FromQuery] string privateKey, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new GetAudioRequest(audioId, privateKey), cancellationToken);
-            return result.IsSuccess ? Ok(result.Data) : result.ReturnErrorResponse();
+            return result != null
+                ? Ok(result)
+                : NotFound(ErrorViewModel.NotFound("Audio was not found."));
         }
         
         [HttpGet("random", Name = "GetRandomAudio")]
@@ -57,9 +59,9 @@ namespace Audiochan.API.Controllers
         public async Task<IActionResult> GetRandom(CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new GetRandomAudioRequest(), cancellationToken);
-            return result.IsSuccess
-                ? Ok(result.Data)
-                : result.ReturnErrorResponse();
+            return result != null
+                ? Ok(result)
+                : NotFound(ErrorViewModel.NotFound("Audio was not found."));
         }
 
         [HttpPost(Name = "CreateAudio")]

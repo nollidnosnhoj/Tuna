@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Users.GetUser
 {
-    public class GetUserRequestHandler : IRequestHandler<GetUserRequest, IResult<UserViewModel>>
+    public class GetUserRequestHandler : IRequestHandler<GetUserRequest, UserViewModel>
     {
         private readonly IApplicationDbContext _dbContext;
         private readonly ICurrentUserService _currentUserService;
@@ -19,11 +19,11 @@ namespace Audiochan.Core.Features.Users.GetUser
             _dbContext = dbContext;
         }
 
-        public async Task<IResult<UserViewModel>> Handle(GetUserRequest request, CancellationToken cancellationToken)
+        public async Task<UserViewModel> Handle(GetUserRequest request, CancellationToken cancellationToken)
         {
             var currentUserId = _currentUserService.GetUserId();
 
-            var profile = await _dbContext.Users
+            return await _dbContext.Users
                 .AsNoTracking()
                 .Include(u => u.Followers)
                 .Include(u => u.Followings)
@@ -31,10 +31,6 @@ namespace Audiochan.Core.Features.Users.GetUser
                 .Where(u => u.UserName == request.Username.Trim().ToLower())
                 .ProjectToUser(currentUserId)
                 .SingleOrDefaultAsync(cancellationToken);
-
-            return profile == null
-                ? Result<UserViewModel>.Fail(ResultError.NotFound)
-                : Result<UserViewModel>.Success(profile);
         }
     }
 }

@@ -12,7 +12,7 @@ using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Audios.GetRandomAudio
 {
-    public class GetRandomAudioRequestHandler : IRequestHandler<GetRandomAudioRequest, Result<AudioDetailViewModel>>
+    public class GetRandomAudioRequestHandler : IRequestHandler<GetRandomAudioRequest, AudioDetailViewModel>
     {
         private readonly IApplicationDbContext _dbContext;
         private readonly ICurrentUserService _currentUserService;
@@ -26,19 +26,15 @@ namespace Audiochan.Core.Features.Audios.GetRandomAudio
             _audiochanOptions = options.Value;
         }
 
-        public async Task<Result<AudioDetailViewModel>> Handle(GetRandomAudioRequest request,
+        public async Task<AudioDetailViewModel> Handle(GetRandomAudioRequest request,
             CancellationToken cancellationToken)
         {
             var currentUserId = _currentUserService.GetUserId();
-            var audio = await _dbContext.Audios
+            return await _dbContext.Audios
                 .DefaultListQueryable(currentUserId)
                 .OrderBy(a => Guid.NewGuid())
                 .ProjectToDetail(_audiochanOptions)
                 .SingleOrDefaultAsync(cancellationToken);
-
-            return audio == null
-                ? Result<AudioDetailViewModel>.Fail(ResultError.NotFound)
-                : Result<AudioDetailViewModel>.Success(audio);
         }
     }
 }

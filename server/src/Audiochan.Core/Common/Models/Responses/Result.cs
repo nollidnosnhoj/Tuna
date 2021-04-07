@@ -1,25 +1,9 @@
 ﻿using System.Collections.Generic;
+using Audiochan.Core.Common.Enums;
+using Audiochan.Core.Common.Models.Interfaces;
 
 namespace Audiochan.Core.Common.Models.Responses
 {
-    public enum ResultError
-    {
-        BadRequest,
-        NotFound,
-        Unauthorized,
-        Forbidden,
-        UnprocessedEntity
-    }
-
-    public interface IResult<out TResponse>
-    {
-        TResponse Data { get; }
-        bool IsSuccess { get; }
-        ResultError? ErrorCode { get; }
-        string Message { get; }
-        Dictionary<string, string[]> Errors { get; }
-    }
-
     public record Result<TResponse> : IResult<TResponse>
     {
         public TResponse Data { get; init; }

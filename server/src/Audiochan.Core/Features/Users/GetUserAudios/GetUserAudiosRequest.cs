@@ -1,4 +1,4 @@
-﻿using Audiochan.Core.Common.Interfaces;
+﻿using Audiochan.Core.Common.Models.Interfaces;
 using Audiochan.Core.Common.Models.Requests;
 using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Features.Audios.GetAudioList;

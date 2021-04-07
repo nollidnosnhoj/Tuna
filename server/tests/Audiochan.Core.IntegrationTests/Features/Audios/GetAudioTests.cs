@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Common.Helpers;
-using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Features.Audios.CreateAudio;
 using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.UnitTests.Builders;
@@ -34,9 +33,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             var result = await _fixture.SendAsync(new GetAudioRequest(0));
 
             // Assert
-            result.Should().NotBeNull();
-            result.IsSuccess.Should().Be(false);
-            result.ErrorCode.Should().Be(ResultError.NotFound);
+            result.Should().BeNull();
         }
 
         [Fact]
@@ -56,12 +53,8 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
 
             // Assert
             successResult.Should().NotBeNull();
-            successResult.IsSuccess.Should().Be(true);
-            successResult.Data.Should().NotBeNull();
-            successResult.Data.Should().BeOfType<AudioDetailViewModel>();
-            failureResult.Should().NotBeNull();
-            failureResult.IsSuccess.Should().Be(false);
-            failureResult.ErrorCode.Should().Be(ResultError.NotFound);
+            successResult.Should().BeOfType<AudioDetailViewModel>();
+            failureResult.Should().BeNull();
         }
 
         [Fact]
@@ -78,9 +71,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             var result = await _fixture.SendAsync(new GetAudioRequest(audio.Id, privateKey));
 
             result.Should().NotBeNull();
-            result.IsSuccess.Should().Be(true);
-            result.Data.Should().NotBeNull();
-            result.Data.Id.Should().Be(audio.Id);
+            result.Id.Should().Be(audio.Id);
         }
         
         [Fact]
@@ -96,9 +87,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             await _fixture.RunAsDefaultUserAsync();
             var result = await _fixture.SendAsync(new GetAudioRequest(audio.Id));
 
-            result.Should().NotBeNull();
-            result.IsSuccess.Should().Be(false);
-            result.ErrorCode.Should().Be(ResultError.NotFound);
+            result.Should().BeNull();
         }
 
         [Fact]
@@ -114,9 +103,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             var result = await _fixture.SendAsync(new GetAudioRequest(audio.Id));
 
             result.Should().NotBeNull();
-            result.IsSuccess.Should().Be(true);
-            result.Data.Should().NotBeNull();
-            result.Data.Id.Should().Be(audio.Id);
+            result.Id.Should().Be(audio.Id);
         }
 
         [Fact]
@@ -140,15 +127,12 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
 
             // Assert
             result.Should().NotBeNull();
-            result.IsSuccess.Should().Be(true);
-            result.Data.Should().NotBeNull();
-            result.Data.Should().BeOfType<AudioDetailViewModel>();
-            result.Data.Should().NotBeNull();
-            result.Data.Title.Should().Be(audio.Data.Title);
-            result.Data.Description.Should().Be(audio.Data.Description);
-            result.Data.Tags.Length.Should().Be(2);
-            result.Data.Tags.Should().Contain("apples");
-            result.Data.Tags.Should().Contain("oranges");
+            result.Should().BeOfType<AudioDetailViewModel>();
+            result.Title.Should().Be(audio.Data.Title);
+            result.Description.Should().Be(audio.Data.Description);
+            result.Tags.Length.Should().Be(2);
+            result.Tags.Should().Contain("apples");
+            result.Tags.Should().Contain("oranges");
         }
     }
 }

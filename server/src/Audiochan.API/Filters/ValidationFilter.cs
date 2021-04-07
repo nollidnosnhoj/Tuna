@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Audiochan.API.Extensions;
+using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Common.Models.Responses;
 using Microsoft.AspNetCore.Mvc.Filters;
 

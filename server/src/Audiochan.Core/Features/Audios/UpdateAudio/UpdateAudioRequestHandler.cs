@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Enums;
+using Audiochan.Core.Common.Models.Interfaces;
 using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Common.Options;
 using Audiochan.Core.Features.Audios.GetAudio;
@@ -12,7 +13,7 @@ using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Audios.UpdateAudio
 {
-    public class UpdateAudioRequestHandler : IRequestHandler<UpdateAudioRequest, Result<AudioDetailViewModel>>
+    public class UpdateAudioRequestHandler : IRequestHandler<UpdateAudioRequest, IResult<AudioDetailViewModel>>
     {
         private readonly IApplicationDbContext _dbContext;
         private readonly ICurrentUserService _currentUserService;
@@ -30,7 +31,7 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
             _audiochanOptions = options.Value;
         }
 
-        public async Task<Result<AudioDetailViewModel>> Handle(UpdateAudioRequest request,
+        public async Task<IResult<AudioDetailViewModel>> Handle(UpdateAudioRequest request,
             CancellationToken cancellationToken)
         {
             var currentUserId = await _dbContext.Users

@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Audiochan.Core.Features.Audios.GetRandomAudio
 {
-    public record GetRandomAudioRequest : IRequest<Result<AudioDetailViewModel>>
+    public record GetRandomAudioRequest : IRequest<AudioDetailViewModel>
     {
     }
 }

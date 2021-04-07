@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Interfaces;
+using Audiochan.Core.Common.Models.Interfaces;
 using Audiochan.Core.Common.Models.Requests;
 using Audiochan.Core.Common.Models.Responses;
 using Microsoft.EntityFrameworkCore;

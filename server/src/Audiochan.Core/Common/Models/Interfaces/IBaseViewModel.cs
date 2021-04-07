@@ -1,4 +1,4 @@
-﻿namespace Audiochan.Core.Common.Models.Responses
+﻿namespace Audiochan.Core.Common.Models.Interfaces
 {
     public interface IBaseViewModel
     {
