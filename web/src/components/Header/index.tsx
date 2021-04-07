@@ -120,8 +120,6 @@ const Header: React.FC<HeaderProps> = (props) => {
         align="center"
         as="header"
         px={4}
-        borderColor="primary.500"
-        borderBottomWidth={4}
         position="fixed"
         top={0}
         left={0}
@@ -145,6 +143,7 @@ const Header: React.FC<HeaderProps> = (props) => {
               onClick={onToggle}
               position="relative"
               ref={menuButtonRef}
+              isRound
             />
             <Box display={{ base: "none", md: "flex" }} marginLeft={14}>
               <Heading size="lg">
@@ -201,7 +200,7 @@ const Header: React.FC<HeaderProps> = (props) => {
       >
         <DrawerOverlay>
           <DrawerContent>
-            <DrawerBody p={0} marginTop="120px">
+            <DrawerBody p={0} marginTop="100px">
               <HeaderMenuLink
                 label="Browse"
                 href="/audios"
