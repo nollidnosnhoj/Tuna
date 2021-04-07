@@ -11,15 +11,16 @@ import {
 import React, { useEffect, useMemo, useRef } from "react";
 import { MdVolumeDown, MdVolumeMute, MdVolumeUp } from "react-icons/md";
 
+const VOLUME_KEY = "audiochan_volume";
+
 interface VolumeControlProps {
   audioNode: HTMLAudioElement | null;
   volume: number;
   onChange: (value: number) => void;
-  saveToLocalStorage?: boolean;
 }
 
 export default function VolumeControl(props: VolumeControlProps) {
-  const { audioNode, volume, onChange, saveToLocalStorage = false } = props;
+  const { audioNode, volume, onChange } = props;
   const lastVolumeRef = useRef<number>();
 
   const handleVolumeChange = (value: number) => {
@@ -46,21 +47,26 @@ export default function VolumeControl(props: VolumeControlProps) {
   };
 
   useEffect(() => {
-    const localData = localStorage.getItem("audiochan_volume");
+    const localData = localStorage.getItem(VOLUME_KEY);
     if (localData) {
       let parsedVolume = Math.floor(parseFloat(localData));
       onChange(parsedVolume);
     }
-  }, [onChange]);
+  }, []);
 
   useEffect(() => {
     if (audioNode) {
       audioNode.volume = volume / 100;
-      if (saveToLocalStorage) {
-        localStorage.setItem("audiochan_volume", volume.toString());
-      }
     }
-  }, [audioNode, volume, saveToLocalStorage]);
+
+    var saveTimer = setTimeout(() => {
+      localStorage.setItem(VOLUME_KEY, volume.toFixed(2));
+    }, 200);
+
+    return () => {
+      clearTimeout(saveTimer);
+    };
+  }, [audioNode, volume]);
 
   return (
     <Flex>
@@ -81,6 +87,7 @@ export default function VolumeControl(props: VolumeControlProps) {
           step={5}
           onChange={handleVolumeChange}
           colorScheme="primary"
+          focusThumbOnChange={false}
         >
           <SliderTrack>
             <SliderFilledTrack />
