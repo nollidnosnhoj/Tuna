@@ -57,7 +57,7 @@ export default function DesktopAudioPlayer(props: DesktopAudioPlayerProps) {
     onToggle: onQueuePanelToggle,
   } = useDisclosure();
 
-  const playerBackgroundColor = useColorModeValue("white", "gray.800");
+  const playerBackgroundColor = useColorModeValue("gray.100", "gray.800");
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     switch (e.keyCode) {

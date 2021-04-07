@@ -19,7 +19,7 @@ export default function AudioListSubHeader(props: { current: string }) {
           </Button>
         </NextLink>
         {isLoggedIn && (
-          <NextLink href="/audios/feed">
+          <NextLink href="/feed">
             <Button
               size="lg"
               variant="link"

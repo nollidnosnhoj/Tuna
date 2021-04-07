@@ -65,7 +65,7 @@ const AudioListItem: React.FC<AudioListItemProps> = ({
           <Box>
             <Flex align="center">
               <Link
-                href={`/audios/view/${audio.id}`}
+                href={`/audios/${audio.id}`}
                 _hover={{ textDecoration: "none" }}
               >
                 <Text as="b">{audio.title}</Text>

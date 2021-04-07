@@ -136,7 +136,7 @@ export default function AudioUploading(props: AudioUploadingProps) {
   // Once completed, push the route to the newly created audio
   useEffect(() => {
     if (completed) {
-      Router.push(`audios/view/${audioId}`).then(() => {
+      Router.push(`audios/${audioId}`).then(() => {
         successfulToast({
           title: "Audio uploaded",
           message: "You have successfully uploaded your audio.",
