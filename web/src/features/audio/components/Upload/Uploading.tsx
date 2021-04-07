@@ -12,6 +12,7 @@ import { ErrorResponse } from "~/lib/types";
 
 interface AudioUploadingProps {
   file: File;
+  setToPublic?: boolean;
 }
 
 type S3PresignedUrl = {
@@ -27,7 +28,7 @@ const STAGE_MESSAGES = [
 ];
 
 export default function AudioUploading(props: AudioUploadingProps) {
-  const { file } = props;
+  const { file, setToPublic } = props;
   const { user } = useUser();
   const [stage, setStage] = useState(0);
   const [uploadAudioProgress, setUploadAudioProgress] = useState(0);
@@ -40,7 +41,10 @@ export default function AudioUploading(props: AudioUploadingProps) {
   const getUploadUrl = useCallback(() => {
     return new Promise<S3PresignedUrl>((resolve, reject) => {
       api
-        .post<S3PresignedUrl>("upload", { fileName: file.name })
+        .post<S3PresignedUrl>("upload", {
+          fileName: file.name,
+          fileSize: file.size,
+        })
         .then(({ data }) => {
           resolve(data);
         })
@@ -95,7 +99,7 @@ export default function AudioUploading(props: AudioUploadingProps) {
             duration: Math.round(audio.duration),
             fileSize: file.size,
             tags: [],
-            visibility: "unlisted",
+            visibility: setToPublic ? "public" : "unlisted",
           };
 
           createAudio(body)
