@@ -22,15 +22,15 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
         private readonly IStorageService _storageService;
         private readonly ICurrentUserService _currentUserService;
         private readonly ITagRepository _tagRepository;
-        private readonly AudiochanOptions _audiochanOptions;
+        private readonly MediaStorageSettings _storageSettings;
 
-        public CreateAudioRequestHandler(IOptions<AudiochanOptions> options,
+        public CreateAudioRequestHandler(IOptions<MediaStorageSettings> options,
             IApplicationDbContext dbContext,
             IStorageService storageService,
             ICurrentUserService currentUserService,
             ITagRepository tagRepository)
         {
-            _audiochanOptions = options.Value;
+            _storageSettings = options.Value;
             _dbContext = dbContext;
             _storageService = storageService;
             _currentUserService = currentUserService;
@@ -64,7 +64,7 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
                 await _dbContext.Audios.AddAsync(audio, cancellationToken);
                 await _dbContext.SaveChangesAsync(cancellationToken);
                 
-                var viewModel = audio.MapToDetail(_audiochanOptions) with
+                var viewModel = audio.MapToDetail(_storageSettings) with
                 {
                     Author = new MetaAuthorDto
                     {
@@ -78,7 +78,7 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
             }
             catch (Exception)
             {
-                await _storageService.RemoveAsync(_audiochanOptions.AudioStorageOptions.Container, BlobHelpers.GetAudioBlobName(audio),
+                await _storageService.RemoveAsync(_storageSettings.Audio.Container, BlobHelpers.GetAudioBlobName(audio),
                     cancellationToken);
                 throw;
             }

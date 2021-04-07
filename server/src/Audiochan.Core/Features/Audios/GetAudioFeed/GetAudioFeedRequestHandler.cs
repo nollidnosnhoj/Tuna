@@ -15,12 +15,12 @@ namespace Audiochan.Core.Features.Audios.GetAudioFeed
     public class GetAudioFeedRequestHandler : IRequestHandler<GetAudioFeedRequest, PagedList<AudioViewModel>>
     {
         private readonly IApplicationDbContext _dbContext;
-        private readonly AudiochanOptions _audiochanOptions;
+        private readonly MediaStorageSettings _storageSettings;
 
-        public GetAudioFeedRequestHandler(IApplicationDbContext dbContext, IOptions<AudiochanOptions> options)
+        public GetAudioFeedRequestHandler(IApplicationDbContext dbContext, IOptions<MediaStorageSettings> options)
         {
             _dbContext = dbContext;
-            _audiochanOptions = options.Value;
+            _storageSettings = options.Value;
         }
 
         public async Task<PagedList<AudioViewModel>> Handle(GetAudioFeedRequest request,
@@ -35,7 +35,7 @@ namespace Audiochan.Core.Features.Audios.GetAudioFeed
             return await _dbContext.Audios
                 .DefaultListQueryable(request.UserId)
                 .Where(a => followedIds.Contains(a.UserId))
-                .ProjectToList(_audiochanOptions)
+                .ProjectToList(_storageSettings)
                 .OrderByDescending(a => a.Uploaded)
                 .PaginateAsync(cancellationToken: cancellationToken);
         }

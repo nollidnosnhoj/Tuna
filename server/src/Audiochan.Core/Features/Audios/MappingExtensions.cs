@@ -13,7 +13,7 @@ namespace Audiochan.Core.Features.Audios
 {
     public static class AudioMappingExtensions
     {
-        private static Expression<Func<Audio, AudioDetailViewModel>> AudioToDetailProjection(AudiochanOptions options)
+        private static Expression<Func<Audio, AudioDetailViewModel>> AudioToDetailProjection(MediaStorageSettings options)
         {
             return audio => new AudioDetailViewModel
             {
@@ -29,7 +29,7 @@ namespace Audiochan.Core.Features.Audios
                 FileSize = audio.FileSize,
                 LastModified = audio.LastModified,
                 PrivateKey = audio.Visibility == Visibility.Private ? audio.PrivateKey : null,
-                AudioUrl = $"{options.StorageUrl}/{options.AudioStorageOptions.Container}/{audio.UploadId + audio.FileExt}",
+                AudioUrl = $"{options.StorageUrl}/{options.Audio.Container}/{audio.UploadId + audio.FileExt}",
                 Author = new MetaAuthorDto
                 {
                     Id = audio.User.Id,
@@ -39,7 +39,7 @@ namespace Audiochan.Core.Features.Audios
             };
         }
 
-        private static Expression<Func<Audio, AudioViewModel>> AudioToListProjection(AudiochanOptions options)
+        private static Expression<Func<Audio, AudioViewModel>> AudioToListProjection(MediaStorageSettings options)
         {
             return audio => new AudioViewModel
             {
@@ -49,7 +49,7 @@ namespace Audiochan.Core.Features.Audios
                 Picture = audio.Picture,
                 Uploaded = audio.Created,
                 Visibility = audio.Visibility,
-                AudioUrl = $"{options.StorageUrl}/{options.AudioStorageOptions.Container}/{audio.UploadId + audio.FileExt}",
+                AudioUrl = $"{options.StorageUrl}/{options.Audio.Container}/{audio.UploadId + audio.FileExt}",
                 Author = new MetaAuthorDto
                 {
                     Id = audio.User.Id,
@@ -60,12 +60,12 @@ namespace Audiochan.Core.Features.Audios
         }
 
         public static IQueryable<AudioDetailViewModel> ProjectToDetail(this IQueryable<Audio> queryable,
-            AudiochanOptions options) => queryable.Select(AudioToDetailProjection(options));
+            MediaStorageSettings options) => queryable.Select(AudioToDetailProjection(options));
 
-        public static IQueryable<AudioViewModel> ProjectToList(this IQueryable<Audio> queryable, AudiochanOptions options) =>
+        public static IQueryable<AudioViewModel> ProjectToList(this IQueryable<Audio> queryable, MediaStorageSettings options) =>
             queryable.Select(AudioToListProjection(options));
 
-        public static AudioDetailViewModel MapToDetail(this Audio audio, AudiochanOptions options) =>
+        public static AudioDetailViewModel MapToDetail(this Audio audio, MediaStorageSettings options) =>
             AudioToDetailProjection(options).Compile().Invoke(audio);
     }
 }

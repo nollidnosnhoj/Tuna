@@ -14,13 +14,13 @@ namespace Audiochan.Core.Features.Audios.GetAudio
     {
         private readonly IApplicationDbContext _dbContext;
         private readonly ICurrentUserService _currentUserService;
-        private readonly AudiochanOptions _audiochanOptions;
+        private readonly MediaStorageSettings _storageSettings;
 
-        public GetAudioRequestHandler(IApplicationDbContext dbContext, ICurrentUserService currentUserService, IOptions<AudiochanOptions> options)
+        public GetAudioRequestHandler(IApplicationDbContext dbContext, ICurrentUserService currentUserService, IOptions<MediaStorageSettings> options)
         {
             _dbContext = dbContext;
             _currentUserService = currentUserService;
-            _audiochanOptions = options.Value;
+            _storageSettings = options.Value;
         }
 
         public async Task<AudioDetailViewModel> Handle(GetAudioRequest request, CancellationToken cancellationToken)
@@ -30,7 +30,7 @@ namespace Audiochan.Core.Features.Audios.GetAudio
             return await _dbContext.Audios
                 .DefaultSingleQueryable(request.PrivateKey, currentUserId)
                 .Where(x => x.Id == request.Id)
-                .ProjectToDetail(_audiochanOptions)
+                .ProjectToDetail(_storageSettings)
                 .SingleOrDefaultAsync(cancellationToken);
         }
     }

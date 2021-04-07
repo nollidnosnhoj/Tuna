@@ -17,19 +17,19 @@ namespace Audiochan.Core.Features.Users.UpdatePicture
 {
     public class UpdateUserPictureRequestHandler : IRequestHandler<UpdateUserPictureRequest, IResult<string>>
     {
-        private readonly AudiochanOptions.StorageOptions _pictureStorageOptions;
+        private readonly MediaStorageSettings _storageSettings;
         private readonly UserManager<User> _userManager;
         private readonly IImageService _imageService;
         private readonly IStorageService _storageService;
         private readonly IDateTimeProvider _dateTimeProvider;
 
-        public UpdateUserPictureRequestHandler(IOptions<AudiochanOptions> options,
+        public UpdateUserPictureRequestHandler(IOptions<MediaStorageSettings> options,
             UserManager<User> userManager,
             IImageService imageService,
             IStorageService storageService,
             IDateTimeProvider dateTimeProvider)
         {
-            _pictureStorageOptions = options.Value.ImageStorageOptions;
+            _storageSettings = options.Value;
             _userManager = userManager;
             _imageService = imageService;
             _storageService = storageService;
@@ -38,7 +38,7 @@ namespace Audiochan.Core.Features.Users.UpdatePicture
 
         public async Task<IResult<string>> Handle(UpdateUserPictureRequest request, CancellationToken cancellationToken)
         {
-            var container = Path.Combine(_pictureStorageOptions.Container, "users");
+            var container = Path.Combine(_storageSettings.Image.Container, "users");
             var blobName = BlobHelpers.GetPictureBlobName(_dateTimeProvider.Now);
             try
             {

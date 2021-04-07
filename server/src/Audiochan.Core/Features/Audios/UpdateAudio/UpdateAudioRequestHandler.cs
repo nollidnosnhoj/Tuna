@@ -18,17 +18,17 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
         private readonly IApplicationDbContext _dbContext;
         private readonly ICurrentUserService _currentUserService;
         private readonly ITagRepository _tagRepository;
-        private readonly AudiochanOptions _audiochanOptions;
+        private readonly MediaStorageSettings _storageSettings;
 
         public UpdateAudioRequestHandler(IApplicationDbContext dbContext,
             ICurrentUserService currentUserService,
             ITagRepository tagRepository,
-            IOptions<AudiochanOptions> options)
+            IOptions<MediaStorageSettings> options)
         {
             _dbContext = dbContext;
             _currentUserService = currentUserService;
             _tagRepository = tagRepository;
-            _audiochanOptions = options.Value;
+            _storageSettings = options.Value;
         }
 
         public async Task<IResult<AudioDetailViewModel>> Handle(UpdateAudioRequest request,
@@ -71,7 +71,7 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
             _dbContext.Audios.Update(audio);
             await _dbContext.SaveChangesAsync(cancellationToken);
 
-            var viewModel = audio.MapToDetail(_audiochanOptions);
+            var viewModel = audio.MapToDetail(_storageSettings);
 
             return Result<AudioDetailViewModel>.Success(viewModel);
         }

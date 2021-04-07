@@ -20,13 +20,13 @@ namespace Audiochan.Infrastructure.Search
     {
         private readonly IApplicationDbContext _dbContext;
         private readonly ICurrentUserService _currentUserService;
-        private readonly AudiochanOptions _audiochanOptions;
+        private readonly MediaStorageSettings _storageSettings;
 
-        public DatabaseSearchService(IApplicationDbContext dbContext, ICurrentUserService currentUserService, IOptions<AudiochanOptions> options)
+        public DatabaseSearchService(IApplicationDbContext dbContext, ICurrentUserService currentUserService, IOptions<MediaStorageSettings> options)
         {
             _dbContext = dbContext;
             _currentUserService = currentUserService;
-            _audiochanOptions = options.Value;
+            _storageSettings = options.Value;
         }
 
         public async Task<PagedList<AudioViewModel>> SearchAudios(SearchAudiosRequest request,
@@ -43,7 +43,7 @@ namespace Audiochan.Infrastructure.Search
                     .ILike(a.Title, $"%{request.Q.Trim()}%"));
 
             var result = await queryable
-                .ProjectToList(_audiochanOptions)
+                .ProjectToList(_storageSettings)
                 .PaginateAsync(request, cancellationToken);
 
             return result;

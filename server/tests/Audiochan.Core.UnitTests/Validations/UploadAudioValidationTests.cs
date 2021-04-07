@@ -14,18 +14,18 @@ namespace Audiochan.Core.UnitTests.Validations
 
         public UploadAudioValidationTests()
         {
-            var options = Options.Create(new AudiochanOptions
+            var options = Options.Create(new MediaStorageSettings
             {
-                AudioStorageOptions = new AudiochanOptions.StorageOptions
+                Audio = new MediaStorageSettings.StorageSettings
                 {
                     Container = "audios",
-                    ContentTypes = new List<string>
+                    ValidContentTypes = new List<string>
                     {
                         "audio/mp3",
                         "audio/mpeg",
                         "audio/ogg"
                     },
-                    MaxFileSize = 262144000
+                    MaximumFileSize = 262144000
                 }
             });
             _validator = new CreateAudioRequestValidator(options);

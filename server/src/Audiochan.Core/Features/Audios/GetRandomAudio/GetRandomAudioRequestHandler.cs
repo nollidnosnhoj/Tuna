@@ -16,14 +16,14 @@ namespace Audiochan.Core.Features.Audios.GetRandomAudio
     {
         private readonly IApplicationDbContext _dbContext;
         private readonly ICurrentUserService _currentUserService;
-        private readonly AudiochanOptions _audiochanOptions;
+        private readonly MediaStorageSettings _storageSettings;
 
         public GetRandomAudioRequestHandler(IApplicationDbContext dbContext, ICurrentUserService currentUserService,
-            IOptions<AudiochanOptions> options)
+            IOptions<MediaStorageSettings> options)
         {
             _dbContext = dbContext;
             _currentUserService = currentUserService;
-            _audiochanOptions = options.Value;
+            _storageSettings = options.Value;
         }
 
         public async Task<AudioDetailViewModel> Handle(GetRandomAudioRequest request,
@@ -33,7 +33,7 @@ namespace Audiochan.Core.Features.Audios.GetRandomAudio
             return await _dbContext.Audios
                 .DefaultListQueryable(currentUserId)
                 .OrderBy(a => Guid.NewGuid())
-                .ProjectToDetail(_audiochanOptions)
+                .ProjectToDetail(_storageSettings)
                 .SingleOrDefaultAsync(cancellationToken);
         }
     }

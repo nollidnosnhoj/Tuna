@@ -14,13 +14,13 @@ namespace Audiochan.Core.Features.Audios.GetAudioList
     {
         private readonly IApplicationDbContext _dbContext;
         private readonly ICurrentUserService _currentUserService;
-        private readonly AudiochanOptions _audiochanOptions;
+        private readonly MediaStorageSettings _storageSettings;
 
-        public GetAudioListRequestHandler(IApplicationDbContext dbContext, ICurrentUserService currentUserService, IOptions<AudiochanOptions> options)
+        public GetAudioListRequestHandler(IApplicationDbContext dbContext, ICurrentUserService currentUserService, IOptions<MediaStorageSettings> options)
         {
             _dbContext = dbContext;
             _currentUserService = currentUserService;
-            _audiochanOptions = options.Value;
+            _storageSettings = options.Value;
         }
 
         public async Task<CursorList<AudioViewModel, long?>> Handle(GetAudioListRequest request,
@@ -31,7 +31,7 @@ namespace Audiochan.Core.Features.Audios.GetAudioList
             return await _dbContext.Audios
                 .DefaultListQueryable(currentUserId)
                 .OrderByDescending(a => a.Id)
-                .ProjectToList(_audiochanOptions)
+                .ProjectToList(_storageSettings)
                 .CursorPaginateAsync(request, cancellationToken);
         }
     }

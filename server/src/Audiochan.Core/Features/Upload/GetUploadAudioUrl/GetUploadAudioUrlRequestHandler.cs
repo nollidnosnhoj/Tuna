@@ -12,15 +12,15 @@ namespace Audiochan.Core.Features.Upload.GetUploadAudioUrl
 {
     public class GetUploadAudioUrlRequestHandler : IRequestHandler<GetUploadAudioUrlRequest, GetUploadAudioUrlResponse>
     {
-        private readonly AudiochanOptions _audiochanOptions;
+        private readonly MediaStorageSettings _storageSettings;
         private readonly ICurrentUserService _currentUserService;
         private readonly IStorageService _storageService;
 
-        public GetUploadAudioUrlRequestHandler(IStorageService storageService, ICurrentUserService currentUserService, IOptions<AudiochanOptions> options)
+        public GetUploadAudioUrlRequestHandler(IStorageService storageService, ICurrentUserService currentUserService, IOptions<MediaStorageSettings> options)
         {
             _storageService = storageService;
             _currentUserService = currentUserService;
-            _audiochanOptions = options.Value;
+            _storageSettings = options.Value;
         }
 
         public Task<GetUploadAudioUrlResponse> Handle(GetUploadAudioUrlRequest request, CancellationToken cancellationToken)
@@ -30,7 +30,7 @@ namespace Audiochan.Core.Features.Upload.GetUploadAudioUrl
             var blobName = uploadId + Path.GetExtension(request.FileName);
             var metadata = new Dictionary<string, string> {{"UserId", userId}, {"OriginalFilename", request.FileName}};
             var presignedUrl = _storageService.GetPresignedUrl(
-                _audiochanOptions.AudioStorageOptions.Container, 
+                _storageSettings.Audio.Container, 
                 blobName,
                 5, 
                 metadata);

@@ -16,14 +16,14 @@ namespace Audiochan.Core.Features.Users.GetUserAudios
     {
         private readonly IApplicationDbContext _dbContext;
         private readonly ICurrentUserService _currentUserService;
-        private readonly AudiochanOptions _audiochanOptions;
+        private readonly MediaStorageSettings _storageSettings;
 
         public GetUserAudiosRequestHandler(IApplicationDbContext dbContext, ICurrentUserService currentUserService,
-            IOptions<AudiochanOptions> options)
+            IOptions<MediaStorageSettings> options)
         {
             _dbContext = dbContext;
             _currentUserService = currentUserService;
-            _audiochanOptions = options.Value;
+            _storageSettings = options.Value;
         }
 
         public async Task<PagedList<AudioViewModel>> Handle(GetUserAudiosRequest request,
@@ -33,7 +33,7 @@ namespace Audiochan.Core.Features.Users.GetUserAudios
             return await _dbContext.Audios
                 .DefaultListQueryable(currentUserId)
                 .Where(a => a.User.UserName == request.Username.ToLower())
-                .ProjectToList(_audiochanOptions)
+                .ProjectToList(_storageSettings)
                 .PaginateAsync(request, cancellationToken);
         }
     }
