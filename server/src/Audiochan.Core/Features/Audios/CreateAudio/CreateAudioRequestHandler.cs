@@ -50,7 +50,7 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
 
             audio.UpdateTitle(request.Title);
             audio.UpdateDescription(request.Description);
-            audio.UpdatePublicityStatus(request.Publicity);
+            audio.UpdatePublicityStatus(request.Visibility);
             
             if (audio.Visibility == Visibility.Private)
                 audio.SetPrivateKey();

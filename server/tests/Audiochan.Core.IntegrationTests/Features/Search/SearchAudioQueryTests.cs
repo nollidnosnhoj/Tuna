@@ -79,7 +79,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Search
                     Duration = 100,
                     FileSize = 100,
                     Tags = tags,
-                    Publicity = "public"
+                    Visibility = "public"
                 });
             }
 

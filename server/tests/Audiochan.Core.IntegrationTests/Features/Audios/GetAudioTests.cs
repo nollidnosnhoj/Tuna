@@ -132,7 +132,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
                 Duration = 100,
                 FileSize = 100,
                 Tags = new List<string> {"apples", "oranges"},
-                Publicity = "unlisted"
+                Visibility = "unlisted"
             });
 
             // Act
