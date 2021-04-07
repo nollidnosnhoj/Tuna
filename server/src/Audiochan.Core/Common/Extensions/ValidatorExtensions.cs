@@ -28,43 +28,43 @@ namespace Audiochan.Core.Common.Extensions
         }
 
         public static IRuleBuilder<T, string> Password<T>(this IRuleBuilder<T, string> ruleBuilder,
-            IdentityOptions identityOptions, string field = "Password")
+            IdentitySettings identitySettings, string field = "Password")
         {
-            if (identityOptions.PasswordRequiresDigit)
+            if (identitySettings.PasswordRequiresDigit)
                 ruleBuilder.Matches(@"[0-9]+")
                     .WithErrorCode(ValidationErrorCodes.Password.RequireDigits)
                     .WithMessage($"{field} must contain one digit.");
-            if (identityOptions.PasswordRequiresLowercase)
+            if (identitySettings.PasswordRequiresLowercase)
                 ruleBuilder.Matches(@"[a-z]+")
                     .WithErrorCode(ValidationErrorCodes.Password.RequireLowercase)
                     .WithMessage($"{field} must contain one lowercase character.");
-            if (identityOptions.PasswordRequiresUppercase)
+            if (identitySettings.PasswordRequiresUppercase)
                 ruleBuilder.Matches(@"[A-Z]+")
                     .WithErrorCode(ValidationErrorCodes.Password.RequireUppercase)
                     .WithMessage($"{field} must contain one uppercase character.");
-            if (identityOptions.PasswordRequiresNonAlphanumeric)
+            if (identitySettings.PasswordRequiresNonAlphanumeric)
                 ruleBuilder.Matches(@"[^a-zA-Z\d]+")
                     .WithErrorCode(ValidationErrorCodes.Password.RequireNonAlphanumeric)
                     .WithMessage($"{field} must contain one non-alphanumeric character.");
-            if (identityOptions.PasswordMinimumLength > 0)
-                ruleBuilder.MinimumLength(identityOptions.PasswordMinimumLength)
+            if (identitySettings.PasswordMinimumLength > 0)
+                ruleBuilder.MinimumLength(identitySettings.PasswordMinimumLength)
                     .WithErrorCode(ValidationErrorCodes.Password.RequireLength)
-                    .WithMessage($"{field} must be at least {identityOptions.PasswordMinimumLength} characters long.");
+                    .WithMessage($"{field} must be at least {identitySettings.PasswordMinimumLength} characters long.");
 
             return ruleBuilder;
         }
 
         public static IRuleBuilder<T, string> Username<T>(this IRuleBuilder<T, string> ruleBuilder,
-            IdentityOptions identityOptions)
+            IdentitySettings identitySettings)
         {
             return ruleBuilder
                 .NotEmpty()
                 .WithMessage("Username is required.")
-                .MinimumLength(identityOptions.UsernameMinimumLength)
+                .MinimumLength(identitySettings.UsernameMinimumLength)
                 .WithMessage("Username must be at least 3 characters long.")
-                .MaximumLength(identityOptions.UsernameMaximumLength)
+                .MaximumLength(identitySettings.UsernameMaximumLength)
                 .WithMessage("Username must be at most 20 characters long.")
-                .Must(username => username.All(x => identityOptions.UsernameAllowedCharacters.Contains(x)))
+                .Must(username => username.All(x => identitySettings.UsernameAllowedCharacters.Contains(x)))
                 .WithErrorCode(ValidationErrorCodes.Username.RequireCharacters)
                 .WithMessage("Username is invalid.");
         }

@@ -30,8 +30,8 @@ namespace Audiochan.API
         {
             services.Configure<AmazonS3Options>(Configuration.GetSection(nameof(AmazonS3Options)));
             services.Configure<MediaStorageSettings>(Configuration.GetSection(nameof(MediaStorageSettings)));
-            services.Configure<JwtOptions>(Configuration.GetSection(nameof(JwtOptions)));
-            services.Configure<IdentityOptions>(Configuration.GetSection(nameof(IdentityOptions)));
+            services.Configure<JwtSettings>(Configuration.GetSection(nameof(JwtSettings)));
+            services.Configure<IdentitySettings>(Configuration.GetSection(nameof(IdentitySettings)));
             
             var jsonSerializerOptions = new JsonSerializerOptions()
             {

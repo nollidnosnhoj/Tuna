@@ -7,7 +7,7 @@ namespace Audiochan.Core.Features.Users.UpdatePassword
 {
     public class UpdatePasswordRequestValidator : AbstractValidator<UpdatePasswordRequest>
     {
-        public UpdatePasswordRequestValidator(IOptions<IdentityOptions> options)
+        public UpdatePasswordRequestValidator(IOptions<IdentitySettings> options)
         {
             RuleFor(req => req.NewPassword)
                 .NotEmpty()

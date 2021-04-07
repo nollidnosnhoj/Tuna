@@ -17,14 +17,14 @@ namespace Audiochan.Infrastructure.Security
 {
     public class TokenProvider : ITokenProvider
     {
-        private readonly JwtOptions _jwtOptions;
+        private readonly JwtSettings _jwtSettings;
         private readonly IDateTimeProvider _dateTimeProvider;
         private readonly UserManager<User> _userManager;
 
-        public TokenProvider(IOptions<JwtOptions> jwtOptions, UserManager<User> userManager,
+        public TokenProvider(IOptions<JwtSettings> jwtOptions, UserManager<User> userManager,
             IDateTimeProvider dateTimeProvider)
         {
-            _jwtOptions = jwtOptions.Value;
+            _jwtSettings = jwtOptions.Value;
             _userManager = userManager;
             _dateTimeProvider = dateTimeProvider;
         }
@@ -33,10 +33,10 @@ namespace Audiochan.Infrastructure.Security
         {
             var claims = await GetClaims(user);
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.Secret));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Secret));
 
             var createdDate = _dateTimeProvider.Now;
-            var expirationDate = createdDate.Add(_jwtOptions.AccessTokenExpiration);
+            var expirationDate = createdDate.Add(_jwtSettings.AccessTokenExpiration);
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
@@ -76,7 +76,7 @@ namespace Audiochan.Infrastructure.Security
             return new RefreshToken
             {
                 Token = Convert.ToBase64String(randomBytes),
-                Expiry = _dateTimeProvider.Now.Add(_jwtOptions.RefreshTokenExpiration),
+                Expiry = _dateTimeProvider.Now.Add(_jwtSettings.RefreshTokenExpiration),
                 Created = _dateTimeProvider.Now,
                 UserId = userId
             };

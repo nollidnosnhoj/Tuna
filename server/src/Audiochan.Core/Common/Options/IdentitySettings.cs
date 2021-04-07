@@ -1,6 +1,6 @@
 ﻿namespace Audiochan.Core.Common.Options
 {
-    public record IdentityOptions
+    public record IdentitySettings
     {
         public int UsernameMinimumLength { get; init; } = 3;
         public int UsernameMaximumLength { get; init; } = 20;

@@ -13,8 +13,8 @@ namespace Audiochan.API.Configurations
         public static IServiceCollection ConfigureAuthentication(this IServiceCollection services,
             IConfiguration configuration)
         {
-            var jwtSetting = new JwtOptions();
-            configuration.GetSection(nameof(JwtOptions)).Bind(jwtSetting);
+            var jwtSetting = new JwtSettings();
+            configuration.GetSection(nameof(JwtSettings)).Bind(jwtSetting);
 
             services
                 .AddAuthentication(options =>

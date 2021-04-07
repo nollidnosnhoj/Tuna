@@ -2,7 +2,7 @@
 
 namespace Audiochan.Core.Common.Options
 {
-    public record JwtOptions
+    public record JwtSettings
     {
         public string Secret { get; init; }
         public TimeSpan AccessTokenExpiration { get; init; }

@@ -7,7 +7,7 @@ namespace Audiochan.Core.Features.Auth.Register
 {
     public class RegisterUserRequestValidator : AbstractValidator<RegisterUserRequest>
     {
-        public RegisterUserRequestValidator(IOptions<IdentityOptions> options)
+        public RegisterUserRequestValidator(IOptions<IdentitySettings> options)
         {
             RuleFor(req => req.Username).Username(options.Value);
             RuleFor(req => req.Email)
