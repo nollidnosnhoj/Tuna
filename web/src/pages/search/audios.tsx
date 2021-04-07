@@ -25,6 +25,6 @@ export const getServerSideProps: GetServerSideProps<AudioSearchValues> = async (
   };
 };
 
-export default function (props: AudioSearchValues) {
+export default function AudioSearchNextPage(props: AudioSearchValues) {
   return <AudioSearchPage {...props} />;
 }

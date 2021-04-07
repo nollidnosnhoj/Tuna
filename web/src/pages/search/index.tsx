@@ -43,7 +43,7 @@ function fetchSummaryResults(key: string, query: Record<string, any>) {
   return fetch<PagedList<Audio>>(key, query);
 }
 
-export default function SearchPage(props: SearchValues) {
+export default function SearchNextPage(props: SearchValues) {
   const { colorMode } = useColorMode();
 
   const [searchValues, setSearchValues] = useState<SearchValues>(props);
