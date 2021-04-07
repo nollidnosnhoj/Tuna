@@ -21,9 +21,9 @@ export const editAudioSchema: SchemaOf<AudioRequest> = object().shape({
     .max(10, validationMessages.max("Tags", 10))
     .ensure()
     .defined(),
-  isPublic: boolean()
-    .defined(),
-  visibility: string().defined()
+  visibility: string()
+    .oneOf(['public', 'unlisted', 'private'], "Invalid visibility state.")
+    .defined()
 }).defined();
 
 export const uploadAudioSchema: SchemaOf<AudioRequest> = object().shape({
@@ -39,7 +39,7 @@ export const uploadAudioSchema: SchemaOf<AudioRequest> = object().shape({
     .max(10, validationMessages.max("Tags", 10))
     .ensure()
     .defined(),
-  isPublic: boolean()
-    .defined(),
-  visibility: string().defined()
+  visibility: string()
+    .oneOf(['public', 'unlisted', 'private'], "Invalid visibility state.")
+    .defined()
 }).defined();
