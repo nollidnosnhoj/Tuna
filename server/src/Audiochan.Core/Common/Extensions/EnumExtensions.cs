@@ -9,7 +9,7 @@ namespace Audiochan.Core.Common.Extensions
         {
             if (string.IsNullOrWhiteSpace(value)) return defaultEnum;
 
-            if (!Enum.TryParse<TEnum>(value, out var result))
+            if (!Enum.TryParse<TEnum>(value, true, out var result))
                 result = defaultEnum;
 
             return result;

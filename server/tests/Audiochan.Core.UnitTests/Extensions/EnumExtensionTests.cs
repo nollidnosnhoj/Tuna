@@ -22,5 +22,13 @@ namespace Audiochan.Core.UnitTests.Extensions
             var result = input.ParseToEnumOrDefault<TestEnum>();
             result.Should().Be(default(TestEnum));
         }
+
+        [Fact]
+        public void CheckIfParseTrueStringIntoEnum()
+        {
+            const string input = "enum5";
+            var result = input.ParseToEnumOrDefault<TestEnum>();
+            result.Should().Be(TestEnum.Enum5);
+        }
     }
 }
