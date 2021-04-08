@@ -1,37 +1,32 @@
 # Audiochan
 
-Audiochan is a platform for users to upload their audio and share them.
+Audiochan is a platform to listen to music created by independent artists.
 
-This is a personal project of mine that I have been working on and off during COVID lockdown.
+## Current Features
 
-## Tech stack 😂
+- Authentication
+- Upload audio into the platform.
+- Create a queue of audio to listen using the audio player.
 
-- ASP.NET Core (Backend)
-- Next.js (Frontend)
-- Amazon S3 (Media Storage)
-- PostgreSQL (Database)
-- *Redis
-- *Docker
-- *Nginx
+## Upcoming Features
 
-*Planned
+- Create a playlist of audio to be saved into your account.
+- Give feedback on audios.
+- Use comfortably on mobile devices.
+- Display waveform on audio detail page.
 
-## TODOS
+## Tech Stack
 
-*Items may be added or removed.*
+### Backend
 
-- [ ] Landing page for unauthenticated users
-- [ ] Feed page for authenticated users
-- [ ] Add settings page for profile and account.
-- [ ] Add share button to each audio/profile.
-- [ ] Create a method for embedding audio.
-- [ ] Frontend refactoring (mobile responsiveness)
+- ASP.NET Core
+- Entity Framework Core
+- PostgreSQL
 
-## Planned Upcoming Features
+### Frontend
 
-*Items may be added or removed.*
+- Next.js
 
-- [ ] Audio feedback
-- [ ] Genre Categories
-- [ ] Additional Audio properties (isLoop, etc.)
-- [ ] Playlists
+## Contributing
+
+TBA
