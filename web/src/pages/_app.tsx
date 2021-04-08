@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Hydrate } from "react-query/hydration";
 import PageLoader from "~/components/PageLoader";
-import { UserProvider } from "~/contexts/userContext";
+import { UserProvider } from "~/contexts/UserContext";
 import AudioPlayerProvider from "~/contexts/AudioPlayerContext";
 import theme from "~/lib/theme";
 import queryClient from "~/lib/queryClient";

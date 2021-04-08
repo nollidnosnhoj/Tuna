@@ -12,8 +12,8 @@ import { formatDuration } from "~/utils/format";
 
 interface ProgressBarProps {
   audioNode: HTMLAudioElement | null;
-  currentTime: number;
-  duration: number;
+  currentTime?: number;
+  duration?: number;
   onSeekChange: (time: number) => void;
 }
 
@@ -24,15 +24,15 @@ export default function ProgressBar(props: ProgressBarProps) {
   const [sliderValue, setSliderValue] = useState(0);
   const [isDraggingProgress, setIsDraggingProgress] = useState(false);
 
-  const formattedCurrentTime = useMemo(
-    () => formatDuration(currentTime) ?? EMPTY_TIME_FORMAT,
-    [currentTime]
-  );
+  const formattedCurrentTime = useMemo(() => {
+    if (currentTime === undefined) return EMPTY_TIME_FORMAT;
+    return formatDuration(currentTime);
+  }, [currentTime]);
 
-  const formattedDuration = useMemo(
-    () => formatDuration(duration) ?? EMPTY_TIME_FORMAT,
-    [duration]
-  );
+  const formattedDuration = useMemo(() => {
+    if (duration === undefined) return EMPTY_TIME_FORMAT;
+    return formatDuration(duration);
+  }, [duration]);
 
   const handleSliderChange = useCallback(
     (value: number) => {

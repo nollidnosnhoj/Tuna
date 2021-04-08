@@ -11,16 +11,16 @@ import {
   Text,
   Tooltip,
 } from "@chakra-ui/react";
-import React, { useContext, useMemo } from "react";
-import { Audio } from "~/features/audio/types";
-import { formatDuration } from "~/utils/format";
-import Link from "~/components/Link";
-import Picture from "~/components/Picture";
+import React, { useMemo } from "react";
 import { FaPause, FaPlay } from "react-icons/fa";
 import { HiDotsVertical } from "react-icons/hi";
 import { MdQueueMusic } from "react-icons/md";
-import { AudioPlayerContext } from "~/contexts/AudioPlayerContext";
+import Link from "~/components/Link";
+import Picture from "~/components/Picture";
 import { mapAudiosForAudioQueue } from "~/components/AudioPlayer/utils";
+import useAudioPlayer from "~/hooks/useAudioPlayer";
+import { Audio } from "~/features/audio/types";
+import { formatDuration } from "~/utils/format";
 
 export interface AudioListItemProps {
   audio: Audio;
@@ -35,7 +35,7 @@ const AudioListItem: React.FC<AudioListItemProps> = ({
   isPlaying,
   removeArtistName = false,
 }) => {
-  const { dispatch } = useContext(AudioPlayerContext);
+  const { dispatch } = useAudioPlayer();
 
   const picture = useMemo(() => {
     return audio?.picture

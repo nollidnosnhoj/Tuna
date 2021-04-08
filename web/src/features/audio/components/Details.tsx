@@ -20,32 +20,22 @@ import {
   TagLeftIcon,
 } from "@chakra-ui/react";
 import Router from "next/router";
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { EditIcon } from "@chakra-ui/icons";
 import NextLink from "next/link";
-import AudioEdit from "./Edit";
-import Link from "../../../components/Link";
-import Picture from "../../../components/Picture";
-import { useAddAudioPicture } from "~/features/audio/hooks/mutations/useAddAudioPicture";
-import { AudioDetail } from "~/features/audio/types";
-import { formatDuration } from "~/utils/format";
-import { relativeDate } from "~/utils/time";
-import useUser from "~/hooks/useUser";
 import { FaHashtag, FaPause, FaPlay } from "react-icons/fa";
 import { MdQueueMusic } from "react-icons/md";
+import AudioEdit from "./Edit";
+import Link from "~/components/Link";
+import Picture from "~/components/Picture";
 import PictureDropzone from "~/components/Picture/PictureDropzone";
-// import {
-//   mapAudioForAudioQueue,
-//   mapAudiosForAudioQueue,
-// } from "~/components/AudioPlayer/utils";
-import { AudioPlayerContext } from "~/contexts/AudioPlayerContext";
 import { mapAudioForAudioQueue } from "~/components/AudioPlayer/utils";
+import { useAddAudioPicture } from "~/features/audio/hooks/mutations/useAddAudioPicture";
+import { AudioDetail } from "~/features/audio/types";
+import useAudioPlayer from "~/hooks/useAudioPlayer";
+import useUser from "~/hooks/useUser";
+import { formatDuration } from "~/utils/format";
+import { relativeDate } from "~/utils/time";
 
 interface AudioDetailProps {
   audio: AudioDetail;
@@ -54,7 +44,7 @@ interface AudioDetailProps {
 const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
   const secondaryColor = useColorModeValue("black.300", "gray.300");
   const { user: currentUser } = useUser();
-  const { state, dispatch } = useContext(AudioPlayerContext);
+  const { state, dispatch } = useAudioPlayer();
   const { currentPlaying, isPlaying } = state;
 
   const isAudioNowPlaying = useMemo(

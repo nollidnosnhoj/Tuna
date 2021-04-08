@@ -79,7 +79,6 @@ export function audioPlayerReducer(
         ...state,
         queue: payload,
         playIndex: index ?? 0,
-        currentPlaying: payload[index ?? 0],
         isPlaying: true,
       };
     }
@@ -108,8 +107,6 @@ export function audioPlayerReducer(
         ...state,
         queue: newQueue,
         playIndex: newPlayIndex,
-        currentPlaying:
-          newPlayIndex === undefined ? undefined : newQueue[newPlayIndex],
       };
     }
     case "CLEAR_QUEUE": {
@@ -117,7 +114,6 @@ export function audioPlayerReducer(
         ...state,
         queue: [],
         playIndex: undefined,
-        currentPlaying: undefined,
       };
     }
     case "SET_VOLUME": {
@@ -146,7 +142,6 @@ export function audioPlayerReducer(
         ...state,
         isPlaying: true,
         playIndex: newIndex,
-        currentPlaying: queue[newIndex],
       };
     }
     case "SET_REPEAT": {
@@ -163,7 +158,6 @@ export function audioPlayerReducer(
         ...state,
         isPlaying: true,
         playIndex: newIndex,
-        currentPlaying: queue[newIndex],
       };
     }
     case "PLAY_NEXT": {
@@ -177,14 +171,13 @@ export function audioPlayerReducer(
         ...state,
         isPlaying: true,
         playIndex: newIndex,
-        currentPlaying: queue[newIndex],
       };
     }
     case "UPDATE_CURRENT": {
       const { queue, playIndex } = state;
       return {
         ...state,
-        currentPlaying: playIndex ? queue[playIndex] : undefined,
+        currentPlaying: playIndex !== undefined ? queue[playIndex] : undefined,
       };
     }
     default: {
@@ -197,12 +190,58 @@ export const AudioPlayerContext = React.createContext<AudioPlayerContextType>(
   {} as AudioPlayerContextType
 );
 
+const AUDIO_PLAYER_SETTING = "audiochan_player_setting";
+
 export default function AudioPlayerProvider(props: PropsWithChildren<any>) {
   const [state, dispatch] = useReducer(audioPlayerReducer, defaultState);
 
   const contextType = useMemo(() => {
     return { state, dispatch };
   }, [state, dispatch]);
+
+  const { volume, repeat, queue, playIndex } = state;
+
+  useEffect(() => {
+    const setting = JSON.parse(
+      localStorage.getItem(AUDIO_PLAYER_SETTING) || ""
+    );
+
+    if (setting) {
+      const parsedVolume = parseInt(setting.volume);
+      if (!isNaN(parsedVolume)) {
+        dispatch({ type: "SET_VOLUME", payload: parsedVolume });
+      }
+      if (Object.values(REPEAT_MODE).includes(setting.repeat)) {
+        console.log("repeat");
+        dispatch({
+          type: "SET_REPEAT",
+          payload: setting.repeat,
+        });
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    const saveTimer = setTimeout(() => {
+      const settings = {
+        volume: volume,
+        repeat: repeat,
+      };
+
+      localStorage.setItem(AUDIO_PLAYER_SETTING, JSON.stringify(settings));
+    }, 200);
+
+    return () => {
+      clearTimeout(saveTimer);
+    };
+  }, [repeat, volume]);
+
+  /**
+   * Update current playing whenever playIndex changes
+   */
+  useEffect(() => {
+    dispatch({ type: "UPDATE_CURRENT" });
+  }, [playIndex, queue.length]);
 
   return (
     <AudioPlayerContext.Provider value={contextType}>

@@ -1,6 +1,7 @@
-import React, { useCallback, useContext, useEffect, useRef } from "react";
-import { AudioPlayerContext, REPEAT_MODE } from "~/contexts/AudioPlayerContext";
+import React, { useCallback, useEffect, useRef } from "react";
 import DesktopAudioPlayer from "./components/DesktopPlayer";
+import { REPEAT_MODE } from "~/contexts/AudioPlayerContext";
+import useAudioPlayer from "~/hooks/useAudioPlayer";
 
 interface AudioPlayerProps {
   preload?: "none" | "metadata" | "auto";
@@ -8,7 +9,7 @@ interface AudioPlayerProps {
 
 export default function AudioPlayer(props: AudioPlayerProps) {
   const { preload = "auto" } = props;
-  const { state, dispatch } = useContext(AudioPlayerContext);
+  const { state, dispatch } = useAudioPlayer();
   const {
     currentPlaying,
     currentTime,

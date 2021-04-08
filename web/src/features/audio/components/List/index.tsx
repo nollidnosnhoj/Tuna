@@ -1,21 +1,21 @@
-import { ButtonGroup, IconButton } from "@chakra-ui/button";
 import {
   Box,
-  Divider,
   Flex,
   List,
   ListItem,
   SimpleGrid,
-} from "@chakra-ui/layout";
-import { Tooltip } from "@chakra-ui/tooltip";
-import React, { useCallback, useContext, useState } from "react";
+  ButtonGroup,
+  IconButton,
+  Tooltip,
+} from "@chakra-ui/react";
+import React, { useCallback, useState } from "react";
 import { FaList } from "react-icons/fa";
 import { IoMdGrid } from "react-icons/io";
-import { mapAudiosForAudioQueue } from "~/components/AudioPlayer/utils";
-import { AudioPlayerContext } from "~/contexts/AudioPlayerContext";
-import { Audio } from "../../types";
 import AudioGridItem from "./GridItem";
 import AudioListItem from "./ListItem";
+import { mapAudiosForAudioQueue } from "~/components/AudioPlayer/utils";
+import { Audio } from "~/features/audio/types";
+import useAudioPlayer from "~/hooks/useAudioPlayer";
 
 type AudioListLayout = "list" | "grid";
 
@@ -33,7 +33,7 @@ export default function AudioList(props: AudioListProps) {
     defaultLayout = "list",
     hideLayoutToggle = false,
   } = props;
-  const { state, dispatch } = useContext(AudioPlayerContext);
+  const { state, dispatch } = useAudioPlayer();
   const { currentPlaying, isPlaying } = state;
 
   const [layout, setLayout] = useState<AudioListLayout>(defaultLayout);

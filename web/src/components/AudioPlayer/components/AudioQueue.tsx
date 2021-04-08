@@ -8,8 +8,8 @@ import {
   ListItem,
   useColorModeValue,
 } from "@chakra-ui/react";
-import React, { useContext } from "react";
-import { AudioPlayerContext } from "~/contexts/AudioPlayerContext";
+import React from "react";
+import useAudioPlayer from "~/hooks/useAudioPlayer";
 
 interface AudioQueueProps {
   isOpen: boolean;
@@ -18,7 +18,7 @@ interface AudioQueueProps {
 
 export default function AudioQueue(props: AudioQueueProps) {
   const { isOpen, onClose } = props;
-  const { state, dispatch } = useContext(AudioPlayerContext);
+  const { state, dispatch } = useAudioPlayer();
   const { queue, playIndex } = state;
   const bgColor = useColorModeValue("white", "gray.800");
   const hoverColor = useColorModeValue("gray.300", "gray.900");
@@ -87,14 +87,12 @@ export default function AudioQueue(props: AudioQueueProps) {
                 <chakra.span>{audio.artist}</chakra.span>
               </Box>
               <Flex flex="1" justifyContent="flex-end" width="50px">
-                {playIndex !== index && (
-                  <CloseButton
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      dispatch({ type: "REMOVE_FROM_QUEUE", payload: index });
-                    }}
-                  />
-                )}
+                <CloseButton
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    dispatch({ type: "REMOVE_FROM_QUEUE", payload: index });
+                  }}
+                />
               </Flex>
             </ListItem>
           ))}
