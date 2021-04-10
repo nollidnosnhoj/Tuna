@@ -6,7 +6,7 @@ using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Common.Helpers;
 using Audiochan.Core.Common.Models.Interfaces;
 using Audiochan.Core.Common.Models.Responses;
-using Audiochan.Core.Common.Options;
+using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;

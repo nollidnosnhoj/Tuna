@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Models.Responses;
-using Audiochan.Core.Common.Options;
+using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Features.Audios.GetAudioList;
 using Audiochan.Core.Interfaces;
 using MediatR;

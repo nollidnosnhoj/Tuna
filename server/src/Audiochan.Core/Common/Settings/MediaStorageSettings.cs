@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Audiochan.Core.Common.Options
+namespace Audiochan.Core.Common.Settings
 {
     public record MediaStorageSettings
     {

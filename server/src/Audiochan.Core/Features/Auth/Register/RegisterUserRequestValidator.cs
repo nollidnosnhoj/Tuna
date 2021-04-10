@@ -1,5 +1,5 @@
 ﻿using Audiochan.Core.Common.Extensions;
-using Audiochan.Core.Common.Options;
+using Audiochan.Core.Common.Settings;
 using FluentValidation;
 using Microsoft.Extensions.Options;
 

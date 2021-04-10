@@ -1,4 +1,4 @@
-﻿using Audiochan.Core.Common.Options;
+﻿using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Entities;
 using Audiochan.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Identity;

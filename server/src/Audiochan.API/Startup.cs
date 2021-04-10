@@ -3,7 +3,7 @@ using Audiochan.API.Configurations;
 using Audiochan.API.Middlewares;
 using Audiochan.API.Services;
 using Audiochan.Core;
-using Audiochan.Core.Common.Options;
+using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Interfaces;
 using Audiochan.Infrastructure;
 using Audiochan.Infrastructure.Storage.Options;
