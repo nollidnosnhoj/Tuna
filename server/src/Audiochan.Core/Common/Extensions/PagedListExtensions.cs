@@ -14,15 +14,20 @@ namespace Audiochan.Core.Common.Extensions
 {
     public static class PagedListExtensions
     {
+        const int DefaultPageNumber = 1;
+        private const int DefaultPageSize = 30;
+        
         public static async Task<PagedList<TResponse>> PaginateAsync<TResponse>(
             this IQueryable<TResponse> queryable,
-            int page = 1,
-            int limit = 30,
+            int page = DefaultPageNumber,
+            int limit = DefaultPageSize,
             CancellationToken cancellationToken = default)
         {
+            if (page == default) page = DefaultPageNumber;
+            if (limit == default) limit = DefaultPageSize;
             var count = await queryable.CountAsync(cancellationToken);
-            var pageNumber = Math.Max(1, page);
-            var pageLimit = Math.Max(0, Math.Min(limit, 30));
+            var pageNumber = Math.Max(DefaultPageNumber, page);
+            var pageLimit = Math.Max(0, Math.Min(limit, DefaultPageSize));
             var list = await queryable
                 .Skip((pageNumber - 1) * pageLimit)
                 .Take(pageLimit)
