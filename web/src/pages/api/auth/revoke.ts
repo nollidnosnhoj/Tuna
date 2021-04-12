@@ -18,7 +18,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       skipAuthRefresh: true
     });
 
-    setAccessTokenCookie('', { res });
+    setAccessTokenCookie('', 0, { res });
     setRefreshTokenCookie('', 0, { res })
 
     res.status(status).end();

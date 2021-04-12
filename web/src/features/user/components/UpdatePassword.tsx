@@ -43,7 +43,7 @@ export default function UpdatePassword() {
         });
         resetForm();
         logout("Please login with your new password").then(() => {
-          Router.push("/login");
+          Router.push("/auth/login");
         });
       } catch (err) {
         apiErrorToast(err);

@@ -20,7 +20,7 @@ export default async (req: NextApiRequest, res: NextApiResponse<AuthResult>) => 
       skipAuthRefresh: true
     })
 
-    setAccessTokenCookie(data.accessToken, { res });
+    setAccessTokenCookie(data.accessToken, 60 * 60 * 24 * 7, { res });
     setRefreshTokenCookie(data.refreshToken, data.refreshTokenExpires, { res });
     res.status(status).json(data)
   } catch (err) {

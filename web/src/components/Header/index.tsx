@@ -90,13 +90,13 @@ const Header: React.FC<HeaderProps> = (props) => {
             </NextLink>
           </MenuGroup>
           <MenuDivider />
-          <MenuItem onClick={async () => await logout()}>Logout</MenuItem>
+          <MenuItem onClick={() => router.push("/logout")}>Logout</MenuItem>
         </MenuList>
       </Menu>
     </Box>
   ) : (
     <>
-      <NextLink href="/login">
+      <NextLink href="/auth/login">
         <Button
           size="md"
           colorScheme="gray"
@@ -106,7 +106,7 @@ const Header: React.FC<HeaderProps> = (props) => {
           Login
         </Button>
       </NextLink>
-      <NextLink href="/register">
+      <NextLink href="/auth/register">
         <Button size="md" colorScheme="primary" textTransform="uppercase">
           Register
         </Button>

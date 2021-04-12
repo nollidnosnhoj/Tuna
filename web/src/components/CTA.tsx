@@ -86,7 +86,7 @@ export function HomepageCTA(props: { isLoggedIn?: boolean }) {
                     Random
                   </Button>
                 </NextLink>
-                <NextLink href={isLoggedIn ? "/upload" : "/login"}>
+                <NextLink href={isLoggedIn ? "/upload" : "/auth/login"}>
                   <Button
                     leftIcon={<FaCloudUploadAlt />}
                     colorScheme="primary"

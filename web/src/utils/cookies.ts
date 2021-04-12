@@ -26,10 +26,11 @@ export function getAccessToken(ctx?: RequestContext) {
   return getCookie("accessToken", ctx);
 }
 
-export function setAccessTokenCookie(value: string, ctx?: ResponseContext) {
+export function setAccessTokenCookie(value: string, age: number, ctx?: ResponseContext) {
   setCookie("accessToken", value, ctx, {
     path: "/",
     sameSite: true,
+    maxAge: age
   });
 }
 

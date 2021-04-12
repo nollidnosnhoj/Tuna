@@ -23,7 +23,7 @@ export default function RegisterPage() {
     <Page title="Register">
       <Flex justify="center" marginTop={50}>
         <Box width="550px">
-          <RegisterForm onSuccess={() => router.push("/login")} />
+          <RegisterForm onSuccess={() => router.push("/auth/login")} />
         </Box>
       </Flex>
     </Page>

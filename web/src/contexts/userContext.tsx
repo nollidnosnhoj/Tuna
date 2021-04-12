@@ -65,14 +65,11 @@ export function UserProvider(props: PropsWithChildren<UserProviderProps>) {
     });
   };
 
-  async function deauthenticate(logoutMessage?: string) {
+  async function deauthenticate() {
     try {
       await revokeRefreshToken();
       updateUser(undefined);
-      successfulToast({
-        title: "You have logged out.",
-        message: logoutMessage,
-      });
+      setExpirationToLocalStorage(0);
       return true;
     } catch (err) {
       return false;
@@ -82,7 +79,9 @@ export function UserProvider(props: PropsWithChildren<UserProviderProps>) {
   function setExpirationToLocalStorage(exp: number) {
     setExpires(() => exp);
     if (typeof window !== "undefined") {
-      window.localStorage.setItem("expires", exp.toString());
+      exp <= 0
+        ? window.localStorage.removeItem("expires")
+        : window.localStorage.setItem("expires", exp.toString());
     }
   }
 

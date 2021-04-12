@@ -21,7 +21,7 @@ export default function withRequiredAuth(
           <Box>
             <Heading as="h2">You are not authorized.</Heading>
             <Box marginTop={10}>
-              <NextLink href="/login">
+              <NextLink href="/auth/login">
                 <Button width="100%">Login</Button>
               </NextLink>
             </Box>
