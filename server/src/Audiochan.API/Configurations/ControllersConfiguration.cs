@@ -2,7 +2,6 @@
 using System.Text.Json.Serialization;
 using Audiochan.API.Filters;
 using FluentValidation.AspNetCore;
-using MicroElements.Swashbuckle.FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -26,8 +25,7 @@ namespace Audiochan.API.Configurations
                     configuration.JsonSerializerOptions.PropertyNamingPolicy = jsonSerializerOptions.PropertyNamingPolicy;
                     configuration.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
                 })
-                .AddFluentValidation(configuration =>
-                    configuration.ValidatorFactoryType = typeof(HttpContextServiceProviderValidatorFactory));
+                .AddFluentValidation(cfg => cfg.RegisterValidatorsFromAssemblyContaining<Startup>());
 
             return services;
         }
