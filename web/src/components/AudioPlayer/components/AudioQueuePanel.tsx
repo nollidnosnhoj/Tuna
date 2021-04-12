@@ -16,7 +16,7 @@ interface AudioQueueProps {
   onClose: () => void;
 }
 
-export default function AudioQueue(props: AudioQueueProps) {
+export default function AudioQueuePanel(props: AudioQueueProps) {
   const { isOpen, onClose } = props;
   const { state, dispatch } = useAudioPlayer();
   const { queue, playIndex } = state;

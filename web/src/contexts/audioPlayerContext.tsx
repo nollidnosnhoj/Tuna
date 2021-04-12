@@ -34,7 +34,12 @@ const defaultState: AudioPlayerState = {
 
 type AudioPlayerAction =
   | {
-      type: "PLAY_PREVIOUS" | "PLAY_NEXT" | "CLEAR_QUEUE" | "UPDATE_CURRENT";
+      type:
+        | "PLAY_PREVIOUS"
+        | "PLAY_NEXT"
+        | "CLEAR_QUEUE"
+        | "UPDATE_CURRENT"
+        | "TOGGLE_PLAYING";
     }
   | {
       type: "SET_PLAYING";
@@ -126,6 +131,13 @@ export function audioPlayerReducer(
       return {
         ...state,
         isPlaying: action.payload,
+      };
+    }
+    case "TOGGLE_PLAYING": {
+      const { isPlaying } = state;
+      return {
+        ...state,
+        isPlaying: !isPlaying,
       };
     }
     case "SET_CURRENT_TIME": {

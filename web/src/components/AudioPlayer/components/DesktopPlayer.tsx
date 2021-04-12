@@ -7,47 +7,37 @@ import {
   useColorModeValue,
   useDisclosure,
 } from "@chakra-ui/react";
-import React, { useRef } from "react";
+import React, { useCallback, useRef } from "react";
 import { RiPlayListFill } from "react-icons/ri";
 import { REPEAT_MODE } from "~/contexts/AudioPlayerContext";
-import AudioQueueDesktop from "./AudioQueue";
+import AudioQueuePanel from "./AudioQueuePanel";
 import NowPlayingSection from "./NowPlayingSection";
 import PlayerControls from "./PlayerControls";
 import ProgressBar from "./ProgressBar";
 import RepeatControl from "./RepeatControl";
 import { AudioPlayerItem } from "../types";
 import VolumeControl from "./VolumeControl";
+import useAudioPlayer from "~/hooks/useAudioPlayer";
 
 interface DesktopAudioPlayerProps {
   audioRef: React.RefObject<HTMLAudioElement>;
-  isPlaying: boolean;
-  volume: number;
-  repeat: REPEAT_MODE;
-  currentTime?: number;
-  currentPlaying?: AudioPlayerItem;
-  handleSeekChange: (seek: number) => void;
-  handleTogglePlay: (e: React.SyntheticEvent) => void;
-  handlePrevious: () => void;
-  handleNext: () => void;
-  handleVolume: (value: number) => void;
-  handleRepeat: (value: REPEAT_MODE) => void;
+  isHidden?: boolean;
 }
 
 export default function DesktopAudioPlayer(props: DesktopAudioPlayerProps) {
+  const { audioRef, isHidden = false } = props;
+
+  const { state, dispatch } = useAudioPlayer();
+
   const {
-    audioRef,
-    isPlaying,
-    volume,
-    repeat,
-    currentTime,
+    queue,
     currentPlaying,
-    handleSeekChange,
-    handleTogglePlay,
-    handlePrevious,
-    handleNext,
-    handleVolume,
-    handleRepeat,
-  } = props;
+    currentTime,
+    isPlaying,
+    playIndex,
+    repeat,
+    volume,
+  } = state;
 
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -59,31 +49,50 @@ export default function DesktopAudioPlayer(props: DesktopAudioPlayerProps) {
 
   const playerBackgroundColor = useColorModeValue("gray.100", "gray.800");
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    switch (e.keyCode) {
-      case 32: // Space
-        if (e.target === containerRef.current) {
+  const handleTogglePlay = useCallback(
+    (e: React.SyntheticEvent) => {
+      e.stopPropagation();
+      const audio = audioRef.current;
+      if (audio && playIndex !== undefined) {
+        dispatch({ type: "TOGGLE_PLAYING" });
+      }
+    },
+    [playIndex]
+  );
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      switch (e.keyCode) {
+        case 32: // Space
+          if (e.target === containerRef.current) {
+            e.preventDefault();
+            handleTogglePlay(e);
+          }
+          break;
+        case 38: // Up Arrow
           e.preventDefault();
-          handleTogglePlay(e);
-        }
-        break;
-      case 38: // Up Arrow
-        e.preventDefault();
-        handleVolume(volume + 5);
-        break;
-      case 40: // Down Arrow
-        e.preventDefault();
-        handleVolume(volume - 5);
-        break;
-    }
-  };
+          dispatch({
+            type: "SET_VOLUME",
+            payload: Math.max(0, Math.min(volume + 5, 100)),
+          });
+          break;
+        case 40: // Down Arrow
+          e.preventDefault();
+          dispatch({
+            type: "SET_VOLUME",
+            payload: Math.max(0, Math.min(volume - 5, 100)),
+          });
+          break;
+      }
+    },
+    [volume, handleTogglePlay]
+  );
+
+  if (isHidden) return null;
 
   return (
     <React.Fragment>
-      <AudioQueueDesktop
-        isOpen={isQueuePanelOpen}
-        onClose={onQueuePanelClose}
-      />
+      <AudioQueuePanel isOpen={isQueuePanelOpen} onClose={onQueuePanelClose} />
       <Box
         role="group"
         tabIndex={0}
@@ -111,27 +120,38 @@ export default function DesktopAudioPlayer(props: DesktopAudioPlayerProps) {
             <ProgressBar
               audioNode={audioRef.current}
               currentTime={currentTime}
-              duration={currentPlaying?.duration}
-              onSeekChange={handleSeekChange}
+              duration={audioRef.current?.duration || currentPlaying?.duration}
+              onSeekChange={(time) =>
+                dispatch({ type: "SET_CURRENT_TIME", payload: time })
+              }
             />
             <PlayerControls
               isPlaying={isPlaying}
+              hasNoPrevious={playIndex === 0}
+              hasNoNext={playIndex === queue.length - 1}
               onTogglePlay={handleTogglePlay}
-              onPrevious={handlePrevious}
-              onNext={handleNext}
+              onPrevious={() => dispatch({ type: "PLAY_PREVIOUS" })}
+              onNext={() => dispatch({ type: "PLAY_NEXT" })}
             />
           </Flex>
           <Flex width="30%" justifyContent="flex-end">
             <Box>
               <HStack>
-                <Box width="100px">
+                <Box width="150px">
                   <VolumeControl
                     audioNode={audioRef.current}
                     volume={volume}
-                    onChange={handleVolume}
+                    onChange={(value) =>
+                      dispatch({ type: "SET_VOLUME", payload: value })
+                    }
                   />
                 </Box>
-                <RepeatControl repeat={repeat} onRepeatChange={handleRepeat} />
+                <RepeatControl
+                  repeat={repeat}
+                  onRepeatChange={(value) =>
+                    dispatch({ type: "SET_REPEAT", payload: value })
+                  }
+                />
                 <chakra.button
                   onClick={onQueuePanelToggle}
                   aria-label="Toggle Queue Panel"

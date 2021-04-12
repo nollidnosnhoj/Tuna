@@ -1,4 +1,4 @@
-import { Box, chakra, Flex, Icon } from "@chakra-ui/react";
+import { Box, chakra, Flex, HStack, Icon, IconButton } from "@chakra-ui/react";
 import React, { useCallback } from "react";
 import {
   MdPause,
@@ -9,39 +9,57 @@ import {
 
 interface PlayerControlsProps {
   isPlaying: boolean;
+  hasNoPrevious?: boolean;
+  hasNoNext?: boolean;
   onTogglePlay: (e: React.SyntheticEvent) => void;
-  onPrevious: () => void;
-  onNext: () => void;
+  onPrevious?: () => void;
+  onNext?: () => void;
 }
 
 export default function PlayerControls(props: PlayerControlsProps) {
-  const { isPlaying, onTogglePlay, onPrevious, onNext } = props;
+  const {
+    isPlaying,
+    onTogglePlay,
+    onPrevious,
+    onNext,
+    hasNoNext = true,
+    hasNoPrevious = false,
+  } = props;
 
   return (
-    <Flex fontSize="40px">
-      <Box>
-        <chakra.button
-          onClick={onPrevious}
-          aria-label="Previous"
-          title="Previous"
-        >
-          <Icon as={MdSkipPrevious} />
-        </chakra.button>
-      </Box>
-      <Box>
-        <chakra.button onClick={onTogglePlay}>
-          <Icon
-            as={isPlaying ? MdPause : MdPlayArrow}
-            aria-label={isPlaying ? "Pause" : "Play"}
-            title={isPlaying ? "Pause" : "Play"}
-          />
-        </chakra.button>
-      </Box>
-      <Box>
-        <chakra.button onClick={onNext}>
-          <Icon as={MdSkipNext} aria-label="Next" title="Next" />
-        </chakra.button>
-      </Box>
-    </Flex>
+    <HStack>
+      <IconButton
+        icon={<MdSkipPrevious />}
+        aria-label="Previous"
+        title="Previous"
+        onClick={onPrevious}
+        disabled={hasNoPrevious}
+        isRound
+        variant="ghost"
+        size="lg"
+        fontSize="25px"
+      />
+      <IconButton
+        icon={isPlaying ? <MdPause /> : <MdPlayArrow />}
+        onClick={onTogglePlay}
+        aria-label={isPlaying ? "Pause" : "Play"}
+        title={isPlaying ? "Pause" : "Play"}
+        isRound
+        size="lg"
+        colorScheme="primary"
+        fontSize="25px"
+      />
+      <IconButton
+        icon={<MdSkipNext />}
+        aria-label="Next"
+        title="Next"
+        onClick={onNext}
+        disabled={hasNoNext}
+        isRound
+        variant="ghost"
+        size="lg"
+        fontSize="25px"
+      />
+    </HStack>
   );
 }
