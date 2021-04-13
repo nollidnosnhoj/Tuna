@@ -46,14 +46,11 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
             if (currentUser is null)
                 return Result<AudioDetailViewModel>.Fail(ResultError.Unauthorized);
 
-            var audio = new Audio(request.UploadId, request.FileName, request.FileSize, request.Duration, currentUser.Id);
+            var audio = new Audio(request.UploadId, request.FileName, request.FileSize, request.Duration, currentUser);
 
             audio.UpdateTitle(request.Title);
             audio.UpdateDescription(request.Description);
             audio.UpdatePublicityStatus(request.Visibility);
-            
-            if (audio.Visibility == Visibility.Private)
-                audio.SetPrivateKey();
 
             try
             {
@@ -64,15 +61,7 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
                 await _dbContext.Audios.AddAsync(audio, cancellationToken);
                 await _dbContext.SaveChangesAsync(cancellationToken);
                 
-                var viewModel = audio.MapToDetail(_storageSettings) with
-                {
-                    Author = new MetaAuthorDto
-                    {
-                        Id = currentUser.Id,
-                        Picture = currentUser.Picture,
-                        Username = currentUser.UserName
-                    },
-                };
+                var viewModel = audio.MapToDetail(_storageSettings);
                 
                 return Result<AudioDetailViewModel>.Success(viewModel);
             }

@@ -15,6 +15,12 @@ namespace Audiochan.Core.Entities
             this.Tags = new HashSet<Tag>();
         }
 
+        public Audio(string uploadId, string fileName, long fileSize, int duration, User user)
+            : this(uploadId, fileName, fileSize, duration, user.Id)
+        {
+            this.User = user;
+        }
+
         public Audio(string uploadId, string fileName, long fileSize, int duration, string userId) : this()
         {
             if (string.IsNullOrWhiteSpace(uploadId))
@@ -66,16 +72,20 @@ namespace Audiochan.Core.Entities
             if (description is not null)
                 this.Description = description;
         }
+        
+        public void UpdatePublicityStatus(string status)
+        {
+            var publicity = status.ParseToEnumOrDefault<Visibility>();
+            UpdatePublicityStatus(publicity);
+        }
 
         public void UpdatePublicityStatus(Visibility status)
         {
             this.Visibility = status;
-        }
-
-        public void UpdatePublicityStatus(string status)
-        {
-            var publicity = status.ParseToEnumOrDefault<Visibility>();
-            this.Visibility = publicity;
+            if (this.Visibility == Visibility.Private)
+            {
+                SetPrivateKey();
+            }
         }
 
         public void SetPrivateKey()
