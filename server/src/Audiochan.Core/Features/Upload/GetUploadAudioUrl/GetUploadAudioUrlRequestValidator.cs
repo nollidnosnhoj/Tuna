@@ -11,17 +11,9 @@ namespace Audiochan.Core.Features.Upload.GetUploadAudioUrl
         public GetUploadAudioUrlRequestValidator(IOptions<MediaStorageSettings> options)
         {
             RuleFor(x => x.FileName)
-                .NotEmpty()
-                .WithMessage("Filename cannot be empty.")
-                .Must(Path.HasExtension)
-                .WithMessage("Filename must have a file extension")
-                .Must(value => options.Value.Audio.ValidContentTypes.Contains(value.GetContentType()))
-                .WithMessage("The file name's extension is invalid.");
+                .FileNameValidation(options.Value.Audio.ValidContentTypes);
             RuleFor(x => x.FileSize)
-                .NotEmpty()
-                .WithMessage("Filesize cannot be empty.")
-                .Must(value => options.Value.Audio.MaximumFileSize >= value)
-                .WithMessage("Filesize exceeds maximum limit.");
+                .FileSizeValidation(options.Value.Audio.MaximumFileSize);
         }
     }
 }

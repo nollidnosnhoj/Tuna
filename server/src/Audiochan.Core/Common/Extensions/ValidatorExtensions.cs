@@ -1,31 +1,44 @@
-using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Audiochan.Core.Common.Constants;
 using Audiochan.Core.Common.Settings;
 using FluentValidation;
-using Microsoft.AspNetCore.Http;
 
 namespace Audiochan.Core.Common.Extensions
 {
     public static class ValidatorExtensions
     {
-        /// <summary>
-        /// Validate the IFormFile to ensure the file meets the given restrictions.
-        /// </summary>
-        /// <param name="ruleBuilder"></param>
-        /// <param name="contentTypes"></param>
-        /// <param name="fileSizeLimit"></param>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
-        public static IRuleBuilder<T, IFormFile> FileValidation<T>(this IRuleBuilder<T, IFormFile> ruleBuilder,
-            IEnumerable<string> contentTypes, long fileSizeLimit)
+        public static IRuleBuilder<T, string> FileNameValidation<T>(this IRuleBuilder<T, string> ruleBuilder, 
+            IEnumerable<string> validContentTypes)
         {
             return ruleBuilder
-                .Must(file => file.Length <= fileSizeLimit)
-                .WithMessage($"File size is over {fileSizeLimit / 1000000} MB")
-                .Must(file => contentTypes.Contains(file.ContentType))
-                .WithMessage("File type is invalid.");
+                .NotEmpty()
+                .WithMessage("Filename cannot be empty.")
+                .Must(Path.HasExtension)
+                .WithMessage("Filename must have a file extension")
+                .Must(value => validContentTypes.Contains(value.GetContentType()))
+                .WithMessage("The file name's extension is invalid.");
+        }
+
+        public static IRuleBuilder<T, string> FileContentTypeValidation<T>(this IRuleBuilder<T, string> ruleBuilder,
+            IEnumerable<string> contentTypes)
+        {
+            return ruleBuilder
+                .NotEmpty()
+                .WithMessage("File's content type cannot be empty.")
+                .Must(contentTypes.Contains)
+                .WithMessage("File's content type is invalid.");
+        }
+
+        public static IRuleBuilder<T, long> FileSizeValidation<T>(this IRuleBuilder<T, long> ruleBuilder,
+            long fileSizeLimit)
+        {
+            return ruleBuilder
+                .NotEmpty()
+                .WithMessage("Filesize cannot be empty.")
+                .Must(fileSize => fileSize > fileSizeLimit)
+                .WithMessage($"File size is over {fileSizeLimit / 1000000} MB");
         }
 
         public static IRuleBuilder<T, string> Password<T>(this IRuleBuilder<T, string> ruleBuilder,

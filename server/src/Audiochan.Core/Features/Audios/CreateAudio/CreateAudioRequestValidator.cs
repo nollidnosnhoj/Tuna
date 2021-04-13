@@ -3,6 +3,7 @@ using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Common.Validators;
 using FluentValidation;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Audios.CreateAudio
@@ -20,18 +21,9 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
                 .NotEmpty()
                 .WithMessage("Duration is required.");
             RuleFor(req => req.FileSize)
-                .NotEmpty()
-                .WithMessage("FileSize is required.")
-                .LessThanOrEqualTo(uploadOptions.MaximumFileSize)
-                .WithMessage("FileSize exceeded maximum file size.");
+                .FileSizeValidation(uploadOptions.MaximumFileSize);
             RuleFor(req => req.FileName)
-                .NotEmpty()
-                .WithMessage("Filename is required.")
-                .Must(Path.HasExtension)
-                .WithMessage("Filename must have a file extension.")
-                .Must(fileName => uploadOptions.ValidContentTypes
-                    .Contains(Path.GetExtension(fileName).GetContentType()))
-                .WithMessage("Filename is invalid.");
+                .FileNameValidation(uploadOptions.ValidContentTypes);
 
             Include(new AudioAbstractRequestValidator());
         }
