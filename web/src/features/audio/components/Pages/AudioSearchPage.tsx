@@ -8,6 +8,8 @@ import TagInput from "~/components/Form/TagInput";
 import AudioList from "~/features/audio/components/List";
 import { useGetAudioListInfinite } from "~/features/audio/hooks/queries/useAudiosInfinite";
 import InfiniteListControls from "~/components/List/InfiniteListControls";
+import { useGetAudioListPagination } from "../../hooks/queries";
+import PaginationListControls from "~/components/List/PaginationListControls";
 
 export type AudioSearchValues = {
   q?: string;
@@ -43,10 +45,13 @@ export default function AudioSearchPage(props: AudioSearchValues) {
 
   const {
     items: audios,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-  } = useGetAudioListInfinite("search/audios", queryParams);
+    isFetching,
+    page,
+    setPage,
+    totalPages,
+  } = useGetAudioListPagination("search/audios", queryParams, 30, {
+    enabled: Boolean(searchValues.q),
+  });
 
   return (
     <Page title="Search audios | Audiochan" removeSearchBar>
@@ -79,20 +84,6 @@ export default function AudioSearchPage(props: AudioSearchValues) {
             error={formErrors.tags}
           />
           <Flex>
-            {/* <HStack width="100%" spacing={4}>
-              <Box>
-                <FormControl id="sort">
-                  <FormLabel>Sort</FormLabel>
-                  <Select
-                    name="sort"
-                    value={formValues.sort}
-                    onChange={handleChange}
-                  >
-                    <option value="latest">Latest</option>
-                  </Select>
-                </FormControl>
-              </Box>
-            </HStack> */}
             <Flex width="100%" justifyContent="flex-end" alignItems="flex-end">
               <Button type="submit">Search</Button>
             </Flex>
@@ -100,11 +91,14 @@ export default function AudioSearchPage(props: AudioSearchValues) {
         </form>
       </Box>
       <AudioList audios={audios} />
-      <InfiniteListControls
-        fetchNext={fetchNextPage}
-        hasNext={hasNextPage}
-        isFetching={isFetchingNextPage}
-      />
+      {audios.length && (
+        <PaginationListControls
+          currentPage={page}
+          onPageChange={setPage}
+          pageNeighbors={2}
+          totalPages={totalPages}
+        />
+      )}
     </Page>
   );
 }

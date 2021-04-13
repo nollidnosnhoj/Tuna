@@ -1,131 +1,30 @@
-import {
-  Button,
-  Flex,
-  FormControl,
-  useColorMode,
-  Box,
-  Heading,
-  Text,
-  VStack,
-} from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
-import React, { useMemo, useState } from "react";
-import Page from "~/components/Page";
-import AudioList from "~/features/audio/components/List";
-import { fetch } from "~/utils/api";
-import { PagedList } from "~/lib/types";
-import { Audio } from "~/features/audio/types";
-import { Profile } from "~/features/user/types";
-import { useFormik } from "formik";
-import TextInput from "~/components/Form/TextInput";
-import { SearchIcon } from "@chakra-ui/icons";
-import usePagination from "~/hooks/usePagination";
+import AudioSearchPage, {
+  AudioSearchValues,
+} from "~/features/audio/components/Pages/AudioSearchPage";
 
-type SearchValues = { q: string };
-
-export const getServerSideProps: GetServerSideProps<SearchValues> = async ({
+export const getServerSideProps: GetServerSideProps<AudioSearchValues> = async ({
   query,
 }) => {
-  let searchTerm: string = "";
+  const searchTermQuery = query["q"] ?? "";
+  const sortQuery = query["sort"] ?? "";
+  const tagsQuery = query["tag"] ?? "";
 
-  if (query["q"]) {
-    searchTerm = Array.isArray(query["q"]) ? query["q"][0] : query["q"];
-  }
+  const q = Array.isArray(searchTermQuery)
+    ? searchTermQuery[0]
+    : searchTermQuery;
+  const sort = Array.isArray(sortQuery) ? sortQuery[0] : sortQuery;
+  const tags = Array.isArray(tagsQuery) ? tagsQuery : tagsQuery.split(",");
 
   return {
     props: {
-      q: searchTerm,
+      q,
+      sort,
+      tags,
     },
   };
 };
 
-function fetchSummaryResults(key: string, query: Record<string, any>) {
-  return fetch<PagedList<Audio>>(key, query);
-}
-
-export default function SearchNextPage(props: SearchValues) {
-  const { colorMode } = useColorMode();
-
-  const [searchValues, setSearchValues] = useState<SearchValues>(props);
-
-  const fetchQueryParams = useMemo(() => ({ ...searchValues, size: 3 }), [
-    searchValues,
-  ]);
-
-  const formik = useFormik<SearchValues>({
-    initialValues: searchValues,
-    onSubmit: (values) => {
-      if (!values.q) return;
-      setSearchValues(values);
-    },
-  });
-
-  const { handleChange, handleSubmit, values: formValues } = formik;
-
-  const { items: audios, isFetching: isFetchingAudios } = usePagination<Audio>(
-    "search/audios",
-    () => fetch<PagedList<Audio>>("search/audios", fetchQueryParams),
-    fetchQueryParams,
-    {
-      enabled: !!searchValues.q,
-    }
-  );
-
-  const { items: users, isFetching: isFetchingUsers } = usePagination<Profile>(
-    "search/users",
-    () => fetch<PagedList<Profile>>("search/users", fetchQueryParams),
-    fetchQueryParams,
-    {
-      enabled: !!searchValues.q,
-    }
-  );
-
-  const noResultsFound = useMemo(() => {
-    return !users && !audios && !isFetchingAudios && !isFetchingUsers;
-  }, [audios, users, isFetchingAudios, isFetchingUsers]);
-
-  return (
-    <Page title={`Search everything | Audiochan`} removeSearchBar>
-      <Box>
-        <Heading>
-          Search {searchValues.q ? `results for ${searchValues.q}` : ""}
-        </Heading>
-        <Box>
-          <form onSubmit={handleSubmit}>
-            <FormControl id="q">
-              <TextInput
-                name="q"
-                value={formValues.q ?? ""}
-                onChange={handleChange}
-                placeholder="Search..."
-                size="lg"
-              />
-            </FormControl>
-            <Flex marginTop={4} justifyContent="flex-end">
-              <Button type="submit">Submit</Button>
-            </Flex>
-          </form>
-        </Box>
-        {!searchValues.q && (
-          <VStack align="center" paddingTop={20}>
-            <SearchIcon fontSize={100} />
-            <Text fontSize={20}>Search for audios, users, etc. here</Text>
-          </VStack>
-        )}
-        {audios && (
-          <React.Fragment>
-            {noResultsFound && <Text>No results found.</Text>}
-            {audios.length > 0 && (
-              <Box>
-                <Heading as="h2" size="lg">
-                  Audios
-                </Heading>
-                <AudioList audios={audios} />
-              </Box>
-            )}
-          </React.Fragment>
-        )}
-      </Box>
-    </Page>
-  );
+export default function AudioSearchNextPage(props: AudioSearchValues) {
+  return <AudioSearchPage {...props} />;
 }
