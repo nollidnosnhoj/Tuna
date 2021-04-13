@@ -14,6 +14,7 @@
         public class Username
         {
             public const string RequireCharacters = "requireCharacters";
+            public const string InvalidFormat = "invalidFormat";
         }
     }
 }

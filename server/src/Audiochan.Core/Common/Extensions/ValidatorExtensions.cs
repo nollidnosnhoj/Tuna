@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Audiochan.Core.Common.Constants;
@@ -66,7 +67,10 @@ namespace Audiochan.Core.Common.Extensions
                 .WithMessage("Username must be at most 20 characters long.")
                 .Must(username => username.All(x => identitySettings.UsernameAllowedCharacters.Contains(x)))
                 .WithErrorCode(ValidationErrorCodes.Username.RequireCharacters)
-                .WithMessage("Username is invalid.");
+                .WithMessage("Username is invalid.")
+                .Must(username => !username.All(char.IsDigit))
+                .WithErrorCode(ValidationErrorCodes.Username.InvalidFormat)
+                .WithMessage("Username cannot contain only numbers.");
         }
     }
 }
