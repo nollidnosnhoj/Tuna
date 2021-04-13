@@ -13,7 +13,6 @@ using Audiochan.Core.Common.Exceptions;
 using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Interfaces;
-using Audiochan.Infrastructure.Storage.Extensions;
 using Audiochan.Infrastructure.Storage.Options;
 using Microsoft.Extensions.Options;
 
@@ -27,7 +26,7 @@ namespace Audiochan.Infrastructure.Storage
         private readonly long _chunkThreshold;
         private readonly string _url;
 
-        public AmazonS3Service(IOptions<AmazonS3Options> amazonS3Options, IDateTimeProvider dateTimeProvider)
+        public AmazonS3Service(IOptions<AmazonS3Settings> amazonS3Options, IDateTimeProvider dateTimeProvider)
         {
             _dateTimeProvider = dateTimeProvider;
             _bucket = amazonS3Options.Value.Bucket;
@@ -197,6 +196,44 @@ namespace Audiochan.Infrastructure.Storage
         {
             var path = Path.Combine(container, blobName);
             return path.Replace(Path.DirectorySeparatorChar, '/');
+        }
+    }
+    
+    public static class AmazonS3Extensions
+    {
+        public static void AddMetadataCollection(this PutObjectRequest request, Dictionary<string, string> data = null)
+        {
+            if (data?.Count > 0)
+            {
+                foreach (var (key, value) in data)
+                {
+                    request.Metadata.Add(key, value);
+                }
+            }
+        }
+
+        public static void AddMetadataCollection(this TransferUtilityUploadRequest request,
+            Dictionary<string, string> data = null)
+        {
+            if (data?.Count > 0)
+            {
+                foreach (var (key, value) in data)
+                {
+                    request.Metadata.Add(key, value);
+                }
+            }
+        }
+
+        public static void AddMetadataCollection(this GetPreSignedUrlRequest request,
+            Dictionary<string, string> data = null)
+        {
+            if (data?.Count > 0)
+            {
+                foreach (var (key, value) in data)
+                {
+                    request.Metadata.Add(key, value);
+                }
+            }
         }
     }
 }

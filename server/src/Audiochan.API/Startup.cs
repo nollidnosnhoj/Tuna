@@ -28,7 +28,7 @@ namespace Audiochan.API
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<AmazonS3Options>(Configuration.GetSection(nameof(AmazonS3Options)));
+            services.Configure<AmazonS3Settings>(Configuration.GetSection(nameof(AmazonS3Settings)));
             services.Configure<MediaStorageSettings>(Configuration.GetSection(nameof(MediaStorageSettings)));
             services.Configure<JwtSettings>(Configuration.GetSection(nameof(JwtSettings)));
             services.Configure<IdentitySettings>(Configuration.GetSection(nameof(IdentitySettings)));
