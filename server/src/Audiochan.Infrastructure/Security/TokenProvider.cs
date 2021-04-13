@@ -86,20 +86,5 @@ namespace Audiochan.Infrastructure.Security
         {
             return EpochTime.GetIntDate(dateTime.ToUniversalTime());
         }
-
-        public bool IsRefreshTokenValid(RefreshToken existingToken)
-        {
-            if (existingToken.Revoked != null)
-            {
-                return false;
-            }
-
-            if (existingToken.Expiry <= _dateTimeProvider.Now)
-            {
-                return false;
-            }
-
-            return true;
-        }
     }
 }

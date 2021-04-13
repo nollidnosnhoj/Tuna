@@ -4,7 +4,7 @@
     {
         public int UsernameMinimumLength { get; init; } = 3;
         public int UsernameMaximumLength { get; init; } = 20;
-        public string UsernameAllowedCharacters { get; init; } = "abcdefghijklmnopqrstuvwxyz-_";
+        public string UsernameAllowedCharacters { get; init; } = "abcdefghijklmnopqrstuvwxyz0123456789-_";
         public bool PasswordRequiresUppercase { get; init; } = false;
         public bool PasswordRequiresLowercase { get; init; } = false;
         public bool PasswordRequiresNonAlphanumeric { get; init; } = false;

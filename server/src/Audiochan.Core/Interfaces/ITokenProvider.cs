@@ -9,6 +9,5 @@ namespace Audiochan.Core.Interfaces
         Task<(string, long)> GenerateAccessToken(User user);
         RefreshToken GenerateRefreshToken(string userId);
         long DateTimeToUnixEpoch(DateTime dateTime);
-        bool IsRefreshTokenValid(RefreshToken existingToken);
     }
 }

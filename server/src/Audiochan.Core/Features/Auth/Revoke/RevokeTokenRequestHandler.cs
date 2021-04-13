@@ -43,11 +43,10 @@ namespace Audiochan.Core.Features.Auth.Revoke
             var existingRefreshToken = user.RefreshTokens
                 .Single(r => r.Token == request.RefreshToken);
 
-            if (_tokenProvider.IsRefreshTokenValid(existingRefreshToken))
-            {
-                existingRefreshToken.Revoked = _dateTimeProvider.Now;
-                await _userManager.UpdateAsync(user);
-            }
+            if (existingRefreshToken != null)
+                user.RefreshTokens.Remove(existingRefreshToken);
+
+            await _userManager.UpdateAsync(user);
 
             return Result<bool>.Success(true);
         }
