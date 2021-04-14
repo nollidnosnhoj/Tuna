@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace Audiochan.API.Features.Upload.GetUploadAudioUrl
+namespace Audiochan.API.Features.Audios.GetUploadAudioUrl
 {
     public record GetUploadAudioUrlRequest : IRequest<GetUploadAudioUrlResponse>
     {

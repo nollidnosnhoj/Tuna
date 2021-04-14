@@ -8,7 +8,7 @@ using Audiochan.Core.Settings;
 using MediatR;
 using Microsoft.Extensions.Options;
 
-namespace Audiochan.API.Features.Upload.GetUploadAudioUrl
+namespace Audiochan.API.Features.Audios.GetUploadAudioUrl
 {
     public class GetUploadAudioUrlRequestHandler : IRequestHandler<GetUploadAudioUrlRequest, GetUploadAudioUrlResponse>
     {
