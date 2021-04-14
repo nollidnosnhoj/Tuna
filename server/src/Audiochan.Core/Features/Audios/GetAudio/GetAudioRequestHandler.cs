@@ -1,7 +1,11 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Extensions;
+using Audiochan.Core.Common.Extensions.MappingExtensions;
+using Audiochan.Core.Common.Extensions.QueryableExtensions;
 using Audiochan.Core.Common.Models.Responses;
+using Audiochan.Core.Common.Models.ViewModels;
 using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Interfaces;
 using MediatR;
@@ -28,7 +32,7 @@ namespace Audiochan.Core.Features.Audios.GetAudio
             var currentUserId = _currentUserService.GetUserId();
 
             return await _dbContext.Audios
-                .DefaultSingleQueryable(request.PrivateKey, currentUserId)
+                .BaseDetailQueryable(request.PrivateKey, currentUserId)
                 .Where(x => x.Id == request.Id)
                 .ProjectToDetail(_storageSettings)
                 .SingleOrDefaultAsync(cancellationToken);

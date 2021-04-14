@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Linq;
 using System.Linq.Expressions;
+using Audiochan.Core.Common.Models.ViewModels;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Followers.GetFollowers;
 using Audiochan.Core.Features.Followers.GetFollowings;
 
-namespace Audiochan.Core.Features.Followers
+namespace Audiochan.Core.Common.Extensions.MappingExtensions
 {
     public static class FollowerMappingExtensions
     {

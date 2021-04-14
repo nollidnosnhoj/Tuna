@@ -1,5 +1,6 @@
 ﻿using Audiochan.Core.Common.Models.Requests;
 using Audiochan.Core.Common.Models.Responses;
+using Audiochan.Core.Common.Models.ViewModels;
 using Audiochan.Core.Features.Audios.GetAudio;
 using MediatR;
 

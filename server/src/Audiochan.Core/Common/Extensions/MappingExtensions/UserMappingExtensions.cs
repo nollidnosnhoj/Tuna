@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Linq;
 using System.Linq.Expressions;
+using Audiochan.Core.Common.Models.ViewModels;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Users.GetCurrentUser;
 using Audiochan.Core.Features.Users.GetUser;
 
-namespace Audiochan.Core.Features.Users
+namespace Audiochan.Core.Common.Extensions.MappingExtensions
 {
     public static class UserMappingExtensions
     {

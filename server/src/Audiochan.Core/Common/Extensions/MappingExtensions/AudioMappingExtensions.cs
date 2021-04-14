@@ -2,14 +2,14 @@
 using System.Linq;
 using System.Linq.Expressions;
 using Audiochan.Core.Common.Enums;
-using Audiochan.Core.Common.Models;
 using Audiochan.Core.Common.Models.Responses;
+using Audiochan.Core.Common.Models.ViewModels;
 using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Features.Audios.GetAudioList;
 
-namespace Audiochan.Core.Features.Audios
+namespace Audiochan.Core.Common.Extensions.MappingExtensions
 {
     public static class AudioMappingExtensions
     {

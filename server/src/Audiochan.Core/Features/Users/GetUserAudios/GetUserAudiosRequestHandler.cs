@@ -2,7 +2,10 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Extensions;
+using Audiochan.Core.Common.Extensions.MappingExtensions;
+using Audiochan.Core.Common.Extensions.QueryableExtensions;
 using Audiochan.Core.Common.Models.Responses;
+using Audiochan.Core.Common.Models.ViewModels;
 using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Features.Audios;
 using Audiochan.Core.Features.Audios.GetAudioList;
@@ -31,7 +34,7 @@ namespace Audiochan.Core.Features.Users.GetUserAudios
         {
             var currentUserId = _currentUserService.GetUserId();
             return await _dbContext.Audios
-                .DefaultListQueryable(currentUserId)
+                .BaseListQueryable(currentUserId)
                 .Where(a => a.User.UserName == request.Username.ToLower())
                 .ProjectToList(_storageSettings)
                 .PaginateAsync(request, cancellationToken);

@@ -1,4 +1,4 @@
-﻿namespace Audiochan.Core.Features.Users.GetCurrentUser
+﻿namespace Audiochan.Core.Common.Models.ViewModels
 {
     public record CurrentUserViewModel
     {

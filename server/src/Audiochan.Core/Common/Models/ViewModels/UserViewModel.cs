@@ -1,4 +1,4 @@
-﻿namespace Audiochan.Core.Features.Users.GetUser
+﻿namespace Audiochan.Core.Common.Models.ViewModels
 {
     public record UserViewModel
     {

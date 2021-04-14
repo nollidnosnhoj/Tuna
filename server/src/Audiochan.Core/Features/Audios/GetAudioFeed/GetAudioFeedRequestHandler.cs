@@ -2,7 +2,10 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Extensions;
+using Audiochan.Core.Common.Extensions.MappingExtensions;
+using Audiochan.Core.Common.Extensions.QueryableExtensions;
 using Audiochan.Core.Common.Models.Responses;
+using Audiochan.Core.Common.Models.ViewModels;
 using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Features.Audios.GetAudioList;
 using Audiochan.Core.Interfaces;
@@ -33,7 +36,7 @@ namespace Audiochan.Core.Features.Audios.GetAudioFeed
                 .ToListAsync(cancellationToken);
 
             return await _dbContext.Audios
-                .DefaultListQueryable(request.UserId)
+                .BaseListQueryable(request.UserId)
                 .Where(a => followedIds.Contains(a.UserId))
                 .ProjectToList(_storageSettings)
                 .OrderByDescending(a => a.Uploaded)

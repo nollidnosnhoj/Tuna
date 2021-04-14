@@ -1,6 +1,6 @@
-﻿namespace Audiochan.Core.Features.Followers.GetFollowings
+﻿namespace Audiochan.Core.Common.Models.ViewModels
 {
-    public record FollowingViewModel
+    public record FollowerViewModel
     {
         public string Username { get; init; }
         public string Picture { get; init; }

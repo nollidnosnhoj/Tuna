@@ -2,7 +2,10 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Extensions;
+using Audiochan.Core.Common.Extensions.MappingExtensions;
+using Audiochan.Core.Common.Extensions.QueryableExtensions;
 using Audiochan.Core.Common.Models.Responses;
+using Audiochan.Core.Common.Models.ViewModels;
 using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Features.Audios;
 using Audiochan.Core.Features.Audios.GetAudioList;
@@ -33,10 +36,14 @@ namespace Audiochan.Infrastructure.Search
             CancellationToken cancellationToken = default)
         {
             var currentUserId = _currentUserService.GetUserId();
+            
+            var parsedTags = request.Tags.Split(',')
+                .Select(t => t.Trim().ToLower())
+                .ToArray();
 
             var queryable = _dbContext.Audios
-                .DefaultListQueryable(currentUserId)
-                .FilterByTags(request.Tags, ",");
+                .BaseListQueryable(currentUserId)
+                .FilterByTags(parsedTags);
 
             if (!string.IsNullOrWhiteSpace(request.Q))
                 queryable = queryable.Where(a => EF.Functions

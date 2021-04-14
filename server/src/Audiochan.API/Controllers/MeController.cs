@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Audiochan.API.Extensions;
 using Audiochan.API.Models;
 using Audiochan.Core.Common.Models.Responses;
+using Audiochan.Core.Common.Models.ViewModels;
 using Audiochan.Core.Features.Audios.GetAudioFeed;
 using Audiochan.Core.Features.Audios.GetAudioList;
 using Audiochan.Core.Features.Followers.CheckIfFollowing;

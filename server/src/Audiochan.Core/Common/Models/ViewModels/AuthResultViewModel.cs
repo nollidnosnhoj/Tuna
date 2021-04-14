@@ -1,4 +1,4 @@
-﻿namespace Audiochan.Core.Features.Auth.Login
+﻿namespace Audiochan.Core.Common.Models.ViewModels
 {
     public record AuthResultViewModel
     {
