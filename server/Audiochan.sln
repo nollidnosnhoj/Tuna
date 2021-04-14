@@ -13,9 +13,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{1E1DB829-84B
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{6320CE6D-E22C-46E3-ACA4-32207BEDEC13}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Audiochan.Core.UnitTests", "tests\Audiochan.Core.UnitTests\Audiochan.Core.UnitTests.csproj", "{014554AE-524E-43D5-85C6-33A3C3626B4E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Audiochan.UnitTests", "tests\Audiochan.UnitTests\Audiochan.UnitTests.csproj", "{014554AE-524E-43D5-85C6-33A3C3626B4E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Audiochan.Core.IntegrationTests", "tests\Audiochan.Core.IntegrationTests\Audiochan.Core.IntegrationTests.csproj", "{16F30741-9497-4B7D-8DC3-DEE93B35B970}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Audiochan.IntegrationTests", "tests\Audiochan.IntegrationTests\Audiochan.IntegrationTests.csproj", "{16F30741-9497-4B7D-8DC3-DEE93B35B970}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
