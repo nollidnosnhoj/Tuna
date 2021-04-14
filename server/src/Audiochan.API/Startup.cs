@@ -1,12 +1,16 @@
+using System.Reflection;
 using System.Text.Json;
 using Audiochan.API.Configurations;
 using Audiochan.API.Middlewares;
 using Audiochan.API.Services;
 using Audiochan.Core;
 using Audiochan.Core.Interfaces;
+using Audiochan.Core.Pipelines;
 using Audiochan.Core.Settings;
 using Audiochan.Infrastructure;
 using Audiochan.Infrastructure.Storage.Options;
+using FluentValidation;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -43,7 +47,8 @@ namespace Audiochan.API
 
             services
                 .AddMemoryCache()
-                .AddCoreServices(jsonSerializerOptions)
+                .AddMediatR(Assembly.GetExecutingAssembly())
+                .AddScoped(typeof(IPipelineBehavior<,>), typeof(DbContextTransactionPipelineBehavior<,>))
                 .AddInfraServices(Configuration, Environment.IsDevelopment())
                 .Configure<JsonSerializerOptions>(options =>
                 {
