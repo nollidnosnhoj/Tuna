@@ -51,7 +51,7 @@ namespace Audiochan.API.Features.Users.UpdatePicture
                     user.UpdatePicture(string.Empty);
                 }
 
-                var image = await _imageService.UploadImage(request.ImageData, container, blobName, cancellationToken);
+                var image = await _imageService.UploadImage(request.Data, container, blobName, cancellationToken);
                 user.UpdatePicture(image.Path);
                 await _userManager.UpdateAsync(user);
                 return Result<string>.Success(image.Url);

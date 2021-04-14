@@ -216,13 +216,11 @@ namespace Audiochan.API.Controllers
             OperationId = "AddUserPicture",
             Tags = new[] {"me"}
         )]
-        public async Task<IActionResult> AddPicture([FromBody] AddPictureRequest request,
+        public async Task<IActionResult> AddPicture([FromBody] UpdateUserPictureRequest request,
             CancellationToken cancellationToken)
         {
-            if (string.IsNullOrWhiteSpace(request.Data))
-                return BadRequest();
-            var result = await _mediator.Send(new UpdateUserPictureRequest(_currentUserId, request.Data),
-                cancellationToken);
+            request.UserId = _currentUserId;
+            var result = await _mediator.Send(request, cancellationToken);
             return result.IsSuccess
                 ? Ok(new {Image = result.Data})
                 : result.ReturnErrorResponse();

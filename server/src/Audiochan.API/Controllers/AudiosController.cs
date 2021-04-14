@@ -9,6 +9,7 @@ using Audiochan.API.Features.Audios.RemoveAudio;
 using Audiochan.API.Features.Audios.UpdateAudio;
 using Audiochan.API.Features.Audios.UpdatePicture;
 using Audiochan.API.Models;
+using Audiochan.Core.Interfaces;
 using Audiochan.Core.Models.Responses;
 using Audiochan.Core.Models.ViewModels;
 using MediatR;
@@ -82,7 +83,7 @@ namespace Audiochan.API.Controllers
                 : result.ReturnErrorResponse();
         }
 
-        [HttpPut("{audioId}", Name = "UpdateAudio")]
+        [HttpPut("{audioId:long}", Name = "UpdateAudio")]
         [ProducesResponseType(typeof(AudioDetailViewModel), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -97,11 +98,12 @@ namespace Audiochan.API.Controllers
             [FromBody] UpdateAudioRequest request,
             CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(request with {Id = audioId}, cancellationToken);
+            request.AudioId = audioId;
+            var result = await _mediator.Send(request, cancellationToken);
             return result.IsSuccess ? Ok(result.Data) : result.ReturnErrorResponse();
         }
 
-        [HttpDelete("{audioId}", Name = "DeleteAudio")]
+        [HttpDelete("{audioId:long}", Name = "DeleteAudio")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -117,19 +119,18 @@ namespace Audiochan.API.Controllers
             return result.IsSuccess ? NoContent() : result.ReturnErrorResponse();
         }
 
-        [HttpPatch("{audioId}/picture")]
+        [HttpPatch("{audioId:long}/picture")]
         [SwaggerOperation(
             Summary = "Add Picture.",
             Description = "Requires authentication.",
             OperationId = "AddAudioPicture",
             Tags = new[] {"audios"})]
         public async Task<IActionResult> AddPicture(long audioId, 
-            [FromBody] AddPictureRequest request,
+            [FromBody] UpdateAudioPictureRequest request,
             CancellationToken cancellationToken)
         {
-            if (string.IsNullOrWhiteSpace(request.Data))
-                return BadRequest();
-            var result = await _mediator.Send(new UpdateAudioPictureRequest(audioId, request.Data), cancellationToken);
+            request.AudioId = audioId;
+            var result = await _mediator.Send(request, cancellationToken);
             return result.IsSuccess
                 ? Ok(new {Image = result.Data})
                 : result.ReturnErrorResponse();

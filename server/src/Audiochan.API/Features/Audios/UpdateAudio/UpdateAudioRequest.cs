@@ -6,8 +6,8 @@ using MediatR;
 
 namespace Audiochan.API.Features.Audios.UpdateAudio
 {
-    public record UpdateAudioRequest : AudioAbstractRequest, IRequest<IResult<AudioDetailViewModel>>
+    public class UpdateAudioRequest : AudioAbstractRequest, IRequest<IResult<AudioDetailViewModel>>
     {
-        [JsonIgnore] public long Id { get; init; }
+        [JsonIgnore] public long AudioId { get; set; }
     }
 }

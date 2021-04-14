@@ -2,7 +2,7 @@
 
 namespace Audiochan.Core.Models.Requests
 {
-    public abstract record AudioAbstractRequest
+    public abstract class AudioAbstractRequest
     {
         public string Title { get; init; }
         public string Description { get; init; }

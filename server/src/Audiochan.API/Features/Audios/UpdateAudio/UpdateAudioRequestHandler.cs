@@ -45,7 +45,7 @@ namespace Audiochan.API.Features.Audios.UpdateAudio
             var audio = await _dbContext.Audios
                 .Include(a => a.User)
                 .Include(a => a.Tags)
-                .SingleOrDefaultAsync(a => a.Id == request.Id, cancellationToken);
+                .SingleOrDefaultAsync(a => a.Id == request.AudioId, cancellationToken);
 
             if (audio == null)
                 return Result<AudioDetailViewModel>.Fail(ResultError.NotFound);

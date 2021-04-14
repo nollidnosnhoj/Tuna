@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Audiochan.API.Features.Audios.CreateAudio
 {
-    public record CreateAudioRequest : AudioAbstractRequest, IRequest<Result<AudioDetailViewModel>>
+    public class CreateAudioRequest : AudioAbstractRequest, IRequest<Result<AudioDetailViewModel>>
     {
         public string UploadId { get; init; }
         public string FileName { get; init; }

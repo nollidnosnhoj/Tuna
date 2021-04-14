@@ -37,7 +37,7 @@ namespace Audiochan.IntegrationTests.Features.Audios
 
             var command = new UpdateAudioRequest
             {
-                Id = audio.Id,
+                AudioId = audio.Id,
                 Title = "New Audio Title PogChamp"
             };
 
@@ -64,7 +64,7 @@ namespace Audiochan.IntegrationTests.Features.Audios
             // Act
             var command = new UpdateAudioRequest
             {
-                Id = audio.Id,
+                AudioId = audio.Id,
                 Title = "This is a new Title",
                 Description = "This is a test description",
                 Tags = new List<string> {"apples", "oranges", "caramel"},

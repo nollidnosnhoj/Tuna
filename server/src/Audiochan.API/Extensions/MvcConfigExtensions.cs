@@ -5,9 +5,9 @@ using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Audiochan.API.Configurations
+namespace Audiochan.API.Extensions
 {
-    public static class ControllersConfiguration
+    public static class MvcConfigExtensions
     {
         public static IServiceCollection ConfigureControllers(this IServiceCollection services, JsonSerializerOptions jsonSerializerOptions)
         {
@@ -26,6 +26,13 @@ namespace Audiochan.API.Configurations
                     configuration.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
                 })
                 .AddFluentValidation(cfg => cfg.RegisterValidatorsFromAssemblyContaining<Startup>());
+
+            return services;
+        }
+        
+        public static IServiceCollection ConfigureRouting(this IServiceCollection services)
+        {
+            services.AddRouting(options => options.LowercaseUrls = true);
 
             return services;
         }

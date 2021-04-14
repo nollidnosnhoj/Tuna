@@ -54,7 +54,7 @@ namespace Audiochan.API.Features.Audios.UpdatePicture
                     return Result<string>.Fail(ResultError.Unauthorized);
 
                 var audio = await _dbContext.Audios
-                    .SingleOrDefaultAsync(a => a.Id == request.Id, cancellationToken);
+                    .SingleOrDefaultAsync(a => a.Id == request.AudioId, cancellationToken);
 
                 if (audio == null) return Result<string>.Fail(ResultError.NotFound);
                 if (!audio.CanModify(currentUserId)) return Result<string>.Fail(ResultError.Forbidden);
@@ -65,7 +65,7 @@ namespace Audiochan.API.Features.Audios.UpdatePicture
                     audio.UpdatePicture(string.Empty);
                 }
 
-                var image = await _imageService.UploadImage(request.ImageData, container, blobName, cancellationToken);
+                var image = await _imageService.UploadImage(request.Data, container, blobName, cancellationToken);
                 audio.UpdatePicture(image.Path);
                 await _dbContext.SaveChangesAsync(cancellationToken);
                 return Result<string>.Success(image.Url);

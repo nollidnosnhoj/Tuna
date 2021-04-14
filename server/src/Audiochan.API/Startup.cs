@@ -1,6 +1,6 @@
 using System.Reflection;
 using System.Text.Json;
-using Audiochan.API.Configurations;
+using Audiochan.API.Extensions;
 using Audiochan.API.Middlewares;
 using Audiochan.API.Services;
 using Audiochan.Core;
@@ -65,7 +65,7 @@ namespace Audiochan.API
                 .ConfigureRouting()
                 .ConfigureRateLimiting(Configuration)
                 .ConfigureCors()
-                .ConfigureSwagger(Configuration);
+                .ConfigureSwagger();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
