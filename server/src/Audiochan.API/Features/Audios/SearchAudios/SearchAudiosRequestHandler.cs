@@ -6,7 +6,7 @@ using Audiochan.Core.Models.Responses;
 using Audiochan.Core.Models.ViewModels;
 using MediatR;
 
-namespace Audiochan.API.Features.Search.SearchAudios
+namespace Audiochan.API.Features.Audios.SearchAudios
 {
     public class SearchAudiosRequestHandler : IRequestHandler<SearchAudiosRequest, PagedList<AudioViewModel>>
     {

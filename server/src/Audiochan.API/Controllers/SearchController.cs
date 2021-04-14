@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.API.Features.Search.SearchAudios;
+using Audiochan.API.Features.Audios.SearchAudios;
 using Audiochan.Core.Models.Responses;
 using Audiochan.Core.Models.ViewModels;
 using MediatR;
