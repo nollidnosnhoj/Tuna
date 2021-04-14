@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
-using Audiochan.Core.Common.Helpers;
 using Audiochan.Core.Entities;
+using Audiochan.Core.Helpers;
 using FluentAssertions;
 using Xunit;
 

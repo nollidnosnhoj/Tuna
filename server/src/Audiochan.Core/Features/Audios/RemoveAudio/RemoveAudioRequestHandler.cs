@@ -2,12 +2,12 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Enums;
-using Audiochan.Core.Common.Helpers;
-using Audiochan.Core.Common.Models.Interfaces;
-using Audiochan.Core.Common.Models.Responses;
-using Audiochan.Core.Common.Settings;
+using Audiochan.Core.Enums;
+using Audiochan.Core.Helpers;
 using Audiochan.Core.Interfaces;
+using Audiochan.Core.Models.Interfaces;
+using Audiochan.Core.Models.Responses;
+using Audiochan.Core.Settings;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;

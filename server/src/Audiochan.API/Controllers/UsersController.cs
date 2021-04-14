@@ -2,15 +2,13 @@
 using System.Threading.Tasks;
 using Audiochan.API.Extensions;
 using Audiochan.API.Models;
-using Audiochan.Core.Common.Models;
-using Audiochan.Core.Common.Models.Requests;
-using Audiochan.Core.Common.Models.Responses;
-using Audiochan.Core.Common.Models.ViewModels;
 using Audiochan.Core.Features.Audios.GetAudioList;
 using Audiochan.Core.Features.Followers.GetFollowers;
 using Audiochan.Core.Features.Followers.GetFollowings;
 using Audiochan.Core.Features.Users.GetUser;
 using Audiochan.Core.Features.Users.GetUserAudios;
+using Audiochan.Core.Models.Responses;
+using Audiochan.Core.Models.ViewModels;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

@@ -2,8 +2,8 @@
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Interfaces;
+using Audiochan.Core.Models.Responses;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 

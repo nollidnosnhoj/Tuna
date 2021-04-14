@@ -1,7 +1,6 @@
 ﻿using Audiochan.API.Models;
-using Audiochan.Core.Common.Enums;
-using Audiochan.Core.Common.Models.Interfaces;
-using Audiochan.Core.Common.Models.Responses;
+using Audiochan.Core.Enums;
+using Audiochan.Core.Models.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 

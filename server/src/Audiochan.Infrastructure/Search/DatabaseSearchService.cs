@@ -1,12 +1,9 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Extensions;
-using Audiochan.Core.Common.Extensions.MappingExtensions;
-using Audiochan.Core.Common.Extensions.QueryableExtensions;
-using Audiochan.Core.Common.Models.Responses;
-using Audiochan.Core.Common.Models.ViewModels;
-using Audiochan.Core.Common.Settings;
+using Audiochan.Core.Extensions;
+using Audiochan.Core.Extensions.MappingExtensions;
+using Audiochan.Core.Extensions.QueryableExtensions;
 using Audiochan.Core.Features.Audios;
 using Audiochan.Core.Features.Audios.GetAudioList;
 using Audiochan.Core.Features.Search.SearchAudios;
@@ -14,6 +11,9 @@ using Audiochan.Core.Features.Search.SearchUsers;
 using Audiochan.Core.Features.Users;
 using Audiochan.Core.Features.Users.GetUser;
 using Audiochan.Core.Interfaces;
+using Audiochan.Core.Models.Responses;
+using Audiochan.Core.Models.ViewModels;
+using Audiochan.Core.Settings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 

@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Audiochan.Core.Common.Enums;
-using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Entities.Base;
+using Audiochan.Core.Enums;
+using Audiochan.Core.Extensions;
 
 namespace Audiochan.Core.Entities
 {

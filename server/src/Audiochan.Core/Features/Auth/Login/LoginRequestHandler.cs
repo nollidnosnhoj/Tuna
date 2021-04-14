@@ -1,11 +1,11 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Enums;
-using Audiochan.Core.Common.Models.Interfaces;
-using Audiochan.Core.Common.Models.Responses;
-using Audiochan.Core.Common.Models.ViewModels;
 using Audiochan.Core.Entities;
+using Audiochan.Core.Enums;
 using Audiochan.Core.Interfaces;
+using Audiochan.Core.Models.Interfaces;
+using Audiochan.Core.Models.Responses;
+using Audiochan.Core.Models.ViewModels;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

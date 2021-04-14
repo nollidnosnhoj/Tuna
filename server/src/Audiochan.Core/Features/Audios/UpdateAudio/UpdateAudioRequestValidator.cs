@@ -1,4 +1,4 @@
-﻿using Audiochan.Core.Common.Validators;
+﻿using Audiochan.Core.Validators;
 using FluentValidation;
 
 namespace Audiochan.Core.Features.Audios.UpdateAudio

@@ -2,7 +2,7 @@
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Models.Responses;
+using Audiochan.Core.Models.Responses;
 
 namespace Audiochan.Core.Interfaces
 {

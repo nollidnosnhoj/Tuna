@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Enums;
-using Audiochan.Core.Common.Helpers;
+using Audiochan.Core.Enums;
 using Audiochan.Core.Features.Audios.CreateAudio;
+using Audiochan.Core.Helpers;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Xunit;

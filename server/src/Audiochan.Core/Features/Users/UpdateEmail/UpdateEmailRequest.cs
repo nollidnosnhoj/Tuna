@@ -1,6 +1,5 @@
 ﻿using System.Text.Json.Serialization;
-using Audiochan.Core.Common.Models.Interfaces;
-using Audiochan.Core.Common.Models.Responses;
+using Audiochan.Core.Models.Interfaces;
 using MediatR;
 
 namespace Audiochan.Core.Features.Users.UpdateEmail

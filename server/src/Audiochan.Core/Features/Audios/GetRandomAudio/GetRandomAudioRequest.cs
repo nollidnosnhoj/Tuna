@@ -1,6 +1,4 @@
-﻿using Audiochan.Core.Common.Models.Responses;
-using Audiochan.Core.Common.Models.ViewModels;
-using Audiochan.Core.Features.Audios.GetAudio;
+﻿using Audiochan.Core.Models.ViewModels;
 using MediatR;
 
 namespace Audiochan.Core.Features.Audios.GetRandomAudio

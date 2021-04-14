@@ -1,7 +1,5 @@
-﻿using Audiochan.Core.Common.Models.Interfaces;
-using Audiochan.Core.Common.Models.Responses;
-using Audiochan.Core.Common.Models.ViewModels;
-using Audiochan.Core.Features.Auth.Login;
+﻿using Audiochan.Core.Models.Interfaces;
+using Audiochan.Core.Models.ViewModels;
 using MediatR;
 
 namespace Audiochan.Core.Features.Auth.Refresh

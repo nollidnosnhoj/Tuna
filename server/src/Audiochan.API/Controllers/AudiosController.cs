@@ -2,8 +2,6 @@
 using System.Threading.Tasks;
 using Audiochan.API.Extensions;
 using Audiochan.API.Models;
-using Audiochan.Core.Common.Models.Responses;
-using Audiochan.Core.Common.Models.ViewModels;
 using Audiochan.Core.Features.Audios.CreateAudio;
 using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Features.Audios.GetAudioList;
@@ -11,6 +9,8 @@ using Audiochan.Core.Features.Audios.GetRandomAudio;
 using Audiochan.Core.Features.Audios.RemoveAudio;
 using Audiochan.Core.Features.Audios.UpdateAudio;
 using Audiochan.Core.Features.Audios.UpdatePicture;
+using Audiochan.Core.Models.Responses;
+using Audiochan.Core.Models.ViewModels;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;

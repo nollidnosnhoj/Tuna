@@ -1,9 +1,7 @@
 ﻿using System.Text.Json.Serialization;
-using Audiochan.Core.Common.Models.Interfaces;
-using Audiochan.Core.Common.Models.Requests;
-using Audiochan.Core.Common.Models.Responses;
-using Audiochan.Core.Common.Models.ViewModels;
-using Audiochan.Core.Features.Audios.GetAudio;
+using Audiochan.Core.Models.Interfaces;
+using Audiochan.Core.Models.Requests;
+using Audiochan.Core.Models.ViewModels;
 using MediatR;
 
 namespace Audiochan.Core.Features.Audios.UpdateAudio

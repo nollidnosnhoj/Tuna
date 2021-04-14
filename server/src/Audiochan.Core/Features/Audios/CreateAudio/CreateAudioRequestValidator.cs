@@ -1,9 +1,7 @@
-﻿using System.IO;
-using Audiochan.Core.Common.Extensions;
-using Audiochan.Core.Common.Settings;
-using Audiochan.Core.Common.Validators;
+﻿using Audiochan.Core.Extensions;
+using Audiochan.Core.Settings;
+using Audiochan.Core.Validators;
 using FluentValidation;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Audios.CreateAudio

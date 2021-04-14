@@ -2,8 +2,6 @@
 using System.Threading.Tasks;
 using Audiochan.API.Extensions;
 using Audiochan.API.Models;
-using Audiochan.Core.Common.Models.Responses;
-using Audiochan.Core.Common.Models.ViewModels;
 using Audiochan.Core.Features.Audios.GetAudioFeed;
 using Audiochan.Core.Features.Audios.GetAudioList;
 using Audiochan.Core.Features.Followers.CheckIfFollowing;
@@ -15,6 +13,8 @@ using Audiochan.Core.Features.Users.UpdatePicture;
 using Audiochan.Core.Features.Users.UpdateUser;
 using Audiochan.Core.Features.Users.UpdateUsername;
 using Audiochan.Core.Interfaces;
+using Audiochan.Core.Models.Responses;
+using Audiochan.Core.Models.ViewModels;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
