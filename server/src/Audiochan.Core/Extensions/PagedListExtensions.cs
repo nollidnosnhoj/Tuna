@@ -10,7 +10,7 @@ namespace Audiochan.Core.Extensions
 {
     public static class PagedListExtensions
     {
-        const int DefaultPageNumber = 1;
+        private const int DefaultPageNumber = 1;
         private const int DefaultPageSize = 30;
         
         public static async Task<PagedList<TResponse>> PaginateAsync<TResponse>(

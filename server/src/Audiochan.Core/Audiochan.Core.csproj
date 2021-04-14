@@ -14,4 +14,25 @@
     <PackageReference Include="System.Text.Json" Version="5.0.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Features\Auth\Login" />
+    <Folder Include="Features\Auth\Refresh" />
+    <Folder Include="Features\Auth\Register" />
+    <Folder Include="Features\Auth\Revoke" />
+    <Folder Include="Features\Followers\CheckIfFollowing" />
+    <Folder Include="Features\Followers\GetFollowers" />
+    <Folder Include="Features\Followers\GetFollowings" />
+    <Folder Include="Features\Followers\SetFollow" />
+    <Folder Include="Features\Search\SearchAudios" />
+    <Folder Include="Features\Upload\GetUploadAudioUrl" />
+    <Folder Include="Features\Users\GetCurrentUser" />
+    <Folder Include="Features\Users\GetUser" />
+    <Folder Include="Features\Users\GetUserAudios" />
+    <Folder Include="Features\Users\UpdateEmail" />
+    <Folder Include="Features\Users\UpdatePassword" />
+    <Folder Include="Features\Users\UpdatePicture" />
+    <Folder Include="Features\Users\UpdateUser" />
+    <Folder Include="Features\Users\UpdateUsername" />
+  </ItemGroup>
+
 </Project>

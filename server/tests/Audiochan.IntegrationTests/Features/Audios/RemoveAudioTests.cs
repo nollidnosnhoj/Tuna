@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Audiochan.API.Features.Audios.RemoveAudio;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Enums;
-using Audiochan.Core.Features.Audios.RemoveAudio;
 using Audiochan.UnitTests.Builders;
 using FluentAssertions;
 using Xunit;
