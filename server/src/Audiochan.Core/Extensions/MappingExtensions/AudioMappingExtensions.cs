@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Linq.Expressions;
 using Audiochan.Core.Entities;
+using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Enums;
 using Audiochan.Core.Models.Responses;
 using Audiochan.Core.Models.ViewModels;

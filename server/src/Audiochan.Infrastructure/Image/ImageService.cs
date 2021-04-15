@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Audiochan.Core.Interfaces;
 using Audiochan.Core.Models.Responses;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 
 namespace Audiochan.Infrastructure.Image
@@ -21,20 +22,11 @@ namespace Audiochan.Infrastructure.Image
         public async Task<SaveBlobResponse> UploadImage(string data, string container, string blobName,
             CancellationToken cancellationToken = default)
         {
-            // Parse the base64 data
-            if (data.Contains("base64"))
-                data = data.Split("base64")[1].Trim(',');
+            var bytes = FromBase64StringToBytes(data);
 
-            var bytes = Convert.FromBase64String(data);
-
-            // Resize the image to 500 x 500.
             using var imageContext = SixLabors.ImageSharp.Image.Load(bytes);
-            var resizedImage = imageContext.Clone(x => x.Resize(500, 500));
-
-            // Save the image context to JPEG
-            var imageStream = new MemoryStream();
-            await resizedImage.SaveAsJpegAsync(imageStream, cancellationToken);
-            imageStream.Seek(0, SeekOrigin.Begin);
+            var resizedImage = ModifyImage(imageContext);
+            var imageStream = await SaveImageAsJpeg(resizedImage, cancellationToken);
 
             return await _storageService.SaveAsync(
                 stream: imageStream,
@@ -42,6 +34,32 @@ namespace Audiochan.Infrastructure.Image
                 blobName: blobName,
                 metadata: null,
                 cancellationToken: cancellationToken);
+        }
+
+        private static async Task<MemoryStream> SaveImageAsJpeg(SixLabors.ImageSharp.Image imageContext, CancellationToken cancellationToken)
+        {
+            // Save the image context to JPEG
+            var imageStream = new MemoryStream();
+            await imageContext.SaveAsJpegAsync(imageStream, cancellationToken);
+            imageStream.Seek(0, SeekOrigin.Begin);
+            return imageStream;
+        }
+
+        private static Image<Rgba32> ModifyImage(Image<Rgba32> imageContext)
+        {
+            // Resize to 500x500
+            var resizedImage = imageContext.Clone(x => x.Resize(500, 500));
+            return resizedImage;
+        }
+
+        private static byte[] FromBase64StringToBytes(string data)
+        {
+            // Parse the base64 data
+            if (data.Contains("base64"))
+                data = data.Split("base64")[1].Trim(',');
+
+            var bytes = Convert.FromBase64String(data);
+            return bytes;
         }
     }
 }

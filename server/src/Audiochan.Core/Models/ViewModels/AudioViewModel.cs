@@ -1,4 +1,5 @@
 ﻿using System;
+using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Enums;
 using Audiochan.Core.Models.Interfaces;
 using Audiochan.Core.Models.Responses;

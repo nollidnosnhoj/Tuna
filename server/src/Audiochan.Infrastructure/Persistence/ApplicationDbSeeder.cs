@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Audiochan.Core.Constants;
 using Audiochan.Core.Entities;
+using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Enums;
 using Audiochan.Core.Interfaces;
 using Microsoft.AspNetCore.Identity;

@@ -16,7 +16,7 @@ namespace Audiochan.API.Filters
             {
                 var errors = context.ModelState
                     .Where(x => x.Value.Errors.Count > 0)
-                    .ToDictionary(kvp => kvp.Key, kvp =>
+                    .ToDictionary(kvp => kvp.Key.ToLower(), kvp =>
                         kvp.Value.Errors.Select(x => x.ErrorMessage).ToArray());
                 var result = Result<bool>.Fail(ResultError.UnprocessedEntity, string.Empty, errors);
                 context.Result = result.ReturnErrorResponse();

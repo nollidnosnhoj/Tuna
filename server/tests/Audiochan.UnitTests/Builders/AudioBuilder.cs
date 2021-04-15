@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Audiochan.Core.Entities;
+using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Enums;
 using Audiochan.Core.Helpers;
 using Bogus;

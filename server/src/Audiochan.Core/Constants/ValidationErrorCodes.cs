@@ -1,8 +1,8 @@
 ﻿namespace Audiochan.Core.Constants
 {
-    public class ValidationErrorCodes
+    public static class ValidationErrorCodes
     {
-        public class Password
+        public static class Password
         {
             public const string RequireDigits = "requireDigits";
             public const string RequireLowercase = "requireLowercase";
@@ -11,7 +11,7 @@
             public const string RequireLength = "requireLength";
         }
 
-        public class Username
+        public static class Username
         {
             public const string RequireCharacters = "requireCharacters";
             public const string InvalidFormat = "invalidFormat";

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Audiochan.API.Features.Audios.CreateAudio;
 using Audiochan.API.Features.Audios.GetAudio;
+using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Enums;
 using Audiochan.Core.Helpers;
 using Audiochan.Core.Models.ViewModels;

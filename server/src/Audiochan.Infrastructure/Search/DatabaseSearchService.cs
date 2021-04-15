@@ -37,7 +37,7 @@ namespace Audiochan.Infrastructure.Search
 
             if (filteredTags.Length > 0)
             {
-                queryable = queryable.FilterByTags(filteredTags);
+                queryable = queryable.Where(a => a.Tags.Any(t => filteredTags.Contains(t.Name)));
             }
 
             if (!string.IsNullOrWhiteSpace(searchTerm))

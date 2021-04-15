@@ -1,4 +1,4 @@
-﻿namespace Audiochan.Core.Enums
+﻿namespace Audiochan.Core.Entities.Enums
 {
     public enum Visibility
     {
