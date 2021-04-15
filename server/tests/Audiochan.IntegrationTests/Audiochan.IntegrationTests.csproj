@@ -24,7 +24,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\src\Audiochan.API\Audiochan.API.csproj" />
+      <ProjectReference Include="..\..\src\Audiochan\Audiochan.csproj" />
       <ProjectReference Include="..\Audiochan.UnitTests\Audiochan.UnitTests.csproj" />
     </ItemGroup>
 

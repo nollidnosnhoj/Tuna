@@ -1,0 +1,94 @@
+﻿using System.Threading;
+using System.Threading.Tasks;
+using Audiochan.Extensions;
+using Audiochan.Core.Models.Responses;
+using Audiochan.Core.Models.ViewModels;
+using Audiochan.Features.Followers.GetFollowers;
+using Audiochan.Features.Followers.GetFollowings;
+using Audiochan.Features.Users.GetUser;
+using Audiochan.Features.Users.GetUserAudios;
+using Audiochan.Models;
+using MediatR;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
+
+namespace Audiochan.Controllers
+{
+    [Route("api/[controller]")]
+    public class UsersController : ControllerBase
+    {
+        private readonly IMediator _mediator;
+
+        public UsersController(IMediator mediator)
+        {
+            _mediator = mediator;
+        }
+
+        [HttpGet("{username}", Name = "GetProfile")]
+        [ProducesResponseType(typeof(UserViewModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [SwaggerOperation(Summary = "Return user's profile.", OperationId = "GetProfile", Tags = new[] {"users"})]
+        public async Task<IActionResult> GetUser(string username, CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(new GetUserRequest(username), cancellationToken);
+
+            return result != null
+                ? Ok(result)
+                : NotFound(ErrorViewModel.NotFound("User was not found."));
+        }
+
+        [HttpGet("{username}/audios", Name = "GetUserAudios")]
+        [ProducesResponseType(typeof(PagedList<AudioViewModel>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
+        [SwaggerOperation(Summary = "Return a list of the user's audios.", OperationId = "GetUserAudios",
+            Tags = new[] {"users"})]
+        public async Task<IActionResult> GetUserAudios(string username, 
+            [FromQuery] PaginationQueryParams paginationQuery, 
+            CancellationToken cancellationToken)
+        {
+            var query = new GetUserAudiosRequest
+            {
+                Username = username,
+                Page = paginationQuery.Page,
+                Size = paginationQuery.Size
+            };
+
+            var list = await _mediator.Send(query, cancellationToken);
+
+            return Ok(list);
+        }
+
+        [HttpGet("{username}/followers", Name = "GetUserFollowers")]
+        [ProducesResponseType(typeof(PagedList<MetaAuthorDto>), StatusCodes.Status200OK)]
+        [SwaggerOperation(Summary = "Return a list of the user's followers.", OperationId = "GetUserFollowers",
+            Tags = new[] {"users"})]
+        public async Task<IActionResult> GetFollowers(string username,
+            [FromQuery] PaginationQueryParams query,
+            CancellationToken cancellationToken)
+        {
+            return Ok(await _mediator.Send(new GetUserFollowersRequest
+            {
+                Username = username,
+                Page = query.Page,
+                Size = query.Size
+            }, cancellationToken));
+        }
+
+        [HttpGet("{username}/followings", Name = "GetUserFollowings")]
+        [ProducesResponseType(typeof(PagedList<MetaAuthorDto>), StatusCodes.Status200OK)]
+        [SwaggerOperation(Summary = "Return a list of the user's followings.", OperationId = "GetUserFollowings",
+            Tags = new[] {"users"})]
+        public async Task<IActionResult> GetFollowings(string username,
+            [FromQuery] PaginationQueryParams query,
+            CancellationToken cancellationToken)
+        {
+            return Ok(await _mediator.Send(new GetUserFollowingsRequest
+            {
+                Username = username,
+                Page = query.Page,
+                Size = query.Size
+            }, cancellationToken));
+        }
+    }
+}

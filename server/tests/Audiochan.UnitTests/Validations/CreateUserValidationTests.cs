@@ -1,4 +1,4 @@
-﻿using Audiochan.API.Features.Auth.Register;
+﻿using Audiochan.Features.Auth.Register;
 using Audiochan.Core.Constants;
 using Audiochan.Core.Settings;
 using FluentValidation;
