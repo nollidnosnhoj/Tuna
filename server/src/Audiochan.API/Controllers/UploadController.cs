@@ -9,7 +9,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace Audiochan.API.Controllers
 {
     [Authorize]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     [ApiExplorerSettings(IgnoreApi = true)]
     public class UploadController : ControllerBase
     {

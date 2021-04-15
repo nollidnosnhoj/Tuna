@@ -15,7 +15,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace Audiochan.API.Controllers
 {
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class UsersController : ControllerBase
     {
         private readonly IMediator _mediator;

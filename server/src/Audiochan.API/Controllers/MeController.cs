@@ -23,7 +23,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace Audiochan.API.Controllers
 {
     [Authorize]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public class MeController : ControllerBase
     {

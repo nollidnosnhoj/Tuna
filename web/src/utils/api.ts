@@ -7,7 +7,7 @@ import { isAxiosError } from './axios';
 import { getAccessToken } from './cookies';
 import { PagedList } from '~/lib/types';
 
-const backendApiClient = axios.create({
+const backendServerAxios = axios.create({
   baseURL: config.BACKEND_API,
   withCredentials: true
 });
@@ -16,17 +16,17 @@ export function getBearer(token: string) {
   return token ? `Bearer ${token}` : ''
 }
 
-createAuthRefreshInterceptor(backendApiClient, async (failedRequest) => {
+createAuthRefreshInterceptor(backendServerAxios, async (failedRequest) => {
   return refreshAccessToken().then((data) => {
     if (failedRequest && isAxiosError(failedRequest) && failedRequest.response) {
       failedRequest.response.config.headers['Authorization'] = getBearer(data.accessToken);
     }
-    backendApiClient.defaults.headers['Authorization'] = getBearer(data.accessToken);
+    backendServerAxios.defaults.headers['Authorization'] = getBearer(data.accessToken);
     return Promise.resolve();
   }).catch(err => Promise.reject(err));
 });
 
-backendApiClient.interceptors.request.use(request => {
+backendServerAxios.interceptors.request.use(request => {
   if (!request.headers.Authorization) {
     const accessToken = getAccessToken();
     request.headers.Authorization = getBearer(accessToken);
@@ -64,31 +64,31 @@ function constructRequestConfiguration(config?: RequestConfiguration): AxiosAuth
 }
 
 function getRequest<TResponse = any>(route: string, params: Record<string,any> = {}, config?: RequestConfiguration) {
-  return backendApiClient.get<TResponse>(constructRouteWithQueryParams(route, params), constructRequestConfiguration(config));
+  return backendServerAxios.get<TResponse>(constructRouteWithQueryParams(route, params), constructRequestConfiguration(config));
 }
 
 function headRequest(route: string, config?: RequestConfiguration) {
-  return backendApiClient.head(route, constructRequestConfiguration(config));
+  return backendServerAxios.head(route, constructRequestConfiguration(config));
 }
 
 function postRequest<TResponse = any, TRequest = unknown>(route: string, body?: TRequest, config?: RequestConfiguration) {
-  return backendApiClient.post<TResponse>(route, body, constructRequestConfiguration(config));
+  return backendServerAxios.post<TResponse>(route, body, constructRequestConfiguration(config));
 }
 
 function putRequest<TResponse = any, TRequest = unknown>(route: string, body?: TRequest, config?: RequestConfiguration) {
-  return backendApiClient.put<TResponse>(route, body, constructRequestConfiguration(config));
+  return backendServerAxios.put<TResponse>(route, body, constructRequestConfiguration(config));
 }
 
 function patchRequest<TResponse = any, TRequest = unknown>(route: string, body?: TRequest, config?: RequestConfiguration) {
-  return backendApiClient.patch<TResponse>(route, body, constructRequestConfiguration(config));
+  return backendServerAxios.patch<TResponse>(route, body, constructRequestConfiguration(config));
 }
 
 function deleteRequest<TResponse = any>(route: string, config?: RequestConfiguration) {
-  return backendApiClient.delete<TResponse>(route, constructRequestConfiguration(config));
+  return backendServerAxios.delete<TResponse>(route, constructRequestConfiguration(config));
 }
 
 function request<TResponse = any, TRequest = unknown>(route: string, method: Method, body?: TRequest, config?: RequestConfiguration) {
-  return backendApiClient.request<TResponse>({
+  return backendServerAxios.request<TResponse>({
     method: method,
     url: route,
     data: body,
