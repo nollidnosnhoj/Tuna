@@ -99,8 +99,9 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                     description = table.Column<string>(type: "text", nullable: true),
                     duration = table.Column<int>(type: "integer", nullable: false),
                     upload_id = table.Column<string>(type: "text", nullable: false),
+                    file_name = table.Column<string>(type: "text", nullable: false),
                     file_size = table.Column<long>(type: "bigint", nullable: false),
-                    file_ext = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: true),
+                    file_ext = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: false),
                     picture = table.Column<string>(type: "text", nullable: true),
                     visibility = table.Column<int>(type: "integer", nullable: false),
                     private_key = table.Column<string>(type: "text", nullable: true),
@@ -153,8 +154,6 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                     token = table.Column<string>(type: "text", nullable: false),
                     expiry = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     created = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    revoked = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
-                    replaced_by_token = table.Column<string>(type: "text", nullable: true),
                     user_id = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>

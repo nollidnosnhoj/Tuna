@@ -39,18 +39,19 @@ namespace Audiochan.Core.Entities
                 throw new ArgumentException("File name does not have file extension", nameof(fileName));
 
             this.UploadId = uploadId;
+            this.FileName = Path.GetFileNameWithoutExtension(fileName);
             this.FileExt = fileExtension;
             this.FileSize = fileSize;
             this.Duration = duration;
             this.UserId = userId;
-
-            this.Title = Path.GetFileNameWithoutExtension(fileName).Truncate(30);
+            AssignDefaultTitle();
         }
 
         public string Title { get; set; }
         public string Description { get; set; } = string.Empty;
         public int Duration { get; set; }
         public string UploadId { get; set; }
+        public string FileName { get; set; }
         public long FileSize { get; set; }
         public string FileExt { get; set; }
         public string Picture { get; set; }
@@ -62,10 +63,8 @@ namespace Audiochan.Core.Entities
 
         public void UpdateTitle(string title)
         {
-            if (!string.IsNullOrWhiteSpace(title))
-            {
-                this.Title = title;
-            }
+            if (string.IsNullOrWhiteSpace(title)) AssignDefaultTitle();
+            else this.Title = title;
         }
 
         public void UpdateDescription(string description)
@@ -136,6 +135,11 @@ namespace Audiochan.Core.Entities
         public bool CanModify(string userId)
         {
             return this.UserId == userId;
+        }
+
+        private void AssignDefaultTitle()
+        {
+            this.Title = this.FileName.Truncate(30);
         }
     }
 }

@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Audiochan.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210329103805_InitialMigration")]
+    [Migration("20210416222640_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -19,7 +19,7 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
             modelBuilder
                 .HasPostgresExtension("uuid-ossp")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63)
-                .HasAnnotation("ProductVersion", "5.0.3")
+                .HasAnnotation("ProductVersion", "5.0.5")
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
             modelBuilder.Entity("AudioTag", b =>
@@ -62,9 +62,15 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                         .HasColumnName("duration");
 
                     b.Property<string>("FileExt")
+                        .IsRequired()
                         .HasMaxLength(10)
                         .HasColumnType("character varying(10)")
                         .HasColumnName("file_ext");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("file_name");
 
                     b.Property<long>("FileSize")
                         .HasColumnType("bigint")
@@ -489,14 +495,6 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                             b1.Property<DateTime>("Expiry")
                                 .HasColumnType("timestamp without time zone")
                                 .HasColumnName("expiry");
-
-                            b1.Property<string>("ReplacedByToken")
-                                .HasColumnType("text")
-                                .HasColumnName("replaced_by_token");
-
-                            b1.Property<DateTime?>("Revoked")
-                                .HasColumnType("timestamp without time zone")
-                                .HasColumnName("revoked");
 
                             b1.Property<string>("Token")
                                 .IsRequired()

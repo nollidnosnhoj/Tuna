@@ -15,8 +15,15 @@ namespace Audiochan.Infrastructure.Persistence.Configurations
             builder.Property(x => x.UploadId)
                 .IsRequired();
 
+            builder.Property(x => x.FileName)
+                .IsRequired();
+
             builder.Property(x => x.FileExt)
+                .IsRequired()
                 .HasMaxLength(10);
+
+            builder.Property(x => x.FileSize)
+                .IsRequired();
 
             builder.HasMany(a => a.Tags)
                 .WithMany(t => t.Audios)
