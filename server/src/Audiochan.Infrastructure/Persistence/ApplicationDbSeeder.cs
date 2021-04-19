@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Audiochan.Core.Constants;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Entities.Enums;
-using Audiochan.Core.Enums;
 using Audiochan.Core.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -40,61 +39,26 @@ namespace Audiochan.Infrastructure.Persistence
             {
                 var user = await userManager.FindByNameAsync("superuser");
 
-                var audio1 = new Audio
-                {
-                    UploadId = "audio1",
-                    Title = "Dreams",
-                    Duration = 388,
-                    FileExt = ".mp3",
-                    FileSize = 9335255,
-                    UserId = user.Id,
-                    Tags = await tagRepository.GetListAsync(new[] {"chillout", "lucid-dreams"}),
-                    Visibility = Visibility.Public
-                };
-                var audio2 = new Audio
-                {
-                    UploadId = "audio2",
-                    Title = "Heaven",
-                    Duration = 194,
-                    FileExt = ".mp3",
-                    FileSize = 6239211,
-                    UserId = user.Id,
-                    Tags = await tagRepository.GetListAsync(new[] {"newgrounds", "piano", "rave"}),
-                    Visibility = Visibility.Public
-                };
-                var audio3 = new Audio
-                {
-                    UploadId = "audio3",
-                    Title = "Life is Beautiful",
-                    Duration = 45,
-                    FileExt = ".mp3",
-                    FileSize = 1823391,
-                    UserId = user.Id,
-                    Tags = await tagRepository.GetListAsync(new[] {"happy", "anime", "hardcore", "nightcore"}),
-                    Visibility = Visibility.Public
-                };
-                var audio4 = new Audio
-                {
-                    UploadId = "audio4",
-                    Title = "Beginning of Time",
-                    Duration = 164,
-                    FileExt = ".mp3",
-                    FileSize = 3952556,
-                    UserId = user.Id,
-                    Tags = await tagRepository.GetListAsync(new[] {"hard-dance"}),
-                    Visibility = Visibility.Unlisted
-                };
-                var audio5 = new Audio
-                {
-                    UploadId = "audio5",
-                    Title = "Verity",
-                    Duration = 219,
-                    FileExt = ".mp3",
-                    FileSize = 8788667,
-                    UserId = user.Id,
-                    Tags = await tagRepository.GetListAsync(new[] {"vocals"}),
-                    Visibility = Visibility.Unlisted
-                };
+                var audio1 = new Audio("audio1", "Dreams.mp3", 9335255, 388, user);
+                audio1.UpdateTags(await tagRepository.GetListAsync(new[] {"chillout", "lucid-dreams"}));
+                audio1.UpdatePublicityStatus(Visibility.Public);
+
+                var audio2 = new Audio("audio2", "Heaven.mp3", 6239211, 194, user);
+                audio2.UpdateTags(await tagRepository.GetListAsync(new[] {"newgrounds", "piano", "rave"}));
+                audio2.UpdatePublicityStatus(Visibility.Public);
+
+                var audio3 = new Audio("audio3", "LifeIsBeautiful.mp3", 1823391, 45, user);
+                audio3.UpdateTags(await tagRepository.GetListAsync(new[] {"happy", "anime", "hardcore", "nightcore"}));
+                audio3.UpdatePublicityStatus(Visibility.Public);
+
+                var audio4 = new Audio("audio4", "BeginningOfTime.mp3", 3952556, 164, user);
+                audio4.UpdateTags(await tagRepository.GetListAsync(new[] {"hard-dance"}));
+                audio4.UpdatePublicityStatus(Visibility.Unlisted);
+
+                var audio5 = new Audio("audio5", "Verity.mp3", 8788667, 219, user);
+                audio5.UpdateTags(await tagRepository.GetListAsync(new[] {"vocals"}));
+                audio5.UpdatePublicityStatus(Visibility.Unlisted);
+                
                 await context.Audios.AddRangeAsync(audio1, audio2, audio3, audio4, audio5);
                 await context.SaveChangesAsync();
             }
