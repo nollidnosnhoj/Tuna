@@ -33,19 +33,16 @@ namespace Audiochan.Features.Auth.Login
             if (user == null || !await _userManager.CheckPasswordAsync(user, request.Password))
                 return Result<AuthResultViewModel>.Fail(ResultError.BadRequest, "Invalid Username/Password");
 
-            var (token, tokenExpiration) = await _tokenProvider.GenerateAccessToken(user);
+            var (accessToken, accessTokenExpiration) = await _tokenProvider.GenerateAccessToken(user);
 
-            var refreshToken = _tokenProvider.GenerateRefreshToken(user.Id);
-
-            user.RefreshTokens.Add(refreshToken);
-            await _userManager.UpdateAsync(user);
+            var (refreshToken, refreshTokenExpiration) = await _tokenProvider.GenerateRefreshToken(user);
 
             var result = new AuthResultViewModel
             {
-                AccessToken = token,
-                AccessTokenExpires = tokenExpiration,
-                RefreshToken = refreshToken.Token,
-                RefreshTokenExpires = _tokenProvider.DateTimeToUnixEpoch(refreshToken.Expiry)
+                AccessToken = accessToken,
+                AccessTokenExpires = accessTokenExpiration,
+                RefreshToken = refreshToken,
+                RefreshTokenExpires = refreshTokenExpiration
             };
 
             return Result<AuthResultViewModel>.Success(result);

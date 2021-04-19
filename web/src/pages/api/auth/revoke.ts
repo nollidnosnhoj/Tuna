@@ -14,20 +14,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const body = { refreshToken: refreshToken };
 
   try {
-    const { status } = await api.post('auth/revoke', body, {
+    await api.post('auth/revoke', body, {
       skipAuthRefresh: true
     });
-
+  } catch (err) {
+  } finally {
     setAccessTokenCookie('', 0, { res });
     setRefreshTokenCookie('', 0, { res })
-
-    res.status(status).end();
-  } catch (err) {
-    if (!isAxiosError(err)) {
-      res.status(500).end();
-    } else {
-      const status = err?.response?.status || 500;
-      res.status(status).json(err?.response?.data);
-    }
+    res.status(200).end();
   }
 }

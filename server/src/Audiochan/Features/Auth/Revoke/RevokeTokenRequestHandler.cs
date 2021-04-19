@@ -28,24 +28,23 @@ namespace Audiochan.Features.Auth.Revoke
 
         public async Task<IResult<bool>> Handle(RevokeTokenRequest request, CancellationToken cancellationToken)
         {
-            // Fail when refresh token is not defined
-            if (string.IsNullOrEmpty(request.RefreshToken))
-                return Result<bool>.Fail(ResultError.BadRequest, "Refresh token was not defined.");
+            if (!string.IsNullOrWhiteSpace(request.RefreshToken))
+            {
+                var user = await _userManager.Users
+                    .Include(u => u.RefreshTokens)
+                    .SingleOrDefaultAsync(u => u.RefreshTokens
+                        .Any(r => r.Token == request.RefreshToken && u.Id == r.UserId), cancellationToken);
 
-            var user = await _userManager.Users
-                .Include(u => u.RefreshTokens)
-                .SingleOrDefaultAsync(u => u.RefreshTokens
-                    .Any(r => r.Token == request.RefreshToken && u.Id == r.UserId), cancellationToken);
+                if (user != null)
+                {
+                    var existingRefreshToken = user.RefreshTokens
+                        .Single(r => r.Token == request.RefreshToken);
 
-            if (user == null)
-                return Result<bool>.Fail(ResultError.BadRequest, "Refresh token does not belong to a user.");
+                    user.RefreshTokens.Remove(existingRefreshToken);
 
-            var existingRefreshToken = user.RefreshTokens
-                .Single(r => r.Token == request.RefreshToken);
-
-            user.RefreshTokens.Remove(existingRefreshToken);
-
-            await _userManager.UpdateAsync(user);
+                    await _userManager.UpdateAsync(user);
+                }
+            }
 
             return Result<bool>.Success(true);
         }

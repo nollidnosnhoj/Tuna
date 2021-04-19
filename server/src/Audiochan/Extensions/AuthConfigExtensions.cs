@@ -3,6 +3,7 @@ using System.Text;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Settings;
 using Audiochan.Infrastructure.Persistence;
+using Audiochan.Infrastructure.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -43,6 +44,17 @@ namespace Audiochan.Extensions
             var jwtSetting = new JwtSettings();
             configuration.GetSection(nameof(JwtSettings)).Bind(jwtSetting);
 
+            var tokenValidationParams = new TokenValidationParameters
+            {
+                ValidateAudience = false,
+                ValidateIssuer = false,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ClockSkew = TimeSpan.Zero
+            };
+
+            services.AddSingleton(tokenValidationParams);
+
             services
                 .AddAuthentication(options =>
                 {
@@ -52,15 +64,9 @@ namespace Audiochan.Extensions
                 })
                 .AddJwtBearer(options =>
                 {
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateAudience = false,
-                        ValidateIssuer = false,
-                        ValidateLifetime = true,
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSetting.Secret)),
-                        ClockSkew = TimeSpan.Zero
-                    };
+                    options.TokenValidationParameters = tokenValidationParams;
+                    options.TokenValidationParameters.IssuerSigningKey = 
+                        new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSetting.RefreshTokenSecret));
                 });
 
             return services;

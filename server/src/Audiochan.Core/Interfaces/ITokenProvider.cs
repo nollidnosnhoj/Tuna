@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Entities;
 
@@ -7,7 +9,7 @@ namespace Audiochan.Core.Interfaces
     public interface ITokenProvider
     {
         Task<(string, long)> GenerateAccessToken(User user);
-        RefreshToken GenerateRefreshToken(string userId);
-        long DateTimeToUnixEpoch(DateTime dateTime);
+        Task<(string, long)> GenerateRefreshToken(User user, string tokenToBeRemoved = "");
+        Task<bool> ValidateRefreshToken(string token);
     }
 }

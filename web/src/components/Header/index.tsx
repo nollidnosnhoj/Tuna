@@ -90,7 +90,9 @@ const Header: React.FC<HeaderProps> = (props) => {
             </NextLink>
           </MenuGroup>
           <MenuDivider />
-          <MenuItem onClick={() => router.push("/logout")}>Logout</MenuItem>
+          <MenuItem onClick={() => router.push("/auth/logout")}>
+            Logout
+          </MenuItem>
         </MenuList>
       </Menu>
     </Box>
