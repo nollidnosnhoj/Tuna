@@ -1,0 +1,48 @@
+services:
+  database:
+    restart: on-failure:1
+    container_name: backend-db
+    build:
+      context: db
+    env_file:
+      - db/.env
+    volumes:
+      - postgres-db:/var/lib/psql/data
+    networks:
+      - audiochan
+  backend:
+    restart: on-failure:1
+    container_name: backend
+    build:
+      context: server/src/Audiochan
+    env_file:
+      - server/.env
+    depends_on:
+      - database
+    networks:
+      - audiochan
+  frontend:
+    stdin_open: true
+    restart: on-failure:1
+    container_name: frontend
+    build:
+      context: web
+    env_file:
+      - web/.env
+    depends_on:
+      - backend
+    volumes:
+      - /app/node_modules
+      - /app/.next
+      - /app/public
+    networks:
+      - audiochan
+
+networks:
+  audiochan:
+    name: audiochan-net
+    driver: bridge
+
+volumes:
+  postgres-db:
+    name: postgres-db

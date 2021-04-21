@@ -1,4 +1,4 @@
-FROM postgres:12-alpine
+FROM postgres:latest
 
 EXPOSE 5432
 
