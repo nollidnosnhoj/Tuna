@@ -2,7 +2,7 @@ import { Box, Text } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import Picture from "~/components/Picture";
 import Link from "~/components/Link";
-import useUser from "~/hooks/useUser";
+import { useUser } from "~/contexts/UserContext";
 import { AudioListItemProps } from "./ListItem";
 
 export default function AudioGridItem(props: AudioListItemProps) {

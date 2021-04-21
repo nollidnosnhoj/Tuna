@@ -35,6 +35,7 @@ const schema: yup.SchemaOf<RegisterFormInputs> = yup
   .defined();
 
 interface RegisterFormProps {
+  initialRef?: React.RefObject<HTMLInputElement>;
   onSuccess: () => void;
 }
 
@@ -96,6 +97,7 @@ export default function RegisterForm(props: RegisterFormProps) {
           onChange={handleChange}
           error={errors.username}
           label="Username"
+          focusRef={props.initialRef}
           required
         />
         <TextInput

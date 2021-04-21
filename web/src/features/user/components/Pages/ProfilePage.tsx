@@ -14,7 +14,7 @@ import { useRouter } from "next/router";
 import Page from "~/components/Page";
 import Picture from "~/components/Picture";
 import { useProfile } from "~/features/user/hooks/queries/useProfile";
-import useUser from "~/hooks/useUser";
+import { useUser } from "~/contexts/UserContext";
 import UserAudioList from "~/features/user/components/UserAudioList";
 import { useAddUserPicture } from "~/features/user/hooks/mutations/useAddUserPicture";
 import { useFollow } from "~/features/user/hooks/mutations";

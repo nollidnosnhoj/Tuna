@@ -10,7 +10,7 @@ import {
 import { useFormik } from "formik";
 import * as yup from "yup";
 import TextInput from "../../../components/Form/TextInput";
-import useUser from "~/hooks/useUser";
+import { useAuth } from "~/contexts/AuthContext";
 import { apiErrorToast, successfulToast } from "~/utils/toast";
 import { isAxiosError } from "~/utils/axios";
 import { ErrorResponse } from "~/lib/types";
@@ -21,11 +21,12 @@ export type LoginFormValues = {
 };
 
 interface LoginFormProps {
+  initialRef?: React.RefObject<HTMLInputElement>;
   onSuccess?: () => void;
 }
 
 export default function LoginForm(props: LoginFormProps) {
-  const { login } = useUser();
+  const { login } = useAuth();
   const [error, setError] = useState("");
 
   const formik = useFormik<LoginFormValues>({
@@ -74,6 +75,7 @@ export default function LoginForm(props: LoginFormProps) {
           onChange={handleChange}
           error={errors.login}
           label="Username/Email"
+          focusRef={props.initialRef}
           required
         />
         <TextInput

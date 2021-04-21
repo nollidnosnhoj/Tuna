@@ -18,7 +18,7 @@ import { MdQueueMusic } from "react-icons/md";
 import Link from "~/components/Link";
 import Picture from "~/components/Picture";
 import { mapAudiosForAudioQueue } from "~/components/AudioPlayer/utils";
-import useAudioPlayer from "~/hooks/useAudioPlayer";
+import { useAudioPlayer } from "~/contexts/AudioPlayerContext";
 import { Audio } from "~/features/audio/types";
 import { formatDuration } from "~/utils/format";
 

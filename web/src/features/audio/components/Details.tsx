@@ -32,8 +32,8 @@ import PictureDropzone from "~/components/Picture/PictureDropzone";
 import { mapAudioForAudioQueue } from "~/components/AudioPlayer/utils";
 import { useAddAudioPicture } from "~/features/audio/hooks/mutations/useAddAudioPicture";
 import { AudioDetail } from "~/features/audio/types";
-import useAudioPlayer from "~/hooks/useAudioPlayer";
-import useUser from "~/hooks/useUser";
+import { useAudioPlayer } from "~/contexts/AudioPlayerContext";
+import { useUser } from "~/contexts/UserContext";
 import { formatDuration } from "~/utils/format";
 import { relativeDate } from "~/utils/time";
 

@@ -3,7 +3,7 @@ import { Box, Flex, Heading, Progress, Stack, Text } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useState } from "react";
 import Router from "next/router";
 import { useCreateAudio } from "~/features/audio/hooks/mutations";
-import useUser from "~/hooks/useUser";
+import { useUser } from "~/contexts/UserContext";
 import { CreateAudioRequest } from "~/features/audio/types";
 import api from "~/utils/api";
 import { successfulToast } from "~/utils/toast";

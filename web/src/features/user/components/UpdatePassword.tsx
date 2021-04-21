@@ -7,7 +7,7 @@ import TextInput from "~/components/Form/TextInput";
 import api from "~/utils/api";
 import { apiErrorToast } from "~/utils/toast";
 import { validationMessages } from "~/utils";
-import useUser from "~/hooks/useUser";
+import { useAuth } from "~/contexts/AuthContext";
 import { passwordRule } from "../schemas";
 
 type UpdatePasswordValues = {
@@ -17,7 +17,7 @@ type UpdatePasswordValues = {
 };
 
 export default function UpdatePassword() {
-  const { logout } = useUser();
+  const { logout } = useAuth();
   const formik = useFormik<UpdatePasswordValues>({
     initialValues: {
       currentPassword: "",
@@ -42,9 +42,7 @@ export default function UpdatePassword() {
           newPassword: newPassword,
         });
         resetForm();
-        logout("Please login with your new password").then(() => {
-          Router.push("/auth/login");
-        });
+        await logout();
       } catch (err) {
         apiErrorToast(err);
       } finally {

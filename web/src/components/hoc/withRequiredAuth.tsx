@@ -1,7 +1,7 @@
 import { Box, Button, Flex, Heading } from "@chakra-ui/react";
 import React, { FC } from "react";
 import NextLink from "next/link";
-import useUser from "~/hooks/useUser";
+import { useAuth } from "~/contexts/AuthContext";
 import Page from "../Page";
 
 export default function withRequiredAuth(
@@ -11,7 +11,7 @@ export default function withRequiredAuth(
   if (initialLoggedIn) return () => <Component />;
 
   return function RequireAuthWrapperComponent() {
-    const { isLoggedIn } = useUser();
+    const { isLoggedIn } = useAuth();
 
     if (isLoggedIn) return <Component />;
 

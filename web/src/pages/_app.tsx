@@ -10,6 +10,7 @@ import AudioPlayerProvider from "~/contexts/AudioPlayerContext";
 import theme from "~/lib/theme";
 import queryClient from "~/lib/queryClient";
 import { CurrentUser } from "~/features/user/types";
+import AuthProvider from "~/contexts/AuthContext";
 
 interface AppProps extends NextAppProps {
   user?: CurrentUser;
@@ -30,12 +31,14 @@ function App({ Component, user, pageProps }: AppProps) {
       <QueryClientProvider client={queryClientRef.current}>
         <Hydrate state={pageProps.dehydratedState}>
           <ChakraProvider resetCSS theme={theme}>
-            <UserProvider initialUser={user}>
-              <AudioPlayerProvider>
-                <PageLoader color={theme.colors.primary[500]} />
-                <Component {...pageProps} />
-                <AudioPlayer />
-              </AudioPlayerProvider>
+            <UserProvider initialUser={user || null}>
+              <AuthProvider>
+                <AudioPlayerProvider>
+                  <PageLoader color={theme.colors.primary[500]} />
+                  <Component {...pageProps} />
+                  <AudioPlayer />
+                </AudioPlayerProvider>
+              </AuthProvider>
             </UserProvider>
           </ChakraProvider>
         </Hydrate>

@@ -1,29 +1,9 @@
-import React, {
-  createContext,
-  PropsWithChildren,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
-import { LoginFormValues } from "~/features/auth/components/LoginForm";
-import {
-  authenticateUser,
-  revokeRefreshToken,
-  refreshAccessToken,
-} from "../features/auth/services";
+import React, { createContext, useContext, useMemo, useState } from "react";
 import { CurrentUser } from "../features/user/types";
-import api from "~/utils/api";
-import { getAccessToken } from "~/utils/cookies";
-import { successfulToast } from "~/utils/toast";
-import { useInterval } from "@chakra-ui/react";
 
 type UserContextType = {
-  user?: CurrentUser;
-  login: (inputs: LoginFormValues) => Promise<void>;
-  logout: (message?: string) => Promise<boolean>;
-  updateUser: (updatedUser: CurrentUser) => void;
-  isLoading: boolean;
-  isLoggedIn: boolean;
+  user: CurrentUser | null;
+  updateUser: (updatedUser: CurrentUser | null) => void;
 };
 
 export const UserContext = createContext<UserContextType>(
@@ -31,99 +11,30 @@ export const UserContext = createContext<UserContextType>(
 );
 
 interface UserProviderProps {
-  initialUser?: CurrentUser;
+  initialUser: CurrentUser | null;
 }
 
-export function UserProvider(props: PropsWithChildren<UserProviderProps>) {
-  const [user, setUser] = useState<CurrentUser | undefined>(props.initialUser);
-  const [expires, setExpires] = useState(0);
-  const [loadingUser, setLoadingUser] = useState(false);
+export const UserProvider: React.FC<UserProviderProps> = ({
+  initialUser,
+  children,
+}) => {
+  const [user, setUser] = useState<CurrentUser | null>(initialUser);
 
-  async function authenticate(inputs: LoginFormValues) {
-    const result = await authenticateUser(inputs);
-    setExpirationToLocalStorage(result.accessTokenExpires);
-    await fetchAuthenticatedUser();
-  }
-
-  const updateUser = (updatedUser: CurrentUser | undefined) => {
+  const updateUser = (updatedUser: CurrentUser | null) => {
     setUser(updatedUser);
   };
-
-  const fetchAuthenticatedUser = () => {
-    return new Promise<CurrentUser>((resolve, reject) => {
-      setLoadingUser(() => true);
-      api
-        .get<CurrentUser>("me")
-        .then(({ data }) => {
-          setUser(data);
-          resolve(data);
-        })
-        .catch(() => {
-          deauthenticate();
-        })
-        .finally(() => setLoadingUser(() => false));
-    });
-  };
-
-  async function deauthenticate() {
-    try {
-      await revokeRefreshToken();
-      updateUser(undefined);
-      setExpirationToLocalStorage(0);
-      return true;
-    } catch (err) {
-      return false;
-    }
-  }
-
-  function setExpirationToLocalStorage(exp: number) {
-    setExpires(() => exp);
-    if (typeof window !== "undefined") {
-      exp <= 0
-        ? window.localStorage.removeItem("expires")
-        : window.localStorage.setItem("expires", exp.toString());
-    }
-  }
-
-  useEffect(() => {
-    const localExpires = window.localStorage.getItem("expires");
-    if (localExpires) {
-      const parsedInt = parseInt(localExpires);
-      setExpires(isNaN(parsedInt) ? 0 : parsedInt);
-    }
-  }, []);
-
-  useEffect(() => {
-    const accessToken = getAccessToken();
-    if (!user && accessToken) {
-      fetchAuthenticatedUser();
-    }
-  }, [user]);
-
-  useInterval(() => {
-    if (user) {
-      const now = Date.now() / 1000;
-      if (expires <= now) {
-        refreshAccessToken().then((result) => {
-          setExpirationToLocalStorage(result.accessTokenExpires);
-        });
-      }
-    }
-  }, 1000 * 60);
 
   const values = useMemo<UserContextType>(
     () => ({
       user,
       updateUser,
-      login: authenticate,
-      logout: deauthenticate,
-      isLoading: loadingUser,
-      isLoggedIn: Boolean(user),
     }),
-    [user, loadingUser]
+    [user, updateUser]
   );
 
-  return (
-    <UserContext.Provider value={values}>{props.children}</UserContext.Provider>
-  );
-}
+  return <UserContext.Provider value={values}>{children}</UserContext.Provider>;
+};
+
+export const useUser = () => {
+  return useContext(UserContext);
+};

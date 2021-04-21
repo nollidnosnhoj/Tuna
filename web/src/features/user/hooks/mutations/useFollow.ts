@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import useUser from '~/hooks/useUser';
+import {useUser} from '~/contexts/UserContext';
 import api from "~/utils/api";
 import { apiErrorToast } from "~/utils/toast";
 

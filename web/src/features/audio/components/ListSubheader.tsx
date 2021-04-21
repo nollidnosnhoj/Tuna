@@ -2,10 +2,10 @@ import { HStack, Button } from "@chakra-ui/react";
 import NextLink from "next/link";
 import React from "react";
 import Container from "~/components/Container";
-import useUser from "~/hooks/useUser";
+import { useAuth } from "~/contexts/AuthContext";
 
 export default function AudioListSubHeader(props: { current: string }) {
-  const { isLoggedIn } = useUser();
+  const { isLoggedIn } = useAuth();
   return (
     <Container paddingY={2}>
       <HStack spacing={4}>

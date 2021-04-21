@@ -1,5 +1,6 @@
 import React, {
   PropsWithChildren,
+  useContext,
   useEffect,
   useMemo,
   useReducer,
@@ -261,3 +262,9 @@ export default function AudioPlayerProvider(props: PropsWithChildren<any>) {
     </AudioPlayerContext.Provider>
   );
 }
+
+export const useAudioPlayer = () => {
+  const context = useContext(AudioPlayerContext);
+  if (!context) throw new Error("Cannot find AudioPlayerContext.");
+  return context;
+};

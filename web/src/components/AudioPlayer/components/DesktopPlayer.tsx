@@ -17,7 +17,7 @@ import ProgressBar from "./ProgressBar";
 import RepeatControl from "./RepeatControl";
 import { AudioPlayerItem } from "../types";
 import VolumeControl from "./VolumeControl";
-import useAudioPlayer from "~/hooks/useAudioPlayer";
+import { useAudioPlayer } from "~/contexts/AudioPlayerContext";
 
 interface DesktopAudioPlayerProps {
   audioRef: React.RefObject<HTMLAudioElement>;

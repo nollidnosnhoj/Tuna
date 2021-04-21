@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import DesktopAudioPlayer from "./components/DesktopPlayer";
-import { REPEAT_MODE } from "~/contexts/AudioPlayerContext";
-import useAudioPlayer from "~/hooks/useAudioPlayer";
+import { REPEAT_MODE, useAudioPlayer } from "~/contexts/AudioPlayerContext";
 
 interface AudioPlayerProps {
   preload?: "none" | "metadata" | "auto";

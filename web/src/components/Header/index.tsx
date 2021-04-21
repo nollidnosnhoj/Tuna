@@ -36,8 +36,9 @@ import Router, { useRouter } from "next/router";
 import NextLink from "next/link";
 import queryString from "query-string";
 import Link from "../Link";
-import useUser from "~/hooks/useUser";
+import { useUser } from "~/contexts/UserContext";
 import HeaderMenuLink from "./MenuLink";
+import UserSection from "./UserSection";
 
 interface HeaderProps {
   removeSearchBar?: boolean;
@@ -45,11 +46,15 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = (props) => {
   const router = useRouter();
-  const { user, logout } = useUser();
+  const { user } = useUser();
   const { toggleColorMode } = useColorMode();
   const ColorModeIcon = useColorModeValue(MoonIcon, SunIcon);
   const menuButtonRef = useRef<any>();
-  const { isOpen, onOpen, onClose, onToggle } = useDisclosure();
+  const {
+    isOpen: isMenuDrawerOpen,
+    onClose: onMenuDrawerClose,
+    onToggle: onMenuDrawerToggle,
+  } = useDisclosure();
   const [searchTerm, setSearchTerm] = useState("");
 
   const handleSearchChange = useCallback(
@@ -68,53 +73,6 @@ const Header: React.FC<HeaderProps> = (props) => {
       Router.push("/search?" + qs);
     }
   };
-
-  const UserMenu = user ? (
-    <Box zIndex={4}>
-      <Menu placement="bottom-end">
-        <MenuButton
-          as={IconButton}
-          icon={<FaUserAlt />}
-          variant="ghost"
-          colorScheme="primary"
-        >
-          Profile
-        </MenuButton>
-        <MenuList>
-          <MenuGroup title={user.username}>
-            <NextLink href={`/users/${user.username}`}>
-              <MenuItem>Profile</MenuItem>
-            </NextLink>
-            <NextLink href="/setting">
-              <MenuItem>Settings</MenuItem>
-            </NextLink>
-          </MenuGroup>
-          <MenuDivider />
-          <MenuItem onClick={() => router.push("/auth/logout")}>
-            Logout
-          </MenuItem>
-        </MenuList>
-      </Menu>
-    </Box>
-  ) : (
-    <>
-      <NextLink href="/auth/login">
-        <Button
-          size="md"
-          colorScheme="gray"
-          variant="ghost"
-          textTransform="uppercase"
-        >
-          Login
-        </Button>
-      </NextLink>
-      <NextLink href="/auth/register">
-        <Button size="md" colorScheme="primary" textTransform="uppercase">
-          Register
-        </Button>
-      </NextLink>
-    </>
-  );
 
   return (
     <React.Fragment>
@@ -141,7 +99,7 @@ const Header: React.FC<HeaderProps> = (props) => {
               size="lg"
               icon={<HamburgerIcon />}
               aria-label="Open menu"
-              onClick={onToggle}
+              onClick={onMenuDrawerToggle}
               position="relative"
               ref={menuButtonRef}
               isRound
@@ -189,14 +147,14 @@ const Header: React.FC<HeaderProps> = (props) => {
               variant="ghost"
               onClick={toggleColorMode}
             />
-            {UserMenu}
+            <UserSection />
           </HStack>
         </Flex>
       </Flex>
       <Drawer
         placement="left"
-        onClose={onClose}
-        isOpen={isOpen}
+        onClose={onMenuDrawerClose}
+        isOpen={isMenuDrawerOpen}
         initialFocusRef={menuButtonRef}
       >
         <DrawerOverlay>

@@ -19,6 +19,7 @@ interface InputFieldProps {
   placeholder?: string;
   textArea?: boolean;
   disabled?: boolean;
+  focusRef?: React.RefObject<HTMLInputElement>;
 }
 
 const TextInput: React.FC<InputFieldProps> = ({
@@ -29,6 +30,7 @@ const TextInput: React.FC<InputFieldProps> = ({
   placeholder,
   error,
   size,
+  focusRef,
   type = "text",
   required = false,
   textArea = false,
@@ -59,6 +61,7 @@ const TextInput: React.FC<InputFieldProps> = ({
           placeholder={placeholder}
           disabled={disabled}
           size={size}
+          ref={focusRef}
         />
       )}
       <FormErrorMessage>{error}</FormErrorMessage>
