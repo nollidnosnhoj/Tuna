@@ -16,11 +16,14 @@ namespace Audiochan.UnitTests.Validations
         {
             var options = Options.Create(new IdentitySettings
             {
-                PasswordRequiresDigit = true,
-                PasswordRequiresLowercase = true,
-                PasswordRequiresUppercase = true,
-                PasswordRequiresNonAlphanumeric = true,
-                PasswordMinimumLength = 5
+                PasswordSettings = new IdentitySettings.PasswordRules
+                {
+                    RequiresDigit = true,
+                    RequiresLowercase = true,
+                    RequiresUppercase = true,
+                    RequiresNonAlphanumeric = true,
+                    MinimumLength = 5
+                }
             });
             _validator = new RegisterUserRequestValidator(options);
         }

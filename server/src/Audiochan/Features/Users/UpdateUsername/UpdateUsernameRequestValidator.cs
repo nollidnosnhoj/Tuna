@@ -9,7 +9,7 @@ namespace Audiochan.Features.Users.UpdateUsername
     {
         public UpdateUsernameRequestValidator(IOptions<IdentitySettings> options)
         {
-            RuleFor(req => req.NewUsername).Username(options.Value);
+            RuleFor(req => req.NewUsername).Username(options.Value.UsernameSettings);
         }
     }
 }

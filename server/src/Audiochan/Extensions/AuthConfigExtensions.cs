@@ -17,18 +17,18 @@ namespace Audiochan.Extensions
         public static IServiceCollection ConfigureIdentity(this IServiceCollection services,
             IConfiguration configuration)
         {
-            var identityOptions = new IdentitySettings();
-            configuration.GetSection(nameof(IdentitySettings)).Bind(identityOptions);
+            var settings = new IdentitySettings();
+            configuration.GetSection(nameof(IdentitySettings)).Bind(settings);
 
             services
                 .AddIdentity<User, Role>(options =>
                 {
-                    options.User.AllowedUserNameCharacters = identityOptions.UsernameAllowedCharacters;
-                    options.Password.RequiredLength = identityOptions.PasswordMinimumLength;
-                    options.Password.RequireDigit = identityOptions.PasswordRequiresDigit;
-                    options.Password.RequireLowercase = identityOptions.PasswordRequiresLowercase;
-                    options.Password.RequireUppercase = identityOptions.PasswordRequiresUppercase;
-                    options.Password.RequireNonAlphanumeric = identityOptions.PasswordRequiresNonAlphanumeric;
+                    options.User.AllowedUserNameCharacters = settings.UsernameSettings.AllowedCharacters;
+                    options.Password.RequiredLength = settings.PasswordSettings.MinimumLength;
+                    options.Password.RequireDigit = settings.PasswordSettings.RequiresDigit;
+                    options.Password.RequireLowercase = settings.PasswordSettings.RequiresLowercase;
+                    options.Password.RequireUppercase = settings.PasswordSettings.RequiresUppercase;
+                    options.Password.RequireNonAlphanumeric = settings.PasswordSettings.RequiresNonAlphanumeric;
                 })
                 .AddRoleManager<RoleManager<Role>>()
                 .AddSignInManager<SignInManager<User>>()

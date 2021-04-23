@@ -14,7 +14,7 @@ namespace Audiochan.Features.Users.UpdatePassword
                 .WithMessage("New Password is required.")
                 .NotEqual(req => req.CurrentPassword)
                 .WithMessage("New password cannot be the same as the previous.")
-                .Password(options.Value, "New Password");
+                .Password(options.Value.PasswordSettings, "New Password");
         }
     }
 }
