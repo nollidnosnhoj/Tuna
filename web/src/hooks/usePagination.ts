@@ -5,10 +5,11 @@ import { ErrorResponse, PagedList } from "../lib/types";
 export default function usePagination<TItem>(
   key: string,
   fetcher: (page: number) => Promise<PagedList<TItem>>,
-  params?: Record<string, any>,
+  params: Record<string, any> = {},
+  initialPage: number = 1,
   options?: UseQueryOptions<PagedList<TItem>>
 ) {
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(initialPage);
   const {
     data,
     error,

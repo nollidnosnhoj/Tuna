@@ -26,7 +26,7 @@ export default function useInfinitePagination<TItem>(
 
   const items = useMemo<TItem[]>(() => {
     return data ? ([] as TItem[]).concat(...(data.pages.map(x => x.items))) : [];
-  }, [data]);
+  }, [data?.pages.length, data?.pageParams.length]);
 
   return {
     items,

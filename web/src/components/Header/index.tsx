@@ -48,6 +48,7 @@ const Header: React.FC<HeaderProps> = (props) => {
   const router = useRouter();
   const { user } = useUser();
   const { toggleColorMode } = useColorMode();
+  const headerColor = useColorModeValue("white", "gray.800");
   const ColorModeIcon = useColorModeValue(MoonIcon, SunIcon);
   const menuButtonRef = useRef<any>();
   const {
@@ -85,6 +86,8 @@ const Header: React.FC<HeaderProps> = (props) => {
         left={0}
         width="100%"
         boxShadow="md"
+        bgColor={headerColor}
+        zIndex={3}
       >
         <Flex
           width="100%"

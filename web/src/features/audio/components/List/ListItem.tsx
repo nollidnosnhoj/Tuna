@@ -68,7 +68,9 @@ const AudioListItem: React.FC<AudioListItemProps> = ({
                 href={`/audios/${audio.id}`}
                 _hover={{ textDecoration: "none" }}
               >
-                <Text as="b">{audio.title}</Text>
+                <Text as="b" fontSize="lg">
+                  {audio.title}
+                </Text>
               </Link>
               <Text fontSize="sm" marginLeft={2}>
                 {formatDuration(audio.duration)}

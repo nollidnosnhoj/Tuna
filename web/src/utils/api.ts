@@ -109,7 +109,7 @@ export function fetch<TResponse>(route: string, params: Record<string, any> = {}
   })
 }
 
-export const fetchPages = async <TData>(key: string, params: Record<string, any>, page: number = 1, options: FetchAudioOptions = {}) => {
+export const fetchPages = async <TData>(key: string, params: Record<string, any> = {}, page: number = 1, options: FetchAudioOptions = {}) => {
   const { data } = await getRequest<PagedList<TData>>(key, { ...params, page }, {
     accessToken: options.accessToken
   });

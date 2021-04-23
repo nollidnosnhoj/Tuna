@@ -6,7 +6,7 @@ interface FetchUserProfileOptions {
 }
 
 export const fetchUserProfile = async (username: string, options: FetchUserProfileOptions = {}) => {
-  const { data } = await api.get<Profile>(`users/${username}`, {
+  const { data } = await api.get<Profile>(`users/${username}`, undefined, {
     accessToken: options.accessToken
   });
 

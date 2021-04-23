@@ -1,3 +1,4 @@
+import { ParsedUrlQuery } from "querystring";
 import slugify from "slugify";
 import { v4 as uuidv4 } from 'uuid'
 import { Audio, AudioDetail } from "~/features/audio/types";
@@ -38,4 +39,16 @@ export function objectToFormData(values: object): FormData {
   });
 
   return formData;
+}
+
+export function extractQueryParam<T = string | number | boolean>(param: string | string[] | undefined, defaultValue?: T): T | undefined {
+  if (typeof param === 'undefined') return defaultValue;
+  let pString = Array.isArray(param) ? param[0] : param;
+  return JSON.parse(pString) as T;
+}
+
+export const extractPaginationInfoFromQuery = (query: ParsedUrlQuery) => {
+  const page = extractQueryParam<number>(query['page'], 1);
+  const size = extractQueryParam<number>(query['size'], 15);
+  return { page, size } 
 }

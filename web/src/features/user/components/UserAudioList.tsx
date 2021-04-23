@@ -1,23 +1,24 @@
 import React from "react";
 import InfiniteListControls from "~/components/List/InfiniteListControls";
 import AudioList from "~/features/audio/components/List";
-import { useGetAudioListInfinite } from "~/features/audio/hooks/queries/useAudiosInfinite";
+import { useGetAudioListInfinite } from "~/features/audio/hooks/queries";
 
 interface UserAudioListProps {
   username: string;
+  hidePaginationControls?: boolean;
 }
 
 export default function UserAudioList(
   props: UserAudioListProps & Record<string, any>
 ) {
-  const { username, ...params } = props;
+  const { username, hidePaginationControls = false } = props;
   const {
     items: audios,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useGetAudioListInfinite(`users/${username}/audios`, params, 15, {
-    staleTime: 10000,
+  } = useGetAudioListInfinite(`users/${username}/audios`, {
+    staleTime: 1000,
   });
 
   return (
@@ -28,11 +29,13 @@ export default function UserAudioList(
         defaultLayout="list"
         hideLayoutToggle
       />
-      <InfiniteListControls
-        fetchNext={fetchNextPage}
-        hasNext={hasNextPage}
-        isFetching={isFetchingNextPage}
-      />
+      {!hidePaginationControls && (
+        <InfiniteListControls
+          fetchNext={fetchNextPage}
+          hasNext={hasNextPage}
+          isFetching={isFetchingNextPage}
+        />
+      )}
     </React.Fragment>
   );
 }

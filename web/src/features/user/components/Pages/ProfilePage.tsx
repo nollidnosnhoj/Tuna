@@ -2,14 +2,13 @@ import {
   Box,
   Button,
   Flex,
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
-  Tabs,
+  Heading,
+  HStack,
+  Spacer,
   Text,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
+import NextLink from "next/link";
 import { useRouter } from "next/router";
 import Page from "~/components/Page";
 import Picture from "~/components/Picture";
@@ -41,51 +40,44 @@ export default function ProfilePage() {
 
   return (
     <Page title={`${profile.username} | Audiochan`}>
-      <Flex direction="row">
-        <Flex flex="1" direction="column" align="center">
-          <Box textAlign="center">
-            <PictureDropzone
-              disabled={isAddingPicture && user?.id === profile.id}
-              onChange={async (imageData) => {
-                const { data } = await addPictureAsync(imageData);
-                setPicture(data.image);
-              }}
-            >
-              <Picture source={picture} imageSize={250} />
-            </PictureDropzone>
-          </Box>
-          <Box textAlign="center" marginY={4}>
-            <Text fontSize="2xl" as="strong">
-              {profile!.username}
-            </Text>
-          </Box>
-          <Flex justifyContent="center">
-            {user && user.id !== profile.id && (
-              <Button
-                colorScheme="primary"
-                variant={isFollowing ? "solid" : "outline"}
-                disabled={isFollowing === undefined}
-                paddingX={12}
-                onClick={() => follow()}
-              >
-                {isFollowing ? "Followed" : "Follow"}
-              </Button>
-            )}
-          </Flex>
-        </Flex>
-        <Box flex="3">
-          <Tabs isLazy>
-            <TabList>
-              <Tab>Uploads</Tab>
-            </TabList>
-            <TabPanels>
-              <TabPanel>
-                <UserAudioList username={profile.username} />
-              </TabPanel>
-            </TabPanels>
-          </Tabs>
+      <Flex marginBottom={4}>
+        <Box flex="1">
+          <PictureDropzone
+            disabled={isAddingPicture && user?.id === profile.id}
+            onChange={async (imageData) => {
+              const { data } = await addPictureAsync(imageData);
+              setPicture(data.image);
+            }}
+          >
+            <Picture source={picture} imageSize={200} borderWidth="1px" />
+          </PictureDropzone>
         </Box>
+        <Flex flex="4">
+          <Flex width="100%">
+            <Box paddingY={2} flex="3">
+              <Heading as="strong">{profile!.username}</Heading>
+            </Box>
+            <Flex justifyContent="flex-end" flex="1">
+              {user && user.id !== profile.id && (
+                <Button
+                  colorScheme="primary"
+                  variant={isFollowing ? "solid" : "outline"}
+                  disabled={isFollowing === undefined}
+                  paddingX={12}
+                  onClick={() => follow()}
+                >
+                  {isFollowing ? "Followed" : "Follow"}
+                </Button>
+              )}
+              {user && user.id === profile.id && (
+                <Button paddingX={12}>Edit Profile</Button>
+              )}
+            </Flex>
+          </Flex>
+          <Box></Box>
+        </Flex>
       </Flex>
+      <UserAudioList username={profile.username} hidePaginationControls />
     </Page>
   );
 }

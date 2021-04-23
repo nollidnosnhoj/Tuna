@@ -20,7 +20,10 @@ export default function AudioFeedPage(props: AudioFeedPageProps) {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useGetAudioListInfinite("me/feed", filter, undefined, {
+  } = useGetAudioListInfinite("me/feed", {
+    params: {
+      ...filter,
+    },
     staleTime: 1000,
     initialData: initialPage && {
       pages: [initialPage],
