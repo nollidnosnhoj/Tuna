@@ -119,11 +119,7 @@ export default function DesktopAudioPlayer(props: DesktopAudioPlayerProps) {
           <Flex flexDirection="column" alignItems="center" width="500px">
             <ProgressBar
               audioNode={audioRef.current}
-              currentTime={currentTime}
               duration={audioRef.current?.duration || currentPlaying?.duration}
-              onSeekChange={(time) =>
-                dispatch({ type: "SET_CURRENT_TIME", payload: time })
-              }
             />
             <PlayerControls
               isPlaying={isPlaying}

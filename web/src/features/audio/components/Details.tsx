@@ -62,7 +62,7 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
         index: 0,
       });
     }
-  }, [isAudioNowPlaying, isPlaying]);
+  }, [isAudioNowPlaying, isPlaying, audio.id]);
 
   const {
     mutateAsync: uploadArtwork,
@@ -108,18 +108,6 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
       </Box>
       <Box flex="5">
         <Stack direction="row" marginBottom={4}>
-          <Tooltip label="Play" placement="top">
-            <span>
-              <IconButton
-                isRound
-                colorScheme="pink"
-                size="lg"
-                icon={isAudioNowPlaying && isPlaying ? <FaPause /> : <FaPlay />}
-                aria-label="Play"
-                onClick={clickPlayButton}
-              />
-            </span>
-          </Tooltip>
           <Stack direction="column" spacing="0" fontSize="sm">
             <Link href={`/users/${audio.author.username}`}>
               <Text fontWeight="500">{audio.author.username}</Text>

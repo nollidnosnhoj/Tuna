@@ -28,7 +28,6 @@ export default function AudioPlayer(props: AudioPlayerProps) {
         dispatch({ type: "PLAY_NEXT" });
       }
     };
-
     const audio = audioRef.current;
 
     if (audio) {

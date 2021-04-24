@@ -990,6 +990,11 @@
   resolved "https://registry.yarnpkg.com/@types/warning/-/warning-3.0.0.tgz#0d2501268ad8f9962b740d387c4654f5f8e23e52"
   integrity sha1-DSUBJorY+ZYrdA04fEZU9fjiPlI=
 
+"@types/wavesurfer.js@^3.3.2":
+  version "3.3.2"
+  resolved "https://registry.yarnpkg.com/@types/wavesurfer.js/-/wavesurfer.js-3.3.2.tgz#e916456691586b07004f40d56c22dc7138509eae"
+  integrity sha512-bujQxJR+2TDXe5hc2kG36n38rJtdTbCafQddWaNJwgdNDVqMVxCCKAFYRQWq1aXnN/h9BTHLIVwi4gM8IwRt5A==
+
 abort-controller@3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/abort-controller/-/abort-controller-3.0.0.tgz#eaf54d53b62bae4138e809ca225c8439a6efb392"
@@ -4062,6 +4067,11 @@ watchpack@2.1.1:
   dependencies:
     glob-to-regexp "^0.4.1"
     graceful-fs "^4.1.2"
+
+wavesurfer.js@^4.6.0:
+  version "4.6.0"
+  resolved "https://registry.yarnpkg.com/wavesurfer.js/-/wavesurfer.js-4.6.0.tgz#3dc26748b2200978afe802582a2085f46eb0ce0d"
+  integrity sha512-+nn6VD86pTtRu9leVNXoIGOCMJyaTNsKNy9v+SfUsYo+SxLCQvEzrZZ/eKMImqspsk+BX1V1xlY4FRkHswu3fA==
 
 webidl-conversions@^4.0.2:
   version "4.0.2"
