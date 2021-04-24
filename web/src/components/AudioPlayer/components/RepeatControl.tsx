@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { chakra, Icon } from "@chakra-ui/react";
-import { REPEAT_MODE } from "~/contexts/AudioPlayerContext";
+import { REPEAT_MODE, useAudioPlayer } from "~/contexts/AudioPlayerContext";
 import { MdRepeat, MdRepeatOne } from "react-icons/md";
 
 const repeatLabels = {
@@ -15,20 +15,16 @@ const repeatModeOrder = [
   REPEAT_MODE.REPEAT_SINGLE,
 ];
 
-interface RepeatControlProps {
-  repeat: REPEAT_MODE;
-  onRepeatChange: (value: REPEAT_MODE) => void;
-}
-
-export default function RepeatControl(props: RepeatControlProps) {
-  const { repeat, onRepeatChange } = props;
+export default function RepeatControl() {
+  const { state, dispatch } = useAudioPlayer();
+  const { repeat } = state;
 
   const handleButtonClick = useCallback(() => {
     let newIndex = repeatModeOrder.findIndex((m) => m === repeat) + 1;
     if (newIndex === 0) throw new Error("Cannot find repeat mode");
     if (newIndex > repeatModeOrder.length - 1) newIndex = 0;
-    onRepeatChange(repeatModeOrder[newIndex]);
-  }, [repeat, onRepeatChange]);
+    dispatch({ type: "SET_REPEAT", payload: repeatModeOrder[newIndex] });
+  }, [repeat]);
 
   let icon: React.ReactNode;
 

@@ -10,19 +10,15 @@ import {
 } from "@chakra-ui/react";
 import React, { useEffect, useMemo, useRef } from "react";
 import { MdVolumeDown, MdVolumeMute, MdVolumeUp } from "react-icons/md";
+import { useAudioPlayer } from "~/contexts/AudioPlayerContext";
 
-interface VolumeControlProps {
-  audioNode: HTMLAudioElement | null;
-  volume: number;
-  onChange: (value: number) => void;
-}
-
-export default function VolumeControl(props: VolumeControlProps) {
-  const { audioNode, volume, onChange } = props;
+export default function VolumeControl() {
+  const { state, dispatch } = useAudioPlayer();
+  const { audioRef, volume } = state;
   const lastVolumeRef = useRef<number>();
 
   const handleVolumeChange = (value: number) => {
-    onChange(value);
+    dispatch({ type: "SET_VOLUME", payload: value });
   };
 
   const volumeIcon = useMemo(() => {
@@ -38,17 +34,17 @@ export default function VolumeControl(props: VolumeControlProps) {
   const handleVolumeButtonClick = () => {
     if (volume > 0) {
       lastVolumeRef.current = volume;
-      onChange(0);
+      handleVolumeChange(0);
     } else {
-      onChange(lastVolumeRef.current ?? 0);
+      handleVolumeChange(lastVolumeRef.current ?? 0);
     }
   };
 
   useEffect(() => {
-    if (audioNode) {
-      audioNode.volume = volume / 100;
+    if (audioRef) {
+      audioRef.volume = volume / 100;
     }
-  }, [audioNode, volume]);
+  }, [audioRef, volume]);
 
   return (
     <Flex>

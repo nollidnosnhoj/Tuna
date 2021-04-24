@@ -44,25 +44,7 @@ interface AudioDetailProps {
 const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
   const secondaryColor = useColorModeValue("black.300", "gray.300");
   const { user: currentUser } = useUser();
-  const { state, dispatch } = useAudioPlayer();
-  const { currentPlaying, isPlaying } = state;
-
-  const isAudioNowPlaying = useMemo(
-    () => !!currentPlaying && currentPlaying.audioId === audio.id,
-    [currentPlaying?.audioId, audio]
-  );
-
-  const clickPlayButton = useCallback(() => {
-    if (isAudioNowPlaying) {
-      dispatch({ type: "SET_PLAYING", payload: !isPlaying });
-    } else {
-      dispatch({
-        type: "SET_NEW_QUEUE",
-        payload: mapAudioForAudioQueue(audio),
-        index: 0,
-      });
-    }
-  }, [isAudioNowPlaying, isPlaying, audio.id]);
+  const { dispatch } = useAudioPlayer();
 
   const {
     mutateAsync: uploadArtwork,

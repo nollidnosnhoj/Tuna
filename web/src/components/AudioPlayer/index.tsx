@@ -9,7 +9,7 @@ interface AudioPlayerProps {
 export default function AudioPlayer(props: AudioPlayerProps) {
   const { preload = "auto" } = props;
   const { state, dispatch } = useAudioPlayer();
-  const { currentPlaying, isPlaying, repeat } = state;
+  const { currentAudio: currentPlaying, isPlaying, repeat } = state;
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const playAudioPromise = () => {
@@ -20,6 +20,10 @@ export default function AudioPlayer(props: AudioPlayerProps) {
       });
     }
   };
+
+  useEffect(() => {
+    dispatch({ type: "SET_AUDIO_REF", payload: audioRef.current });
+  }, []);
 
   // Register any audio event listeners here
   useEffect(() => {
@@ -62,7 +66,7 @@ export default function AudioPlayer(props: AudioPlayerProps) {
         preload={preload}
         loop={repeat === REPEAT_MODE.REPEAT_SINGLE}
       />
-      <DesktopAudioPlayer audioRef={audioRef} />
+      <DesktopAudioPlayer />
     </React.Fragment>
   );
 }

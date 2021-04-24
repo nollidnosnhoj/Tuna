@@ -11,17 +11,12 @@ import {
 import { formatDuration } from "~/utils/format";
 import { useAudioPlayer } from "~/contexts/AudioPlayerContext";
 
-interface ProgressBarProps {
-  audioNode: HTMLAudioElement | null;
-  duration?: number;
-}
-
 const EMPTY_TIME_FORMAT = "--:--";
 
-export default function ProgressBar(props: ProgressBarProps) {
-  const { audioNode, duration } = props;
+export default function ProgressBar() {
   const { state, dispatch } = useAudioPlayer();
-  const { currentTime } = state;
+  const { audioRef, currentTime, currentAudio: currentPlaying } = state;
+  const { duration } = currentPlaying || { duration: 0 };
   const [sliderValue, setSliderValue] = useState(0);
   const [isDraggingProgress, setIsDraggingProgress] = useState(false);
 
@@ -51,8 +46,8 @@ export default function ProgressBar(props: ProgressBarProps) {
   const handleSliderChangeEnd = useCallback(
     (value: number) => {
       if (isDraggingProgress) {
-        const time = Math.ceil(value);
-        if (audioNode) audioNode.currentTime = time;
+        const time = value;
+        if (audioRef) audioRef.currentTime = time;
         setSliderValue(time);
         dispatch({ type: "SET_CURRENT_TIME", payload: time });
       }
@@ -63,22 +58,22 @@ export default function ProgressBar(props: ProgressBarProps) {
 
   const updateSeek = useCallback(
     _.throttle(() => {
-      const time = Math.ceil(audioNode?.currentTime ?? 0);
+      const time = audioRef?.currentTime ?? 0;
       dispatch({ type: "SET_CURRENT_TIME", payload: time });
       if (!isDraggingProgress) {
         setSliderValue(time);
       }
     }, 200),
-    [audioNode, isDraggingProgress]
+    [audioRef, isDraggingProgress]
   );
 
   useEffect(() => {
-    audioNode?.addEventListener("timeupdate", updateSeek);
+    audioRef?.addEventListener("timeupdate", updateSeek);
 
     return () => {
-      audioNode?.removeEventListener("timeupdate", updateSeek);
+      audioRef?.removeEventListener("timeupdate", updateSeek);
     };
-  }, [audioNode, updateSeek]);
+  }, [audioRef, updateSeek]);
 
   return (
     <Flex alignItems="center" width="100%">
@@ -86,7 +81,8 @@ export default function ProgressBar(props: ProgressBarProps) {
       <Box flex="1" marginX={4}>
         <Slider
           min={0}
-          max={duration}
+          max={audioRef?.duration || duration}
+          step={0.1}
           value={sliderValue}
           onChangeStart={handleSliderChangeStart}
           onChange={handleSliderChange}

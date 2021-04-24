@@ -34,7 +34,7 @@ export default function AudioList(props: AudioListProps) {
     hideLayoutToggle = false,
   } = props;
   const { state, dispatch } = useAudioPlayer();
-  const { currentPlaying, isPlaying } = state;
+  const { currentAudio: currentPlaying, isPlaying } = state;
 
   const [layout, setLayout] = useState<AudioListLayout>(defaultLayout);
 

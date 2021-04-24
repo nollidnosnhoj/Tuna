@@ -9,11 +9,10 @@ import React, {
 import { FaPause, FaPlay } from "react-icons/fa";
 import Wavesurfer from "wavesurfer.js";
 import { useAudioPlayer } from "~/contexts/AudioPlayerContext";
-import { Audio, AudioDetail } from "~/features/audio/types";
+import { AudioDetail } from "~/features/audio/types";
 import { mapAudioForAudioQueue } from "../AudioPlayer/utils";
 
 interface WaveformProps {
-  isActive: boolean;
   audio: AudioDetail;
   progressColor?: string;
   cursorColor?: string;
@@ -24,20 +23,25 @@ interface WaveformProps {
 const Waveform: React.FC<WaveformProps> = (props) => {
   const {
     audio,
-    isActive,
     progressColor = "#b92c84",
     cursorColor = "#b92c84",
     barGap,
     barWidth,
   } = props;
-  const { audioUrl, duration } = audio;
+  const { audioUrl } = audio;
 
   const { state, dispatch } = useAudioPlayer();
-  const { currentTime, isPlaying } = state;
+  const { currentTime, isPlaying, audioRef, currentAudio } = state;
+  const { duration } = currentAudio || { duration: audio.duration };
   const [ready, setReady] = useState(false);
 
   const wavesurfer = useRef<Wavesurfer | null>(null);
   const wavesurferRef = useRef<HTMLDivElement | null>(null);
+
+  const isActivelyPlaying = useMemo(() => {
+    if (!currentAudio) return false;
+    return currentAudio.audioId === audio.id;
+  }, [currentAudio?.audioId, audio]);
 
   /**
    * Current the current percentage (current time / duration)
@@ -75,7 +79,7 @@ const Waveform: React.FC<WaveformProps> = (props) => {
 
     const ready = () => {
       setReady(true);
-      if (isActive) {
+      if (isActivelyPlaying) {
         ws?.seekTo(currentPercentage);
       }
     };
@@ -85,7 +89,7 @@ const Waveform: React.FC<WaveformProps> = (props) => {
     return () => {
       ws?.un("ready", ready);
     };
-  }, [isActive, audioUrl]);
+  }, [isActivelyPlaying, audioUrl]);
 
   /**
    * Change current time based on the mouseclick on the waveform canvas
@@ -96,17 +100,18 @@ const Waveform: React.FC<WaveformProps> = (props) => {
     const seek = (e: React.MouseEvent<HTMLElement>) => {
       const { left, width } = e.currentTarget.getBoundingClientRect();
       const newCurrentTime = ((e.clientX - left) / width) * duration;
+      if (audioRef) audioRef.currentTime = newCurrentTime;
       dispatch({ type: "SET_CURRENT_TIME", payload: newCurrentTime });
     };
 
-    if (ready && isActive) {
+    if (ready && isActivelyPlaying) {
       ws?.drawer.on("click", seek);
     }
 
     return () => {
       ws?.drawer.un("click", seek);
     };
-  }, [duration, ready, isActive]);
+  }, [duration, ready, isActivelyPlaying]);
 
   /**
    * Update the waveform progress based on current Time
@@ -114,13 +119,13 @@ const Waveform: React.FC<WaveformProps> = (props) => {
   useEffect(() => {
     const ws = wavesurfer.current;
 
-    if (ready && isActive) {
+    if (ready && isActivelyPlaying) {
       ws?.seekTo(currentPercentage);
     }
-  }, [ready, isActive, currentPercentage]);
+  }, [ready, isActivelyPlaying, currentPercentage]);
 
   const clickPlayButton = useCallback(() => {
-    if (isActive) {
+    if (isActivelyPlaying) {
       dispatch({ type: "SET_PLAYING", payload: !isPlaying });
     } else {
       dispatch({
@@ -129,7 +134,7 @@ const Waveform: React.FC<WaveformProps> = (props) => {
         index: 0,
       });
     }
-  }, [isActive, isPlaying, audio.id]);
+  }, [isActivelyPlaying, isPlaying, audio.id]);
 
   return (
     <Flex>
@@ -140,7 +145,7 @@ const Waveform: React.FC<WaveformProps> = (props) => {
               isRound
               colorScheme="pink"
               size="lg"
-              icon={isPlaying && isActive ? <FaPause /> : <FaPlay />}
+              icon={isPlaying && isActivelyPlaying ? <FaPause /> : <FaPlay />}
               aria-label="Play"
               onClick={clickPlayButton}
             />

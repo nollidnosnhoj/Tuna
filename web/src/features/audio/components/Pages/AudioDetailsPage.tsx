@@ -14,7 +14,7 @@ const WavesurferPlayer = dynamic(() => import("~/components/Waveform"), {
 export default function AudioDetailsPage() {
   const { query } = useRouter();
   const {
-    state: { currentPlaying },
+    state: { currentAudio: currentPlaying },
   } = useAudioPlayer();
   const id = query.id as string;
 

@@ -20,24 +20,15 @@ import VolumeControl from "./VolumeControl";
 import { useAudioPlayer } from "~/contexts/AudioPlayerContext";
 
 interface DesktopAudioPlayerProps {
-  audioRef: React.RefObject<HTMLAudioElement>;
   isHidden?: boolean;
 }
 
 export default function DesktopAudioPlayer(props: DesktopAudioPlayerProps) {
-  const { audioRef, isHidden = false } = props;
+  const { isHidden = false } = props;
 
   const { state, dispatch } = useAudioPlayer();
 
-  const {
-    queue,
-    currentPlaying,
-    currentTime,
-    isPlaying,
-    playIndex,
-    repeat,
-    volume,
-  } = state;
+  const { audioRef, currentAudio: currentPlaying, playIndex, volume } = state;
 
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -52,8 +43,7 @@ export default function DesktopAudioPlayer(props: DesktopAudioPlayerProps) {
   const handleTogglePlay = useCallback(
     (e: React.SyntheticEvent) => {
       e.stopPropagation();
-      const audio = audioRef.current;
-      if (audio && playIndex !== undefined) {
+      if (audioRef && playIndex !== undefined) {
         dispatch({ type: "TOGGLE_PLAYING" });
       }
     },
@@ -117,37 +107,16 @@ export default function DesktopAudioPlayer(props: DesktopAudioPlayerProps) {
             <NowPlayingSection current={currentPlaying} />
           </Box>
           <Flex flexDirection="column" alignItems="center" width="500px">
-            <ProgressBar
-              audioNode={audioRef.current}
-              duration={audioRef.current?.duration || currentPlaying?.duration}
-            />
-            <PlayerControls
-              isPlaying={isPlaying}
-              hasNoPrevious={playIndex === 0}
-              hasNoNext={playIndex === queue.length - 1}
-              onTogglePlay={handleTogglePlay}
-              onPrevious={() => dispatch({ type: "PLAY_PREVIOUS" })}
-              onNext={() => dispatch({ type: "PLAY_NEXT" })}
-            />
+            <ProgressBar />
+            <PlayerControls onTogglePlay={handleTogglePlay} />
           </Flex>
           <Flex width="30%" justifyContent="flex-end">
             <Box>
               <HStack>
                 <Box width="150px">
-                  <VolumeControl
-                    audioNode={audioRef.current}
-                    volume={volume}
-                    onChange={(value) =>
-                      dispatch({ type: "SET_VOLUME", payload: value })
-                    }
-                  />
+                  <VolumeControl />
                 </Box>
-                <RepeatControl
-                  repeat={repeat}
-                  onRepeatChange={(value) =>
-                    dispatch({ type: "SET_REPEAT", payload: value })
-                  }
-                />
+                <RepeatControl />
                 <chakra.button
                   onClick={onQueuePanelToggle}
                   aria-label="Toggle Queue Panel"

@@ -1,30 +1,22 @@
-import { Box, chakra, Flex, HStack, Icon, IconButton } from "@chakra-ui/react";
-import React, { useCallback } from "react";
+import { HStack, IconButton } from "@chakra-ui/react";
+import React from "react";
 import {
   MdPause,
   MdPlayArrow,
   MdSkipNext,
   MdSkipPrevious,
 } from "react-icons/md";
+import { useAudioPlayer } from "~/contexts/AudioPlayerContext";
 
 interface PlayerControlsProps {
-  isPlaying: boolean;
-  hasNoPrevious?: boolean;
-  hasNoNext?: boolean;
   onTogglePlay: (e: React.SyntheticEvent) => void;
-  onPrevious?: () => void;
-  onNext?: () => void;
 }
 
 export default function PlayerControls(props: PlayerControlsProps) {
-  const {
-    isPlaying,
-    onTogglePlay,
-    onPrevious,
-    onNext,
-    hasNoNext = true,
-    hasNoPrevious = false,
-  } = props;
+  const { onTogglePlay } = props;
+
+  const { state, dispatch } = useAudioPlayer();
+  const { isPlaying, playIndex, queue } = state;
 
   return (
     <HStack>
@@ -32,8 +24,8 @@ export default function PlayerControls(props: PlayerControlsProps) {
         icon={<MdSkipPrevious />}
         aria-label="Previous"
         title="Previous"
-        onClick={onPrevious}
-        disabled={hasNoPrevious}
+        onClick={() => dispatch({ type: "PLAY_PREVIOUS" })}
+        disabled={playIndex === 0}
         isRound
         variant="ghost"
         size="lg"
@@ -53,8 +45,8 @@ export default function PlayerControls(props: PlayerControlsProps) {
         icon={<MdSkipNext />}
         aria-label="Next"
         title="Next"
-        onClick={onNext}
-        disabled={hasNoNext}
+        onClick={() => dispatch({ type: "PLAY_NEXT" })}
+        disabled={playIndex === queue.length - 1}
         isRound
         variant="ghost"
         size="lg"
