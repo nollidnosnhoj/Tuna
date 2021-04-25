@@ -15,7 +15,7 @@ namespace Audiochan.Core.Extensions.QueryableExtensions
                 .AsNoTracking()
                 .Include(a => a.Tags)
                 .Include(a => a.User)
-                .Where(a => a.UserId == currentUserId || a.Visibility == Visibility.Public);
+                .Where(a => a.UserId == currentUserId || a.IsPublic);
         }
 
         public static IQueryable<Audio> BaseDetailQueryable(this IQueryable<Audio> dbSet, string privateKey = "", string currentUserId = "")
@@ -24,10 +24,7 @@ namespace Audiochan.Core.Extensions.QueryableExtensions
                 .AsNoTracking()
                 .Include(a => a.Tags)
                 .Include(a => a.User)
-                .Where(a => a.UserId == currentUserId 
-                            || a.Visibility != Visibility.Private
-                            || (a.PrivateKey == privateKey 
-                            && a.Visibility == Visibility.Private));
+                .Where(a => a.UserId == currentUserId || a.IsPublic || a.PrivateKey == privateKey && !a.IsPublic);
         }
     }
 }

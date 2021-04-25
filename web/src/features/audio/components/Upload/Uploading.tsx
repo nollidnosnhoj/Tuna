@@ -94,12 +94,13 @@ export default function AudioUploading(props: AudioUploadingProps) {
         audio.src = window.URL.createObjectURL(file);
         audio.onloadedmetadata = () => {
           const body: CreateAudioRequest = {
+            title: file.name.split(".").slice(0, -1).join("."),
             uploadId: uploadId,
             fileName: file.name,
             duration: Math.round(audio.duration),
             fileSize: file.size,
             tags: [],
-            visibility: setToPublic ? "public" : "unlisted",
+            isPublic: setToPublic,
           };
 
           createAudio(body)

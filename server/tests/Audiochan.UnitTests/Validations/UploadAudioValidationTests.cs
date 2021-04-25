@@ -32,10 +32,10 @@ namespace Audiochan.UnitTests.Validations
         }
 
         [Fact]
-        public void CheckIfTitleIsValidWhenEmpty()
+        public void CheckIfTitleIsInvalidWhenEmpty()
         {
             var result = _validator.TestValidate(new CreateAudioRequest {Title = ""});
-            result.ShouldNotHaveValidationErrorFor(x => x.Title);
+            result.ShouldHaveValidationErrorFor(x => x.Title);
         }
 
         [Fact]

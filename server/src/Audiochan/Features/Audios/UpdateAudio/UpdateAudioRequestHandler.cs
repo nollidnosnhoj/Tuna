@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Enums;
 using Audiochan.Core.Extensions.MappingExtensions;
 using Audiochan.Core.Interfaces;
@@ -63,12 +62,9 @@ namespace Audiochan.Features.Audios.UpdateAudio
 
             audio.UpdateTitle(request.Title);
             audio.UpdateDescription(request.Description);
-            audio.UpdatePublicityStatus(request.Visibility);
             
-            if (audio.Visibility == Visibility.Private)
-                audio.SetPrivateKey();
-            else
-                audio.ClearPrivateKey();
+            if (request.IsPublic.HasValue)
+                audio.UpdatePublicity(request.IsPublic.GetValueOrDefault());
 
             _dbContext.Audios.Update(audio);
             await _dbContext.SaveChangesAsync(cancellationToken);

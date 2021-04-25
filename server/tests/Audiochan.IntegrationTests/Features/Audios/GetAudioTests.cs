@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Audiochan.Features.Audios.CreateAudio;
 using Audiochan.Features.Audios.GetAudio;
-using Audiochan.Core.Entities.Enums;
-using Audiochan.Core.Enums;
 using Audiochan.Core.Helpers;
 using Audiochan.Core.Models.ViewModels;
 using Audiochan.UnitTests.Builders;
@@ -44,7 +42,7 @@ namespace Audiochan.IntegrationTests.Features.Audios
             // Assign
             var (adminId, _) = await _fixture.RunAsAdministratorAsync();
             var audio = new AudioBuilder(adminId, Guid.NewGuid() + ".mp3")
-                .Publicity(Visibility.Private)
+                .SetPublic(false)
                 .Build();
             await _fixture.InsertAsync(audio);
 
@@ -65,7 +63,7 @@ namespace Audiochan.IntegrationTests.Features.Audios
             var (ownerId, _) = await _fixture.RunAsAdministratorAsync();
             var privateKey = "test";
             var audio = new AudioBuilder(ownerId)
-                .Publicity(Visibility.Private, privateKey)
+                .SetPublic(false, privateKey)
                 .Build();
             await _fixture.InsertAsync(audio);
 
@@ -82,7 +80,7 @@ namespace Audiochan.IntegrationTests.Features.Audios
             var (ownerId, _) = await _fixture.RunAsAdministratorAsync();
             var privateKey = "test";
             var audio = new AudioBuilder(ownerId)
-                .Publicity(Visibility.Private, privateKey)
+                .SetPublic(false, privateKey)
                 .Build();
             await _fixture.InsertAsync(audio);
 
@@ -93,22 +91,6 @@ namespace Audiochan.IntegrationTests.Features.Audios
         }
 
         [Fact]
-        public async Task ShouldGetAudio_WhenAudioIsUnlisted()
-        {
-            var (ownerId, _) = await _fixture.RunAsAdministratorAsync();
-            var audio = new AudioBuilder(ownerId)
-                .Publicity(Visibility.Unlisted)
-                .Build();
-            await _fixture.InsertAsync(audio);
-
-            await _fixture.RunAsDefaultUserAsync();
-            var result = await _fixture.SendAsync(new GetAudioRequest(audio.Id));
-
-            result.Should().NotBeNull();
-            result.Id.Should().Be(audio.Id);
-        }
-
-        [Fact]
         public async Task ShouldGetAudio()
         {
             // Assign
@@ -116,12 +98,13 @@ namespace Audiochan.IntegrationTests.Features.Audios
 
             var audio = await _fixture.SendAsync(new CreateAudioRequest
             {
+                Title = "Test Song",
                 UploadId = UploadHelpers.GenerateUploadId(),
                 FileName = "test.mp3",
                 Duration = 100,
                 FileSize = 100,
                 Tags = new List<string> {"apples", "oranges"},
-                Visibility = "unlisted"
+                IsPublic = true
             });
 
             // Act

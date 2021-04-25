@@ -103,7 +103,7 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                     file_size = table.Column<long>(type: "bigint", nullable: false),
                     file_ext = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: false),
                     picture = table.Column<string>(type: "text", nullable: true),
-                    visibility = table.Column<int>(type: "integer", nullable: false),
+                    is_public = table.Column<bool>(type: "boolean", nullable: false),
                     private_key = table.Column<string>(type: "text", nullable: true),
                     user_id = table.Column<string>(type: "text", nullable: false),
                     created = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),

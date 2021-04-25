@@ -36,6 +36,7 @@ import { AudioDetail, AudioRequest } from "~/features/audio/types";
 import { useRemoveAudio, useEditAudio } from "~/features/audio/hooks/mutations";
 import { editAudioSchema } from "~/features/audio/schemas";
 import { apiErrorToast, successfulToast } from "~/utils/toast";
+import InputCheckbox from "~/components/Form/Checkbox";
 
 interface AudioEditProps {
   audio: AudioDetail;
@@ -48,7 +49,7 @@ function mapAudioToModifyInputs(audio: AudioDetail): AudioRequest {
     title: audio.title,
     description: audio.description,
     tags: audio.tags,
-    visibility: audio.visibility,
+    isPublic: audio.isPublic,
   };
 }
 
@@ -67,18 +68,7 @@ const AudioEditModal: React.FC<AudioEditProps> = ({
     initialValues: currentValues,
     validationSchema: editAudioSchema,
     onSubmit: (inputs, { setSubmitting }) => {
-      const newRequest = {};
-      if (currentValues) {
-        Object.entries(inputs).forEach(([key, value]) => {
-          if (currentValues[key] !== value) {
-            newRequest[key] = value;
-          }
-        });
-      } else {
-        Object.assign(newRequest, inputs ?? {});
-      }
-
-      updateAudio(newRequest)
+      updateAudio(inputs)
         .then(() => {
           successfulToast({ title: "Audio updated" });
           onClose();
@@ -157,34 +147,15 @@ const AudioEditModal: React.FC<AudioEditProps> = ({
               error={errors.tags}
               disabled={isSubmitting || deleting}
             />
-            <FormControl id="visibility">
-              <FormLabel>Visibility</FormLabel>
-              <Select
-                name="visibility"
-                value={values.visibility}
-                onChange={handleChange}
-              >
-                <option value="unlisted">Unlisted</option>
-                <option value="public">Public</option>
-                <option value="private">Private</option>
-              </Select>
-              <FormHelperText>
-                <UnorderedList>
-                  <ListItem>
-                    <strong>Public</strong> - Audio will be shown in lists and
-                    searches.
-                  </ListItem>
-                  <ListItem>
-                    <strong>Unlisted</strong> - Audio will not be in lists or
-                    searches.
-                  </ListItem>
-                  <ListItem>
-                    <strong>Private</strong> - Audio can only be seen if a
-                    private key is provided.
-                  </ListItem>
-                </UnorderedList>
-              </FormHelperText>
-            </FormControl>
+            <InputCheckbox
+              name="isPublic"
+              onChange={() => setFieldValue("isPublic", !values.isPublic)}
+              value={values.isPublic ?? false}
+              required
+              error={errors.isPublic}
+              toggleSwitch
+              label="Public"
+            />
             <Flex marginY={4}>
               <Box>
                 <Popover>

@@ -46,11 +46,11 @@ namespace Audiochan.Features.Audios.CreateAudio
             if (currentUser is null)
                 return Result<AudioDetailViewModel>.Fail(ResultError.Unauthorized);
 
-            var audio = new Audio(request.UploadId, request.FileName, request.FileSize, request.Duration, currentUser);
+            var audio = new Audio(request.Title, request.UploadId, request.FileName, request.FileSize, request.Duration, currentUser);
 
             audio.UpdateTitle(request.Title);
             audio.UpdateDescription(request.Description);
-            audio.UpdatePublicityStatus(request.Visibility);
+            audio.UpdatePublicity(request.IsPublic ?? false);
 
             try
             {

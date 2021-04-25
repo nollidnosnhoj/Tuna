@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Enums;
@@ -9,12 +10,13 @@ namespace Audiochan.UnitTests.Builders
 {
     public class AudioBuilder
     {
-        private Audio _audio;
+        private readonly Audio _audio;
         private readonly Randomizer _randomizer = new();
 
         public AudioBuilder(string userId, string fileName = "test.mp3")
         {
             _audio = new Audio(
+                title: Path.GetFileNameWithoutExtension(fileName),
                 uploadId: UploadHelpers.GenerateUploadId(),
                 fileName: fileName,
                 fileSize: _randomizer.Number(5000, 25000),
@@ -40,10 +42,10 @@ namespace Audiochan.UnitTests.Builders
             return this;
         }
 
-        public AudioBuilder Publicity(Visibility status, string privateKey = "")
+        public AudioBuilder SetPublic(bool isPublic, string privateKey = "")
         {
-            _audio.Visibility = status;
-            if (_audio.Visibility == Visibility.Private && !string.IsNullOrEmpty(privateKey))
+            _audio.UpdatePublicity(isPublic);
+            if (!string.IsNullOrWhiteSpace(privateKey))
                 _audio.PrivateKey = privateKey;
             return this;
         }

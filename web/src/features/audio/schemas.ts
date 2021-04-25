@@ -6,7 +6,7 @@ import {
   SchemaOf,
 } from 'yup'
 import { validationMessages } from '~/utils'
-import { AudioRequest, Visibility } from './types';
+import { AudioRequest } from './types';
 
 export const editAudioSchema: SchemaOf<AudioRequest> = object().shape({
   title: string()
@@ -21,8 +21,7 @@ export const editAudioSchema: SchemaOf<AudioRequest> = object().shape({
     .max(10, validationMessages.max("Tags", 10))
     .ensure()
     .defined(),
-  visibility: string()
-    .oneOf(['public', 'unlisted', 'private'], "Invalid visibility state.")
+  isPublic: boolean()
     .defined()
 }).defined();
 
@@ -39,7 +38,6 @@ export const uploadAudioSchema: SchemaOf<AudioRequest> = object().shape({
     .max(10, validationMessages.max("Tags", 10))
     .ensure()
     .defined(),
-  visibility: string()
-    .oneOf(['public', 'unlisted', 'private'], "Invalid visibility state.")
+  isPublic: boolean()
     .defined()
 }).defined();

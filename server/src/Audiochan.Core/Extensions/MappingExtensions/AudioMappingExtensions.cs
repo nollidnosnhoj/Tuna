@@ -23,11 +23,11 @@ namespace Audiochan.Core.Extensions.MappingExtensions
                 Picture = audio.Picture,
                 Uploaded = audio.Created,
                 Tags = audio.Tags.Select(t => t.Name).ToArray(),
-                Visibility = audio.Visibility,
+                IsPublic = audio.IsPublic,
                 FileExt = audio.FileExt,
                 FileSize = audio.FileSize,
                 LastModified = audio.LastModified,
-                PrivateKey = audio.Visibility == Visibility.Private ? audio.PrivateKey : null,
+                PrivateKey = audio.IsPublic ? null : audio.PrivateKey,
                 AudioUrl = $"{options.StorageUrl}/{options.Audio.Container}/{audio.UploadId + audio.FileExt}",
                 Author = new MetaAuthorDto
                 {
@@ -47,7 +47,7 @@ namespace Audiochan.Core.Extensions.MappingExtensions
                 Duration = audio.Duration,
                 Picture = audio.Picture,
                 Uploaded = audio.Created,
-                Visibility = audio.Visibility,
+                IsPublic = audio.IsPublic,
                 AudioUrl = $"{options.StorageUrl}/{options.Audio.Container}/{audio.UploadId + audio.FileExt}",
                 Author = new MetaAuthorDto
                 {

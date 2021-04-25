@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Audiochan.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210419201732_InitialMigration")]
+    [Migration("20210425064447_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -76,6 +76,10 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("file_size");
 
+                    b.Property<bool>("IsPublic")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_public");
+
                     b.Property<DateTime?>("LastModified")
                         .HasColumnType("timestamp without time zone")
                         .HasColumnName("last_modified");
@@ -103,10 +107,6 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("user_id");
-
-                    b.Property<int>("Visibility")
-                        .HasColumnType("integer")
-                        .HasColumnName("visibility");
 
                     b.HasKey("Id")
                         .HasName("pk_audios");

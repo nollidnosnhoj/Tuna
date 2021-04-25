@@ -49,7 +49,10 @@ export default function AudioSearchPage(props: AudioSearchValues) {
     page,
     setPage,
     totalPages,
-  } = useGetAudioListPagination("search/audios", queryParams, 30, {
+  } = useGetAudioListPagination("search/audios", {
+    params: {
+      ...queryParams,
+    },
     enabled: Boolean(searchValues.q),
   });
 

@@ -76,7 +76,7 @@ namespace Audiochan.Core.Extensions
         public static string Truncate(this string input, int length)
         {
             var stringBuilder = new StringBuilder(length);
-            stringBuilder.Append(input.Length > 30 ? input.Substring(0, length) : input);
+            stringBuilder.Append(input.Length > 30 ? input[..length] : input);
             return stringBuilder.ToString();
         }
     }

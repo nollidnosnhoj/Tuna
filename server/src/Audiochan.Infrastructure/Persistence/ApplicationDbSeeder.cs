@@ -39,25 +39,25 @@ namespace Audiochan.Infrastructure.Persistence
             {
                 var user = await userManager.FindByNameAsync("superuser");
 
-                var audio1 = new Audio("audio1", "Dreams.mp3", 9335255, 388, user);
+                var audio1 = new Audio("Dreams", "audio1", "Dreams.mp3", 9335255, 388, user);
                 audio1.UpdateTags(await tagRepository.GetListAsync(new[] {"chillout", "lucid-dreams"}));
-                audio1.UpdatePublicityStatus(Visibility.Public);
+                audio1.UpdatePublicity(true);
 
-                var audio2 = new Audio("audio2", "Heaven.mp3", 6239211, 194, user);
+                var audio2 = new Audio("Heaven", "audio2", "Heaven.mp3", 6239211, 194, user);
                 audio2.UpdateTags(await tagRepository.GetListAsync(new[] {"newgrounds", "piano", "rave"}));
-                audio2.UpdatePublicityStatus(Visibility.Public);
+                audio2.UpdatePublicity(true);
 
-                var audio3 = new Audio("audio3", "LifeIsBeautiful.mp3", 1823391, 45, user);
+                var audio3 = new Audio("Life Is Beautiful", "audio3", "LifeIsBeautiful.mp3", 1823391, 45, user);
                 audio3.UpdateTags(await tagRepository.GetListAsync(new[] {"happy", "anime", "hardcore", "nightcore"}));
-                audio3.UpdatePublicityStatus(Visibility.Public);
+                audio3.UpdatePublicity(true);
 
-                var audio4 = new Audio("audio4", "BeginningOfTime.mp3", 3952556, 164, user);
+                var audio4 = new Audio("Beginning of Time", "audio4", "BeginningOfTime.mp3", 3952556, 164, user);
                 audio4.UpdateTags(await tagRepository.GetListAsync(new[] {"hard-dance"}));
-                audio4.UpdatePublicityStatus(Visibility.Unlisted);
+                audio4.UpdatePublicity(false);
 
-                var audio5 = new Audio("audio5", "Verity.mp3", 8788667, 219, user);
+                var audio5 = new Audio("Verity", "audio5", "Verity.mp3", 8788667, 219, user);
                 audio5.UpdateTags(await tagRepository.GetListAsync(new[] {"vocals"}));
-                audio5.UpdatePublicityStatus(Visibility.Unlisted);
+                audio5.UpdatePublicity(false);
                 
                 await context.Audios.AddRangeAsync(audio1, audio2, audio3, audio4, audio5);
                 await context.SaveChangesAsync();

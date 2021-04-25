@@ -27,10 +27,7 @@ export default function AudioDetailsPage() {
   return (
     <Page title={audio.title}>
       <Box>
-        <WavesurferPlayer
-          isActive={currentPlaying?.audioId === audio.id}
-          audio={audio}
-        />
+        <WavesurferPlayer audio={audio} />
         <AudioDetails audio={audio} />
       </Box>
     </Page>

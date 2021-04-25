@@ -16,16 +16,19 @@ namespace Audiochan.Core.Entities
             this.Tags = new HashSet<Tag>();
         }
 
-        public Audio(string uploadId, string fileName, long fileSize, int duration, User user)
-            : this(uploadId, fileName, fileSize, duration, user.Id)
+        public Audio(string title, string uploadId, string fileName, long fileSize, int duration, User user)
+            : this(title, uploadId, fileName, fileSize, duration, user.Id)
         {
             this.User = user;
         }
 
-        public Audio(string uploadId, string fileName, long fileSize, int duration, string userId) : this()
+        public Audio(string title, string uploadId, string fileName, long fileSize, int duration, string userId) : this()
         {
+            if (string.IsNullOrWhiteSpace(title))
+                throw new ArgumentNullException(nameof(title));
+
             if (string.IsNullOrWhiteSpace(uploadId))
-                throw new ArgumentException("UploadId cannot be empty.", nameof(uploadId));
+                throw new ArgumentNullException(nameof(uploadId));
 
             if (string.IsNullOrWhiteSpace(fileName))
                 throw new ArgumentNullException(nameof(fileName));
@@ -44,7 +47,7 @@ namespace Audiochan.Core.Entities
             this.FileSize = fileSize;
             this.Duration = duration;
             this.UserId = userId;
-            AssignDefaultTitle();
+            this.Title = title.Truncate(30);
         }
 
         public string Title { get; set; }
@@ -55,7 +58,7 @@ namespace Audiochan.Core.Entities
         public long FileSize { get; set; }
         public string FileExt { get; set; }
         public string Picture { get; set; }
-        public Visibility Visibility { get; set; } = Visibility.Unlisted;
+        public bool IsPublic { get; set; }
         public string PrivateKey { get; set; }
         public string UserId { get; set; }
         public User User { get; set; }
@@ -63,8 +66,8 @@ namespace Audiochan.Core.Entities
 
         public void UpdateTitle(string title)
         {
-            if (string.IsNullOrWhiteSpace(title)) AssignDefaultTitle();
-            else this.Title = title;
+            if (!string.IsNullOrWhiteSpace(title))
+                this.Title = title;
         }
 
         public void UpdateDescription(string description)
@@ -73,30 +76,20 @@ namespace Audiochan.Core.Entities
                 this.Description = description;
         }
         
-        public void UpdatePublicityStatus(string status)
+        public void UpdatePublicity(bool isPublic)
         {
-            var publicity = status.ParseToEnumOrDefault<Visibility>();
-            UpdatePublicityStatus(publicity);
+            this.IsPublic = isPublic;
+            
+            if (!isPublic && string.IsNullOrWhiteSpace(this.PrivateKey))
+                this.GenerateNewPrivateKey();
+            
+            if (isPublic)
+                this.PrivateKey = null;
         }
 
-        public void UpdatePublicityStatus(Visibility status)
+        public void GenerateNewPrivateKey()
         {
-            this.Visibility = status;
-            if (this.Visibility == Visibility.Private)
-            {
-                SetPrivateKey();
-            }
-        }
-
-        public void SetPrivateKey()
-        {
-            // TODO: Use Nano-id (or shortid)
             this.PrivateKey = Guid.NewGuid().ToString("N");
-        }
-
-        public void ClearPrivateKey()
-        {
-            this.PrivateKey = null;
         }
 
         public void UpdateTags(List<Tag> tags)
@@ -135,11 +128,6 @@ namespace Audiochan.Core.Entities
         public bool CanModify(string userId)
         {
             return this.UserId == userId;
-        }
-
-        private void AssignDefaultTitle()
-        {
-            this.Title = this.FileName.Truncate(30);
         }
     }
 }

@@ -41,7 +41,7 @@ namespace Audiochan.IntegrationTests.Features.Search
                 }
                 var audio = new AudioBuilder(userId)
                     .Title(title)
-                    .Publicity(Visibility.Public)
+                    .SetPublic(true)
                     .Build();
                 await _fixture.InsertAsync(audio);
             }
@@ -74,12 +74,13 @@ namespace Audiochan.IntegrationTests.Features.Search
 
                 await _fixture.SendAsync(new CreateAudioRequest
                 {
+                    Title = $"Test Song #{i + 1}",
                     UploadId = UploadHelpers.GenerateUploadId(),
                     FileName = "test.mp3",
                     Duration = 100,
                     FileSize = 100,
                     Tags = tags,
-                    Visibility = "public"
+                    IsPublic = true
                 });
             }
 

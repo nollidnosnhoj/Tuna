@@ -40,7 +40,7 @@ namespace Audiochan.Features.Audios.ResetPrivateKey
                 return Result<string>.Fail(ResultError.BadRequest,
                     "Audio must be set to private to change private key.");
             
-            audio.SetPrivateKey();
+            audio.GenerateNewPrivateKey();
 
             _dbContext.Audios.Update(audio);
             await _dbContext.SaveChangesAsync(cancellationToken);

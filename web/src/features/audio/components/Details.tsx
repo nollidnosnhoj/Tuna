@@ -147,9 +147,7 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
             <Spacer />
             <VStack spacing={2} alignItems="normal" textAlign="right">
               <Box color={secondaryColor}>{audioDurationFormatted}</Box>
-              {audio.visibility !== "public" && (
-                <Badge>{audio.visibility}</Badge>
-              )}
+              {!audio.isPublic && <Badge>PRIVATE</Badge>}
             </VStack>
           </Flex>
           {audio.tags && (

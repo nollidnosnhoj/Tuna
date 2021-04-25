@@ -6,7 +6,7 @@ namespace Audiochan.Core.Models.Requests
     {
         public string Title { get; init; }
         public string Description { get; init; }
-        public string Visibility { get; init; }
+        public bool? IsPublic { get; init; }
         public List<string> Tags { get; init; } = new();
     }
 }
