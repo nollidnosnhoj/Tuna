@@ -6,7 +6,7 @@ using Audiochan.Core.Models.Responses;
 
 namespace Audiochan.Core.Models.ViewModels
 {
-    public record AudioDetailViewModel : IBaseViewModel
+    public record AudioDetailViewModel
     {
         public long Id { get; init; }
         public string Title { get; init; }
