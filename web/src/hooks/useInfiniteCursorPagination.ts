@@ -15,7 +15,6 @@ export default function useInfiniteCursorPagination<TItem>(
     isFetchingNextPage
   } = useInfiniteQuery<CursorPagedList<TItem>, ErrorResponse>([key, params], ({ pageParam = undefined }) => fetcher(pageParam), {
       getNextPageParam: (lastPage) => lastPage.next,
-      getPreviousPageParam: (firstPage) => firstPage.previous,
       ...options
     });
 

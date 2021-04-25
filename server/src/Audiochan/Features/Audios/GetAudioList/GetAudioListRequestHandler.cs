@@ -13,7 +13,7 @@ using Microsoft.Extensions.Options;
 
 namespace Audiochan.Features.Audios.GetAudioList
 {
-    public class GetAudioListRequestHandler : IRequestHandler<GetAudioListRequest, CursorList<AudioViewModel, long?>>
+    public class GetAudioListRequestHandler : IRequestHandler<GetAudioListRequest, CursorList<AudioViewModel, long>>
     {
         private readonly IApplicationDbContext _dbContext;
         private readonly ICurrentUserService _currentUserService;
@@ -26,16 +26,23 @@ namespace Audiochan.Features.Audios.GetAudioList
             _storageSettings = options.Value;
         }
 
-        public async Task<CursorList<AudioViewModel, long?>> Handle(GetAudioListRequest request,
+        public async Task<CursorList<AudioViewModel, long>> Handle(GetAudioListRequest request,
             CancellationToken cancellationToken)
         {
             var currentUserId = _currentUserService.GetUserId();
 
-            return await _dbContext.Audios
+            var audios = await _dbContext.Audios
                 .BaseListQueryable(currentUserId)
                 .OrderByDescending(a => a.Id)
                 .ProjectToList(_storageSettings)
-                .CursorPaginateAsync(request, cancellationToken);
+                .CursorPaginateAsync(request, 
+                    req => req.Id, 
+                    req => req.Id < request.Cursor, 
+                    cancellationToken);
+
+            var nextCursor = audios.Count < request.Size ? null : audios.LastOrDefault()?.Id;
+
+            return new CursorList<AudioViewModel, long>(audios, nextCursor);
         }
     }
 }

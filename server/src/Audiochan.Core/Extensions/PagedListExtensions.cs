@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Models.Interfaces;
@@ -38,24 +41,19 @@ namespace Audiochan.Core.Extensions
             return await queryable.PaginateAsync(paginationQuery.Page, paginationQuery.Size, cancellationToken);
         }
 
-        public static async Task<CursorList<TResponse, long?>> CursorPaginateAsync<TResponse>(
+        public static async Task<List<TResponse>> CursorPaginateAsync<TResponse, TCursor>(
             this IQueryable<TResponse> queryable,
-            IHasCursor request,
-            CancellationToken cancellationToken = default) where TResponse : IBaseViewModel
+            IHasCursor<TCursor> request,
+            Expression<Func<TResponse, TCursor>> property,
+            Expression<Func<TResponse, bool>> predicate,
+            CancellationToken cancellationToken = default) where TCursor : struct
         {
-            queryable = queryable.OrderByDescending(x => x.Id);
-            
+            queryable = queryable.OrderByDescending(property);
+
             if (request.Cursor.HasValue)
-                queryable = queryable.Where(x => x.Id < request.Cursor);
-            
-            var items = await queryable
-                .Take(request.Size ?? 30)
-                .ToListAsync(cancellationToken);
+                queryable = queryable.Where(predicate);
 
-            var prev = items.FirstOrDefault()?.Id;
-            var next = items.LastOrDefault()?.Id;
-
-            return new CursorList<TResponse, long?>(items, prev, next);
+            return await queryable.Take(request.Size).ToListAsync(cancellationToken);
         }
     }
 }

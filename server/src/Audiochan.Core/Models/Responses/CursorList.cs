@@ -2,7 +2,7 @@
 
 namespace Audiochan.Core.Models.Responses
 {
-    public record CursorList<TItem, TCursor>(IReadOnlyList<TItem> Items, TCursor Previous, TCursor Next)
+    public record CursorList<TItem, TCursor>(IReadOnlyList<TItem> Items, TCursor? Next) where TCursor : struct
     {
     }
 }

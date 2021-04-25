@@ -5,9 +5,9 @@ using MediatR;
 
 namespace Audiochan.Features.Audios.GetAudioList
 {
-    public record GetAudioListRequest : IHasCursor, IRequest<CursorList<AudioViewModel, long?>>
+    public record GetAudioListRequest : IHasCursor<long>, IRequest<CursorList<AudioViewModel, long>>
     {
         public long? Cursor { get; init; }
-        public int? Size { get; init; }
+        public int Size { get; init; } = 30;
     }
 }
