@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Interfaces;
-using Audiochan.Core.Settings;
+using Audiochan.Core.Models.Settings;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;

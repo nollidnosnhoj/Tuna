@@ -7,7 +7,7 @@ using Audiochan.Core.Helpers;
 using Audiochan.Core.Interfaces;
 using Audiochan.Core.Models.Interfaces;
 using Audiochan.Core.Models.Responses;
-using Audiochan.Core.Settings;
+using Audiochan.Core.Models.Settings;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;

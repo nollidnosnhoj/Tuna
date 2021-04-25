@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Audiochan.Core.Settings
+namespace Audiochan.Core.Models.Settings
 {
     public record JwtSettings
     {

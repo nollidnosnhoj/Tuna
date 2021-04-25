@@ -7,8 +7,8 @@ using Audiochan.Core.Extensions.MappingExtensions;
 using Audiochan.Core.Extensions.QueryableExtensions;
 using Audiochan.Core.Interfaces;
 using Audiochan.Core.Models.Responses;
+using Audiochan.Core.Models.Settings;
 using Audiochan.Core.Models.ViewModels;
-using Audiochan.Core.Settings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Audiochan.Core.Exceptions
+namespace Audiochan.Infrastructure.Storage
 {
     public class StorageException : Exception
     {

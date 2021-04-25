@@ -5,8 +5,8 @@ using Audiochan.Core.Entities;
 using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Enums;
 using Audiochan.Core.Models.Responses;
+using Audiochan.Core.Models.Settings;
 using Audiochan.Core.Models.ViewModels;
-using Audiochan.Core.Settings;
 
 namespace Audiochan.Core.Extensions.MappingExtensions
 {

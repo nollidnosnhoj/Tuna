@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Audiochan.Core.Constants;
-using Audiochan.Core.Settings;
+using Audiochan.Core.Models.Settings;
 using FluentValidation;
 
 namespace Audiochan.Core.Extensions

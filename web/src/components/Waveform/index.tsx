@@ -61,6 +61,7 @@ const Waveform: React.FC<WaveformProps> = (props) => {
         cursorColor,
         barGap,
         barWidth,
+        responsive: true,
       });
       wavesurfer.current?.load(audioUrl);
     }
