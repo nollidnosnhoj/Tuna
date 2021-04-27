@@ -11,7 +11,7 @@ This repository contains the web frontend of the application.
 - Next.JS (React SSR)
 - Chakra UI (UI)
 
-## Contributing
+## Contributing 😍
 
 Work in progress
  
