@@ -2,7 +2,9 @@ import { useQuery, UseQueryOptions } from 'react-query';
 import { ErrorResponse } from "~/lib/types";
 import { AudioDetail } from '~/features/audio/types';
 import { fetchAudioById } from '../../services/mutations/fetchAudioById';
+import { useAuth } from '~/contexts/AuthContext';
 
 export function useGetAudio(id: string, options: UseQueryOptions<AudioDetail, ErrorResponse> = {}) {
-  return useQuery<AudioDetail, ErrorResponse>(['audios', id], () => fetchAudioById(id), options);
+  const { accessToken } = useAuth();
+  return useQuery<AudioDetail, ErrorResponse>(['audios', id], () => fetchAudioById(id, { accessToken }), options);
 }

@@ -1,12 +1,14 @@
 import { useMutation, useQueryClient } from 'react-query';
+import { useAuth } from '~/contexts/AuthContext';
 import api from '~/utils/api';
 import { AudioDetail } from '../../types';
 
 
 export function useEditAudio(id: number) {
   const queryClient = useQueryClient();
+  const { accessToken } = useAuth();
   const updateAudio = async (input: object) => {
-    const { data } = await api.put<AudioDetail>(`audios/${id}`, input);
+    const { data } = await api.put<AudioDetail>(`audios/${id}`, input, { accessToken });
     return data;
   };
 

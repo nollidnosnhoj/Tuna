@@ -1,11 +1,12 @@
 import axios, { Method } from 'axios'
 import createAuthRefreshInterceptor, { AxiosAuthRefreshRequestConfig } from 'axios-auth-refresh';
-import queryString from 'query-string'
+import { stringifyUrl } from 'query-string'
 import config from '~/lib/config';
 import { refreshAccessToken } from "~/features/auth/services";
 import { isAxiosError } from './axios';
 import { getAccessToken } from './cookies';
 import { PagedList } from '~/lib/types';
+import { resolve } from 'node:path';
 
 const backendServerAxios = axios.create({
   baseURL: config.BACKEND_API,
@@ -17,11 +18,11 @@ export function getBearer(token: string) {
 }
 
 createAuthRefreshInterceptor(backendServerAxios, async (failedRequest) => {
-  return refreshAccessToken().then((data) => {
+  return refreshAccessToken().then(([newToken, _]) => {
     if (failedRequest && isAxiosError(failedRequest) && failedRequest.response) {
-      failedRequest.response.config.headers['Authorization'] = getBearer(data.accessToken);
+      failedRequest.response.config.headers['Authorization'] = getBearer(newToken);
     }
-    backendServerAxios.defaults.headers['Authorization'] = getBearer(data.accessToken);
+    backendServerAxios.defaults.headers['Authorization'] = getBearer(newToken);
     return Promise.resolve();
   }).catch(err => Promise.reject(err));
 });
@@ -36,63 +37,75 @@ backendServerAxios.interceptors.request.use(request => {
 
 interface RequestConfiguration {
   accessToken?: string;
+  contentType?: string;
   skipAuthRefresh?: boolean;
 }
 
-function constructRouteWithQueryParams(route: string, params: Record<string, any> = {}) {
-  if (Object.keys(params).length === 0) return route;
-  return `${route}?${queryString.stringify(params)}`
-}
-
-function constructRequestConfiguration(config?: RequestConfiguration): AxiosAuthRefreshRequestConfig {
-  function constructAuthorizationHeader(accessToken?: string) {
-    if (!accessToken) return {};
-    return { 'Authorization': getBearer(accessToken) };
-  }
-
-  if (!config) return {};
-
+function constructRequestConfiguration(config: RequestConfiguration = {}): AxiosAuthRefreshRequestConfig {
   const {
+    contentType = 'application/json',
     accessToken,
     skipAuthRefresh = false
   } = config;
 
+  const headers = {
+    'Content-Type': contentType
+  }
+
+  if (accessToken) {
+    Object.assign(headers, { 'Authorization': getBearer(accessToken) })
+  }
+
   return {
-    headers: { ...constructAuthorizationHeader(accessToken) },
-    skipAuthRefresh: skipAuthRefresh
+    headers,
+    skipAuthRefresh
   }
 }
 
 function getRequest<TResponse = any>(route: string, params: Record<string,any> = {}, config?: RequestConfiguration) {
-  return backendServerAxios.get<TResponse>(constructRouteWithQueryParams(route, params), constructRequestConfiguration(config));
+  const requestConfig = constructRequestConfiguration(config);
+  return backendServerAxios.get<TResponse>(stringifyUrl({ url: route, query: params }), requestConfig);
 }
 
 function headRequest(route: string, config?: RequestConfiguration) {
-  return backendServerAxios.head(route, constructRequestConfiguration(config));
+  const requestConfig = constructRequestConfiguration(config);
+  return backendServerAxios.head(route, requestConfig);
 }
 
 function postRequest<TResponse = any, TRequest = unknown>(route: string, body?: TRequest, config?: RequestConfiguration) {
-  return backendServerAxios.post<TResponse>(route, body, constructRequestConfiguration(config));
+  const requestConfig = constructRequestConfiguration(config);
+  return backendServerAxios.post<TResponse>(route, body, requestConfig);
 }
 
 function putRequest<TResponse = any, TRequest = unknown>(route: string, body?: TRequest, config?: RequestConfiguration) {
-  return backendServerAxios.put<TResponse>(route, body, constructRequestConfiguration(config));
+  const requestConfig = constructRequestConfiguration(config);
+  return backendServerAxios.put<TResponse>(route, body, requestConfig);
 }
 
 function patchRequest<TResponse = any, TRequest = unknown>(route: string, body?: TRequest, config?: RequestConfiguration) {
-  return backendServerAxios.patch<TResponse>(route, body, constructRequestConfiguration(config));
+  const requestConfig = constructRequestConfiguration(config);
+  return backendServerAxios.patch<TResponse>(route, body, requestConfig);
 }
 
 function deleteRequest<TResponse = any>(route: string, config?: RequestConfiguration) {
-  return backendServerAxios.delete<TResponse>(route, constructRequestConfiguration(config));
+  const requestConfig = constructRequestConfiguration(config);
+  return backendServerAxios.delete<TResponse>(route, requestConfig);
 }
 
-function request<TResponse = any, TRequest = unknown>(route: string, method: Method, body?: TRequest, config?: RequestConfiguration) {
+interface GenericRequestConfiguration<TRequest = any> extends RequestConfiguration {
+  body?: TRequest,
+  params?: Record<string, any>
+}
+
+function request<TResponse = any, TRequest = unknown>(method: Method, route: string, config: GenericRequestConfiguration<TRequest> = {}) {
+  const { body, params, ...otherConfig } = config;
+  const requestConfig = constructRequestConfiguration(otherConfig);
   return backendServerAxios.request<TResponse>({
     method: method,
     url: route,
+    params,
     data: body,
-    ...constructRequestConfiguration(config)
+    ...requestConfig
   });
 }
 
@@ -101,7 +114,7 @@ export interface FetchAudioOptions {
 }
 
 export function fetch<TResponse>(route: string, params: Record<string, any> = {}, options: FetchAudioOptions = {}) {
-  const accessToken = options.accessToken || getAccessToken();
+  const { accessToken = getAccessToken() } = options;
   return new Promise<TResponse>((resolve, reject) => {
     getRequest(route, params, {accessToken}).then(({ data }) => {
       resolve(data)
@@ -110,10 +123,12 @@ export function fetch<TResponse>(route: string, params: Record<string, any> = {}
 }
 
 export const fetchPages = async <TData>(key: string, params: Record<string, any> = {}, page: number = 1, options: FetchAudioOptions = {}) => {
-  const { data } = await getRequest<PagedList<TData>>(key, { ...params, page }, {
-    accessToken: options.accessToken
-  });
-  return data;
+  const { accessToken = getAccessToken() } = options;
+  return new Promise<PagedList<TData>>((resolve, reject) => {
+    getRequest(key, { ...params, page }, { accessToken })
+      .then(({ data }) => resolve(data))
+      .catch(err => reject(err));
+  })
 }
 
 export default {

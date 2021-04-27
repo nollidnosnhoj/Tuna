@@ -18,22 +18,30 @@ import API from "~/utils/api";
 import { getAccessToken } from "~/utils/cookies";
 import { useUser } from "./UserContext";
 
-interface AuthProviderProps {
+interface AuthContextProviderProps {
+  accessToken: string;
   isLoadingAuth: boolean;
   isLoggedIn: boolean;
   login: (inputs: LoginFormValues) => Promise<void>;
   logout: () => Promise<void>;
 }
 
+interface AuthProviderProps {
+  accessToken?: string;
+}
+
 const ACCESS_TOKEN_EXPIRATION_KEY = "expires";
 
-const AuthContext = createContext<AuthProviderProps>({} as AuthProviderProps);
+const AuthContext = createContext<AuthContextProviderProps>(
+  {} as AuthContextProviderProps
+);
 
-const AuthProvider: React.FC = (props) => {
+const AuthProvider: React.FC<AuthProviderProps> = (props) => {
   const { user, updateUser } = useUser();
+  const [accessToken, setAccessToken] = useState(
+    () => props.accessToken || getAccessToken()
+  );
   const [accessTokenExpiration, setAccessTokenExpiration] = useState(0);
-
-  const accessToken = getAccessToken();
 
   const { isFetching, refetch, isSuccess } = useQuery<CurrentUser>(
     "me",
@@ -65,14 +73,16 @@ const AuthProvider: React.FC = (props) => {
   };
 
   const login = async (inputs: LoginFormValues) => {
-    const result = await authenticateUser(inputs);
-    setExpirationToLocalStorage(result.accessTokenExpires);
+    const [newToken, newExpires] = await authenticateUser(inputs);
+    setAccessToken(newToken);
+    setExpirationToLocalStorage(newExpires);
     refetch();
   };
 
   const logout = async () => {
     await revokeRefreshToken();
     updateUser(null);
+    setAccessToken("");
     setExpirationToLocalStorage(0);
   };
 
@@ -90,21 +100,23 @@ const AuthProvider: React.FC = (props) => {
     if (user) {
       const now = Date.now() / 1000;
       if (accessTokenExpiration <= now) {
-        refreshAccessToken().then((result) => {
-          setExpirationToLocalStorage(result.accessTokenExpires);
+        refreshAccessToken().then(([newToken, newExpires]) => {
+          setAccessToken(newToken);
+          setExpirationToLocalStorage(newExpires);
         });
       }
     }
   }, 1000 * 60);
 
-  const values = useMemo<AuthProviderProps>(
+  const values = useMemo<AuthContextProviderProps>(
     () => ({
+      accessToken,
       isLoadingAuth: isFetching,
       isLoggedIn: isSuccess && Boolean(user),
       login,
       logout,
     }),
-    [isFetching, login, logout, isSuccess]
+    [accessToken, isFetching, login, logout, isSuccess]
   );
 
   return (
