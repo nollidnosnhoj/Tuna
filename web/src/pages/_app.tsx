@@ -12,6 +12,9 @@ import queryClient from "~/lib/queryClient";
 import { CurrentUser } from "~/features/user/types";
 import AuthProvider from "~/contexts/AuthContext";
 
+// Global stylesheets
+import "rc-slider/assets/index.css";
+
 interface AppProps extends NextAppProps {
   user?: CurrentUser;
 }

@@ -1,13 +1,7 @@
 import _ from "lodash";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import {
-  Box,
-  Flex,
-  Slider,
-  SliderFilledTrack,
-  SliderThumb,
-  SliderTrack,
-} from "@chakra-ui/react";
+import { Box, Flex } from "@chakra-ui/react";
+import Slider from "rc-slider";
 import { formatDuration } from "~/utils/format";
 import { useAudioPlayer } from "~/contexts/AudioPlayerContext";
 
@@ -84,17 +78,11 @@ export default function ProgressBar() {
           max={audioRef?.duration || duration}
           step={0.1}
           value={sliderValue}
-          onChangeStart={handleSliderChangeStart}
+          onBeforeChange={handleSliderChangeStart}
           onChange={handleSliderChange}
-          onChangeEnd={handleSliderChangeEnd}
-          focusThumbOnChange={false}
-          colorScheme="primary"
-        >
-          <SliderTrack>
-            <SliderFilledTrack />
-          </SliderTrack>
-          <SliderThumb />
-        </Slider>
+          onAfterChange={handleSliderChangeEnd}
+          disabled={!currentPlaying}
+        />
       </Box>
       <Box fontSize="sm">{formattedDuration}</Box>
     </Flex>

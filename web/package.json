@@ -21,6 +21,7 @@
     "nookies": "^2.5.2",
     "nprogress": "^0.2.0",
     "query-string": "^7.0.0",
+    "rc-slider": "^9.7.2",
     "react": "^17.0.1",
     "react-context-mutex": "^1.0.8",
     "react-cropper": "^2.1.4",
