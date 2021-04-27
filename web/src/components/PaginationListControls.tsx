@@ -15,9 +15,7 @@ const LEFT_PAGE = "LEFT";
 const RIGHT_PAGE = "RIGHT";
 
 // https://www.digitalocean.com/community/tutorials/how-to-build-custom-pagination-with-react
-export default function PaginationListControls(
-  props: PaginationListControlsProps
-) {
+const PaginationListControls = (props: PaginationListControlsProps) => {
   const totalPages = Math.min(1, props.totalPages ?? 1);
   const currentPage = Math.max(1, Math.min(props.currentPage ?? 1, totalPages));
   // pageNeighbours can be: 0, 1 or 2
@@ -139,4 +137,6 @@ export default function PaginationListControls(
       </HStack>
     </React.Fragment>
   );
-}
+};
+
+export default PaginationListControls;

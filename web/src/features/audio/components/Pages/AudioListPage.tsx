@@ -5,7 +5,7 @@ import Page from "~/components/Page";
 import AudioList from "~/features/audio/components/List";
 import { Audio } from "~/features/audio/types";
 import useAudioList from "~/features/audio/hooks/queries/useAudioList";
-import InfiniteListControls from "~/components/List/InfiniteListControls";
+import InfiniteListControls from "~/components/InfiniteListControls";
 import { CursorPagedList } from "~/lib/types";
 
 export interface AudioListPageProps {

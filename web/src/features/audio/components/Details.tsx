@@ -155,7 +155,7 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
               <Wrap marginTop={2}>
                 {audio.tags.map((tag, idx) => (
                   <WrapItem key={idx}>
-                    <NextLink href={`/search/audios?tag=${tag}`}>
+                    <NextLink href={`/search?tag=${tag}`}>
                       <Tag size="sm" cursor="pointer">
                         <TagLeftIcon as={FaHashtag} />
                         <TagLabel>{tag}</TagLabel>

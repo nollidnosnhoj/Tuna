@@ -9,7 +9,7 @@ import {
 } from "@chakra-ui/react";
 import { useFormik } from "formik";
 import * as yup from "yup";
-import TextInput from "../../../components/Form/TextInput";
+import TextInput from "../../../components/form/TextInput";
 import { useAuth } from "~/contexts/AuthContext";
 import { apiErrorToast, successfulToast } from "~/utils/toast";
 import { isAxiosError } from "~/utils/axios";

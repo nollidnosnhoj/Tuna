@@ -57,33 +57,41 @@ export default function AudioPlayerProvider(props: PropsWithChildren<any>) {
 
   const { volume, repeat, currentAudio } = state;
 
+  /**
+   * When the audio player component loads, load the settings from local storage
+   */
   useEffect(() => {
     const setting = JSON.parse(
       localStorage.getItem(AUDIO_PLAYER_SETTING) || ""
     );
 
     if (setting) {
-      const parsedVolume = parseInt(setting.volume);
+      const { volume, repeat } = setting;
+      const parsedVolume = parseInt(volume);
       if (!isNaN(parsedVolume)) {
         dispatch({ type: "SET_VOLUME", payload: parsedVolume });
       }
-      if (Object.values(REPEAT_MODE).includes(setting.repeat)) {
+      if (Object.values(REPEAT_MODE).includes(repeat)) {
         dispatch({
           type: "SET_REPEAT",
-          payload: setting.repeat,
+          payload: repeat,
         });
       }
     }
   }, []);
 
+  /**
+   * Whenever the volume and repeat changes, save it into the localstorage for persistence
+   */
   useEffect(() => {
     const saveTimer = setTimeout(() => {
-      const settings = {
-        volume: volume,
-        repeat: repeat,
-      };
-
-      localStorage.setItem(AUDIO_PLAYER_SETTING, JSON.stringify(settings));
+      localStorage.setItem(
+        AUDIO_PLAYER_SETTING,
+        JSON.stringify({
+          volume,
+          repeat,
+        })
+      );
     }, 200);
 
     return () => {
@@ -91,6 +99,9 @@ export default function AudioPlayerProvider(props: PropsWithChildren<any>) {
     };
   }, [repeat, volume]);
 
+  /**
+   * When a new song is queued, set the time at the beginning.
+   */
   useEffect(() => {
     dispatch({ type: "SET_CURRENT_TIME", payload: 0 });
   }, [currentAudio?.queueId]);

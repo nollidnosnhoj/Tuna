@@ -3,13 +3,13 @@ import { useFormik } from "formik";
 import { Box, Flex } from "@chakra-ui/layout";
 import Page from "~/components/Page";
 import { Button, FormControl, Heading } from "@chakra-ui/react";
-import TextInput from "~/components/Form/TextInput";
-import TagInput from "~/components/Form/TagInput";
+import TextInput from "~/components/form/TextInput";
+import TagInput from "~/components/form/TagInput";
 import AudioList from "~/features/audio/components/List";
 import { useGetAudioListInfinite } from "~/features/audio/hooks/queries/useAudiosInfinite";
-import InfiniteListControls from "~/components/List/InfiniteListControls";
+import InfiniteListControls from "~/components/InfiniteListControls";
 import { useGetAudioListPagination } from "../../hooks/queries";
-import PaginationListControls from "~/components/List/PaginationListControls";
+import PaginationListControls from "~/components/PaginationListControls";
 
 export type AudioSearchValues = {
   q?: string;

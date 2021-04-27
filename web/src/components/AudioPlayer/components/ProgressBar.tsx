@@ -1,6 +1,13 @@
 import _ from "lodash";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Box, Flex } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  toCSSObject,
+  useColorModeValue,
+  useMultiStyleConfig,
+  useToken,
+} from "@chakra-ui/react";
 import Slider from "rc-slider";
 import { formatDuration } from "~/utils/format";
 import { useAudioPlayer } from "~/contexts/AudioPlayerContext";
@@ -8,6 +15,18 @@ import { useAudioPlayer } from "~/contexts/AudioPlayerContext";
 const EMPTY_TIME_FORMAT = "--:--";
 
 export default function ProgressBar() {
+  /**
+   * This is a dog water way of trying to incorporate chakra's slider colors into rc-slider
+   */
+  const styles = useMultiStyleConfig("Slider", {});
+  const filledTrackBgColorToken = styles.filledTrack.backgroundColor;
+  const trackBgColorToken = styles.track.backgroundColor;
+  const filledTrackColor = useToken(
+    "colors",
+    filledTrackBgColorToken as string
+  );
+  const trackColor = useToken("colors", trackBgColorToken as string);
+
   const { state, dispatch } = useAudioPlayer();
   const { audioRef, currentTime, currentAudio: currentPlaying } = state;
   const { duration } = currentPlaying || { duration: 0 };
@@ -82,6 +101,16 @@ export default function ProgressBar() {
           onChange={handleSliderChange}
           onAfterChange={handleSliderChangeEnd}
           disabled={!currentPlaying}
+          handleStyle={{
+            boxShadow: "var(--chakra-shadows-base)",
+            border: 0,
+          }}
+          trackStyle={{
+            backgroundColor: trackColor,
+          }}
+          railStyle={{
+            backgroundColor: filledTrackColor,
+          }}
         />
       </Box>
       <Box fontSize="sm">{formattedDuration}</Box>

@@ -7,7 +7,7 @@ import Page from "~/components/Page";
 import { useGetAudio } from "~/features/audio/hooks/queries";
 import { useAudioPlayer } from "~/contexts/AudioPlayerContext";
 
-const WavesurferPlayer = dynamic(() => import("~/components/Waveform"), {
+const WavesurferPlayer = dynamic(() => import("~/components/WaveformPlayer"), {
   ssr: false,
 });
 

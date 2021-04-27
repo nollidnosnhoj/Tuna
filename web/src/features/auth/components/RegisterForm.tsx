@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Alert, Box, Button, CloseButton, Flex, Text } from "@chakra-ui/react";
 import * as yup from "yup";
 import { useFormik } from "formik";
-import TextInput from "../../../components/Form/TextInput";
+import TextInput from "../../../components/form/TextInput";
 import { validationMessages } from "~/utils";
 import api from "~/utils/api";
 import { successfulToast } from "~/utils/toast";

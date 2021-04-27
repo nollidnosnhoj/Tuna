@@ -1,8 +1,8 @@
 import { Box } from "@chakra-ui/react";
 import Head from "next/head";
 import React from "react";
-import Header from "~/components/Header";
-import Container from "~/components/Container";
+import Header from "~/components/ui/Header";
+import Container from "~/components/ui/Container";
 
 interface PageProps {
   title?: string;

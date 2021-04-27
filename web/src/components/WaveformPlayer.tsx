@@ -1,4 +1,4 @@
-import { Box, chakra, Flex, IconButton, Tooltip } from "@chakra-ui/react";
+import { chakra, Flex, IconButton, Tooltip } from "@chakra-ui/react";
 import React, {
   useCallback,
   useEffect,
@@ -10,7 +10,7 @@ import { FaPause, FaPlay } from "react-icons/fa";
 import Wavesurfer from "wavesurfer.js";
 import { useAudioPlayer } from "~/contexts/AudioPlayerContext";
 import { AudioDetail } from "~/features/audio/types";
-import { mapAudioForAudioQueue } from "../AudioPlayer/utils";
+import { mapAudioForAudioQueue } from "~/components/AudioPlayer/utils";
 
 interface WaveformProps {
   audio: AudioDetail;

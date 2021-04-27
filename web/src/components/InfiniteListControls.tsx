@@ -7,7 +7,7 @@ type InfiniteListControlsProps = {
   fetchNext?: () => void;
 };
 
-export default function InfiniteListControls(props: InfiniteListControlsProps) {
+const InfiniteListControls = (props: InfiniteListControlsProps) => {
   const { hasNext = false, isFetching = false, fetchNext } = props;
 
   if (!hasNext) return null;
@@ -22,4 +22,6 @@ export default function InfiniteListControls(props: InfiniteListControlsProps) {
       {isFetching ? "Loading..." : "Load more"}
     </Button>
   );
-}
+};
+
+export default InfiniteListControls;

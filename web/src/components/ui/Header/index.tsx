@@ -1,44 +1,62 @@
-import {
-  CloseIcon,
-  HamburgerIcon,
-  MoonIcon,
-  SearchIcon,
-  SunIcon,
-} from "@chakra-ui/icons";
+import { HamburgerIcon, MoonIcon, SearchIcon, SunIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
+  ButtonProps,
   Drawer,
   DrawerBody,
   DrawerCloseButton,
   DrawerContent,
-  DrawerHeader,
   DrawerOverlay,
   Flex,
   Heading,
   HStack,
   IconButton,
   Input,
-  Menu,
-  MenuButton,
-  MenuDivider,
-  MenuGroup,
-  MenuItem,
-  MenuList,
   useColorMode,
   useColorModeValue,
   useDisclosure,
 } from "@chakra-ui/react";
 import React, { useCallback, useRef, useState } from "react";
-import { FaCloudUploadAlt, FaUserAlt } from "react-icons/fa";
+import { FaCloudUploadAlt } from "react-icons/fa";
 import { MdLibraryMusic } from "react-icons/md";
 import Router, { useRouter } from "next/router";
 import NextLink from "next/link";
 import queryString from "query-string";
-import Link from "../Link";
+import Link from "../../Link";
 import { useUser } from "~/contexts/UserContext";
-import HeaderMenuLink from "./MenuLink";
 import UserSection from "./UserSection";
+
+interface HeaderMenuLinkProps extends ButtonProps {
+  label: string;
+  href: string;
+  icon?: React.ReactElement<any, string | React.JSXElementConstructor<any>>;
+  hidden?: boolean;
+}
+
+const HeaderMenuLink = (props: HeaderMenuLinkProps) => {
+  const { label, href, icon, hidden = false, ...buttonProps } = props;
+
+  if (hidden) return null;
+
+  return (
+    <NextLink href={href}>
+      <Button
+        leftIcon={icon}
+        width="100%"
+        marginY={1}
+        paddingY={6}
+        paddingX={6}
+        borderRadius={0}
+        justifyContent="normal"
+        variant="ghost"
+        {...buttonProps}
+      >
+        {label}
+      </Button>
+    </NextLink>
+  );
+};
 
 interface HeaderProps {
   removeSearchBar?: boolean;

@@ -11,8 +11,10 @@ export interface PictureProps {
 
 export default function Picture(props: PictureProps & BoxProps) {
   const { source, imageSize, isLazy = false, onClick, ...boxProps } = props;
-  const color1 = useColorModeValue("gray.500", "gray.900");
-  const color2 = useColorModeValue("gray.400", "gray.800");
+  const [color1, color2] = useColorModeValue<
+    [string, string],
+    [string, string]
+  >(["gray.500", "gray.400"], ["gray.900", "gray.800"]);
 
   return (
     <Box

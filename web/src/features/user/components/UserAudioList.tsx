@@ -1,5 +1,5 @@
 import React from "react";
-import InfiniteListControls from "~/components/List/InfiniteListControls";
+import InfiniteListControls from "~/components/InfiniteListControls";
 import AudioList from "~/features/audio/components/List";
 import { useGetAudioListInfinite } from "~/features/audio/hooks/queries";
 
