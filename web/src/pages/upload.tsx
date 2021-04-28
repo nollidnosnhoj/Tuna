@@ -1,4 +1,14 @@
+import React from "react";
 import withRequiredAuth from "~/components/hoc/withRequiredAuth";
-import AudioUploadPage from "~/features/audio/components/Pages/AudioUploadPage";
+import Page from "~/components/Page";
+import AudioUploadDropzone from "~/features/audio/components/AudioDropzone";
 
-export default withRequiredAuth(AudioUploadPage);
+const AudioUploadNextPage: React.FC = () => {
+  return (
+    <Page title="Upload audio!">
+      <AudioUploadDropzone />
+    </Page>
+  );
+};
+
+export default withRequiredAuth(AudioUploadNextPage);

@@ -37,7 +37,7 @@ namespace Audiochan.Core.Extensions
             return ruleBuilder
                 .NotEmpty()
                 .WithMessage("Filesize cannot be empty.")
-                .Must(fileSize => fileSize > fileSizeLimit)
+                .LessThanOrEqualTo(fileSizeLimit)
                 .WithMessage($"File size is over {fileSizeLimit / 1000000} MB");
         }
 
