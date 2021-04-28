@@ -9,9 +9,10 @@ import NextLink from "next/link";
 import React from "react";
 import { FaRandom, FaCloudUploadAlt } from "react-icons/fa";
 import { MdLibraryMusic } from "react-icons/md";
+import { useAuth } from "~/contexts/AuthContext";
 
-export function HomepageCTA(props: { isLoggedIn?: boolean }) {
-  const { isLoggedIn = false } = props;
+export function HomepageCTA() {
+  const { isLoggedIn } = useAuth();
   return (
     <Box pos="relative" overflow="hidden">
       <Box maxW="7xl" mx="auto">
