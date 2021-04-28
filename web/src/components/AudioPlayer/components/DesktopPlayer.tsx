@@ -6,6 +6,7 @@ import {
   Icon,
   useColorModeValue,
   useDisclosure,
+  VStack,
 } from "@chakra-ui/react";
 import React, { useCallback, useRef } from "react";
 import { RiPlayListFill } from "react-icons/ri";
@@ -40,44 +41,6 @@ export default function DesktopAudioPlayer(props: DesktopAudioPlayerProps) {
 
   const playerBackgroundColor = useColorModeValue("gray.100", "gray.800");
 
-  const handleTogglePlay = useCallback(
-    (e: React.SyntheticEvent) => {
-      e.stopPropagation();
-      if (audioRef && playIndex !== undefined) {
-        dispatch({ type: "TOGGLE_PLAYING" });
-      }
-    },
-    [playIndex]
-  );
-
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      switch (e.keyCode) {
-        case 32: // Space
-          if (e.target === containerRef.current) {
-            e.preventDefault();
-            handleTogglePlay(e);
-          }
-          break;
-        case 38: // Up Arrow
-          e.preventDefault();
-          dispatch({
-            type: "SET_VOLUME",
-            payload: Math.max(0, Math.min(volume + 5, 100)),
-          });
-          break;
-        case 40: // Down Arrow
-          e.preventDefault();
-          dispatch({
-            type: "SET_VOLUME",
-            payload: Math.max(0, Math.min(volume - 5, 100)),
-          });
-          break;
-      }
-    },
-    [volume, handleTogglePlay]
-  );
-
   if (isHidden) return null;
 
   return (
@@ -99,17 +62,16 @@ export default function DesktopAudioPlayer(props: DesktopAudioPlayerProps) {
         width="100%"
         borderTopWidth={1}
         fontSize="26px"
-        onKeyDown={handleKeyDown}
         bgColor={playerBackgroundColor}
       >
         <HStack justifyContent="space-between" width="100%" marginX={4}>
           <Box width="30%">
             <NowPlayingSection current={currentPlaying} />
           </Box>
-          <Flex flexDirection="column" alignItems="center" width="500px">
+          <VStack width="500px">
+            <PlayerControls />
             <ProgressBar />
-            <PlayerControls onTogglePlay={handleTogglePlay} />
-          </Flex>
+          </VStack>
           <Flex width="30%" justifyContent="flex-end">
             <Box>
               <HStack>

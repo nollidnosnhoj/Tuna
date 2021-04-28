@@ -1,5 +1,5 @@
 import { HStack, IconButton } from "@chakra-ui/react";
-import React from "react";
+import React, { useCallback, useMemo } from "react";
 import {
   MdPause,
   MdPlayArrow,
@@ -9,14 +9,26 @@ import {
 import { useAudioPlayer } from "~/contexts/AudioPlayerContext";
 
 interface PlayerControlsProps {
-  onTogglePlay: (e: React.SyntheticEvent) => void;
+  size?: "desktop";
 }
 
 export default function PlayerControls(props: PlayerControlsProps) {
-  const { onTogglePlay } = props;
-
+  const { size = "desktop" } = props;
   const { state, dispatch } = useAudioPlayer();
   const { isPlaying, playIndex, queue } = state;
+
+  const buttonSize = useMemo(() => {
+    switch (size) {
+      default:
+        return "md";
+    }
+  }, [size]);
+
+  const handleTogglePlay = useCallback(() => {
+    if (playIndex !== undefined) {
+      dispatch({ type: "TOGGLE_PLAYING" });
+    }
+  }, [playIndex]);
 
   return (
     <HStack>
@@ -28,16 +40,16 @@ export default function PlayerControls(props: PlayerControlsProps) {
         disabled={playIndex === 0}
         isRound
         variant="ghost"
-        size="lg"
+        size={buttonSize}
         fontSize="25px"
       />
       <IconButton
         icon={isPlaying ? <MdPause /> : <MdPlayArrow />}
-        onClick={onTogglePlay}
+        onClick={handleTogglePlay}
         aria-label={isPlaying ? "Pause" : "Play"}
         title={isPlaying ? "Pause" : "Play"}
         isRound
-        size="lg"
+        size={buttonSize}
         colorScheme="primary"
         fontSize="25px"
       />
@@ -49,7 +61,7 @@ export default function PlayerControls(props: PlayerControlsProps) {
         disabled={playIndex === queue.length - 1}
         isRound
         variant="ghost"
-        size="lg"
+        size={buttonSize}
         fontSize="25px"
       />
     </HStack>

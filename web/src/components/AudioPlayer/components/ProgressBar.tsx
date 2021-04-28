@@ -3,30 +3,17 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Box,
   Flex,
-  toCSSObject,
-  useColorModeValue,
-  useMultiStyleConfig,
-  useToken,
+  Slider,
+  SliderFilledTrack,
+  SliderThumb,
+  SliderTrack,
 } from "@chakra-ui/react";
-import Slider from "rc-slider";
 import { formatDuration } from "~/utils/format";
 import { useAudioPlayer } from "~/contexts/AudioPlayerContext";
 
 const EMPTY_TIME_FORMAT = "--:--";
 
 export default function ProgressBar() {
-  /**
-   * This is a dog water way of trying to incorporate chakra's slider colors into rc-slider
-   */
-  const styles = useMultiStyleConfig("Slider", {});
-  const filledTrackBgColorToken = styles.filledTrack.backgroundColor;
-  const trackBgColorToken = styles.track.backgroundColor;
-  const filledTrackColor = useToken(
-    "colors",
-    filledTrackBgColorToken as string
-  );
-  const trackColor = useToken("colors", trackBgColorToken as string);
-
   const { state, dispatch } = useAudioPlayer();
   const { audioRef, currentTime, currentAudio: currentPlaying } = state;
   const { duration } = currentPlaying || { duration: 0 };
@@ -45,6 +32,7 @@ export default function ProgressBar() {
 
   const handleSliderChange = useCallback(
     (value: number) => {
+      console.log("slider change");
       if (isDraggingProgress) {
         setSliderValue(value);
       }
@@ -53,25 +41,25 @@ export default function ProgressBar() {
   );
 
   const handleSliderChangeStart = () => {
+    console.log("slider change start");
     setIsDraggingProgress(true);
   };
 
   const handleSliderChangeEnd = useCallback(
     (value: number) => {
+      console.log("slider change end");
       if (isDraggingProgress) {
-        const time = value;
-        if (audioRef) audioRef.currentTime = time;
-        setSliderValue(time);
-        dispatch({ type: "SET_CURRENT_TIME", payload: time });
+        if (audioRef) audioRef.currentTime = value;
+        dispatch({ type: "SET_CURRENT_TIME", payload: value });
       }
       setIsDraggingProgress(false);
     },
-    [isDraggingProgress]
+    [audioRef, isDraggingProgress]
   );
 
   const updateSeek = useCallback(
     _.throttle(() => {
-      const time = audioRef?.currentTime ?? 0;
+      const time = audioRef?.currentTime ?? (currentTime || 0);
       dispatch({ type: "SET_CURRENT_TIME", payload: time });
       if (!isDraggingProgress) {
         setSliderValue(time);
@@ -93,25 +81,21 @@ export default function ProgressBar() {
       <Box fontSize="sm">{formattedCurrentTime}</Box>
       <Box flex="1" marginX={4}>
         <Slider
-          min={0}
-          max={audioRef?.duration || duration}
-          step={0.1}
+          colorScheme="primary"
           value={sliderValue}
-          onBeforeChange={handleSliderChangeStart}
+          min={0}
+          max={audioRef?.duration || duration || 100}
+          step={0.5}
+          onChangeStart={handleSliderChangeStart}
+          onChangeEnd={handleSliderChangeEnd}
           onChange={handleSliderChange}
-          onAfterChange={handleSliderChangeEnd}
-          disabled={!currentPlaying}
-          handleStyle={{
-            boxShadow: "var(--chakra-shadows-base)",
-            border: 0,
-          }}
-          trackStyle={{
-            backgroundColor: trackColor,
-          }}
-          railStyle={{
-            backgroundColor: filledTrackColor,
-          }}
-        />
+          focusThumbOnChange={false}
+        >
+          <SliderTrack>
+            <SliderFilledTrack />
+          </SliderTrack>
+          <SliderThumb />
+        </Slider>
       </Box>
       <Box fontSize="sm">{formattedDuration}</Box>
     </Flex>
