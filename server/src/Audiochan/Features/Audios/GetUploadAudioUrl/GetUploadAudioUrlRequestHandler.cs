@@ -30,10 +30,11 @@ namespace Audiochan.Features.Audios.GetUploadAudioUrl
             var blobName = uploadId + Path.GetExtension(request.FileName);
             var metadata = new Dictionary<string, string> {{"UserId", userId}, {"OriginalFilename", request.FileName}};
             var presignedUrl = _storageService.GetPresignedUrl(
-                _storageSettings.Audio.Container, 
-                blobName,
-                5, 
-                metadata);
+                method: "put",
+                container: _storageSettings.Audio.Container, 
+                blobName: blobName,
+                expirationInMinutes: 5, 
+                metadata: metadata);
             var response = new GetUploadAudioUrlResponse{Url = presignedUrl, UploadId = uploadId};
             return Task.FromResult(response);
         }

@@ -162,11 +162,22 @@ namespace Audiochan.Infrastructure.Storage
             }
         }
 
-        public string GetPresignedUrl(string container,
+        public string GetPresignedUrl(
+            string method,
+            string container,
             string blobName,
             int expirationInMinutes,
             Dictionary<string, string> metadata = null)
         {
+            var verb = method.ToLower() switch
+            {
+                "put" => HttpVerb.PUT,
+                "head" => HttpVerb.HEAD,
+                "delete" => HttpVerb.DELETE,
+                "get" => HttpVerb.GET,
+                _ => HttpVerb.GET
+            };
+
             try
             {
                 var expiration = _dateTimeProvider.Now.AddMinutes(5);
@@ -178,7 +189,7 @@ namespace Audiochan.Infrastructure.Storage
                     Key = key,
                     Expires = expiration,
                     ContentType = contentType,
-                    Verb = HttpVerb.PUT
+                    Verb = verb
                 };
 
                 presignedUrlRequest.AddMetadataCollection(metadata);

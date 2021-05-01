@@ -8,7 +8,7 @@ namespace Audiochan.Core.Interfaces
 {
     public interface IStorageService
     {
-        string GetPresignedUrl(string container, string blobName, int expirationInMinutes,
+        string GetPresignedUrl(string method, string container, string blobName, int expirationInMinutes,
             Dictionary<string, string> metadata = null);
 
         Task RemoveAsync(string container, string blobName, CancellationToken cancellationToken = default);
