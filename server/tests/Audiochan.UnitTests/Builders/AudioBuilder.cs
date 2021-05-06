@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Audiochan.Core.Common.Helpers;
 using Audiochan.Core.Entities;
@@ -15,7 +16,7 @@ namespace Audiochan.UnitTests.Builders
         {
             _audio = new Audio(
                 title: Path.GetFileNameWithoutExtension(fileName),
-                uploadId: UploadHelpers.GenerateUploadId(),
+                uploadId: Guid.NewGuid().ToString("N"),
                 fileName: fileName,
                 fileSize: _randomizer.Number(5000, 25000),
                 duration: _randomizer.Number(30, 300),

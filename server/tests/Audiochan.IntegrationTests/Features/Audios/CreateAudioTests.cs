@@ -25,7 +25,7 @@ namespace Audiochan.IntegrationTests.Features.Audios
             // ASSIGN
             var (userId, _) = await _fixture.RunAsDefaultUserAsync();
 
-            var uploadId = UploadHelpers.GenerateUploadId();
+            var uploadId = await UploadHelpers.GenerateUploadId();
 
             // ACT
             var result = await _fixture.SendAsync(new CreateAudioRequest

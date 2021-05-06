@@ -73,7 +73,7 @@ namespace Audiochan.IntegrationTests.Features.Search
                 await _fixture.SendAsync(new CreateAudioRequest
                 {
                     Title = $"Test Song #{i + 1}",
-                    UploadId = UploadHelpers.GenerateUploadId(),
+                    UploadId = await UploadHelpers.GenerateUploadId(),
                     FileName = "test.mp3",
                     Duration = 100,
                     FileSize = 100,

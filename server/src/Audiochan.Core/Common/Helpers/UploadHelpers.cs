@@ -1,12 +1,13 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace Audiochan.Core.Common.Helpers
 {
     public static class UploadHelpers
     {
-        public static string GenerateUploadId()
+        public static async Task<string> GenerateUploadId()
         {
-            return Guid.NewGuid().ToString("N");
+            return await Nanoid.Nanoid.GenerateAsync("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", 21);
         }
     }
 }
