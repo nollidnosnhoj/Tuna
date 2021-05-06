@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Audiochan.Features.Audios.UpdateAudio;
-using Audiochan.Core.Enums;
-using Audiochan.Core.Models.ViewModels;
+using Audiochan.Core.Common.Enums;
+using Audiochan.Core.Features.Audios;
+using Audiochan.Core.Features.Audios.UpdateAudio;
 using Audiochan.UnitTests.Builders;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;

@@ -1,5 +1,5 @@
 ﻿using System;
-using Audiochan.Core.Helpers;
+using Audiochan.Core.Common.Helpers;
 
 namespace Audiochan.UnitTests.Mocks
 {

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using Audiochan.Core.Models.Settings;
-using Audiochan.Features.Audios.CreateAudio;
+using Audiochan.Core.Common.Settings;
+using Audiochan.Core.Features.Audios.CreateAudio;
 using FluentValidation;
 using FluentValidation.TestHelper;
 using Microsoft.Extensions.Options;

@@ -1,13 +1,12 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Enums;
+using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Extensions;
-using Audiochan.Core.Enums;
-using Audiochan.Core.Models.Responses;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Audiochan.Filters
 {
-    // ReSharper disable once ClassNeverInstantiated.Global
     public class ValidationFilter : IAsyncActionFilter
     {
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)

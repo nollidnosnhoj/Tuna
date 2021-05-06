@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Audiochan.Features.Audios.CreateAudio;
-using Audiochan.Features.Audios.SearchAudios;
+using Audiochan.Core.Common.Helpers;
 using Audiochan.Core.Entities.Enums;
-using Audiochan.Core.Enums;
-using Audiochan.Core.Helpers;
+using Audiochan.Core.Features.Audios.CreateAudio;
+using Audiochan.Core.Features.Audios.SearchAudios;
 using Audiochan.UnitTests.Builders;
 using Bogus;
 using FluentAssertions;

@@ -1,8 +1,8 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Models.Responses;
-using Audiochan.Core.Models.ViewModels;
-using Audiochan.Features.Audios.SearchAudios;
+using Audiochan.Core.Common.Models.Responses;
+using Audiochan.Core.Features.Audios;
+using Audiochan.Core.Features.Audios.SearchAudios;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

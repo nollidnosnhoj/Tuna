@@ -2,9 +2,9 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Extensions;
+using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Entities;
-using Audiochan.Core.Extensions;
-using Audiochan.Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Infrastructure.Persistence.Repositories

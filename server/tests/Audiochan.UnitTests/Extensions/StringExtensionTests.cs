@@ -1,4 +1,4 @@
-using Audiochan.Core.Extensions;
+using Audiochan.Core.Common.Extensions;
 using Xunit;
 
 namespace Audiochan.UnitTests.Extensions

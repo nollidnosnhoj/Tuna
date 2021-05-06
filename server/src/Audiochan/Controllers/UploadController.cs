@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Features.Audios.GetUploadAudioUrl;
+using Audiochan.Core.Features.Audios.GetUploadAudioUrl;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

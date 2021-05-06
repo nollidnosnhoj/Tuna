@@ -1,4 +1,4 @@
-﻿using Audiochan.Core.Interfaces;
+﻿using Audiochan.Core.Common.Interfaces;
 using Moq;
 
 namespace Audiochan.UnitTests.Mocks
