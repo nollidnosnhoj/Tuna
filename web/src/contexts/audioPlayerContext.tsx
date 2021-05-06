@@ -61,11 +61,9 @@ export default function AudioPlayerProvider(props: PropsWithChildren<any>) {
    * When the audio player component loads, load the settings from local storage
    */
   useEffect(() => {
-    const setting = JSON.parse(
-      localStorage.getItem(AUDIO_PLAYER_SETTING) || ""
-    );
-
-    if (setting) {
+    let settingString = localStorage.getItem(AUDIO_PLAYER_SETTING) || "";
+    if (settingString) {
+      var setting = JSON.parse(settingString);
       const { volume, repeat } = setting;
       const parsedVolume = parseInt(volume);
       if (!isNaN(parsedVolume)) {
