@@ -1,6 +1,6 @@
 ﻿using Audiochan.Core.Common.Models.Interfaces;
 
-namespace Audiochan.Models
+namespace Audiochan.API.Models
 {
     public record PaginationQueryParams : IHasPage
     {

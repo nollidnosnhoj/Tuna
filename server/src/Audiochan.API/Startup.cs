@@ -1,16 +1,13 @@
 using System.Reflection;
 using System.Text.Json;
-using Audiochan.Extensions;
-using Audiochan.Core;
+using Audiochan.API.Extensions.ConfigurationExtensions;
+using Audiochan.API.Middlewares;
+using Audiochan.API.Services;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Pipelines;
 using Audiochan.Core.Common.Settings;
-using Audiochan.Extensions.ConfigurationExtensions;
 using Audiochan.Infrastructure;
 using Audiochan.Infrastructure.Storage.Options;
-using Audiochan.Middlewares;
-using Audiochan.Services;
-using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -18,7 +15,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace Audiochan
+namespace Audiochan.API
 {
     public class Startup
     {

@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
-namespace Audiochan.Controllers
+namespace Audiochan.API.Controllers
 {
     [Authorize]
     [Route("api/[controller]")]

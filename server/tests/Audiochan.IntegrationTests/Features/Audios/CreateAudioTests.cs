@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Helpers;
-using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Features.Audios.CreateAudio;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;

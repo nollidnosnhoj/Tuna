@@ -2,7 +2,6 @@
 using System.IO;
 using Audiochan.Core.Common.Helpers;
 using Audiochan.Core.Entities;
-using Audiochan.Core.Entities.Enums;
 using Bogus;
 
 namespace Audiochan.UnitTests.Builders

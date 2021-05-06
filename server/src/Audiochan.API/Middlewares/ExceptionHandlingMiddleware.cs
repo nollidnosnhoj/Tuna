@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Audiochan.Models;
+using Audiochan.API.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace Audiochan.Middlewares
+namespace Audiochan.API.Middlewares
 {
     // ReSharper disable once ClassNeverInstantiated.Global
     public class ExceptionHandlingMiddleware

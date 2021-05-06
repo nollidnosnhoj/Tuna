@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Audiochan.Extensions.ConfigurationExtensions
+namespace Audiochan.API.Extensions.ConfigurationExtensions
 {
     public static class CorsConfigExtensions
     {

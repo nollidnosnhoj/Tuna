@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.API.Models;
 using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Features.Audios;
 using Audiochan.Core.Features.Followers.GetFollowers;
@@ -7,14 +8,12 @@ using Audiochan.Core.Features.Followers.GetFollowings;
 using Audiochan.Core.Features.Users;
 using Audiochan.Core.Features.Users.GetUser;
 using Audiochan.Core.Features.Users.GetUserAudios;
-using Audiochan.Extensions;
-using Audiochan.Models;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
-namespace Audiochan.Controllers
+namespace Audiochan.API.Controllers
 {
     [Route("api/[controller]")]
     public class UsersController : ControllerBase

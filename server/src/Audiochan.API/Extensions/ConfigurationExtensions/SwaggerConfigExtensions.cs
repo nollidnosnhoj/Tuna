@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 
-namespace Audiochan.Extensions.ConfigurationExtensions
+namespace Audiochan.API.Extensions.ConfigurationExtensions
 {
     public static class SwaggerConfigExtensions
     {

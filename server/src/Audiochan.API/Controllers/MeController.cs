@@ -1,5 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.API.Extensions;
+using Audiochan.API.Models;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Features.Audios;
@@ -13,15 +15,13 @@ using Audiochan.Core.Features.Users.UpdatePassword;
 using Audiochan.Core.Features.Users.UpdatePicture;
 using Audiochan.Core.Features.Users.UpdateUser;
 using Audiochan.Core.Features.Users.UpdateUsername;
-using Audiochan.Extensions;
-using Audiochan.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
-namespace Audiochan.Controllers
+namespace Audiochan.API.Controllers
 {
     [Authorize]
     [Route("api/[controller]")]

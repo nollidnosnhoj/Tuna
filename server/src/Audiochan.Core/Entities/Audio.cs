@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Entities.Base;
-using Audiochan.Core.Entities.Enums;
 
 namespace Audiochan.Core.Entities
 {

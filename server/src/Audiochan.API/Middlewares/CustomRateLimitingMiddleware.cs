@@ -1,13 +1,13 @@
 ﻿using System.Text.Json;
 using System.Threading.Tasks;
 using AspNetCoreRateLimit;
-using Audiochan.Models;
+using Audiochan.API.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 
-namespace Audiochan.Middlewares
+namespace Audiochan.API.Middlewares
 {
     public class CustomRateLimitingMiddleware : IpRateLimitMiddleware
     {

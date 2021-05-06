@@ -2,7 +2,7 @@
 using Audiochan.Core.Common.Interfaces;
 using Microsoft.AspNetCore.Http;
 
-namespace Audiochan.Services
+namespace Audiochan.API.Services
 {
     public class CurrentUserService : ICurrentUserService
     {

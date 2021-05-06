@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
-namespace Audiochan.Controllers
+namespace Audiochan.API.Controllers
 {
     [Route("api/[controller]")]
     public class SearchController : ControllerBase

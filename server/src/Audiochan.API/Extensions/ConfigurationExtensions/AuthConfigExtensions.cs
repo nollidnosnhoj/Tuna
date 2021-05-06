@@ -9,7 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Audiochan.Extensions.ConfigurationExtensions
+namespace Audiochan.API.Extensions.ConfigurationExtensions
 {
     public static class AuthConfigExtensions
     {

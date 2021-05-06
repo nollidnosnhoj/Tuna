@@ -1,11 +1,11 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
-using Audiochan.Filters;
+using Audiochan.API.Filters;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Audiochan.Extensions.ConfigurationExtensions
+namespace Audiochan.API.Extensions.ConfigurationExtensions
 {
     public static class MvcConfigExtensions
     {

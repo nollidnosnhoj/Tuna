@@ -1,5 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.API.Extensions;
+using Audiochan.API.Models;
 using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Features.Audios;
 using Audiochan.Core.Features.Audios.CreateAudio;
@@ -9,15 +11,13 @@ using Audiochan.Core.Features.Audios.GetRandomAudio;
 using Audiochan.Core.Features.Audios.RemoveAudio;
 using Audiochan.Core.Features.Audios.UpdateAudio;
 using Audiochan.Core.Features.Audios.UpdatePicture;
-using Audiochan.Extensions;
-using Audiochan.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
-namespace Audiochan.Controllers
+namespace Audiochan.API.Controllers
 {
     [Authorize]
     [Route("api/[controller]")]

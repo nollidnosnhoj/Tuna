@@ -1,18 +1,18 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.API.Extensions;
+using Audiochan.API.Models;
 using Audiochan.Core.Features.Auth;
 using Audiochan.Core.Features.Auth.Login;
 using Audiochan.Core.Features.Auth.Refresh;
 using Audiochan.Core.Features.Auth.Register;
 using Audiochan.Core.Features.Auth.Revoke;
-using Audiochan.Extensions;
-using Audiochan.Models;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
-namespace Audiochan.Controllers
+namespace Audiochan.API.Controllers
 {
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
