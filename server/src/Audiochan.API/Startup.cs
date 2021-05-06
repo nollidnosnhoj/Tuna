@@ -3,6 +3,7 @@ using System.Text.Json;
 using Audiochan.API.Extensions.ConfigurationExtensions;
 using Audiochan.API.Middlewares;
 using Audiochan.API.Services;
+using Audiochan.Core;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Pipelines;
 using Audiochan.Core.Common.Settings;
@@ -44,9 +45,8 @@ namespace Audiochan.API
 
             services
                 .AddMemoryCache()
-                .AddMediatR(Assembly.GetExecutingAssembly())
-                .AddScoped(typeof(IPipelineBehavior<,>), typeof(DbContextTransactionPipelineBehavior<,>))
-                .AddInfraServices(Configuration, Environment.IsDevelopment())
+                .AddServicesFromCore()
+                .AddServicesFromInfrastructure(Configuration, Environment.IsDevelopment())
                 .Configure<JsonSerializerOptions>(options =>
                 {
                     options.IgnoreNullValues = jsonSerializerOptions.IgnoreNullValues;

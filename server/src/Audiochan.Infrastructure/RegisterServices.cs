@@ -15,7 +15,7 @@ namespace Audiochan.Infrastructure
 {
     public static class RegisterServices
     {
-        public static IServiceCollection AddInfraServices(this IServiceCollection services,
+        public static IServiceCollection AddServicesFromInfrastructure(this IServiceCollection services,
             IConfiguration configuration,
             bool isDevelopment)
         {

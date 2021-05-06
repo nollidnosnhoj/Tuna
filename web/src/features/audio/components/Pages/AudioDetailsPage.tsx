@@ -1,15 +1,10 @@
 import React from "react";
 import { Box } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import dynamic from "next/dynamic";
 import AudioDetails from "~/features/audio/components/Details";
 import Page from "~/components/Page";
 import { useGetAudio } from "~/features/audio/hooks/queries";
 import { useAudioPlayer } from "~/contexts/AudioPlayerContext";
-
-const WavesurferPlayer = dynamic(() => import("~/components/WaveformPlayer"), {
-  ssr: false,
-});
 
 export default function AudioDetailsPage() {
   const { query } = useRouter();
@@ -27,7 +22,6 @@ export default function AudioDetailsPage() {
   return (
     <Page title={audio.title}>
       <Box>
-        <WavesurferPlayer audio={audio} />
         <AudioDetails audio={audio} />
       </Box>
     </Page>

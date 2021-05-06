@@ -44,7 +44,8 @@ interface AudioDetailProps {
 const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
   const secondaryColor = useColorModeValue("black.300", "gray.300");
   const { user: currentUser } = useUser();
-  const { dispatch } = useAudioPlayer();
+  const { state, dispatch } = useAudioPlayer();
+  const { currentTime, isPlaying, audioRef, currentAudio } = state;
 
   const {
     mutateAsync: uploadArtwork,
@@ -57,11 +58,28 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
     onClose: onEditClose,
   } = useDisclosure();
 
+  const isActivelyPlaying = useMemo(() => {
+    if (!currentAudio) return false;
+    return currentAudio.audioId === audio.id;
+  }, [currentAudio?.audioId, audio]);
+
   const [picture, setPicture] = useState(() => {
     return audio?.picture
-      ? `https://audiochan-public.s3.amazonaws.com/${audio.picture}`
+      ? `https://audiochan.s3.amazonaws.com/${audio.picture}`
       : "";
   });
+
+  const clickPlayButton = useCallback(() => {
+    if (isActivelyPlaying) {
+      dispatch({ type: "SET_PLAYING", payload: !isPlaying });
+    } else {
+      dispatch({
+        type: "SET_NEW_QUEUE",
+        payload: mapAudioForAudioQueue(audio),
+        index: 0,
+      });
+    }
+  }, [isActivelyPlaying, isPlaying, audio.id]);
 
   const audioDurationFormatted = useMemo(() => {
     return formatDuration(audio.duration);
@@ -90,6 +108,18 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
       </Box>
       <Box flex="5">
         <Stack direction="row" marginBottom={4}>
+          <Tooltip label="Play" placement="top">
+            <span>
+              <IconButton
+                isRound
+                colorScheme="pink"
+                size="lg"
+                icon={isPlaying && isActivelyPlaying ? <FaPause /> : <FaPlay />}
+                aria-label="Play"
+                onClick={clickPlayButton}
+              />
+            </span>
+          </Tooltip>
           <Stack direction="column" spacing="0" fontSize="sm">
             <Link href={`/users/${audio.author.username}`}>
               <Text fontWeight="500">{audio.author.username}</Text>

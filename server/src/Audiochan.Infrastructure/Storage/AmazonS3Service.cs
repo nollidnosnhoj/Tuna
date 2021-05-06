@@ -191,12 +191,12 @@ namespace Audiochan.Infrastructure.Storage
 
         private string GetKeyName(string container, string blobName)
         {
-            return $"${container}/${blobName}";
+            return $"{container}/{blobName}";
         }
 
         private string GetBlobUrl(string bucket, string container, string blobName)
         {
-            return $"http://${bucket}.s3.amazonaws.com/${GetKeyName(container, blobName)}";
+            return $"http://{bucket}.s3.amazonaws.com/{GetKeyName(container, blobName)}";
         }
     }
 
