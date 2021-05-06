@@ -1,4 +1,8 @@
-﻿using Audiochan.Core.Common.Models.Interfaces;
+﻿using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Audiochan.Core.Common.Interfaces;
+using Audiochan.Core.Common.Models.Interfaces;
 using Audiochan.Core.Common.Models.Responses;
 using MediatR;
 
@@ -11,4 +15,26 @@ namespace Audiochan.Core.Features.Audios.SearchAudios
         public int Page { get; init; }
         public int Size { get; init; }
     }
+    
+    public class SearchAudiosRequestHandler : IRequestHandler<SearchAudiosRequest, PagedList<AudioViewModel>>
+    {
+        private readonly ISearchService _searchService;
+
+        public SearchAudiosRequestHandler(ISearchService searchService)
+        {
+            _searchService = searchService;
+        }
+
+        public async Task<PagedList<AudioViewModel>> Handle(SearchAudiosRequest request,
+            CancellationToken cancellationToken)
+        {
+            var parsedTags = request.Tags.Split(',')
+                .Select(t => t.Trim().ToLower())
+                .Where(t => !string.IsNullOrWhiteSpace(t))
+                .ToArray();
+            
+            return await _searchService.SearchAudios(request.Q, parsedTags, request.Page, request.Size, cancellationToken);
+        }
+    }
+
 }

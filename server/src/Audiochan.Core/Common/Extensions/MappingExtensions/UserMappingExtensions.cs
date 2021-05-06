@@ -3,6 +3,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Auth;
+using Audiochan.Core.Features.Auth.GetCurrentUser;
 using Audiochan.Core.Features.Users;
 
 namespace Audiochan.Core.Common.Extensions.MappingExtensions

@@ -1,4 +1,4 @@
-﻿namespace Audiochan.Core.Features.Auth
+﻿namespace Audiochan.Core.Features.Auth.GetCurrentUser
 {
     public record CurrentUserViewModel
     {
