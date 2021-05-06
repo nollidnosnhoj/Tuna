@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using Audiochan.Core.Common.Helpers;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models.Requests;
@@ -33,10 +34,10 @@ namespace Audiochan.API.Controllers
             OperationId = "GetPresignedUrl",
             Tags = new[] {"upload"}
         )]
-        public IActionResult GetUploadUrl([FromBody] UploadAudioUrlRequest request)
+        public async Task<IActionResult> GetUploadUrl([FromBody] UploadAudioUrlRequest request)
         {
             var userId = _currentUserService.GetUserId();
-            var uploadId = AudioHelpers.GenerateUploadId();
+            var uploadId = await UploadHelpers.GenerateUploadId();
             var blobName = uploadId + Path.GetExtension(request.FileName);
             var metadata = new Dictionary<string, string> {{"UserId", userId}, {"OriginalFilename", request.FileName}};
             var presignedUrl = _storageService.GetPresignedUrl(
