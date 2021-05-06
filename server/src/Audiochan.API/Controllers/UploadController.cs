@@ -1,7 +1,10 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using Audiochan.Core.Features.Audios.GetUploadAudioUrl;
-using MediatR;
+﻿using System.Collections.Generic;
+using System.IO;
+using Audiochan.Core.Common.Helpers;
+using Audiochan.Core.Common.Interfaces;
+using Audiochan.Core.Common.Models.Requests;
+using Audiochan.Core.Common.Models.Responses;
+using Audiochan.Core.Common.Settings;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -13,11 +16,15 @@ namespace Audiochan.API.Controllers
     [ApiExplorerSettings(IgnoreApi = true)]
     public class UploadController : ControllerBase
     {
-        private readonly IMediator _mediator;
+        private readonly MediaStorageSettings _storageSettings;
+        private readonly ICurrentUserService _currentUserService;
+        private readonly IStorageService _storageService;
 
-        public UploadController(IMediator mediator)
+        public UploadController(MediaStorageSettings storageSettings, ICurrentUserService currentUserService, IStorageService storageService)
         {
-            _mediator = mediator;
+            _storageSettings = storageSettings;
+            _currentUserService = currentUserService;
+            _storageService = storageService;
         }
 
         [HttpPost]
@@ -26,10 +33,20 @@ namespace Audiochan.API.Controllers
             OperationId = "GetPresignedUrl",
             Tags = new[] {"upload"}
         )]
-        public async Task<IActionResult> GetUploadUrl([FromBody] GetUploadAudioUrlRequest request,
-            CancellationToken cancellationToken)
+        public IActionResult GetUploadUrl([FromBody] UploadAudioUrlRequest request)
         {
-            var response = await _mediator.Send(request, cancellationToken);
+            var userId = _currentUserService.GetUserId();
+            var uploadId = AudioHelpers.GenerateUploadId();
+            var blobName = uploadId + Path.GetExtension(request.FileName);
+            var metadata = new Dictionary<string, string> {{"UserId", userId}, {"OriginalFilename", request.FileName}};
+            var presignedUrl = _storageService.GetPresignedUrl(
+                method: "put",
+                bucket: _storageSettings.Audio.Bucket,
+                container: _storageSettings.Audio.Container,
+                blobName: blobName,
+                expirationInMinutes: 5,
+                metadata: metadata);
+            var response = new GetUploadAudioUrlResponse {Url = presignedUrl, UploadId = uploadId};
             return new JsonResult(response);
         }
     }

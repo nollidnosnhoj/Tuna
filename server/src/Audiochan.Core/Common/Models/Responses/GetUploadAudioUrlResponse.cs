@@ -1,4 +1,4 @@
-﻿namespace Audiochan.Core.Features.Audios.GetUploadAudioUrl
+﻿namespace Audiochan.Core.Common.Models.Responses
 {
     public record GetUploadAudioUrlResponse
     {

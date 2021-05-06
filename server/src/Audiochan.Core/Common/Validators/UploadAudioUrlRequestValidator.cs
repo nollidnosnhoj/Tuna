@@ -1,13 +1,14 @@
 ﻿using Audiochan.Core.Common.Extensions;
+using Audiochan.Core.Common.Models.Requests;
 using Audiochan.Core.Common.Settings;
 using FluentValidation;
 using Microsoft.Extensions.Options;
 
-namespace Audiochan.Core.Features.Audios.GetUploadAudioUrl
+namespace Audiochan.Core.Common.Validators
 {
-    public class GetUploadAudioUrlRequestValidator : AbstractValidator<GetUploadAudioUrlRequest>
+    public class UploadAudioUrlRequestValidator : AbstractValidator<UploadAudioUrlRequest>
     {
-        public GetUploadAudioUrlRequestValidator(IOptions<MediaStorageSettings> options)
+        public UploadAudioUrlRequestValidator(IOptions<MediaStorageSettings> options)
         {
             RuleFor(x => x.FileName)
                 .FileNameValidation(options.Value.Audio.ValidContentTypes);
