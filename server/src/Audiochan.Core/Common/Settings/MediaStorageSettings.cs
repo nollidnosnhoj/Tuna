@@ -6,13 +6,11 @@ namespace Audiochan.Core.Common.Settings
     {
         public record StorageSettings
         {
+            public string Bucket { get; init; }
             public string Container { get; init; }
             public List<string> ValidContentTypes { get; init; }
             public long MaximumFileSize { get; init; }
         }
-        
-        public string Provider { get; init; }
-        public string StorageUrl { get; init; }
         public StorageSettings Audio { get; init; }
         public StorageSettings Image { get; init; }
     }

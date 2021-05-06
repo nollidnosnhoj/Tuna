@@ -47,7 +47,7 @@ namespace Audiochan.Core.Features.Users.UpdatePicture
 
                 if (!string.IsNullOrEmpty(user.Picture))
                 {
-                    await _storageService.RemoveAsync(user.Picture, cancellationToken);
+                    await _storageService.RemoveAsync(_storageSettings.Audio.Bucket, user.Picture, cancellationToken);
                     user.UpdatePicture(string.Empty);
                 }
 
@@ -58,7 +58,7 @@ namespace Audiochan.Core.Features.Users.UpdatePicture
             }
             catch (Exception)
             {
-                await _storageService.RemoveAsync(container, blobName, cancellationToken);
+                await _storageService.RemoveAsync(_storageSettings.Audio.Bucket, container, blobName, cancellationToken);
                 throw;
             }
         }

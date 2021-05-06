@@ -4,6 +4,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models.Responses;
+using Audiochan.Core.Common.Settings;
+using Microsoft.Extensions.Options;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
@@ -13,10 +15,12 @@ namespace Audiochan.Infrastructure.Image
     public class ImageService : IImageService
     {
         private readonly IStorageService _storageService;
+        private readonly MediaStorageSettings _storageSettings;
 
-        public ImageService(IStorageService storageService)
+        public ImageService(IStorageService storageService, IOptions<MediaStorageSettings> storageSettings)
         {
             _storageService = storageService;
+            _storageSettings = storageSettings.Value;
         }
 
         public async Task<SaveBlobResponse> UploadImage(string data, string container, string blobName,
@@ -30,6 +34,7 @@ namespace Audiochan.Infrastructure.Image
 
             return await _storageService.SaveAsync(
                 stream: imageStream,
+                bucket: _storageSettings.Audio.Bucket,
                 container: container,
                 blobName: blobName,
                 metadata: null,

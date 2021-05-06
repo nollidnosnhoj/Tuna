@@ -31,6 +31,7 @@ namespace Audiochan.Core.Features.Audios.GetUploadAudioUrl
             var metadata = new Dictionary<string, string> {{"UserId", userId}, {"OriginalFilename", request.FileName}};
             var presignedUrl = _storageService.GetPresignedUrl(
                 method: "put",
+                bucket: _storageSettings.Audio.Bucket,
                 container: _storageSettings.Audio.Container, 
                 blobName: blobName,
                 expirationInMinutes: 5, 
