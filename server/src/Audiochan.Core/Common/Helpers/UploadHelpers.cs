@@ -5,9 +5,9 @@ namespace Audiochan.Core.Common.Helpers
 {
     public static class UploadHelpers
     {
-        public static async Task<string> GenerateUploadId()
+        public static string GenerateUploadId()
         {
-            return await Nanoid.Nanoid.GenerateAsync("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", 21);
+            return Guid.NewGuid().ToString();
         }
     }
 }

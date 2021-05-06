@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Builders;
 using Audiochan.Core.Common.Constants;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Entities;
@@ -37,25 +38,60 @@ namespace Audiochan.Infrastructure.Persistence
             {
                 var user = await userManager.FindByNameAsync("superuser");
 
-                var audio1 = new Audio("Dreams", "audio1", "Dreams.mp3", 9335255, 388, user);
-                audio1.UpdateTags(await tagRepository.GetListAsync(new[] {"chillout", "lucid-dreams"}));
-                audio1.UpdatePublicity(true);
-
-                var audio2 = new Audio("Heaven", "audio2", "Heaven.mp3", 6239211, 194, user);
-                audio2.UpdateTags(await tagRepository.GetListAsync(new[] {"newgrounds", "piano", "rave"}));
-                audio2.UpdatePublicity(true);
-
-                var audio3 = new Audio("Life Is Beautiful", "audio3", "LifeIsBeautiful.mp3", 1823391, 45, user);
-                audio3.UpdateTags(await tagRepository.GetListAsync(new[] {"happy", "anime", "hardcore", "nightcore"}));
-                audio3.UpdatePublicity(true);
-
-                var audio4 = new Audio("Beginning of Time", "audio4", "BeginningOfTime.mp3", 3952556, 164, user);
-                audio4.UpdateTags(await tagRepository.GetListAsync(new[] {"hard-dance"}));
-                audio4.UpdatePublicity(false);
-
-                var audio5 = new Audio("Verity", "audio5", "Verity.mp3", 8788667, 219, user);
-                audio5.UpdateTags(await tagRepository.GetListAsync(new[] {"vocals"}));
-                audio5.UpdatePublicity(false);
+                var audio1 = await new AudioBuilder()
+                    .AddTitle("Dreams")
+                    .AddUploadId("audio1")
+                    .AddFileName("Dreams.mp3")
+                    .AddFileSize(9335255)
+                    .AddDuration(388)
+                    .AddUser(user)
+                    .AddTags(await tagRepository.GetListAsync(new[] {"chillout", "lucid-dreams"}))
+                    .SetPublic(true)
+                    .BuildAsync();
+                
+                var audio2 = await new AudioBuilder()
+                    .AddTitle("Heaven")
+                    .AddUploadId("audio2")
+                    .AddFileName("Heaven.mp3")
+                    .AddFileSize(6239211)
+                    .AddDuration(194)
+                    .AddUser(user)
+                    .AddTags(await tagRepository.GetListAsync(new[] {"newgrounds", "piano", "rave"}))
+                    .SetPublic(true)
+                    .BuildAsync();
+                
+                var audio3 = await new AudioBuilder()
+                    .AddTitle("Life Is Beautiful")
+                    .AddUploadId("audio3")
+                    .AddFileName("LifeIsBeautiful.mp3")
+                    .AddFileSize(1823391)
+                    .AddDuration(45)
+                    .AddUser(user)
+                    .AddTags(await tagRepository.GetListAsync(new[] {"happy", "anime", "hardcore", "nightcore"}))
+                    .SetPublic(true)
+                    .BuildAsync();
+                
+                var audio4 = await new AudioBuilder()
+                    .AddTitle("Beginning of Time")
+                    .AddUploadId("audio4")
+                    .AddFileName("BeginningOfTime.mp3")
+                    .AddFileSize(3952556)
+                    .AddDuration(164)
+                    .AddUser(user)
+                    .AddTags(await tagRepository.GetListAsync(new[] {"hard-dance"}))
+                    .SetPublic(false)
+                    .BuildAsync();
+                
+                var audio5 = await new AudioBuilder()
+                    .AddTitle("Verity")
+                    .AddUploadId("audio5")
+                    .AddFileName("Verity.mp3")
+                    .AddFileSize(8788667)
+                    .AddDuration(219)
+                    .AddUser(user)
+                    .AddTags(await tagRepository.GetListAsync(new[] {"vocals"}))
+                    .SetPublic(false)
+                    .BuildAsync();
 
                 await context.Audios.AddRangeAsync(audio1, audio2, audio3, audio4, audio5);
                 await context.SaveChangesAsync();

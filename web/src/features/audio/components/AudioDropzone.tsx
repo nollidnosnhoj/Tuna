@@ -75,9 +75,9 @@ export default function AudioUploadDropzone() {
 
   useEffect(() => {
     const uploading = async () => {
-      if (!!uploadingFile && user !== null) {
+      if (!!uploadingFile && !!user) {
         const { uploadId, url } = await getS3PresignedUrl(uploadingFile);
-        await uploadAudioToS3(url, user.id, uploadingFile, (value) =>
+        await uploadAudioToS3(url, user!.id, uploadingFile, (value) =>
           setProgressNumber(value)
         );
         const audioDuration = await getDurationFromAudio(uploadingFile);
@@ -96,7 +96,31 @@ export default function AudioUploadDropzone() {
     uploading();
   }, [uploadingFile]);
 
-  const DropzoneContainer: React.FC = ({ children }) => {
+  if (newAudioId) {
+    return (
+      <Box width="100%">
+        <VStack marginY={20}>
+          <Heading>Audio Uploaded!</Heading>
+          <NextLink href={`/audios/${newAudioId}`}>
+            <Button colorScheme="primary">View Audio</Button>
+          </NextLink>
+        </VStack>
+      </Box>
+    );
+  } else if (uploadingFile && !newAudioId) {
+    return (
+      <Flex width="100%" justifyContent="center" alignItems="center">
+        <HStack marginY={20}>
+          <CircularProgress value={progressNumber} color="primary.400">
+            <CircularProgressLabel>
+              {Math.round(progressNumber || 0)}%
+            </CircularProgressLabel>
+          </CircularProgress>
+          <Heading>"Uploading..."</Heading>
+        </HStack>
+      </Flex>
+    );
+  } else {
     return (
       <Flex
         {...getRootProps()}
@@ -104,42 +128,6 @@ export default function AudioUploadDropzone() {
         borderWidth={1}
         borderColor={borderColor}
       >
-        {children}
-      </Flex>
-    );
-  };
-
-  if (newAudioId) {
-    return (
-      <DropzoneContainer>
-        <Box width="100%">
-          <VStack marginY={20}>
-            <Heading>Audio Uploaded!</Heading>
-            <NextLink href={`/audios/${newAudioId}`}>
-              <Button colorScheme="primary">View Audio</Button>
-            </NextLink>
-          </VStack>
-        </Box>
-      </DropzoneContainer>
-    );
-  } else if (uploadingFile && !newAudioId) {
-    return (
-      <DropzoneContainer>
-        <Flex width="100%" justifyContent="center" alignItems="center">
-          <HStack marginY={20}>
-            <CircularProgress value={progressNumber} color="primary.400">
-              <CircularProgressLabel>
-                {Math.round(progressNumber || 0)}%
-              </CircularProgressLabel>
-            </CircularProgress>
-            <Heading>"Uploading..."</Heading>
-          </HStack>
-        </Flex>
-      </DropzoneContainer>
-    );
-  } else {
-    return (
-      <DropzoneContainer>
         <Box width="100%">
           <input {...getInputProps()} />
           <VStack marginY={20}>
@@ -171,7 +159,7 @@ export default function AudioUploadDropzone() {
             </Text>
           </Flex>
         </Box>
-      </DropzoneContainer>
+      </Flex>
     );
   }
 }

@@ -3,7 +3,7 @@ using Audiochan.Core.Entities.Base;
 
 namespace Audiochan.Core.Entities
 {
-    public class Tag : IEntity
+    public class Tag : IEntity<long>
     {
         public Tag()
         {

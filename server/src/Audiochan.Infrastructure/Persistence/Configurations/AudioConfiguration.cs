@@ -38,6 +38,7 @@ namespace Audiochan.Infrastructure.Persistence.Configurations
             builder.HasKey(x => x.Id);
             builder.HasIndex(x => x.Title);
             builder.HasIndex(x => x.UploadId);
+            builder.HasIndex(x => x.Created);
         }
     }
 }

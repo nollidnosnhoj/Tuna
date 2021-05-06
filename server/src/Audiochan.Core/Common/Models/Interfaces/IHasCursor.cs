@@ -1,8 +1,8 @@
 ﻿namespace Audiochan.Core.Common.Models.Interfaces
 {
-    public interface IHasCursor<TCursor> where TCursor : struct
+    public interface IHasCursor
     {
-        TCursor? Cursor { get; init; }
+        string Cursor { get; init; }
         int Size { get; init; }
     }
 }

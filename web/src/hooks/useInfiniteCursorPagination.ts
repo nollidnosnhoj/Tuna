@@ -4,7 +4,7 @@ import { ErrorResponse, CursorPagedList } from "../lib/types";
 
 export default function useInfiniteCursorPagination<TItem>(
   key: string, 
-  fetcher: (cursor?: number) => Promise<CursorPagedList<TItem>>, 
+  fetcher: (cursor?: string) => Promise<CursorPagedList<TItem>>, 
   params?: Record<string, any>,
   options?: UseInfiniteQueryOptions<CursorPagedList<TItem>, ErrorResponse>
 ) {

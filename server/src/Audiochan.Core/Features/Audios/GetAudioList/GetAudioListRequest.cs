@@ -1,55 +1,73 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Extensions.MappingExtensions;
 using Audiochan.Core.Common.Extensions.QueryableExtensions;
+using Audiochan.Core.Common.Helpers;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models.Interfaces;
 using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Common.Settings;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Audios.GetAudioList
 {
-    public record GetAudioListRequest : IHasCursor<long>, IRequest<CursorList<AudioViewModel, long>>
+    public record GetAudioListRequest : IHasCursor, IRequest<CursorList<AudioViewModel>>
     {
-        public long? Cursor { get; init; }
+        public string Cursor { get; init; }
         public int Size { get; init; } = 30;
     }
 
-    public class GetAudioListRequestHandler : IRequestHandler<GetAudioListRequest, CursorList<AudioViewModel, long>>
+    public class GetAudioListRequestHandler : IRequestHandler<GetAudioListRequest, CursorList<AudioViewModel>>
     {
         private readonly IApplicationDbContext _dbContext;
         private readonly ICurrentUserService _currentUserService;
         private readonly MediaStorageSettings _storageSettings;
+        private readonly IDateTimeProvider _dateTimeProvider;
 
         public GetAudioListRequestHandler(IApplicationDbContext dbContext, ICurrentUserService currentUserService,
-            IOptions<MediaStorageSettings> options)
+            IOptions<MediaStorageSettings> options, IDateTimeProvider dateTimeProvider)
         {
             _dbContext = dbContext;
             _currentUserService = currentUserService;
+            _dateTimeProvider = dateTimeProvider;
             _storageSettings = options.Value;
         }
 
-        public async Task<CursorList<AudioViewModel, long>> Handle(GetAudioListRequest request,
+        public async Task<CursorList<AudioViewModel>> Handle(GetAudioListRequest request,
             CancellationToken cancellationToken)
         {
             var currentUserId = _currentUserService.GetUserId();
+            var (dateTime, id) = CursorHelpers.DecodeCursor(_dateTimeProvider, request.Cursor);
+            var limit = request.Size + 1;
 
-            var audios = await _dbContext.Audios
-                .BaseListQueryable(currentUserId)
-                .OrderByDescending(a => a.Id)
+            var queryable = _dbContext.Audios
+                .BaseListQueryable(currentUserId);
+
+            if (dateTime.HasValue && !string.IsNullOrWhiteSpace(id))
+            {
+                queryable = queryable.Where(a => a.Created < dateTime.GetValueOrDefault()
+                    && string.Compare(a.Id, id, StringComparison.Ordinal) < 0);
+            }
+
+            var audios = await queryable
+                .Take(limit)
+                .OrderByDescending(a => a.Created)
                 .ProjectToList(_storageSettings)
-                .CursorPaginateAsync(request,
-                    req => req.Id,
-                    req => req.Id < request.Cursor,
-                    cancellationToken);
+                .ToListAsync(cancellationToken);
 
-            var nextCursor = audios.Count < request.Size ? null : audios.LastOrDefault()?.Id;
+            var lastAudio = audios.LastOrDefault();
 
-            return new CursorList<AudioViewModel, long>(audios, nextCursor);
+            var nextCursor = audios.Count < request.Size
+                ? null
+                : lastAudio != null
+                    ? CursorHelpers.EncodeCursor(_dateTimeProvider, lastAudio.Uploaded, lastAudio.Id)
+                    : null;
+
+            return new CursorList<AudioViewModel>(audios, nextCursor);
         }
     }
 }

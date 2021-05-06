@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Builders;
 using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Common.Extensions.MappingExtensions;
 using Audiochan.Core.Common.Helpers;
@@ -54,24 +55,18 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
             if (currentUser is null)
                 return Result<AudioDetailViewModel>.Fail(ResultError.Unauthorized);
 
-            var audio = new Audio(request.Title, request.UploadId, request.FileName, request.FileSize, request.Duration,
-                currentUser);
-
-            audio.UpdateTitle(request.Title);
-            audio.UpdateDescription(request.Description);
-            audio.UpdatePublicity(request.IsPublic ?? false);
+            var audio = await new AudioBuilder()
+                .GenerateFromCreateRequest(request, currentUser.Id)
+                .AddTags(request.Tags.Count > 0
+                    ? await _tagRepository.GetListAsync(request.Tags, cancellationToken)
+                    : new List<Tag>())
+                .BuildAsync();
 
             try
             {
-                audio.UpdateTags(request.Tags.Count > 0
-                    ? await _tagRepository.GetListAsync(request.Tags, cancellationToken)
-                    : new List<Tag>());
-
                 await _dbContext.Audios.AddAsync(audio, cancellationToken);
                 await _dbContext.SaveChangesAsync(cancellationToken);
-
                 var viewModel = audio.MapToDetail(_storageSettings);
-
                 return Result<AudioDetailViewModel>.Success(viewModel);
             }
             catch (Exception)

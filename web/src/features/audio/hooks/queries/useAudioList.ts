@@ -10,7 +10,7 @@ export default function useGetAudioListInfinite(params: Record<string, any> = {}
   const { accessToken } = useAuth();
   Object.assign(params, { size });
   return useInfiniteCursorPagination<Audio>('audios', (cursor) => {
-    if (cursor === 0) cursor = undefined;
+    if (!cursor) cursor = undefined;
     return fetch('audios', {...params, cursor: cursor }, { accessToken })
   }, params, options);
 }

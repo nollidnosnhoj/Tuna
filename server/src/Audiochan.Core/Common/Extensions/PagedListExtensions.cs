@@ -39,20 +39,5 @@ namespace Audiochan.Core.Common.Extensions
         {
             return await queryable.PaginateAsync(paginationQuery.Page, paginationQuery.Size, cancellationToken);
         }
-
-        public static async Task<List<TResponse>> CursorPaginateAsync<TResponse, TCursor>(
-            this IQueryable<TResponse> queryable,
-            IHasCursor<TCursor> request,
-            Expression<Func<TResponse, TCursor>> property,
-            Expression<Func<TResponse, bool>> predicate,
-            CancellationToken cancellationToken = default) where TCursor : struct
-        {
-            queryable = queryable.OrderByDescending(property);
-
-            if (request.Cursor.HasValue)
-                queryable = queryable.Where(predicate);
-
-            return await queryable.Take(request.Size).ToListAsync(cancellationToken);
-        }
     }
 }

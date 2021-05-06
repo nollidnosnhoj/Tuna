@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Builders;
 using Audiochan.Core.Common.Helpers;
 using Audiochan.Core.Features.Audios;
 using Audiochan.Core.Features.Audios.CreateAudio;
 using Audiochan.Core.Features.Audios.GetAudio;
-using Audiochan.UnitTests.Builders;
+using Audiochan.UnitTests;
 using FluentAssertions;
 using Xunit;
 
@@ -26,11 +27,13 @@ namespace Audiochan.IntegrationTests.Features.Audios
         {
             // Assign
             var (ownerId, _) = await _fixture.RunAsDefaultUserAsync();
-            var audio = new AudioBuilder(ownerId, "myaudio.mp3").Build();
+            var audio = await new AudioBuilder()
+                .UseTestDefaults(ownerId, "myaudio.mp3")
+                .BuildAsync();
             await _fixture.InsertAsync(audio);
 
             // Act
-            var result = await _fixture.SendAsync(new GetAudioRequest(0));
+            var result = await _fixture.SendAsync(new GetAudioRequest(string.Empty));
 
             // Assert
             result.Should().BeNull();
@@ -41,9 +44,10 @@ namespace Audiochan.IntegrationTests.Features.Audios
         {
             // Assign
             var (adminId, _) = await _fixture.RunAsAdministratorAsync();
-            var audio = new AudioBuilder(adminId, Guid.NewGuid() + ".mp3")
+            var audio = await new AudioBuilder()
+                .UseTestDefaults(adminId, Guid.NewGuid() + ".mp3")
                 .SetPublic(false)
-                .Build();
+                .BuildAsync();
             await _fixture.InsertAsync(audio);
 
             // Act
@@ -62,9 +66,11 @@ namespace Audiochan.IntegrationTests.Features.Audios
         {
             var (ownerId, _) = await _fixture.RunAsAdministratorAsync();
             var privateKey = "test";
-            var audio = new AudioBuilder(ownerId)
-                .SetPublic(false, privateKey)
-                .Build();
+            var audio = await new AudioBuilder()
+                .UseTestDefaults(ownerId)
+                .SetPublic(false)
+                .OverwritePrivateKey(privateKey)
+                .BuildAsync();
             await _fixture.InsertAsync(audio);
 
             await _fixture.RunAsDefaultUserAsync();
@@ -79,9 +85,11 @@ namespace Audiochan.IntegrationTests.Features.Audios
         {
             var (ownerId, _) = await _fixture.RunAsAdministratorAsync();
             var privateKey = "test";
-            var audio = new AudioBuilder(ownerId)
-                .SetPublic(false, privateKey)
-                .Build();
+            var audio = await new AudioBuilder()
+                .UseTestDefaults(ownerId)
+                .SetPublic(false)
+                .OverwritePrivateKey(privateKey)
+                .BuildAsync();
             await _fixture.InsertAsync(audio);
 
             await _fixture.RunAsDefaultUserAsync();
@@ -99,7 +107,7 @@ namespace Audiochan.IntegrationTests.Features.Audios
             var audio = await _fixture.SendAsync(new CreateAudioRequest
             {
                 Title = "Test Song",
-                UploadId = await UploadHelpers.GenerateUploadId(),
+                UploadId = UploadHelpers.GenerateUploadId(),
                 FileName = "test.mp3",
                 Duration = 100,
                 FileSize = 100,

@@ -2,7 +2,7 @@
 
 namespace Audiochan.Core.Entities
 {
-    public class FollowedUser : IEntity
+    public class FollowedUser : IEntity<long>
     {
         public string ObserverId { get; set; }
         public User Observer { get; set; }

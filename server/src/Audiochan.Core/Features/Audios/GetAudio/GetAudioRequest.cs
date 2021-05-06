@@ -11,7 +11,7 @@ using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Audios.GetAudio
 {
-    public record GetAudioRequest(long Id, string PrivateKey = "") : IRequest<AudioDetailViewModel>
+    public record GetAudioRequest(string Id, string PrivateKey = "") : IRequest<AudioDetailViewModel>
     {
     }
 

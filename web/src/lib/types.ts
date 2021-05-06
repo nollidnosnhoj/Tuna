@@ -20,9 +20,9 @@ export type PagedList<T> = {
   hasNext: boolean;
 }
 
-export type CursorPagedList<T, R = string | number | boolean> = {
+export type CursorPagedList<T> = {
   items: T[],
-  next?: R;
+  next?: string;
 }
 
 export interface PaginatedOptions {

@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Threading.Tasks;
 using Audiochan.Core.Common.Helpers;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models.Requests;
@@ -8,6 +7,7 @@ using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Common.Settings;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Audiochan.API.Controllers
@@ -21,9 +21,9 @@ namespace Audiochan.API.Controllers
         private readonly ICurrentUserService _currentUserService;
         private readonly IStorageService _storageService;
 
-        public UploadController(MediaStorageSettings storageSettings, ICurrentUserService currentUserService, IStorageService storageService)
+        public UploadController(IOptions<MediaStorageSettings> storageSettings, ICurrentUserService currentUserService, IStorageService storageService)
         {
-            _storageSettings = storageSettings;
+            _storageSettings = storageSettings.Value;
             _currentUserService = currentUserService;
             _storageService = storageService;
         }
@@ -34,10 +34,10 @@ namespace Audiochan.API.Controllers
             OperationId = "GetPresignedUrl",
             Tags = new[] {"upload"}
         )]
-        public async Task<IActionResult> GetUploadUrl([FromBody] UploadAudioUrlRequest request)
+        public IActionResult GetUploadUrl([FromBody] UploadAudioUrlRequest request)
         {
             var userId = _currentUserService.GetUserId();
-            var uploadId = await UploadHelpers.GenerateUploadId();
+            var uploadId = UploadHelpers.GenerateUploadId();
             var blobName = uploadId + Path.GetExtension(request.FileName);
             var metadata = new Dictionary<string, string> {{"UserId", userId}, {"OriginalFilename", request.FileName}};
             var presignedUrl = _storageService.GetPresignedUrl(

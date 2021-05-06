@@ -17,7 +17,7 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
 {
     public class UpdateAudioRequest : AudioAbstractRequest, IRequest<IResult<AudioDetailViewModel>>
     {
-        [JsonIgnore] public long AudioId { get; set; }
+        [JsonIgnore] public string AudioId { get; set; }
     }
 
 

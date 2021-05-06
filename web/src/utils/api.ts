@@ -6,7 +6,6 @@ import { refreshAccessToken } from "~/features/auth/services";
 import { isAxiosError } from './axios';
 import { getAccessToken } from './cookies';
 import { PagedList } from '~/lib/types';
-import { resolve } from 'node:path';
 
 const backendServerAxios = axios.create({
   baseURL: config.BACKEND_API,

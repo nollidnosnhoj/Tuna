@@ -18,7 +18,7 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
 {
     public class UpdateAudioPictureRequest : IRequest<IResult<string>>
     {
-        [JsonIgnore] public long AudioId { get; set; }
+        [JsonIgnore] public string AudioId { get; set; }
         public string Data { get; init; }
     }
 

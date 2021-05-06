@@ -30,6 +30,7 @@ namespace Audiochan.Infrastructure.Persistence
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new())
         {
+            // Add default created/updated date
             foreach (var entry in ChangeTracker.Entries<IAudited>())
             {
                 switch (entry.State)

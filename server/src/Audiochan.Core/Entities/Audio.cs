@@ -7,46 +7,11 @@ using Audiochan.Core.Entities.Base;
 
 namespace Audiochan.Core.Entities
 {
-    public class Audio : BaseEntity
+    public class Audio : BaseEntity<string>
     {
         public Audio()
         {
             this.Tags = new HashSet<Tag>();
-        }
-
-        public Audio(string title, string uploadId, string fileName, long fileSize, int duration, User user)
-            : this(title, uploadId, fileName, fileSize, duration, user.Id)
-        {
-            this.User = user;
-        }
-
-        public Audio(string title, string uploadId, string fileName, long fileSize, int duration,
-            string userId) : this()
-        {
-            if (string.IsNullOrWhiteSpace(title))
-                throw new ArgumentNullException(nameof(title));
-
-            if (string.IsNullOrWhiteSpace(uploadId))
-                throw new ArgumentNullException(nameof(uploadId));
-
-            if (string.IsNullOrWhiteSpace(fileName))
-                throw new ArgumentNullException(nameof(fileName));
-
-            if (string.IsNullOrWhiteSpace(userId))
-                throw new ArgumentNullException(nameof(userId));
-
-            var fileExtension = Path.GetExtension(fileName);
-
-            if (string.IsNullOrEmpty(fileExtension))
-                throw new ArgumentException("File name does not have file extension", nameof(fileName));
-
-            this.UploadId = uploadId;
-            this.FileName = Path.GetFileNameWithoutExtension(fileName);
-            this.FileExt = fileExtension;
-            this.FileSize = fileSize;
-            this.Duration = duration;
-            this.UserId = userId;
-            this.Title = title.Truncate(30);
         }
 
         public string Title { get; set; }

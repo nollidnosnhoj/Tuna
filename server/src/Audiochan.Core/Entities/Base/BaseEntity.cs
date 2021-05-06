@@ -2,9 +2,9 @@
 
 namespace Audiochan.Core.Entities.Base
 {
-    public abstract class BaseEntity : IEntity, IAudited
+    public abstract class BaseEntity<TKey> : IEntity<TKey>, IAudited
     {
-        public long Id { get; set; }
+        public TKey Id { get; set; }
         public DateTime Created { get; set; }
         public DateTime? LastModified { get; set; }
     }

@@ -14,7 +14,7 @@ using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Audios.RemoveAudio
 {
-    public record RemoveAudioRequest(long Id) : IRequest<IResult<bool>>
+    public record RemoveAudioRequest(string Id) : IRequest<IResult<bool>>
     {
     }
 

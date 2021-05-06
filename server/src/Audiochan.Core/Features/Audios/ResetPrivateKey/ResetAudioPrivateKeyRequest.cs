@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Audios.ResetPrivateKey
 {
-    public record ResetAudioPrivateKeyRequest(long AudioId) : IRequest<IResult<string>>
+    public record ResetAudioPrivateKeyRequest(string AudioId) : IRequest<IResult<string>>
     {
     }
 

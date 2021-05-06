@@ -1,7 +1,7 @@
 ﻿namespace Audiochan.Core.Entities.Base
 {
-    public interface IEntity
+    public interface IEntity<TKey>
     {
-        long Id { get; set; }
+        TKey Id { get; set; }
     }
 }

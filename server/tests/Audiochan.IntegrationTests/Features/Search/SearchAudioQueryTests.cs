@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Builders;
 using Audiochan.Core.Common.Helpers;
 using Audiochan.Core.Features.Audios.CreateAudio;
 using Audiochan.Core.Features.Audios.SearchAudios;
-using Audiochan.UnitTests.Builders;
+using Audiochan.UnitTests;
 using Bogus;
 using FluentAssertions;
 using Xunit;
@@ -37,10 +38,11 @@ namespace Audiochan.IntegrationTests.Features.Search
                     if (random.Int(1, 10) % 2 == 0)
                         title += " ABC123";
                 }
-                var audio = new AudioBuilder(userId)
-                    .Title(title)
+                var audio = await new AudioBuilder()
+                    .UseTestDefaults(userId)
+                    .AddTitle(title)
                     .SetPublic(true)
-                    .Build();
+                    .BuildAsync();
                 await _fixture.InsertAsync(audio);
             }
 
@@ -73,7 +75,7 @@ namespace Audiochan.IntegrationTests.Features.Search
                 await _fixture.SendAsync(new CreateAudioRequest
                 {
                     Title = $"Test Song #{i + 1}",
-                    UploadId = await UploadHelpers.GenerateUploadId(),
+                    UploadId = UploadHelpers.GenerateUploadId(),
                     FileName = "test.mp3",
                     Duration = 100,
                     FileSize = 100,
