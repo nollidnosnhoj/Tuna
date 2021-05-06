@@ -17,7 +17,7 @@ namespace Audiochan.Core.Features.Followers.GetFollowers
         public int Page { get; init; }
         public int Size { get; init; }
     }
-    
+
     public class GetUserFollowersRequestHandler : IRequestHandler<GetUserFollowersRequest, PagedList<FollowerViewModel>>
     {
         private readonly IApplicationDbContext _dbContext;

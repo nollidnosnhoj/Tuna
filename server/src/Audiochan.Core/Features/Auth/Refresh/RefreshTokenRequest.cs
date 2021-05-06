@@ -16,8 +16,8 @@ namespace Audiochan.Core.Features.Auth.Refresh
     {
         public string RefreshToken { get; init; }
     }
-    
-        public class RefreshTokenRequestHandler : IRequestHandler<RefreshTokenRequest, IResult<AuthResultViewModel>>
+
+    public class RefreshTokenRequestHandler : IRequestHandler<RefreshTokenRequest, IResult<AuthResultViewModel>>
     {
         private readonly UserManager<User> _userManager;
         private readonly ITokenProvider _tokenProvider;
@@ -49,12 +49,13 @@ namespace Audiochan.Core.Features.Auth.Refresh
 
             var existingRefreshToken = user.RefreshTokens
                 .Single(r => r.Token == request.RefreshToken);
-            
+
             if (!await _tokenProvider.ValidateRefreshToken(existingRefreshToken.Token))
                 return Result<AuthResultViewModel>.Fail(ResultError.BadRequest,
                     "Refresh token is invalid/expired.");
-            
-            var (refreshToken, refreshTokenExpiration) = await _tokenProvider.GenerateRefreshToken(user, existingRefreshToken.Token);
+
+            var (refreshToken, refreshTokenExpiration) =
+                await _tokenProvider.GenerateRefreshToken(user, existingRefreshToken.Token);
             var (token, tokenExpiration) = await _tokenProvider.GenerateAccessToken(user);
 
             return Result<AuthResultViewModel>.Success(new AuthResultViewModel
@@ -66,5 +67,4 @@ namespace Audiochan.Core.Features.Auth.Refresh
             });
         }
     }
-
 }

@@ -10,7 +10,8 @@ namespace Audiochan.Core.Common.Extensions.MappingExtensions
 {
     public static class AudioMappingExtensions
     {
-        private static Expression<Func<Audio, AudioDetailViewModel>> AudioToDetailProjection(MediaStorageSettings options)
+        private static Expression<Func<Audio, AudioDetailViewModel>> AudioToDetailProjection(
+            MediaStorageSettings options)
         {
             return audio => new AudioDetailViewModel
             {
@@ -26,7 +27,8 @@ namespace Audiochan.Core.Common.Extensions.MappingExtensions
                 FileSize = audio.FileSize,
                 LastModified = audio.LastModified,
                 PrivateKey = audio.IsPublic ? null : audio.PrivateKey,
-                AudioUrl = $"https://${options.Audio.Bucket}.s3.amazonaws.com/${options.Audio.Container}/${audio.UploadId + audio.FileExt}",
+                AudioUrl =
+                    $"https://${options.Audio.Bucket}.s3.amazonaws.com/${options.Audio.Container}/${audio.UploadId + audio.FileExt}",
                 Author = new MetaAuthorDto
                 {
                     Id = audio.User.Id,
@@ -46,7 +48,8 @@ namespace Audiochan.Core.Common.Extensions.MappingExtensions
                 Picture = audio.Picture,
                 Uploaded = audio.Created,
                 IsPublic = audio.IsPublic,
-                AudioUrl = $"https://${options.Audio.Bucket}.s3.amazonaws.com/${options.Audio.Container}/${audio.UploadId + audio.FileExt}",
+                AudioUrl =
+                    $"https://${options.Audio.Bucket}.s3.amazonaws.com/${options.Audio.Container}/${audio.UploadId + audio.FileExt}",
                 Author = new MetaAuthorDto
                 {
                     Id = audio.User.Id,
@@ -59,7 +62,8 @@ namespace Audiochan.Core.Common.Extensions.MappingExtensions
         public static IQueryable<AudioDetailViewModel> ProjectToDetail(this IQueryable<Audio> queryable,
             MediaStorageSettings options) => queryable.Select(AudioToDetailProjection(options));
 
-        public static IQueryable<AudioViewModel> ProjectToList(this IQueryable<Audio> queryable, MediaStorageSettings options) =>
+        public static IQueryable<AudioViewModel> ProjectToList(this IQueryable<Audio> queryable,
+            MediaStorageSettings options) =>
             queryable.Select(AudioToListProjection(options));
 
         public static AudioDetailViewModel MapToDetail(this Audio audio, MediaStorageSettings options) =>

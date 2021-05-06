@@ -34,10 +34,9 @@ namespace Audiochan.API
             services.Configure<MediaStorageSettings>(Configuration.GetSection(nameof(MediaStorageSettings)));
             services.Configure<JwtSettings>(Configuration.GetSection(nameof(JwtSettings)));
             services.Configure<IdentitySettings>(Configuration.GetSection(nameof(IdentitySettings)));
-            
+
             var jsonSerializerOptions = new JsonSerializerOptions()
             {
-                
                 IgnoreNullValues = false,
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                 PropertyNameCaseInsensitive = false

@@ -33,11 +33,12 @@ namespace Audiochan.Infrastructure.Storage
             };
 
             var credentials = new BasicAWSCredentials(amazonS3Options.Value.PublicKey, amazonS3Options.Value.SecretKey);
-            
+
             _client = new AmazonS3Client(credentials, s3Config);
         }
 
-        public async Task RemoveAsync(string bucket, string container, string blobName, CancellationToken cancellationToken = default)
+        public async Task RemoveAsync(string bucket, string container, string blobName,
+            CancellationToken cancellationToken = default)
         {
             await RemoveAsync(bucket, GetKeyName(container, blobName), cancellationToken);
         }
@@ -66,7 +67,7 @@ namespace Audiochan.Infrastructure.Storage
             long? length = stream.CanSeek
                 ? stream.Length
                 : null;
-            
+
             var contentType = blobName.GetContentType();
 
             if (length >= 5000000000)
@@ -198,7 +199,7 @@ namespace Audiochan.Infrastructure.Storage
             return $"http://${bucket}.s3.amazonaws.com/${GetKeyName(container, blobName)}";
         }
     }
-    
+
     public static class AmazonS3Extensions
     {
         public static void AddMetadataCollection(this PutObjectRequest request, Dictionary<string, string> data = null)

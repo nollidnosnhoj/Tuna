@@ -28,9 +28,8 @@ namespace Audiochan.Infrastructure.Persistence
 
                 await userManager.AddToRoleAsync(superuser, UserRoleConstants.Admin);
             }
-
         }
-        
+
         public static async Task AddDefaultAudioForDemo(ApplicationDbContext context, UserManager<User> userManager,
             ITagRepository tagRepository)
         {
@@ -57,7 +56,7 @@ namespace Audiochan.Infrastructure.Persistence
                 var audio5 = new Audio("Verity", "audio5", "Verity.mp3", 8788667, 219, user);
                 audio5.UpdateTags(await tagRepository.GetListAsync(new[] {"vocals"}));
                 audio5.UpdatePublicity(false);
-                
+
                 await context.Audios.AddRangeAsync(audio1, audio2, audio3, audio4, audio5);
                 await context.SaveChangesAsync();
             }

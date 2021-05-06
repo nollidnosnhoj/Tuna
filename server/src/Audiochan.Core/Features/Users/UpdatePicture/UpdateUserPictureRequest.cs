@@ -21,8 +21,8 @@ namespace Audiochan.Core.Features.Users.UpdatePicture
         [JsonIgnore] public string UserId { get; set; }
         public string Data { get; init; }
     }
-    
-        public class UpdateUserPictureRequestHandler : IRequestHandler<UpdateUserPictureRequest, IResult<string>>
+
+    public class UpdateUserPictureRequestHandler : IRequestHandler<UpdateUserPictureRequest, IResult<string>>
     {
         private readonly MediaStorageSettings _storageSettings;
         private readonly UserManager<User> _userManager;
@@ -65,10 +65,10 @@ namespace Audiochan.Core.Features.Users.UpdatePicture
             }
             catch (Exception)
             {
-                await _storageService.RemoveAsync(_storageSettings.Audio.Bucket, container, blobName, cancellationToken);
+                await _storageService.RemoveAsync(_storageSettings.Audio.Bucket, container, blobName,
+                    cancellationToken);
                 throw;
             }
         }
     }
-
 }

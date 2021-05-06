@@ -14,14 +14,15 @@ namespace Audiochan.Core.Features.Audios.GetAudio
     public record GetAudioRequest(long Id, string PrivateKey = "") : IRequest<AudioDetailViewModel>
     {
     }
-    
+
     public class GetAudioRequestHandler : IRequestHandler<GetAudioRequest, AudioDetailViewModel>
     {
         private readonly IApplicationDbContext _dbContext;
         private readonly ICurrentUserService _currentUserService;
         private readonly MediaStorageSettings _storageSettings;
 
-        public GetAudioRequestHandler(IApplicationDbContext dbContext, ICurrentUserService currentUserService, IOptions<MediaStorageSettings> options)
+        public GetAudioRequestHandler(IApplicationDbContext dbContext, ICurrentUserService currentUserService,
+            IOptions<MediaStorageSettings> options)
         {
             _dbContext = dbContext;
             _currentUserService = currentUserService;
@@ -39,5 +40,4 @@ namespace Audiochan.Core.Features.Audios.GetAudio
                 .SingleOrDefaultAsync(cancellationToken);
         }
     }
-
 }

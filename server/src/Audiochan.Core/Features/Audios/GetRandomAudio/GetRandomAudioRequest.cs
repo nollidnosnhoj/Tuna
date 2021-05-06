@@ -15,7 +15,7 @@ namespace Audiochan.Core.Features.Audios.GetRandomAudio
     public record GetRandomAudioRequest : IRequest<AudioDetailViewModel>
     {
     }
-    
+
     public class GetRandomAudioRequestHandler : IRequestHandler<GetRandomAudioRequest, AudioDetailViewModel>
     {
         private readonly IApplicationDbContext _dbContext;
@@ -41,5 +41,4 @@ namespace Audiochan.Core.Features.Audios.GetRandomAudio
                 .SingleOrDefaultAsync(cancellationToken);
         }
     }
-
 }

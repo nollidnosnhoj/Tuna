@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models.Interfaces;
 using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Entities;
@@ -15,19 +14,14 @@ namespace Audiochan.Core.Features.Auth.Revoke
     {
         public string RefreshToken { get; init; }
     }
-    
+
     public class RevokeTokenRequestHandler : IRequestHandler<RevokeTokenRequest, IResult<bool>>
     {
         private readonly UserManager<User> _userManager;
-        private readonly ITokenProvider _tokenProvider;
-        private readonly IDateTimeProvider _dateTimeProvider;
 
-        public RevokeTokenRequestHandler(UserManager<User> userManager, ITokenProvider tokenProvider,
-            IDateTimeProvider dateTimeProvider)
+        public RevokeTokenRequestHandler(UserManager<User> userManager)
         {
             _userManager = userManager;
-            _tokenProvider = tokenProvider;
-            _dateTimeProvider = dateTimeProvider;
         }
 
         public async Task<IResult<bool>> Handle(RevokeTokenRequest request, CancellationToken cancellationToken)
@@ -53,5 +47,4 @@ namespace Audiochan.Core.Features.Auth.Revoke
             return Result<bool>.Success(true);
         }
     }
-
 }

@@ -9,7 +9,7 @@ namespace Audiochan.Core.Common.Extensions
 {
     public static class ValidatorExtensions
     {
-        public static IRuleBuilder<T, string> FileNameValidation<T>(this IRuleBuilder<T, string> ruleBuilder, 
+        public static IRuleBuilder<T, string> FileNameValidation<T>(this IRuleBuilder<T, string> ruleBuilder,
             IEnumerable<string> validContentTypes)
         {
             return ruleBuilder

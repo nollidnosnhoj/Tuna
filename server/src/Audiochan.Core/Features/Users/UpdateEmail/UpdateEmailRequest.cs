@@ -6,7 +6,6 @@ using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Models.Interfaces;
 using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Entities;
-using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
@@ -17,18 +16,8 @@ namespace Audiochan.Core.Features.Users.UpdateEmail
         [JsonIgnore] public string UserId { get; init; }
         public string NewEmail { get; init; }
     }
-    
-    public class UpdateEmailRequestValidator : AbstractValidator<UpdateEmailRequest>
-    {
-        public UpdateEmailRequestValidator()
-        {
-            RuleFor(req => req.NewEmail)
-                .NotEmpty().WithMessage("Email is required.")
-                .EmailAddress().WithMessage("Email is invalid.");
-        }
-    }
 
-    
+
     public class UpdateEmailRequestHandler : IRequestHandler<UpdateEmailRequest, IResult<bool>>
     {
         private readonly UserManager<User> _userManager;
@@ -50,5 +39,4 @@ namespace Audiochan.Core.Features.Users.UpdateEmail
             return Result<bool>.Success(true);
         }
     }
-
 }

@@ -11,7 +11,7 @@ namespace Audiochan.Core.Features.Auth.GetCurrentUser
     public record GetCurrentUserRequest : IRequest<CurrentUserViewModel>
     {
     }
-    
+
     public class GetCurrentUserRequestHandler : IRequestHandler<GetCurrentUserRequest, CurrentUserViewModel>
     {
         private readonly IApplicationDbContext _dbContext;
@@ -35,5 +35,4 @@ namespace Audiochan.Core.Features.Auth.GetCurrentUser
                 .SingleOrDefaultAsync(cancellationToken);
         }
     }
-
 }

@@ -9,8 +9,6 @@ using Audiochan.Core.Common.Models.Interfaces;
 using Audiochan.Core.Common.Models.Requests;
 using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Common.Settings;
-using Audiochan.Core.Common.Validators;
-using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -20,14 +18,6 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
     public class UpdateAudioRequest : AudioAbstractRequest, IRequest<IResult<AudioDetailViewModel>>
     {
         [JsonIgnore] public long AudioId { get; set; }
-    }
-
-    public class UpdateAudioRequestValidator : AbstractValidator<UpdateAudioRequest>
-    {
-        public UpdateAudioRequestValidator()
-        {
-            Include(new AudioAbstractRequestValidator());
-        }
     }
 
 

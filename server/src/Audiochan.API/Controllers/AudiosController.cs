@@ -34,7 +34,8 @@ namespace Audiochan.API.Controllers
         [AllowAnonymous]
         [ProducesResponseType(typeof(PagedList<AudioViewModel>), StatusCodes.Status200OK)]
         [SwaggerOperation(Summary = "Returns a list of audios.", OperationId = "GetAudios", Tags = new[] {"audios"})]
-        public async Task<IActionResult> GetList([FromQuery] GetAudioListRequest query, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetList([FromQuery] GetAudioListRequest query,
+            CancellationToken cancellationToken)
         {
             return Ok(await _mediator.Send(query, cancellationToken));
         }
@@ -44,14 +45,15 @@ namespace Audiochan.API.Controllers
         [ProducesResponseType(typeof(AudioDetailViewModel), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
         [SwaggerOperation(Summary = "Return an audio by ID.", OperationId = "GetAudio", Tags = new[] {"audios"})]
-        public async Task<IActionResult> Get(long audioId, [FromQuery] string privateKey, CancellationToken cancellationToken)
+        public async Task<IActionResult> Get(long audioId, [FromQuery] string privateKey,
+            CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new GetAudioRequest(audioId, privateKey), cancellationToken);
             return result != null
                 ? Ok(result)
                 : NotFound(ErrorViewModel.NotFound("Audio was not found."));
         }
-        
+
         [HttpGet("random", Name = "GetRandomAudio")]
         [AllowAnonymous]
         [ProducesResponseType(typeof(AudioDetailViewModel), StatusCodes.Status200OK)]
@@ -74,7 +76,8 @@ namespace Audiochan.API.Controllers
             Description = "Requires authentication.",
             OperationId = "CreateAudio",
             Tags = new[] {"audios"})]
-        public async Task<IActionResult> Create([FromBody] CreateAudioRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> Create([FromBody] CreateAudioRequest request,
+            CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(request, cancellationToken);
             return result.IsSuccess
@@ -93,7 +96,7 @@ namespace Audiochan.API.Controllers
             Description = "Requires authentication.",
             OperationId = "UpdateAudio",
             Tags = new[] {"audios"})]
-        public async Task<IActionResult> Update(long audioId, 
+        public async Task<IActionResult> Update(long audioId,
             [FromBody] UpdateAudioRequest request,
             CancellationToken cancellationToken)
         {
@@ -124,7 +127,7 @@ namespace Audiochan.API.Controllers
             Description = "Requires authentication.",
             OperationId = "AddAudioPicture",
             Tags = new[] {"audios"})]
-        public async Task<IActionResult> AddPicture(long audioId, 
+        public async Task<IActionResult> AddPicture(long audioId,
             [FromBody] UpdateAudioPictureRequest request,
             CancellationToken cancellationToken)
         {

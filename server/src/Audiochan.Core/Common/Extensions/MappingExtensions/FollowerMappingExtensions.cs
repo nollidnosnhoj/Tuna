@@ -13,7 +13,7 @@ namespace Audiochan.Core.Common.Extensions.MappingExtensions
 
         public static IQueryable<FollowingViewModel> ProjectToFollowing(this IQueryable<FollowedUser> queryable) =>
             queryable.Select(FollowingToListProjection());
-        
+
         private static Expression<Func<FollowedUser, FollowerViewModel>> FollowerToListProjection()
         {
             return user => new FollowerViewModel

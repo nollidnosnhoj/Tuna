@@ -20,7 +20,8 @@ namespace Audiochan.Core.Entities
             this.User = user;
         }
 
-        public Audio(string title, string uploadId, string fileName, long fileSize, int duration, string userId) : this()
+        public Audio(string title, string uploadId, string fileName, long fileSize, int duration,
+            string userId) : this()
         {
             if (string.IsNullOrWhiteSpace(title))
                 throw new ArgumentNullException(nameof(title));
@@ -73,14 +74,14 @@ namespace Audiochan.Core.Entities
             if (description is not null)
                 this.Description = description;
         }
-        
+
         public void UpdatePublicity(bool isPublic)
         {
             this.IsPublic = isPublic;
-            
+
             if (!isPublic && string.IsNullOrWhiteSpace(this.PrivateKey))
                 this.GenerateNewPrivateKey();
-            
+
             if (isPublic)
                 this.PrivateKey = null;
         }

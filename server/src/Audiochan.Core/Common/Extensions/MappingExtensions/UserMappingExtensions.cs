@@ -15,7 +15,7 @@ namespace Audiochan.Core.Common.Extensions.MappingExtensions
 
         public static IQueryable<UserViewModel> ProjectToUser(this IQueryable<User> queryable, string userId) =>
             queryable.Select(UserProjection(userId));
-        
+
         private static Expression<Func<User, CurrentUserViewModel>> CurrentUserProjection()
         {
             return user => new CurrentUserViewModel

@@ -38,12 +38,13 @@ namespace Audiochan.Infrastructure.Security
             return GenerateToken(_jwtSettings.AccessTokenSecret, new ClaimsIdentity(claims), expirationDate);
         }
 
-        public async Task<(string, long)>  GenerateRefreshToken(User user, string tokenToBeRemoved = "")
+        public async Task<(string, long)> GenerateRefreshToken(User user, string tokenToBeRemoved = "")
         {
             var now = _dateTimeProvider.Now;
             var claims = await GetClaims(user);
             var expirationDate = now.Add(_jwtSettings.RefreshTokenExpiration);
-            var (token, expirationDateEpoch) = GenerateToken(_jwtSettings.RefreshTokenSecret, new ClaimsIdentity(claims), expirationDate);
+            var (token, expirationDateEpoch) = GenerateToken(_jwtSettings.RefreshTokenSecret,
+                new ClaimsIdentity(claims), expirationDate);
             var refreshToken = new RefreshToken
             {
                 Token = token,
@@ -61,7 +62,7 @@ namespace Audiochan.Infrastructure.Security
                     user.RefreshTokens.Remove(oldRefreshToken);
                 }
             }
-            
+
             await _userManager.UpdateAsync(user);
             return (token, expirationDateEpoch);
         }
@@ -79,8 +80,8 @@ namespace Audiochan.Infrastructure.Security
             try
             {
                 tokenHandler.ValidateToken(
-                    token, 
-                    tokenValidationParams, 
+                    token,
+                    tokenValidationParams,
                     out var validatedToken);
                 var jwtSecurityToken = (JwtSecurityToken) validatedToken;
                 var userId = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Sub)?.Value;
@@ -92,10 +93,11 @@ namespace Audiochan.Infrastructure.Security
             }
         }
 
-        private static (string, long) GenerateToken(string secret, ClaimsIdentity claimsIdentity, DateTime expirationDate)
+        private static (string, long) GenerateToken(string secret, ClaimsIdentity claimsIdentity,
+            DateTime expirationDate)
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
-            
+
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = claimsIdentity,

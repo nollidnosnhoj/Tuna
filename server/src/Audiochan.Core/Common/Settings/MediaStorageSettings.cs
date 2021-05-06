@@ -11,6 +11,7 @@ namespace Audiochan.Core.Common.Settings
             public List<string> ValidContentTypes { get; init; }
             public long MaximumFileSize { get; init; }
         }
+
         public StorageSettings Audio { get; init; }
         public StorageSettings Image { get; init; }
     }

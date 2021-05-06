@@ -15,7 +15,7 @@ namespace Audiochan.Core.Features.Audios.SearchAudios
         public int Page { get; init; }
         public int Size { get; init; }
     }
-    
+
     public class SearchAudiosRequestHandler : IRequestHandler<SearchAudiosRequest, PagedList<AudioViewModel>>
     {
         private readonly ISearchService _searchService;
@@ -32,9 +32,9 @@ namespace Audiochan.Core.Features.Audios.SearchAudios
                 .Select(t => t.Trim().ToLower())
                 .Where(t => !string.IsNullOrWhiteSpace(t))
                 .ToArray();
-            
-            return await _searchService.SearchAudios(request.Q, parsedTags, request.Page, request.Size, cancellationToken);
+
+            return await _searchService.SearchAudios(request.Q, parsedTags, request.Page, request.Size,
+                cancellationToken);
         }
     }
-
 }

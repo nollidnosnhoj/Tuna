@@ -36,7 +36,7 @@ namespace Audiochan.API.Extensions.ConfigurationExtensions
 
             return services;
         }
-        
+
         public static IServiceCollection ConfigureAuthentication(this IServiceCollection services,
             IConfiguration configuration)
         {
@@ -64,13 +64,13 @@ namespace Audiochan.API.Extensions.ConfigurationExtensions
                 .AddJwtBearer(options =>
                 {
                     options.TokenValidationParameters = tokenValidationParams;
-                    options.TokenValidationParameters.IssuerSigningKey = 
+                    options.TokenValidationParameters.IssuerSigningKey =
                         new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSetting.RefreshTokenSecret));
                 });
 
             return services;
         }
-        
+
         public static IServiceCollection ConfigureAuthorization(this IServiceCollection services)
         {
             services.AddAuthorization();

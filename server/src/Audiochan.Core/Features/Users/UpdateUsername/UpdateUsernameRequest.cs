@@ -5,12 +5,9 @@ using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Models.Interfaces;
 using Audiochan.Core.Common.Models.Responses;
-using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Entities;
-using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Users.UpdateUsername
 {
@@ -18,14 +15,6 @@ namespace Audiochan.Core.Features.Users.UpdateUsername
     {
         [JsonIgnore] public string UserId { get; init; }
         public string NewUsername { get; init; }
-    }
-    
-    public class UpdateUsernameRequestValidator : AbstractValidator<UpdateUsernameRequest>
-    {
-        public UpdateUsernameRequestValidator(IOptions<IdentitySettings> options)
-        {
-            RuleFor(req => req.NewUsername).Username(options.Value.UsernameSettings);
-        }
     }
 
     public class UpdateUsernameRequestHandler : IRequestHandler<UpdateUsernameRequest, IResult<bool>>
@@ -52,5 +41,4 @@ namespace Audiochan.Core.Features.Users.UpdateUsername
             return Result<bool>.Success(true);
         }
     }
-
 }

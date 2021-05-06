@@ -12,7 +12,7 @@ namespace Audiochan.Core.Features.Followers.SetFollow
     public record SetFollowRequest(string UserId, string Username, bool IsFollowing) : IRequest<IResult<bool>>
     {
     }
-    
+
     public class SetFollowRequestHandler : IRequestHandler<SetFollowRequest, IResult<bool>>
     {
         private readonly IApplicationDbContext _dbContext;
@@ -46,5 +46,4 @@ namespace Audiochan.Core.Features.Followers.SetFollow
             return Result<bool>.Success(isFollowed);
         }
     }
-
 }

@@ -17,8 +17,8 @@ namespace Audiochan.Core.Features.Audios.RemoveAudio
     public record RemoveAudioRequest(long Id) : IRequest<IResult<bool>>
     {
     }
-    
-        public class RemoveAudioRequestHandler : IRequestHandler<RemoveAudioRequest, IResult<bool>>
+
+    public class RemoveAudioRequestHandler : IRequestHandler<RemoveAudioRequest, IResult<bool>>
     {
         private readonly MediaStorageSettings _storageSettings;
         private readonly IApplicationDbContext _dbContext;
@@ -62,7 +62,7 @@ namespace Audiochan.Core.Features.Audios.RemoveAudio
             {
                 _storageService.RemoveAsync(
                     _storageSettings.Audio.Bucket,
-                    _storageSettings.Audio.Container, 
+                    _storageSettings.Audio.Container,
                     BlobHelpers.GetAudioBlobName(audio),
                     cancellationToken)
             };
@@ -70,10 +70,9 @@ namespace Audiochan.Core.Features.Audios.RemoveAudio
             {
                 tasks.Add(_storageService.RemoveAsync(_storageSettings.Audio.Bucket, audio.Picture, cancellationToken));
             }
-                
+
             await Task.WhenAll(tasks);
             return Result<bool>.Success(true);
         }
     }
-
 }

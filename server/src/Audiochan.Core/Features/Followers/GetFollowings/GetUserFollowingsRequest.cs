@@ -17,8 +17,9 @@ namespace Audiochan.Core.Features.Followers.GetFollowings
         public int Page { get; init; }
         public int Size { get; init; }
     }
-    
-    public class GetUserFollowingsRequestHandler : IRequestHandler<GetUserFollowingsRequest, PagedList<FollowingViewModel>>
+
+    public class
+        GetUserFollowingsRequestHandler : IRequestHandler<GetUserFollowingsRequest, PagedList<FollowingViewModel>>
     {
         private readonly IApplicationDbContext _dbContext;
 
@@ -39,5 +40,4 @@ namespace Audiochan.Core.Features.Followers.GetFollowings
                 .PaginateAsync(request, cancellationToken);
         }
     }
-
 }

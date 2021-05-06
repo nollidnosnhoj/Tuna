@@ -11,7 +11,7 @@ namespace Audiochan.Core.Features.Users.GetUser
     public record GetUserRequest(string Username) : IRequest<UserViewModel>
     {
     }
-    
+
     public class GetUserRequestHandler : IRequestHandler<GetUserRequest, UserViewModel>
     {
         private readonly IApplicationDbContext _dbContext;
@@ -37,5 +37,4 @@ namespace Audiochan.Core.Features.Users.GetUser
                 .SingleOrDefaultAsync(cancellationToken);
         }
     }
-
 }

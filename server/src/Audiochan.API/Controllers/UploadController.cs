@@ -14,6 +14,7 @@ namespace Audiochan.API.Controllers
     public class UploadController : ControllerBase
     {
         private readonly IMediator _mediator;
+
         public UploadController(IMediator mediator)
         {
             _mediator = mediator;
@@ -25,7 +26,8 @@ namespace Audiochan.API.Controllers
             OperationId = "GetPresignedUrl",
             Tags = new[] {"upload"}
         )]
-        public async Task<IActionResult> GetUploadUrl([FromBody] GetUploadAudioUrlRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetUploadUrl([FromBody] GetUploadAudioUrlRequest request,
+            CancellationToken cancellationToken)
         {
             var response = await _mediator.Send(request, cancellationToken);
             return new JsonResult(response);

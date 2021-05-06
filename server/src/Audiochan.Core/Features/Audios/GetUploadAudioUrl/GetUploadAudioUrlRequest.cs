@@ -17,7 +17,7 @@ namespace Audiochan.Core.Features.Audios.GetUploadAudioUrl
         public string FileName { get; init; }
         public long FileSize { get; init; }
     }
-    
+
     public class GetUploadAudioUrlRequestValidator : AbstractValidator<GetUploadAudioUrlRequest>
     {
         public GetUploadAudioUrlRequestValidator(IOptions<MediaStorageSettings> options)
@@ -29,21 +29,23 @@ namespace Audiochan.Core.Features.Audios.GetUploadAudioUrl
         }
     }
 
-    
+
     public class GetUploadAudioUrlRequestHandler : IRequestHandler<GetUploadAudioUrlRequest, GetUploadAudioUrlResponse>
     {
         private readonly MediaStorageSettings _storageSettings;
         private readonly ICurrentUserService _currentUserService;
         private readonly IStorageService _storageService;
 
-        public GetUploadAudioUrlRequestHandler(IStorageService storageService, ICurrentUserService currentUserService, IOptions<MediaStorageSettings> options)
+        public GetUploadAudioUrlRequestHandler(IStorageService storageService, ICurrentUserService currentUserService,
+            IOptions<MediaStorageSettings> options)
         {
             _storageService = storageService;
             _currentUserService = currentUserService;
             _storageSettings = options.Value;
         }
 
-        public Task<GetUploadAudioUrlResponse> Handle(GetUploadAudioUrlRequest request, CancellationToken cancellationToken)
+        public Task<GetUploadAudioUrlResponse> Handle(GetUploadAudioUrlRequest request,
+            CancellationToken cancellationToken)
         {
             var userId = _currentUserService.GetUserId();
             var uploadId = UploadHelpers.GenerateUploadId();
@@ -52,13 +54,12 @@ namespace Audiochan.Core.Features.Audios.GetUploadAudioUrl
             var presignedUrl = _storageService.GetPresignedUrl(
                 method: "put",
                 bucket: _storageSettings.Audio.Bucket,
-                container: _storageSettings.Audio.Container, 
+                container: _storageSettings.Audio.Container,
                 blobName: blobName,
-                expirationInMinutes: 5, 
+                expirationInMinutes: 5,
                 metadata: metadata);
-            var response = new GetUploadAudioUrlResponse{Url = presignedUrl, UploadId = uploadId};
+            var response = new GetUploadAudioUrlResponse {Url = presignedUrl, UploadId = uploadId};
             return Task.FromResult(response);
         }
     }
-
 }

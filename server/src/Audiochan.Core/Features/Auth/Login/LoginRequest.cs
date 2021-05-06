@@ -5,7 +5,6 @@ using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models.Interfaces;
 using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Entities;
-using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -17,17 +16,8 @@ namespace Audiochan.Core.Features.Auth.Login
         public string Login { get; init; }
         public string Password { get; init; }
     }
-    
-    public class LoginRequestValidator : AbstractValidator<LoginRequest>
-    {
-        public LoginRequestValidator()
-        {
-            RuleFor(x => x.Login).NotEmpty();
-            RuleFor(x => x.Password).NotEmpty();
-        }
-    }
 
-    
+
     public class LoginRequestHandler : IRequestHandler<LoginRequest, IResult<AuthResultViewModel>>
     {
         private readonly UserManager<User> _userManager;
@@ -64,5 +54,4 @@ namespace Audiochan.Core.Features.Auth.Login
             return Result<AuthResultViewModel>.Success(result);
         }
     }
-
 }

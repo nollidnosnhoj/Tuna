@@ -19,14 +19,15 @@ namespace Audiochan.Infrastructure.Search
         private readonly ICurrentUserService _currentUserService;
         private readonly MediaStorageSettings _storageSettings;
 
-        public DatabaseSearchService(IApplicationDbContext dbContext, ICurrentUserService currentUserService, IOptions<MediaStorageSettings> options)
+        public DatabaseSearchService(IApplicationDbContext dbContext, ICurrentUserService currentUserService,
+            IOptions<MediaStorageSettings> options)
         {
             _dbContext = dbContext;
             _currentUserService = currentUserService;
             _storageSettings = options.Value;
         }
 
-        public async Task<PagedList<AudioViewModel>> SearchAudios(string searchTerm, string[] filteredTags, 
+        public async Task<PagedList<AudioViewModel>> SearchAudios(string searchTerm, string[] filteredTags,
             int page = 1, int limit = 30, CancellationToken cancellationToken = default)
         {
             var currentUserId = _currentUserService.GetUserId();

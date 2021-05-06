@@ -9,7 +9,7 @@ namespace Audiochan.Core.Features.Followers.CheckIfFollowing
     public record CheckIfUserIsFollowingRequest(string UserId, string Username) : IRequest<bool>
     {
     }
-    
+
     public class CheckIfUserIsFollowingRequestHandler : IRequestHandler<CheckIfUserIsFollowingRequest, bool>
     {
         private readonly IApplicationDbContext _dbContext;
@@ -28,5 +28,4 @@ namespace Audiochan.Core.Features.Followers.CheckIfFollowing
                                && u.Target.UserName == request.Username.Trim().ToLower(), cancellationToken);
         }
     }
-
 }

@@ -41,7 +41,8 @@ namespace Audiochan.Infrastructure.Image
                 cancellationToken: cancellationToken);
         }
 
-        private static async Task<MemoryStream> SaveImageAsJpeg(SixLabors.ImageSharp.Image imageContext, CancellationToken cancellationToken)
+        private static async Task<MemoryStream> SaveImageAsJpeg(SixLabors.ImageSharp.Image imageContext,
+            CancellationToken cancellationToken)
         {
             // Save the image context to JPEG
             var imageStream = new MemoryStream();

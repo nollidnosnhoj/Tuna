@@ -7,7 +7,8 @@ namespace Audiochan.Core.Common.Interfaces
 {
     public interface ISearchService
     {
-        Task<PagedList<AudioViewModel>> SearchAudios(string searchTerm, string[] filteredTags, int page = 1, int limit = 30,
+        Task<PagedList<AudioViewModel>> SearchAudios(string searchTerm, string[] filteredTags, int page = 1,
+            int limit = 30,
             CancellationToken cancellationToken = default);
     }
 }

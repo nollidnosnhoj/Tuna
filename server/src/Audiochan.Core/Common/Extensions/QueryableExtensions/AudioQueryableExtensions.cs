@@ -15,7 +15,8 @@ namespace Audiochan.Core.Common.Extensions.QueryableExtensions
                 .Where(a => a.UserId == currentUserId || a.IsPublic);
         }
 
-        public static IQueryable<Audio> BaseDetailQueryable(this IQueryable<Audio> dbSet, string privateKey = "", string currentUserId = "")
+        public static IQueryable<Audio> BaseDetailQueryable(this IQueryable<Audio> dbSet, string privateKey = "",
+            string currentUserId = "")
         {
             return dbSet
                 .AsNoTracking()

@@ -17,7 +17,7 @@ namespace Audiochan.Core.Features.Users.UpdateUser
         public string About { get; init; }
         public string Website { get; init; }
     }
-    
+
     public class UpdateUserDetailsRequestHandler : IRequestHandler<UpdateUserDetailsRequest, IResult<bool>>
     {
         private readonly UserManager<User> _userManager;
@@ -40,5 +40,4 @@ namespace Audiochan.Core.Features.Users.UpdateUser
             return Result<bool>.Success(true);
         }
     }
-
 }

@@ -20,7 +20,7 @@ namespace Audiochan.Core.Features.Users.GetUserAudios
         public int Page { get; init; }
         public int Size { get; init; }
     }
-    
+
     public class GetUserAudiosRequestHandler : IRequestHandler<GetUserAudiosRequest, PagedList<AudioViewModel>>
     {
         private readonly IApplicationDbContext _dbContext;
@@ -46,5 +46,4 @@ namespace Audiochan.Core.Features.Users.GetUserAudios
                 .PaginateAsync(request, cancellationToken);
         }
     }
-
 }

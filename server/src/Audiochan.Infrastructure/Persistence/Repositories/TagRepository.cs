@@ -18,7 +18,8 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task<List<Tag>> GetListAsync(IEnumerable<string> tags, CancellationToken cancellationToken = default)
+        public async Task<List<Tag>> GetListAsync(IEnumerable<string> tags,
+            CancellationToken cancellationToken = default)
         {
             var taggifyTags = tags.FormatTags();
 

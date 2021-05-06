@@ -9,7 +9,8 @@ namespace Audiochan.API.Extensions.ConfigurationExtensions
 {
     public static class MvcConfigExtensions
     {
-        public static IServiceCollection ConfigureControllers(this IServiceCollection services, JsonSerializerOptions jsonSerializerOptions)
+        public static IServiceCollection ConfigureControllers(this IServiceCollection services,
+            JsonSerializerOptions jsonSerializerOptions)
         {
             services
                 .AddControllers(configuration =>
@@ -22,14 +23,16 @@ namespace Audiochan.API.Extensions.ConfigurationExtensions
                     configuration.JsonSerializerOptions.IgnoreNullValues = jsonSerializerOptions.IgnoreNullValues;
                     configuration.JsonSerializerOptions.PropertyNameCaseInsensitive =
                         jsonSerializerOptions.PropertyNameCaseInsensitive;
-                    configuration.JsonSerializerOptions.PropertyNamingPolicy = jsonSerializerOptions.PropertyNamingPolicy;
-                    configuration.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
+                    configuration.JsonSerializerOptions.PropertyNamingPolicy =
+                        jsonSerializerOptions.PropertyNamingPolicy;
+                    configuration.JsonSerializerOptions.Converters.Add(
+                        new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
                 })
                 .AddFluentValidation(cfg => cfg.RegisterValidatorsFromAssemblyContaining<Startup>());
 
             return services;
         }
-        
+
         public static IServiceCollection ConfigureRouting(this IServiceCollection services)
         {
             services.AddRouting(options => options.LowercaseUrls = true);

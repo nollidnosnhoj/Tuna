@@ -43,8 +43,8 @@ namespace Audiochan.API.Controllers
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
         [SwaggerOperation(Summary = "Return a list of the user's audios.", OperationId = "GetUserAudios",
             Tags = new[] {"users"})]
-        public async Task<IActionResult> GetUserAudios(string username, 
-            [FromQuery] PaginationQueryParams paginationQuery, 
+        public async Task<IActionResult> GetUserAudios(string username,
+            [FromQuery] PaginationQueryParams paginationQuery,
             CancellationToken cancellationToken)
         {
             var query = new GetUserAudiosRequest

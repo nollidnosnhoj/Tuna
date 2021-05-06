@@ -18,14 +18,15 @@ namespace Audiochan.Core.Features.Audios.GetAudioList
         public long? Cursor { get; init; }
         public int Size { get; init; } = 30;
     }
-    
+
     public class GetAudioListRequestHandler : IRequestHandler<GetAudioListRequest, CursorList<AudioViewModel, long>>
     {
         private readonly IApplicationDbContext _dbContext;
         private readonly ICurrentUserService _currentUserService;
         private readonly MediaStorageSettings _storageSettings;
 
-        public GetAudioListRequestHandler(IApplicationDbContext dbContext, ICurrentUserService currentUserService, IOptions<MediaStorageSettings> options)
+        public GetAudioListRequestHandler(IApplicationDbContext dbContext, ICurrentUserService currentUserService,
+            IOptions<MediaStorageSettings> options)
         {
             _dbContext = dbContext;
             _currentUserService = currentUserService;
@@ -41,9 +42,9 @@ namespace Audiochan.Core.Features.Audios.GetAudioList
                 .BaseListQueryable(currentUserId)
                 .OrderByDescending(a => a.Id)
                 .ProjectToList(_storageSettings)
-                .CursorPaginateAsync(request, 
-                    req => req.Id, 
-                    req => req.Id < request.Cursor, 
+                .CursorPaginateAsync(request,
+                    req => req.Id,
+                    req => req.Id < request.Cursor,
                     cancellationToken);
 
             var nextCursor = audios.Count < request.Size ? null : audios.LastOrDefault()?.Id;
@@ -51,5 +52,4 @@ namespace Audiochan.Core.Features.Audios.GetAudioList
             return new CursorList<AudioViewModel, long>(audios, nextCursor);
         }
     }
-
 }

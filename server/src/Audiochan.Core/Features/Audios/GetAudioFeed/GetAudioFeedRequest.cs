@@ -17,7 +17,7 @@ namespace Audiochan.Core.Features.Audios.GetAudioFeed
     {
         public string UserId { get; init; }
     }
-    
+
     public class GetAudioFeedRequestHandler : IRequestHandler<GetAudioFeedRequest, PagedList<AudioViewModel>>
     {
         private readonly IApplicationDbContext _dbContext;
@@ -46,5 +46,4 @@ namespace Audiochan.Core.Features.Audios.GetAudioFeed
                 .PaginateAsync(cancellationToken: cancellationToken);
         }
     }
-
 }

@@ -14,7 +14,7 @@ namespace Audiochan.Core.Common.Extensions
     {
         private const int DefaultPageNumber = 1;
         private const int DefaultPageSize = 30;
-        
+
         public static async Task<PagedList<TResponse>> PaginateAsync<TResponse>(
             this IQueryable<TResponse> queryable,
             int page = DefaultPageNumber,
