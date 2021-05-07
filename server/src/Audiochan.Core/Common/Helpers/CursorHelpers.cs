@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Text;
-using Audiochan.Core.Common.Interfaces;
+using NodaTime;
 
 namespace Audiochan.Core.Common.Helpers
 {
     public static class CursorHelpers
     {
-        public static (DateTime? since, string id) DecodeCursor(string cursor)
+        public static (Instant? since, string id) DecodeCursor(string cursor)
         {
-            DateTime? dateTime = null;
+            Instant? dateTime = null;
             var id = string.Empty;
 
             if (!string.IsNullOrWhiteSpace(cursor))
@@ -19,7 +19,7 @@ namespace Audiochan.Core.Common.Helpers
                 {
                     if (long.TryParse(decodedCursorArray[0], out var timestamp))
                     {
-                        dateTime = new DateTime(timestamp);
+                        dateTime = Instant.FromUnixTimeTicks(timestamp);
                     }
 
                     id = decodedCursorArray[1];
@@ -29,9 +29,9 @@ namespace Audiochan.Core.Common.Helpers
             return (dateTime, id);
         }
 
-        public static string EncodeCursor(DateTime dateTime, string id)
+        public static string EncodeCursor(Instant dateTime, string id)
         {
-            var timestamp = dateTime.Ticks.ToString();
+            var timestamp = dateTime.ToUnixTimeTicks();
             var rawCursor = string.Join(':', timestamp, id);
             var bytes = Encoding.UTF8.GetBytes(rawCursor);
             return Convert.ToBase64String(bytes);

@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using NodaTime;
 
 namespace Audiochan.Infrastructure.Security
 {
@@ -34,22 +35,22 @@ namespace Audiochan.Infrastructure.Security
         public async Task<(string, long)> GenerateAccessToken(User user)
         {
             var claims = await GetClaims(user);
-            var expirationDate = _dateTimeProvider.Now.Add(_jwtSettings.AccessTokenExpiration);
-            return GenerateToken(_jwtSettings.AccessTokenSecret, new ClaimsIdentity(claims), expirationDate);
+            var expirationDate = _dateTimeProvider.Now.Plus(Duration.FromTimeSpan(_jwtSettings.AccessTokenExpiration));
+            return GenerateToken(_jwtSettings.AccessTokenSecret, new ClaimsIdentity(claims), expirationDate.ToDateTimeUtc());
         }
 
         public async Task<(string, long)> GenerateRefreshToken(User user, string tokenToBeRemoved = "")
         {
             var now = _dateTimeProvider.Now;
             var claims = await GetClaims(user);
-            var expirationDate = now.Add(_jwtSettings.RefreshTokenExpiration);
+            var expirationDate = now.Plus(Duration.FromTimeSpan(_jwtSettings.AccessTokenExpiration));
             var (token, expirationDateEpoch) = GenerateToken(_jwtSettings.RefreshTokenSecret,
-                new ClaimsIdentity(claims), expirationDate);
+                new ClaimsIdentity(claims), expirationDate.ToDateTimeUtc());
             var refreshToken = new RefreshToken
             {
                 Token = token,
-                Expiry = expirationDate,
-                Created = now,
+                Expiry = expirationDate.ToDateTimeUtc(),
+                Created = now.ToDateTimeUtc(),
                 UserId = user.Id
             };
             user.RefreshTokens.Add(refreshToken);

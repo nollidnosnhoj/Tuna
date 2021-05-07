@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Identity;
+using NodaTime;
 
 namespace Audiochan.Core.Entities
 {
@@ -15,7 +16,7 @@ namespace Audiochan.Core.Entities
             RefreshTokens = new HashSet<RefreshToken>();
         }
 
-        public User(string username, string email, DateTime joined)
+        public User(string username, string email, Instant joined)
         {
             this.UserName = username;
             this.Email = email;
@@ -27,7 +28,7 @@ namespace Audiochan.Core.Entities
         public string Picture { get; set; }
         public string About { get; set; }
         public string Website { get; set; }
-        public DateTime Joined { get; set; }
+        public Instant Joined { get; set; }
         public ICollection<Audio> Audios { get; set; }
         public ICollection<FollowedUser> Followings { get; set; }
         public ICollection<FollowedUser> Followers { get; set; }

@@ -26,20 +26,23 @@ namespace Audiochan.Infrastructure
             services.AddTransient<ISearchService, DatabaseSearchService>();
             services.AddTransient<IImageService, ImageService>();
             services.AddTransient<ITokenProvider, TokenProvider>();
-            services.AddTransient<IDateTimeProvider, DateTimeProvider>();
+            services.AddTransient<IDateTimeProvider, NodaTimeProvider>();
             return services;
         }
 
         private static void ConfigureDatabase(IServiceCollection services, IConfiguration configuration,
             bool isDevelopment)
         {
-            services.AddDbContext<ApplicationDbContext>(options =>
+            services.AddDbContext<ApplicationDbContext>(o =>
             {
-                options.UseNpgsql(configuration.GetConnectionString("Database"));
-                options.UseSnakeCaseNamingConvention();
+                o.UseNpgsql(configuration.GetConnectionString("Database"), npgo => 
+                {
+                    npgo.UseNodaTime();
+                });
+                o.UseSnakeCaseNamingConvention();
                 if (isDevelopment)
                 {
-                    options.EnableSensitiveDataLogging();
+                    o.EnableSensitiveDataLogging();
                 }
             });
 

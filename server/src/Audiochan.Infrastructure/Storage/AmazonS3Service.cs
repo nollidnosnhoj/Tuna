@@ -13,6 +13,7 @@ using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Infrastructure.Storage.Options;
 using Microsoft.Extensions.Options;
+using NodaTime;
 
 namespace Audiochan.Infrastructure.Storage
 {
@@ -168,13 +169,13 @@ namespace Audiochan.Infrastructure.Storage
 
             try
             {
-                var expiration = _dateTimeProvider.Now.AddMinutes(5);
+                var expiration = _dateTimeProvider.Now.Plus(Duration.FromMinutes(5));
                 var contentType = blobName.GetContentType();
                 var presignedUrlRequest = new GetPreSignedUrlRequest
                 {
                     BucketName = bucket,
                     Key = GetKeyName(container, blobName),
-                    Expires = expiration,
+                    Expires = expiration.ToDateTimeUtc(),
                     ContentType = contentType,
                     Verb = verb
                 };

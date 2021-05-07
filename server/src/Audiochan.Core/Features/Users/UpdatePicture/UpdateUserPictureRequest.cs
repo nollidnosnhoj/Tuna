@@ -46,7 +46,7 @@ namespace Audiochan.Core.Features.Users.UpdatePicture
         public async Task<IResult<string>> Handle(UpdateUserPictureRequest request, CancellationToken cancellationToken)
         {
             var container = Path.Combine(_storageSettings.Image.Container, "users");
-            var blobName = BlobHelpers.GetPictureBlobName(_dateTimeProvider.Now);
+            var blobName = BlobHelpers.GetPictureBlobName(_dateTimeProvider.Now.ToDateTimeUtc());
             try
             {
                 var user = await _userManager.FindByIdAsync(request.UserId + "");

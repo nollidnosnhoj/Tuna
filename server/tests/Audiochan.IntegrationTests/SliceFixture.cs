@@ -18,6 +18,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using NodaTime;
 using Npgsql;
 using Respawn;
 using Xunit;
@@ -151,7 +152,7 @@ namespace Audiochan.IntegrationTests
                 UserName = userName,
                 Email = userName + "@localhost",
                 DisplayName = userName,
-                Joined = DateTime.UtcNow
+                Joined = Instant.FromDateTimeUtc(DateTime.Now.ToUniversalTime())
             };
 
             var result = await userManager.CreateAsync(user, password);

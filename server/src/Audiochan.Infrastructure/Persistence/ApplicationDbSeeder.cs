@@ -6,6 +6,7 @@ using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using NodaTime;
 
 namespace Audiochan.Infrastructure.Persistence
 {
@@ -15,7 +16,7 @@ namespace Audiochan.Infrastructure.Persistence
         {
             if (!await userManager.Users.AnyAsync())
             {
-                var superuser = new User("superuser", "superuser@localhost", DateTime.UtcNow);
+                var superuser = new User("superuser", "superuser@localhost", Instant.FromDateTimeUtc(DateTime.Now.ToUniversalTime()));
 
                 // TODO: Do not hardcode superuser password when deploying into production haha
                 await userManager.CreateAsync(superuser, "Password1");

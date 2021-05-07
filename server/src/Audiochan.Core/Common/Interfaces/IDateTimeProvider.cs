@@ -1,9 +1,10 @@
 ﻿using System;
+using NodaTime;
 
 namespace Audiochan.Core.Common.Interfaces
 {
     public interface IDateTimeProvider
     {
-        DateTime Now { get; }
+        Instant Now { get; }
     }
 }

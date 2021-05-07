@@ -50,7 +50,7 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
             CancellationToken cancellationToken)
         {
             var container = Path.Combine(_storageSettings.Image.Container, "audios");
-            var blobName = BlobHelpers.GetPictureBlobName(_dateTimeProvider.Now);
+            var blobName = BlobHelpers.GetPictureBlobName(_dateTimeProvider.Now.ToDateTimeUtc());
             try
             {
                 var currentUserId = await _dbContext.Users

@@ -1,6 +1,7 @@
 ﻿using System;
 using Audiochan.Core.Common.Helpers;
 using FluentAssertions;
+using NodaTime;
 using Xunit;
 
 namespace Audiochan.UnitTests.Helpers
@@ -10,7 +11,7 @@ namespace Audiochan.UnitTests.Helpers
         [Fact]
         public void CursorEncodeDecodeTest()
         {
-            var dateTime = new DateTime(2021, 12, 25, 12, 30, 30, 500).ToUniversalTime();
+            var dateTime = Instant.FromDateTimeUtc(new DateTime(2021, 12, 25, 12, 30, 30, 500).ToUniversalTime());
             var id = "testId";
 
             var cursor = CursorHelpers.EncodeCursor(dateTime, id);
@@ -19,7 +20,6 @@ namespace Audiochan.UnitTests.Helpers
 
             assertDateTime.Should().NotBeNull();
             assertDateTime.Should().Be(dateTime);
-            assertDateTime!.Value.Millisecond.Should().Be(dateTime.Millisecond);
             assertId.Should().Be(id);
         }
     }
