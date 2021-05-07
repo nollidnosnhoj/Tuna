@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Entities.Base;
+using Audiochan.Core.Entities.Enums;
 
 namespace Audiochan.Core.Entities
 {
@@ -22,7 +21,7 @@ namespace Audiochan.Core.Entities
         public long FileSize { get; set; }
         public string FileExt { get; set; }
         public string Picture { get; set; }
-        public bool IsPublic { get; set; }
+        public Visibility Visibility { get; set; }
         public string PrivateKey { get; set; }
         public string UserId { get; set; }
         public User User { get; set; }
@@ -40,17 +39,23 @@ namespace Audiochan.Core.Entities
                 this.Description = description;
         }
 
-        public void UpdatePublicity(bool isPublic)
+        public void UpdateVisibility(Visibility visibility)
         {
-            this.IsPublic = isPublic;
+            if (this.Visibility != visibility)
+            {
+                if (visibility == Visibility.Private)
+                {
+                    this.GenerateNewPrivateKey();
+                }
+                else if (this.Visibility == Visibility.Private)
+                {
+                    this.PrivateKey = null;
+                }
 
-            if (!isPublic && string.IsNullOrWhiteSpace(this.PrivateKey))
-                this.GenerateNewPrivateKey();
-
-            if (isPublic)
-                this.PrivateKey = null;
+                this.Visibility = visibility;
+            }
         }
-
+        
         public void GenerateNewPrivateKey()
         {
             this.PrivateKey = Guid.NewGuid().ToString("N");

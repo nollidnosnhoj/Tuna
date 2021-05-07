@@ -1,3 +1,4 @@
+import { yupToFormErrors } from 'formik';
 import {
   array,
   boolean,
@@ -21,23 +22,7 @@ export const editAudioSchema: SchemaOf<AudioRequest> = object().shape({
     .max(10, validationMessages.max("Tags", 10))
     .ensure()
     .defined(),
-  isPublic: boolean()
-    .defined()
-}).defined();
-
-export const uploadAudioSchema: SchemaOf<AudioRequest> = object().shape({
-  title: string()
-    .max(30, validationMessages.max("Title", 30))
-    .ensure()
-    .defined(),
-  description: string()
-    .max(500, validationMessages.max("Description", 500))
-    .ensure()
-    .defined(),
-  tags: array(string())
-    .max(10, validationMessages.max("Tags", 10))
-    .ensure()
-    .defined(),
-  isPublic: boolean()
-    .defined()
+  visibility: string()
+    .required(validationMessages.required("Visiblity"))
+    .oneOf(['public', 'unlisted', 'private'])
 }).defined();
