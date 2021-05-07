@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+using NodaTime;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Audiochan.Infrastructure.Persistence.Migrations
@@ -47,7 +48,7 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                     picture = table.Column<string>(type: "text", nullable: true),
                     about = table.Column<string>(type: "text", nullable: true),
                     website = table.Column<string>(type: "text", nullable: true),
-                    joined = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    joined = table.Column<Instant>(type: "timestamp", nullable: false),
                     user_name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     normalized_user_name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -103,10 +104,9 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                     file_ext = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: false),
                     picture = table.Column<string>(type: "text", nullable: true),
                     is_public = table.Column<bool>(type: "boolean", nullable: false),
-                    private_key = table.Column<string>(type: "text", nullable: true),
                     user_id = table.Column<string>(type: "text", nullable: false),
-                    created = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    last_modified = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                    created = table.Column<Instant>(type: "timestamp", nullable: false),
+                    last_modified = table.Column<Instant>(type: "timestamp", nullable: true)
                 },
                 constraints: table =>
                 {

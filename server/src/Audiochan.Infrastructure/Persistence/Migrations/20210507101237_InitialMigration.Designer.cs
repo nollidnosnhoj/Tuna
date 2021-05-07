@@ -11,8 +11,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Audiochan.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210507034310_AddNodaTimeInstant2")]
-    partial class AddNodaTimeInstant2
+    [Migration("20210507101237_InitialMigration")]
+    partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -86,10 +86,6 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                     b.Property<string>("Picture")
                         .HasColumnType("text")
                         .HasColumnName("picture");
-
-                    b.Property<string>("PrivateKey")
-                        .HasColumnType("text")
-                        .HasColumnName("private_key");
 
                     b.Property<string>("Title")
                         .IsRequired()

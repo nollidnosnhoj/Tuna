@@ -85,10 +85,6 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                         .HasColumnType("text")
                         .HasColumnName("picture");
 
-                    b.Property<string>("PrivateKey")
-                        .HasColumnType("text")
-                        .HasColumnName("private_key");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(100)
