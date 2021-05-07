@@ -4,7 +4,6 @@ using System.Linq.Expressions;
 using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Entities;
-using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Features.Audios;
 
 namespace Audiochan.Core.Common.Extensions.MappingExtensions
@@ -23,13 +22,13 @@ namespace Audiochan.Core.Common.Extensions.MappingExtensions
                 Picture = audio.Picture,
                 Uploaded = audio.Created.ToDateTimeUtc(),
                 Tags = audio.Tags.Select(t => t.Name).ToArray(),
-                Visibility = audio.Visibility,
+                IsPublic = audio.IsPublic,
                 FileExt = audio.FileExt,
                 FileSize = audio.FileSize,
                 LastModified = audio.LastModified.HasValue
                     ? audio.LastModified.Value.ToDateTimeUtc()
                     : null,
-                PrivateKey = audio.Visibility == Visibility.Private ? audio.PrivateKey : null,
+                PrivateKey = audio.IsPublic ? null : audio.PrivateKey,
                 AudioUrl =
                     $"https://{options.Audio.Bucket}.s3.amazonaws.com/{options.Audio.Container}/{audio.UploadId + audio.FileExt}",
                 Author = new MetaAuthorDto
@@ -50,7 +49,7 @@ namespace Audiochan.Core.Common.Extensions.MappingExtensions
                 Duration = audio.Duration,
                 Picture = audio.Picture,
                 Uploaded = audio.Created.ToDateTimeUtc(),
-                Visibility = audio.Visibility,
+                IsPublic = audio.IsPublic,
                 AudioUrl =
                     $"https://{options.Audio.Bucket}.s3.amazonaws.com/{options.Audio.Container}/{audio.UploadId + audio.FileExt}",
                 Author = new MetaAuthorDto

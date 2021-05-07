@@ -8,7 +8,6 @@ using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models.Interfaces;
 using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Common.Settings;
-using Audiochan.Core.Entities.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -43,7 +42,7 @@ namespace Audiochan.Core.Features.Audios.GetAudioList
             var (dateTime, id) = CursorHelpers.DecodeCursor(request.Cursor);
 
             var queryable = _dbContext.Audios
-                .Where(a => a.Visibility == Visibility.Public);
+                .BaseListQueryable(currentUserId);
 
             if (dateTime.HasValue && !string.IsNullOrWhiteSpace(id))
             {

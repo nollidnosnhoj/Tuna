@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Builders;
 using Audiochan.Core.Common.Helpers;
-using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Features.Audios;
 using Audiochan.Core.Features.Audios.CreateAudio;
 using Audiochan.Core.Features.Audios.GetAudio;
@@ -47,7 +46,7 @@ namespace Audiochan.IntegrationTests.Features.Audios
             var (adminId, _) = await _fixture.RunAsAdministratorAsync();
             var audio = await new AudioBuilder()
                 .UseTestDefaults(adminId, Guid.NewGuid() + ".mp3")
-                .SetVisibility(Visibility.Private)
+                .SetPublic(false)
                 .BuildAsync();
             await _fixture.InsertAsync(audio);
 
@@ -69,7 +68,7 @@ namespace Audiochan.IntegrationTests.Features.Audios
             var privateKey = "test";
             var audio = await new AudioBuilder()
                 .UseTestDefaults(ownerId)
-                .SetVisibility(Visibility.Private)
+                .SetPublic(false)
                 .OverwritePrivateKey(privateKey)
                 .BuildAsync();
             await _fixture.InsertAsync(audio);
@@ -88,7 +87,7 @@ namespace Audiochan.IntegrationTests.Features.Audios
             var privateKey = "test";
             var audio = await new AudioBuilder()
                 .UseTestDefaults(ownerId)
-                .SetVisibility(Visibility.Private)
+                .SetPublic(false)
                 .OverwritePrivateKey(privateKey)
                 .BuildAsync();
             await _fixture.InsertAsync(audio);
@@ -97,22 +96,6 @@ namespace Audiochan.IntegrationTests.Features.Audios
             var result = await _fixture.SendAsync(new GetAudioRequest(audio.Id));
 
             result.Should().BeNull();
-        }
-
-        [Fact]
-        public async Task ShouldGetAudio_WhenAudioIsUnlisted_AsAnotherUser()
-        {
-            var (ownerId, _) = await _fixture.RunAsAdministratorAsync();
-            var audio = await new AudioBuilder()
-                .UseTestDefaults(ownerId)
-                .SetVisibility(Visibility.Unlisted)
-                .BuildAsync();
-            await _fixture.InsertAsync(audio);
-
-            await _fixture.RunAsDefaultUserAsync();
-            var result = await _fixture.SendAsync(new GetAudioRequest(audio.Id));
-
-            result.Should().NotBeNull();
         }
 
         [Fact]
@@ -129,6 +112,7 @@ namespace Audiochan.IntegrationTests.Features.Audios
                 Duration = 100,
                 FileSize = 100,
                 Tags = new List<string> {"apples", "oranges"},
+                IsPublic = true
             });
 
             // Act
@@ -142,7 +126,6 @@ namespace Audiochan.IntegrationTests.Features.Audios
             result.Tags.Length.Should().Be(2);
             result.Tags.Should().Contain("apples");
             result.Tags.Should().Contain("oranges");
-            result.Visibility.Should().Be(Visibility.Unlisted);
         }
     }
 }

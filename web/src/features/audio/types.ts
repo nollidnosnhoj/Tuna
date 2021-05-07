@@ -7,7 +7,7 @@ export type Visibility = 'unlisted' | 'public' | 'private'
 export type Audio = {
   id: string;
   title: string;
-  visibility: string;
+  isPublic: boolean;
   duration: number;
   picture?: string;
   uploaded: string;
@@ -19,7 +19,7 @@ export type AudioDetail = {
   id: string;
   title: string;
   description?: string;
-  visibility: string;
+  isPublic: boolean;
   privateKey?: string;
   tags: string[];
   duration: number;
@@ -36,7 +36,7 @@ export interface AudioRequest {
   title: string;
   description?: string;
   tags: string[];
-  visibility: string;
+  isPublic?: boolean;
 };
 
 export interface CreateAudioRequest extends AudioRequest {

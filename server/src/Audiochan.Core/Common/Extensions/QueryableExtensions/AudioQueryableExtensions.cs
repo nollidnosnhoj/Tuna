@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using Audiochan.Core.Entities;
-using Audiochan.Core.Entities.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Common.Extensions.QueryableExtensions
@@ -13,7 +12,7 @@ namespace Audiochan.Core.Common.Extensions.QueryableExtensions
                 .AsNoTracking()
                 .Include(a => a.Tags)
                 .Include(a => a.User)
-                .Where(a => a.UserId == currentUserId || a.Visibility == Visibility.Public);
+                .Where(a => a.UserId == currentUserId || a.IsPublic);
         }
 
         public static IQueryable<Audio> BaseDetailQueryable(this IQueryable<Audio> dbSet, string privateKey = "",
@@ -23,9 +22,7 @@ namespace Audiochan.Core.Common.Extensions.QueryableExtensions
                 .AsNoTracking()
                 .Include(a => a.Tags)
                 .Include(a => a.User)
-                .Where(a => a.UserId == currentUserId 
-                            || a.Visibility != Visibility.Private 
-                            || a.PrivateKey == privateKey && a.Visibility == Visibility.Private);
+                .Where(a => a.UserId == currentUserId || a.IsPublic || a.PrivateKey == privateKey && !a.IsPublic);
         }
     }
 }

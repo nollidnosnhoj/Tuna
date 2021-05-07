@@ -41,8 +41,8 @@ namespace Audiochan.Core.Features.Audios.GetAudioFeed
             return await _dbContext.Audios
                 .BaseListQueryable(request.UserId)
                 .Where(a => followedIds.Contains(a.UserId))
-                .OrderByDescending(a => a.Created)
                 .ProjectToList(_storageSettings)
+                .OrderByDescending(a => a.Uploaded)
                 .PaginateAsync(cancellationToken: cancellationToken);
         }
     }

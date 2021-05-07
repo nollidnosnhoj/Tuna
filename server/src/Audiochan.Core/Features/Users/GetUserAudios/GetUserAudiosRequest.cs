@@ -42,7 +42,6 @@ namespace Audiochan.Core.Features.Users.GetUserAudios
             return await _dbContext.Audios
                 .BaseListQueryable(currentUserId)
                 .Where(a => a.User.UserName == request.Username.ToLower())
-                .OrderByDescending(a => a.Created)
                 .ProjectToList(_storageSettings)
                 .PaginateAsync(request, cancellationToken);
         }

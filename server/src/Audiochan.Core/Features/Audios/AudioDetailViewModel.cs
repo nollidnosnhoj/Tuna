@@ -1,6 +1,5 @@
 ﻿using System;
 using Audiochan.Core.Common.Models.Responses;
-using Audiochan.Core.Entities.Enums;
 
 namespace Audiochan.Core.Features.Audios
 {
@@ -9,7 +8,7 @@ namespace Audiochan.Core.Features.Audios
         public string Id { get; init; }
         public string Title { get; init; }
         public string Description { get; init; }
-        public Visibility Visibility { get; init; }
+        public bool IsPublic { get; init; }
         public string PrivateKey { get; init; }
         public string[] Tags { get; init; }
         public int Duration { get; init; }

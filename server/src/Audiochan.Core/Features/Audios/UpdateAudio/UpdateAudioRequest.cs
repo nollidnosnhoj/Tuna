@@ -70,8 +70,8 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
             audio.UpdateTitle(request.Title);
             audio.UpdateDescription(request.Description);
 
-            if (request.Visibility.HasValue)
-                audio.UpdateVisibility(request.Visibility.Value);
+            if (request.IsPublic.HasValue)
+                audio.UpdatePublicity(request.IsPublic.GetValueOrDefault());
 
             _dbContext.Audios.Update(audio);
             await _dbContext.SaveChangesAsync(cancellationToken);

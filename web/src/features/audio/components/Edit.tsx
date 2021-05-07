@@ -25,9 +25,6 @@ import {
   FormHelperText,
   ListItem,
   UnorderedList,
-  Radio,
-  RadioGroup,
-  Stack,
 } from "@chakra-ui/react";
 import { DeleteIcon } from "@chakra-ui/icons";
 import React, { useMemo, useState } from "react";
@@ -52,7 +49,7 @@ function mapAudioToModifyInputs(audio: AudioDetail): AudioRequest {
     title: audio.title,
     description: audio.description,
     tags: audio.tags,
-    visibility: audio.visibility,
+    isPublic: audio.isPublic,
   };
 }
 
@@ -150,17 +147,15 @@ const AudioEditModal: React.FC<AudioEditProps> = ({
               error={errors.tags}
               disabled={isSubmitting || deleting}
             />
-            <RadioGroup
-              name="visibility"
-              value={values.visibility || "public"}
-              onChange={(value) => setFieldValue("visibility", value)}
-            >
-              <Stack spacing={4} direction="row">
-                <Radio value="public">Public</Radio>
-                <Radio value="unlisted">Unlisted</Radio>
-                <Radio value="private">Private</Radio>
-              </Stack>
-            </RadioGroup>
+            <InputCheckbox
+              name="isPublic"
+              onChange={() => setFieldValue("isPublic", !values.isPublic)}
+              value={values.isPublic ?? false}
+              required
+              error={errors.isPublic}
+              toggleSwitch
+              label="Public"
+            />
             <Flex marginY={4}>
               <Box>
                 <Popover>

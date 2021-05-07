@@ -4,7 +4,6 @@ using Audiochan.Core.Common.Builders;
 using Audiochan.Core.Common.Constants;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Entities;
-using Audiochan.Core.Entities.Enums;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using NodaTime;
@@ -48,7 +47,7 @@ namespace Audiochan.Infrastructure.Persistence
                     .AddDuration(388)
                     .AddUser(user)
                     .AddTags(await tagRepository.GetListAsync(new[] {"chillout", "lucid-dreams"}))
-                    .SetVisibility(Visibility.Public)
+                    .SetPublic(true)
                     .BuildAsync();
                 
                 var audio2 = await new AudioBuilder()
@@ -59,7 +58,7 @@ namespace Audiochan.Infrastructure.Persistence
                     .AddDuration(194)
                     .AddUser(user)
                     .AddTags(await tagRepository.GetListAsync(new[] {"newgrounds", "piano", "rave"}))
-                    .SetVisibility(Visibility.Public)
+                    .SetPublic(true)
                     .BuildAsync();
                 
                 var audio3 = await new AudioBuilder()
@@ -70,7 +69,7 @@ namespace Audiochan.Infrastructure.Persistence
                     .AddDuration(45)
                     .AddUser(user)
                     .AddTags(await tagRepository.GetListAsync(new[] {"happy", "anime", "hardcore", "nightcore"}))
-                    .SetVisibility(Visibility.Public)
+                    .SetPublic(true)
                     .BuildAsync();
                 
                 var audio4 = await new AudioBuilder()
@@ -81,7 +80,7 @@ namespace Audiochan.Infrastructure.Persistence
                     .AddDuration(164)
                     .AddUser(user)
                     .AddTags(await tagRepository.GetListAsync(new[] {"hard-dance"}))
-                    .SetVisibility(Visibility.Unlisted)
+                    .SetPublic(false)
                     .BuildAsync();
                 
                 var audio5 = await new AudioBuilder()
@@ -92,7 +91,7 @@ namespace Audiochan.Infrastructure.Persistence
                     .AddDuration(219)
                     .AddUser(user)
                     .AddTags(await tagRepository.GetListAsync(new[] {"vocals"}))
-                    .SetVisibility(Visibility.Private)
+                    .SetPublic(false)
                     .BuildAsync();
 
                 await context.Audios.AddRangeAsync(audio1, audio2, audio3, audio4, audio5);

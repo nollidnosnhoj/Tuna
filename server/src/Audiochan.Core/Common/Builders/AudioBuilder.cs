@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Helpers;
 using Audiochan.Core.Entities;
-using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Features.Audios.CreateAudio;
 
 namespace Audiochan.Core.Common.Builders
@@ -45,7 +44,7 @@ namespace Audiochan.Core.Common.Builders
             
             _audio.UpdateTitle(request.Title);
             _audio.UpdateDescription(request.Description);
-            _audio.UpdateVisibility(request.Visibility ?? Visibility.Unlisted);
+            _audio.UpdatePublicity(request.IsPublic ?? false);
             
             return this;
         }
@@ -112,9 +111,9 @@ namespace Audiochan.Core.Common.Builders
             return this;
         }
 
-        public AudioBuilder SetVisibility(Visibility visibility)
+        public AudioBuilder SetPublic(bool isPublic)
         {
-            _audio.UpdateVisibility(visibility);
+            _audio.UpdatePublicity(isPublic);
             return this;
         }
 

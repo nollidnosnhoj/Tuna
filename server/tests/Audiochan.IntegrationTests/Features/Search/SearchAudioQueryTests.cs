@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Builders;
 using Audiochan.Core.Common.Helpers;
-using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Features.Audios.CreateAudio;
 using Audiochan.Core.Features.Audios.SearchAudios;
 using Audiochan.UnitTests;
@@ -42,7 +41,7 @@ namespace Audiochan.IntegrationTests.Features.Search
                 var audio = await new AudioBuilder()
                     .UseTestDefaults(userId)
                     .AddTitle(title)
-                    .SetVisibility(Visibility.Public)
+                    .SetPublic(true)
                     .BuildAsync();
                 await _fixture.InsertAsync(audio);
             }
@@ -81,7 +80,7 @@ namespace Audiochan.IntegrationTests.Features.Search
                     Duration = 100,
                     FileSize = 100,
                     Tags = tags,
-                    Visibility = Visibility.Public
+                    IsPublic = true
                 });
             }
 

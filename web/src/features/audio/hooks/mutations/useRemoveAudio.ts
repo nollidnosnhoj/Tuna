@@ -3,7 +3,7 @@ import { useAuth } from '~/contexts/AuthContext';
 import api from '~/utils/api';
 
 
-export function useRemoveAudio(id: string) {
+export function useRemoveAudio(id: number) {
   const queryClient = useQueryClient();
   const { accessToken } = useAuth();
   const removeAudio = async () => await api.delete(`audios/${id}`, { accessToken });
