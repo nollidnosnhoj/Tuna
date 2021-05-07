@@ -6,7 +6,7 @@ namespace Audiochan.Core.Common.Helpers
 {
     public static class CursorHelpers
     {
-        public static (DateTime? since, string id) DecodeCursor(IDateTimeProvider dateTimeProvider, string cursor)
+        public static (DateTime? since, string id) DecodeCursor(string cursor)
         {
             DateTime? dateTime = null;
             var id = string.Empty;
@@ -19,7 +19,7 @@ namespace Audiochan.Core.Common.Helpers
                 {
                     if (long.TryParse(decodedCursorArray[0], out var timestamp))
                     {
-                        dateTime = dateTimeProvider.FromEpochToDateTime(timestamp);
+                        dateTime = new DateTime(timestamp);
                     }
 
                     id = decodedCursorArray[1];
@@ -29,9 +29,9 @@ namespace Audiochan.Core.Common.Helpers
             return (dateTime, id);
         }
 
-        public static string EncodeCursor(IDateTimeProvider dateTimeProvider, DateTime dateTime, string id)
+        public static string EncodeCursor(DateTime dateTime, string id)
         {
-            var timestamp = dateTimeProvider.FromDateTimeToEpoch(dateTime).ToString();
+            var timestamp = dateTime.Ticks.ToString();
             var rawCursor = string.Join(':', timestamp, id);
             var bytes = Encoding.UTF8.GetBytes(rawCursor);
             return Convert.ToBase64String(bytes);

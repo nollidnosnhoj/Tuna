@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Extensions.MappingExtensions;
@@ -26,14 +25,12 @@ namespace Audiochan.Core.Features.Audios.GetAudioList
         private readonly IApplicationDbContext _dbContext;
         private readonly ICurrentUserService _currentUserService;
         private readonly MediaStorageSettings _storageSettings;
-        private readonly IDateTimeProvider _dateTimeProvider;
 
         public GetAudioListRequestHandler(IApplicationDbContext dbContext, ICurrentUserService currentUserService,
-            IOptions<MediaStorageSettings> options, IDateTimeProvider dateTimeProvider)
+            IOptions<MediaStorageSettings> options)
         {
             _dbContext = dbContext;
             _currentUserService = currentUserService;
-            _dateTimeProvider = dateTimeProvider;
             _storageSettings = options.Value;
         }
 
@@ -41,8 +38,7 @@ namespace Audiochan.Core.Features.Audios.GetAudioList
             CancellationToken cancellationToken)
         {
             var currentUserId = _currentUserService.GetUserId();
-            var (dateTime, id) = CursorHelpers.DecodeCursor(_dateTimeProvider, request.Cursor);
-            var limit = request.Size + 1;
+            var (dateTime, id) = CursorHelpers.DecodeCursor(request.Cursor);
 
             var queryable = _dbContext.Audios
                 .BaseListQueryable(currentUserId);
@@ -50,12 +46,13 @@ namespace Audiochan.Core.Features.Audios.GetAudioList
             if (dateTime.HasValue && !string.IsNullOrWhiteSpace(id))
             {
                 queryable = queryable.Where(a => a.Created < dateTime.GetValueOrDefault()
-                    && string.Compare(a.Id, id, StringComparison.Ordinal) < 0);
+                    || (a.Created == dateTime.GetValueOrDefault() && string.Compare(a.Id, id) < 0));
             }
 
             var audios = await queryable
-                .Take(limit)
+                .Take(request.Size)
                 .OrderByDescending(a => a.Created)
+                .ThenByDescending(a => a.Id)
                 .ProjectToList(_storageSettings)
                 .ToListAsync(cancellationToken);
 
@@ -64,7 +61,7 @@ namespace Audiochan.Core.Features.Audios.GetAudioList
             var nextCursor = audios.Count < request.Size
                 ? null
                 : lastAudio != null
-                    ? CursorHelpers.EncodeCursor(_dateTimeProvider, lastAudio.Uploaded, lastAudio.Id)
+                    ? CursorHelpers.EncodeCursor(lastAudio.Uploaded, lastAudio.Id)
                     : null;
 
             return new CursorList<AudioViewModel>(audios, nextCursor);
