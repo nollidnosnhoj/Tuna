@@ -100,6 +100,22 @@ namespace Audiochan.IntegrationTests.Features.Audios
         }
 
         [Fact]
+        public async Task ShouldGetAudio_WhenAudioIsUnlisted_AsAnotherUser()
+        {
+            var (ownerId, _) = await _fixture.RunAsAdministratorAsync();
+            var audio = await new AudioBuilder()
+                .UseTestDefaults(ownerId)
+                .SetVisibility(Visibility.Unlisted)
+                .BuildAsync();
+            await _fixture.InsertAsync(audio);
+
+            await _fixture.RunAsDefaultUserAsync();
+            var result = await _fixture.SendAsync(new GetAudioRequest(audio.Id));
+
+            result.Should().NotBeNull();
+        }
+
+        [Fact]
         public async Task ShouldGetAudio()
         {
             // Assign
