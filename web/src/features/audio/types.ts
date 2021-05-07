@@ -5,7 +5,7 @@ export type AudioSearchType = 'audios' | 'user' | 'feed'
 export type Visibility = 'unlisted' | 'public' | 'private'
 
 export type Audio = {
-  id: number;
+  id: string;
   title: string;
   isPublic: boolean;
   duration: number;
@@ -16,7 +16,7 @@ export type Audio = {
 }
 
 export type AudioDetail = {
-  id: number;
+  id: string;
   title: string;
   description?: string;
   isPublic: boolean;

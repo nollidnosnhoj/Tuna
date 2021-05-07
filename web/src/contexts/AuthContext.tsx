@@ -16,6 +16,7 @@ import {
 import { CurrentUser } from "~/features/user/types";
 import API from "~/utils/api";
 import { getAccessToken } from "~/utils/cookies";
+import { errorToast } from "~/utils/toast";
 import { useUser } from "./UserContext";
 
 interface AuthContextProviderProps {
@@ -100,10 +101,16 @@ const AuthProvider: React.FC<AuthProviderProps> = (props) => {
     if (user) {
       const now = Date.now() / 1000;
       if (accessTokenExpiration <= now) {
-        refreshAccessToken().then(([newToken, newExpires]) => {
-          setAccessToken(newToken);
-          setExpirationToLocalStorage(newExpires);
-        });
+        refreshAccessToken()
+          .then(([newToken, newExpires]) => {
+            setAccessToken(newToken);
+            setExpirationToLocalStorage(newExpires);
+          })
+          .catch((err) => {
+            errorToast({
+              message: "Session expired. Please login.",
+            });
+          });
       }
     }
   }, 1000 * 60);

@@ -34,10 +34,6 @@ namespace Audiochan.Core.Features.Auth.Refresh
         public async Task<IResult<AuthResultViewModel>> Handle(RefreshTokenRequest request,
             CancellationToken cancellationToken)
         {
-            if (string.IsNullOrEmpty(request.RefreshToken))
-                return Result<AuthResultViewModel>
-                    .Fail(ResultError.BadRequest, "Refresh token was not defined.");
-
             var user = await _userManager.Users
                 .Include(u => u.RefreshTokens)
                 .SingleOrDefaultAsync(u => u.RefreshTokens

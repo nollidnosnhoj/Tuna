@@ -1,4 +1,3 @@
-import axios from "axios";
 import {
   Box,
   Button,
@@ -7,40 +6,19 @@ import {
   Text,
   VStack,
   chakra,
-  Checkbox,
-  Spacer,
-  HStack,
-  CircularProgress,
-  CircularProgressLabel,
 } from "@chakra-ui/react";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { useDropzone } from "react-dropzone";
-import NextLink from "next/link";
-import { useUser } from "~/contexts/UserContext";
 import SETTINGS from "~/lib/config";
-import { ErrorResponse } from "~/lib/types";
-import api from "~/utils/api";
-import { isAxiosError } from "~/utils/axios";
 import { formatFileSize } from "~/utils/format";
 import { errorToast } from "~/utils/toast";
-import { useCreateAudio } from "../hooks/mutations";
-import { CreateAudioRequest } from "../types";
-import {
-  getDurationFromAudio,
-  getS3PresignedUrl,
-  uploadAudioToS3,
-} from "../services";
 
-export default function AudioUploadDropzone() {
-  const { user } = useUser();
-  const [uploadingFile, setUploadingFile] = useState<File | null>(null);
-  const [isPublic, setIsPublic] = useState(false);
-  const [newAudioId, setNewAudioId] = useState(0);
-  const [progressNumber, setProgressNumber] = useState<number | undefined>(
-    undefined
-  );
-  const { mutateAsync: createAudio } = useCreateAudio();
+interface AudioUploadDropzoneProps {
+  onUpload: (file: File) => void;
+}
 
+export default function AudioUploadDropzone(props: AudioUploadDropzoneProps) {
+  const { onUpload } = props;
   const {
     getRootProps,
     getInputProps,
@@ -53,7 +31,7 @@ export default function AudioUploadDropzone() {
     accept: SETTINGS.UPLOAD.AUDIO.accept,
     noClick: true,
     onDropAccepted: ([acceptedFile]) => {
-      setUploadingFile(acceptedFile);
+      onUpload(acceptedFile);
     },
     onDropRejected: (fileRejections) => {
       fileRejections.forEach((fileRejection) => {
@@ -73,93 +51,35 @@ export default function AudioUploadDropzone() {
     return "gray.700";
   }, [isDragReject, isDragAccept]);
 
-  useEffect(() => {
-    const uploading = async () => {
-      if (!!uploadingFile && !!user) {
-        const { uploadId, url } = await getS3PresignedUrl(uploadingFile);
-        await uploadAudioToS3(url, user!.id, uploadingFile, (value) =>
-          setProgressNumber(value)
-        );
-        const audioDuration = await getDurationFromAudio(uploadingFile);
-        const audio = await createAudio({
-          title: uploadingFile.name.split(".").slice(0, -1).join("."),
-          uploadId: uploadId,
-          fileName: uploadingFile.name,
-          duration: Math.round(audioDuration),
-          fileSize: uploadingFile.size,
-          tags: [],
-          isPublic: isPublic,
-        });
-        setNewAudioId(audio.id);
-      }
-    };
-    uploading();
-  }, [uploadingFile]);
-
-  if (newAudioId) {
-    return (
-      <Box width="100%">
+  return (
+    <Flex
+      borderRadius={4}
+      borderWidth={1}
+      borderColor={borderColor}
+      {...getRootProps()}
+    >
+      <Box width="100%" marginY={20}>
+        <input {...getInputProps()} />
         <VStack marginY={20}>
-          <Heading>Audio Uploaded!</Heading>
-          <NextLink href={`/audios/${newAudioId}`}>
-            <Button colorScheme="primary">View Audio</Button>
-          </NextLink>
+          <Heading size="md">Drag and drop your audio file here.</Heading>
+          <chakra.div>
+            <Button colorScheme="primary" onClick={open}>
+              Or click to upload your file.
+            </Button>
+          </chakra.div>
         </VStack>
+        <Flex
+          direction="column"
+          justifyContent="flex-end"
+          alignItems="center"
+          marginBottom={2}
+        >
+          <Text fontSize="sm">
+            MP3 file only. Maximum file size:{" "}
+            {formatFileSize(SETTINGS.UPLOAD.AUDIO.maxSize)}
+          </Text>
+        </Flex>
       </Box>
-    );
-  } else if (uploadingFile && !newAudioId) {
-    return (
-      <Flex width="100%" justifyContent="center" alignItems="center">
-        <HStack marginY={20}>
-          <CircularProgress value={progressNumber} color="primary.400">
-            <CircularProgressLabel>
-              {Math.round(progressNumber || 0)}%
-            </CircularProgressLabel>
-          </CircularProgress>
-          <Heading>"Uploading..."</Heading>
-        </HStack>
-      </Flex>
-    );
-  } else {
-    return (
-      <Flex
-        {...getRootProps()}
-        borderRadius={4}
-        borderWidth={1}
-        borderColor={borderColor}
-      >
-        <Box width="100%">
-          <input {...getInputProps()} />
-          <VStack marginY={20}>
-            <Heading size="md">Drag and drop your audio file here.</Heading>
-            <chakra.div>
-              <Button colorScheme="primary" onClick={open}>
-                Or click to upload your file.
-              </Button>
-            </chakra.div>
-            <chakra.div>
-              <Checkbox
-                checked={isPublic}
-                onChange={() => setIsPublic((prev) => !prev)}
-              >
-                Set audio to public after upload.
-              </Checkbox>
-            </chakra.div>
-            <Spacer />
-          </VStack>
-          <Flex
-            direction="column"
-            justifyContent="flex-end"
-            alignItems="center"
-            marginBottom={2}
-          >
-            <Text fontSize="sm">
-              MP3 file only. Maximum file size:{" "}
-              {formatFileSize(SETTINGS.UPLOAD.AUDIO.maxSize)}
-            </Text>
-          </Flex>
-        </Box>
-      </Flex>
-    );
-  }
+    </Flex>
+  );
 }
