@@ -16,7 +16,7 @@
     "dayjs": "^1.10.4",
     "formik": "^2.2.6",
     "framer-motion": "^4.1.11",
-    "lodash": "^4.17.21",
+    "lodash": "4.17.21",
     "next": "^10.2.0",
     "nookies": "^2.5.2",
     "nprogress": "^0.2.0",
