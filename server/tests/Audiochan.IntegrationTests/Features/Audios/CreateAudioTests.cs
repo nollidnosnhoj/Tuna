@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Helpers;
+using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Features.Audios.CreateAudio;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
@@ -72,7 +73,7 @@ namespace Audiochan.IntegrationTests.Features.Audios
             created.Tags.Should().Contain(x => x.Name == "apples");
             created.Tags.Should().Contain(x => x.Name == "oranges");
             created.Tags.Should().Contain(x => x.Name == "banana");
-            created.IsPublic.Should().BeFalse();
+            created.Visibility.Should().Be(Visibility.Unlisted);
             created.PrivateKey.Should().NotBeEmpty();
             created.UserId.Should().Be(userId);
         }

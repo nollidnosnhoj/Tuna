@@ -20,11 +20,10 @@ import {
 
 interface AudioUploadingProps {
   file: File | null;
-  isPublic: boolean;
 }
 
 const AudioUploading: React.FC<AudioUploadingProps> = (props) => {
-  const { file, isPublic } = props;
+  const { file } = props;
 
   const { mutateAsync: createAudio } = useCreateAudio();
 
@@ -47,7 +46,7 @@ const AudioUploading: React.FC<AudioUploadingProps> = (props) => {
           duration: Math.round(audioDuration),
           fileSize: file.size,
           tags: [],
-          isPublic: isPublic,
+          visibility: "unlisted",
         });
         setAudioId(audio.id);
       }

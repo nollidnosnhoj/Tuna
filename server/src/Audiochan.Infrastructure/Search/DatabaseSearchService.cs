@@ -45,6 +45,7 @@ namespace Audiochan.Infrastructure.Search
                     .ILike(a.Title, $"%{searchTerm.Trim()}%"));
 
             var result = await queryable
+                .OrderByDescending(a => a.Created)
                 .ProjectToList(_storageSettings)
                 .PaginateAsync(page, limit, cancellationToken);
 

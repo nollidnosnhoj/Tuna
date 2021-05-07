@@ -85,7 +85,9 @@ const AudioListItem: React.FC<AudioListItemProps> = ({
         </Flex>
         <Flex flex="1" justify="flex-end">
           <Stack direction="column" spacing={1} textAlign="right">
-            {!audio.isPublic && <Badge>PRIVATE</Badge>}
+            {audio.visibility !== "public" && (
+              <Badge textTransform="uppercase">{audio.visibility}</Badge>
+            )}
           </Stack>
         </Flex>
       </Flex>

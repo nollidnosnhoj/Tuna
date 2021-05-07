@@ -1,6 +1,6 @@
 export type AudioPlayerItem = {
   queueId: string;
-  audioId: number;
+  audioId: string;
   title: string;
   artist: string;
   artistId: string;

@@ -4,7 +4,7 @@ import api from '~/utils/api';
 import { AudioDetail } from '../../types';
 
 
-export function useEditAudio(id: number) {
+export function useEditAudio(id: string) {
   const queryClient = useQueryClient();
   const { accessToken } = useAuth();
   const updateAudio = async (input: object) => {

@@ -26,7 +26,7 @@ export default function AudioListPage(props: AudioListPageProps) {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useAudioList({ ...listFilter }, 1, {
+  } = useAudioList({ ...listFilter }, undefined, {
     staleTime: 1000,
     initialData: initialPage && {
       pages: [initialPage],
