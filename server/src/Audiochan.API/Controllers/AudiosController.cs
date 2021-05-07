@@ -7,7 +7,6 @@ using Audiochan.Core.Features.Audios;
 using Audiochan.Core.Features.Audios.CreateAudio;
 using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Features.Audios.GetAudioList;
-using Audiochan.Core.Features.Audios.GetRandomAudio;
 using Audiochan.Core.Features.Audios.RemoveAudio;
 using Audiochan.Core.Features.Audios.UpdateAudio;
 using Audiochan.Core.Features.Audios.UpdatePicture;
@@ -49,19 +48,6 @@ namespace Audiochan.API.Controllers
             CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new GetAudioRequest(audioId, privateKey), cancellationToken);
-            return result != null
-                ? Ok(result)
-                : NotFound(ErrorViewModel.NotFound("Audio was not found."));
-        }
-
-        [HttpGet("random", Name = "GetRandomAudio")]
-        [AllowAnonymous]
-        [ProducesResponseType(typeof(AudioDetailViewModel), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [SwaggerOperation(Summary = "Return a random audio.", OperationId = "GetRandomAudio", Tags = new[] {"audios"})]
-        public async Task<IActionResult> GetRandom(CancellationToken cancellationToken)
-        {
-            var result = await _mediator.Send(new GetRandomAudioRequest(), cancellationToken);
             return result != null
                 ? Ok(result)
                 : NotFound(ErrorViewModel.NotFound("Audio was not found."));

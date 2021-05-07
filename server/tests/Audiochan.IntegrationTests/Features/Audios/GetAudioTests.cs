@@ -62,43 +62,6 @@ namespace Audiochan.IntegrationTests.Features.Audios
         }
 
         [Fact]
-        public async Task ShouldGetAudio_WhenAudioIsPrivateAndPrivateKeyIsValid()
-        {
-            var (ownerId, _) = await _fixture.RunAsAdministratorAsync();
-            var privateKey = "test";
-            var audio = await new AudioBuilder()
-                .UseTestDefaults(ownerId)
-                .SetPublic(false)
-                .OverwritePrivateKey(privateKey)
-                .BuildAsync();
-            await _fixture.InsertAsync(audio);
-
-            await _fixture.RunAsDefaultUserAsync();
-            var result = await _fixture.SendAsync(new GetAudioRequest(audio.Id, privateKey));
-
-            result.Should().NotBeNull();
-            result.Id.Should().Be(audio.Id);
-        }
-        
-        [Fact]
-        public async Task ShouldNotGetAudio_WhenAudioIsPrivateAndPrivateKeyIsInvalid()
-        {
-            var (ownerId, _) = await _fixture.RunAsAdministratorAsync();
-            var privateKey = "test";
-            var audio = await new AudioBuilder()
-                .UseTestDefaults(ownerId)
-                .SetPublic(false)
-                .OverwritePrivateKey(privateKey)
-                .BuildAsync();
-            await _fixture.InsertAsync(audio);
-
-            await _fixture.RunAsDefaultUserAsync();
-            var result = await _fixture.SendAsync(new GetAudioRequest(audio.Id));
-
-            result.Should().BeNull();
-        }
-
-        [Fact]
         public async Task ShouldGetAudio()
         {
             // Assign

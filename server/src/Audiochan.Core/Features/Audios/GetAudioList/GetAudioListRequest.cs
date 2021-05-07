@@ -42,7 +42,8 @@ namespace Audiochan.Core.Features.Audios.GetAudioList
             var (dateTime, id) = CursorHelpers.DecodeCursor(request.Cursor);
 
             var queryable = _dbContext.Audios
-                .BaseListQueryable(currentUserId);
+                .DefaultQueryable()
+                .ExcludePrivateAudios();
 
             if (dateTime.HasValue && !string.IsNullOrWhiteSpace(id))
             {

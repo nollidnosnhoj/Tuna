@@ -6,23 +6,19 @@ namespace Audiochan.Core.Common.Extensions.QueryableExtensions
 {
     public static class AudioQueryableExtensions
     {
-        public static IQueryable<Audio> BaseListQueryable(this IQueryable<Audio> dbSet, string currentUserId = "")
+        public static IQueryable<Audio> DefaultQueryable(this IQueryable<Audio> dbSet)
         {
             return dbSet
                 .AsNoTracking()
                 .Include(a => a.Tags)
-                .Include(a => a.User)
-                .Where(a => a.UserId == currentUserId || a.IsPublic);
+                .Include(a => a.User);
         }
 
-        public static IQueryable<Audio> BaseDetailQueryable(this IQueryable<Audio> dbSet, string privateKey = "",
-            string currentUserId = "")
+        public static IQueryable<Audio> ExcludePrivateAudios(this IQueryable<Audio> queryable, string currentUserId = "")
         {
-            return dbSet
-                .AsNoTracking()
-                .Include(a => a.Tags)
-                .Include(a => a.User)
-                .Where(a => a.UserId == currentUserId || a.IsPublic || a.PrivateKey == privateKey && !a.IsPublic);
+            return string.IsNullOrEmpty(currentUserId)
+                ? queryable.Where(a => a.IsPublic)
+                : queryable.Where(a => a.IsPublic || a.UserId == currentUserId);
         }
     }
 }

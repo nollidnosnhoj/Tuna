@@ -9,7 +9,6 @@ namespace Audiochan.Core.Features.Audios
         public string Title { get; init; }
         public string Description { get; init; }
         public bool IsPublic { get; init; }
-        public string PrivateKey { get; init; }
         public string[] Tags { get; init; }
         public int Duration { get; init; }
         public long FileSize { get; init; }

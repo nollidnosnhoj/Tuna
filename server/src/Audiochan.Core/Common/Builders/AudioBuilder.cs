@@ -117,12 +117,6 @@ namespace Audiochan.Core.Common.Builders
             return this;
         }
 
-        public AudioBuilder OverwritePrivateKey(string key)
-        {
-            _audio.PrivateKey = key;
-            return this;
-        }
-
         public async Task<Audio> BuildAsync()
         {
             _audio.Id = await Nanoid.Nanoid.GenerateAsync();

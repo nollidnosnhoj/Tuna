@@ -40,7 +40,8 @@ namespace Audiochan.Core.Features.Users.GetUserAudios
         {
             var currentUserId = _currentUserService.GetUserId();
             return await _dbContext.Audios
-                .BaseListQueryable(currentUserId)
+                .DefaultQueryable()
+                .ExcludePrivateAudios(currentUserId)
                 .Where(a => a.User.UserName == request.Username.ToLower())
                 .ProjectToList(_storageSettings)
                 .PaginateAsync(request, cancellationToken);

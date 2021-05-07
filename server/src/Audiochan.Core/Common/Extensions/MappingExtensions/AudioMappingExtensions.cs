@@ -28,7 +28,6 @@ namespace Audiochan.Core.Common.Extensions.MappingExtensions
                 LastModified = audio.LastModified.HasValue
                     ? audio.LastModified.Value.ToDateTimeUtc()
                     : null,
-                PrivateKey = audio.IsPublic ? null : audio.PrivateKey,
                 AudioUrl =
                     $"https://{options.Audio.Bucket}.s3.amazonaws.com/{options.Audio.Container}/{audio.UploadId + audio.FileExt}",
                 Author = new MetaAuthorDto

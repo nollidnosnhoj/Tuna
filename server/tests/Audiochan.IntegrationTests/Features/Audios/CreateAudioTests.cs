@@ -73,7 +73,6 @@ namespace Audiochan.IntegrationTests.Features.Audios
             created.Tags.Should().Contain(x => x.Name == "oranges");
             created.Tags.Should().Contain(x => x.Name == "banana");
             created.IsPublic.Should().BeFalse();
-            created.PrivateKey.Should().NotBeEmpty();
             created.UserId.Should().Be(userId);
         }
     }
