@@ -51,10 +51,10 @@ namespace Audiochan.Core.Features.Audios.GetAudioList
             }
 
             var audios = await queryable
-                .Take(request.Size)
                 .OrderByDescending(a => a.Created)
                 .ThenByDescending(a => a.Id)
                 .ProjectToList(_storageSettings)
+                .Take(request.Size)
                 .ToListAsync(cancellationToken);
 
             var lastAudio = audios.LastOrDefault();
