@@ -6,13 +6,26 @@ import {
   Button,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
-import React from "react";
+import { useRouter } from "next/router";
+import React, { useCallback } from "react";
 import { FaRandom, FaCloudUploadAlt } from "react-icons/fa";
 import { MdLibraryMusic } from "react-icons/md";
 import { useAuth } from "~/contexts/AuthContext";
+import { usePage } from "./Page";
 
 export function HomepageCTA() {
+  const router = useRouter();
   const { isLoggedIn } = useAuth();
+  const { openLogin } = usePage();
+
+  const clickUploadButton = useCallback(() => {
+    if (isLoggedIn) {
+      router.push("/upload");
+    } else {
+      openLogin();
+    }
+  }, [isLoggedIn]);
+
   return (
     <Box pos="relative" overflow="hidden">
       <Box maxW="7xl" mx="auto">
@@ -87,17 +100,16 @@ export function HomepageCTA() {
                     Random
                   </Button>
                 </NextLink>
-                <NextLink href="/upload">
-                  <Button
-                    leftIcon={<FaCloudUploadAlt />}
-                    colorScheme="primary"
-                    fontSize={{ base: "md", md: "lg" }}
-                    px={{ base: 8, md: 10 }}
-                    py={{ base: 3, md: 4 }}
-                  >
-                    Upload
-                  </Button>
-                </NextLink>
+                <Button
+                  leftIcon={<FaCloudUploadAlt />}
+                  colorScheme="primary"
+                  fontSize={{ base: "md", md: "lg" }}
+                  px={{ base: 8, md: 10 }}
+                  py={{ base: 3, md: 4 }}
+                  onClick={clickUploadButton}
+                >
+                  Upload
+                </Button>
               </Stack>
             </Box>
           </Box>
