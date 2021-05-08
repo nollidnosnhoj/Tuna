@@ -10,9 +10,9 @@ import {
 import { useFormik } from "formik";
 import * as yup from "yup";
 import TextInput from "../../../components/form/TextInput";
-import { useAuth } from "~/contexts/AuthContext";
+import { useAuth } from "~/lib/contexts/AuthContext";
 import { apiErrorToast, successfulToast } from "~/utils/toast";
-import { isAxiosError } from "~/utils/axios";
+import { isAxiosError } from "~/utils/http";
 import { ErrorResponse } from "~/lib/types";
 
 export type LoginFormValues = {

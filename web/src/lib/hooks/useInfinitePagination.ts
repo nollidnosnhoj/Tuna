@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useInfiniteQuery, UseInfiniteQueryOptions } from "react-query";
-import { PagedList, ErrorResponse } from "../lib/types";
+import { PagedList, ErrorResponse } from "../types";
 
 export default function useInfinitePagination<TItem>(
   key: string, 

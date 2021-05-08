@@ -3,8 +3,8 @@ import { Button } from "@chakra-ui/react";
 import * as yup from "yup";
 import { useFormik } from "formik";
 import TextInput from "~/components/form/TextInput";
-import { useUser } from "~/contexts/UserContext";
-import api from "~/utils/api";
+import { useUser } from "~/lib/contexts/UserContext";
+import api from "~/lib/api";
 import { apiErrorToast, successfulToast } from "~/utils/toast";
 import { usernameRule } from "../schemas";
 

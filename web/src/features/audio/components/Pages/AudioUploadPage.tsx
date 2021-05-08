@@ -7,7 +7,7 @@ import { AudioRequest } from "../../types";
 import AudioDropzone from "../AudioDropzone";
 import AudioForm from "../AudioForm";
 import { publishAudioSchema } from "../../schemas";
-import useNavigationLock from "~/hooks/useNavigationLock";
+import useNavigationLock from "~/lib/hooks/useNavigationLock";
 import { apiErrorToast } from "~/utils/toast";
 
 export default function AudioUploadPage() {

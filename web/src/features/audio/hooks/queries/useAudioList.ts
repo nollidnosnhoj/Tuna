@@ -1,9 +1,9 @@
 import { UseInfiniteQueryOptions } from 'react-query';
 import { CursorPagedList } from "~/lib/types";
 import { Audio } from '~/features/audio/types';
-import { fetch, fetchPages } from '~/utils/api';
-import useInfiniteCursorPagination from '~/hooks/useInfiniteCursorPagination';
-import { useAuth } from '~/contexts/AuthContext';
+import { fetch, fetchPages } from '~/lib/api';
+import useInfiniteCursorPagination from '~/lib/hooks/useInfiniteCursorPagination';
+import { useAuth } from '~/lib/contexts/AuthContext';
 
 
 export default function useGetAudioListInfinite(params: Record<string, any> = {}, size: number = 15, options?: UseInfiniteQueryOptions<CursorPagedList<Audio>>) {

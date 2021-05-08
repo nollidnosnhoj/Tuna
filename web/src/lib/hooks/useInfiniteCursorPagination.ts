@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useInfiniteQuery, UseInfiniteQueryOptions } from "react-query";
-import { ErrorResponse, CursorPagedList } from "../lib/types";
+import { ErrorResponse, CursorPagedList } from "../types";
 
 export default function useInfiniteCursorPagination<TItem>(
   key: string, 

@@ -5,12 +5,14 @@ import dynamic from "next/dynamic";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Hydrate } from "react-query/hydration";
 import PageLoader from "~/components/PageLoader";
-import { UserProvider } from "~/contexts/UserContext";
-import AudioPlayerProvider from "~/components/providers/AudioPlayerProvider";
+import {
+  AudioPlayerProvider,
+  AuthProvider,
+  UserProvider,
+} from "~/components/providers";
 import theme from "~/lib/theme";
 import queryClient from "~/lib/queryClient";
 import { CurrentUser } from "~/features/user/types";
-import AuthProvider from "~/components/providers/AuthProvider";
 
 interface AppProps extends NextAppProps {
   user?: CurrentUser;

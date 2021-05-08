@@ -3,8 +3,8 @@ import AudioFeedPage, {
   AudioFeedPageProps,
 } from "~/features/audio/components/Pages/AudioFeedPage";
 import { Audio } from "~/features/audio/types";
-import { fetchPages } from "~/utils/api";
-import { getAccessToken } from "~/utils/cookies";
+import { fetchPages } from "~/lib/api";
+import { getAccessToken } from "~/utils";
 
 export const getServerSideProps: GetServerSideProps<AudioFeedPageProps> = async ({
   query,

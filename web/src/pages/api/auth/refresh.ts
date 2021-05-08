@@ -1,7 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import api from '~/utils/api';
-import { isAxiosError } from '~/utils/axios';
-import { getRefreshToken, setAccessTokenCookie, setRefreshTokenCookie } from '~/utils/cookies'
+import api from '~/lib/api';
+import { isAxiosError, getRefreshToken, setAccessTokenCookie, setRefreshTokenCookie } from '~/utils'
 
 export default async (req: NextApiRequest, res: NextApiResponse ) => {
   try {

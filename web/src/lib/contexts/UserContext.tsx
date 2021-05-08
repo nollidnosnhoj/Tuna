@@ -1,5 +1,5 @@
 import { createContext, useContext } from "react";
-import { CurrentUser } from "../features/user/types";
+import { CurrentUser } from "../../features/user/types";
 
 export type UserContextType = {
   user: CurrentUser | null;

@@ -1,6 +1,7 @@
-import { AudioPlayerItem } from "~/components/AudioPlayer/types";
-import { AudioPlayerAction } from "../actions/audioPlayerActions";
-import { AudioPlayerState, REPEAT_MODE } from "../AudioPlayerContext";
+import { AudioPlayerAction } from "../actions";
+import { REPEAT_MODE, AudioPlayerItem } from '../types'
+import { AudioPlayerState } from "../AudioPlayerContext";
+
 
 function getCurrentAudio(list: AudioPlayerItem[], index?: number) {
   return index === undefined ? undefined : list[index];

@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import AudioDetails from "~/features/audio/components/Details";
 import Page from "~/components/Page";
 import { useGetAudio } from "~/features/audio/hooks/queries";
-import { useAudioPlayer } from "~/contexts/AudioPlayerContext";
+import { useAudioPlayer } from "~/lib/contexts/AudioPlayerContext";
 
 export default function AudioDetailsPage() {
   const { query } = useRouter();

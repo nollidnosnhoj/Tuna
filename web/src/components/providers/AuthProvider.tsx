@@ -8,23 +8,20 @@ import {
   revokeRefreshToken,
 } from "~/features/auth/services";
 import { CurrentUser } from "~/features/user/types";
-import API from "~/utils/api";
-import { getAccessToken } from "~/utils/cookies";
-import { errorToast } from "~/utils/toast";
-import { useUser } from "../../contexts/UserContext";
+import API from "~/lib/api";
+import { useUser } from "~/lib/contexts/UserContext";
 import {
   ACCESS_TOKEN_EXPIRATION_KEY,
   AuthContextProviderProps,
   AuthContext,
-} from "../../contexts/AuthContext";
+} from "~/lib/contexts/AuthContext";
+import { getAccessToken, errorToast } from "~/utils";
 
 interface AuthProviderProps {
   accessToken?: string;
 }
 
-export default function AuthProvider(
-  props: PropsWithChildren<AuthProviderProps>
-) {
+export function AuthProvider(props: PropsWithChildren<AuthProviderProps>) {
   const { user, updateUser } = useUser();
   const [accessToken, setAccessToken] = useState(
     () => props.accessToken || getAccessToken()

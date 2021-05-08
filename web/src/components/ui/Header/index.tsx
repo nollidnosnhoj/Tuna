@@ -24,7 +24,7 @@ import Router, { useRouter } from "next/router";
 import NextLink from "next/link";
 import queryString from "query-string";
 import Link from "../../Link";
-import { useUser } from "~/contexts/UserContext";
+import { useUser } from "~/lib/contexts/UserContext";
 import UserSection from "./UserSection";
 
 interface HeaderMenuLinkProps extends ButtonProps {

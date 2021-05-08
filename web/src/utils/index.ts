@@ -1,27 +1,12 @@
-import { ParsedUrlQuery } from "querystring";
-import slugify from "slugify";
-import { v4 as uuidv4 } from 'uuid'
-import { Audio, AudioDetail } from "~/features/audio/types";
-
-export const validationMessages = {
-  required: function (field: string) {
-    return `${field} is required.`;
-  },
-  min: function (field: string, min: number) {
-    return `${field} must be at least ${min} characters long.`;
-  },
-  max: function (field: string, max: number) {
-    return `${field} must be no more than ${max} characters long.`;
-  },
-};
-
-export function taggify(value: string) {
-  return slugify(value, {
-    replacement: '-',
-    lower: true,
-    strict: true
-  });
-}
+export * from './audioplayer'
+export * from './cookies'
+export * from './format'
+export * from './http'
+export * from './string'
+export * from './time'
+export * from './toast'
+export * from './tokens'
+export * from './validation'
 
 export function objectToFormData(values: object): FormData {
   var formData = new FormData();
@@ -39,16 +24,4 @@ export function objectToFormData(values: object): FormData {
   });
 
   return formData;
-}
-
-export function extractQueryParam<T = string | number | boolean>(param: string | string[] | undefined, defaultValue?: T): T | undefined {
-  if (typeof param === 'undefined') return defaultValue;
-  let pString = Array.isArray(param) ? param[0] : param;
-  return JSON.parse(pString) as T;
-}
-
-export const extractPaginationInfoFromQuery = (query: ParsedUrlQuery) => {
-  const page = extractQueryParam<number>(query['page'], 1);
-  const size = extractQueryParam<number>(query['size'], 15);
-  return { page, size } 
 }

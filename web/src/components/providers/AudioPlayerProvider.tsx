@@ -4,17 +4,23 @@ import React, {
   useMemo,
   useReducer,
 } from "react";
-import { audioPlayerReducer } from "../../contexts/reducers/audioPlayerReducer";
-import {
-  defaultState,
-  REPEAT_MODE,
-  AudioPlayerContext,
-} from "../../contexts/AudioPlayerContext";
+import { AudioPlayerContext } from "../../lib/contexts";
+import { audioPlayerReducer } from "../../lib/contexts/reducers";
+import { REPEAT_MODE } from "../../lib/contexts/types";
 
 const AUDIO_PLAYER_SETTING = "audiochan_player_setting";
 
-export default function AudioPlayerProvider(props: PropsWithChildren<any>) {
-  const [state, dispatch] = useReducer(audioPlayerReducer, defaultState);
+export function AudioPlayerProvider(props: PropsWithChildren<any>) {
+  const [state, dispatch] = useReducer(audioPlayerReducer, {
+    audioRef: null,
+    currentAudio: undefined,
+    queue: [],
+    playIndex: undefined,
+    isPlaying: false,
+    repeat: REPEAT_MODE.DISABLE,
+    currentTime: undefined,
+    volume: 25,
+  });
 
   const contextType = useMemo(() => {
     return { state, dispatch };

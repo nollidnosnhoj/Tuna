@@ -1,7 +1,7 @@
 import { createStandaloneToast } from '@chakra-ui/react'
 import theme from '~/lib/theme'
 import { ErrorResponse } from '~/lib/types';
-import { isAxiosError } from './axios';
+import { isAxiosError } from './http';
 
 const toast = createStandaloneToast({ theme: theme });
 

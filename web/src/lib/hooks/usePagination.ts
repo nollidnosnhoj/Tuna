@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useQuery, UseQueryOptions } from "react-query";
-import { ErrorResponse, PagedList } from "../lib/types";
+import { ErrorResponse, PagedList } from "../types";
 
 export default function usePagination<TItem>(
   key: string,

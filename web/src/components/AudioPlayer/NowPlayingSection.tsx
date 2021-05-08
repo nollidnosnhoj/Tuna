@@ -2,7 +2,7 @@ import { Box, Flex, chakra } from "@chakra-ui/react";
 import React from "react";
 import Link from "~/components/Link";
 import Picture from "~/components/Picture";
-import { AudioPlayerItem } from "../types";
+import { AudioPlayerItem } from "~/lib/contexts/types";
 
 interface NowPlayingSectionProps {
   current?: AudioPlayerItem;

@@ -1,7 +1,7 @@
 // https://stackoverflow.com/a/2686098
-export function formatNumberAbbrv(num: number) {
+export function toNumberAbbrv(num: number) {
   // dont format if the number is in the one-thosands
-  if (num < 10000) return addCommasToNumber(num);
+  if (num < 10000) return includeCommasInNumber(num);
 
   let result = "";
   
@@ -23,7 +23,7 @@ export function formatNumberAbbrv(num: number) {
   return result + num;
 }
 
-export function addCommasToNumber(num: number): string {
+export function includeCommasInNumber(num: number): string {
   // convert number into string
   let numString = num+"";
 

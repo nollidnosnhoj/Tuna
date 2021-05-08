@@ -10,15 +10,14 @@ import {
 } from "@chakra-ui/react";
 import React, { useCallback, useRef } from "react";
 import { RiPlayListFill } from "react-icons/ri";
-import { REPEAT_MODE } from "~/contexts/AudioPlayerContext";
 import AudioQueuePanel from "./AudioQueuePanel";
 import NowPlayingSection from "./NowPlayingSection";
 import PlayerControls from "./PlayerControls";
 import ProgressBar from "./ProgressBar";
 import RepeatControl from "./RepeatControl";
-import { AudioPlayerItem } from "../types";
 import VolumeControl from "./VolumeControl";
-import { useAudioPlayer } from "~/contexts/AudioPlayerContext";
+import { useAudioPlayer } from "~/lib/contexts/AudioPlayerContext";
+import { AudioPlayerItem, REPEAT_MODE } from "~/lib/contexts/types";
 
 interface DesktopAudioPlayerProps {
   isHidden?: boolean;

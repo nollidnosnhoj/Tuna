@@ -1,18 +1,19 @@
 import React, { useCallback } from "react";
 import { chakra, Icon } from "@chakra-ui/react";
-import { REPEAT_MODE, useAudioPlayer } from "~/contexts/AudioPlayerContext";
+import { useAudioPlayer } from "~/lib/contexts/AudioPlayerContext";
+import { REPEAT_MODE } from "~/lib/contexts/types";
 import { MdRepeat, MdRepeatOne } from "react-icons/md";
 
 const repeatLabels = {
   [REPEAT_MODE.DISABLE]: "No Repeat",
   [REPEAT_MODE.REPEAT]: "Repeat All",
-  [REPEAT_MODE.REPEAT_SINGLE]: "Repeat One",
+  [REPEAT_MODE.REPEAT_ONE]: "Repeat One",
 };
 
 const repeatModeOrder = [
   REPEAT_MODE.DISABLE,
   REPEAT_MODE.REPEAT,
-  REPEAT_MODE.REPEAT_SINGLE,
+  REPEAT_MODE.REPEAT_ONE,
 ];
 
 export default function RepeatControl() {
@@ -35,7 +36,7 @@ export default function RepeatControl() {
     case REPEAT_MODE.REPEAT:
       icon = <Icon as={MdRepeat} />;
       break;
-    case REPEAT_MODE.REPEAT_SINGLE:
+    case REPEAT_MODE.REPEAT_ONE:
       icon = <Icon as={MdRepeatOne} />;
       break;
   }

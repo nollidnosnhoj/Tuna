@@ -1,12 +1,7 @@
 import React, { useContext } from "react";
-import { AudioPlayerItem } from "~/components/AudioPlayer/types";
 import { AudioPlayerAction } from "./actions/audioPlayerActions";
-
-export enum REPEAT_MODE {
-  DISABLE = "disable",
-  REPEAT = "repeat",
-  REPEAT_SINGLE = "repeat-one",
-}
+import { REPEAT_MODE } from "./types";
+import { AudioPlayerItem } from "~/lib/contexts/types";
 
 export interface AudioPlayerState {
   audioRef: HTMLAudioElement | null;
@@ -18,17 +13,6 @@ export interface AudioPlayerState {
   currentTime?: number;
   volume: number;
 }
-
-export const defaultState: AudioPlayerState = {
-  audioRef: null,
-  currentAudio: undefined,
-  queue: [],
-  playIndex: undefined,
-  isPlaying: false,
-  repeat: REPEAT_MODE.DISABLE,
-  currentTime: undefined,
-  volume: 25,
-};
 
 type AudioPlayerContextType = {
   state: AudioPlayerState;

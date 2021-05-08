@@ -1,11 +1,11 @@
 import axios, { Method } from 'axios'
 import createAuthRefreshInterceptor, { AxiosAuthRefreshRequestConfig } from 'axios-auth-refresh';
 import { stringifyUrl } from 'query-string'
-import config from '~/lib/config';
 import { refreshAccessToken } from "~/features/auth/services";
-import { isAxiosError } from './axios';
-import { getAccessToken } from './cookies';
+import config from '~/lib/config';
 import { PagedList } from '~/lib/types';
+import { isAxiosError, getAccessToken } from '../utils';
+
 
 const backendServerAxios = axios.create({
   baseURL: config.BACKEND_API,

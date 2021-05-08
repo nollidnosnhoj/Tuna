@@ -10,7 +10,7 @@ import { useRouter } from "next/router";
 import React, { useCallback } from "react";
 import { FaRandom, FaCloudUploadAlt } from "react-icons/fa";
 import { MdLibraryMusic } from "react-icons/md";
-import { useAuth } from "~/contexts/AuthContext";
+import { useAuth } from "~/lib/contexts/AuthContext";
 import { usePage } from "./Page";
 
 export function HomepageCTA() {

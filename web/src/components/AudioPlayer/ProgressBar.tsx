@@ -9,7 +9,7 @@ import {
   SliderTrack,
 } from "@chakra-ui/react";
 import { formatDuration } from "~/utils/format";
-import { useAudioPlayer } from "~/contexts/AudioPlayerContext";
+import { useAudioPlayer } from "~/lib/contexts/AudioPlayerContext";
 
 const EMPTY_TIME_FORMAT = "--:--";
 

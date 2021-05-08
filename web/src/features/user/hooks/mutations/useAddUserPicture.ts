@@ -1,6 +1,6 @@
 import { useQueryClient, useMutation } from "react-query";
-import { useAuth } from "~/contexts/AuthContext";
-import api from "~/utils/api";
+import { useAuth } from "~/lib/contexts/AuthContext";
+import api from "~/lib/api";
 
 
 export function useAddUserPicture(username: string) {

@@ -1,5 +1,4 @@
-import { AudioPlayerItem } from "~/components/AudioPlayer/types";
-import { REPEAT_MODE } from "../AudioPlayerContext";
+import { REPEAT_MODE, AudioPlayerItem } from "../types";
 
 export type AudioPlayerAction =
   | {

@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { ErrorResponse } from '~/lib/types';
-import api from '~/utils/api'
-import { isAxiosError } from '~/utils/axios';
+import api from '~/lib/api'
+import { isAxiosError } from '~/utils/http';
 
 type UploadResponse = {
   audioId: string;

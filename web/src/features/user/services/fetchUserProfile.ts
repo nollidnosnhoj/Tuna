@@ -1,5 +1,5 @@
 import { Profile } from '~/features/user/types';
-import api from '~/utils/api'
+import api from '~/lib/api'
 
 interface FetchUserProfileOptions {
   accessToken?: string;

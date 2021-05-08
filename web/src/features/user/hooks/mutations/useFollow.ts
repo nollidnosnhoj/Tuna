@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { useAuth } from "~/contexts/AuthContext";
-import {useUser} from '~/contexts/UserContext';
-import api from "~/utils/api";
+import { useAuth } from "~/lib/contexts/AuthContext";
+import {useUser} from '~/lib/contexts/UserContext';
+import api from "~/lib/api";
 import { apiErrorToast } from "~/utils/toast";
 
 

@@ -1,8 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { AuthResult } from '~/features/auth/types';
-import api from '~/utils/api';
-import { isAxiosError } from '~/utils/axios';
-import { setAccessTokenCookie, setRefreshTokenCookie } from '~/utils/cookies'
+import api from '~/lib/api';
+import { isAxiosError, setAccessTokenCookie, setRefreshTokenCookie } from '~/utils'
 
 export type BackendAuthResult = {
   accessToken: string,

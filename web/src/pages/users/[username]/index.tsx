@@ -1,9 +1,9 @@
 import { GetServerSideProps } from "next";
 import { QueryClient } from "react-query";
 import { dehydrate } from "react-query/hydration";
-import { getAccessToken } from "~/utils/cookies";
 import { fetchUserProfile } from "~/features/user/services";
 import ProfilePage from "~/features/user/components/Pages/ProfilePage";
+import { getAccessToken } from "~/utils";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const queryClient = new QueryClient();

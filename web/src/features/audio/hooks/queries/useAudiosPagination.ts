@@ -1,9 +1,9 @@
 import { UseQueryOptions } from 'react-query';
-import usePagination from "~/hooks/usePagination";
+import usePagination from "~/lib/hooks/usePagination";
 import { PagedList } from "~/lib/types";
 import { Audio } from '~/features/audio/types';
-import { fetchPages } from '~/utils/api';
-import { useAuth } from '~/contexts/AuthContext';
+import { fetchPages } from '~/lib/api';
+import { useAuth } from '~/lib/contexts/AuthContext';
 
 interface UseGetAudioPaginationListOptions extends UseQueryOptions<PagedList<Audio>> {
   params?: Record<string, any>
