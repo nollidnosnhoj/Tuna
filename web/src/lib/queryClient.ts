@@ -7,11 +7,11 @@ const queryClient = new QueryClient({
     mutations: {
       onError: (err) => {
         if (isAxiosError(err)) {
-          apiErrorToast(err)
+          apiErrorToast(err);
           return;
         }
         console.log(err);
-      }
+      },
     },
     queries: {
       retry: false,
@@ -19,13 +19,13 @@ const queryClient = new QueryClient({
       refetchOnWindowFocus: false,
       onError: (err) => {
         if (isAxiosError(err)) {
-          apiErrorToast(err)
+          apiErrorToast(err);
           return;
         }
         console.log(err);
-      }
+      },
     },
   },
-})
+});
 
 export default queryClient;

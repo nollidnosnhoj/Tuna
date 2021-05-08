@@ -6,8 +6,6 @@ import { Button, FormControl, Heading } from "@chakra-ui/react";
 import TextInput from "~/components/form/TextInput";
 import TagInput from "~/components/form/TagInput";
 import AudioList from "~/features/audio/components/List";
-import { useGetAudioListInfinite } from "~/features/audio/hooks/queries/useAudiosInfinite";
-import InfiniteListControls from "~/components/InfiniteListControls";
 import { useGetAudioListPagination } from "../../hooks/queries";
 import PaginationListControls from "~/components/PaginationListControls";
 
@@ -45,7 +43,6 @@ export default function AudioSearchPage(props: AudioSearchValues) {
 
   const {
     items: audios,
-    isFetching,
     page,
     setPage,
     totalPages,

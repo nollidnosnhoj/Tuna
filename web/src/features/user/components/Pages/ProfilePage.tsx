@@ -1,14 +1,5 @@
-import {
-  Box,
-  Button,
-  Flex,
-  Heading,
-  HStack,
-  Spacer,
-  Text,
-} from "@chakra-ui/react";
+import { Box, Button, Flex, Heading } from "@chakra-ui/react";
 import React, { useState } from "react";
-import NextLink from "next/link";
 import { useRouter } from "next/router";
 import Page from "~/components/Page";
 import Picture from "~/components/Picture";
@@ -24,19 +15,22 @@ export default function ProfilePage() {
   const { query } = useRouter();
   const username = query.username as string;
   const { data: profile } = useProfile(username, { staleTime: 1000 });
-  if (!profile) return null;
   const {
     mutateAsync: addPictureAsync,
     isLoading: isAddingPicture,
   } = useAddUserPicture(username);
 
+  // TODO: Put this into it's own component
   const [picture, setPicture] = useState(() => {
     return profile?.picture
       ? `https://audiochan-public.s3.amazonaws.com/${profile.picture}`
       : "";
   });
 
-  const { isFollowing, follow } = useFollow(username, profile.isFollowing);
+  // TODO: Put this into it's own component
+  const { isFollowing, follow } = useFollow(username, profile?.isFollowing);
+
+  if (!profile) return null;
 
   return (
     <Page title={`${profile.username} | Audiochan`}>
@@ -45,7 +39,7 @@ export default function ProfilePage() {
           <PictureDropzone
             disabled={isAddingPicture && user?.id === profile.id}
             onChange={async (imageData) => {
-              const { data } = await addPictureAsync(imageData);
+              const data = await addPictureAsync(imageData);
               setPicture(data.image);
             }}
           >
@@ -55,7 +49,7 @@ export default function ProfilePage() {
         <Flex flex="4">
           <Flex width="100%">
             <Box paddingY={2} flex="3">
-              <Heading as="strong">{profile!.username}</Heading>
+              <Heading as="strong">{profile.username}</Heading>
             </Box>
             <Flex justifyContent="flex-end" flex="1">
               {user && user.id !== profile.id && (

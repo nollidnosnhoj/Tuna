@@ -30,6 +30,7 @@ import UserSection from "./UserSection";
 interface HeaderMenuLinkProps extends ButtonProps {
   label: string;
   href: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   icon?: React.ReactElement<any, string | React.JSXElementConstructor<any>>;
   hidden?: boolean;
 }
@@ -68,6 +69,7 @@ const Header: React.FC<HeaderProps> = (props) => {
   const { toggleColorMode } = useColorMode();
   const headerColor = useColorModeValue("white", "gray.800");
   const ColorModeIcon = useColorModeValue(MoonIcon, SunIcon);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const menuButtonRef = useRef<any>();
   const {
     isOpen: isMenuDrawerOpen,

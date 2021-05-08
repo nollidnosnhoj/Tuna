@@ -8,7 +8,7 @@ import {
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
-import React, { useCallback, useRef } from "react";
+import React, { useRef } from "react";
 import { RiPlayListFill } from "react-icons/ri";
 import AudioQueuePanel from "./AudioQueuePanel";
 import NowPlayingSection from "./NowPlayingSection";
@@ -17,7 +17,6 @@ import ProgressBar from "./ProgressBar";
 import RepeatControl from "./RepeatControl";
 import VolumeControl from "./VolumeControl";
 import { useAudioPlayer } from "~/lib/hooks/useAudioPlayer";
-import { AudioPlayerItem, REPEAT_MODE } from "~/lib/contexts/types";
 
 interface DesktopAudioPlayerProps {
   isHidden?: boolean;
@@ -26,9 +25,9 @@ interface DesktopAudioPlayerProps {
 export default function DesktopAudioPlayer(props: DesktopAudioPlayerProps) {
   const { isHidden = false } = props;
 
-  const { state, dispatch } = useAudioPlayer();
+  const { state } = useAudioPlayer();
 
-  const { audioRef, currentAudio: currentPlaying, playIndex, volume } = state;
+  const { currentAudio: currentPlaying } = state;
 
   const containerRef = useRef<HTMLDivElement>(null);
 

@@ -8,7 +8,7 @@ export default function withRequiredAuth(
   Component: FC,
   initialLoggedIn?: boolean
 ) {
-  if (initialLoggedIn) return () => <Component />;
+  if (initialLoggedIn) return <Component />;
 
   return function RequireAuthWrapperComponent() {
     const { isLoggedIn } = useAuth();

@@ -1,15 +1,16 @@
-export * from './audioplayer'
-export * from './cookies'
-export * from './format'
-export * from './http'
-export * from './string'
-export * from './time'
-export * from './toast'
-export * from './tokens'
-export * from './validation'
+export * from "./audioplayer";
+export * from "./cookies";
+export * from "./format";
+export * from "./http";
+export * from "./string";
+export * from "./time";
+export * from "./toast";
+export * from "./tokens";
+export * from "./validation";
 
-export function objectToFormData(values: object): FormData {
-  var formData = new FormData();
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function objectToFormData(values: Record<string, any>): FormData {
+  const formData = new FormData();
 
   Object.entries(values).forEach(([key, value]) => {
     if (value) {

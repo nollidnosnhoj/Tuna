@@ -90,7 +90,7 @@ export function AuthProvider(props: PropsWithChildren<AuthProviderProps>) {
             setAccessToken(newToken);
             setExpirationToLocalStorage(newExpires);
           })
-          .catch((err) => {
+          .catch(() => {
             errorToast({
               message: "Session expired. Please login.",
             });

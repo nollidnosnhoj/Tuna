@@ -37,7 +37,7 @@ const theme = extendTheme({
       },
       a: {
         color: props.colorMode === "dark" ? "primary.300" : "primary.500",
-      }
+      },
     }),
   },
 });

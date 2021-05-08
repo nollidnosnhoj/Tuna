@@ -10,7 +10,7 @@ import { REPEAT_MODE } from "../../lib/contexts/types";
 
 const AUDIO_PLAYER_SETTING = "audiochan_player_setting";
 
-export function AudioPlayerProvider(props: PropsWithChildren<any>) {
+export function AudioPlayerProvider(props: PropsWithChildren<unknown>) {
   const [state, dispatch] = useReducer(audioPlayerReducer, {
     audioRef: null,
     currentAudio: undefined,
@@ -32,9 +32,9 @@ export function AudioPlayerProvider(props: PropsWithChildren<any>) {
    * When the audio player component loads, load the settings from local storage
    */
   useEffect(() => {
-    let settingString = localStorage.getItem(AUDIO_PLAYER_SETTING) || "";
+    const settingString = localStorage.getItem(AUDIO_PLAYER_SETTING) || "";
     if (settingString) {
-      var setting = JSON.parse(settingString);
+      const setting = JSON.parse(settingString);
       const { volume, repeat } = setting;
       const parsedVolume = parseInt(volume);
       if (!isNaN(parsedVolume)) {

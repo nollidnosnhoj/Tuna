@@ -1,7 +1,7 @@
 export enum REPEAT_MODE {
-  DISABLE = 'disable',
-  REPEAT = 'repeat',
-  REPEAT_ONE = 'repeat_one'
+  DISABLE = "disable",
+  REPEAT = "repeat",
+  REPEAT_ONE = "repeat_one",
 }
 
 export type AudioPlayerItem = {
@@ -13,6 +13,6 @@ export type AudioPlayerItem = {
   duration: number;
   cover: string;
   source?: string;
-  privateKey?: string
+  privateKey?: string;
   related: boolean;
-}
+};

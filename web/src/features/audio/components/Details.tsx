@@ -45,7 +45,7 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
   const secondaryColor = useColorModeValue("black.300", "gray.300");
   const { user: currentUser } = useUser();
   const { state, dispatch } = useAudioPlayer();
-  const { currentTime, isPlaying, audioRef, currentAudio } = state;
+  const { isPlaying, currentAudio } = state;
 
   const {
     mutateAsync: uploadArtwork,
@@ -99,7 +99,7 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
         <PictureDropzone
           disabled={isAddingArtwork && currentUser?.id === audio.author.id}
           onChange={async (croppedData) => {
-            const { data } = await uploadArtwork(croppedData);
+            const data = await uploadArtwork(croppedData);
             setPicture(data.image);
           }}
         >

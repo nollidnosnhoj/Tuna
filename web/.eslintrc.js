@@ -28,6 +28,7 @@ module.exports = {
         "plugin:prettier/recommended", // Prettier plugin
       ],
       rules: {
+        "react/no-unescaped-entities": "off",
         "react-hooks/exhaustive-deps": "off",
 
         // We will use TypeScript's types for component props instead

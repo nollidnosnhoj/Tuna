@@ -1,6 +1,6 @@
 import { Box } from "@chakra-ui/react";
 import { useFormikContext } from "formik";
-import React, { useCallback } from "react";
+import React from "react";
 import * as yup from "yup";
 import slugify from "slugify";
 import InputCheckbox from "~/components/form/Checkbox";
@@ -21,7 +21,6 @@ export default function AudioForm(props: AudioFormProps) {
     isSubmitting,
     handleChange,
     setFieldValue,
-    validationSchema,
   } = useFormikContext<AudioRequest>();
 
   return (

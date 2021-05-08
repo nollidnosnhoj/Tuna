@@ -7,7 +7,7 @@ import { Audio } from "~/features/audio/types";
 import { PagedList } from "~/lib/types";
 
 export interface AudioFeedPageProps {
-  filter: Record<string, any>;
+  filter: Record<string, unknown>;
   initialPage?: PagedList<Audio>;
 }
 

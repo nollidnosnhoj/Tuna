@@ -1,6 +1,6 @@
 export type AuthResult = {
-  accessToken: string,
+  accessToken: string;
   accessTokenExpires: number;
-  refreshToken: string,
+  refreshToken: string;
   refreshTokenExpires: number;
-}
+};

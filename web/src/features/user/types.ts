@@ -3,7 +3,7 @@ export type CurrentUser = {
   username: string;
   email: string;
   roles?: string[];
-}
+};
 
 export type Profile = {
   id: string;
@@ -14,4 +14,4 @@ export type Profile = {
   followerCount: number;
   followingCount: number;
   picture: string;
-}
+};

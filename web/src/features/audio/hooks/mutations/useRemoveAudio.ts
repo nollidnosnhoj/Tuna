@@ -1,17 +1,18 @@
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, UseMutationResult, useQueryClient } from "react-query";
 import { useAuth } from "~/lib/hooks/useAuth";
-import api from '~/lib/api';
+import api from "~/lib/api";
 
-
-export function useRemoveAudio(id: string) {
+export function useRemoveAudio(id: string): UseMutationResult<void> {
   const queryClient = useQueryClient();
   const { accessToken } = useAuth();
-  const removeAudio = async () => await api.delete(`audios/${id}`, { accessToken });
+  const removeAudio = async (): Promise<void> => {
+    await api.delete(`audios/${id}`, { accessToken });
+  };
 
   return useMutation(removeAudio, {
     onSuccess() {
       queryClient.invalidateQueries(`audios`);
       queryClient.invalidateQueries([`audios`, id], { exact: true });
-    }
+    },
   });
 }

@@ -1,9 +1,9 @@
 import slugify from "slugify";
 
-export function taggify(value: string) {
+export function taggify(value: string): string {
   return slugify(value, {
-    replacement: '-',
+    replacement: "-",
     lower: true,
-    strict: true
+    strict: true,
   });
 }

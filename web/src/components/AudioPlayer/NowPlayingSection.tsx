@@ -13,7 +13,7 @@ export default function NowPlayingSection(props: NowPlayingSectionProps) {
 
   if (!current) return null;
 
-  const { audioId, artistId, title, artist, cover } = current;
+  const { audioId, title, artist, cover } = current;
 
   return (
     <Flex fontSize="16px" alignItems="center">

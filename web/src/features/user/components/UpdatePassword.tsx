@@ -2,7 +2,6 @@ import React from "react";
 import { Button } from "@chakra-ui/react";
 import * as yup from "yup";
 import { useFormik } from "formik";
-import Router from "next/router";
 import TextInput from "~/components/form/TextInput";
 import api from "~/lib/api";
 import { apiErrorToast } from "~/utils/toast";

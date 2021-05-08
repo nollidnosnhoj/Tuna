@@ -1,3 +1,3 @@
-export * from './useAudio'
-export * from './useAudiosInfinite'
-export * from './useAudiosPagination'
+export * from "./useAudio";
+export * from "./useAudiosInfinite";
+export * from "./useAudiosPagination";

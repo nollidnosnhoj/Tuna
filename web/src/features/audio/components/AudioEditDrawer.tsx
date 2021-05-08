@@ -10,18 +10,13 @@ import {
   Spacer,
   HStack,
 } from "@chakra-ui/react";
-import { Formik, FormikHelpers, useFormik } from "formik";
+import { Formik, FormikHelpers } from "formik";
 import React, { useState } from "react";
 import Router from "next/router";
-import slugify from "slugify";
-import * as yup from "yup";
 import { apiErrorToast, successfulToast } from "~/utils/toast";
 import { useEditAudio, useRemoveAudio } from "../hooks/mutations";
 import { editAudioSchema } from "../schemas";
 import { AudioDetail, AudioRequest } from "../types";
-import InputCheckbox from "~/components/form/Checkbox";
-import TagInput from "~/components/form/TagInput";
-import TextInput from "~/components/form/TextInput";
 import AudioForm from "./AudioForm";
 
 interface AudioEditDrawerProps {
@@ -68,7 +63,7 @@ const AudioEditDrawer: React.FC<AudioEditDrawerProps> = (props) => {
     }
 
     setIsProcessing(true);
-    deleteAudio()
+    deleteAudio(undefined)
       .then(() => {
         Router.push("/").then(() => {
           successfulToast({

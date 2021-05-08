@@ -66,7 +66,9 @@ export default function AudioPlayer(props: AudioPlayerProps) {
         controls={false}
         preload={preload}
         loop={repeat === REPEAT_MODE.REPEAT_ONE}
-      />
+      >
+        <track kind="captions"></track>
+      </audio>
       <DesktopAudioPlayer />
     </React.Fragment>
   );

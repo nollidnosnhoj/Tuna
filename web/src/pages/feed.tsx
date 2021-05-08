@@ -11,15 +11,14 @@ export const getServerSideProps: GetServerSideProps<AudioFeedPageProps> = async 
   req,
 }) => {
   const accessToken = getAccessToken({ req });
-  const { page, ...filter } = query;
 
-  const resultPage = await fetchPages<Audio>("me/feed", filter, 1, {
+  const resultPage = await fetchPages<Audio>("me/feed", query, 1, {
     accessToken,
   });
 
   return {
     props: {
-      filter: filter,
+      filter: query,
       initialPage: resultPage,
     },
   };

@@ -1,29 +1,37 @@
 import { useMemo, useState } from "react";
-import { useQuery, UseQueryOptions } from "react-query";
+import { useQuery, UseQueryOptions, UseQueryResult } from "react-query";
 import { ErrorResponse, PagedList } from "../types";
+
+export interface UsePaginationResultType<TItem>
+  extends Omit<UseQueryResult<PagedList<TItem>>, "data"> {
+  items: TItem[];
+  page: number;
+  setPage: (page: number) => void;
+  totalCount: number;
+  totalPages: number;
+  hasPrevious: boolean;
+  hasNext: boolean;
+}
 
 export default function usePagination<TItem>(
   key: string,
   fetcher: (page: number) => Promise<PagedList<TItem>>,
-  params: Record<string, any> = {},
-  initialPage: number = 1,
+  params: Record<string, unknown> = {},
+  initialPage = 1,
   options?: UseQueryOptions<PagedList<TItem>>
-) {
+): UsePaginationResultType<TItem> {
   const [page, setPage] = useState(initialPage);
-  const {
-    data,
-    error,
-    isLoading,
-    isError,
-    isFetching,
-    isPreviousData
-  } = useQuery<PagedList<TItem>, ErrorResponse>([key, { ...params, page }], () => fetcher(page), {
-    keepPreviousData: true,
-    ...options
-  });
+  const { data, ...result } = useQuery<PagedList<TItem>, ErrorResponse>(
+    [key, { ...params, page }],
+    () => fetcher(page),
+    {
+      keepPreviousData: true,
+      ...options,
+    }
+  );
 
   const items = useMemo<TItem[]>(() => {
-    return data ? data.items : []
+    return data ? data.items : [];
   }, [data]);
 
   const totalCount = useMemo<number>(() => {
@@ -35,25 +43,25 @@ export default function usePagination<TItem>(
   }, [data]);
 
   const hasPrevious = useMemo<boolean>(() => {
-    return data ? data.hasPrevious : false
+    return data ? data.hasPrevious : false;
   }, [data]);
 
   const hasNext = useMemo<boolean>(() => {
-    return data ? data.hasNext : false
+    return data ? data.hasNext : false;
   }, [data]);
 
-  return { 
+  const changePage = (num: number): void => {
+    setPage(num);
+  };
+
+  return {
     items,
-    error,
-    isLoading,
-    isError,
-    isFetching,
-    isPreviousData,
     page,
-    setPage,
+    setPage: changePage,
     totalCount,
     totalPages,
     hasPrevious,
-    hasNext
-  }
+    hasNext,
+    ...result,
+  };
 }

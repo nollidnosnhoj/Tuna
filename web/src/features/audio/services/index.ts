@@ -1,37 +1,29 @@
-import axios from 'axios'
-import { ErrorResponse } from '~/lib/types';
-import api from '~/lib/api'
-import { isAxiosError } from '~/utils/http';
+import axios from "axios";
+import api from "~/lib/api";
 
 type UploadResponse = {
   audioId: string;
   uploadUrl: string;
-}
+};
 
-export const getS3PresignedUrl = (file: File) => {
-  return new Promise<UploadResponse>(async (resolve, reject) => {
-    try {
-      const duration = await getDurationFromAudio(file);
-
-      const { data } = await api.post<UploadResponse>("upload", {
-        fileName: file.name,
-        fileSize: file.size,
-        duration: duration,
-      });
-
-      resolve(data);
-    } catch (err) {
-      const errorMessage = "Unable to upload audio.";
-      if (isAxiosError<ErrorResponse>(err)) {
-        reject(err.response?.data.message ?? errorMessage);
-      } else {
-        reject(errorMessage);
-      }
-    }
+export const getS3PresignedUrl = async (
+  file: File
+): Promise<UploadResponse> => {
+  const duration = await getDurationFromAudio(file);
+  const { data } = await api.post<UploadResponse>("upload", {
+    fileName: file.name,
+    fileSize: file.size,
+    duration: duration,
   });
-}
+  return data;
+};
 
-export const uploadAudioToS3 = (s3Url: string, userId: string, file: File, progressCallback: (value: number) => void) => {
+export const uploadAudioToS3 = (
+  s3Url: string,
+  userId: string,
+  file: File,
+  progressCallback: (value: number) => void
+): Promise<void> => {
   return new Promise<void>((resolve, reject) => {
     axios
       .put(s3Url, file, {
@@ -52,9 +44,9 @@ export const uploadAudioToS3 = (s3Url: string, userId: string, file: File, progr
         reject("Unable to upload audio.");
       });
   });
-}
+};
 
-export const getDurationFromAudio = (file: File) => {
+export const getDurationFromAudio = (file: File): Promise<number> => {
   return new Promise<number>((resolve, reject) => {
     const audio = new Audio();
     audio.src = window.URL.createObjectURL(file);
@@ -62,7 +54,7 @@ export const getDurationFromAudio = (file: File) => {
       resolve(audio.duration);
     };
     audio.onerror = () => {
-      reject("Could not load metadata from audio.")
-    }
+      reject("Could not load metadata from audio.");
+    };
   });
-}
+};

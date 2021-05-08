@@ -63,30 +63,30 @@ export default function AudioDropzone(props: AudioDropzoneProps) {
 
   useEffect(() => {
     const uploading = async () => {
-      try {
-        const { audioId, uploadUrl } = await getS3PresignedUrl(file!);
-        onUploading(audioId);
-        await uploadAudioToS3(uploadUrl, user!.id, file!, (value) =>
-          setProgress(value)
-        );
-        setUploaded(true);
-        onUploaded();
-      } catch (err) {
-        errorToast({
-          message: "Unable to complete upload. Please try again later.",
-        });
+      if (!!file && !!user) {
+        try {
+          const { audioId, uploadUrl } = await getS3PresignedUrl(file);
+          onUploading(audioId);
+          await uploadAudioToS3(uploadUrl, user.id, file, (value) =>
+            setProgress(value)
+          );
+          setUploaded(true);
+          onUploaded();
+        } catch (err) {
+          errorToast({
+            message: "Unable to complete upload. Please try again later.",
+          });
+        }
       }
     };
-    if (!!file && !!user) {
-      uploading();
-    }
+    uploading();
   }, [file, user]);
 
   if (file) {
     return (
       <Box display="flex" justifyContent="center">
         <VStack marginY={10}>
-          <Progress hasStripe value={50} />
+          <Progress hasStripe value={progress} />
           <Heading as="h2" size="md">
             {uploaded ? "Done" : "Uploading..."}
           </Heading>
