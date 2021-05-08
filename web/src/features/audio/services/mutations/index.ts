@@ -1,1 +1,1 @@
-export * from './fetchAudioById'
+export * from "./fetchAudioById";

@@ -1,28 +1,34 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
-import { AuthResult } from '~/features/auth/types';
-import api from '~/utils/api';
-import { isAxiosError } from '~/utils/axios';
-import { setAccessTokenCookie, setRefreshTokenCookie } from '~/utils/cookies'
+import type { NextApiRequest, NextApiResponse } from "next";
+import { AuthResult } from "~/features/auth/types";
+import api from "~/lib/api";
+import {
+  isAxiosError,
+  setAccessTokenCookie,
+  setRefreshTokenCookie,
+} from "~/utils";
 
 export type BackendAuthResult = {
-  accessToken: string,
-  refreshToken: string,
-  refreshTokenExpires: number
-}
+  accessToken: string;
+  refreshToken: string;
+  refreshTokenExpires: number;
+};
 
-export default async (req: NextApiRequest, res: NextApiResponse<AuthResult>) => {
+export default async (
+  req: NextApiRequest,
+  res: NextApiResponse<AuthResult>
+): Promise<void> => {
   try {
-    if (req.method?.toUpperCase() !== 'POST') {
+    if (req.method?.toUpperCase() !== "POST") {
       res.status(404).end();
     }
 
-    const { status, data } = await api.post('auth/login', req.body, {
-      skipAuthRefresh: true
-    })
+    const { status, data } = await api.post("auth/login", req.body, {
+      skipAuthRefresh: true,
+    });
 
     setAccessTokenCookie(data.accessToken, 60 * 60 * 24 * 7, { res });
     setRefreshTokenCookie(data.refreshToken, data.refreshTokenExpires, { res });
-    res.status(status).json(data)
+    res.status(status).json(data);
   } catch (err) {
     if (!isAxiosError(err)) {
       res.status(500).end();
@@ -31,4 +37,4 @@ export default async (req: NextApiRequest, res: NextApiResponse<AuthResult>) => 
       res.status(status).json(err?.response?.data);
     }
   }
-}
+};

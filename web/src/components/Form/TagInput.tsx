@@ -11,7 +11,6 @@ import {
 } from "@chakra-ui/react";
 import React, { useCallback, useMemo, useState } from "react";
 import * as yup from "yup";
-import { taggify } from "~/utils";
 
 interface TagInputProps {
   name: string;
@@ -46,7 +45,7 @@ const TagInput: React.FC<TagInputProps> = ({
           ?.validate(input)
           .then(() => resolve([true, ""]))
           .catch((err) => {
-            let message: string = "Unknown validation error.";
+            let message = "Unknown validation error.";
             if (err instanceof yup.ValidationError) {
               message = Array.isArray(err.errors) ? err.errors[0] : err.errors;
             }
@@ -71,7 +70,7 @@ const TagInput: React.FC<TagInputProps> = ({
   const onAddTag = async () => {
     const taggifyTag = formatTagCallback?.(currentInput) ?? currentInput;
     if (validationSchema) {
-      var [isValid, errorMessage] = await applyValidationSchema(taggifyTag);
+      const [isValid, errorMessage] = await applyValidationSchema(taggifyTag);
       if (!isValid) {
         setInputError(errorMessage);
         return;
@@ -82,7 +81,7 @@ const TagInput: React.FC<TagInputProps> = ({
     setInputError("");
   };
 
-  const removeTag = (idx: number, e?: React.SyntheticEvent) => {
+  const removeTag = (idx: number) => {
     if (idx < 0 || idx >= tags.length) return;
     const filtered = [...tags];
     filtered.splice(idx, 1);

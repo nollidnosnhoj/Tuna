@@ -5,7 +5,7 @@ import { PictureProps } from "~/components/Picture";
 import PictureCropModal from "./PictureCropModal";
 import SETTINGS from "~/lib/config";
 import { errorToast, successfulToast } from "~/utils/toast";
-import { isAxiosError } from "~/utils/axios";
+import { isAxiosError } from "~/utils/http";
 import { ErrorResponse } from "~/lib/types";
 
 interface PictureDropzoneProps {

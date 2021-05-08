@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
-import DesktopAudioPlayer from "./components/DesktopPlayer";
-import { REPEAT_MODE, useAudioPlayer } from "~/contexts/AudioPlayerContext";
+import DesktopAudioPlayer from "./DesktopPlayer";
+import { useAudioPlayer } from "~/lib/hooks/useAudioPlayer";
+import { REPEAT_MODE } from "~/lib/contexts/types";
 
 interface AudioPlayerProps {
   preload?: "none" | "metadata" | "auto";
@@ -64,8 +65,10 @@ export default function AudioPlayer(props: AudioPlayerProps) {
         ref={audioRef}
         controls={false}
         preload={preload}
-        loop={repeat === REPEAT_MODE.REPEAT_SINGLE}
-      />
+        loop={repeat === REPEAT_MODE.REPEAT_ONE}
+      >
+        <track kind="captions"></track>
+      </audio>
       <DesktopAudioPlayer />
     </React.Fragment>
   );

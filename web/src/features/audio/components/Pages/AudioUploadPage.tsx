@@ -1,13 +1,13 @@
 import { Box, Button, Flex, Heading, Text, VStack } from "@chakra-ui/react";
 import { Formik } from "formik";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { usePublishAudio } from "../../hooks/mutations";
 import { AudioRequest } from "../../types";
 import AudioDropzone from "../AudioDropzone";
 import AudioForm from "../AudioForm";
 import { publishAudioSchema } from "../../schemas";
-import useNavigationLock from "~/hooks/useNavigationLock";
+import useNavigationLock from "~/lib/hooks/useNavigationLock";
 import { apiErrorToast } from "~/utils/toast";
 
 export default function AudioUploadPage() {

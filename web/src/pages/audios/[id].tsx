@@ -1,9 +1,9 @@
 import { GetServerSideProps } from "next";
 import { QueryClient } from "react-query";
 import { dehydrate } from "react-query/hydration";
-import { getAccessToken } from "~/utils/cookies";
 import { fetchAudioById } from "~/features/audio/services/mutations/fetchAudioById";
 import AudioDetailsPage from "~/features/audio/components/Pages/AudioDetailsPage";
+import { getAccessToken } from "~/utils";
 
 // Fetch the audio detail and render it onto the server.
 export const getServerSideProps: GetServerSideProps = async (context) => {

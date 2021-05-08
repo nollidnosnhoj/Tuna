@@ -3,23 +3,22 @@ import AudioFeedPage, {
   AudioFeedPageProps,
 } from "~/features/audio/components/Pages/AudioFeedPage";
 import { Audio } from "~/features/audio/types";
-import { fetchPages } from "~/utils/api";
-import { getAccessToken } from "~/utils/cookies";
+import { fetchPages } from "~/lib/api";
+import { getAccessToken } from "~/utils";
 
 export const getServerSideProps: GetServerSideProps<AudioFeedPageProps> = async ({
   query,
   req,
 }) => {
   const accessToken = getAccessToken({ req });
-  const { page, ...filter } = query;
 
-  const resultPage = await fetchPages<Audio>("me/feed", filter, 1, {
+  const resultPage = await fetchPages<Audio>("me/feed", query, 1, {
     accessToken,
   });
 
   return {
     props: {
-      filter: filter,
+      filter: query,
       initialPage: resultPage,
     },
   };

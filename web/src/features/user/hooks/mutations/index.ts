@@ -1,2 +1,2 @@
-export * from './useAddUserPicture'
-export * from './useFollow'
+export * from "./useAddUserPicture";
+export * from "./useFollow";

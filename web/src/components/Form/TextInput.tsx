@@ -11,7 +11,7 @@ interface InputFieldProps {
   name: string;
   value: string;
   onChange: (e: React.ChangeEvent) => void;
-  size?: (string & {}) | "lg" | "md" | "sm" | "xs";
+  size?: (string & Record<string, unknown>) | "lg" | "md" | "sm" | "xs";
   type?: string;
   error?: string;
   label?: string;

@@ -13,9 +13,9 @@ import { FaList } from "react-icons/fa";
 import { IoMdGrid } from "react-icons/io";
 import AudioGridItem from "./GridItem";
 import AudioListItem from "./ListItem";
-import { mapAudiosForAudioQueue } from "~/components/AudioPlayer/utils";
+import { mapAudiosForAudioQueue } from "~/utils/audioplayer";
 import { Audio } from "~/features/audio/types";
-import { useAudioPlayer } from "~/contexts/AudioPlayerContext";
+import { useAudioPlayer } from "~/lib/hooks/useAudioPlayer";
 
 type AudioListLayout = "list" | "grid";
 

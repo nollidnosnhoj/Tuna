@@ -28,11 +28,11 @@ import { MdQueueMusic } from "react-icons/md";
 import Link from "~/components/Link";
 import Picture from "~/components/Picture";
 import PictureDropzone from "~/components/Picture/PictureDropzone";
-import { mapAudioForAudioQueue } from "~/components/AudioPlayer/utils";
+import { mapAudioForAudioQueue } from "~/utils/audioplayer";
 import { useAddAudioPicture } from "~/features/audio/hooks/mutations/useAddAudioPicture";
 import { AudioDetail } from "~/features/audio/types";
-import { useAudioPlayer } from "~/contexts/AudioPlayerContext";
-import { useUser } from "~/contexts/UserContext";
+import { useAudioPlayer } from "~/lib/hooks/useAudioPlayer";
+import { useUser } from "~/lib/hooks/useUser";
 import { formatDuration } from "~/utils/format";
 import { relativeDate } from "~/utils/time";
 import AudioEditDrawer from "./AudioEditDrawer";
@@ -45,7 +45,7 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
   const secondaryColor = useColorModeValue("black.300", "gray.300");
   const { user: currentUser } = useUser();
   const { state, dispatch } = useAudioPlayer();
-  const { currentTime, isPlaying, audioRef, currentAudio } = state;
+  const { isPlaying, currentAudio } = state;
 
   const {
     mutateAsync: uploadArtwork,
@@ -99,7 +99,7 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
         <PictureDropzone
           disabled={isAddingArtwork && currentUser?.id === audio.author.id}
           onChange={async (croppedData) => {
-            const { data } = await uploadArtwork(croppedData);
+            const data = await uploadArtwork(croppedData);
             setPicture(data.image);
           }}
         >

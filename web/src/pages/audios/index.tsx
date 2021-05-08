@@ -1,11 +1,11 @@
 import { GetServerSideProps } from "next";
-import { fetch } from "~/utils/api";
-import { getAccessToken } from "~/utils/cookies";
+import { fetch } from "~/lib/api";
 import { Audio } from "~/features/audio/types";
 import AudioListPage, {
   AudioListPageProps,
-} from "../../features/audio/components/Pages/AudioListPage";
+} from "~/features/audio/components/Pages/AudioListPage";
 import { CursorPagedList } from "~/lib/types";
+import { getAccessToken } from "~/utils";
 
 export const getServerSideProps: GetServerSideProps<AudioListPageProps> = async ({
   query,

@@ -9,7 +9,7 @@ interface UserAudioListProps {
 }
 
 export default function UserAudioList(
-  props: UserAudioListProps & Record<string, any>
+  props: UserAudioListProps & Record<string, unknown>
 ) {
   const { username, hidePaginationControls = false } = props;
   const {

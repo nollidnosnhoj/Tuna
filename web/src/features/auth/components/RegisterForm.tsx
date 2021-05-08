@@ -4,10 +4,10 @@ import * as yup from "yup";
 import { useFormik } from "formik";
 import TextInput from "../../../components/form/TextInput";
 import { validationMessages } from "~/utils";
-import api from "~/utils/api";
+import api from "~/lib/api";
 import { successfulToast } from "~/utils/toast";
 import { ErrorResponse } from "~/lib/types";
-import { isAxiosError } from "~/utils/axios";
+import { isAxiosError } from "~/utils/http";
 import { usernameRule, passwordRule } from "~/features/user/schemas";
 
 type RegisterFormInputs = {

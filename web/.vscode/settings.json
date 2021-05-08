@@ -1,4 +1,8 @@
 {
   "editor.tabSize": 2,
-  "editor.fontSize": 14
+  "editor.fontSize": 14,
+  "editor.formatOnSave": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  }
 }
