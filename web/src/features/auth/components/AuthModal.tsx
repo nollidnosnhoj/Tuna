@@ -52,10 +52,10 @@ export default function AuthModal({
             </TabList>
             <TabPanels>
               <TabPanel>
-                <LoginForm initialRef={authInputRef} />
+                <LoginForm initialRef={authInputRef} onSuccess={onClose} />
               </TabPanel>
               <TabPanel>
-                <RegisterForm initialRef={authInputRef} />
+                <RegisterForm initialRef={authInputRef} onSuccess={onClose} />
               </TabPanel>
             </TabPanels>
           </Tabs>
