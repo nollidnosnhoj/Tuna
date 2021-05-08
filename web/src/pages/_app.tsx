@@ -6,11 +6,11 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { Hydrate } from "react-query/hydration";
 import PageLoader from "~/components/PageLoader";
 import { UserProvider } from "~/contexts/UserContext";
-import AudioPlayerProvider from "~/contexts/AudioPlayerContext";
+import AudioPlayerProvider from "~/components/providers/AudioPlayerProvider";
 import theme from "~/lib/theme";
 import queryClient from "~/lib/queryClient";
 import { CurrentUser } from "~/features/user/types";
-import AuthProvider from "~/contexts/AuthContext";
+import AuthProvider from "~/components/providers/AuthProvider";
 
 interface AppProps extends NextAppProps {
   user?: CurrentUser;
