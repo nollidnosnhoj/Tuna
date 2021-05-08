@@ -152,7 +152,7 @@ namespace Audiochan.IntegrationTests
                 UserName = userName,
                 Email = userName + "@localhost",
                 DisplayName = userName,
-                Joined = Instant.FromDateTimeUtc(DateTime.Now.ToUniversalTime())
+                Joined = Instant.FromDateTimeUtc(DateTime.UtcNow)
             };
 
             var result = await userManager.CreateAsync(user, password);

@@ -40,8 +40,5 @@ export interface AudioRequest {
 };
 
 export interface CreateAudioRequest extends AudioRequest {
-  uploadId: string;
-  fileName: string;
-  duration: number;
-  fileSize: number;
+  audioId: string;
 }

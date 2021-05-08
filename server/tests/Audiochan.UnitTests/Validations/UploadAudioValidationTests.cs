@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Features.Audios.CreateAudio;
+using Audiochan.Core.Features.Audios.UploadAudio;
 using FluentValidation;
 using FluentValidation.TestHelper;
 using Microsoft.Extensions.Options;
@@ -10,7 +11,7 @@ namespace Audiochan.UnitTests.Validations
 {
     public class UploadAudioValidationTests
     {
-        private readonly IValidator<CreateAudioRequest> _validator;
+        private readonly IValidator<UploadAudioRequest> _validator;
 
         public UploadAudioValidationTests()
         {
@@ -28,56 +29,7 @@ namespace Audiochan.UnitTests.Validations
                     MaximumFileSize = 262144000
                 }
             });
-            _validator = new CreateAudioRequestValidator(options);
-        }
-
-        [Fact]
-        public void CheckIfTitleIsInvalidWhenEmpty()
-        {
-            var result = _validator.TestValidate(new CreateAudioRequest {Title = ""});
-            result.ShouldHaveValidationErrorFor(x => x.Title);
-        }
-
-        [Fact]
-        public void CheckIfOverTenTagsIsInvalid()
-        {
-            var tags = new List<string?>
-            {
-                "word1", "word2", "word3", "word4", "word5", "word6", "word7", "word8", "word9", "word10", "word11"
-            };
-
-            var dto = new CreateAudioRequest {Tags = tags};
-            var result = _validator.TestValidate(dto);
-            result.ShouldHaveValidationErrorFor(x => x.Tags);
-        }
-
-        [Fact]
-        public void CheckIfLessOrEqualToTenTagsIsValid()
-        {
-            var tags = new List<string?>
-            {
-                "word1", "word2", "word3", "word4", "word5", "word6", "word7", "word8", "word9"
-            };
-
-            var dto = new CreateAudioRequest {Tags = tags};
-            var result = _validator.TestValidate(dto);
-            result.ShouldNotHaveValidationErrorFor(x => x.Tags);
-        }
-
-        [Fact]
-        public void CheckIfNullTagsIsValid()
-        {
-            var dto = new CreateAudioRequest();
-            var result = _validator.TestValidate(dto);
-            result.ShouldNotHaveValidationErrorFor(x => x.Tags);
-        }
-
-        [Fact]
-        public void CheckIfEmptyTagsIsValid()
-        {
-            var dto = new CreateAudioRequest {Tags = new List<string?>()};
-            var result = _validator.TestValidate(dto);
-            result.ShouldNotHaveValidationErrorFor(x => x.Tags);
+            _validator = new UploadAudioRequestValidator(options);
         }
     }
 }

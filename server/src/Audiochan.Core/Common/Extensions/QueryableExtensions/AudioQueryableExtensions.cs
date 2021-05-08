@@ -11,7 +11,8 @@ namespace Audiochan.Core.Common.Extensions.QueryableExtensions
             return dbSet
                 .AsNoTracking()
                 .Include(a => a.Tags)
-                .Include(a => a.User);
+                .Include(a => a.User)
+                .Where(a => a.IsPublish);
         }
 
         public static IQueryable<Audio> ExcludePrivateAudios(this IQueryable<Audio> queryable, string currentUserId = "")

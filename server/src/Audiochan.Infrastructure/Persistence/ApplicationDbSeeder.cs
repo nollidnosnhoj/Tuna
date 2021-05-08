@@ -16,7 +16,7 @@ namespace Audiochan.Infrastructure.Persistence
         {
             if (!await userManager.Users.AnyAsync())
             {
-                var superuser = new User("superuser", "superuser@localhost", Instant.FromDateTimeUtc(DateTime.Now.ToUniversalTime()));
+                var superuser = new User("superuser", "superuser@localhost", Instant.FromDateTimeUtc(DateTime.UtcNow));
 
                 // TODO: Do not hardcode superuser password when deploying into production haha
                 await userManager.CreateAsync(superuser, "Password1");
@@ -41,58 +41,63 @@ namespace Audiochan.Infrastructure.Persistence
 
                 var audio1 = await new AudioBuilder()
                     .AddTitle("Dreams")
-                    .AddUploadId("audio1")
+                    .AddFileNameSeed("audio1.mp3")
                     .AddFileName("Dreams.mp3")
                     .AddFileSize(9335255)
                     .AddDuration(388)
                     .AddUser(user)
                     .AddTags(await tagRepository.GetListAsync(new[] {"chillout", "lucid-dreams"}))
                     .SetPublic(true)
-                    .BuildAsync();
+                    .SetPublish(true, Instant.FromDateTimeUtc(DateTime.UtcNow))
+                    .BuildAsync(true);
                 
                 var audio2 = await new AudioBuilder()
                     .AddTitle("Heaven")
-                    .AddUploadId("audio2")
+                    .AddFileNameSeed("audio2.mp3")
                     .AddFileName("Heaven.mp3")
                     .AddFileSize(6239211)
                     .AddDuration(194)
                     .AddUser(user)
                     .AddTags(await tagRepository.GetListAsync(new[] {"newgrounds", "piano", "rave"}))
                     .SetPublic(true)
-                    .BuildAsync();
+                    .SetPublish(true, Instant.FromDateTimeUtc(DateTime.UtcNow))
+                    .BuildAsync(true);
                 
                 var audio3 = await new AudioBuilder()
                     .AddTitle("Life Is Beautiful")
-                    .AddUploadId("audio3")
+                    .AddFileNameSeed("audio3.mp3")
                     .AddFileName("LifeIsBeautiful.mp3")
                     .AddFileSize(1823391)
                     .AddDuration(45)
                     .AddUser(user)
                     .AddTags(await tagRepository.GetListAsync(new[] {"happy", "anime", "hardcore", "nightcore"}))
                     .SetPublic(true)
-                    .BuildAsync();
+                    .SetPublish(true, Instant.FromDateTimeUtc(DateTime.UtcNow))
+                    .BuildAsync(true);
                 
                 var audio4 = await new AudioBuilder()
                     .AddTitle("Beginning of Time")
-                    .AddUploadId("audio4")
+                    .AddFileNameSeed("audio4.mp3")
                     .AddFileName("BeginningOfTime.mp3")
                     .AddFileSize(3952556)
                     .AddDuration(164)
                     .AddUser(user)
                     .AddTags(await tagRepository.GetListAsync(new[] {"hard-dance"}))
                     .SetPublic(false)
-                    .BuildAsync();
+                    .SetPublish(true, Instant.FromDateTimeUtc(DateTime.UtcNow))
+                    .BuildAsync(true);
                 
                 var audio5 = await new AudioBuilder()
                     .AddTitle("Verity")
-                    .AddUploadId("audio5")
+                    .AddFileNameSeed("audio5.mp3")
                     .AddFileName("Verity.mp3")
                     .AddFileSize(8788667)
                     .AddDuration(219)
                     .AddUser(user)
                     .AddTags(await tagRepository.GetListAsync(new[] {"vocals"}))
                     .SetPublic(false)
-                    .BuildAsync();
+                    .SetPublish(true, Instant.FromDateTimeUtc(DateTime.UtcNow))
+                    .BuildAsync(true);
 
                 await context.Audios.AddRangeAsync(audio1, audio2, audio3, audio4, audio5);
                 await context.SaveChangesAsync();

@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Builders;
-using Audiochan.Core.Common.Helpers;
-using Audiochan.Core.Features.Audios.CreateAudio;
+using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Features.Audios.SearchAudios;
 using Audiochan.UnitTests;
 using Bogus;
 using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace Audiochan.IntegrationTests.Features.Search
@@ -61,7 +61,7 @@ namespace Audiochan.IntegrationTests.Features.Search
         {
             const int resultCount = 6;
 
-            await _fixture.RunAsDefaultUserAsync();
+            var (userId, _) = await _fixture.RunAsDefaultUserAsync();
 
             for (var i = 0; i < 10; i++)
             {
@@ -72,16 +72,22 @@ namespace Audiochan.IntegrationTests.Features.Search
                 if (i > 0 && i % 3 == 0)
                     tags.Add("testtag2");
 
-                await _fixture.SendAsync(new CreateAudioRequest
+                var tagEntities = await _fixture.ExecuteScopeAsync(sp =>
                 {
-                    Title = $"Test Song #{i + 1}",
-                    UploadId = UploadHelpers.GenerateUploadId(),
-                    FileName = "test.mp3",
-                    Duration = 100,
-                    FileSize = 100,
-                    Tags = tags,
-                    IsPublic = true
+                    var tagRepository = sp.GetRequiredService<ITagRepository>();
+                    return tagRepository.GetListAsync(tags);
                 });
+
+                var audio = await new AudioBuilder()
+                    .AddFileName("test.mp3")
+                    .AddTitle($"Test Song #{i + 1}")
+                    .AddDuration(100)
+                    .AddFileSize(100)
+                    .AddTags(tagEntities)
+                    .AddUserId(userId)
+                    .BuildAsync();
+
+                await _fixture.InsertAsync(audio);
             }
 
             var result = await _fixture.SendAsync(new SearchAudiosRequest

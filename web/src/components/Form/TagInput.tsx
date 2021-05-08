@@ -9,37 +9,53 @@ import {
   Wrap,
   WrapItem,
 } from "@chakra-ui/react";
-import React, { useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
+import * as yup from "yup";
 import { taggify } from "~/utils";
 
 interface TagInputProps {
   name: string;
   value: string[];
-  onChange?: (value: string[]) => void;
-  onAdd: (value: string) => void;
-  onRemove: (index: number) => void;
-  error?: string | string[];
+  onChange: (value: string[]) => void;
+  validationSchema?: yup.SchemaOf<string>;
+  formatTagCallback?: (rawTag: string) => string;
+  placeholder?: string;
+  error?: string;
   disabled?: boolean;
-  allowDuplicate?: boolean;
-  maxLength?: number;
 }
 
 const TagInput: React.FC<TagInputProps> = ({
   name,
   value,
   onChange,
-  onAdd,
-  onRemove,
+  validationSchema,
+  formatTagCallback,
   error,
   disabled = false,
-  allowDuplicate = false,
-  maxLength = 10,
 }) => {
   const [currentInput, setCurrentInput] = useState("");
   const [inputError, setInputError] = useState(error);
   const tags = useMemo(() => {
     return value.length === 0 ? [] : value.filter((val) => val.length > 0);
   }, [value]);
+
+  const applyValidationSchema = useCallback(
+    (input: string) => {
+      return new Promise<[boolean, string]>((resolve) => {
+        validationSchema
+          ?.validate(input)
+          .then(() => resolve([true, ""]))
+          .catch((err) => {
+            let message: string = "Unknown validation error.";
+            if (err instanceof yup.ValidationError) {
+              message = Array.isArray(err.errors) ? err.errors[0] : err.errors;
+            }
+            resolve([false, message]);
+          });
+      });
+    },
+    [validationSchema]
+  );
 
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCurrentInput(e.target.value);
@@ -52,37 +68,25 @@ const TagInput: React.FC<TagInputProps> = ({
     }
   };
 
-  const validateInput = (tag: string): boolean => {
-    if (tag.length <= 0) {
-      setInputError("A tag must have an character.");
-      return false;
+  const onAddTag = async () => {
+    const taggifyTag = formatTagCallback?.(currentInput) ?? currentInput;
+    if (validationSchema) {
+      var [isValid, errorMessage] = await applyValidationSchema(taggifyTag);
+      if (!isValid) {
+        setInputError(errorMessage);
+        return;
+      }
     }
-    if (!allowDuplicate && value.includes(tag)) {
-      setInputError("Tag aleady exists in set.");
-      return false;
-    }
-    if (value.length >= maxLength) {
-      setInputError("You reached the maximum amount of tags.");
-      return false;
-    }
-    return true;
-  };
-
-  const onAddTag = () => {
-    const taggifyTag = taggify(currentInput);
-    if (!validateInput(taggifyTag)) return;
-    // const newValues = [...value, taggifyTag];
-    // onChange(newValues);
-    onAdd(taggifyTag);
+    onChange([...tags, taggifyTag]);
     setCurrentInput("");
     setInputError("");
   };
 
   const removeTag = (idx: number, e?: React.SyntheticEvent) => {
-    if (idx < 0) return "";
-    // const filtered = value.filter((_, i) => i !== idx);
-    // onChange(filtered);
-    onRemove(idx);
+    if (idx < 0 || idx >= tags.length) return;
+    const filtered = [...tags];
+    filtered.splice(idx, 1);
+    onChange(filtered);
   };
 
   return (

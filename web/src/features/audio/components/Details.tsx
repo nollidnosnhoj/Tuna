@@ -25,7 +25,6 @@ import { EditIcon } from "@chakra-ui/icons";
 import NextLink from "next/link";
 import { FaHashtag, FaPause, FaPlay } from "react-icons/fa";
 import { MdQueueMusic } from "react-icons/md";
-import AudioEdit from "./Edit";
 import Link from "~/components/Link";
 import Picture from "~/components/Picture";
 import PictureDropzone from "~/components/Picture/PictureDropzone";
@@ -36,6 +35,7 @@ import { useAudioPlayer } from "~/contexts/AudioPlayerContext";
 import { useUser } from "~/contexts/UserContext";
 import { formatDuration } from "~/utils/format";
 import { relativeDate } from "~/utils/time";
+import AudioEditDrawer from "./AudioEditDrawer";
 
 interface AudioDetailProps {
   audio: AudioDetail;
@@ -168,6 +168,11 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
                       </chakra.span>
                     </Tooltip>
                   )}
+                  <AudioEditDrawer
+                    audio={audio}
+                    isOpen={isEditOpen}
+                    onClose={onEditClose}
+                  />
                 </Box>
               </Flex>
               <Text fontSize="sm" color={secondaryColor} marginTop={4}>
@@ -198,7 +203,6 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
           )}
         </Stack>
       </Box>
-      <AudioEdit audio={audio} isOpen={isEditOpen} onClose={onEditClose} />
     </Flex>
   );
 };

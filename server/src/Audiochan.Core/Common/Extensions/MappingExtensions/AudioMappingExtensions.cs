@@ -29,7 +29,7 @@ namespace Audiochan.Core.Common.Extensions.MappingExtensions
                     ? audio.LastModified.Value.ToDateTimeUtc()
                     : null,
                 AudioUrl =
-                    $"https://{options.Audio.Bucket}.s3.amazonaws.com/{options.Audio.Container}/{audio.UploadId + audio.FileExt}",
+                    $"https://{options.Audio.Bucket}.s3.amazonaws.com/{options.Audio.Container}/{audio.FileName}",
                 Author = new MetaAuthorDto
                 {
                     Id = audio.User.Id,
@@ -50,7 +50,7 @@ namespace Audiochan.Core.Common.Extensions.MappingExtensions
                 Uploaded = audio.Created.ToDateTimeUtc(),
                 IsPublic = audio.IsPublic,
                 AudioUrl =
-                    $"https://{options.Audio.Bucket}.s3.amazonaws.com/{options.Audio.Container}/{audio.UploadId + audio.FileExt}",
+                    $"https://{options.Audio.Bucket}.s3.amazonaws.com/{options.Audio.Container}/{audio.FileName}",
                 Author = new MetaAuthorDto
                 {
                     Id = audio.User.Id,

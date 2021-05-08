@@ -53,16 +53,17 @@ namespace Audiochan.API.Controllers
                 : NotFound(ErrorViewModel.NotFound("Audio was not found."));
         }
 
-        [HttpPost(Name = "CreateAudio")]
+        [HttpPost(Name = "PublishAudio")]
         [ProducesResponseType(typeof(AudioDetailViewModel), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [SwaggerOperation(
-            Summary = "Create audio.",
+            Summary = "Publish audio.",
             Description = "Requires authentication.",
-            OperationId = "CreateAudio",
+            OperationId = "Publishaudio",
             Tags = new[] {"audios"})]
-        public async Task<IActionResult> Create([FromBody] CreateAudioRequest request,
+        public async Task<IActionResult> Publish([FromBody] PublishAudioRequest request,
             CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(request, cancellationToken);

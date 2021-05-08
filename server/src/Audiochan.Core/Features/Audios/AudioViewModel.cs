@@ -8,7 +8,7 @@ namespace Audiochan.Core.Features.Audios
         public string Id { get; init; }
         public string Title { get; init; }
         public bool IsPublic { get; init; }
-        public int Duration { get; init; }
+        public decimal Duration { get; init; }
         public string Picture { get; init; }
         public DateTime Uploaded { get; init; }
         public string AudioUrl { get; init; }

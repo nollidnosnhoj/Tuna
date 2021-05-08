@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Audiochan.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210507101237_InitialMigration")]
+    [Migration("20210508032031_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -67,7 +67,6 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                         .HasColumnName("file_ext");
 
                     b.Property<string>("FileName")
-                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("file_name");
 
@@ -79,24 +78,32 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("is_public");
 
+                    b.Property<bool>("IsPublish")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_publish");
+
                     b.Property<Instant?>("LastModified")
                         .HasColumnType("timestamp")
                         .HasColumnName("last_modified");
 
+                    b.Property<string>("OriginalFileName")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("original_file_name");
+
                     b.Property<string>("Picture")
                         .HasColumnType("text")
                         .HasColumnName("picture");
+
+                    b.Property<Instant?>("PublishDate")
+                        .HasColumnType("timestamp")
+                        .HasColumnName("publish_date");
 
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)")
                         .HasColumnName("title");
-
-                    b.Property<string>("UploadId")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("upload_id");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -111,9 +118,6 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("Title")
                         .HasDatabaseName("ix_audios_title");
-
-                    b.HasIndex("UploadId")
-                        .HasDatabaseName("ix_audios_upload_id");
 
                     b.HasIndex("UserId")
                         .HasDatabaseName("ix_audios_user_id");

@@ -40,14 +40,6 @@ const GuestSection: React.FC = () => {
   const { query, push: routerPush } = useRouter();
   const initialRef = useRef<HTMLInputElement | null>(null);
 
-  const onLoginSuccess = useCallback(() => {
-    routerPush((query.redirect as string) || "/").then(() => onClose());
-  }, [routerPush, query]);
-
-  const onRegisterSuccess = useCallback(() => {
-    routerPush("/auth/login").then(() => onClose());
-  }, [routerPush]);
-
   const onOpenModalOnTabIndex = (idx: number) => {
     setIndex(idx).then(() => onOpen());
   };
@@ -92,16 +84,10 @@ const GuestSection: React.FC = () => {
               </TabList>
               <TabPanels>
                 <TabPanel>
-                  <LoginForm
-                    initialRef={initialRef}
-                    onSuccess={onLoginSuccess}
-                  />
+                  <LoginForm initialRef={initialRef} />
                 </TabPanel>
                 <TabPanel>
-                  <RegisterForm
-                    initialRef={initialRef}
-                    onSuccess={onRegisterSuccess}
-                  />
+                  <RegisterForm initialRef={initialRef} />
                 </TabPanel>
               </TabPanels>
             </Tabs>

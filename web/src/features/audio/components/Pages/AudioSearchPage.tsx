@@ -75,15 +75,7 @@ export default function AudioSearchPage(props: AudioSearchValues) {
           <TagInput
             name="tags"
             value={formValues.tags ?? []}
-            onAdd={(tag) => {
-              setFieldValue("tags", [...(formValues.tags ?? []), tag]);
-            }}
-            onRemove={(index) => {
-              setFieldValue(
-                "tags",
-                formValues.tags?.filter((_, i) => i !== index)
-              );
-            }}
+            onChange={(tags) => setFieldValue("tags", tags)}
             error={formErrors.tags}
           />
           <Flex>

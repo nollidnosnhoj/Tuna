@@ -87,7 +87,7 @@ export function HomepageCTA() {
                     Random
                   </Button>
                 </NextLink>
-                <NextLink href={isLoggedIn ? "/upload" : "/auth/login"}>
+                <NextLink href="/upload">
                   <Button
                     leftIcon={<FaCloudUploadAlt />}
                     colorScheme="primary"

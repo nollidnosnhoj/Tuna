@@ -16,7 +16,6 @@ namespace Audiochan.UnitTests
                 .AddTitle(Path.GetFileNameWithoutExtension(fileName))
                 .AddFileName(fileName)
                 .AddFileExtension(Path.GetExtension(fileName))
-                .AddUploadId(UploadHelpers.GenerateUploadId())
                 .AddDuration(random.Number(30, 300))
                 .AddFileSize(random.Number(5000, 25000))
                 .AddUserId(userId);

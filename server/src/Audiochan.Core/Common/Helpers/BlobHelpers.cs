@@ -7,7 +7,7 @@ namespace Audiochan.Core.Common.Helpers
     {
         public static string GetAudioBlobName(Audio audio)
         {
-            return audio.UploadId + audio.FileExt;
+            return audio.Id + audio.FileExt;
         }
 
         public static string GetPictureBlobName(DateTime dateTime)

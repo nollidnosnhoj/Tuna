@@ -17,6 +17,7 @@ namespace Audiochan.Core.Features.Audios.GetAudioList
 {
     public record GetAudioListRequest : IHasCursor, IRequest<CursorList<AudioViewModel>>
     {
+        public string Tag { get; init; }
         public string Cursor { get; init; }
         public int Size { get; init; } = 30;
     }
@@ -24,26 +25,28 @@ namespace Audiochan.Core.Features.Audios.GetAudioList
     public class GetAudioListRequestHandler : IRequestHandler<GetAudioListRequest, CursorList<AudioViewModel>>
     {
         private readonly IApplicationDbContext _dbContext;
-        private readonly ICurrentUserService _currentUserService;
         private readonly MediaStorageSettings _storageSettings;
 
-        public GetAudioListRequestHandler(IApplicationDbContext dbContext, ICurrentUserService currentUserService,
-            IOptions<MediaStorageSettings> options)
+        public GetAudioListRequestHandler(IApplicationDbContext dbContext, IOptions<MediaStorageSettings> options)
         {
             _dbContext = dbContext;
-            _currentUserService = currentUserService;
             _storageSettings = options.Value;
         }
 
         public async Task<CursorList<AudioViewModel>> Handle(GetAudioListRequest request,
             CancellationToken cancellationToken)
         {
-            var currentUserId = _currentUserService.GetUserId();
             var (dateTime, id) = CursorHelpers.DecodeCursor(request.Cursor);
 
             var queryable = _dbContext.Audios
                 .DefaultQueryable()
                 .ExcludePrivateAudios();
+
+            if (!string.IsNullOrWhiteSpace(request.Tag))
+            {
+                queryable = queryable
+                    .Where(a => a.Tags.Any(t => t.Name == request.Tag));
+            }
 
             if (dateTime.HasValue && !string.IsNullOrWhiteSpace(id))
             {

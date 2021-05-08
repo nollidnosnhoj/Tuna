@@ -36,7 +36,7 @@ const schema: yup.SchemaOf<RegisterFormInputs> = yup
 
 interface RegisterFormProps {
   initialRef?: React.RefObject<HTMLInputElement>;
-  onSuccess: () => void;
+  onSuccess?: () => void;
 }
 
 export default function RegisterForm(props: RegisterFormProps) {

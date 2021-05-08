@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Builders;
@@ -17,54 +18,59 @@ using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Audios.CreateAudio
 {
-    public class CreateAudioRequest : AudioAbstractRequest, IRequest<Result<AudioDetailViewModel>>
+    public class PublishAudioRequest : AudioAbstractRequest, IRequest<Result<AudioDetailViewModel>>
     {
-        public string UploadId { get; init; }
-        public string FileName { get; init; }
-        public long FileSize { get; init; }
-        public int Duration { get; init; }
+        public string AudioId { get; init; }
     }
 
-    public class CreateAudioRequestHandler : IRequestHandler<CreateAudioRequest, Result<AudioDetailViewModel>>
+    public class PublishAudioRequestHandler : IRequestHandler<PublishAudioRequest, Result<AudioDetailViewModel>>
     {
         private readonly IApplicationDbContext _dbContext;
         private readonly IStorageService _storageService;
         private readonly ICurrentUserService _currentUserService;
         private readonly ITagRepository _tagRepository;
         private readonly MediaStorageSettings _storageSettings;
+        private readonly IDateTimeProvider _dateTimeProvider;
 
-        public CreateAudioRequestHandler(IOptions<MediaStorageSettings> options,
+        public PublishAudioRequestHandler(IOptions<MediaStorageSettings> options,
             IApplicationDbContext dbContext,
             IStorageService storageService,
             ICurrentUserService currentUserService,
-            ITagRepository tagRepository)
+            ITagRepository tagRepository, 
+            IDateTimeProvider dateTimeProvider)
         {
             _storageSettings = options.Value;
             _dbContext = dbContext;
             _storageService = storageService;
             _currentUserService = currentUserService;
             _tagRepository = tagRepository;
+            _dateTimeProvider = dateTimeProvider;
         }
 
-        public async Task<Result<AudioDetailViewModel>> Handle(CreateAudioRequest request,
+        public async Task<Result<AudioDetailViewModel>> Handle(PublishAudioRequest request,
             CancellationToken cancellationToken)
         {
-            var currentUser = await _dbContext.Users
-                .SingleOrDefaultAsync(u => u.Id == _currentUserService.GetUserId(), cancellationToken);
+            var audio = await _dbContext.Audios
+                .Include(u => u.User)
+                .SingleOrDefaultAsync(a => a.Id == request.AudioId, cancellationToken);
 
-            if (currentUser is null)
-                return Result<AudioDetailViewModel>.Fail(ResultError.Unauthorized);
+            if (audio == null || audio.IsPublish)
+                return Result<AudioDetailViewModel>.Fail(ResultError.NotFound);
 
-            var audio = await new AudioBuilder()
-                .GenerateFromCreateRequest(request, currentUser.Id)
-                .AddTags(request.Tags.Count > 0
-                    ? await _tagRepository.GetListAsync(request.Tags, cancellationToken)
-                    : new List<Tag>())
-                .BuildAsync();
+            var currentUserId = _currentUserService.GetUserId();
+
+            if (audio.UserId != currentUserId)
+                return Result<AudioDetailViewModel>.Fail(ResultError.Forbidden);
 
             try
             {
-                await _dbContext.Audios.AddAsync(audio, cancellationToken);
+                audio.UpdateTitle(request.Title);
+                audio.UpdateDescription(request.Description);
+                audio.UpdatePublicity(request.IsPublic ?? false);
+                if (request.Tags.Count > 0)
+                    audio.UpdateTags(await _tagRepository.GetListAsync(request.Tags, cancellationToken));
+                audio.PublishAudio(_dateTimeProvider.Now);
+                _dbContext.Audios.Update(audio);
                 await _dbContext.SaveChangesAsync(cancellationToken);
                 var viewModel = audio.MapToDetail(_storageSettings);
                 return Result<AudioDetailViewModel>.Success(viewModel);

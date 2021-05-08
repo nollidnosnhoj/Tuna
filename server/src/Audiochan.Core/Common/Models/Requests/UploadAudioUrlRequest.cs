@@ -4,5 +4,6 @@
     {
         public string FileName { get; init; }
         public long FileSize { get; init; }
+        public int Duration { get; init; }
     }
 }

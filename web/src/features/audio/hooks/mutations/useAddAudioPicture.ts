@@ -3,7 +3,7 @@ import { useAuth } from '~/contexts/AuthContext';
 import api from '~/utils/api'
 
 
-export function useAddAudioPicture(id: number) {
+export function useAddAudioPicture(id: string) {
   const queryClient = useQueryClient();
   const { accessToken } = useAuth();
   const uploadArtwork = async (data: string) => {

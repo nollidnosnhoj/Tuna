@@ -4,7 +4,7 @@ import api from '~/utils/api';
 import { AudioDetail, CreateAudioRequest } from '../../types';
 
 
-export function useCreateAudio() {
+export function usePublishAudio() {
   const { accessToken } = useAuth();
   const uploadAudio = async (request: CreateAudioRequest) => {
     const { data } = await api.post<AudioDetail>('audios', request, { accessToken });

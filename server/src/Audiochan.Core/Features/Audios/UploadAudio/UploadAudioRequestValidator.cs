@@ -1,20 +1,15 @@
 ﻿using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Settings;
-using Audiochan.Core.Common.Validators;
 using FluentValidation;
 using Microsoft.Extensions.Options;
 
-namespace Audiochan.Core.Features.Audios.CreateAudio
+namespace Audiochan.Core.Features.Audios.UploadAudio
 {
-    public class CreateAudioRequestValidator : AbstractValidator<CreateAudioRequest>
+    public class UploadAudioRequestValidator : AbstractValidator<UploadAudioRequest>
     {
-        public CreateAudioRequestValidator(IOptions<MediaStorageSettings> options)
+        public UploadAudioRequestValidator(IOptions<MediaStorageSettings> options)
         {
             var uploadOptions = options.Value.Audio;
-
-            RuleFor(req => req.UploadId)
-                .NotEmpty()
-                .WithMessage("UploadId is required.");
             RuleFor(req => req.Duration)
                 .NotEmpty()
                 .WithMessage("Duration is required.");
@@ -22,8 +17,6 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
                 .FileSizeValidation(uploadOptions.MaximumFileSize);
             RuleFor(req => req.FileName)
                 .FileNameValidation(uploadOptions.ValidContentTypes);
-
-            Include(new AudioAbstractRequestValidator());
         }
     }
 }

@@ -3,24 +3,31 @@ import { ErrorResponse } from '~/lib/types';
 import api from '~/utils/api'
 import { isAxiosError } from '~/utils/axios';
 
+type UploadResponse = {
+  audioId: string;
+  uploadUrl: string;
+}
+
 export const getS3PresignedUrl = (file: File) => {
-  return new Promise<{ uploadId: string; url: string; }>((resolve, reject) => {
-    api
-      .post<{ uploadId: string; url: string; }>("upload", {
+  return new Promise<UploadResponse>(async (resolve, reject) => {
+    try {
+      const duration = await getDurationFromAudio(file);
+
+      const { data } = await api.post<UploadResponse>("upload", {
         fileName: file.name,
         fileSize: file.size,
-      })
-      .then(({ data }) => {
-        resolve(data);
-      })
-      .catch((err) => {
-        const errorMessage = "Unable to upload audio.";
-        if (isAxiosError<ErrorResponse>(err)) {
-          reject(err.response?.data.message ?? errorMessage);
-        } else {
-          reject(errorMessage);
-        }
+        duration: duration,
       });
+
+      resolve(data);
+    } catch (err) {
+      const errorMessage = "Unable to upload audio.";
+      if (isAxiosError<ErrorResponse>(err)) {
+        reject(err.response?.data.message ?? errorMessage);
+      } else {
+        reject(errorMessage);
+      }
+    }
   });
 }
 

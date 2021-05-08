@@ -7,6 +7,6 @@ namespace Audiochan.Infrastructure.Shared
 {
     public class NodaTimeProvider : IDateTimeProvider
     {
-        public Instant Now => Instant.FromDateTimeUtc(DateTime.Now.ToUniversalTime());
+        public Instant Now => Instant.FromDateTimeUtc(DateTime.UtcNow);
     }
 }

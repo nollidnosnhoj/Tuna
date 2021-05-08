@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Audiochan.Core.Entities.Base;
+using NodaTime;
 
 namespace Audiochan.Core.Entities
 {
@@ -8,18 +9,22 @@ namespace Audiochan.Core.Entities
     {
         public Audio()
         {
+            this.IsPublic = false;
+            this.IsPublish = false;
             this.Tags = new HashSet<Tag>();
         }
 
         public string Title { get; set; }
         public string Description { get; set; } = string.Empty;
-        public int Duration { get; set; }
-        public string UploadId { get; set; }
+        public decimal Duration { get; set; }
         public string FileName { get; set; }
+        public string OriginalFileName { get; set; }
         public long FileSize { get; set; }
         public string FileExt { get; set; }
         public string Picture { get; set; }
         public bool IsPublic { get; set; }
+        public bool IsPublish { get; set; }
+        public Instant? PublishDate { get; set; }
         public string UserId { get; set; }
         public User User { get; set; }
         public ICollection<Tag> Tags { get; set; }
@@ -39,6 +44,24 @@ namespace Audiochan.Core.Entities
         public void UpdatePublicity(bool isPublic)
         {
             this.IsPublic = isPublic;
+        }
+
+        public void PublishAudio(Instant publishTime)
+        {
+            if (!this.IsPublish)
+            {
+                this.IsPublish = true;
+                this.PublishDate = publishTime;
+            }
+        }
+
+        public void UnPublishAudio()
+        {
+            if (this.IsPublish)
+            {
+                this.IsPublish = false;
+                this.PublishDate = null;
+            }
         }
 
         public void UpdateTags(List<Tag> tags)

@@ -8,6 +8,7 @@ using Audiochan.Core.Features.Audios.CreateAudio;
 using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.UnitTests;
 using FluentAssertions;
+using NodaTime;
 using Xunit;
 
 namespace Audiochan.IntegrationTests.Features.Audios
@@ -65,27 +66,27 @@ namespace Audiochan.IntegrationTests.Features.Audios
         public async Task ShouldGetAudio()
         {
             // Assign
-            await _fixture.RunAsDefaultUserAsync();
+            var (userId, _) = await _fixture.RunAsDefaultUserAsync();
 
-            var audio = await _fixture.SendAsync(new CreateAudioRequest
-            {
-                Title = "Test Song",
-                UploadId = UploadHelpers.GenerateUploadId(),
-                FileName = "test.mp3",
-                Duration = 100,
-                FileSize = 100,
-                Tags = new List<string> {"apples", "oranges"},
-                IsPublic = true
-            });
+            var audio = await new AudioBuilder()
+                .AddFileName("test.mp3")
+                .AddTitle("Test Song")
+                .AddFileSize(100)
+                .AddDuration(100)
+                .AddUserId(userId)
+                .SetPublic(true)
+                .SetPublish(true, Instant.FromDateTimeUtc(DateTime.UtcNow))
+                .BuildAsync();
+            
+            await _fixture.InsertAsync(audio);
 
             // Act
-            var result = await _fixture.SendAsync(new GetAudioRequest(audio.Data.Id));
+            var result = await _fixture.SendAsync(new GetAudioRequest(audio.Id));
 
             // Assert
             result.Should().NotBeNull();
             result.Should().BeOfType<AudioDetailViewModel>();
-            result.Title.Should().Be(audio.Data.Title);
-            result.Description.Should().Be(audio.Data.Description);
+            result.Title.Should().Be(audio.Title);
             result.Tags.Length.Should().Be(2);
             result.Tags.Should().Contain("apples");
             result.Tags.Should().Contain("oranges");

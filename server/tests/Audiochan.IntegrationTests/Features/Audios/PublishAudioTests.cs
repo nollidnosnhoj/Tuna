@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Helpers;
+using Audiochan.Core.Common.Builders;
 using Audiochan.Core.Features.Audios.CreateAudio;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
@@ -10,30 +10,32 @@ using Xunit;
 namespace Audiochan.IntegrationTests.Features.Audios
 {
     [Collection(nameof(SliceFixture))]
-    public class CreateAudioTests
+    public class PublishAudioTests
     {
         private readonly SliceFixture _fixture;
 
-        public CreateAudioTests(SliceFixture fixture)
+        public PublishAudioTests(SliceFixture fixture)
         {
             _fixture = fixture;
         }
 
         [Fact]
-        public async Task Should_Create_New_Audio()
+        public async Task Should_Publish_Audio()
         {
             // ASSIGN
             var (userId, _) = await _fixture.RunAsDefaultUserAsync();
-
-            var uploadId = UploadHelpers.GenerateUploadId();
-
+            var audio = await new AudioBuilder()
+                .AddFileName("testaudio.mp3")
+                .AddFileSize(10000)
+                .AddDuration(100)
+                .AddUserId(userId)
+                .BuildAsync();
+            await _fixture.InsertAsync(audio);
+            
             // ACT
-            var result = await _fixture.SendAsync(new CreateAudioRequest
+            var result = await _fixture.SendAsync(new PublishAudioRequest
             {
-                UploadId = uploadId,
-                FileName = "testaudio.mp3",
-                Duration = 100,
-                FileSize = 10000,
+                AudioId = audio.Id,
                 Title = "Test Audio",
                 Description = "This is a test audio",
                 Tags = new List<string> {"apples", "oranges", "banana"},
@@ -62,7 +64,6 @@ namespace Audiochan.IntegrationTests.Features.Audios
             result.Data.Author.Id.Should().Be(userId);
 
             created.Should().NotBeNull();
-            created.UploadId.Should().Be(uploadId);
             created.Title.Should().Be("Test Audio");
             created.Description.Should().Be("This is a test audio");
             created.FileExt.Should().Be(".mp3");
@@ -73,6 +74,8 @@ namespace Audiochan.IntegrationTests.Features.Audios
             created.Tags.Should().Contain(x => x.Name == "oranges");
             created.Tags.Should().Contain(x => x.Name == "banana");
             created.IsPublic.Should().BeFalse();
+            created.IsPublish.Should().BeTrue();
+            created.PublishDate.Should().NotBeNull();
             created.UserId.Should().Be(userId);
         }
     }

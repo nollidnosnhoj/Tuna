@@ -1,24 +1,33 @@
 import {
   Box,
   Button,
+  chakra,
   Flex,
   Heading,
-  Text,
   VStack,
-  chakra,
+  Text,
+  Progress,
 } from "@chakra-ui/react";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useDropzone } from "react-dropzone";
+import { useUser } from "~/contexts/UserContext";
 import SETTINGS from "~/lib/config";
 import { formatFileSize } from "~/utils/format";
 import { errorToast } from "~/utils/toast";
+import { getS3PresignedUrl, uploadAudioToS3 } from "../services";
 
-interface AudioUploadDropzoneProps {
-  onUpload: (file: File) => void;
+interface AudioDropzoneProps {
+  onUploading: (id: string) => void;
+  onUploaded: () => void;
 }
 
-export default function AudioUploadDropzone(props: AudioUploadDropzoneProps) {
-  const { onUpload } = props;
+export default function AudioDropzone(props: AudioDropzoneProps) {
+  const { onUploaded, onUploading } = props;
+  const { user } = useUser();
+  const [file, setFile] = useState<File | null>(null);
+  const [progress, setProgress] = useState(0);
+  const [uploaded, setUploaded] = useState(false);
+
   const {
     getRootProps,
     getInputProps,
@@ -26,12 +35,13 @@ export default function AudioUploadDropzone(props: AudioUploadDropzoneProps) {
     isDragReject,
     isDragAccept,
   } = useDropzone({
-    multiple: false,
-    maxSize: SETTINGS.UPLOAD.AUDIO.maxSize,
     accept: SETTINGS.UPLOAD.AUDIO.accept,
+    maxSize: SETTINGS.UPLOAD.AUDIO.maxSize,
+    maxFiles: 1,
+    multiple: false,
     noClick: true,
     onDropAccepted: ([acceptedFile]) => {
-      onUpload(acceptedFile);
+      setFile(acceptedFile);
     },
     onDropRejected: (fileRejections) => {
       fileRejections.forEach((fileRejection) => {
@@ -51,6 +61,40 @@ export default function AudioUploadDropzone(props: AudioUploadDropzoneProps) {
     return "gray.700";
   }, [isDragReject, isDragAccept]);
 
+  useEffect(() => {
+    const uploading = async () => {
+      try {
+        const { audioId, uploadUrl } = await getS3PresignedUrl(file!);
+        onUploading(audioId);
+        await uploadAudioToS3(uploadUrl, user!.id, file!, (value) =>
+          setProgress(value)
+        );
+        setUploaded(true);
+        onUploaded();
+      } catch (err) {
+        errorToast({
+          message: "Unable to complete upload. Please try again later.",
+        });
+      }
+    };
+    if (!!file && !!user) {
+      uploading();
+    }
+  }, [file, user]);
+
+  if (file) {
+    return (
+      <Box display="flex" justifyContent="center">
+        <VStack marginY={10}>
+          <Progress hasStripe value={50} />
+          <Heading as="h2" size="md">
+            {uploaded ? "Done" : "Uploading..."}
+          </Heading>
+        </VStack>
+      </Box>
+    );
+  }
+
   return (
     <Flex
       borderRadius={4}
@@ -58,7 +102,7 @@ export default function AudioUploadDropzone(props: AudioUploadDropzoneProps) {
       borderColor={borderColor}
       {...getRootProps()}
     >
-      <Box width="100%" marginY={20}>
+      <Box width="100%" marginY={10}>
         <input {...getInputProps()} />
         <VStack marginY={20}>
           <Heading size="md">Drag and drop your audio file here.</Heading>

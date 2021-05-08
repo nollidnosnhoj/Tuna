@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Extensions;
-using Audiochan.Core.Common.Helpers;
+using Audiochan.Core.Common.Exceptions;
 using Audiochan.Core.Entities;
-using Audiochan.Core.Features.Audios.CreateAudio;
+using NodaTime;
 
 namespace Audiochan.Core.Common.Builders
 {
@@ -16,37 +14,6 @@ namespace Audiochan.Core.Common.Builders
         public AudioBuilder()
         {
             _audio = new Audio();
-        }
-
-        public AudioBuilder GenerateFromCreateRequest(CreateAudioRequest request, string userId)
-        {
-            if (string.IsNullOrWhiteSpace(request.Title))
-                throw new ArgumentNullException(nameof(request.Title));
-            
-            if (string.IsNullOrWhiteSpace(request.UploadId))
-                throw new ArgumentNullException(nameof(request.UploadId));
-            
-            if (string.IsNullOrWhiteSpace(request.FileName))
-                throw new ArgumentNullException(nameof(request.FileName));
-
-            var fileExtension = Path.GetExtension(request.FileName);
-            
-            if (string.IsNullOrEmpty(fileExtension))
-                throw new ArgumentException("File name does not have file extension", nameof(request.FileName));
-            
-            _audio.UploadId = request.UploadId;
-            _audio.FileName = Path.GetFileNameWithoutExtension(request.FileName);
-            _audio.FileExt = fileExtension;
-            _audio.FileSize = request.FileSize;
-            _audio.Duration = request.Duration;
-            _audio.UserId = userId;
-            _audio.Title = _audio.FileName.Truncate(30);
-            
-            _audio.UpdateTitle(request.Title);
-            _audio.UpdateDescription(request.Description);
-            _audio.UpdatePublicity(request.IsPublic ?? false);
-            
-            return this;
         }
 
         public AudioBuilder AddTitle(string title)
@@ -61,22 +28,25 @@ namespace Audiochan.Core.Common.Builders
             return this;
         }
 
-        public AudioBuilder AddDuration(int duration)
+        public AudioBuilder AddDuration(decimal duration)
         {
             _audio.Duration = duration;
             return this;
         }
 
-        public AudioBuilder AddUploadId(string uploadId)
+        public AudioBuilder AddFileNameSeed(string fileName)
         {
-            _audio.UploadId = uploadId;
+            _audio.FileName = fileName;
+            _audio.FileExt = Path.GetExtension(fileName);
             return this;
         }
 
         public AudioBuilder AddFileName(string fileName)
         {
-            _audio.FileName = fileName;
+            _audio.OriginalFileName = fileName;
             _audio.FileExt = Path.GetExtension(fileName);
+            if (string.IsNullOrEmpty(_audio.Title))
+                _audio.Title = Path.GetFileNameWithoutExtension(fileName);
             return this;
         }
 
@@ -117,9 +87,47 @@ namespace Audiochan.Core.Common.Builders
             return this;
         }
 
-        public async Task<Audio> BuildAsync()
+        public AudioBuilder SetPublish(bool isPublish, Instant? publishDate = null)
         {
+            if (isPublish && publishDate.HasValue)
+            {
+                _audio.PublishAudio(publishDate.Value);
+            }
+            else
+            {
+                _audio.UnPublishAudio();
+            }
+
+            return this;
+        }
+
+        public async Task<Audio> BuildAsync(bool skipFileNaming = false)
+        {
+            if (string.IsNullOrWhiteSpace(_audio.Title))
+                throw new BuilderException("Cannot build Audio. Requires title.");
+
+            if (string.IsNullOrWhiteSpace(_audio.FileExt))
+                throw new BuilderException("Cannot build Audio. Requires file extension.");
+
+            if (string.IsNullOrWhiteSpace(_audio.OriginalFileName))
+                throw new BuilderException("Cannot build Audio. Requires original file name.");
+
+            if (_audio.FileSize <= 0)
+                throw new BuilderException("Cannot build Audio. Requires a positive file size.");
+
+            if (_audio.Duration <= 0)
+                throw new BuilderException("Cannot build Audio. Requires a positive duration.");
+
+            if (string.IsNullOrWhiteSpace(_audio.UserId))
+                throw new BuilderException("Cannot build Audio. Requires a user id.");
+            
             _audio.Id = await Nanoid.Nanoid.GenerateAsync();
+            
+            if (!skipFileNaming)
+            {
+                _audio.FileName = _audio.Id + _audio.FileExt;
+            }
+            
             return _audio;
         }
     }
