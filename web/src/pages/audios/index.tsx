@@ -9,7 +9,6 @@ import { CursorPagedList } from "~/lib/types";
 
 export const getServerSideProps: GetServerSideProps<AudioListPageProps> = async ({
   query,
-  params,
   req,
 }) => {
   const accessToken = getAccessToken({ req });
@@ -19,7 +18,6 @@ export const getServerSideProps: GetServerSideProps<AudioListPageProps> = async 
 
   return {
     props: {
-      filter: query,
       initialPage: resultPage,
     },
   };
