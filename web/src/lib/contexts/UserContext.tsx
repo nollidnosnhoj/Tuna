@@ -1,4 +1,4 @@
-import { createContext, useContext } from "react";
+import { createContext } from "react";
 import { CurrentUser } from "../../features/user/types";
 
 export type UserContextType = {
@@ -9,7 +9,3 @@ export type UserContextType = {
 export const UserContext = createContext<UserContextType>(
   {} as UserContextType
 );
-
-export const useUser = () => {
-  return useContext(UserContext);
-};

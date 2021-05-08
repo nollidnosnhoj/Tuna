@@ -1,5 +1,5 @@
 import { useQueryClient, useMutation } from "react-query";
-import { useAuth } from "~/lib/contexts/AuthContext";
+import { useAuth } from "~/lib/hooks/useAuth";
 import api from "~/lib/api";
 
 

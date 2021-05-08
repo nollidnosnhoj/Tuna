@@ -13,8 +13,8 @@ import router from "next/router";
 import React from "react";
 import { FaUserAlt } from "react-icons/fa";
 import NextLink from "next/link";
-import { useUser } from "~/lib/contexts/UserContext";
-import { useAuth } from "~/lib/contexts/AuthContext";
+import { useUser } from "~/lib/hooks/useUser";
+import { useAuth } from "~/lib/hooks/useAuth";
 import { usePage } from "~/components/Page";
 
 const UserSection: React.FC = () => {

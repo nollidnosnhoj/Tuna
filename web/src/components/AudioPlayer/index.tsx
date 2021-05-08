@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import DesktopAudioPlayer from "./DesktopPlayer";
-import { useAudioPlayer } from "~/lib/contexts/AudioPlayerContext";
+import { useAudioPlayer } from "~/lib/hooks/useAudioPlayer";
 import { REPEAT_MODE } from "~/lib/contexts/types";
 
 interface AudioPlayerProps {

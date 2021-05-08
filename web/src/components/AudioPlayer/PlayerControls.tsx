@@ -6,7 +6,7 @@ import {
   MdSkipNext,
   MdSkipPrevious,
 } from "react-icons/md";
-import { useAudioPlayer } from "~/lib/contexts/AudioPlayerContext";
+import { useAudioPlayer } from "~/lib/hooks/useAudioPlayer";
 
 interface PlayerControlsProps {
   size?: "desktop";

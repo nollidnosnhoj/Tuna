@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { useAuth } from "~/lib/contexts/AuthContext";
-import {useUser} from '~/lib/contexts/UserContext';
+import { useAuth } from "~/lib/hooks/useAuth";
+import { useUser } from "~/lib/hooks/useUser";
 import api from "~/lib/api";
 import { apiErrorToast } from "~/utils/toast";
 

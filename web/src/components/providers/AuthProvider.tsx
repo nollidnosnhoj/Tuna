@@ -9,7 +9,7 @@ import {
 } from "~/features/auth/services";
 import { CurrentUser } from "~/features/user/types";
 import API from "~/lib/api";
-import { useUser } from "~/lib/contexts/UserContext";
+import { useUser } from "~/lib/hooks/useUser";
 import {
   ACCESS_TOKEN_EXPIRATION_KEY,
   AuthContextProviderProps,

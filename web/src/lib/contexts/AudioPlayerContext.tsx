@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React from "react";
 import { AudioPlayerAction } from "./actions/audioPlayerActions";
 import { REPEAT_MODE } from "./types";
 import { AudioPlayerItem } from "~/lib/contexts/types";
@@ -22,9 +22,3 @@ type AudioPlayerContextType = {
 export const AudioPlayerContext = React.createContext<AudioPlayerContextType>(
   {} as AudioPlayerContextType
 );
-
-export const useAudioPlayer = () => {
-  const context = useContext(AudioPlayerContext);
-  if (!context) throw new Error("Cannot find AudioPlayerContext.");
-  return context;
-};

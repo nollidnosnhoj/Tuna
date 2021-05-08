@@ -3,7 +3,7 @@ import useInfinitePagination from "~/lib/hooks/useInfinitePagination";
 import { PagedList } from "~/lib/types";
 import { Audio } from '~/features/audio/types';
 import { fetchPages } from '~/lib/api';
-import { useAuth } from '~/lib/contexts/AuthContext';
+import { useAuth } from "~/lib/hooks/useAuth";
 
 interface UseGetAudioInfiniteOptions extends UseInfiniteQueryOptions<PagedList<Audio>> {
   params?: Record<string, any>

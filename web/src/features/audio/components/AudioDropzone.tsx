@@ -10,7 +10,7 @@ import {
 } from "@chakra-ui/react";
 import React, { useEffect, useMemo, useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { useUser } from "~/lib/contexts/UserContext";
+import { useUser } from "~/lib/hooks/useUser";
 import SETTINGS from "~/lib/config";
 import { formatFileSize } from "~/utils/format";
 import { errorToast } from "~/utils/toast";

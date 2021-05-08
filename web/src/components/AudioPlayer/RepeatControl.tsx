@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { chakra, Icon } from "@chakra-ui/react";
-import { useAudioPlayer } from "~/lib/contexts/AudioPlayerContext";
+import { useAudioPlayer } from "~/lib/hooks/useAudioPlayer";
 import { REPEAT_MODE } from "~/lib/contexts/types";
 import { MdRepeat, MdRepeatOne } from "react-icons/md";
 

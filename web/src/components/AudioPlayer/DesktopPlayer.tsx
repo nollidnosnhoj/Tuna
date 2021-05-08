@@ -16,7 +16,7 @@ import PlayerControls from "./PlayerControls";
 import ProgressBar from "./ProgressBar";
 import RepeatControl from "./RepeatControl";
 import VolumeControl from "./VolumeControl";
-import { useAudioPlayer } from "~/lib/contexts/AudioPlayerContext";
+import { useAudioPlayer } from "~/lib/hooks/useAudioPlayer";
 import { AudioPlayerItem, REPEAT_MODE } from "~/lib/contexts/types";
 
 interface DesktopAudioPlayerProps {
