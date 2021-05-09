@@ -8,13 +8,14 @@ import {
   Text,
   Progress,
 } from "@chakra-ui/react";
+import axios from "axios";
 import React, { useEffect, useMemo, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { useUser } from "~/lib/hooks/useUser";
 import SETTINGS from "~/lib/config";
 import { formatFileSize } from "~/utils/format";
 import { errorToast } from "~/utils/toast";
-import { getS3PresignedUrl, uploadAudioToS3 } from "../services";
+import { getS3PresignedUrl } from "../services";
 
 interface AudioDropzoneProps {
   onUploading: (id: string) => void;
@@ -67,9 +68,17 @@ export default function AudioDropzone(props: AudioDropzoneProps) {
         try {
           const { audioId, uploadUrl } = await getS3PresignedUrl(file);
           onUploading(audioId);
-          await uploadAudioToS3(uploadUrl, user.id, file, (value) =>
-            setProgress(value)
-          );
+          await axios.put(uploadUrl, file, {
+            headers: {
+              "Content-Type": file.type,
+              "x-amz-meta-userId": `${user.id}`,
+              "x-amz-meta-originalFilename": `${file.name}`,
+            },
+            onUploadProgress: (evt) => {
+              const currentProgress = (evt.loaded / evt.total) * 100;
+              setProgress(currentProgress);
+            },
+          });
           setUploaded(true);
           onUploaded();
         } catch (err) {
