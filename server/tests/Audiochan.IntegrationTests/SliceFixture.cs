@@ -338,7 +338,7 @@ namespace Audiochan.IntegrationTests
 
             var context = scope.ServiceProvider.GetService<ApplicationDbContext>();
 
-            context.Database.Migrate();
+            context?.Database.Migrate();
         }
     }
 }

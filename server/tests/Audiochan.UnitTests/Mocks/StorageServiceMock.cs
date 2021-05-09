@@ -46,6 +46,15 @@ namespace Audiochan.UnitTests.Mocks
                     Url = "blob.mp3",
                     ContentType = "audio/mpeg"
                 });
+            mock
+                .Setup(x =>
+                    x.CopyBlobAsync(It.IsAny<string>(),
+                        It.IsAny<string>(),
+                        It.IsAny<string>(),
+                        It.IsAny<string>(),
+                        It.IsAny<string>(),
+                        It.IsAny<CancellationToken>()))
+                .Returns(Task.CompletedTask);
 
             return mock;
         }

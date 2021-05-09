@@ -4,7 +4,7 @@ using Audiochan.API.Extensions;
 using Audiochan.API.Models;
 using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Features.Audios;
-using Audiochan.Core.Features.Audios.CreateAudio;
+using Audiochan.Core.Features.Audios.PublishAudio;
 using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Features.Audios.GetAudioList;
 using Audiochan.Core.Features.Audios.RemoveAudio;
@@ -54,15 +54,11 @@ namespace Audiochan.API.Controllers
         }
 
         [HttpPost(Name = "PublishAudio")]
+        [ApiExplorerSettings(IgnoreApi = true)]
         [ProducesResponseType(typeof(AudioDetailViewModel), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        [SwaggerOperation(
-            Summary = "Publish audio.",
-            Description = "Requires authentication.",
-            OperationId = "Publishaudio",
-            Tags = new[] {"audios"})]
         public async Task<IActionResult> Publish([FromBody] PublishAudioRequest request,
             CancellationToken cancellationToken)
         {

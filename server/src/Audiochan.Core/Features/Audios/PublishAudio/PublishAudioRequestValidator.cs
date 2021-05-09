@@ -1,7 +1,7 @@
 ﻿using Audiochan.Core.Common.Validators;
 using FluentValidation;
 
-namespace Audiochan.Core.Features.Audios.CreateAudio
+namespace Audiochan.Core.Features.Audios.PublishAudio
 {
     public class PublishAudioRequestValidator : AbstractValidator<PublishAudioRequest>
     {

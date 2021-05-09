@@ -1,22 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text.Json.Serialization;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Builders;
 using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Common.Extensions.MappingExtensions;
-using Audiochan.Core.Common.Helpers;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models.Requests;
 using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Common.Settings;
-using Audiochan.Core.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
-namespace Audiochan.Core.Features.Audios.CreateAudio
+namespace Audiochan.Core.Features.Audios.PublishAudio
 {
     public class PublishAudioRequest : AudioAbstractRequest, IRequest<Result<AudioDetailViewModel>>
     {
@@ -61,26 +55,30 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
 
             if (audio.UserId != currentUserId)
                 return Result<AudioDetailViewModel>.Fail(ResultError.Forbidden);
+            
+            audio.UpdateTitle(request.Title);
+            audio.UpdateDescription(request.Description);
+            audio.UpdatePublicity(request.IsPublic ?? false);
+            
+            if (request.Tags.Count > 0)
+                audio.UpdateTags(await _tagRepository.GetListAsync(request.Tags, cancellationToken));
+            
+            audio.PublishAudio(_dateTimeProvider.Now);
+            
+            _dbContext.Audios.Update(audio);
+            await _dbContext.SaveChangesAsync(cancellationToken);
 
-            try
-            {
-                audio.UpdateTitle(request.Title);
-                audio.UpdateDescription(request.Description);
-                audio.UpdatePublicity(request.IsPublic ?? false);
-                if (request.Tags.Count > 0)
-                    audio.UpdateTags(await _tagRepository.GetListAsync(request.Tags, cancellationToken));
-                audio.PublishAudio(_dateTimeProvider.Now);
-                _dbContext.Audios.Update(audio);
-                await _dbContext.SaveChangesAsync(cancellationToken);
-                var viewModel = audio.MapToDetail(_storageSettings);
-                return Result<AudioDetailViewModel>.Success(viewModel);
-            }
-            catch (Exception)
-            {
-                await _storageService.RemoveAsync(_storageSettings.Audio.Container, BlobHelpers.GetAudioBlobName(audio),
-                    cancellationToken);
-                throw;
-            }
+            // Copy temp audio to public bucket
+            await _storageService.MoveBlobAsync(
+                _storageSettings.Audio.TempBucket, 
+                _storageSettings.Audio.Container, 
+                audio.FileName, 
+                _storageSettings.Audio.Bucket, 
+                _storageSettings.Audio.Container,
+                cancellationToken);
+            
+            var viewModel = audio.MapToDetail(_storageSettings);
+            return Result<AudioDetailViewModel>.Success(viewModel);
         }
     }
 }

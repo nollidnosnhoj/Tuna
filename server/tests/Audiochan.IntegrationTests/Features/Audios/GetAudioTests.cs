@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Audiochan.Core.Common.Builders;
 using Audiochan.Core.Common.Helpers;
 using Audiochan.Core.Features.Audios;
-using Audiochan.Core.Features.Audios.CreateAudio;
+using Audiochan.Core.Features.Audios.PublishAudio;
 using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.UnitTests;
 using FluentAssertions;

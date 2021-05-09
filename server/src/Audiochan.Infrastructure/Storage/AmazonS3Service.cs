@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -86,7 +87,7 @@ namespace Audiochan.Infrastructure.Storage
                     CannedACL = S3CannedACL.PublicRead,
                 };
 
-                fileTransferUtilityRequest.AddMetadataCollection(metadata);
+                fileTransferUtilityRequest.Metadata.AddMetadata(metadata);
 
                 try
                 {
@@ -109,7 +110,7 @@ namespace Audiochan.Infrastructure.Storage
                     AutoCloseStream = true
                 };
 
-                putRequest.AddMetadataCollection(metadata);
+                putRequest.Metadata.AddMetadata(metadata);
 
                 try
                 {
@@ -150,37 +151,28 @@ namespace Audiochan.Infrastructure.Storage
             }
         }
 
-        public string GetPresignedUrl(
-            string method,
+        public string CreatePutPresignedUrl(
             string bucket,
             string container,
             string blobName,
             int expirationInMinutes,
             Dictionary<string, string> metadata = null)
         {
-            var verb = method.ToLower() switch
-            {
-                "put" => HttpVerb.PUT,
-                "head" => HttpVerb.HEAD,
-                "delete" => HttpVerb.DELETE,
-                "get" => HttpVerb.GET,
-                _ => HttpVerb.GET
-            };
-
             try
             {
-                var expiration = _dateTimeProvider.Now.Plus(Duration.FromMinutes(5));
                 var contentType = blobName.GetContentType();
                 var presignedUrlRequest = new GetPreSignedUrlRequest
                 {
                     BucketName = bucket,
                     Key = GetKeyName(container, blobName),
-                    Expires = expiration.ToDateTimeUtc(),
+                    Expires = _dateTimeProvider.Now
+                        .Plus(Duration.FromMinutes(expirationInMinutes))
+                        .ToDateTimeUtc(),
                     ContentType = contentType,
-                    Verb = verb
+                    Verb = HttpVerb.PUT,
                 };
 
-                presignedUrlRequest.AddMetadataCollection(metadata);
+                presignedUrlRequest.Metadata.AddMetadata(metadata);
 
                 return _client.GetPreSignedURL(presignedUrlRequest);
             }
@@ -188,6 +180,54 @@ namespace Audiochan.Infrastructure.Storage
             {
                 throw new StorageException(ex.Message, ex);
             }
+        }
+
+        public async Task CopyBlobAsync(string sourceBucket, 
+            string sourceContainer, 
+            string sourceBlobName, 
+            string targetBucket,
+            string targetContainer,
+            CancellationToken cancellationToken = default)
+        {
+            var sourceKey = GetKeyName(sourceContainer, sourceBlobName);
+            var targetKey = GetKeyName(targetContainer, sourceBlobName);
+
+            try
+            {
+                var request = new CopyObjectRequest
+                {
+                    SourceBucket = sourceBucket,
+                    SourceKey = sourceKey,
+                    DestinationBucket = targetBucket,
+                    DestinationKey = targetKey,
+                };
+
+                var response = await _client.CopyObjectAsync(request, cancellationToken);
+
+                if (response.HttpStatusCode != HttpStatusCode.OK)
+                    throw new StorageException("Copy object failed.");
+            }
+            catch (AmazonS3Exception ex)
+            {
+                throw new StorageException(ex.Message, ex);
+            }
+        }
+
+        public async Task MoveBlobAsync(string sourceBucket,
+            string sourceContainer,
+            string sourceBlobName,
+            string targetBucket,
+            string targetContainer,
+            CancellationToken cancellationToken = default)
+        {
+            await CopyBlobAsync(sourceBucket, 
+                sourceContainer, 
+                sourceBlobName, 
+                targetBucket, 
+                targetContainer,
+                cancellationToken);
+
+            await RemoveAsync(sourceBucket, sourceContainer, sourceBlobName, cancellationToken);
         }
 
         private string GetKeyName(string container, string blobName)
@@ -203,39 +243,20 @@ namespace Audiochan.Infrastructure.Storage
 
     public static class AmazonS3Extensions
     {
-        public static void AddMetadataCollection(this PutObjectRequest request, Dictionary<string, string> data = null)
+        public static void AddMetadata(this MetadataCollection metadataCollection,
+            IDictionary<string, string> inputMeta)
         {
-            if (data?.Count > 0)
-            {
-                foreach (var (key, value) in data)
-                {
-                    request.Metadata.Add(key, value);
-                }
-            }
+            if (inputMeta == null) return;
+
+            foreach (var (key, value) in inputMeta)
+                metadataCollection[key] = value;
         }
 
-        public static void AddMetadataCollection(this TransferUtilityUploadRequest request,
-            Dictionary<string, string> data = null)
+        public static IDictionary<string, string> ToMetadata(this MetadataCollection metadataCollection)
         {
-            if (data?.Count > 0)
-            {
-                foreach (var (key, value) in data)
-                {
-                    request.Metadata.Add(key, value);
-                }
-            }
-        }
-
-        public static void AddMetadataCollection(this GetPreSignedUrlRequest request,
-            Dictionary<string, string> data = null)
-        {
-            if (data?.Count > 0)
-            {
-                foreach (var (key, value) in data)
-                {
-                    request.Metadata.Add(key, value);
-                }
-            }
+            return metadataCollection.Keys
+                .ToDictionary(k => k.Replace("x-amz-meta-", string.Empty),
+                    k => metadataCollection[k]);
         }
     }
 }
