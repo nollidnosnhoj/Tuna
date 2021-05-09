@@ -33,14 +33,14 @@ namespace Audiochan.Infrastructure.Persistence
             // Add default created/updated date
             foreach (var entry in ChangeTracker.Entries<IAudited>())
             {
-                switch (entry.State)
+                if (entry.State == EntityState.Added && entry.Entity.Created == default)
                 {
-                    case EntityState.Added:
-                        entry.Property(nameof(IAudited.Created)).CurrentValue = _dateTimeProvider.Now;
-                        break;
-                    case EntityState.Modified:
-                        entry.Property(nameof(IAudited.LastModified)).CurrentValue = _dateTimeProvider.Now;
-                        break;
+                    entry.Property(nameof(IAudited.Created)).CurrentValue = _dateTimeProvider.Now;
+                }
+
+                if (entry.State == EntityState.Modified && entry.Entity.LastModified == default)
+                {
+                    entry.Property(nameof(IAudited.LastModified)).CurrentValue = _dateTimeProvider.Now;
                 }
             }
 

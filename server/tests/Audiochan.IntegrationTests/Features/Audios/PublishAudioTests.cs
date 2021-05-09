@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Builders;
-using Audiochan.Core.Features.Audios.CreateAudio;
+using Audiochan.Core.Features.Audios.PublishAudio;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Xunit;

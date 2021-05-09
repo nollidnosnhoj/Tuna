@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using Audiochan.Core.Common.Settings;
-using Audiochan.Core.Features.Audios.CreateAudio;
+using Audiochan.Core.Features.Audios.PublishAudio;
 using Audiochan.Core.Features.Audios.UploadAudio;
 using FluentValidation;
 using FluentValidation.TestHelper;

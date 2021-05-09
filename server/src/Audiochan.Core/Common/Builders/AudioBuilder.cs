@@ -87,17 +87,15 @@ namespace Audiochan.Core.Common.Builders
             return this;
         }
 
-        public AudioBuilder SetPublish(bool isPublish, Instant? publishDate = null)
+        public AudioBuilder SetPublishToTrue(Instant publishDate)
         {
-            if (isPublish && publishDate.HasValue)
-            {
-                _audio.PublishAudio(publishDate.Value);
-            }
-            else
-            {
-                _audio.UnPublishAudio();
-            }
+            _audio.PublishAudio(publishDate);
+            return this;
+        }
 
+        public AudioBuilder SetCreatedDate(Instant date)
+        {
+            _audio.Created = date;
             return this;
         }
 

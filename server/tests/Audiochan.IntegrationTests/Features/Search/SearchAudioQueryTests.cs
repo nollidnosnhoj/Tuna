@@ -25,6 +25,8 @@ namespace Audiochan.IntegrationTests.Features.Search
         public async Task ShouldFilterAudio_BasedOnSearchTerm()
         {
             var random = new Randomizer();
+            var dateTimeProvider = await _fixture.ExecuteScopeAsync(sp => 
+                Task.FromResult(sp.GetRequiredService<IDateTimeProvider>()));
             var (userId, _) = await _fixture.RunAsDefaultUserAsync();
 
             for (var i = 0; i < 10; i++)
@@ -42,6 +44,7 @@ namespace Audiochan.IntegrationTests.Features.Search
                     .UseTestDefaults(userId)
                     .AddTitle(title)
                     .SetPublic(true)
+                    .SetPublishToTrue(dateTimeProvider.Now)
                     .BuildAsync();
                 await _fixture.InsertAsync(audio);
             }
@@ -60,6 +63,9 @@ namespace Audiochan.IntegrationTests.Features.Search
         public async Task ShouldFilterAudio_BasedOnTags()
         {
             const int resultCount = 6;
+            
+            var dateTimeProvider = await _fixture.ExecuteScopeAsync(sp => 
+                Task.FromResult(sp.GetRequiredService<IDateTimeProvider>()));
 
             var (userId, _) = await _fixture.RunAsDefaultUserAsync();
 
@@ -84,6 +90,7 @@ namespace Audiochan.IntegrationTests.Features.Search
                     .AddDuration(100)
                     .AddFileSize(100)
                     .AddTags(tagEntities)
+                    .SetPublishToTrue(dateTimeProvider.Now)
                     .AddUserId(userId)
                     .BuildAsync();
 

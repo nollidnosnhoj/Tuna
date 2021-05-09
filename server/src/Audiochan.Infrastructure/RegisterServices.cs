@@ -27,6 +27,7 @@ namespace Audiochan.Infrastructure
             services.AddTransient<IImageService, ImageService>();
             services.AddTransient<ITokenProvider, TokenProvider>();
             services.AddTransient<IDateTimeProvider, NodaTimeProvider>();
+            services.AddTransient<CleanupService>();
             return services;
         }
 

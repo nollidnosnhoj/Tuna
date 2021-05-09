@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Builders;
+using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Settings;
@@ -56,13 +57,12 @@ namespace Audiochan.Core.Features.Audios.UploadAudio
             await _dbContext.SaveChangesAsync(cancellationToken);
 
             var metadata = new Dictionary<string, string> {{"UserId", userId}, {"OriginalFilename", request.FileName}};
-            var presignedUrl = _storageService.GetPresignedUrl(
-                method: "put",
-                bucket: _storageSettings.Audio.Bucket,
-                container: _storageSettings.Audio.Container,
-                blobName: audio.Id + fileExt,
-                expirationInMinutes: 5,
-                metadata: metadata);
+            var presignedUrl = _storageService.CreatePutPresignedUrl(
+                _storageSettings.Audio.TempBucket,
+                _storageSettings.Audio.Container,
+                audio.Id + fileExt,
+                5,
+                metadata);
             return new UploadAudioResponse {UploadUrl = presignedUrl, AudioId = audio.Id};
         }
     }
