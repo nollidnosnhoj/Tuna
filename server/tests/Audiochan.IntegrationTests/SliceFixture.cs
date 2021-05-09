@@ -83,8 +83,8 @@ namespace Audiochan.IntegrationTests
                 base.ConfigureWebHost(builder);
             }
         }
-
-        public async Task ExecuteScopeAsync(Func<IServiceProvider, Task> action)
+        
+        public async Task ExecuteScopeWithTransactionAsync(Func<IServiceProvider, Task> action)
         {
             using var scope = _scopeFactory.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -102,7 +102,7 @@ namespace Audiochan.IntegrationTests
             }
         }
 
-        public async Task<T> ExecuteScopeAsync<T>(Func<IServiceProvider, Task<T>> action)
+        public async Task<T> ExecuteScopeWithTransactionAsync<T>(Func<IServiceProvider, Task<T>> action)
         {
             using var scope = _scopeFactory.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -119,6 +119,19 @@ namespace Audiochan.IntegrationTests
                 dbContext.RollbackTransaction();
                 throw;
             }
+        }
+
+        public async Task ExecuteScopeAsync(Func<IServiceProvider, Task> action)
+        {
+            using var scope = _scopeFactory.CreateScope();
+            await action(scope.ServiceProvider);
+        }
+
+        public async Task<T> ExecuteScopeAsync<T>(Func<IServiceProvider, Task<T>> action)
+        {
+            using var scope = _scopeFactory.CreateScope();
+            var result = await action(scope.ServiceProvider);
+            return result;
         }
 
         public async Task<(string, string)> RunAsDefaultUserAsync()

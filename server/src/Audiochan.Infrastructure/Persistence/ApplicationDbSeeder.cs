@@ -48,7 +48,7 @@ namespace Audiochan.Infrastructure.Persistence
                     .AddUser(user)
                     .AddTags(await tagRepository.GetListAsync(new[] {"chillout", "lucid-dreams"}))
                     .SetPublic(true)
-                    .SetPublish(true, Instant.FromDateTimeUtc(DateTime.UtcNow))
+                    .SetPublishToTrue(Instant.FromDateTimeUtc(DateTime.UtcNow))
                     .BuildAsync(true);
                 
                 var audio2 = await new AudioBuilder()
@@ -60,7 +60,7 @@ namespace Audiochan.Infrastructure.Persistence
                     .AddUser(user)
                     .AddTags(await tagRepository.GetListAsync(new[] {"newgrounds", "piano", "rave"}))
                     .SetPublic(true)
-                    .SetPublish(true, Instant.FromDateTimeUtc(DateTime.UtcNow))
+                    .SetPublishToTrue(Instant.FromDateTimeUtc(DateTime.UtcNow))
                     .BuildAsync(true);
                 
                 var audio3 = await new AudioBuilder()
@@ -72,7 +72,7 @@ namespace Audiochan.Infrastructure.Persistence
                     .AddUser(user)
                     .AddTags(await tagRepository.GetListAsync(new[] {"happy", "anime", "hardcore", "nightcore"}))
                     .SetPublic(true)
-                    .SetPublish(true, Instant.FromDateTimeUtc(DateTime.UtcNow))
+                    .SetPublishToTrue(Instant.FromDateTimeUtc(DateTime.UtcNow))
                     .BuildAsync(true);
                 
                 var audio4 = await new AudioBuilder()
@@ -84,7 +84,7 @@ namespace Audiochan.Infrastructure.Persistence
                     .AddUser(user)
                     .AddTags(await tagRepository.GetListAsync(new[] {"hard-dance"}))
                     .SetPublic(false)
-                    .SetPublish(true, Instant.FromDateTimeUtc(DateTime.UtcNow))
+                    .SetPublishToTrue(Instant.FromDateTimeUtc(DateTime.UtcNow))
                     .BuildAsync(true);
                 
                 var audio5 = await new AudioBuilder()
@@ -96,7 +96,7 @@ namespace Audiochan.Infrastructure.Persistence
                     .AddUser(user)
                     .AddTags(await tagRepository.GetListAsync(new[] {"vocals"}))
                     .SetPublic(false)
-                    .SetPublish(true, Instant.FromDateTimeUtc(DateTime.UtcNow))
+                    .SetPublishToTrue(Instant.FromDateTimeUtc(DateTime.UtcNow))
                     .BuildAsync(true);
 
                 await context.Audios.AddRangeAsync(audio1, audio2, audio3, audio4, audio5);
