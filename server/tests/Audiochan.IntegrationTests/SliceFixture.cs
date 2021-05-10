@@ -9,7 +9,7 @@ using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Entities;
 using Audiochan.Infrastructure.Persistence;
-using Audiochan.UnitTests.Mocks;
+using Audiochan.IntegrationTests.Mocks;
 using MediatR;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -19,6 +19,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NodaTime;
+using NodaTime.Testing;
 using Npgsql;
 using Respawn;
 using Xunit;
@@ -38,6 +39,7 @@ namespace Audiochan.IntegrationTests
         private readonly WebApplicationFactory<Startup> _factory;
         private static string _currentUserId;
         private static string _currentUsername;
+        private static Instant? _currentTime;
 
         public SliceFixture()
         {
@@ -77,6 +79,7 @@ namespace Audiochan.IntegrationTests
                 builder.ConfigureServices(services =>
                 {
                     ReplaceCurrentUserService(services);
+                    ReplaceDateTimeProvider(services);
                     ReplaceStorageService(services);
                 });
 
@@ -195,6 +198,12 @@ namespace Audiochan.IntegrationTests
             throw new Exception($"Unable to create {userName}.{Environment.NewLine}{errors}");
         }
 
+        public Instant SetCurrentTime(Instant nowDateTime)
+        {
+            _currentTime = nowDateTime;
+            return nowDateTime;
+        }
+
         public Task ExecuteDbContextAsync(Func<ApplicationDbContext, Task> action)
             => ExecuteScopeAsync(sp => action(sp.GetService<ApplicationDbContext>()));
 
@@ -282,8 +291,7 @@ namespace Audiochan.IntegrationTests
             });
         }
 
-        public Task<T> FindAsync<T, TKey>(TKey id)
-            where T : class
+        public Task<T> FindAsync<T, TKey>(TKey id) where T : class
         {
             return ExecuteDbContextAsync(db => db.Set<T>().FindAsync(id).AsTask());
         }
@@ -323,6 +331,18 @@ namespace Audiochan.IntegrationTests
         {
             _factory?.Dispose();
             return Task.CompletedTask;
+        }
+
+        private static void ReplaceDateTimeProvider(IServiceCollection services)
+        {
+            var clockDescriptor = services.FirstOrDefault(d =>
+                d.ServiceType == typeof(IClock));
+
+            services.Remove(clockDescriptor);
+
+            services.AddTransient<IClock>(_ => _currentTime.HasValue 
+                ? SystemClock.Instance 
+                : new FakeClock(_currentTime.GetValueOrDefault()));
         }
 
         private static void ReplaceCurrentUserService(IServiceCollection services)

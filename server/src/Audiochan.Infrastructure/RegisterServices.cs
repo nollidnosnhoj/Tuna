@@ -10,6 +10,7 @@ using Audiochan.Infrastructure.Storage;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using NodaTime;
 
 namespace Audiochan.Infrastructure
 {
@@ -22,11 +23,12 @@ namespace Audiochan.Infrastructure
             ConfigureDatabase(services, configuration, isDevelopment);
             ConfigureRepositories(services);
             services.AddAWSService<IAmazonS3>();
+            services.AddTransient<IClock>(_ => SystemClock.Instance);
             services.AddTransient<IStorageService, AmazonS3Service>();
             services.AddTransient<ISearchService, DatabaseSearchService>();
             services.AddTransient<IImageService, ImageService>();
             services.AddTransient<ITokenProvider, TokenProvider>();
-            services.AddTransient<IDateTimeProvider, NodaTimeProvider>();
+            services.AddTransient<IDateTimeProvider, DateTimeProvider>();
             services.AddTransient<CleanupService>();
             return services;
         }
