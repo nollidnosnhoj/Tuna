@@ -1,10 +1,6 @@
-import React, { useMemo, useState } from "react";
-import { useFormik } from "formik";
-import { Box, Flex } from "@chakra-ui/layout";
+import React, { useMemo } from "react";
 import Page from "~/components/Page";
-import { Button, FormControl, Heading } from "@chakra-ui/react";
-import TextInput from "~/components/form/TextInput";
-import TagInput from "~/components/form/TagInput";
+import { Heading } from "@chakra-ui/react";
 import AudioList from "~/features/audio/components/List";
 import { useGetAudioListPagination } from "../../hooks/queries";
 import PaginationListControls from "~/components/PaginationListControls";
@@ -16,29 +12,14 @@ export type AudioSearchValues = {
 };
 
 export default function AudioSearchPage(props: AudioSearchValues) {
-  const [searchValues, setSearchValues] = useState<AudioSearchValues>(props);
-
-  const formik = useFormik<AudioSearchValues>({
-    initialValues: searchValues,
-    onSubmit: (values) => {
-      setSearchValues(values);
-    },
-  });
-
-  const {
-    handleChange,
-    handleSubmit,
-    values: formValues,
-    errors: formErrors,
-    setFieldValue,
-  } = formik;
-
+  const { q, sort, tags } = props;
   const queryParams = useMemo(
     () => ({
-      ...searchValues,
-      tags: searchValues.tags?.join(","),
+      q,
+      sort,
+      tags: tags?.join(","),
     }),
-    [searchValues]
+    [q, sort, tags]
   );
 
   const {
@@ -50,38 +31,11 @@ export default function AudioSearchPage(props: AudioSearchValues) {
     params: {
       ...queryParams,
     },
-    enabled: Boolean(searchValues.q),
   });
 
   return (
     <Page title="Search audios | Audiochan" removeSearchBar>
-      <Heading>
-        Search {searchValues.q ? `results for ${searchValues.q}` : ""}
-      </Heading>
-      <Box>
-        <form onSubmit={handleSubmit}>
-          <FormControl id="q">
-            <TextInput
-              name="q"
-              value={formValues.q ?? ""}
-              onChange={handleChange}
-              placeholder="Search..."
-              size="lg"
-            />
-          </FormControl>
-          <TagInput
-            name="tags"
-            value={formValues.tags ?? []}
-            onChange={(tags) => setFieldValue("tags", tags)}
-            error={formErrors.tags}
-          />
-          <Flex>
-            <Flex width="100%" justifyContent="flex-end" alignItems="flex-end">
-              <Button type="submit">Search</Button>
-            </Flex>
-          </Flex>
-        </form>
-      </Box>
+      <Heading>Search {q ? `results for ${q}` : ""}</Heading>
       <AudioList audios={audios} />
       {audios.length && (
         <PaginationListControls

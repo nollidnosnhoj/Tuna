@@ -34,7 +34,7 @@ namespace Audiochan.Core.Features.Audios.GetAudio
             var currentUserId = _currentUserService.GetUserId();
 
             return await _dbContext.Audios
-                .DefaultQueryable()
+                .IncludePublishAudios()
                 .Where(x => x.Id == request.Id)
                 .ProjectToDetail(_storageSettings)
                 .SingleOrDefaultAsync(cancellationToken);

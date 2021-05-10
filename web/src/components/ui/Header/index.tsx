@@ -12,20 +12,18 @@ import {
   Heading,
   HStack,
   IconButton,
-  Input,
   useColorMode,
   useColorModeValue,
   useDisclosure,
 } from "@chakra-ui/react";
-import React, { useCallback, useRef, useState } from "react";
+import React, { useRef } from "react";
 import { FaCloudUploadAlt } from "react-icons/fa";
 import { MdLibraryMusic } from "react-icons/md";
-import Router, { useRouter } from "next/router";
 import NextLink from "next/link";
-import queryString from "query-string";
 import Link from "../../Link";
 import { useUser } from "~/lib/hooks/useUser";
 import UserSection from "./UserSection";
+import SearchBar from "./SearchBar";
 
 interface HeaderMenuLinkProps extends ButtonProps {
   label: string;
@@ -59,12 +57,7 @@ const HeaderMenuLink = (props: HeaderMenuLinkProps) => {
   );
 };
 
-interface HeaderProps {
-  removeSearchBar?: boolean;
-}
-
-const Header: React.FC<HeaderProps> = (props) => {
-  const router = useRouter();
+const Header: React.FC = () => {
   const { user } = useUser();
   const { toggleColorMode } = useColorMode();
   const headerColor = useColorModeValue("white", "gray.800");
@@ -76,24 +69,6 @@ const Header: React.FC<HeaderProps> = (props) => {
     onClose: onMenuDrawerClose,
     onToggle: onMenuDrawerToggle,
   } = useDisclosure();
-  const [searchTerm, setSearchTerm] = useState("");
-
-  const handleSearchChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setSearchTerm(e.target.value);
-    },
-    [setSearchTerm]
-  );
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      if (!searchTerm) return;
-      const { query } = router;
-      const qs = queryString.stringify({ ...query, q: searchTerm });
-      Router.push("/search?" + qs);
-    }
-  };
 
   return (
     <React.Fragment>
@@ -142,19 +117,7 @@ const Header: React.FC<HeaderProps> = (props) => {
           </Flex>
           <Flex marginX={8} justify="center" width="full">
             <Box width="100%">
-              {!props.removeSearchBar && (
-                <Input
-                  size="lg"
-                  variant="filled"
-                  placeholder="Search..."
-                  value={searchTerm}
-                  onChange={handleSearchChange}
-                  onKeyDown={handleKeyDown}
-                  _hover={{
-                    boxShadow: "md",
-                  }}
-                />
-              )}
+              <SearchBar />
             </Box>
           </Flex>
           <HStack

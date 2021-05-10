@@ -8,6 +8,7 @@ using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models.Interfaces;
 using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Common.Settings;
+using Audiochan.Core.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -36,25 +37,10 @@ namespace Audiochan.Core.Features.Audios.GetAudioList
         public async Task<CursorList<AudioViewModel>> Handle(GetAudioListRequest request,
             CancellationToken cancellationToken)
         {
-            var (dateTime, id) = CursorHelpers.DecodeCursor(request.Cursor);
-
-            var queryable = _dbContext.Audios
-                .DefaultQueryable()
-                .ExcludePrivateAudios();
-
-            if (!string.IsNullOrWhiteSpace(request.Tag))
-            {
-                queryable = queryable
-                    .Where(a => a.Tags.Any(t => t.Name == request.Tag));
-            }
-
-            if (dateTime.HasValue && !string.IsNullOrWhiteSpace(id))
-            {
-                queryable = queryable.Where(a => a.Created < dateTime.GetValueOrDefault()
-                    || (a.Created == dateTime.GetValueOrDefault() && string.Compare(a.Id, id) < 0));
-            }
-
-            var audios = await queryable
+            var audios = await _dbContext.Audios
+                .IncludePublishAudios()
+                .ExcludePrivateAudios()
+                .FilterUsingCursor(request.Cursor)
                 .OrderByDescending(a => a.Created)
                 .ThenByDescending(a => a.Id)
                 .ProjectToList(_storageSettings)

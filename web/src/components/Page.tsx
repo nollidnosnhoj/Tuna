@@ -71,19 +71,17 @@ export function PageProvider(props: PropsWithChildren<PageProviderProps>) {
 interface PageProps {
   title?: string;
   removeHeader?: boolean;
-  removeSearchBar?: boolean;
 }
 
 const Page: React.FC<PageProps> = ({
   title = "Audiochan",
   removeHeader = false,
-  removeSearchBar = false,
   children,
   ...props
 }) => {
   return (
     <PageProvider title={title}>
-      {!removeHeader && <Header removeSearchBar={removeSearchBar} />}
+      {!removeHeader && <Header />}
       <Container mt="120px" mb="100px" {...props}>
         {children}
       </Container>

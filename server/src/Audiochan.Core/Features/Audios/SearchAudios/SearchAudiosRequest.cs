@@ -28,13 +28,7 @@ namespace Audiochan.Core.Features.Audios.SearchAudios
         public async Task<PagedList<AudioViewModel>> Handle(SearchAudiosRequest request,
             CancellationToken cancellationToken)
         {
-            var parsedTags = request.Tags.Split(',')
-                .Select(t => t.Trim().ToLower())
-                .Where(t => !string.IsNullOrWhiteSpace(t))
-                .ToArray();
-
-            return await _searchService.SearchAudios(request.Q, parsedTags, request.Page, request.Size,
-                cancellationToken);
+            return await _searchService.SearchAudios(request, cancellationToken);
         }
     }
 }
