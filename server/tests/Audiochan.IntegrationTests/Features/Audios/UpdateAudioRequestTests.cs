@@ -13,11 +13,11 @@ using Xunit;
 namespace Audiochan.IntegrationTests.Features.Audios
 {
     [Collection(nameof(SliceFixture))]
-    public class UpdateAudioTests
+    public class UpdateAudioRequestTests
     {
         private readonly SliceFixture _fixture;
 
-        public UpdateAudioTests(SliceFixture fixture)
+        public UpdateAudioRequestTests(SliceFixture fixture)
         {
             _fixture = fixture;
         }
@@ -30,7 +30,7 @@ namespace Audiochan.IntegrationTests.Features.Audios
                 .RunAsUserAsync("kopacetic", Guid.NewGuid().ToString(), Array.Empty<string>());
 
             var audio = await new AudioBuilder()
-                .UseTestDefaults(ownerId, "testaudio.mp3")
+                .UseTestDefaults(ownerId, true, "testaudio.mp3")
                 .BuildAsync();
 
             await _fixture.InsertAsync(audio);
@@ -53,14 +53,14 @@ namespace Audiochan.IntegrationTests.Features.Audios
         }
 
         [Fact]
-        public async Task ShouldUpdate_WhenInputIsValid()
+        public async Task ShouldUpdateSuccessfully()
         {
             // Assign
             var (ownerId, _) = await _fixture
                 .RunAsUserAsync("kopacetic", Guid.NewGuid().ToString(), Array.Empty<string>());
 
             var audio = await new AudioBuilder()
-                .UseTestDefaults(ownerId, "testaudio.mp3")
+                .UseTestDefaults(ownerId, true, "testaudio.mp3")
                 .BuildAsync();
 
             await _fixture.InsertAsync(audio);

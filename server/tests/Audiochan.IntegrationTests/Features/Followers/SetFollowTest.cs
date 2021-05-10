@@ -8,11 +8,11 @@ using Xunit;
 namespace Audiochan.IntegrationTests.Features.Followers
 {
     [Collection(nameof(SliceFixture))]
-    public class SetFollowTests
+    public class SetFollowTest
     {
         private readonly SliceFixture _sliceFixture;
 
-        public SetFollowTests(SliceFixture sliceFixture)
+        public SetFollowTest(SliceFixture sliceFixture)
         {
             _sliceFixture = sliceFixture;
         }

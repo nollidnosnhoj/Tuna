@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Exceptions;
 using Audiochan.Core.Entities;
-using NodaTime;
 
 namespace Audiochan.Core.Common.Builders
 {
@@ -11,6 +11,11 @@ namespace Audiochan.Core.Common.Builders
     {
         private readonly Audio _audio;
 
+        public AudioBuilder(DateTime createdDate) : this()
+        {
+            _audio.Created = createdDate;
+        }
+        
         public AudioBuilder()
         {
             _audio = new Audio();
@@ -34,19 +39,10 @@ namespace Audiochan.Core.Common.Builders
             return this;
         }
 
-        public AudioBuilder AddFileNameSeed(string fileName)
-        {
-            _audio.FileName = fileName;
-            _audio.FileExt = Path.GetExtension(fileName);
-            return this;
-        }
-
         public AudioBuilder AddFileName(string fileName)
         {
             _audio.OriginalFileName = fileName;
             _audio.FileExt = Path.GetExtension(fileName);
-            if (string.IsNullOrEmpty(_audio.Title))
-                _audio.Title = Path.GetFileNameWithoutExtension(fileName);
             return this;
         }
 
@@ -59,13 +55,6 @@ namespace Audiochan.Core.Common.Builders
         public AudioBuilder AddFileExtension(string fileExtension)
         {
             _audio.FileExt = fileExtension;
-            return this;
-        }
-
-        public AudioBuilder AddUser(User user)
-        {
-            _audio.UserId = user.Id;
-            _audio.User = user;
             return this;
         }
 
@@ -87,19 +76,19 @@ namespace Audiochan.Core.Common.Builders
             return this;
         }
 
-        public AudioBuilder SetPublishToTrue(Instant publishDate)
+        public AudioBuilder SetPublish(DateTime publishDate)
         {
             _audio.PublishAudio(publishDate);
             return this;
         }
 
-        public AudioBuilder SetCreatedDate(Instant date)
+        public AudioBuilder SetUnPublish()
         {
-            _audio.Created = date;
+            _audio.UnPublishAudio();
             return this;
         }
 
-        public async Task<Audio> BuildAsync(bool skipFileNaming = false)
+        public async Task<Audio> BuildAsync()
         {
             if (string.IsNullOrWhiteSpace(_audio.Title))
                 throw new BuilderException("Cannot build Audio. Requires title.");
@@ -120,11 +109,7 @@ namespace Audiochan.Core.Common.Builders
                 throw new BuilderException("Cannot build Audio. Requires a user id.");
             
             _audio.Id = await Nanoid.Nanoid.GenerateAsync();
-            
-            if (!skipFileNaming)
-            {
-                _audio.FileName = _audio.Id + _audio.FileExt;
-            }
+            _audio.FileName = _audio.Id + _audio.FileExt;
             
             return _audio;
         }

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Features.Auth.Login;
 using Audiochan.Core.Features.Auth.Refresh;
+using Bogus;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
@@ -9,11 +11,11 @@ using Xunit;
 namespace Audiochan.IntegrationTests.Features.Auth
 {
     [Collection(nameof(SliceFixture))]
-    public class RefreshTests
+    public class RefreshAccessTokenRequestTests
     {
         private readonly SliceFixture _fixture;
 
-        public RefreshTests(SliceFixture fixture)
+        public RefreshAccessTokenRequestTests(SliceFixture fixture)
         {
             _fixture = fixture;
         }
@@ -21,16 +23,15 @@ namespace Audiochan.IntegrationTests.Features.Auth
         [Fact]
         public async Task ShouldSuccessfullyRefreshAccessToken()
         {
-            var username = "refreshtokentestuser";
-            var password = "refreshtokentestPassword#@@@@";
+            var loginRequestFaker = new Faker<LoginRequest>()
+                .RuleFor(x => x.Login, f => f.Name.FirstName().GenerateSlug())
+                .RuleFor(x => x.Password, f => f.Internet.Password());
 
-            var (userId, _) = await _fixture.RunAsUserAsync(username, password, Array.Empty<string>());
+            var loginRequest = loginRequestFaker.Generate();
+
+            var (userId, _) = await _fixture.RunAsUserAsync(loginRequest.Login, loginRequest.Password, Array.Empty<string>());
             
-            var loginResult = await _fixture.SendAsync(new LoginRequest
-            {
-                Login = username,
-                Password = password
-            });
+            var loginResult = await _fixture.SendAsync(loginRequest);
 
             var refreshResult = await _fixture.SendAsync(new RefreshTokenRequest
             {

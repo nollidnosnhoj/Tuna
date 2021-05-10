@@ -1,4 +1,5 @@
 using Audiochan.Core.Common.Extensions;
+using FluentAssertions;
 using Xunit;
 
 namespace Audiochan.UnitTests.Extensions
@@ -6,18 +7,11 @@ namespace Audiochan.UnitTests.Extensions
     public class StringExtensionTests
     {
         [Theory]
-        [InlineData("superuser-this-is-an-example-song", "Superuser - This is an example song")]
-        [InlineData("xn-det-hr-r-en-lycklig-sng-z7bc4b", "Det här är en lycklig sång.")]
-        public void ReturnValidSlugTheory(string slug, string input)
+        [InlineData("Happy Hardcore", "happy-hardcore")]
+        public void ReturnValidTagTheory(string tag, string validInput)
         {
-            Assert.Equal(slug, input.GenerateSlug());
-        }
-
-        [Theory]
-        [InlineData("happy-hardcore", "Happy Hardcore")]
-        public void ReturnValidTagTheory(string tag, string input)
-        {
-            Assert.Equal(tag, input.GenerateTag());
+            var taggify = tag.GenerateSlug();
+            taggify.Should().Be(validInput);
         }
     }
 }

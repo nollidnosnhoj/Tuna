@@ -20,20 +20,17 @@ namespace Audiochan.Core.Common.Extensions.MappingExtensions
                 Description = audio.Description,
                 Duration = audio.Duration,
                 Picture = audio.Picture,
-                Uploaded = audio.Created.ToDateTimeUtc(),
+                Uploaded = audio.Created,
                 Tags = audio.Tags.Select(t => t.Name).ToArray(),
                 IsPublic = audio.IsPublic,
                 FileExt = audio.FileExt,
                 FileSize = audio.FileSize,
-                LastModified = audio.LastModified.HasValue
-                    ? audio.LastModified.Value.ToDateTimeUtc()
-                    : null,
-                AudioUrl =
-                    $"https://{options.Audio.Bucket}.s3.amazonaws.com/{options.Audio.Container}/{audio.FileName}",
+                LastModified = audio.LastModified,
+                AudioUrl = $"https://{options.Audio.Bucket}.s3.amazonaws.com/{options.Audio.Container}/{audio.FileName}",
                 Author = new MetaAuthorDto
                 {
                     Id = audio.User.Id,
-                    Picture = audio.User.Picture,
+                    Picture = $"https://{options.Image.Bucket}.s3.amazonaws.com/{options.Audio.Container}/${audio.User.Picture}",
                     Username = audio.User.UserName
                 }
             };
@@ -47,14 +44,14 @@ namespace Audiochan.Core.Common.Extensions.MappingExtensions
                 Title = audio.Title,
                 Duration = audio.Duration,
                 Picture = audio.Picture,
-                Uploaded = audio.Created.ToDateTimeUtc(),
+                Uploaded = audio.Created,
                 IsPublic = audio.IsPublic,
                 AudioUrl =
                     $"https://{options.Audio.Bucket}.s3.amazonaws.com/{options.Audio.Container}/{audio.FileName}",
                 Author = new MetaAuthorDto
                 {
                     Id = audio.User.Id,
-                    Picture = audio.User.Picture,
+                    Picture = $"https://{options.Image.Bucket}.s3.amazonaws.com/{options.Audio.Container}/${audio.User.Picture}",
                     Username = audio.User.UserName
                 }
             };

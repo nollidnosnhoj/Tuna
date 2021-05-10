@@ -2,36 +2,33 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Builders;
-using Audiochan.Core.Common.Helpers;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Features.Audios;
-using Audiochan.Core.Features.Audios.PublishAudio;
 using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.UnitTests;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using NodaTime;
 using Xunit;
 
 namespace Audiochan.IntegrationTests.Features.Audios
 {
     [Collection(nameof(SliceFixture))]
-    public class GetAudioTests
+    public class GetAudioRequestTests
     {
         private readonly SliceFixture _fixture;
 
-        public GetAudioTests(SliceFixture fixture)
+        public GetAudioRequestTests(SliceFixture fixture)
         {
             _fixture = fixture;
         }
-
+        
         [Fact]
         public async Task ShouldNotGetAudio_WhenAudioIdIsInvalid()
         {
             // Assign
             var (ownerId, _) = await _fixture.RunAsDefaultUserAsync();
             var audio = await new AudioBuilder()
-                .UseTestDefaults(ownerId, "myaudio.mp3")
+                .UseTestDefaults(ownerId, true, "myaudio.mp3")
                 .BuildAsync();
             await _fixture.InsertAsync(audio);
 
@@ -46,9 +43,6 @@ namespace Audiochan.IntegrationTests.Features.Audios
         public async Task ShouldGetAudio()
         {
             // Assign
-            var dateTimeProvider = await _fixture.ExecuteScopeAsync(sp => 
-                Task.FromResult(sp.GetRequiredService<IDateTimeProvider>()));
-
             var (userId, _) = await _fixture.RunAsDefaultUserAsync();
 
             var userTags = new List<string>
@@ -70,7 +64,7 @@ namespace Audiochan.IntegrationTests.Features.Audios
                 .AddTags(tags)
                 .AddUserId(userId)
                 .SetPublic(true)
-                .SetPublishToTrue(dateTimeProvider.Now)
+                .SetPublish(DateTime.UtcNow)
                 .BuildAsync();
             
             await _fixture.InsertAsync(audio);

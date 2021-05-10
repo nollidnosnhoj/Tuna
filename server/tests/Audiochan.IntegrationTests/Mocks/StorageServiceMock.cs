@@ -6,7 +6,7 @@ using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models.Responses;
 using Moq;
 
-namespace Audiochan.UnitTests.Mocks
+namespace Audiochan.IntegrationTests.Mocks
 {
     public static class StorageServiceMock
     {

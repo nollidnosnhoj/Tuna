@@ -11,11 +11,11 @@ using Xunit;
 namespace Audiochan.IntegrationTests.Features.Audios
 {
     [Collection(nameof(SliceFixture))]
-    public class RemoveAudioTests
+    public class RemoveAudioRequestTests
     {
         private readonly SliceFixture _fixture;
 
-        public RemoveAudioTests(SliceFixture fixture)
+        public RemoveAudioRequestTests(SliceFixture fixture)
         {
             _fixture = fixture;
         }
@@ -28,7 +28,7 @@ namespace Audiochan.IntegrationTests.Features.Audios
                 await _fixture.RunAsUserAsync("kopacetic", Guid.NewGuid().ToString(), Array.Empty<string>());
 
             var audio = await new AudioBuilder()
-                .UseTestDefaults(ownerId, "testaudio.mp3")
+                .UseTestDefaults(ownerId, true, "testaudio.mp3")
                 .BuildAsync();
 
             await _fixture.InsertAsync(audio);
@@ -51,7 +51,7 @@ namespace Audiochan.IntegrationTests.Features.Audios
         {
             var (ownerId, _) = await _fixture.RunAsDefaultUserAsync();
             var audio = await new AudioBuilder()
-                .UseTestDefaults(ownerId, "testaudio.mp3")
+                .UseTestDefaults(ownerId, true, "testaudio.mp3")
                 .BuildAsync();
             await _fixture.InsertAsync(audio);
 
