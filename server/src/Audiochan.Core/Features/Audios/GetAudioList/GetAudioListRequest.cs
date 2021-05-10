@@ -11,7 +11,6 @@ using Audiochan.Core.Common.Settings;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using NodaTime;
 
 namespace Audiochan.Core.Features.Audios.GetAudioList
 {
@@ -66,7 +65,7 @@ namespace Audiochan.Core.Features.Audios.GetAudioList
             var nextCursor = audios.Count < request.Size
                 ? null
                 : lastAudio != null
-                    ? CursorHelpers.EncodeCursor(Instant.FromDateTimeUtc(lastAudio.Uploaded), lastAudio.Id)
+                    ? CursorHelpers.EncodeCursor(lastAudio.Uploaded, lastAudio.Id)
                     : null;
 
             return new CursorList<AudioViewModel>(audios, nextCursor);

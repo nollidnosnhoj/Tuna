@@ -26,7 +26,7 @@ namespace Audiochan.Infrastructure
             services.AddTransient<ISearchService, DatabaseSearchService>();
             services.AddTransient<IImageService, ImageService>();
             services.AddTransient<ITokenProvider, TokenProvider>();
-            services.AddTransient<IDateTimeProvider, NodaTimeProvider>();
+            services.AddTransient<IDateTimeProvider, DateTimeProvider>();
             services.AddTransient<CleanupService>();
             return services;
         }
@@ -36,10 +36,7 @@ namespace Audiochan.Infrastructure
         {
             services.AddDbContext<ApplicationDbContext>(o =>
             {
-                o.UseNpgsql(configuration.GetConnectionString("Database"), npgo => 
-                {
-                    npgo.UseNodaTime();
-                });
+                o.UseNpgsql(configuration.GetConnectionString("Database"));
                 o.UseSnakeCaseNamingConvention();
                 if (isDevelopment)
                 {

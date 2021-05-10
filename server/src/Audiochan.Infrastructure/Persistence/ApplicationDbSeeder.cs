@@ -6,7 +6,6 @@ using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using NodaTime;
 
 namespace Audiochan.Infrastructure.Persistence
 {
@@ -16,7 +15,7 @@ namespace Audiochan.Infrastructure.Persistence
         {
             if (!await userManager.Users.AnyAsync())
             {
-                var superuser = new User("superuser", "superuser@localhost", Instant.FromDateTimeUtc(DateTime.UtcNow));
+                var superuser = new User("superuser", "superuser@localhost", DateTime.UtcNow);
 
                 // TODO: Do not hardcode superuser password when deploying into production haha
                 await userManager.CreateAsync(superuser, "Password1");
@@ -41,63 +40,64 @@ namespace Audiochan.Infrastructure.Persistence
 
                 var audio1 = await new AudioBuilder()
                     .AddTitle("Dreams")
-                    .AddFileNameSeed("audio1.mp3")
                     .AddFileName("Dreams.mp3")
                     .AddFileSize(9335255)
                     .AddDuration(388)
-                    .AddUser(user)
+                    .AddUserId(user.Id)
                     .AddTags(await tagRepository.GetListAsync(new[] {"chillout", "lucid-dreams"}))
                     .SetPublic(true)
-                    .SetPublishToTrue(Instant.FromDateTimeUtc(DateTime.UtcNow))
-                    .BuildAsync(true);
+                    .SetPublish(DateTime.UtcNow)
+                    .BuildAsync();
                 
                 var audio2 = await new AudioBuilder()
                     .AddTitle("Heaven")
-                    .AddFileNameSeed("audio2.mp3")
                     .AddFileName("Heaven.mp3")
                     .AddFileSize(6239211)
                     .AddDuration(194)
-                    .AddUser(user)
+                    .AddUserId(user.Id)
                     .AddTags(await tagRepository.GetListAsync(new[] {"newgrounds", "piano", "rave"}))
                     .SetPublic(true)
-                    .SetPublishToTrue(Instant.FromDateTimeUtc(DateTime.UtcNow))
-                    .BuildAsync(true);
+                    .SetPublish(DateTime.UtcNow)
+                    .BuildAsync();
                 
                 var audio3 = await new AudioBuilder()
                     .AddTitle("Life Is Beautiful")
-                    .AddFileNameSeed("audio3.mp3")
                     .AddFileName("LifeIsBeautiful.mp3")
                     .AddFileSize(1823391)
                     .AddDuration(45)
-                    .AddUser(user)
+                    .AddUserId(user.Id)
                     .AddTags(await tagRepository.GetListAsync(new[] {"happy", "anime", "hardcore", "nightcore"}))
                     .SetPublic(true)
-                    .SetPublishToTrue(Instant.FromDateTimeUtc(DateTime.UtcNow))
-                    .BuildAsync(true);
+                    .SetPublish(DateTime.UtcNow)
+                    .BuildAsync();
                 
                 var audio4 = await new AudioBuilder()
                     .AddTitle("Beginning of Time")
-                    .AddFileNameSeed("audio4.mp3")
                     .AddFileName("BeginningOfTime.mp3")
                     .AddFileSize(3952556)
                     .AddDuration(164)
-                    .AddUser(user)
+                    .AddUserId(user.Id)
                     .AddTags(await tagRepository.GetListAsync(new[] {"hard-dance"}))
                     .SetPublic(false)
-                    .SetPublishToTrue(Instant.FromDateTimeUtc(DateTime.UtcNow))
-                    .BuildAsync(true);
+                    .SetPublish(DateTime.UtcNow)
+                    .BuildAsync();
                 
                 var audio5 = await new AudioBuilder()
                     .AddTitle("Verity")
-                    .AddFileNameSeed("audio5.mp3")
                     .AddFileName("Verity.mp3")
                     .AddFileSize(8788667)
                     .AddDuration(219)
-                    .AddUser(user)
+                    .AddUserId(user.Id)
                     .AddTags(await tagRepository.GetListAsync(new[] {"vocals"}))
                     .SetPublic(false)
-                    .SetPublishToTrue(Instant.FromDateTimeUtc(DateTime.UtcNow))
-                    .BuildAsync(true);
+                    .SetPublish(DateTime.UtcNow)
+                    .BuildAsync();
+
+                audio1.FileName = "audio1.mp3";
+                audio2.FileName = "audio2.mp3";
+                audio3.FileName = "audio3.mp3";
+                audio4.FileName = "audio4.mp3";
+                audio5.FileName = "audio5.mp3";
 
                 await context.Audios.AddRangeAsync(audio1, audio2, audio3, audio4, audio5);
                 await context.SaveChangesAsync();

@@ -3,60 +3,24 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using Slugify;
 
 namespace Audiochan.Core.Common.Extensions
 {
     public static class StringExtensions
     {
-        public static bool ValidSlug(this string phrase)
-        {
-            return !string.IsNullOrWhiteSpace(phrase)
-                   && Regex.IsMatch(phrase.ToLower(), @"/^[a-z0-9]+(?:-[a-z0-9]+)*$/");
-        }
-
         public static string GenerateSlug(this string phrase)
         {
             if (string.IsNullOrWhiteSpace(phrase)) return string.Empty;
 
-            // Convert foreign characters into ASCII
-            var text = new IdnMapping().GetAscii(phrase);
-
-            return text.GenerateTag();
+            return new SlugHelper().GenerateSlug(phrase);
         }
-
-        public static string GenerateTag(this string name)
-        {
-            if (string.IsNullOrWhiteSpace(name)) return string.Empty;
-
-            var text = name.ToLower();
-
-            //  Remove all invalid characters.  
-            text = Regex.Replace(text, @"[^a-z0-9\s-]", "");
-
-            //  Convert multiple spaces into one space
-            text = Regex.Replace(text, @"\s+", " ").Trim();
-
-            //  Replace spaces by underscores.
-            text = Regex.Replace(text, @"\s", "-");
-
-            // If there's consecutive hyphens, only use one.
-            text = Regex.Replace(text, @"[-]{2,}", "-");
-
-            // Dirty: Trim any hyphens
-            text = text.Trim('-');
-
-            return text;
-        }
-
+        
         public static List<string> FormatTags(this IEnumerable<string> tags)
         {
-            // If a tag is null, return an empty string
-            // If the tag is valid, do not tagify it
-            // Remove any entries that are empty.
             var formattedTags = tags
-                .Select(t => t ?? string.Empty)
-                .Select(t => t.ValidSlug() ? t : t.GenerateTag())
                 .Where(t => !string.IsNullOrWhiteSpace(t))
+                .Select(t => t.GenerateSlug())
                 .ToList();
 
             return formattedTags;

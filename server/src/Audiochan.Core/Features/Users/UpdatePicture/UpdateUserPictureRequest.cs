@@ -46,27 +46,23 @@ namespace Audiochan.Core.Features.Users.UpdatePicture
         public async Task<IResult<string>> Handle(UpdateUserPictureRequest request, CancellationToken cancellationToken)
         {
             var container = Path.Combine(_storageSettings.Image.Container, "users");
-            var blobName = BlobHelpers.GetPictureBlobName(_dateTimeProvider.Now.ToDateTimeUtc());
+            var user = await _userManager.FindByIdAsync(request.UserId + "");
+            if (user == null) return Result<string>.Fail(ResultError.Unauthorized);
+            var blobName = $"{user.Id}_{_dateTimeProvider.Now:yyyyMMddHHmmss}.jpg";
             try
             {
-                var user = await _userManager.FindByIdAsync(request.UserId + "");
-                if (user == null) return Result<string>.Fail(ResultError.Unauthorized);
-
+                var response = await _imageService.UploadImage(request.Data, container, blobName, cancellationToken);
+                
                 if (!string.IsNullOrEmpty(user.Picture))
-                {
                     await _storageService.RemoveAsync(_storageSettings.Audio.Bucket, user.Picture, cancellationToken);
-                    user.UpdatePicture(string.Empty);
-                }
-
-                var image = await _imageService.UploadImage(request.Data, container, blobName, cancellationToken);
-                user.UpdatePicture(image.Path);
+                
+                user.UpdatePicture(blobName);
                 await _userManager.UpdateAsync(user);
-                return Result<string>.Success(image.Url);
+                return Result<string>.Success(response.Url);
             }
             catch (Exception)
             {
-                await _storageService.RemoveAsync(_storageSettings.Audio.Bucket, container, blobName,
-                    cancellationToken);
+                await _storageService.RemoveAsync(_storageSettings.Audio.Bucket, container, blobName, cancellationToken);
                 throw;
             }
         }

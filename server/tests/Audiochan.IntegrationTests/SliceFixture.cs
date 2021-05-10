@@ -9,7 +9,7 @@ using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Entities;
 using Audiochan.Infrastructure.Persistence;
-using Audiochan.UnitTests.Mocks;
+using Audiochan.IntegrationTests.Mocks;
 using MediatR;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -18,7 +18,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using NodaTime;
 using Npgsql;
 using Respawn;
 using Xunit;
@@ -38,9 +37,11 @@ namespace Audiochan.IntegrationTests
         private readonly WebApplicationFactory<Startup> _factory;
         private static string _currentUserId;
         private static string _currentUsername;
+        private static DateTime _currentTime;
 
         public SliceFixture()
         {
+            _currentTime = DateTime.UtcNow;
             _factory = new AudiochanTestApplicationFactory();
             _configuration = _factory.Services.GetRequiredService<IConfiguration>();
             _scopeFactory = _factory.Services.GetRequiredService<IServiceScopeFactory>();
@@ -77,6 +78,7 @@ namespace Audiochan.IntegrationTests
                 builder.ConfigureServices(services =>
                 {
                     ReplaceCurrentUserService(services);
+                    ReplaceDateTimeProvider(services);
                     ReplaceStorageService(services);
                 });
 
@@ -165,7 +167,7 @@ namespace Audiochan.IntegrationTests
                 UserName = userName,
                 Email = userName + "@localhost",
                 DisplayName = userName,
-                Joined = Instant.FromDateTimeUtc(DateTime.UtcNow)
+                Joined = _currentTime
             };
 
             var result = await userManager.CreateAsync(user, password);
@@ -193,6 +195,12 @@ namespace Audiochan.IntegrationTests
             var errors = string.Join(Environment.NewLine, result.ToResult().Errors);
 
             throw new Exception($"Unable to create {userName}.{Environment.NewLine}{errors}");
+        }
+
+        public DateTime SetCurrentTime(DateTime nowDateTime)
+        {
+            _currentTime = nowDateTime;
+            return nowDateTime;
         }
 
         public Task ExecuteDbContextAsync(Func<ApplicationDbContext, Task> action)
@@ -282,8 +290,7 @@ namespace Audiochan.IntegrationTests
             });
         }
 
-        public Task<T> FindAsync<T, TKey>(TKey id)
-            where T : class
+        public Task<T> FindAsync<T, TKey>(TKey id) where T : class
         {
             return ExecuteDbContextAsync(db => db.Set<T>().FindAsync(id).AsTask());
         }
@@ -323,6 +330,16 @@ namespace Audiochan.IntegrationTests
         {
             _factory?.Dispose();
             return Task.CompletedTask;
+        }
+
+        private static void ReplaceDateTimeProvider(IServiceCollection services)
+        {
+            var clockDescriptor = services.FirstOrDefault(d =>
+                d.ServiceType == typeof(IDateTimeProvider));
+
+            services.Remove(clockDescriptor);
+
+            services.AddTransient(_ => DateTimeProviderMock.Create(_currentTime).Object);
         }
 
         private static void ReplaceCurrentUserService(IServiceCollection services)

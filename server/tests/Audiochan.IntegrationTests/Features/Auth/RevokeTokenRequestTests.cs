@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Features.Auth.Login;
 using Audiochan.Core.Features.Auth.Revoke;
+using Bogus;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
@@ -9,11 +11,11 @@ using Xunit;
 namespace Audiochan.IntegrationTests.Features.Auth
 {
     [Collection(nameof(SliceFixture))]
-    public class RevokeTests
+    public class RevokeTokenRequestTests
     {
         private readonly SliceFixture _fixture;
 
-        public RevokeTests(SliceFixture fixture)
+        public RevokeTokenRequestTests(SliceFixture fixture)
         {
             _fixture = fixture;
         }
@@ -21,16 +23,15 @@ namespace Audiochan.IntegrationTests.Features.Auth
         [Fact]
         public async Task ShouldSuccessfullyRevokeToken()
         {
-            var username = "revoketest1";
-            var password = "slkdjflksdjflkadsjfkl;dasjflk;ja";
+            var loginRequestFaker = new Faker<LoginRequest>()
+                .RuleFor(x => x.Login, f => f.Name.FirstName().GenerateSlug())
+                .RuleFor(x => x.Password, f => f.Internet.Password());
 
-            var (userId, _) = await _fixture.RunAsUserAsync(username, password, Array.Empty<string>());
+            var loginRequest = loginRequestFaker.Generate();
+
+            var (userId, _) = await _fixture.RunAsUserAsync(loginRequest.Login, loginRequest.Password, Array.Empty<string>());
             
-            var loginResult = await _fixture.SendAsync(new LoginRequest
-            {
-                Login = username,
-                Password = password
-            });
+            var loginResult = await _fixture.SendAsync(loginRequest);
 
             var revokeResult = await _fixture.SendAsync(new RevokeTokenRequest
             {

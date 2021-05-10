@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Audiochan.Core.Entities.Base;
-using NodaTime;
 
 namespace Audiochan.Core.Entities
 {
@@ -24,7 +24,7 @@ namespace Audiochan.Core.Entities
         public string Picture { get; set; }
         public bool IsPublic { get; set; }
         public bool IsPublish { get; set; }
-        public Instant? PublishDate { get; set; }
+        public DateTime? PublishDate { get; set; }
         public string UserId { get; set; }
         public User User { get; set; }
         public ICollection<Tag> Tags { get; set; }
@@ -46,7 +46,7 @@ namespace Audiochan.Core.Entities
             this.IsPublic = isPublic;
         }
 
-        public void PublishAudio(Instant publishTime)
+        public void PublishAudio(DateTime publishTime)
         {
             if (!this.IsPublish)
             {
