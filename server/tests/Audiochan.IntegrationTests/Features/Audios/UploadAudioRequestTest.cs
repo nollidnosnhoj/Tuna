@@ -40,6 +40,7 @@ namespace Audiochan.IntegrationTests.Features.Audios
             // assert
             var audio = await _fixture.ExecuteDbContextAsync(dbContext =>
                 dbContext.Audios.FindAsync(response.AudioId));
+            
             response.Should().NotBeNull();
             response.AudioId.Should().NotBeEmpty();
             audio.Id.Should().Be(response.AudioId);
