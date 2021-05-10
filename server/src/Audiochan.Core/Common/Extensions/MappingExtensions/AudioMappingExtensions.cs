@@ -20,14 +20,12 @@ namespace Audiochan.Core.Common.Extensions.MappingExtensions
                 Description = audio.Description,
                 Duration = audio.Duration,
                 Picture = audio.Picture,
-                Uploaded = audio.Created.ToDateTimeUtc(),
+                Uploaded = audio.Created,
                 Tags = audio.Tags.Select(t => t.Name).ToArray(),
                 IsPublic = audio.IsPublic,
                 FileExt = audio.FileExt,
                 FileSize = audio.FileSize,
-                LastModified = audio.LastModified.HasValue
-                    ? audio.LastModified.Value.ToDateTimeUtc()
-                    : null,
+                LastModified = audio.LastModified,
                 AudioUrl =
                     $"https://{options.Audio.Bucket}.s3.amazonaws.com/{options.Audio.Container}/{audio.FileName}",
                 Author = new MetaAuthorDto
@@ -47,7 +45,7 @@ namespace Audiochan.Core.Common.Extensions.MappingExtensions
                 Title = audio.Title,
                 Duration = audio.Duration,
                 Picture = audio.Picture,
-                Uploaded = audio.Created.ToDateTimeUtc(),
+                Uploaded = audio.Created,
                 IsPublic = audio.IsPublic,
                 AudioUrl =
                     $"https://{options.Audio.Bucket}.s3.amazonaws.com/{options.Audio.Container}/{audio.FileName}",

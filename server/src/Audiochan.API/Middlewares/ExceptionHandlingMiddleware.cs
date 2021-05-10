@@ -9,7 +9,6 @@ using Microsoft.Extensions.Logging;
 
 namespace Audiochan.API.Middlewares
 {
-    // ReSharper disable once ClassNeverInstantiated.Global
     public class ExceptionHandlingMiddleware
     {
         private readonly RequestDelegate _next;

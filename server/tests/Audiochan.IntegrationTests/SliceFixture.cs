@@ -18,8 +18,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using NodaTime;
-using NodaTime.Testing;
 using Npgsql;
 using Respawn;
 using Xunit;
@@ -39,10 +37,11 @@ namespace Audiochan.IntegrationTests
         private readonly WebApplicationFactory<Startup> _factory;
         private static string _currentUserId;
         private static string _currentUsername;
-        private static Instant? _currentTime;
+        private static DateTime _currentTime;
 
         public SliceFixture()
         {
+            _currentTime = DateTime.UtcNow;
             _factory = new AudiochanTestApplicationFactory();
             _configuration = _factory.Services.GetRequiredService<IConfiguration>();
             _scopeFactory = _factory.Services.GetRequiredService<IServiceScopeFactory>();
@@ -168,7 +167,7 @@ namespace Audiochan.IntegrationTests
                 UserName = userName,
                 Email = userName + "@localhost",
                 DisplayName = userName,
-                Joined = Instant.FromDateTimeUtc(DateTime.UtcNow)
+                Joined = _currentTime
             };
 
             var result = await userManager.CreateAsync(user, password);
@@ -198,7 +197,7 @@ namespace Audiochan.IntegrationTests
             throw new Exception($"Unable to create {userName}.{Environment.NewLine}{errors}");
         }
 
-        public Instant SetCurrentTime(Instant nowDateTime)
+        public DateTime SetCurrentTime(DateTime nowDateTime)
         {
             _currentTime = nowDateTime;
             return nowDateTime;
@@ -336,13 +335,11 @@ namespace Audiochan.IntegrationTests
         private static void ReplaceDateTimeProvider(IServiceCollection services)
         {
             var clockDescriptor = services.FirstOrDefault(d =>
-                d.ServiceType == typeof(IClock));
+                d.ServiceType == typeof(IDateTimeProvider));
 
             services.Remove(clockDescriptor);
 
-            services.AddTransient<IClock>(_ => _currentTime.HasValue 
-                ? SystemClock.Instance 
-                : new FakeClock(_currentTime.GetValueOrDefault()));
+            services.AddTransient(_ => DateTimeProviderMock.Create(_currentTime).Object);
         }
 
         private static void ReplaceCurrentUserService(IServiceCollection services)

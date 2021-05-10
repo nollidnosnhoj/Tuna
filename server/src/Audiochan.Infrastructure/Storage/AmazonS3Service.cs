@@ -14,7 +14,6 @@ using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Infrastructure.Storage.Options;
 using Microsoft.Extensions.Options;
-using NodaTime;
 
 namespace Audiochan.Infrastructure.Storage
 {
@@ -165,9 +164,7 @@ namespace Audiochan.Infrastructure.Storage
                 {
                     BucketName = bucket,
                     Key = GetKeyName(container, blobName),
-                    Expires = _dateTimeProvider.Now
-                        .Plus(Duration.FromMinutes(expirationInMinutes))
-                        .ToDateTimeUtc(),
+                    Expires = _dateTimeProvider.Now.AddMinutes(expirationInMinutes),
                     ContentType = contentType,
                     Verb = HttpVerb.PUT,
                 };

@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Audiochan.Core.Features.Audios.UploadAudio;
 using Bogus;
 using FluentAssertions;
-using NodaTime;
 using Xunit;
 
 namespace Audiochan.IntegrationTests.Features.Audios
@@ -33,7 +32,7 @@ namespace Audiochan.IntegrationTests.Features.Audios
             };
 
             await _fixture.RunAsDefaultUserAsync();
-            _fixture.SetCurrentTime(Instant.FromDateTimeUtc(new DateTime(2021, 12, 25).ToUniversalTime()));
+            _fixture.SetCurrentTime(new DateTime(2021, 12, 25, 12, 0, 0));
 
             // act
             var response = await _fixture.SendAsync(request);

@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Infrastructure.Persistence;
-using Audiochan.Infrastructure.Persistence.TypeHandlers;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
-using NodaTime;
 using Npgsql;
 
 namespace Audiochan.Infrastructure.Shared
@@ -25,7 +23,7 @@ namespace Audiochan.Infrastructure.Shared
         {
             var rowsAffected = 0;
             
-            var thresholdDate = _dateTimeProvider.Now.Minus(Duration.FromDays(1));
+            var thresholdDate = _dateTimeProvider.Now.AddDays(-1);
 
             var parameters = new Dictionary<string, object>
             {
@@ -35,9 +33,7 @@ namespace Audiochan.Infrastructure.Shared
             // ReSharper disable once UseAwaitUsing
             using var conn = (NpgsqlConnection)_dbContext.Database.GetDbConnection();
             conn.Open();
-            conn.TypeMapper.UseNodaTime();
-            SqlMapper.AddTypeHandler(InstantTypeHandler.Default);
-            
+
             // ReSharper disable once MethodHasAsyncOverloadWithCancellation
             var transaction = conn.BeginTransaction();
 

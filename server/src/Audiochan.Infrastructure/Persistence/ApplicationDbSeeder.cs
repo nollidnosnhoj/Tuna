@@ -6,7 +6,6 @@ using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using NodaTime;
 
 namespace Audiochan.Infrastructure.Persistence
 {
@@ -16,7 +15,7 @@ namespace Audiochan.Infrastructure.Persistence
         {
             if (!await userManager.Users.AnyAsync())
             {
-                var superuser = new User("superuser", "superuser@localhost", Instant.FromDateTimeUtc(DateTime.UtcNow));
+                var superuser = new User("superuser", "superuser@localhost", DateTime.UtcNow);
 
                 // TODO: Do not hardcode superuser password when deploying into production haha
                 await userManager.CreateAsync(superuser, "Password1");
@@ -47,7 +46,7 @@ namespace Audiochan.Infrastructure.Persistence
                     .AddUserId(user.Id)
                     .AddTags(await tagRepository.GetListAsync(new[] {"chillout", "lucid-dreams"}))
                     .SetPublic(true)
-                    .SetPublish(Instant.FromDateTimeUtc(DateTime.UtcNow))
+                    .SetPublish(DateTime.UtcNow)
                     .BuildAsync();
                 
                 var audio2 = await new AudioBuilder()
@@ -58,7 +57,7 @@ namespace Audiochan.Infrastructure.Persistence
                     .AddUserId(user.Id)
                     .AddTags(await tagRepository.GetListAsync(new[] {"newgrounds", "piano", "rave"}))
                     .SetPublic(true)
-                    .SetPublish(Instant.FromDateTimeUtc(DateTime.UtcNow))
+                    .SetPublish(DateTime.UtcNow)
                     .BuildAsync();
                 
                 var audio3 = await new AudioBuilder()
@@ -69,7 +68,7 @@ namespace Audiochan.Infrastructure.Persistence
                     .AddUserId(user.Id)
                     .AddTags(await tagRepository.GetListAsync(new[] {"happy", "anime", "hardcore", "nightcore"}))
                     .SetPublic(true)
-                    .SetPublish(Instant.FromDateTimeUtc(DateTime.UtcNow))
+                    .SetPublish(DateTime.UtcNow)
                     .BuildAsync();
                 
                 var audio4 = await new AudioBuilder()
@@ -80,7 +79,7 @@ namespace Audiochan.Infrastructure.Persistence
                     .AddUserId(user.Id)
                     .AddTags(await tagRepository.GetListAsync(new[] {"hard-dance"}))
                     .SetPublic(false)
-                    .SetPublish(Instant.FromDateTimeUtc(DateTime.UtcNow))
+                    .SetPublish(DateTime.UtcNow)
                     .BuildAsync();
                 
                 var audio5 = await new AudioBuilder()
@@ -91,7 +90,7 @@ namespace Audiochan.Infrastructure.Persistence
                     .AddUserId(user.Id)
                     .AddTags(await tagRepository.GetListAsync(new[] {"vocals"}))
                     .SetPublic(false)
-                    .SetPublish(Instant.FromDateTimeUtc(DateTime.UtcNow))
+                    .SetPublish(DateTime.UtcNow)
                     .BuildAsync();
 
                 audio1.FileName = "audio1.mp3";

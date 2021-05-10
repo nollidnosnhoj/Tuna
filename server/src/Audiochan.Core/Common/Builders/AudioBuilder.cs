@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Exceptions;
 using Audiochan.Core.Entities;
-using NodaTime;
 
 namespace Audiochan.Core.Common.Builders
 {
@@ -11,7 +11,7 @@ namespace Audiochan.Core.Common.Builders
     {
         private readonly Audio _audio;
 
-        public AudioBuilder(Instant createdDate) : this()
+        public AudioBuilder(DateTime createdDate) : this()
         {
             _audio.Created = createdDate;
         }
@@ -76,7 +76,7 @@ namespace Audiochan.Core.Common.Builders
             return this;
         }
 
-        public AudioBuilder SetPublish(Instant publishDate)
+        public AudioBuilder SetPublish(DateTime publishDate)
         {
             _audio.PublishAudio(publishDate);
             return this;
