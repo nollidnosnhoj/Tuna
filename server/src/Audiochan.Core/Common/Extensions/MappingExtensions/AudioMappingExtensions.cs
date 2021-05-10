@@ -26,12 +26,11 @@ namespace Audiochan.Core.Common.Extensions.MappingExtensions
                 FileExt = audio.FileExt,
                 FileSize = audio.FileSize,
                 LastModified = audio.LastModified,
-                AudioUrl =
-                    $"https://{options.Audio.Bucket}.s3.amazonaws.com/{options.Audio.Container}/{audio.FileName}",
+                AudioUrl = $"https://{options.Audio.Bucket}.s3.amazonaws.com/{options.Audio.Container}/{audio.FileName}",
                 Author = new MetaAuthorDto
                 {
                     Id = audio.User.Id,
-                    Picture = audio.User.Picture,
+                    Picture = $"https://{options.Image.Bucket}.s3.amazonaws.com/{options.Audio.Container}/${audio.User.Picture}",
                     Username = audio.User.UserName
                 }
             };
@@ -52,7 +51,7 @@ namespace Audiochan.Core.Common.Extensions.MappingExtensions
                 Author = new MetaAuthorDto
                 {
                     Id = audio.User.Id,
-                    Picture = audio.User.Picture,
+                    Picture = $"https://{options.Image.Bucket}.s3.amazonaws.com/{options.Audio.Container}/${audio.User.Picture}",
                     Username = audio.User.UserName
                 }
             };

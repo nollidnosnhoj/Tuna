@@ -49,38 +49,45 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
         public async Task<IResult<string>> Handle(UpdateAudioPictureRequest request,
             CancellationToken cancellationToken)
         {
-            var container = Path.Combine(_storageSettings.Image.Container, "audios");
-            var blobName = BlobHelpers.GetPictureBlobName(_dateTimeProvider.Now);
+            var container = string.Join('/', _storageSettings.Image.Container, "audios");
+            
+            var currentUserId = await _dbContext.Users
+                .Select(u => u.Id)
+                .SingleOrDefaultAsync(id => id == _currentUserService.GetUserId(), cancellationToken);
+
+            if (string.IsNullOrEmpty(currentUserId))
+                return Result<string>.Fail(ResultError.Unauthorized);
+
+            var audio = await _dbContext.Audios
+                .SingleOrDefaultAsync(a => a.Id == request.AudioId, cancellationToken);
+
+            if (audio == null) return Result<string>.Fail(ResultError.NotFound);
+            
+            if (!audio.CanModify(currentUserId)) return Result<string>.Fail(ResultError.Forbidden);
+            
+            var blobName = $"{audio.Id}_{_dateTimeProvider.Now:yyyyMMddHHmmss}.jpg";
+
             try
             {
-                var currentUserId = await _dbContext.Users
-                    .Select(u => u.Id)
-                    .SingleOrDefaultAsync(id => id == _currentUserService.GetUserId(), cancellationToken);
-
-                if (string.IsNullOrEmpty(currentUserId))
-                    return Result<string>.Fail(ResultError.Unauthorized);
-
-                var audio = await _dbContext.Audios
-                    .SingleOrDefaultAsync(a => a.Id == request.AudioId, cancellationToken);
-
-                if (audio == null) return Result<string>.Fail(ResultError.NotFound);
-                if (!audio.CanModify(currentUserId)) return Result<string>.Fail(ResultError.Forbidden);
-
                 if (!string.IsNullOrEmpty(audio.Picture))
                 {
                     await _storageService.RemoveAsync(_storageSettings.Audio.Bucket, audio.Picture, cancellationToken);
                     audio.UpdatePicture(string.Empty);
                 }
 
-                var image = await _imageService.UploadImage(request.Data, container, blobName, cancellationToken);
-                audio.UpdatePicture(image.Path);
+                var response = await _imageService.UploadImage(request.Data, container, blobName, cancellationToken);
+                
+                // TODO: Maybe instead of deleting it, set a expiration for the old picture object.
+                if (!string.IsNullOrEmpty(audio.Picture))
+                    await _storageService.RemoveAsync(_storageSettings.Audio.Bucket, audio.Picture, cancellationToken);
+                
+                audio.UpdatePicture(blobName);
                 await _dbContext.SaveChangesAsync(cancellationToken);
-                return Result<string>.Success(image.Url);
+                return Result<string>.Success(response.Url);
             }
             catch (Exception)
             {
-                await _storageService.RemoveAsync(_storageSettings.Audio.Bucket, container, blobName,
-                    cancellationToken);
+                await _storageService.RemoveAsync(_storageSettings.Audio.Bucket, container, blobName, cancellationToken);
                 throw;
             }
         }

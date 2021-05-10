@@ -123,6 +123,7 @@ namespace Audiochan.Infrastructure.Storage
 
             return new SaveBlobResponse
             {
+                Bucket = bucket,
                 Path = GetKeyName(container, blobName),
                 Url = GetBlobUrl(bucket, container, blobName),
                 ContentType = contentType

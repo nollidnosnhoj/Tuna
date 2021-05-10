@@ -6,6 +6,7 @@ using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models.Requests;
 using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Common.Settings;
+using Audiochan.Core.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -26,14 +27,14 @@ namespace Audiochan.Core.Features.Audios.PublishAudio
         private readonly MediaStorageSettings _storageSettings;
         private readonly IDateTimeProvider _dateTimeProvider;
 
-        public PublishAudioRequestHandler(IOptions<MediaStorageSettings> options,
+        public PublishAudioRequestHandler(IOptions<MediaStorageSettings> mediaStorageOptions,
             IApplicationDbContext dbContext,
             IStorageService storageService,
             ICurrentUserService currentUserService,
             ITagRepository tagRepository, 
             IDateTimeProvider dateTimeProvider)
         {
-            _storageSettings = options.Value;
+            _storageSettings = mediaStorageOptions.Value;
             _dbContext = dbContext;
             _storageService = storageService;
             _currentUserService = currentUserService;
@@ -48,14 +49,15 @@ namespace Audiochan.Core.Features.Audios.PublishAudio
                 .Include(u => u.User)
                 .SingleOrDefaultAsync(a => a.Id == request.AudioId, cancellationToken);
 
-            if (audio == null || audio.IsPublish)
+            if (audio == null || !await DoesAudioExistInStorage(audio, cancellationToken))
                 return Result<AudioDetailViewModel>.Fail(ResultError.NotFound);
 
-            var currentUserId = _currentUserService.GetUserId();
-
-            if (audio.UserId != currentUserId)
+            if (audio.UserId != _currentUserService.GetUserId())
                 return Result<AudioDetailViewModel>.Fail(ResultError.Forbidden);
             
+            if (audio.IsPublish)
+                return Result<AudioDetailViewModel>.Fail(ResultError.BadRequest, "Audio is already published.");
+
             audio.UpdateTitle(request.Title);
             audio.UpdateDescription(request.Description);
             audio.UpdatePublicity(request.IsPublic ?? false);
@@ -79,6 +81,15 @@ namespace Audiochan.Core.Features.Audios.PublishAudio
             
             var viewModel = audio.MapToDetail(_storageSettings);
             return Result<AudioDetailViewModel>.Success(viewModel);
+        }
+
+        private async Task<bool> DoesAudioExistInStorage(Audio audio, CancellationToken cancellationToken = default)
+        {
+            return await _storageService.ExistsAsync(
+                _storageSettings.Audio.TempBucket,
+                _storageSettings.Audio.Container,
+                audio.FileName,
+                cancellationToken);
         }
     }
 }
