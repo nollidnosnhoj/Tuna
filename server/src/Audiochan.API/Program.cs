@@ -9,6 +9,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Serilog;
+using Serilog.Events;
 
 namespace Audiochan.API
 {
@@ -16,19 +18,30 @@ namespace Audiochan.API
     {
         public static async Task Main(string[] args)
         {
-            var host = CreateHostBuilder(args).Build();
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+                .Enrich.FromLogContext()
+                .WriteTo.Console()
+                .CreateLogger();
 
-            using (var scope = host.Services.CreateScope())
+            try
             {
-                var services = scope.ServiceProvider;
+                var host = CreateHostBuilder(args).Build();
 
-                try
+                using (var scope = host.Services.CreateScope())
                 {
+                    var services = scope.ServiceProvider;
+
                     var env = services.GetRequiredService<IWebHostEnvironment>();
                     var context = services.GetRequiredService<ApplicationDbContext>();
+
+                    Log.Information("Migrating database...");
                     await context.Database.MigrateAsync();
+
                     if (env.IsDevelopment())
                     {
+                        Log.Information("Seeding users and default audios.");
                         var userManager = services.GetRequiredService<UserManager<User>>();
                         var roleManager = services.GetRequiredService<RoleManager<Role>>();
                         var tagRepo = services.GetRequiredService<ITagRepository>();
@@ -36,24 +49,27 @@ namespace Audiochan.API
                         await ApplicationDbSeeder.AddDefaultAudioForDemo(context, userManager, tagRepo);
                     }
                 }
-                catch (Exception ex)
-                {
-                    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-                    logger.LogError(ex, "An error occurred while migrating or seeding the database.");
-                    throw;
-                }
-            }
 
-            await host.RunAsync();
+                await host.RunAsync();
+            }
+            catch (Exception ex)
+            {
+                Log.Fatal(ex, "Host terminated unexpectedly.");
+            }
+            finally
+            {
+                Log.CloseAndFlush();
+            }
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureLogging(logging =>
+        public static IHostBuilder CreateHostBuilder(string[] args)
+        {
+            return Host.CreateDefaultBuilder(args)
+                .UseSerilog()
+                .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    logging.ClearProviders();
-                    logging.AddConsole();
-                })
-                .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
+                    webBuilder.UseStartup<Startup>();
+                });
+        }
     }
 }
