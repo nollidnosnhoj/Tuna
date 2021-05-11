@@ -53,21 +53,20 @@ namespace Audiochan.IntegrationTests.Features.Auth
         [Fact]
         public async Task ShouldSuccessfullyRevokeOneToken()
         {
-            var username = "revoketest2";
-            var password = "slkdjflksdjflkadsjfkl;dasjflk;ja";
+            var loginRequestFaker = new Faker<LoginRequest>()
+                .RuleFor(x => x.Login, f => f.Name.FirstName().GenerateSlug())
+                .RuleFor(x => x.Password, f => f.Internet.Password());
 
-            var (userId, _) = await _fixture.RunAsUserAsync(username, password, Array.Empty<string>());
+            var loginRequest = loginRequestFaker.Generate();
+
+            var (userId, _) = await _fixture.RunAsUserAsync(loginRequest.Login, loginRequest.Password, Array.Empty<string>());
             
-            var loginResult1 = await _fixture.SendAsync(new LoginRequest
-            {
-                Login = username,
-                Password = password
-            });
+            var loginResult1 = await _fixture.SendAsync(loginRequest);
             
             var loginResult2 = await _fixture.SendAsync(new LoginRequest
             {
-                Login = username,
-                Password = password
+                Login = loginRequest.Login,
+                Password = loginRequest.Password
             });
 
             var revokeResult = await _fixture.SendAsync(new RevokeTokenRequest
