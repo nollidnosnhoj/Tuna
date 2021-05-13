@@ -1,7 +1,7 @@
 import { useQuery, UseQueryOptions, UseQueryResult } from "react-query";
-import { ErrorResponse } from "../../../../lib/types";
-import { Profile } from "../../types";
-import { fetchUserProfile } from "../../services/fetchUserProfile";
+import { ErrorResponse } from "../../../lib/types";
+import { Profile } from "../types";
+import { fetchUserProfile } from "../services/fetchUserProfile";
 import { useAuth } from "~/lib/hooks/useAuth";
 
 export function useProfile(

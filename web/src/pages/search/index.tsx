@@ -1,30 +1,33 @@
-import { GetServerSideProps } from "next";
-import AudioSearchPage, {
-  AudioSearchValues,
-} from "~/features/audio/components/Pages/AudioSearchPage";
+import { Heading } from "@chakra-ui/react";
+import React from "react";
+import Page from "~/components/Page";
+import PaginationListControls from "~/components/PaginationListControls";
+import AudioList from "~/features/audio/components/List";
+import { useAudioSearchQuery } from "~/features/audio/hooks";
 
-export const getServerSideProps: GetServerSideProps<AudioSearchValues> = async ({
-  query,
-}) => {
-  const searchTermQuery = query["q"] ?? "";
-  const sortQuery = query["sort"] ?? "";
-  const tagsQuery = query["tag"] ?? "";
+export default function AudioSearchNextPage() {
+  const {
+    items: audios,
+    page,
+    setPage,
+    totalPages,
+    searchQuery,
+  } = useAudioSearchQuery();
 
-  const q = Array.isArray(searchTermQuery)
-    ? searchTermQuery[0]
-    : searchTermQuery;
-  const sort = Array.isArray(sortQuery) ? sortQuery[0] : sortQuery;
-  const tags = Array.isArray(tagsQuery) ? tagsQuery : tagsQuery.split(",");
-
-  return {
-    props: {
-      q,
-      sort,
-      tags,
-    },
-  };
-};
-
-export default function AudioSearchNextPage(props: AudioSearchValues) {
-  return <AudioSearchPage {...props} />;
+  return (
+    <Page title="Search audios | Audiochan">
+      <Heading>
+        Search {searchQuery ? `results for ${searchQuery}` : ""}
+      </Heading>
+      <AudioList audios={audios} />
+      {audios.length && (
+        <PaginationListControls
+          currentPage={page}
+          onPageChange={setPage}
+          pageNeighbors={2}
+          totalPages={totalPages}
+        />
+      )}
+    </Page>
+  );
 }

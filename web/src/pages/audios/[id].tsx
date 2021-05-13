@@ -1,11 +1,14 @@
 import { GetServerSideProps } from "next";
+import React from "react";
 import { QueryClient } from "react-query";
+import { useRouter } from "next/router";
 import { dehydrate } from "react-query/hydration";
+import Page from "~/components/Page";
 import { fetchAudioById } from "~/features/audio/services/mutations/fetchAudioById";
-import AudioDetailsPage from "~/features/audio/components/Pages/AudioDetailsPage";
 import { getAccessToken } from "~/utils";
+import { useGetAudio } from "~/features/audio/hooks";
+import AudioDetails from "~/features/audio/components/Details";
 
-// Fetch the audio detail and render it onto the server.
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const queryClient = new QueryClient();
   const id = context.params?.id as string;
@@ -28,5 +31,18 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 export default function ViewAudioNextPage() {
-  return <AudioDetailsPage />;
+  const { query } = useRouter();
+  const id = query.id as string;
+
+  const { data: audio } = useGetAudio(id, {
+    staleTime: 1000,
+  });
+
+  if (!audio) return null;
+
+  return (
+    <Page title={audio.title}>
+      <AudioDetails audio={audio} />
+    </Page>
+  );
 }

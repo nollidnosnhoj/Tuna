@@ -1,7 +1,7 @@
 import { useMutation, UseMutationResult } from "react-query";
 import { useAuth } from "~/lib/hooks/useAuth";
 import api from "~/lib/api";
-import { AudioDetail, CreateAudioRequest } from "../../types";
+import { AudioDetail, CreateAudioRequest } from "../types";
 
 export function usePublishAudio(): UseMutationResult<AudioDetail> {
   const { accessToken } = useAuth();

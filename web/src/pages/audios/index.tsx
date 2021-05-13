@@ -1,28 +1,34 @@
-import { GetServerSideProps } from "next";
-import { fetch } from "~/lib/api";
-import { Audio } from "~/features/audio/types";
-import AudioListPage, {
-  AudioListPageProps,
-} from "~/features/audio/components/Pages/AudioListPage";
-import { CursorPagedList } from "~/lib/types";
-import { getAccessToken } from "~/utils";
+import { useRouter } from "next/router";
+import React from "react";
+import { Heading } from "@chakra-ui/react";
+import InfiniteListControls from "~/components/InfiniteListControls";
+import Page from "~/components/Page";
+import AudioList from "~/features/audio/components/List";
+import { useAudioListQuery } from "~/features/audio/hooks";
 
-export const getServerSideProps: GetServerSideProps<AudioListPageProps> = async ({
-  query,
-  req,
-}) => {
-  const accessToken = getAccessToken({ req });
-  const resultPage = await fetch<CursorPagedList<Audio>>("audios", query, {
-    accessToken,
-  });
+export default function BrowseAudioNextPage() {
+  const { query } = useRouter();
 
-  return {
-    props: {
-      initialPage: resultPage,
-    },
-  };
-};
+  const {
+    items: audios,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useAudioListQuery();
 
-export default function BrowseAudioNextPage(props: AudioListPageProps) {
-  return <AudioListPage {...props} />;
+  return (
+    <Page title="Browse Latest Public Audios">
+      {query["tag"] && (
+        <Heading as="h2" size="lg">
+          Showing '{query["tag"]}' audios
+        </Heading>
+      )}
+      <AudioList audios={audios} />
+      <InfiniteListControls
+        fetchNext={fetchNextPage}
+        hasNext={hasNextPage}
+        isFetching={isFetchingNextPage}
+      />
+    </Page>
+  );
 }

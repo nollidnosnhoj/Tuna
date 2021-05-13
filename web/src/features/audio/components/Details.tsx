@@ -29,7 +29,7 @@ import Link from "~/components/Link";
 import Picture from "~/components/Picture";
 import PictureDropzone from "~/components/Picture/PictureDropzone";
 import { mapAudioForAudioQueue } from "~/utils/audioplayer";
-import { useAddAudioPicture } from "~/features/audio/hooks/mutations/useAddAudioPicture";
+import { useAddAudioPicture } from "~/features/audio/hooks/useAddAudioPicture";
 import { AudioDetail } from "~/features/audio/types";
 import { useAudioPlayer } from "~/lib/hooks/useAudioPlayer";
 import { useUser } from "~/lib/hooks/useUser";

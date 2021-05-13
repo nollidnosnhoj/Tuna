@@ -14,7 +14,7 @@ import { Formik, FormikHelpers } from "formik";
 import React, { useState } from "react";
 import Router from "next/router";
 import { apiErrorToast, successfulToast } from "~/utils/toast";
-import { useEditAudio, useRemoveAudio } from "../hooks/mutations";
+import { useEditAudio, useRemoveAudio } from "../hooks";
 import { editAudioSchema } from "../schemas";
 import { AudioDetail, AudioRequest } from "../types";
 import AudioForm from "./AudioForm";

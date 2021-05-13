@@ -1,7 +1,7 @@
 import React from "react";
 import InfiniteListControls from "~/components/InfiniteListControls";
 import AudioList from "~/features/audio/components/List";
-import { useGetAudioListInfinite } from "~/features/audio/hooks/queries";
+import { useUserAudioListQuery } from "../hooks";
 
 interface UserAudioListProps {
   username: string;
@@ -17,9 +17,7 @@ export default function UserAudioList(
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useGetAudioListInfinite(`users/${username}/audios`, {
-    staleTime: 1000,
-  });
+  } = useUserAudioListQuery(username);
 
   return (
     <React.Fragment>
