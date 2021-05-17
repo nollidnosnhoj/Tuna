@@ -35,7 +35,6 @@
   "devDependencies": {
     "@types/cookie": "^0.4.0",
     "@types/js-cookie": "^2.2.6",
-    "@types/next": "^9.0.0",
     "@types/node": "^15.0.2",
     "@types/nprogress": "^0.2.0",
     "@types/react": "^17.0.5",
