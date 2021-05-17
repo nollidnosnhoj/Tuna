@@ -10,7 +10,6 @@ namespace Audiochan.UnitTests
     {
         public static AudioBuilder UseTestDefaults(this AudioBuilder audioBuilder, 
             string userId,
-            bool isPublish = false,
             string fileName = "test.mp3")
         {
             var random = new Randomizer();
@@ -22,9 +21,6 @@ namespace Audiochan.UnitTests
                 .AddDuration(random.Number(30, 300))
                 .AddFileSize(random.Number(5000, 25000))
                 .AddUserId(userId);
-
-            if (isPublish)
-                audioBuilder = audioBuilder.SetPublish(DateTime.UtcNow);
 
             return audioBuilder;
         }

@@ -39,7 +39,6 @@ namespace Audiochan.Core.Features.Audios.GetAudioFeed
                 .ToListAsync(cancellationToken);
 
             return await _dbContext.Audios
-                .IncludePublishAudios()
                 .ExcludePrivateAudios()
                 .Where(a => followedIds.Contains(a.UserId))
                 .ProjectToList(_storageSettings)

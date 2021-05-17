@@ -29,7 +29,6 @@ namespace Audiochan.Infrastructure.Search
         public async Task<PagedList<AudioViewModel>> SearchAudios(SearchAudiosRequest request, CancellationToken cancellationToken = default)
         {
             var queryable = _dbContext.Audios
-                .IncludePublishAudios()
                 .ExcludePrivateAudios()
                 .FilterByTags(request.Tags);
             

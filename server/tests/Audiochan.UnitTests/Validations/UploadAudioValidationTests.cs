@@ -42,7 +42,6 @@ namespace Audiochan.UnitTests.Validations
             // Assign
             var request = new UploadAudioRequest
             {
-                Duration = _randomizer.Number(300),
                 FileSize = _randomizer.Number(1, 262144000),
                 FileName = _randomizer.Word() + ".mp3"
             };
@@ -65,7 +64,6 @@ namespace Audiochan.UnitTests.Validations
 
             // Assert
             result.IsValid.Should().BeFalse();
-            result.ShouldHaveValidationErrorFor(x => x.Duration);
             result.ShouldHaveValidationErrorFor(x => x.FileName);
             result.ShouldHaveValidationErrorFor(x => x.FileSize);
         }

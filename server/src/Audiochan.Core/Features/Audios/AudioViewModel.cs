@@ -5,7 +5,7 @@ namespace Audiochan.Core.Features.Audios
 {
     public record AudioViewModel
     {
-        public string Id { get; init; }
+        public Guid Id { get; init; }
         public string Title { get; init; }
         public bool IsPublic { get; init; }
         public decimal Duration { get; init; }

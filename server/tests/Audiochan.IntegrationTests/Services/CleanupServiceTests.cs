@@ -29,7 +29,6 @@ namespace Audiochan.IntegrationTests.Services
             var unPublishCreatedDate = nowDate.AddDays(-2);
 
             var unPublishedAudioFaker = new Faker<Audio>()
-                .RuleFor(x => x.Id, _ => Nanoid.Nanoid.Generate())
                 .RuleFor(x => x.FileExt, f => f.System.FileExt("audio/mpeg"))
                 .RuleFor(x => x.OriginalFileName, f => f.System.FileName(".mp3"))
                 .RuleFor(x => x.FileSize, f => f.Random.Number(1, 2_000_000))
@@ -39,13 +38,12 @@ namespace Audiochan.IntegrationTests.Services
                     a.Title = Path.GetFileNameWithoutExtension(a.OriginalFileName);
                     a.Created = unPublishCreatedDate;
                     a.UserId = ownerId;
-                    a.FileName = a.Id + a.FileExt;
+                    a.FileName = "test" + a.FileExt;
                 });
 
             var unPublishedAudios = unPublishedAudioFaker.Generate(3);
             
             var publishedAudioFaker = new Faker<Audio>()
-                .RuleFor(x => x.Id, _ => Nanoid.Nanoid.Generate())
                 .RuleFor(x => x.FileExt, f => f.System.FileExt("audio/mpeg"))
                 .RuleFor(x => x.OriginalFileName, f => f.System.FileName(".mp3"))
                 .RuleFor(x => x.FileSize, f => f.Random.Number(1, 2_000_000))
@@ -54,7 +52,7 @@ namespace Audiochan.IntegrationTests.Services
                 {
                     a.Title = Path.GetFileNameWithoutExtension(a.OriginalFileName);
                     a.UserId = ownerId;
-                    a.FileName = a.Id + a.FileExt;
+                    a.FileName = "test" + a.FileExt;
                 });
 
             var publishedAudios = publishedAudioFaker.Generate(3);

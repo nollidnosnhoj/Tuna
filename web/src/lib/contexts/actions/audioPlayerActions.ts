@@ -5,6 +5,10 @@ export type AudioPlayerAction =
       type: "PLAY_PREVIOUS" | "PLAY_NEXT" | "CLEAR_QUEUE" | "TOGGLE_PLAYING";
     }
   | {
+      type: "REMOVE_AUDIO_ID_FROM_QUEUE";
+      payload: string;
+    }
+  | {
       type: "SET_PLAYING";
       payload: boolean;
     }

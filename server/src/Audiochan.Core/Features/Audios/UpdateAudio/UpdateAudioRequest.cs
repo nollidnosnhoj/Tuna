@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,7 +18,7 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
 {
     public class UpdateAudioRequest : AudioAbstractRequest, IRequest<IResult<AudioDetailViewModel>>
     {
-        [JsonIgnore] public string AudioId { get; set; }
+        [JsonIgnore] public Guid AudioId { get; set; }
     }
 
 

@@ -46,7 +46,6 @@ namespace Audiochan.API
                         var roleManager = services.GetRequiredService<RoleManager<Role>>();
                         var tagRepo = services.GetRequiredService<ITagRepository>();
                         await ApplicationDbSeeder.UserSeedAsync(userManager, roleManager);
-                        await ApplicationDbSeeder.AddDefaultAudioForDemo(context, userManager, tagRepo);
                     }
                 }
 

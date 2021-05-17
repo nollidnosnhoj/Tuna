@@ -48,7 +48,7 @@ namespace Audiochan.Core.Features.Users.UpdatePicture
             var container = Path.Combine(_storageSettings.Image.Container, "users");
             var user = await _userManager.FindByIdAsync(request.UserId + "");
             if (user == null) return Result<string>.Fail(ResultError.Unauthorized);
-            var blobName = $"{user.Id}_{_dateTimeProvider.Now:yyyyMMddHHmmss}.jpg";
+            var blobName = $"{user.Id}/{_dateTimeProvider.Now:yyyyMMddHHmmss}.jpg";
             try
             {
                 var response = await _imageService.UploadImage(request.Data, container, blobName, cancellationToken);

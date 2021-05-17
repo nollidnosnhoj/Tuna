@@ -10,9 +10,6 @@ namespace Audiochan.Core.Features.Audios.UploadAudio
         public UploadAudioRequestValidator(IOptions<MediaStorageSettings> options)
         {
             var uploadOptions = options.Value.Audio;
-            RuleFor(req => req.Duration)
-                .NotEmpty()
-                .WithMessage("Duration is required.");
             RuleFor(req => req.FileSize)
                 .FileSizeValidation(uploadOptions.MaximumFileSize);
             RuleFor(req => req.FileName)

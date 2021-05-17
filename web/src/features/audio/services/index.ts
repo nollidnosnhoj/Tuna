@@ -1,11 +1,11 @@
 import api from "~/lib/api";
 
 type UploadResponse = {
-  audioId: string;
+  uploadId: string;
   uploadUrl: string;
 };
 
-const getDurationFromAudio = (file: File): Promise<number> => {
+export const getDurationFromAudio = (file: File): Promise<number> => {
   return new Promise<number>((resolve, reject) => {
     const audio = new Audio();
     audio.src = window.URL.createObjectURL(file);
@@ -21,11 +21,9 @@ const getDurationFromAudio = (file: File): Promise<number> => {
 export const getS3PresignedUrl = async (
   file: File
 ): Promise<UploadResponse> => {
-  const duration = await getDurationFromAudio(file);
   const { data } = await api.post<UploadResponse>("upload", {
     fileName: file.name,
     fileSize: file.size,
-    duration: duration,
   });
   return data;
 };

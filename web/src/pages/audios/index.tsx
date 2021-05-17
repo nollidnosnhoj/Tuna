@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import React from "react";
-import { Heading } from "@chakra-ui/react";
+import { Heading, Text } from "@chakra-ui/react";
 import InfiniteListControls from "~/components/InfiniteListControls";
 import Page from "~/components/Page";
 import AudioList from "~/features/audio/components/List";
@@ -23,7 +23,11 @@ export default function BrowseAudioNextPage() {
           Showing '{query["tag"]}' audios
         </Heading>
       )}
-      <AudioList audios={audios} />
+      <AudioList
+        audios={audios}
+        notFoundContent={<Text>No audio found. Be the first to upload!</Text>}
+        hideLayoutToggle
+      />
       <InfiniteListControls
         fetchNext={fetchNextPage}
         hasNext={hasNextPage}

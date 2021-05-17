@@ -11,10 +11,10 @@ import { SearchIcon } from "@chakra-ui/icons";
 
 export default function SearchBar() {
   const { query, push: routerPush } = useRouter();
-  const [term, setTerm] = useState<string | string[] | undefined>("");
+  const [term, setTerm] = useState<string | string[]>("");
 
   useEffect(() => {
-    setTerm(query["q"]);
+    setTerm(query["q"] || "");
   }, [query]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {

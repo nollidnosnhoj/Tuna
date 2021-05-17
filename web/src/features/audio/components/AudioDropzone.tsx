@@ -6,28 +6,26 @@ import {
   Heading,
   VStack,
   Text,
-  Progress,
+  CloseButton,
 } from "@chakra-ui/react";
-import axios from "axios";
-import React, { useEffect, useMemo, useState } from "react";
+import { useField } from "formik";
+import React, { useMemo } from "react";
 import { useDropzone } from "react-dropzone";
-import { useUser } from "~/lib/hooks/useUser";
 import SETTINGS from "~/lib/config";
 import { formatFileSize } from "~/utils/format";
 import { errorToast } from "~/utils/toast";
-import { getS3PresignedUrl } from "../services";
 
 interface AudioDropzoneProps {
-  onUploading: (id: string) => void;
-  onUploaded: () => void;
+  name: string;
 }
 
 export default function AudioDropzone(props: AudioDropzoneProps) {
-  const { onUploaded, onUploading } = props;
-  const { user } = useUser();
-  const [file, setFile] = useState<File | null>(null);
-  const [progress, setProgress] = useState(0);
-  const [uploaded, setUploaded] = useState(false);
+  const { name } = props;
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [{ value }, { error }, { setValue }] = useField<File | null>({
+    name: name,
+  });
 
   const {
     getRootProps,
@@ -42,7 +40,7 @@ export default function AudioDropzone(props: AudioDropzoneProps) {
     multiple: false,
     noClick: true,
     onDropAccepted: ([acceptedFile]) => {
-      setFile(acceptedFile);
+      setValue(acceptedFile, false);
     },
     onDropRejected: (fileRejections) => {
       fileRejections.forEach((fileRejection) => {
@@ -62,48 +60,6 @@ export default function AudioDropzone(props: AudioDropzoneProps) {
     return "gray.700";
   }, [isDragReject, isDragAccept]);
 
-  useEffect(() => {
-    const uploading = async () => {
-      if (!!file && !!user) {
-        try {
-          const { audioId, uploadUrl } = await getS3PresignedUrl(file);
-          onUploading(audioId);
-          await axios.put(uploadUrl, file, {
-            headers: {
-              "Content-Type": file.type,
-              "x-amz-meta-userId": `${user.id}`,
-              "x-amz-meta-originalFilename": `${file.name}`,
-            },
-            onUploadProgress: (evt) => {
-              const currentProgress = (evt.loaded / evt.total) * 100;
-              setProgress(currentProgress);
-            },
-          });
-          setUploaded(true);
-          onUploaded();
-        } catch (err) {
-          errorToast({
-            message: "Unable to complete upload. Please try again later.",
-          });
-        }
-      }
-    };
-    uploading();
-  }, [file, user]);
-
-  if (file) {
-    return (
-      <Box display="flex" justifyContent="center">
-        <VStack marginY={10}>
-          <Progress hasStripe value={progress} />
-          <Heading as="h2" size="md">
-            {uploaded ? "Done" : "Uploading..."}
-          </Heading>
-        </VStack>
-      </Box>
-    );
-  }
-
   return (
     <Flex
       borderRadius={4}
@@ -111,20 +67,40 @@ export default function AudioDropzone(props: AudioDropzoneProps) {
       borderColor={borderColor}
       {...getRootProps()}
     >
-      <Box width="100%" marginY={10}>
+      <Box width="100%" marginTop={10}>
         <input {...getInputProps()} />
-        <VStack marginY={20}>
-          <Heading size="md">Drag and drop your audio file here.</Heading>
-          <chakra.div>
-            <Button colorScheme="primary" onClick={open}>
-              Or click to upload your file.
-            </Button>
-          </chakra.div>
-        </VStack>
+        {value ? (
+          <VStack>
+            <Flex alignItems="center">
+              <Heading size="md">{value.name}</Heading>
+              <CloseButton
+                marginLeft={4}
+                aria-label="Remove File"
+                onClick={() => setValue(null)}
+                variant="ghost"
+              />
+            </Flex>
+          </VStack>
+        ) : (
+          <VStack>
+            <Heading size="md">Drag and drop your audio file here.</Heading>
+            <chakra.div>
+              <Button colorScheme="primary" onClick={open}>
+                Or click to upload your file.
+              </Button>
+            </chakra.div>
+            {error && (
+              <chakra.span color="red.500" fontSize="sm">
+                {error}
+              </chakra.span>
+            )}
+          </VStack>
+        )}
         <Flex
           direction="column"
           justifyContent="flex-end"
           alignItems="center"
+          marginTop={10}
           marginBottom={2}
         >
           <Text fontSize="sm">

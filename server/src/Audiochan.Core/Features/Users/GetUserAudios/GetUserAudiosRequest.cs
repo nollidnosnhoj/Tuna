@@ -16,9 +16,9 @@ using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Users.GetUserAudios
 {
-    public record GetUserAudiosRequest : IHasCursor, IRequest<CursorList<AudioViewModel>>
+    public class GetUserAudiosRequest : IHasCursor, IRequest<CursorList<AudioViewModel>>
     {
-        public string Username { get; init; }
+        public string Username { get; set; }
         public string Cursor { get; init; }
         public int Size { get; init; }
     }
@@ -42,7 +42,6 @@ namespace Audiochan.Core.Features.Users.GetUserAudios
         {
             var currentUserId = _currentUserService.GetUserId();
             var audios = await _dbContext.Audios
-                .IncludePublishAudios()
                 .ExcludePrivateAudios(currentUserId)
                 .Where(a => a.User.UserName == request.Username.ToLower())
                 .FilterUsingCursor(request.Cursor)
@@ -57,7 +56,7 @@ namespace Audiochan.Core.Features.Users.GetUserAudios
             var nextCursor = audios.Count < request.Size
                 ? null
                 : lastAudio != null
-                    ? CursorHelpers.EncodeCursor(lastAudio.Uploaded, lastAudio.Id)
+                    ? CursorHelpers.EncodeCursor(lastAudio.Uploaded, lastAudio.Id.ToString())
                     : null;
 
             return new CursorList<AudioViewModel>(audios, nextCursor);

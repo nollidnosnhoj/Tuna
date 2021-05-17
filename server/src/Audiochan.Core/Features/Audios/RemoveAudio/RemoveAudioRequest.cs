@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,7 +15,7 @@ using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Audios.RemoveAudio
 {
-    public record RemoveAudioRequest(string Id) : IRequest<IResult<bool>>
+    public record RemoveAudioRequest(Guid Id) : IRequest<IResult<bool>>
     {
     }
 

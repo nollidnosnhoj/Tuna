@@ -3,9 +3,14 @@ import { useAuth } from "~/lib/hooks/useAuth";
 import api from "~/lib/api";
 import { AudioDetail, CreateAudioRequest } from "../types";
 
-export function usePublishAudio(): UseMutationResult<AudioDetail> {
+export function useCreateAudio(): UseMutationResult<
+  AudioDetail,
+  unknown,
+  CreateAudioRequest,
+  unknown
+> {
   const { accessToken } = useAuth();
-  const uploadAudio = async (
+  const createAudio = async (
     request: CreateAudioRequest
   ): Promise<AudioDetail> => {
     const { data } = await api.post<AudioDetail>("audios", request, {
@@ -14,5 +19,5 @@ export function usePublishAudio(): UseMutationResult<AudioDetail> {
     return data;
   };
 
-  return useMutation(uploadAudio);
+  return useMutation(createAudio);
 }

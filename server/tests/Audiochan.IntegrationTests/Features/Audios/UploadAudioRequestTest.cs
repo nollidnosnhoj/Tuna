@@ -26,7 +26,6 @@ namespace Audiochan.IntegrationTests.Features.Audios
             var extension = ".mp3";
             var request = new UploadAudioRequest
             {
-                Duration = _randomizer.Number(30, 360) + _randomizer.Decimal(),
                 FileName = _randomizer.Word() + extension,
                 FileSize = _randomizer.Number(1000, 10000000)
             };
@@ -39,15 +38,14 @@ namespace Audiochan.IntegrationTests.Features.Audios
 
             // assert
             var audio = await _fixture.ExecuteDbContextAsync(dbContext =>
-                dbContext.Audios.FindAsync(response.AudioId));
+                dbContext.Audios.FindAsync(response.UploadId));
             
             response.Should().NotBeNull();
-            response.AudioId.Should().NotBeEmpty();
-            audio.Id.Should().Be(response.AudioId);
-            audio.Duration.Should().Be(request.Duration);
+            response.UploadId.Should().NotBeEmpty();
+            audio.Id.Should().Be(response.UploadId);
             audio.OriginalFileName.Should().Be(request.FileName);
             audio.FileExt.Should().Be(extension);
-            audio.FileName.Should().Be(response.AudioId + extension);
+            audio.FileName.Should().Be(response.UploadId + extension);
             audio.FileSize.Should().Be(request.FileSize);
         }
     }

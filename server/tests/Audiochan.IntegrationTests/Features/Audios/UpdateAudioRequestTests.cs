@@ -29,9 +29,9 @@ namespace Audiochan.IntegrationTests.Features.Audios
             var (ownerId, _) = await _fixture
                 .RunAsUserAsync("kopacetic", Guid.NewGuid().ToString(), Array.Empty<string>());
 
-            var audio = await new AudioBuilder()
-                .UseTestDefaults(ownerId, true, "testaudio.mp3")
-                .BuildAsync();
+            var audio = new AudioBuilder()
+                .UseTestDefaults(ownerId, "testaudio.mp3")
+                .BuildAsync("test");
 
             await _fixture.InsertAsync(audio);
 
@@ -59,9 +59,9 @@ namespace Audiochan.IntegrationTests.Features.Audios
             var (ownerId, _) = await _fixture
                 .RunAsUserAsync("kopacetic", Guid.NewGuid().ToString(), Array.Empty<string>());
 
-            var audio = await new AudioBuilder()
-                .UseTestDefaults(ownerId, true, "testaudio.mp3")
-                .BuildAsync();
+            var audio = new AudioBuilder()
+                .UseTestDefaults(ownerId, "testaudio.mp3")
+                .BuildAsync("test");
 
             await _fixture.InsertAsync(audio);
             

@@ -53,6 +53,7 @@ namespace Audiochan.IntegrationTests.Mocks
                         It.IsAny<string>(),
                         It.IsAny<string>(),
                         It.IsAny<string>(),
+                        It.IsAny<string>(),
                         It.IsAny<CancellationToken>()))
                 .Returns(Task.CompletedTask);
 

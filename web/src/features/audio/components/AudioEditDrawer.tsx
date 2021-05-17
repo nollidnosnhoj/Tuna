@@ -13,11 +13,12 @@ import {
 import { Formik, FormikHelpers } from "formik";
 import React, { useState } from "react";
 import Router from "next/router";
+import * as yup from "yup";
 import { apiErrorToast, successfulToast } from "~/utils/toast";
 import { useEditAudio, useRemoveAudio } from "../hooks";
-import { editAudioSchema } from "../schemas";
 import { AudioDetail, AudioRequest } from "../types";
 import AudioForm from "./AudioForm";
+import { validationMessages } from "~/utils";
 
 interface AudioEditDrawerProps {
   audio: AudioDetail;
@@ -25,6 +26,28 @@ interface AudioEditDrawerProps {
   onClose: () => void;
   buttonRef?: React.RefObject<HTMLButtonElement>;
 }
+
+const validationSchema = yup
+  .object()
+  .shape({
+    title: yup
+      .string()
+      .required(validationMessages.required("Title"))
+      .max(30, validationMessages.max("Title", 30))
+      .defined(),
+    description: yup
+      .string()
+      .max(500, validationMessages.max("Description", 500))
+      .ensure()
+      .defined(),
+    tags: yup
+      .array(yup.string())
+      .max(10, validationMessages.max("Tags", 10))
+      .ensure()
+      .defined(),
+    isPublic: yup.boolean().defined(),
+  })
+  .defined();
 
 const AudioEditDrawer: React.FC<AudioEditDrawerProps> = (props) => {
   const { audio, isOpen, onClose, buttonRef } = props;
@@ -97,7 +120,7 @@ const AudioEditDrawer: React.FC<AudioEditDrawerProps> = (props) => {
               tags: audio.tags,
               isPublic: audio.isPublic,
             }}
-            validationSchema={editAudioSchema}
+            validationSchema={validationSchema}
             onSubmit={onEditSubmit}
           >
             {({ handleSubmit }) => (

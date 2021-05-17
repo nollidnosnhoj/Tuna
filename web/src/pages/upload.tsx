@@ -1,90 +1,185 @@
-import { Flex, Box, Heading, Button, VStack, Text } from "@chakra-ui/react";
-import { Formik } from "formik";
+import axios from "axios";
+import {
+  Flex,
+  Box,
+  Heading,
+  Button,
+  VStack,
+  Text,
+  Progress,
+} from "@chakra-ui/react";
+import { Formik, FormikHelpers } from "formik";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
+import * as yup from "yup";
 import withRequiredAuth from "~/components/hoc/withRequiredAuth";
 import Page from "~/components/Page";
 import AudioDropzone from "~/features/audio/components/AudioDropzone";
 import AudioForm from "~/features/audio/components/AudioForm";
-import { usePublishAudio } from "~/features/audio/hooks";
-import { publishAudioSchema } from "~/features/audio/schemas";
+import { useCreateAudio } from "~/features/audio/hooks";
+import {
+  getDurationFromAudio,
+  getS3PresignedUrl,
+} from "~/features/audio/services";
 import { AudioRequest } from "~/features/audio/types";
 import useNavigationLock from "~/lib/hooks/useNavigationLock";
-import { apiErrorToast } from "~/utils";
+import { apiErrorToast, errorToast, validationMessages } from "~/utils";
+import { useUser } from "~/lib/hooks/useUser";
+
+interface CreateAudioRequestValues extends AudioRequest {
+  file: File | null;
+}
+
+const validationSchema = yup
+  .object()
+  .shape({
+    title: yup
+      .string()
+      .required(validationMessages.required("Title"))
+      .max(30, validationMessages.max("Title", 30))
+      .ensure()
+      .defined(),
+    description: yup
+      .string()
+      .max(500, validationMessages.max("Description", 500))
+      .ensure()
+      .defined(),
+    tags: yup
+      .array(yup.string())
+      .max(10, validationMessages.max("Tags", 10))
+      .ensure()
+      .defined(),
+    isPublic: yup.boolean().defined(),
+  })
+  .defined();
 
 const AudioUploadNextPage: React.FC = () => {
   const router = useRouter();
+  const { user } = useUser();
   const [audioId, setAudioId] = useState("");
-  const [uploaded, setUploaded] = useState(false);
-  const [published, setPublished] = useState(false);
-  const { mutateAsync: publishAudio } = usePublishAudio();
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploading, setUploading] = useState(false);
+  const { mutateAsync: createAudio } = useCreateAudio();
 
   useNavigationLock(
-    Boolean(audioId) && !uploaded,
+    uploading,
     "Are you sure you want to leave page? You will lose progress."
   );
 
-  const handleSubmit = (values: AudioRequest) => {
-    publishAudio({ ...values, audioId: audioId })
-      .then(() => {
-        setPublished(true);
-      })
-      .catch((err) => {
+  const handleUploading = async (
+    values: CreateAudioRequestValues,
+    { setValues }: FormikHelpers<CreateAudioRequestValues>
+  ) => {
+    const { file, ...formValues } = values;
+    if (file && user) {
+      try {
+        setUploading(true);
+        const { uploadId, uploadUrl } = await getS3PresignedUrl(file);
+        await axios.put(uploadUrl, file, {
+          headers: {
+            "Content-Type": file.type,
+            "x-amz-meta-userId": `${user.id}`,
+            "x-amz-meta-originalFilename": `${file.name}`,
+          },
+          onUploadProgress: (evt) => {
+            const currentProgress = (evt.loaded / evt.total) * 100;
+            setUploadProgress(currentProgress);
+          },
+        });
+        const duration = await getDurationFromAudio(file);
+        const { id } = await createAudio({
+          ...formValues,
+          uploadId: uploadId,
+          fileName: file.name,
+          fileSize: file.size,
+          duration: duration,
+          contentType: file.type,
+        });
+        setAudioId(id);
+      } catch (err) {
         apiErrorToast(err);
-      });
+        setValues(values);
+      } finally {
+        setUploading(false);
+      }
+    } else {
+      errorToast({ message: "File and/or audio not defined." });
+    }
   };
 
-  if (audioId && published) {
+  if (audioId) {
     return (
-      <Flex justify="center" align="center" marginTop={10}>
-        <Box textAlign="center">
-          <Heading as="h2" size="xl" marginY={4}>
-            Your audio has been published!
-          </Heading>
-          <Button
-            colorScheme="primary"
-            onClick={() => router.push(`/audios/${audioId}`)}
-          >
-            Click me to view your audio
-          </Button>
+      <Page title="Audio created!">
+        <Flex justify="center" align="center" marginTop={10}>
+          <Box textAlign="center">
+            <Heading as="h2" size="xl" marginY={4}>
+              Your audio has been uploaded!
+            </Heading>
+            <Button
+              colorScheme="primary"
+              onClick={() => router.push(`/audios/${audioId}`)}
+            >
+              Click me to view your audio
+            </Button>
+          </Box>
+        </Flex>
+      </Page>
+    );
+  }
+
+  if (uploading) {
+    return (
+      <Page title="Uploading...">
+        <Box display="flex" justifyContent="center">
+          <VStack marginY={10}>
+            <Progress hasStripe value={uploadProgress} />
+            <Heading as="h2" size="md">
+              Uploading...
+            </Heading>
+          </VStack>
         </Box>
-      </Flex>
+      </Page>
     );
   }
 
   return (
     <Page title="Upload">
-      <AudioDropzone
-        onUploaded={() => setUploaded(true)}
-        onUploading={(aid) => setAudioId(aid)}
-      />
-      {audioId && (
-        <Formik
-          initialValues={{
-            title: "",
-            description: "",
-            tags: [],
-            isPublic: false,
-          }}
-          validationSchema={publishAudioSchema}
-          onSubmit={handleSubmit}
-        >
-          {({ handleSubmit }) => (
+      <Formik<CreateAudioRequestValues>
+        initialValues={{
+          file: null,
+          title: "",
+          description: "",
+          tags: [],
+          isPublic: false,
+        }}
+        validate={(values) => {
+          if (!values.file) {
+            return { file: "File is required." };
+          }
+
+          return {};
+        }}
+        validationSchema={validationSchema}
+        onSubmit={handleUploading}
+      >
+        {({ handleSubmit, isValid }) => (
+          <Box marginBottom={10}>
             <form onSubmit={handleSubmit}>
+              <AudioDropzone name="file" />
               <AudioForm />
               <VStack>
                 <Text>
                   By publishing this audio, you have agreed to Audiochan's terms
                   of service and license agreement.
                 </Text>
-                <Button disabled={!uploaded} type="submit" width="75%">
-                  Publish
+                <Button disabled={!isValid} type="submit" width="75%">
+                  Upload
                 </Button>
               </VStack>
             </form>
-          )}
-        </Formik>
-      )}
+          </Box>
+        )}
+      </Formik>
     </Page>
   );
 };

@@ -1,10 +1,11 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.API.Extensions;
 using Audiochan.API.Models;
 using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Features.Audios;
-using Audiochan.Core.Features.Audios.PublishAudio;
+using Audiochan.Core.Features.Audios.CreateAudio;
 using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Features.Audios.GetAudioList;
 using Audiochan.Core.Features.Audios.RemoveAudio;
@@ -39,12 +40,12 @@ namespace Audiochan.API.Controllers
             return Ok(await _mediator.Send(query, cancellationToken));
         }
 
-        [HttpGet("{audioId}", Name = "GetAudio")]
+        [HttpGet("{audioId:guid}", Name = "GetAudio")]
         [AllowAnonymous]
         [ProducesResponseType(typeof(AudioDetailViewModel), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
         [SwaggerOperation(Summary = "Return an audio by ID.", OperationId = "GetAudio", Tags = new[] {"audios"})]
-        public async Task<IActionResult> Get(string audioId, [FromQuery] string privateKey,
+        public async Task<IActionResult> Get(Guid audioId, [FromQuery] string privateKey,
             CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new GetAudioRequest(audioId, privateKey), cancellationToken);
@@ -53,13 +54,13 @@ namespace Audiochan.API.Controllers
                 : NotFound(ErrorViewModel.NotFound("Audio was not found."));
         }
 
-        [HttpPost(Name = "PublishAudio")]
+        [HttpPost(Name = "CreateAudio")]
         [ApiExplorerSettings(IgnoreApi = true)]
         [ProducesResponseType(typeof(AudioDetailViewModel), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        public async Task<IActionResult> Publish([FromBody] PublishAudioRequest request,
+        public async Task<IActionResult> Create([FromBody] CreateAudioRequest request,
             CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(request, cancellationToken);
@@ -68,7 +69,7 @@ namespace Audiochan.API.Controllers
                 : result.ReturnErrorResponse();
         }
 
-        [HttpPut("{audioId}", Name = "UpdateAudio")]
+        [HttpPut("{audioId:guid}", Name = "UpdateAudio")]
         [ProducesResponseType(typeof(AudioDetailViewModel), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -79,7 +80,7 @@ namespace Audiochan.API.Controllers
             Description = "Requires authentication.",
             OperationId = "UpdateAudio",
             Tags = new[] {"audios"})]
-        public async Task<IActionResult> Update(string audioId,
+        public async Task<IActionResult> Update(Guid audioId,
             [FromBody] UpdateAudioRequest request,
             CancellationToken cancellationToken)
         {
@@ -88,7 +89,7 @@ namespace Audiochan.API.Controllers
             return result.IsSuccess ? Ok(result.Data) : result.ReturnErrorResponse();
         }
 
-        [HttpDelete("{audioId}", Name = "DeleteAudio")]
+        [HttpDelete("{audioId:guid}", Name = "DeleteAudio")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -98,19 +99,19 @@ namespace Audiochan.API.Controllers
             Description = "Requires authentication.",
             OperationId = "DeleteAudio",
             Tags = new[] {"audios"})]
-        public async Task<IActionResult> Destroy(string audioId, CancellationToken cancellationToken)
+        public async Task<IActionResult> Destroy(Guid audioId, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new RemoveAudioRequest(audioId), cancellationToken);
             return result.IsSuccess ? NoContent() : result.ReturnErrorResponse();
         }
 
-        [HttpPatch("{audioId}/picture")]
+        [HttpPatch("{audioId:guid}/picture")]
         [SwaggerOperation(
             Summary = "Add Picture.",
             Description = "Requires authentication.",
             OperationId = "AddAudioPicture",
             Tags = new[] {"audios"})]
-        public async Task<IActionResult> AddPicture(string audioId,
+        public async Task<IActionResult> AddPicture(Guid audioId,
             [FromBody] UpdateAudioPictureRequest request,
             CancellationToken cancellationToken)
         {

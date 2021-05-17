@@ -20,17 +20,17 @@ namespace Audiochan.Core.Common.Extensions.MappingExtensions
                 Description = audio.Description,
                 Duration = audio.Duration,
                 Picture = audio.Picture,
-                Uploaded = audio.Created,
+                Created = audio.Created,
                 Tags = audio.Tags.Select(t => t.Name).ToArray(),
                 IsPublic = audio.IsPublic,
                 FileExt = audio.FileExt,
                 FileSize = audio.FileSize,
                 LastModified = audio.LastModified,
-                AudioUrl = $"https://{options.Audio.Bucket}.s3.amazonaws.com/{options.Audio.Container}/{audio.FileName}",
+                AudioUrl = $"https://{options.Audio.Bucket}.s3.amazonaws.com/{options.Audio.Container}/{audio.Id}/{audio.FileName}",
                 Author = new MetaAuthorDto
                 {
                     Id = audio.User.Id,
-                    Picture = $"https://{options.Image.Bucket}.s3.amazonaws.com/{options.Audio.Container}/${audio.User.Picture}",
+                    Picture = $"https://{options.Image.Bucket}.s3.amazonaws.com/{options.Audio.Container}/{audio.Id}/{audio.User.Picture}",
                     Username = audio.User.UserName
                 }
             };
@@ -47,11 +47,11 @@ namespace Audiochan.Core.Common.Extensions.MappingExtensions
                 Uploaded = audio.Created,
                 IsPublic = audio.IsPublic,
                 AudioUrl =
-                    $"https://{options.Audio.Bucket}.s3.amazonaws.com/{options.Audio.Container}/{audio.FileName}",
+                    $"https://{options.Audio.Bucket}.s3.amazonaws.com/{options.Audio.Container}/{audio.Id}/{audio.FileName}",
                 Author = new MetaAuthorDto
                 {
                     Id = audio.User.Id,
-                    Picture = $"https://{options.Image.Bucket}.s3.amazonaws.com/{options.Audio.Container}/${audio.User.Picture}",
+                    Picture = $"https://{options.Image.Bucket}.s3.amazonaws.com/{options.Audio.Container}/{audio.Id}/{audio.User.Picture}",
                     Username = audio.User.UserName
                 }
             };

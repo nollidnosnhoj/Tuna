@@ -5,7 +5,7 @@ namespace Audiochan.Core.Features.Audios
 {
     public record AudioDetailViewModel
     {
-        public string Id { get; init; }
+        public Guid Id { get; init; }
         public string Title { get; init; }
         public string Description { get; init; }
         public bool IsPublic { get; init; }
@@ -14,7 +14,7 @@ namespace Audiochan.Core.Features.Audios
         public long FileSize { get; init; }
         public string FileExt { get; init; }
         public string Picture { get; init; }
-        public DateTime Uploaded { get; init; }
+        public DateTime Created { get; init; }
         public DateTime? LastModified { get; init; }
         public string AudioUrl { get; init; }
         public MetaAuthorDto Author { get; init; }

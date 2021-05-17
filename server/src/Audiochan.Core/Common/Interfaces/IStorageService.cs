@@ -27,12 +27,16 @@ namespace Audiochan.Core.Common.Interfaces
             string sourceContainer,
             string sourceBlobName,
             string targetBucket,
-            string targetContainer, CancellationToken cancellationToken = default);
+            string targetContainer, 
+            string targetKey = null,
+            CancellationToken cancellationToken = default);
         
         Task MoveBlobAsync(string sourceBucket,
             string sourceContainer,
             string sourceBlobName,
             string targetBucket,
-            string targetContainer, CancellationToken cancellationToken = default);
+            string targetContainer, 
+            string targetKey = null,
+            CancellationToken cancellationToken = default);
     }
 }

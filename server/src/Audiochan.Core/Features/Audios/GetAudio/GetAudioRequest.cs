@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Extensions.MappingExtensions;
@@ -11,7 +12,7 @@ using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Audios.GetAudio
 {
-    public record GetAudioRequest(string Id, string PrivateKey = "") : IRequest<AudioDetailViewModel>
+    public record GetAudioRequest(Guid Id, string PrivateKey = "") : IRequest<AudioDetailViewModel>
     {
     }
 
@@ -34,7 +35,7 @@ namespace Audiochan.Core.Features.Audios.GetAudio
             var currentUserId = _currentUserService.GetUserId();
 
             return await _dbContext.Audios
-                .IncludePublishAudios()
+                
                 .Where(x => x.Id == request.Id)
                 .ProjectToDetail(_storageSettings)
                 .SingleOrDefaultAsync(cancellationToken);

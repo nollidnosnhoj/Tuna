@@ -36,20 +36,17 @@ namespace Audiochan.IntegrationTests.Features.Audios
             var (ownerId, _) = await _fixture.RunAsAdministratorAsync();
 
             var audioFaker = new Faker<Audio>()
-                .RuleFor(x => x.Id, _ => Nanoid.Nanoid.Generate())
                 .RuleFor(x => x.FileExt, f => ".mp3")
                 .RuleFor(x => x.OriginalFileName, f => f.System.FileName("mp3"))
                 .RuleFor(x => x.FileSize, f => f.Random.Number(1, 2_000_000))
                 .RuleFor(x => x.Duration, f => f.Random.Number(1, 300))
-                .RuleFor(x => x.PublishDate, f => f.Date.Past())
                 .RuleFor(x => x.IsPublic, _ => true)
-                .RuleFor(x => x.IsPublish, _ => true)
                 .FinishWith((f, a) =>
                 {
                     a.Tags = new List<Tag> {new() {Name = tags[0]}, new() {Name = tags[1]}};
                     a.Title = Path.GetFileNameWithoutExtension(a.OriginalFileName);
                     a.UserId = ownerId;
-                    a.FileName = a.Id + a.FileExt;
+                    a.FileName = "test" + a.FileExt;
                 });
 
             var audio = audioFaker.Generate();

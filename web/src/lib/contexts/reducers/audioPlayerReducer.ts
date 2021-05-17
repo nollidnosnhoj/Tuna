@@ -39,6 +39,32 @@ export function audioPlayerReducer(
         queue: [...queue, ...payload],
       };
     }
+    case "REMOVE_AUDIO_ID_FROM_QUEUE": {
+      const { queue, currentAudio } = state;
+      const { payload } = action;
+      const newState = state;
+      const filtered = queue.filter((x) => x.audioId !== payload);
+      if (currentAudio?.audioId === payload) {
+        Object.assign(newState, {
+          currentAudio: undefined,
+          isPlaying: false,
+          playIndex: undefined,
+        });
+      } else {
+        const newPlayIndex = filtered.findIndex(
+          (x) => x.queueId === currentAudio?.queueId
+        );
+
+        Object.assign(newState, {
+          playIndex: newPlayIndex,
+        });
+      }
+
+      return {
+        ...newState,
+        queue: filtered,
+      };
+    }
     case "REMOVE_FROM_QUEUE": {
       const { queue, playIndex } = state;
       const { payload } = action;

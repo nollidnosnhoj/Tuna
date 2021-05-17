@@ -37,7 +37,6 @@ namespace Audiochan.Core.Features.Audios.GetAudioList
             CancellationToken cancellationToken)
         {
             var audios = await _dbContext.Audios
-                .IncludePublishAudios()
                 .ExcludePrivateAudios()
                 .FilterUsingCursor(request.Cursor)
                 .OrderByDescending(a => a.Created)
@@ -51,7 +50,7 @@ namespace Audiochan.Core.Features.Audios.GetAudioList
             var nextCursor = audios.Count < request.Size
                 ? null
                 : lastAudio != null
-                    ? CursorHelpers.EncodeCursor(lastAudio.Uploaded, lastAudio.Id)
+                    ? CursorHelpers.EncodeCursor(lastAudio.Uploaded, lastAudio.Id.ToString())
                     : null;
 
             return new CursorList<AudioViewModel>(audios, nextCursor);

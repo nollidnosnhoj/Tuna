@@ -27,13 +27,13 @@ namespace Audiochan.IntegrationTests.Features.Audios
         {
             // Assign
             var (ownerId, _) = await _fixture.RunAsDefaultUserAsync();
-            var audio = await new AudioBuilder()
-                .UseTestDefaults(ownerId, true, "myaudio.mp3")
-                .BuildAsync();
+            var audio = new AudioBuilder()
+                .UseTestDefaults(ownerId, "myaudio.mp3")
+                .BuildAsync("test");
             await _fixture.InsertAsync(audio);
 
             // Act
-            var result = await _fixture.SendAsync(new GetAudioRequest(string.Empty));
+            var result = await _fixture.SendAsync(new GetAudioRequest(Guid.Empty));
 
             // Assert
             result.Should().BeNull();
@@ -56,7 +56,7 @@ namespace Audiochan.IntegrationTests.Features.Audios
                 return repo.GetListAsync(userTags);
             });
 
-            var audio = await new AudioBuilder()
+            var audio = new AudioBuilder()
                 .AddFileName("test.mp3")
                 .AddTitle("Test Song")
                 .AddFileSize(100)
@@ -64,8 +64,7 @@ namespace Audiochan.IntegrationTests.Features.Audios
                 .AddTags(tags)
                 .AddUserId(userId)
                 .SetPublic(true)
-                .SetPublish(DateTime.UtcNow)
-                .BuildAsync();
+                .BuildAsync("test");
             
             await _fixture.InsertAsync(audio);
 

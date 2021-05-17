@@ -44,17 +44,11 @@ namespace Audiochan.API.Controllers
         [SwaggerOperation(Summary = "Return a list of the user's audios.", OperationId = "GetUserAudios",
             Tags = new[] {"users"})]
         public async Task<IActionResult> GetUserAudios(string username,
-            [FromQuery] PaginationQueryParams paginationQuery,
+            [FromQuery] GetUserAudiosRequest request,
             CancellationToken cancellationToken)
         {
-            var query = new GetUserAudiosRequest
-            {
-                Username = username,
-                Page = paginationQuery.Page,
-                Size = paginationQuery.Size
-            };
-
-            var list = await _mediator.Send(query, cancellationToken);
+            request.Username = username;
+            var list = await _mediator.Send(request, cancellationToken);
 
             return Ok(list);
         }

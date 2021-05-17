@@ -185,10 +185,13 @@ namespace Audiochan.Infrastructure.Storage
             string sourceBlobName, 
             string targetBucket,
             string targetContainer,
+            string targetKey = null,
             CancellationToken cancellationToken = default)
         {
             var sourceKey = GetKeyName(sourceContainer, sourceBlobName);
-            var targetKey = GetKeyName(targetContainer, sourceBlobName);
+            var newTargetKey = !string.IsNullOrEmpty(targetKey) 
+                ? GetKeyName(targetContainer, targetKey) 
+                : GetKeyName(targetContainer, sourceBlobName);
 
             try
             {
@@ -197,7 +200,7 @@ namespace Audiochan.Infrastructure.Storage
                     SourceBucket = sourceBucket,
                     SourceKey = sourceKey,
                     DestinationBucket = targetBucket,
-                    DestinationKey = targetKey,
+                    DestinationKey = newTargetKey,
                 };
 
                 var response = await _client.CopyObjectAsync(request, cancellationToken);
@@ -216,6 +219,7 @@ namespace Audiochan.Infrastructure.Storage
             string sourceBlobName,
             string targetBucket,
             string targetContainer,
+            string targetKey = null,
             CancellationToken cancellationToken = default)
         {
             await CopyBlobAsync(sourceBucket, 
@@ -223,6 +227,7 @@ namespace Audiochan.Infrastructure.Storage
                 sourceBlobName, 
                 targetBucket, 
                 targetContainer,
+                targetKey,
                 cancellationToken);
 
             await RemoveAsync(sourceBucket, sourceContainer, sourceBlobName, cancellationToken);

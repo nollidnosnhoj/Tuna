@@ -18,7 +18,7 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
 {
     public class UpdateAudioPictureRequest : IRequest<IResult<string>>
     {
-        [JsonIgnore] public string AudioId { get; set; }
+        [JsonIgnore] public Guid AudioId { get; set; }
         public string Data { get; init; }
     }
 
@@ -50,31 +50,18 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
             CancellationToken cancellationToken)
         {
             var container = string.Join('/', _storageSettings.Image.Container, "audios");
-            
-            var currentUserId = await _dbContext.Users
-                .Select(u => u.Id)
-                .SingleOrDefaultAsync(id => id == _currentUserService.GetUserId(), cancellationToken);
-
-            if (string.IsNullOrEmpty(currentUserId))
-                return Result<string>.Fail(ResultError.Unauthorized);
-
+            var currentUserId = _currentUserService.GetUserId();
             var audio = await _dbContext.Audios
-                .SingleOrDefaultAsync(a => a.Id == request.AudioId, cancellationToken);
-
-            if (audio == null) return Result<string>.Fail(ResultError.NotFound);
+                .FindAsync(new object[]{ request.AudioId }, cancellationToken);
+            if (audio == null) 
+                return Result<string>.Fail(ResultError.NotFound);
+            if (!audio.CanModify(currentUserId)) 
+                return Result<string>.Fail(ResultError.Forbidden);
             
-            if (!audio.CanModify(currentUserId)) return Result<string>.Fail(ResultError.Forbidden);
-            
-            var blobName = $"{audio.Id}_{_dateTimeProvider.Now:yyyyMMddHHmmss}.jpg";
+            var blobName = $"{audio.Id}/{_dateTimeProvider.Now:yyyyMMddHHmmss}.jpg";
 
             try
             {
-                if (!string.IsNullOrEmpty(audio.Picture))
-                {
-                    await _storageService.RemoveAsync(_storageSettings.Audio.Bucket, audio.Picture, cancellationToken);
-                    audio.UpdatePicture(string.Empty);
-                }
-
                 var response = await _imageService.UploadImage(request.Data, container, blobName, cancellationToken);
                 
                 // TODO: Maybe instead of deleting it, set a expiration for the old picture object.
