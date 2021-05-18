@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Features.Audios.UploadAudio;
+using Audiochan.UnitTests.Builders;
 using Bogus;
 using FluentAssertions;
 using FluentValidation;
@@ -20,17 +21,7 @@ namespace Audiochan.UnitTests.Validations
         {
             var options = Options.Create(new MediaStorageSettings
             {
-                Audio = new MediaStorageSettings.StorageSettings
-                {
-                    Container = "audios",
-                    ValidContentTypes = new List<string>
-                    {
-                        "audio/mp3",
-                        "audio/mpeg",
-                        "audio/ogg"
-                    },
-                    MaximumFileSize = 262_144_000
-                }
+                Audio = MediaStorageSettingBuilder.BuildAudioDefault()
             });
             _validator = new UploadAudioRequestValidator(options);
             _randomizer = new Randomizer();
@@ -42,7 +33,7 @@ namespace Audiochan.UnitTests.Validations
             // Assign
             var request = new UploadAudioRequest
             {
-                FileSize = _randomizer.Number(1, 262144000),
+                FileSize = _randomizer.Number(1, (int)MediaStorageSettingBuilder.MaxAudioSize),
                 FileName = _randomizer.Word() + ".mp3"
             };
 
@@ -100,7 +91,7 @@ namespace Audiochan.UnitTests.Validations
         public async Task ShouldNotValidate_WhenFileSizeIsTooLarge()
         {
             // Assign
-            var request = new UploadAudioRequest {FileSize = 262_144_000 + 1};
+            var request = new UploadAudioRequest {FileSize = MediaStorageSettingBuilder.MaxAudioSize + 1};
             
             // Act
             var result = await _validator.TestValidateAsync(request);

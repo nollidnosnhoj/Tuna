@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Builders;
 using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Audios.RemoveAudio;
 using Audiochan.UnitTests;
+using Audiochan.UnitTests.Builders;
 using FluentAssertions;
 using Xunit;
 
@@ -29,7 +29,7 @@ namespace Audiochan.IntegrationTests.Features.Audios
 
             var audio = new AudioBuilder()
                 .UseTestDefaults(ownerId, "testaudio.mp3")
-                .BuildAsync("test");
+                .Build("test");
 
             await _fixture.InsertAsync(audio);
 
@@ -52,7 +52,7 @@ namespace Audiochan.IntegrationTests.Features.Audios
             var (ownerId, _) = await _fixture.RunAsDefaultUserAsync();
             var audio = new AudioBuilder()
                 .UseTestDefaults(ownerId, "testaudio.mp3")
-                .BuildAsync("test");
+                .Build("test");
             await _fixture.InsertAsync(audio);
 
             var command = new RemoveAudioRequest(audio.Id);

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
-using Audiochan.Core.Common.Builders;
 using Audiochan.Core.Common.Helpers;
+using Audiochan.UnitTests.Builders;
 using Bogus;
 
 namespace Audiochan.UnitTests

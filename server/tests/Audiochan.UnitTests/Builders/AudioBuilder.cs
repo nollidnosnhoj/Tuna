@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading.Tasks;
 using Audiochan.Core.Common.Exceptions;
 using Audiochan.Core.Entities;
 
-namespace Audiochan.Core.Common.Builders
+namespace Audiochan.UnitTests.Builders
 {
     public class AudioBuilder
     {
@@ -89,29 +88,8 @@ namespace Audiochan.Core.Common.Builders
             return this;
         }
 
-        public Audio BuildAsync(string objectId)
+        public Audio Build(string objectId)
         {
-            if (string.IsNullOrWhiteSpace(_audio.Title))
-                throw new BuilderException("Cannot build Audio. Requires title.");
-
-            if (string.IsNullOrWhiteSpace(_audio.OriginalFileName))
-                throw new BuilderException("Cannot build Audio. Requires original file name.");
-            
-            if (string.IsNullOrWhiteSpace(_audio.FileExt))
-                throw new BuilderException("Cannot build Audio. Requires file extension.");
-            
-            if (string.IsNullOrWhiteSpace(_audio.ContentType))
-                throw new BuilderException("Cannot build Audio. Requires content type.");
-
-            if (_audio.FileSize <= 0)
-                throw new BuilderException("Cannot build Audio. Requires a positive file size.");
-
-            if (_audio.Duration <= 0)
-                throw new BuilderException("Cannot build Audio. Requires a positive duration.");
-
-            if (string.IsNullOrWhiteSpace(_audio.UserId))
-                throw new BuilderException("Cannot build Audio. Requires a user id.");
-            
             _audio.FileName = objectId + _audio.FileExt;
             
             return _audio;

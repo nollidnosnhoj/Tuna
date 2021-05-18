@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Builders;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Features.Audios;
 using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.UnitTests;
+using Audiochan.UnitTests.Builders;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
@@ -29,7 +29,7 @@ namespace Audiochan.IntegrationTests.Features.Audios
             var (ownerId, _) = await _fixture.RunAsDefaultUserAsync();
             var audio = new AudioBuilder()
                 .UseTestDefaults(ownerId, "myaudio.mp3")
-                .BuildAsync("test");
+                .Build("test");
             await _fixture.InsertAsync(audio);
 
             // Act
@@ -64,7 +64,7 @@ namespace Audiochan.IntegrationTests.Features.Audios
                 .AddTags(tags)
                 .AddUserId(userId)
                 .SetPublic(true)
-                .BuildAsync("test");
+                .Build("test");
             
             await _fixture.InsertAsync(audio);
 
