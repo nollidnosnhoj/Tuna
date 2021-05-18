@@ -1,19 +1,20 @@
 ﻿using System.Collections.Generic;
 using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Common.Models.Interfaces;
+using MediatR;
 
 namespace Audiochan.Core.Common.Models.Responses
 {
     public record Result<TResponse> : IResult<TResponse>
     {
-        public TResponse Data { get; init; }
-        public Dictionary<string, string[]> Errors { get; init; }
-        public string Message { get; init; }
+        public TResponse Data { get; init; } = default!;
+        public Dictionary<string, string[]>? Errors { get; init; }
+        public string? Message { get; init; }
         public bool IsSuccess { get; init; }
         public ResultError? ErrorCode { get; init; }
 
         public static Result<TResponse> Fail(ResultError errorCode, string message = "",
-            Dictionary<string, string[]> errors = null)
+            Dictionary<string, string[]>? errors = null)
         {
             return new()
             {

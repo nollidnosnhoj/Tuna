@@ -14,7 +14,7 @@ namespace Audiochan.Core.Features.Auth.Refresh
 {
     public record RefreshTokenRequest : IRequest<IResult<AuthResultViewModel>>
     {
-        public string RefreshToken { get; init; }
+        public string RefreshToken { get; init; } = null!;
     }
 
     public class RefreshTokenRequestHandler : IRequestHandler<RefreshTokenRequest, IResult<AuthResultViewModel>>

@@ -27,7 +27,6 @@ namespace Audiochan.Infrastructure
             services.AddTransient<IImageService, ImageService>();
             services.AddTransient<ITokenProvider, TokenProvider>();
             services.AddTransient<IDateTimeProvider, DateTimeProvider>();
-            services.AddTransient<CleanupService>();
             return services;
         }
 
@@ -44,7 +43,7 @@ namespace Audiochan.Infrastructure
                 }
             });
 
-            services.AddScoped<IApplicationDbContext>(provider => provider.GetService<ApplicationDbContext>());
+            services.AddScoped<IApplicationDbContext>(provider => provider.GetService<ApplicationDbContext>()!);
         }
 
         private static void ConfigureRepositories(IServiceCollection services)

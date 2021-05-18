@@ -2,8 +2,8 @@
 {
     public record CurrentUserViewModel
     {
-        public string Id { get; init; }
-        public string Username { get; init; }
-        public string Email { get; init; }
+        public string Id { get; init; } = null!;
+        public string Username { get; init; } = null!;
+        public string Email { get; init; } = null!;
     }
 }

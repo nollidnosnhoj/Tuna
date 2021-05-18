@@ -1,17 +1,13 @@
 ﻿using System;
-using System.IO;
-using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Enums;
-using Audiochan.Core.Common.Helpers;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models.Interfaces;
 using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Common.Settings;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Audios.UpdatePicture
@@ -19,7 +15,7 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
     public class UpdateAudioPictureRequest : IRequest<IResult<string>>
     {
         [JsonIgnore] public Guid AudioId { get; set; }
-        public string Data { get; init; }
+        public string Data { get; init; } = null!;
     }
 
     public class UpdateAudioPictureRequestHandler : IRequestHandler<UpdateAudioPictureRequest, IResult<string>>

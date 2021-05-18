@@ -13,8 +13,8 @@ namespace Audiochan.Core.Features.Auth.Login
 {
     public record LoginRequest : IRequest<IResult<AuthResultViewModel>>
     {
-        public string Login { get; init; }
-        public string Password { get; init; }
+        public string Login { get; init; } = null!;
+        public string Password { get; init; } = null!;
     }
 
 

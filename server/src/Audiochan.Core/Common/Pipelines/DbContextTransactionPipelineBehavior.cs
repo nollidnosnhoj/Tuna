@@ -12,6 +12,7 @@ namespace Audiochan.Core.Common.Pipelines
     /// <typeparam name="TRequest">The Request object</typeparam>
     /// <typeparam name="TResponse">The Response object</typeparam>
     public class DbContextTransactionPipelineBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+        where TRequest : notnull
     {
         private readonly IApplicationDbContext _dbContext;
 

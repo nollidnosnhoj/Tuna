@@ -31,7 +31,7 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                 {
                     id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    name = table.Column<string>(type: "text", nullable: true)
+                    name = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -97,11 +97,11 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                     title = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     description = table.Column<string>(type: "text", nullable: true),
                     duration = table.Column<decimal>(type: "numeric", nullable: false),
-                    file_name = table.Column<string>(type: "text", nullable: true),
+                    file_name = table.Column<string>(type: "text", nullable: false),
                     original_file_name = table.Column<string>(type: "text", nullable: false),
                     file_size = table.Column<long>(type: "bigint", nullable: false),
                     file_ext = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: false),
-                    content_type = table.Column<string>(type: "text", nullable: true),
+                    content_type = table.Column<string>(type: "text", nullable: false),
                     picture = table.Column<string>(type: "text", nullable: true),
                     is_public = table.Column<bool>(type: "boolean", nullable: false),
                     user_id = table.Column<string>(type: "text", nullable: false),

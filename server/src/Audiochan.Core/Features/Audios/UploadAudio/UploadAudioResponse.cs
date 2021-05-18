@@ -2,7 +2,7 @@
 {
     public record UploadAudioResponse
     {
-        public string UploadId { get; init; }
-        public string UploadUrl { get; init; }
+        public string UploadId { get; init; } = null!;
+        public string UploadUrl { get; init; } = null!;
     }
 }

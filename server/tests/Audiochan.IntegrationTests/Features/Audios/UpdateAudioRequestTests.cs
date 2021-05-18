@@ -49,7 +49,7 @@ namespace Audiochan.IntegrationTests.Features.Audios
             // Assert
             result.Should().NotBeNull();
             result.IsSuccess.Should().Be(false);
-            result.ErrorCode.Should().Be(ResultError.Forbidden);
+            result.ErrorCode.Should().Be(ResultError.NotFound);
         }
 
         [Fact]
@@ -92,7 +92,7 @@ namespace Audiochan.IntegrationTests.Features.Audios
             result.Data.Should().NotBeNull();
             result.Data.Title.Should().Be(command.Title);
             result.Data.Description.Should().Be(command.Description);
-            result.Data.Tags.Length.Should().Be(3);
+            result.Data.Tags.Count.Should().Be(3);
             result.Data.Tags.Should().Contain(x => x == "apples");
             result.Data.Tags.Should().Contain(x => x == "oranges");
             result.Data.Tags.Should().Contain(x => x == "caramel");

@@ -11,7 +11,7 @@ namespace Audiochan.Core.Features.Audios.UploadAudio
 {
     public record UploadAudioRequest : IRequest<UploadAudioResponse>
     {
-        public string FileName { get; init; }
+        public string FileName { get; init; } = null!;
         public long FileSize { get; init; }
     }
     

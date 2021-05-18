@@ -2,7 +2,7 @@
 {
     public interface IHasCursor
     {
-        string Cursor { get; init; }
+        string? Cursor { get; init; }
         int Size { get; init; }
     }
 }

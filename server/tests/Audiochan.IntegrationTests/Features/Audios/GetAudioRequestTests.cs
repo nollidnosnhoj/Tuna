@@ -75,7 +75,7 @@ namespace Audiochan.IntegrationTests.Features.Audios
             result.Should().NotBeNull();
             result.Should().BeOfType<AudioDetailViewModel>();
             result.Title.Should().Be(audio.Title);
-            result.Tags.Length.Should().Be(2);
+            result.Tags.Count.Should().Be(2);
             result.Tags.Should().Contain("apples");
             result.Tags.Should().Contain("oranges");
         }

@@ -4,7 +4,6 @@ using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Enums;
-using Audiochan.Core.Common.Helpers;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models.Interfaces;
 using Audiochan.Core.Common.Models.Responses;
@@ -18,8 +17,8 @@ namespace Audiochan.Core.Features.Users.UpdatePicture
 {
     public record UpdateUserPictureRequest : IRequest<IResult<string>>
     {
-        [JsonIgnore] public string UserId { get; set; }
-        public string Data { get; init; }
+        [JsonIgnore] public string? UserId { get; set; }
+        public string Data { get; init; } = null!;
     }
 
     public class UpdateUserPictureRequestHandler : IRequestHandler<UpdateUserPictureRequest, IResult<string>>

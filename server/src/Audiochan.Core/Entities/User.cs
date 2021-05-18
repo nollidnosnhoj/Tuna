@@ -15,7 +15,7 @@ namespace Audiochan.Core.Entities
             RefreshTokens = new HashSet<RefreshToken>();
         }
 
-        public User(string username, string email, DateTime joined)
+        public User(string username, string email, DateTime joined) : this()
         {
             this.UserName = username;
             this.Email = email;
@@ -23,17 +23,17 @@ namespace Audiochan.Core.Entities
             this.DisplayName = username;
         }
 
-        public string DisplayName { get; set; }
-        public string Picture { get; set; }
-        public string About { get; set; }
-        public string Website { get; set; }
+        public string DisplayName { get; set; } = null!;
+        public string? Picture { get; set; }
+        public string? About { get; set; }
+        public string? Website { get; set; }
         public DateTime Joined { get; set; }
         public ICollection<Audio> Audios { get; set; }
         public ICollection<FollowedUser> Followings { get; set; }
         public ICollection<FollowedUser> Followers { get; set; }
         public ICollection<RefreshToken> RefreshTokens { get; set; }
 
-        public void UpdateDisplayName(string displayName)
+        public void UpdateDisplayName(string? displayName)
         {
             if (!string.IsNullOrWhiteSpace(displayName))
             {
@@ -45,13 +45,13 @@ namespace Audiochan.Core.Entities
             }
         }
 
-        public void UpdateAbout(string about)
+        public void UpdateAbout(string? about)
         {
             if (about is not null)
                 this.About = about;
         }
 
-        public void UpdateWebsite(string website)
+        public void UpdateWebsite(string? website)
         {
             if (website is not null)
                 this.Website = website;
@@ -92,7 +92,7 @@ namespace Audiochan.Core.Entities
             return false;
         }
 
-        private FollowedUser GetFollower(string userId)
+        private FollowedUser? GetFollower(string userId)
         {
             if (string.IsNullOrWhiteSpace(userId))
                 throw new ArgumentNullException(nameof(userId));

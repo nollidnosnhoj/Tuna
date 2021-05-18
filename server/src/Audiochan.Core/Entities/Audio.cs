@@ -11,16 +11,18 @@ namespace Audiochan.Core.Entities
         {
             this.Tags = new HashSet<Tag>();
         }
+        
+        public Guid Id { get; set; }
 
         /// <summary>
         /// The name of the audio. Will default to using the original filename without the extension.
         /// </summary>
-        public string Title { get; set; }
+        public string Title { get; set; } = null!;
         
         /// <summary>
         /// Words to describe the audio. Optional.
         /// </summary>
-        public string Description { get; set; } = string.Empty;
+        public string? Description { get; set; }
         
         /// <summary>
         /// How long the audio is in seconds. Required.
@@ -30,12 +32,12 @@ namespace Audiochan.Core.Entities
         /// <summary>
         /// The name of the file in the storage. Required.
         /// </summary>
-        public string FileName { get; set; }
+        public string FileName { get; set; } = null!;
         
         /// <summary>
         /// The name of the file when before being uploaded into the storage. Required.
         /// </summary>
-        public string OriginalFileName { get; set; }
+        public string OriginalFileName { get; set; } = null!;
         
         /// <summary>
         /// The size of the audio file in bytes. Required.
@@ -45,17 +47,17 @@ namespace Audiochan.Core.Entities
         /// <summary>
         /// The file extension of the file uploaded into the storage. Required.
         /// </summary>
-        public string FileExt { get; set; }
+        public string FileExt { get; set; } = null!;
         
         /// <summary>
         /// The mime-type of the audio. Required.
         /// </summary>
-        public string ContentType { get; set; }
+        public string ContentType { get; set; } = null!;
         
         /// <summary>
         /// The path in the storage where the audio's picture is located. Empty if no picture was uploaded.
         /// </summary>
-        public string Picture { get; set; }
+        public string? Picture { get; set; }
 
         /// <summary>
         /// Set whether the audio should be listed in public lists or not.
@@ -65,12 +67,12 @@ namespace Audiochan.Core.Entities
         /// <summary>
         /// The foreign key that references the user.
         /// </summary>
-        public string UserId { get; set; }
+        public string UserId { get; set; } = null!;
         
         /// <summary>
         /// The navigation property that references the user.
         /// </summary>
-        public User User { get; set; }
+        public User User { get; set; } = null!;
         
         /// <summary>
         /// The navigation property the references the many tags related to this audio.
@@ -83,7 +85,7 @@ namespace Audiochan.Core.Entities
                 this.Title = title;
         }
 
-        public void UpdateDescription(string description)
+        public void UpdateDescription(string? description)
         {
             if (description is not null)
                 this.Description = description;

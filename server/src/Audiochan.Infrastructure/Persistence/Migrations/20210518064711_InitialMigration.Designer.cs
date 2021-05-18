@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Audiochan.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210513210747_InitialMigration")]
+    [Migration("20210518064711_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -49,6 +49,7 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                         .HasColumnName("id");
 
                     b.Property<string>("ContentType")
+                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("content_type");
 
@@ -71,6 +72,7 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                         .HasColumnName("file_ext");
 
                     b.Property<string>("FileName")
+                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("file_name");
 
@@ -184,6 +186,7 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("name");
 

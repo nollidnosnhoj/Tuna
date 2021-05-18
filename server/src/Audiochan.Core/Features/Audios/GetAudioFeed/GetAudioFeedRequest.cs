@@ -15,7 +15,7 @@ namespace Audiochan.Core.Features.Audios.GetAudioFeed
 {
     public record GetAudioFeedRequest : IRequest<PagedList<AudioViewModel>>
     {
-        public string UserId { get; init; }
+        public string? UserId { get; init; }
     }
 
     public class GetAudioFeedRequestHandler : IRequestHandler<GetAudioFeedRequest, PagedList<AudioViewModel>>

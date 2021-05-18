@@ -37,6 +37,7 @@ namespace Audiochan.IntegrationTests.Features.Audios
 
             var audioFaker = new Faker<Audio>()
                 .RuleFor(x => x.FileExt, f => ".mp3")
+                .RuleFor(x => x.ContentType, f => "audio/mp3")
                 .RuleFor(x => x.OriginalFileName, f => f.System.FileName("mp3"))
                 .RuleFor(x => x.FileSize, f => f.Random.Number(1, 2_000_000))
                 .RuleFor(x => x.Duration, f => f.Random.Number(1, 300))

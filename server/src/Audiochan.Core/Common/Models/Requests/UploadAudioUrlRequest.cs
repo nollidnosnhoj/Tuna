@@ -2,8 +2,7 @@
 {
     public record UploadAudioUrlRequest
     {
-        public string FileName { get; init; }
+        public string FileName { get; init; } = null!;
         public long FileSize { get; init; }
-        public int Duration { get; init; }
     }
 }

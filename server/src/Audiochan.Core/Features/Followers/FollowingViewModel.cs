@@ -2,7 +2,7 @@
 {
     public record FollowingViewModel
     {
-        public string Username { get; init; }
-        public string Picture { get; init; }
+        public string Username { get; init; } = null!;
+        public string? Picture { get; init; }
     }
 }

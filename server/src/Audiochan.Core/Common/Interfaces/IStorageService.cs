@@ -10,7 +10,7 @@ namespace Audiochan.Core.Common.Interfaces
     public interface IStorageService
     {
         string CreatePutPresignedUrl(string bucket, string container, string blobName, int expirationInMinutes,
-            Dictionary<string, string> metadata = null);
+            Dictionary<string, string>? metadata = null);
 
         Task RemoveAsync(string bucket, string container, string blobName,
             CancellationToken cancellationToken = default);
@@ -18,7 +18,7 @@ namespace Audiochan.Core.Common.Interfaces
         Task RemoveAsync(string bucket, string key, CancellationToken cancellationToken = default);
 
         Task<SaveBlobResponse> SaveAsync(Stream stream, string bucket, string container, string blobName,
-            Dictionary<string, string> metadata = null, CancellationToken cancellationToken = default);
+            Dictionary<string, string>? metadata = null, CancellationToken cancellationToken = default);
 
         Task<bool> ExistsAsync(string bucket, string container, string blobName,
             CancellationToken cancellationToken = default);
@@ -28,7 +28,7 @@ namespace Audiochan.Core.Common.Interfaces
             string sourceBlobName,
             string targetBucket,
             string targetContainer, 
-            string targetKey = null,
+            string? targetKey = null,
             CancellationToken cancellationToken = default);
         
         Task MoveBlobAsync(string sourceBucket,
@@ -36,7 +36,7 @@ namespace Audiochan.Core.Common.Interfaces
             string sourceBlobName,
             string targetBucket,
             string targetContainer, 
-            string targetKey = null,
+            string? targetKey = null,
             CancellationToken cancellationToken = default);
     }
 }

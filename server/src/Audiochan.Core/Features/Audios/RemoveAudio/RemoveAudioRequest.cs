@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Enums;
@@ -16,9 +15,7 @@ using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Audios.RemoveAudio
 {
-    public record RemoveAudioRequest(Guid Id) : IRequest<IResult<bool>>
-    {
-    }
+    public record RemoveAudioRequest(Guid Id) : IRequest<IResult<bool>>;
 
     public class RemoveAudioRequestHandler : IRequestHandler<RemoveAudioRequest, IResult<bool>>
     {
@@ -40,10 +37,10 @@ namespace Audiochan.Core.Features.Audios.RemoveAudio
 
         public async Task<IResult<bool>> Handle(RemoveAudioRequest request, CancellationToken cancellationToken)
         {
-            var (audio, errorResult) = await GetAudio(request.Id, cancellationToken);
+            var (audio, result) = await GetAudio(request.Id, cancellationToken);
 
             if (audio == null)
-                return errorResult;
+                return result;
 
             _dbContext.Audios.Remove(audio);
 
@@ -63,10 +60,10 @@ namespace Audiochan.Core.Features.Audios.RemoveAudio
             }
 
             await Task.WhenAll(tasks);
-            return Result<bool>.Success(true);
+            return result;
         }
 
-        private async Task<(Audio, IResult<bool>)> GetAudio(Guid audioId, CancellationToken cancellationToken = default)
+        private async Task<(Audio?, IResult<bool>)> GetAudio(Guid audioId, CancellationToken cancellationToken = default)
         {
             var currentUserId = _currentUserService.GetUserId();
 
@@ -76,10 +73,9 @@ namespace Audiochan.Core.Features.Audios.RemoveAudio
             if (audio == null)
                 return (null, Result<bool>.Fail(ResultError.NotFound));
 
-            if (!audio.CanModify(currentUserId))
-                return (null, Result<bool>.Fail(ResultError.Forbidden));
-
-            return (audio, null);
+            return !audio.CanModify(currentUserId) 
+                ? (null, Result<bool>.Fail(ResultError.Forbidden)) 
+                : (audio, Result<bool>.Success(true));
         }
     }
 }

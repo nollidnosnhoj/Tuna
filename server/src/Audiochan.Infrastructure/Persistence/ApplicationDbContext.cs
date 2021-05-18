@@ -16,7 +16,7 @@ namespace Audiochan.Infrastructure.Persistence
     public class ApplicationDbContext : IdentityDbContext<User, Role, string>, IApplicationDbContext
     {
         private readonly IDateTimeProvider _dateTimeProvider;
-        private IDbContextTransaction _currentTransaction;
+        private IDbContextTransaction? _currentTransaction;
 
         public ApplicationDbContext(DbContextOptions options,
             IDateTimeProvider dateTimeProvider) : base(options)
@@ -24,9 +24,9 @@ namespace Audiochan.Infrastructure.Persistence
             _dateTimeProvider = dateTimeProvider;
         }
 
-        public DbSet<Audio> Audios { get; set; }
-        public DbSet<FollowedUser> FollowedUsers { get; set; }
-        public DbSet<Tag> Tags { get; set; }
+        public DbSet<Audio> Audios { get; set; } = null!;
+        public DbSet<FollowedUser> FollowedUsers { get; set; } = null!;
+        public DbSet<Tag> Tags { get; set; } = null!;
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new())
         {

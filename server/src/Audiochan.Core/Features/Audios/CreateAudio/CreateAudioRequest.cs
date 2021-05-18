@@ -17,10 +17,10 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
 {
     public class CreateAudioRequest : AudioAbstractRequest, IRequest<Result<AudioDetailViewModel>>
     {
-        public string UploadId { get; init; }
-        public string FileName { get; init; }
+        public string UploadId { get; init; } = null!;
+        public string FileName { get; init; } = null!;
         public long FileSize { get; init; }
-        public string ContentType { get; init; }
+        public string ContentType { get; init; } = null!;
         public decimal Duration { get; init; }
     }
 
@@ -36,8 +36,7 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
             IApplicationDbContext dbContext,
             IStorageService storageService,
             ICurrentUserService currentUserService,
-            ITagRepository tagRepository, 
-            IDateTimeProvider dateTimeProvider)
+            ITagRepository tagRepository)
         {
             _storageSettings = mediaStorageOptions.Value;
             _dbContext = dbContext;

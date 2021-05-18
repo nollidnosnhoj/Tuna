@@ -62,7 +62,7 @@ namespace Audiochan.Infrastructure.Storage
             string bucket,
             string container,
             string blobName,
-            Dictionary<string, string> metadata = null,
+            Dictionary<string, string>? metadata = null,
             CancellationToken cancellationToken = default)
         {
             long? length = stream.CanSeek
@@ -156,7 +156,7 @@ namespace Audiochan.Infrastructure.Storage
             string container,
             string blobName,
             int expirationInMinutes,
-            Dictionary<string, string> metadata = null)
+            Dictionary<string, string>? metadata = null)
         {
             try
             {
@@ -185,13 +185,11 @@ namespace Audiochan.Infrastructure.Storage
             string sourceBlobName, 
             string targetBucket,
             string targetContainer,
-            string targetKey = null,
+            string? targetKey = null,
             CancellationToken cancellationToken = default)
         {
             var sourceKey = GetKeyName(sourceContainer, sourceBlobName);
-            var newTargetKey = !string.IsNullOrEmpty(targetKey) 
-                ? GetKeyName(targetContainer, targetKey) 
-                : GetKeyName(targetContainer, sourceBlobName);
+            var newTargetKey = GetKeyName(targetContainer, targetKey ?? sourceBlobName);
 
             try
             {
@@ -219,7 +217,7 @@ namespace Audiochan.Infrastructure.Storage
             string sourceBlobName,
             string targetBucket,
             string targetContainer,
-            string targetKey = null,
+            string? targetKey = null,
             CancellationToken cancellationToken = default)
         {
             await CopyBlobAsync(sourceBucket, 
@@ -247,7 +245,7 @@ namespace Audiochan.Infrastructure.Storage
     public static class AmazonS3Extensions
     {
         public static void AddMetadata(this MetadataCollection metadataCollection,
-            IDictionary<string, string> inputMeta)
+            IDictionary<string, string>? inputMeta)
         {
             if (inputMeta == null) return;
 

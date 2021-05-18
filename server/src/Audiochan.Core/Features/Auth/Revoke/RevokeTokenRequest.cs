@@ -12,7 +12,7 @@ namespace Audiochan.Core.Features.Auth.Revoke
 {
     public record RevokeTokenRequest : IRequest<IResult<bool>>
     {
-        public string RefreshToken { get; init; }
+        public string RefreshToken { get; init; } = null!;
     }
 
     public class RevokeTokenRequestHandler : IRequestHandler<RevokeTokenRequest, IResult<bool>>

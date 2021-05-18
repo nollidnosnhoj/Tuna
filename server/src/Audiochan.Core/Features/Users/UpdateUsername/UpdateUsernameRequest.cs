@@ -14,8 +14,8 @@ namespace Audiochan.Core.Features.Users.UpdateUsername
 {
     public record UpdateUsernameRequest : IRequest<IResult<bool>>
     {
-        [JsonIgnore] public string UserId { get; init; }
-        public string NewUsername { get; init; }
+        [JsonIgnore] public string? UserId { get; init; }
+        public string NewUsername { get; init; } = null!;
     }
 
     public class UpdateUsernameRequestHandler : IRequestHandler<UpdateUsernameRequest, IResult<bool>>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using Audiochan.Core.Common.Exceptions;
+using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Entities;
 
 namespace Audiochan.UnitTests.Builders
@@ -90,6 +91,8 @@ namespace Audiochan.UnitTests.Builders
 
         public Audio Build(string objectId)
         {
+            _audio.FileExt = Path.GetExtension(_audio.OriginalFileName);
+            _audio.ContentType = _audio.FileName.GetContentType();
             _audio.FileName = objectId + _audio.FileExt;
             
             return _audio;

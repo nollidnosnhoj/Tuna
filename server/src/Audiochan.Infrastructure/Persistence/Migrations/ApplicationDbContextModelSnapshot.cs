@@ -47,6 +47,7 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                         .HasColumnName("id");
 
                     b.Property<string>("ContentType")
+                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("content_type");
 
@@ -69,6 +70,7 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                         .HasColumnName("file_ext");
 
                     b.Property<string>("FileName")
+                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("file_name");
 
@@ -182,6 +184,7 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("name");
 

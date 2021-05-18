@@ -13,7 +13,7 @@ namespace Audiochan.Core.Features.Followers.GetFollowers
 {
     public record GetUserFollowersRequest : IHasPage, IRequest<PagedList<FollowerViewModel>>
     {
-        public string Username { get; init; }
+        public string? Username { get; init; }
         public int Page { get; init; }
         public int Size { get; init; }
     }
@@ -34,7 +34,7 @@ namespace Audiochan.Core.Features.Followers.GetFollowers
                 .AsNoTracking()
                 .Include(u => u.Target)
                 .Include(u => u.Observer)
-                .Where(u => u.Target.UserName == request.Username.Trim().ToLower())
+                .Where(u => request.Username != null && u.Target.UserName == request.Username.Trim().ToLower())
                 .ProjectToFollower()
                 .PaginateAsync(request, cancellationToken);
         }

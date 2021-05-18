@@ -8,7 +8,6 @@ using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models.Interfaces;
 using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Common.Settings;
-using Audiochan.Core.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -17,8 +16,8 @@ namespace Audiochan.Core.Features.Audios.GetAudioList
 {
     public record GetAudioListRequest : IHasCursor, IRequest<CursorList<AudioViewModel>>
     {
-        public string Tag { get; init; }
-        public string Cursor { get; init; }
+        public string? Tag { get; init; }
+        public string? Cursor { get; init; }
         public int Size { get; init; } = 30;
     }
 

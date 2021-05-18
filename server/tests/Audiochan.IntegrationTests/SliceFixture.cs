@@ -33,18 +33,18 @@ namespace Audiochan.IntegrationTests
     {
         private readonly Checkpoint _checkpoint;
         private readonly IConfiguration _configuration;
-        private static IServiceScopeFactory _scopeFactory;
+        private static IServiceScopeFactory _scopeFactory = null!;
         private readonly WebApplicationFactory<Startup> _factory;
-        private static string _currentUserId;
-        private static string _currentUsername;
+        private static string? _currentUserId;
+        private static string? _currentUsername;
         private static DateTime _currentTime;
 
         public SliceFixture()
         {
             _currentTime = DateTime.UtcNow;
             _factory = new AudiochanTestApplicationFactory();
-            _configuration = _factory.Services.GetRequiredService<IConfiguration>();
-            _scopeFactory = _factory.Services.GetRequiredService<IServiceScopeFactory>();
+            _configuration = _factory.Services.GetRequiredService<IConfiguration>()!;
+            _scopeFactory = _factory.Services.GetRequiredService<IServiceScopeFactory>()!;
             _checkpoint = new Checkpoint
             {
                 TablesToIgnore = new[] {"__EFMigrationsHistory"},
@@ -192,7 +192,7 @@ namespace Audiochan.IntegrationTests
                 return (_currentUserId, _currentUsername);
             }
 
-            var errors = string.Join(Environment.NewLine, result.ToResult().Errors);
+            var errors = string.Join(Environment.NewLine, result.ToResult().Errors!);
 
             throw new Exception($"Unable to create {userName}.{Environment.NewLine}{errors}");
         }
@@ -204,22 +204,22 @@ namespace Audiochan.IntegrationTests
         }
 
         public Task ExecuteDbContextAsync(Func<ApplicationDbContext, Task> action)
-            => ExecuteScopeAsync(sp => action(sp.GetService<ApplicationDbContext>()));
+            => ExecuteScopeAsync(sp => action(sp.GetService<ApplicationDbContext>()!));
 
         public Task ExecuteDbContextAsync(Func<ApplicationDbContext, ValueTask> action)
-            => ExecuteScopeAsync(sp => action(sp.GetService<ApplicationDbContext>()).AsTask());
+            => ExecuteScopeAsync(sp => action(sp.GetService<ApplicationDbContext>()!).AsTask());
 
         public Task ExecuteDbContextAsync(Func<ApplicationDbContext, IMediator, Task> action)
-            => ExecuteScopeAsync(sp => action(sp.GetService<ApplicationDbContext>(), sp.GetService<IMediator>()));
+            => ExecuteScopeAsync(sp => action(sp.GetService<ApplicationDbContext>()!, sp.GetService<IMediator>()!));
 
         public Task<T> ExecuteDbContextAsync<T>(Func<ApplicationDbContext, Task<T>> action)
-            => ExecuteScopeAsync(sp => action(sp.GetService<ApplicationDbContext>()));
+            => ExecuteScopeAsync(sp => action(sp.GetService<ApplicationDbContext>()!));
 
         public Task<T> ExecuteDbContextAsync<T>(Func<ApplicationDbContext, ValueTask<T>> action)
-            => ExecuteScopeAsync(sp => action(sp.GetService<ApplicationDbContext>()).AsTask());
+            => ExecuteScopeAsync(sp => action(sp.GetService<ApplicationDbContext>()!).AsTask());
 
         public Task<T> ExecuteDbContextAsync<T>(Func<ApplicationDbContext, IMediator, Task<T>> action)
-            => ExecuteScopeAsync(sp => action(sp.GetService<ApplicationDbContext>(), sp.GetService<IMediator>()));
+            => ExecuteScopeAsync(sp => action(sp.GetService<ApplicationDbContext>()!, sp.GetService<IMediator>()!));
 
         public Task InsertAsync<T>(params T[] entities) where T : class
         {
@@ -328,7 +328,7 @@ namespace Audiochan.IntegrationTests
 
         public Task DisposeAsync()
         {
-            _factory?.Dispose();
+            _factory.Dispose();
             return Task.CompletedTask;
         }
 
@@ -337,7 +337,8 @@ namespace Audiochan.IntegrationTests
             var clockDescriptor = services.FirstOrDefault(d =>
                 d.ServiceType == typeof(IDateTimeProvider));
 
-            services.Remove(clockDescriptor);
+            if (clockDescriptor is not null)
+                services.Remove(clockDescriptor);
 
             services.AddTransient(_ => DateTimeProviderMock.Create(_currentTime).Object);
         }
@@ -347,7 +348,8 @@ namespace Audiochan.IntegrationTests
             var currentUserServiceDescriptor = services.FirstOrDefault(d =>
                 d.ServiceType == typeof(ICurrentUserService));
 
-            services.Remove(currentUserServiceDescriptor);
+            if (currentUserServiceDescriptor is not null)
+                services.Remove(currentUserServiceDescriptor);
 
             services.AddTransient(_ => CurrentUserServiceMock.Create(_currentUserId, _currentUsername).Object);
         }
@@ -357,7 +359,8 @@ namespace Audiochan.IntegrationTests
             var storageServiceDescriptor = services.FirstOrDefault(d =>
                 d.ServiceType == typeof(IStorageService));
 
-            services.Remove(storageServiceDescriptor);
+            if (storageServiceDescriptor is not null)
+                services.Remove(storageServiceDescriptor);
 
             services.AddTransient(_ => StorageServiceMock.Create().Object);
         }

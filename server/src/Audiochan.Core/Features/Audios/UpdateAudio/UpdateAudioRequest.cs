@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
@@ -47,7 +46,7 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
             var (audio, errorResult) = await GetAudioAsync(request.AudioId, cancellationToken);
 
             if (audio == null)
-                return errorResult;
+                return errorResult!;
 
             if (request.Tags.Count > 0)
             {
@@ -70,7 +69,7 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
             return Result<AudioDetailViewModel>.Success(viewModel);
         }
 
-        public async Task<(Audio, Result<AudioDetailViewModel>)> GetAudioAsync(Guid audioId,
+        public async Task<(Audio?, Result<AudioDetailViewModel>?)> GetAudioAsync(Guid audioId,
             CancellationToken cancellationToken = default)
         {
             var currentUserId = _currentUserService.GetUserId();

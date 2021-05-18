@@ -31,7 +31,7 @@ namespace Audiochan.Core.Common.Extensions.QueryableExtensions
                 : queryable;
         }
         
-        public static IQueryable<Audio> FilterUsingCursor(this IQueryable<Audio> queryable, string cursor)
+        public static IQueryable<Audio> FilterUsingCursor(this IQueryable<Audio> queryable, string? cursor)
         {
             if (string.IsNullOrEmpty(cursor)) return queryable;
             var (since, id) = CursorHelpers.DecodeCursor(cursor);

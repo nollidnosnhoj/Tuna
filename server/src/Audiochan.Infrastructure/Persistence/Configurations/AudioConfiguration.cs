@@ -9,18 +9,10 @@ namespace Audiochan.Infrastructure.Persistence.Configurations
         public void Configure(EntityTypeBuilder<Audio> builder)
         {
             builder.Property(x => x.Title)
-                .IsRequired()
                 .HasMaxLength(100);
 
-            builder.Property(x => x.OriginalFileName)
-                .IsRequired();
-
             builder.Property(x => x.FileExt)
-                .IsRequired()
                 .HasMaxLength(10);
-
-            builder.Property(x => x.FileSize)
-                .IsRequired();
 
             builder.HasMany(a => a.Tags)
                 .WithMany(t => t.Audios)

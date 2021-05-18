@@ -19,9 +19,11 @@ namespace Audiochan.Core.Common.Extensions.MappingExtensions
                 Title = audio.Title,
                 Description = audio.Description,
                 Duration = audio.Duration,
-                Picture = $"https://{options.Image.Bucket}.s3.amazonaws.com/{options.Image.Container}/audios/{audio.Picture}",
+                Picture = audio.Picture != null 
+                    ? $"https://{options.Image.Bucket}.s3.amazonaws.com/{options.Image.Container}/audios/{audio.Picture}"
+                    : null,
                 Created = audio.Created,
-                Tags = audio.Tags.Select(t => t.Name).ToArray(),
+                Tags = audio.Tags.Select(t => t.Name).ToList(),
                 IsPublic = audio.IsPublic,
                 FileExt = audio.FileExt,
                 FileSize = audio.FileSize,
@@ -30,7 +32,9 @@ namespace Audiochan.Core.Common.Extensions.MappingExtensions
                 Author = new MetaAuthorDto
                 {
                     Id = audio.User.Id,
-                    Picture = $"https://{options.Image.Bucket}.s3.amazonaws.com/{options.Audio.Container}/{audio.Id}/{audio.User.Picture}",
+                    Picture = audio.User.Picture != null
+                        ? $"https://{options.Image.Bucket}.s3.amazonaws.com/{options.Audio.Container}/{audio.Id}/{audio.User.Picture}"
+                        : null,
                     Username = audio.User.UserName
                 }
             };
@@ -43,7 +47,9 @@ namespace Audiochan.Core.Common.Extensions.MappingExtensions
                 Id = audio.Id,
                 Title = audio.Title,
                 Duration = audio.Duration,
-                Picture = $"https://{options.Image.Bucket}.s3.amazonaws.com/{options.Image.Container}/audios/{audio.Picture}",
+                Picture = audio.Picture != null 
+                    ? $"https://{options.Image.Bucket}.s3.amazonaws.com/{options.Image.Container}/audios/{audio.Picture}"
+                    : null,
                 Uploaded = audio.Created,
                 IsPublic = audio.IsPublic,
                 AudioUrl =
@@ -51,7 +57,9 @@ namespace Audiochan.Core.Common.Extensions.MappingExtensions
                 Author = new MetaAuthorDto
                 {
                     Id = audio.User.Id,
-                    Picture = $"https://{options.Image.Bucket}.s3.amazonaws.com/{options.Audio.Container}/{audio.Id}/{audio.User.Picture}",
+                    Picture = audio.User.Picture != null
+                        ? $"https://{options.Image.Bucket}.s3.amazonaws.com/{options.Audio.Container}/{audio.Id}/{audio.User.Picture}"
+                        : null,
                     Username = audio.User.UserName
                 }
             };
