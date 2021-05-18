@@ -2,7 +2,6 @@
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Builders;
 using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Common.Extensions.MappingExtensions;
 using Audiochan.Core.Common.Interfaces;
@@ -50,29 +49,12 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
         public async Task<Result<AudioDetailViewModel>> Handle(CreateAudioRequest request,
             CancellationToken cancellationToken)
         {
-            var existsInTempStorage = await ExistsInTempStorage(request.UploadId, Path.GetExtension(request.FileName), cancellationToken);
+            var existsInTempStorage = await ExistsInTempStorageAsync(request.UploadId, cancellationToken);
 
             if (!existsInTempStorage)
                 return Result<AudioDetailViewModel>.Fail(ResultError.BadRequest, "Cannot find audio in temp storage.");
 
-            var currentUser = await _dbContext.Users
-                .SingleOrDefaultAsync(x => x.Id == _currentUserService.GetUserId(), cancellationToken);
-
-            var tags = request.Tags.Count > 0
-                ? await _tagRepository.GetListAsync(request.Tags, cancellationToken)
-                : new List<Tag>();
-
-            var audio = new AudioBuilder()
-                .AddUser(currentUser)
-                .AddFileName(request.FileName)
-                .AddContentType(request.ContentType)
-                .AddDuration(request.Duration)
-                .AddFileSize(request.FileSize)
-                .AddTitle(request.Title)
-                .AddDescription(request.Description)
-                .SetPublic(request.IsPublic ?? false)
-                .AddTags(tags)
-                .BuildAsync(request.UploadId);
+            var audio = await CreateAudioFromRequestAsync(request, cancellationToken);
 
             await _dbContext.Audios.AddAsync(audio, cancellationToken);
             await _dbContext.SaveChangesAsync(cancellationToken);
@@ -92,12 +74,36 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
             return Result<AudioDetailViewModel>.Success(viewModel);
         }
 
-        private async Task<bool> ExistsInTempStorage(string uploadId, string fileExt, CancellationToken cancellationToken = default)
+        private async Task<Audio> CreateAudioFromRequestAsync(CreateAudioRequest request, CancellationToken cancellationToken)
+        {
+            var currentUser = await _dbContext.Users
+                .SingleOrDefaultAsync(x => x.Id == _currentUserService.GetUserId(), cancellationToken);
+
+            var audio = new Audio
+            {
+                User = currentUser,
+                ContentType = request.ContentType,
+                OriginalFileName = request.FileName,
+                FileExt = Path.GetExtension(request.UploadId),
+                FileSize = request.FileSize,
+                Duration = request.Duration,
+                Title = request.Title,
+                Description = request.Description,
+                IsPublic = request.IsPublic ?? false,
+            };
+            audio.FileName = request.UploadId + audio.FileExt;
+            audio.Tags = request.Tags.Count > 0
+                ? await _tagRepository.GetListAsync(request.Tags, cancellationToken)
+                : new List<Tag>();
+            return audio;
+        }
+
+        private async Task<bool> ExistsInTempStorageAsync(string blobName, CancellationToken cancellationToken = default)
         {
             return await _storageService.ExistsAsync(
                 _storageSettings.Audio.TempBucket,
                 _storageSettings.Audio.Container,
-                uploadId + fileExt,
+                blobName,
                 cancellationToken);
         }
     }

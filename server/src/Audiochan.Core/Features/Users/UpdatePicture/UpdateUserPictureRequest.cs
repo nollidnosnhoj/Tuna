@@ -29,26 +29,33 @@ namespace Audiochan.Core.Features.Users.UpdatePicture
         private readonly IImageService _imageService;
         private readonly IStorageService _storageService;
         private readonly IDateTimeProvider _dateTimeProvider;
+        private readonly ICurrentUserService _currentUserService;
 
         public UpdateUserPictureRequestHandler(IOptions<MediaStorageSettings> options,
             UserManager<User> userManager,
             IImageService imageService,
             IStorageService storageService,
-            IDateTimeProvider dateTimeProvider)
+            IDateTimeProvider dateTimeProvider, ICurrentUserService currentUserService)
         {
             _storageSettings = options.Value;
             _userManager = userManager;
             _imageService = imageService;
             _storageService = storageService;
             _dateTimeProvider = dateTimeProvider;
+            _currentUserService = currentUserService;
         }
 
         public async Task<IResult<string>> Handle(UpdateUserPictureRequest request, CancellationToken cancellationToken)
         {
             var container = Path.Combine(_storageSettings.Image.Container, "users");
+            
             var user = await _userManager.FindByIdAsync(request.UserId + "");
-            if (user == null) return Result<string>.Fail(ResultError.Unauthorized);
+            if (user == null) return Result<string>.Fail(ResultError.NotFound);
+            if (user.Id != _currentUserService.GetUserId())
+                return Result<string>.Fail(ResultError.Forbidden);
+            
             var blobName = $"{user.Id}/{_dateTimeProvider.Now:yyyyMMddHHmmss}.jpg";
+            
             try
             {
                 var response = await _imageService.UploadImage(request.Data, container, blobName, cancellationToken);

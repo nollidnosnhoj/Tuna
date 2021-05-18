@@ -19,7 +19,7 @@ namespace Audiochan.Core.Common.Extensions.MappingExtensions
                 Title = audio.Title,
                 Description = audio.Description,
                 Duration = audio.Duration,
-                Picture = audio.Picture,
+                Picture = $"https://{options.Image.Bucket}.s3.amazonaws.com/{options.Image.Container}/audios/{audio.Picture}",
                 Created = audio.Created,
                 Tags = audio.Tags.Select(t => t.Name).ToArray(),
                 IsPublic = audio.IsPublic,
@@ -43,7 +43,7 @@ namespace Audiochan.Core.Common.Extensions.MappingExtensions
                 Id = audio.Id,
                 Title = audio.Title,
                 Duration = audio.Duration,
-                Picture = audio.Picture,
+                Picture = $"https://{options.Image.Bucket}.s3.amazonaws.com/{options.Image.Container}/audios/{audio.Picture}",
                 Uploaded = audio.Created,
                 IsPublic = audio.IsPublic,
                 AudioUrl =

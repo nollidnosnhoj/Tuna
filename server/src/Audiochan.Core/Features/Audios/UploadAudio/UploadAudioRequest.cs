@@ -35,15 +35,16 @@ namespace Audiochan.Core.Features.Audios.UploadAudio
             var userId = _currentUserService.GetUserId();
             var fileExt = Path.GetExtension(request.FileName);
             var objectId = await Nanoid.Nanoid.GenerateAsync();
+            var blobName = objectId + fileExt;
 
             var metadata = new Dictionary<string, string> {{"UserId", userId}, {"OriginalFilename", request.FileName}};
             var presignedUrl = _storageService.CreatePutPresignedUrl(
                 _storageSettings.Audio.TempBucket,
                 _storageSettings.Audio.Container,
-                objectId + fileExt,
+                blobName,
                 5,
                 metadata);
-            return new UploadAudioResponse {UploadUrl = presignedUrl, UploadId = objectId};
+            return new UploadAudioResponse {UploadUrl = presignedUrl, UploadId = blobName};
         }
     }
 }

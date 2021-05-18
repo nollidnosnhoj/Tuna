@@ -9,6 +9,7 @@ using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models.Interfaces;
 using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Common.Settings;
+using Audiochan.Core.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -39,21 +40,10 @@ namespace Audiochan.Core.Features.Audios.RemoveAudio
 
         public async Task<IResult<bool>> Handle(RemoveAudioRequest request, CancellationToken cancellationToken)
         {
-            var currentUserId = await _dbContext.Users
-                .Select(u => u.Id)
-                .SingleOrDefaultAsync(id => id == _currentUserService.GetUserId(), cancellationToken);
-
-            if (string.IsNullOrEmpty(currentUserId))
-                return Result<bool>.Fail(ResultError.Unauthorized);
-
-            var audio = await _dbContext.Audios
-                .SingleOrDefaultAsync(a => a.Id == request.Id, cancellationToken);
+            var (audio, errorResult) = await GetAudio(request.Id, cancellationToken);
 
             if (audio == null)
-                return Result<bool>.Fail(ResultError.NotFound);
-
-            if (!audio.CanModify(currentUserId))
-                return Result<bool>.Fail(ResultError.Forbidden);
+                return errorResult;
 
             _dbContext.Audios.Remove(audio);
 
@@ -74,6 +64,22 @@ namespace Audiochan.Core.Features.Audios.RemoveAudio
 
             await Task.WhenAll(tasks);
             return Result<bool>.Success(true);
+        }
+
+        private async Task<(Audio, IResult<bool>)> GetAudio(Guid audioId, CancellationToken cancellationToken = default)
+        {
+            var currentUserId = _currentUserService.GetUserId();
+
+            var audio = await _dbContext.Audios
+                .SingleOrDefaultAsync(a => a.Id == audioId, cancellationToken);
+
+            if (audio == null)
+                return (null, Result<bool>.Fail(ResultError.NotFound));
+
+            if (!audio.CanModify(currentUserId))
+                return (null, Result<bool>.Fail(ResultError.Forbidden));
+
+            return (audio, null);
         }
     }
 }

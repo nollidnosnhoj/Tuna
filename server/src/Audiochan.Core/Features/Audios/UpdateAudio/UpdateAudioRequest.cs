@@ -10,6 +10,7 @@ using Audiochan.Core.Common.Models.Interfaces;
 using Audiochan.Core.Common.Models.Requests;
 using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Common.Settings;
+using Audiochan.Core.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -43,23 +44,10 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
         public async Task<IResult<AudioDetailViewModel>> Handle(UpdateAudioRequest request,
             CancellationToken cancellationToken)
         {
-            var currentUserId = await _dbContext.Users
-                .Select(u => u.Id)
-                .SingleOrDefaultAsync(id => id == _currentUserService.GetUserId(), cancellationToken);
-
-            if (string.IsNullOrEmpty(currentUserId))
-                return Result<AudioDetailViewModel>.Fail(ResultError.Unauthorized);
-
-            var audio = await _dbContext.Audios
-                .Include(a => a.User)
-                .Include(a => a.Tags)
-                .SingleOrDefaultAsync(a => a.Id == request.AudioId, cancellationToken);
+            var (audio, errorResult) = await GetAudioAsync(request.AudioId, cancellationToken);
 
             if (audio == null)
-                return Result<AudioDetailViewModel>.Fail(ResultError.NotFound);
-
-            if (!audio.CanModify(currentUserId))
-                return Result<AudioDetailViewModel>.Fail(ResultError.Forbidden);
+                return errorResult;
 
             if (request.Tags.Count > 0)
             {
@@ -81,5 +69,24 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
 
             return Result<AudioDetailViewModel>.Success(viewModel);
         }
+
+        public async Task<(Audio, Result<AudioDetailViewModel>)> GetAudioAsync(Guid audioId,
+            CancellationToken cancellationToken = default)
+        {
+            var currentUserId = _currentUserService.GetUserId();
+
+            var audio = await _dbContext.Audios
+                .Include(a => a.User)
+                .Include(a => a.Tags)
+                .SingleOrDefaultAsync(a => a.Id == audioId, cancellationToken);
+
+            if (audio == null)
+                return (null, Result<AudioDetailViewModel>.Fail(ResultError.NotFound));
+
+            if (!audio.CanModify(currentUserId))
+                return (null, Result<AudioDetailViewModel>.Fail(ResultError.NotFound));
+
+            return (audio, null);
+        } 
     }
 }
