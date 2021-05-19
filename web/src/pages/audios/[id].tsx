@@ -1,3 +1,11 @@
+import {
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  Box,
+  AccordionIcon,
+  AccordionPanel,
+} from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
 import React from "react";
 import { QueryClient } from "react-query";
@@ -8,6 +16,8 @@ import { fetchAudioById } from "~/features/audio/services/mutations/fetchAudioBy
 import { getAccessToken } from "~/utils";
 import { useGetAudio } from "~/features/audio/hooks";
 import AudioDetails from "~/features/audio/components/Details";
+import AudioTags from "~/features/audio/components/AudioTags";
+import AudioFileInfo from "~/features/audio/components/AudioFileInfo";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const queryClient = new QueryClient();
@@ -43,6 +53,50 @@ export default function ViewAudioNextPage() {
   return (
     <Page title={audio.title}>
       <AudioDetails audio={audio} />
+      <Accordion defaultIndex={[0]} allowMultiple>
+        <AccordionItem>
+          <h2>
+            <AccordionButton>
+              <Box flex="1" textAlign="left">
+                Description
+              </Box>
+              <AccordionIcon />
+            </AccordionButton>
+          </h2>
+          <AccordionPanel pb={4}>
+            {audio.description || "No information given."}
+          </AccordionPanel>
+        </AccordionItem>
+        <AccordionItem isDisabled={audio.tags.length === 0}>
+          <h2>
+            <AccordionButton>
+              <Box flex="1" textAlign="left">
+                Tags
+              </Box>
+              <AccordionIcon />
+            </AccordionButton>
+          </h2>
+          <AccordionPanel pb={4}>
+            <AudioTags tags={audio.tags} />
+          </AccordionPanel>
+        </AccordionItem>
+        <AccordionItem>
+          <h2>
+            <AccordionButton>
+              <Box flex="1" textAlign="left">
+                File Info
+              </Box>
+              <AccordionIcon />
+            </AccordionButton>
+          </h2>
+          <AccordionPanel pb={4}>
+            <AudioFileInfo
+              duration={audio.duration}
+              fileSize={audio.fileSize}
+            />
+          </AccordionPanel>
+        </AccordionItem>
+      </Accordion>
     </Page>
   );
 }

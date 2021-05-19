@@ -3,28 +3,25 @@ import {
   Box,
   Flex,
   Heading,
-  HStack,
   IconButton,
   Spacer,
   Stack,
-  Tag,
   Text,
   Tooltip,
   useColorModeValue,
   useDisclosure,
   VStack,
-  Wrap,
-  WrapItem,
-  chakra,
-  TagLabel,
-  TagLeftIcon,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
 } from "@chakra-ui/react";
 import Router from "next/router";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { EditIcon } from "@chakra-ui/icons";
-import NextLink from "next/link";
-import { FaHashtag, FaPause, FaPlay } from "react-icons/fa";
+import { FaPause, FaPlay } from "react-icons/fa";
 import { MdQueueMusic } from "react-icons/md";
+import { HiDotsVertical } from "react-icons/hi";
 import Link from "~/components/Link";
 import Picture from "~/components/Picture";
 import PictureDropzone from "~/components/Picture/PictureDropzone";
@@ -33,7 +30,6 @@ import { useAddAudioPicture } from "~/features/audio/hooks/useAddAudioPicture";
 import { AudioDetail } from "~/features/audio/types";
 import { useAudioPlayer } from "~/lib/hooks/useAudioPlayer";
 import { useUser } from "~/lib/hooks/useUser";
-import { formatDuration } from "~/utils/format";
 import { relativeDate } from "~/utils/time";
 import AudioEditDrawer from "./AudioEditDrawer";
 
@@ -81,129 +77,97 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
     }
   }, [isActivelyPlaying, isPlaying, audio.id]);
 
-  const audioDurationFormatted = useMemo(() => {
-    return formatDuration(audio.duration);
-  }, [audio.duration]);
-
-  const audioCreatedDateRelative = useMemo(() => {
-    return relativeDate(audio.uploaded);
-  }, [audio.uploaded]);
-
   useEffect(() => {
     Router.prefetch(`/users/${audio.author.username}`);
   }, []);
 
   return (
-    <Flex marginBottom={4} justifyContent="center">
-      <Box flex="1" marginRight={4}>
-        <PictureDropzone
-          disabled={isAddingArtwork && currentUser?.id === audio.author.id}
-          onChange={async (croppedData) => {
-            const data = await uploadArtwork(croppedData);
-            setPicture(data.image);
-          }}
-        >
-          <Picture source={picture} imageSize={250} borderWidth="1px" />
-        </PictureDropzone>
-      </Box>
-      <Box flex="5">
-        <Stack direction="row" marginBottom={4}>
-          <Tooltip label="Play" placement="top">
-            <span>
-              <IconButton
-                isRound
-                colorScheme="pink"
-                size="lg"
-                icon={isPlaying && isActivelyPlaying ? <FaPause /> : <FaPlay />}
-                aria-label="Play"
-                onClick={clickPlayButton}
-              />
-            </span>
-          </Tooltip>
-          <Stack direction="column" spacing="0" fontSize="sm">
-            <Link href={`/users/${audio.author.username}`}>
-              <Text fontWeight="500">{audio.author.username}</Text>
-            </Link>
-            <Text color={secondaryColor}>{audioCreatedDateRelative}</Text>
-          </Stack>
-          <Spacer />
-          <HStack justifyContent="flex-end">
-            <Tooltip label="Add to queue" placement="top">
+    <Box>
+      <Flex marginBottom={4} justifyContent="center">
+        <Box flex="1" marginRight={4}>
+          <PictureDropzone
+            disabled={isAddingArtwork && currentUser?.id === audio.author.id}
+            onChange={async (croppedData) => {
+              const data = await uploadArtwork(croppedData);
+              setPicture(data.image);
+            }}
+          >
+            <Picture source={picture} imageSize={125} borderWidth="1px" />
+          </PictureDropzone>
+        </Box>
+        <Box flex="5">
+          <Stack direction="row" marginBottom={4}>
+            <Tooltip label="Play" placement="top">
               <span>
                 <IconButton
                   isRound
+                  colorScheme="pink"
                   size="lg"
+                  icon={
+                    isPlaying && isActivelyPlaying ? <FaPause /> : <FaPlay />
+                  }
+                  aria-label="Play"
+                  onClick={clickPlayButton}
+                />
+              </span>
+            </Tooltip>
+            <Stack direction="column" spacing="0" fontSize="sm">
+              <Link href={`/users/${audio.author.username}`}>
+                <Text fontWeight="500">{audio.author.username}</Text>
+              </Link>
+              <Text color={secondaryColor}>{relativeDate(audio.uploaded)}</Text>
+            </Stack>
+            <Spacer />
+            <Menu placement="bottom-end">
+              <MenuButton
+                as={IconButton}
+                icon={<HiDotsVertical />}
+                variant="ghost"
+                isRound
+              />
+              <MenuList>
+                {audio.author.id === currentUser?.id && (
+                  <MenuItem icon={<EditIcon />} onClick={onEditOpen}>
+                    Edit
+                  </MenuItem>
+                )}
+                <MenuItem
                   icon={<MdQueueMusic />}
-                  aria-label="Add to queue"
                   onClick={() =>
                     dispatch({
                       type: "ADD_TO_QUEUE",
                       payload: mapAudioForAudioQueue(audio),
                     })
                   }
-                />
-              </span>
-            </Tooltip>
-          </HStack>
-        </Stack>
-        <Stack direction="column" spacing={2} width="100%">
-          <Flex as="header">
-            <Box>
-              <Flex alignItems="center">
-                <Heading as="h1" fontSize="3xl">
-                  {audio.title}
-                </Heading>
-                <Box>
-                  {audio.author.id === currentUser?.id && (
-                    <Tooltip label="Edit" placement="top">
-                      <chakra.span marginLeft={4}>
-                        <IconButton
-                          isRound
-                          variant="ghost"
-                          size="lg"
-                          icon={<EditIcon />}
-                          aria-label="Edit"
-                          onClick={onEditOpen}
-                        />
-                      </chakra.span>
-                    </Tooltip>
-                  )}
-                  <AudioEditDrawer
-                    audio={audio}
-                    isOpen={isEditOpen}
-                    onClose={onEditClose}
-                  />
-                </Box>
-              </Flex>
-              <Text fontSize="sm" color={secondaryColor} marginTop={4}>
-                {audio.description || "No information given."}
-              </Text>
-            </Box>
-            <Spacer />
-            <VStack spacing={2} alignItems="normal" textAlign="right">
-              <Box color={secondaryColor}>{audioDurationFormatted}</Box>
-              {!audio.isPublic && <Badge>PRIVATE</Badge>}
-            </VStack>
-          </Flex>
-          {audio.tags && (
-            <Flex alignItems="flex-end">
-              <Wrap marginTop={2}>
-                {audio.tags.map((tag, idx) => (
-                  <WrapItem key={idx}>
-                    <NextLink href={`/search?tag=${tag}`}>
-                      <Tag size="sm" cursor="pointer">
-                        <TagLeftIcon as={FaHashtag} />
-                        <TagLabel>{tag}</TagLabel>
-                      </Tag>
-                    </NextLink>
-                  </WrapItem>
-                ))}
-              </Wrap>
+                >
+                  Add to queue
+                </MenuItem>
+              </MenuList>
+            </Menu>
+            <AudioEditDrawer
+              audio={audio}
+              isOpen={isEditOpen}
+              onClose={onEditClose}
+            />
+          </Stack>
+          <Stack direction="column" spacing={2} width="100%">
+            <Flex as="header">
+              <Box>
+                <Flex alignItems="center">
+                  <Heading as="h1" fontSize="2xl">
+                    {audio.title}
+                  </Heading>
+                </Flex>
+              </Box>
+              <Spacer />
+              <VStack spacing={2} alignItems="normal" textAlign="right">
+                {!audio.isPublic && <Badge>PRIVATE</Badge>}
+              </VStack>
             </Flex>
-          )}
-        </Stack>
-      </Box>
-    </Flex>
+          </Stack>
+        </Box>
+      </Flex>
+    </Box>
   );
 };
 
