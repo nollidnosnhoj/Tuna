@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
@@ -46,7 +45,7 @@ namespace Audiochan.Core.Features.Users.UpdatePicture
 
         public async Task<IResult<string>> Handle(UpdateUserPictureRequest request, CancellationToken cancellationToken)
         {
-            var container = Path.Combine(_storageSettings.Image.Container, "users");
+            var container = string.Join('/', _storageSettings.Image.Container, "users");
             
             var user = await _userManager.FindByIdAsync(request.UserId + "");
             if (user == null) return Result<string>.Fail(ResultError.NotFound);
