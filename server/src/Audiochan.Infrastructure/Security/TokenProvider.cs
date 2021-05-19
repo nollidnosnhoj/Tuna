@@ -42,7 +42,7 @@ namespace Audiochan.Infrastructure.Security
         {
             var now = _dateTimeProvider.Now;
             var claims = await GetClaims(user);
-            var expirationDate = now.Add(_jwtSettings.AccessTokenExpiration);
+            var expirationDate = now.Add(_jwtSettings.RefreshTokenExpiration);
             var (token, expirationDateEpoch) = GenerateToken(_jwtSettings.RefreshTokenSecret,
                 new ClaimsIdentity(claims), expirationDate);
             var refreshToken = new RefreshToken
