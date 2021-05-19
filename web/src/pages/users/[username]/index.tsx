@@ -11,7 +11,6 @@ import { useUser } from "~/lib/hooks/useUser";
 import { Flex, Box, Heading, Button } from "@chakra-ui/react";
 import Page from "~/components/Page";
 import Picture from "~/components/Picture";
-import PictureDropzone from "~/components/Picture/PictureDropzone";
 import UserAudioList from "~/features/user/components/UserAudioList";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -45,11 +44,7 @@ export default function UserProfileNextPage() {
   } = useAddUserPicture(username);
 
   // TODO: Put this into it's own component
-  const [picture, setPicture] = useState(() => {
-    return profile?.picture
-      ? `https://audiochan-public.s3.amazonaws.com/${profile.picture}`
-      : "";
-  });
+  const [picture, setPicture] = useState(profile?.picture ?? "");
 
   // TODO: Put this into it's own component
   const { isFollowing, follow } = useFollow(username, profile?.isFollowing);
@@ -60,15 +55,15 @@ export default function UserProfileNextPage() {
     <Page title={`${profile.username} | Audiochan`}>
       <Flex marginBottom={4}>
         <Box flex="1">
-          <PictureDropzone
-            disabled={isAddingPicture && user?.id === profile.id}
-            onChange={async (imageData) => {
-              const data = await addPictureAsync(imageData);
+          <Picture
+            src={picture}
+            onChange={async (croppedData) => {
+              const data = await addPictureAsync(croppedData);
               setPicture(data.image);
             }}
-          >
-            <Picture source={picture} imageSize={200} borderWidth="1px" />
-          </PictureDropzone>
+            isUploading={isAddingPicture}
+            canEdit={profile.id === user?.id}
+          />
         </Box>
         <Flex flex="4">
           <Flex width="100%">

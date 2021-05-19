@@ -11,16 +11,17 @@ import {
   Text,
   Tooltip,
 } from "@chakra-ui/react";
-import React, { useMemo } from "react";
+import NextImage from "next/image";
+import React from "react";
 import { FaPause, FaPlay } from "react-icons/fa";
 import { HiDotsVertical } from "react-icons/hi";
 import { MdQueueMusic } from "react-icons/md";
 import Link from "~/components/Link";
-import Picture from "~/components/Picture";
 import { mapAudiosForAudioQueue } from "~/utils/audioplayer";
 import { useAudioPlayer } from "~/lib/hooks/useAudioPlayer";
 import { Audio } from "~/features/audio/types";
 import { formatDuration } from "~/utils/format";
+import PictureContainer from "~/components/Picture/PictureContainer";
 
 export interface AudioListItemProps {
   audio: Audio;
@@ -37,15 +38,18 @@ const AudioListItem: React.FC<AudioListItemProps> = ({
 }) => {
   const { dispatch } = useAudioPlayer();
 
-  const picture = useMemo(() => {
-    return audio?.picture
-      ? `https://audiochan-public.s3.amazonaws.com/${audio.picture}`
-      : "";
-  }, [audio.picture]);
-
   return (
     <Box as="article" display="flex">
-      <Picture source={picture} imageSize={100} isLazy borderWidth="1px" />
+      <PictureContainer width={100} borderWidth="1px">
+        {audio.picture && (
+          <NextImage
+            src={audio.picture}
+            layout="fill"
+            objectFit="cover"
+            loading="lazy"
+          />
+        )}
+      </PictureContainer>
       <Flex width="100%" mx={4} marginTop={2}>
         <Flex flex="3">
           <Box marginRight={4}>

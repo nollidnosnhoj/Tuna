@@ -1,8 +1,10 @@
-import { Box, Flex, chakra } from "@chakra-ui/react";
+import { Box, Flex, chakra, useDisclosure } from "@chakra-ui/react";
 import React from "react";
+import NextImage from "next/image";
 import Link from "~/components/Link";
-import Picture from "~/components/Picture";
 import { AudioPlayerItem } from "~/lib/contexts/types";
+import PictureContainer from "../Picture/PictureContainer";
+import PictureModal from "../Picture/PictureModal";
 
 interface NowPlayingSectionProps {
   current?: AudioPlayerItem;
@@ -11,6 +13,8 @@ interface NowPlayingSectionProps {
 export default function NowPlayingSection(props: NowPlayingSectionProps) {
   const { current } = props;
 
+  const { isOpen, onClose, onOpen } = useDisclosure();
+
   if (!current) return null;
 
   const { audioId, title, artist, cover } = current;
@@ -18,7 +22,17 @@ export default function NowPlayingSection(props: NowPlayingSectionProps) {
   return (
     <Flex fontSize="16px" alignItems="center">
       <Box marginRight={4}>
-        <Picture source={cover} imageSize={75} borderWidth="1px" />
+        <PictureContainer width={75} borderWidth="1px" onClick={onOpen}>
+          {cover && (
+            <NextImage
+              src={cover}
+              layout="fill"
+              objectFit="cover"
+              loading="lazy"
+            />
+          )}
+        </PictureContainer>
+        <PictureModal src={cover} isOpen={isOpen} onClose={onClose} />
       </Box>
       <Box>
         <Box>

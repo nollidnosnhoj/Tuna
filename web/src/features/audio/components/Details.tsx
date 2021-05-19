@@ -24,7 +24,6 @@ import { MdQueueMusic } from "react-icons/md";
 import { HiDotsVertical } from "react-icons/hi";
 import Link from "~/components/Link";
 import Picture from "~/components/Picture";
-import PictureDropzone from "~/components/Picture/PictureDropzone";
 import { mapAudioForAudioQueue } from "~/utils/audioplayer";
 import { useAddAudioPicture } from "~/features/audio/hooks/useAddAudioPicture";
 import { AudioDetail } from "~/features/audio/types";
@@ -59,11 +58,7 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
     return currentAudio.audioId === audio.id;
   }, [currentAudio?.audioId, audio]);
 
-  const [picture, setPicture] = useState(() => {
-    return audio?.picture
-      ? `https://audiochan.s3.amazonaws.com/${audio.picture}`
-      : "";
-  });
+  const [picture, setPicture] = useState(audio?.picture ?? "");
 
   const clickPlayButton = useCallback(() => {
     if (isActivelyPlaying) {
@@ -85,15 +80,15 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
     <Box>
       <Flex marginBottom={4} justifyContent="center">
         <Box flex="1" marginRight={4}>
-          <PictureDropzone
-            disabled={isAddingArtwork && currentUser?.id === audio.author.id}
+          <Picture
+            src={picture}
             onChange={async (croppedData) => {
               const data = await uploadArtwork(croppedData);
               setPicture(data.image);
             }}
-          >
-            <Picture source={picture} imageSize={125} borderWidth="1px" />
-          </PictureDropzone>
+            isUploading={isAddingArtwork}
+            canEdit={audio.author.id === currentUser?.id}
+          />
         </Box>
         <Box flex="5">
           <Stack direction="row" marginBottom={4}>
