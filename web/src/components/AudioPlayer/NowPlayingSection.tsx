@@ -32,7 +32,12 @@ export default function NowPlayingSection(props: NowPlayingSectionProps) {
             />
           )}
         </PictureContainer>
-        <PictureModal src={cover} isOpen={isOpen} onClose={onClose} />
+        <PictureModal
+          title={title}
+          src={cover}
+          isOpen={isOpen}
+          onClose={onClose}
+        />
       </Box>
       <Box>
         <Box>

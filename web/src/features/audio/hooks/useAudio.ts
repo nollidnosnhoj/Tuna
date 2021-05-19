@@ -6,12 +6,12 @@ import { useAuth } from "~/lib/hooks/useAuth";
 
 export function useGetAudio(
   id: string,
-  options: UseQueryOptions<AudioDetail, ErrorResponse> = {}
+  queryOptions: UseQueryOptions<AudioDetail, ErrorResponse> = {}
 ): UseQueryResult<AudioDetail, ErrorResponse> {
   const { accessToken } = useAuth();
   return useQuery<AudioDetail, ErrorResponse>(
     ["audios", id],
     () => fetchAudioById(id, { accessToken }),
-    options
+    queryOptions
   );
 }
