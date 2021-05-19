@@ -1,4 +1,3 @@
-import { useRouter } from "next/router";
 import { UseInfiniteQueryOptions } from "react-query";
 import { Audio } from "~/features/audio/types";
 import { fetch } from "~/lib/api";
@@ -13,8 +12,7 @@ export function useUserAudioListQuery(
   size?: number,
   queryOptions?: UseInfiniteQueryOptions<CursorPagedList<Audio>>
 ): UseInfiniteCursorPaginationReturnType<Audio> {
-  const { query } = useRouter();
-  const params = { ...query };
+  const params = {};
   if (typeof size !== "undefined" && size > 0) {
     Object.assign(params, { size });
   }
@@ -29,7 +27,7 @@ export function useUserAudioListQuery(
         { accessToken }
       );
     },
-    query,
+    params,
     queryOptions
   );
 }

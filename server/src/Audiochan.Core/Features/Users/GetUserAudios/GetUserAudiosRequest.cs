@@ -20,7 +20,7 @@ namespace Audiochan.Core.Features.Users.GetUserAudios
     {
         public string? Username { get; set; }
         public string? Cursor { get; init; }
-        public int Size { get; init; }
+        public int Size { get; init; } = 30;
     }
 
     public class GetUserAudiosRequestHandler : IRequestHandler<GetUserAudiosRequest, CursorList<AudioViewModel>>
