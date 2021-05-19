@@ -32,13 +32,13 @@ namespace Audiochan.Core.Common.Extensions.MappingExtensions
             {
                 Id = user.Id,
                 Username = user.UserName,
-                About = user.About,
-                Picture = user.Picture,
-                Website = user.Website,
+                About = user.About ?? "",
+                Picture = user.Picture ?? "",
+                Website = user.Website ?? "",
                 AudioCount = user.Audios.Count,
                 FollowerCount = user.Followers.Count,
                 FollowingCount = user.Followings.Count,
-                IsFollowing = userId != null && userId.Length > 0
+                IsFollowing = userId.Length > 0
                     ? user.Followers.Any(f => f.ObserverId == userId)
                     : (bool?) null
             };

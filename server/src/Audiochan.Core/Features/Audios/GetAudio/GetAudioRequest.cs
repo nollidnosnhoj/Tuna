@@ -12,7 +12,7 @@ using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Audios.GetAudio
 {
-    public record GetAudioRequest(Guid Id, string PrivateKey = "") : IRequest<AudioDetailViewModel>
+    public record GetAudioRequest(Guid Id) : IRequest<AudioDetailViewModel>
     {
     }
 
@@ -32,10 +32,7 @@ namespace Audiochan.Core.Features.Audios.GetAudio
 
         public async Task<AudioDetailViewModel> Handle(GetAudioRequest request, CancellationToken cancellationToken)
         {
-            var currentUserId = _currentUserService.GetUserId();
-
             return await _dbContext.Audios
-                
                 .Where(x => x.Id == request.Id)
                 .ProjectToDetail(_storageSettings)
                 .SingleOrDefaultAsync(cancellationToken);

@@ -90,7 +90,7 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
                 Description = request.Description,
                 IsPublic = request.IsPublic ?? false,
             };
-            audio.FileName = request.UploadId + audio.FileExt;
+            audio.FileName = request.UploadId;
             audio.Tags = request.Tags.Count > 0
                 ? await _tagRepository.GetListAsync(request.Tags, cancellationToken)
                 : new List<Tag>();

@@ -30,7 +30,7 @@ const PageLoader: React.FC<PageLoaderProps> = ({ color }) => {
         background: ${color};
 
         position: fixed;
-        z-index: 1031;
+        z-index: 9999;
         top: 0;
         left: 0;
 
