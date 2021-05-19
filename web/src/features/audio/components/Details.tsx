@@ -81,6 +81,7 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
       <Flex marginBottom={4} justifyContent="center">
         <Box flex="1" marginRight={4}>
           <Picture
+            title={audio.title}
             src={picture}
             onChange={async (croppedData) => {
               const data = await uploadArtwork(croppedData);

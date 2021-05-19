@@ -11,6 +11,7 @@ import {
 } from "@chakra-ui/react";
 import React, { useState, useEffect } from "react";
 import ReactCropper from "react-cropper";
+import "cropperjs/dist/cropper.css";
 import { usePicture } from "~/components/Picture";
 
 interface PictureCropProps {
@@ -24,7 +25,7 @@ export default function PictureCropModal({
   isOpen,
   onClose,
 }: PictureCropProps) {
-  const { onUpload } = usePicture();
+  const { onUpload, isUploading } = usePicture();
   const [imageData, setImageData] = useState("");
   const [cropper, setCropper] = useState<Cropper | null>(null);
 
@@ -36,13 +37,10 @@ export default function PictureCropModal({
         setImageData(reader.result as string);
       });
       reader.readAsDataURL(file);
-    }
-
-    () => {
-      console.log("destroy");
+    } else {
       setImageData("");
       setCropper(null);
-    };
+    }
   }, [file, setCropper]);
 
   const clear = () => {
@@ -79,7 +77,9 @@ export default function PictureCropModal({
                 checkOrientation={false}
                 initialAspectRatio={1}
                 autoCrop
-                onInitialized={(instance) => setCropper(instance)}
+                onInitialized={(instance) => {
+                  setCropper(instance);
+                }}
                 viewMode={1}
                 cropBoxMovable={false}
                 cropBoxResizable={false}
@@ -93,7 +93,12 @@ export default function PictureCropModal({
             </Box>
           </ModalBody>
           <ModalFooter>
-            <Button colorScheme="primary" onClick={handleCropAndUpload}>
+            <Button
+              isLoading={isUploading}
+              loadingText="Uploading..."
+              colorScheme="primary"
+              onClick={handleCropAndUpload}
+            >
               {"Crop & Upload"}
             </Button>
           </ModalFooter>

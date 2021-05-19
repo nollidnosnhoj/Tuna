@@ -16,6 +16,7 @@ type PictureContextType = {
 
 interface PictureProps {
   src: string;
+  title: string;
   onChange: (data: string) => Promise<void>;
   isUploading: boolean;
   canEdit?: boolean;
@@ -26,7 +27,7 @@ const PictureContext = React.createContext<PictureContextType>(
 );
 
 export default function Picture(props: PictureProps) {
-  const { src, onChange, isUploading, canEdit = false } = props;
+  const { src, title, onChange, isUploading, canEdit = false } = props;
 
   const {
     isOpen: isPictureModalOpen,
@@ -103,14 +104,15 @@ export default function Picture(props: PictureProps) {
         )}
         {canEdit && (
           <Button
-            size="xs"
+            size="sm"
             position="absolute"
-            bottom="10%"
+            bottom="5%"
             paddingX={4}
             onClick={(e) => {
               e.stopPropagation();
               open();
             }}
+            colorScheme="primary"
           >
             Upload
           </Button>
@@ -124,6 +126,7 @@ export default function Picture(props: PictureProps) {
         />
       )}
       <PictureModal
+        title={title}
         src={src}
         isOpen={isPictureModalOpen}
         onClose={onPictureModalClose}
