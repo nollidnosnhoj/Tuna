@@ -18,7 +18,6 @@ import {
 } from "@chakra-ui/react";
 import React, { useRef } from "react";
 import { FaCloudUploadAlt } from "react-icons/fa";
-import { MdLibraryMusic } from "react-icons/md";
 import NextLink from "next/link";
 import Link from "../../Link";
 import { useUser } from "~/lib/hooks/useUser";
@@ -147,11 +146,6 @@ const Header: React.FC = () => {
           <DrawerContent>
             <DrawerCloseButton />
             <DrawerBody p={0} marginTop={12}>
-              <HeaderMenuLink
-                label="Browse"
-                href="/audios"
-                icon={<MdLibraryMusic />}
-              />
               <HeaderMenuLink
                 label="Search"
                 href="/search"
