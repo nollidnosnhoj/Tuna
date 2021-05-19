@@ -37,7 +37,7 @@ export default function PlayerControls(props: PlayerControlsProps) {
         aria-label="Previous"
         title="Previous"
         onClick={() => dispatch({ type: "PLAY_PREVIOUS" })}
-        disabled={playIndex === 0}
+        disabled={playIndex === 0 || playIndex === undefined}
         isRound
         variant="ghost"
         size={buttonSize}
@@ -52,13 +52,14 @@ export default function PlayerControls(props: PlayerControlsProps) {
         size={buttonSize}
         colorScheme="primary"
         fontSize="25px"
+        disabled={playIndex === undefined}
       />
       <IconButton
         icon={<MdSkipNext />}
         aria-label="Next"
         title="Next"
         onClick={() => dispatch({ type: "PLAY_NEXT" })}
-        disabled={playIndex === queue.length - 1}
+        disabled={playIndex === queue.length - 1 || playIndex === undefined}
         isRound
         variant="ghost"
         size={buttonSize}

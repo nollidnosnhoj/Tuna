@@ -15,7 +15,12 @@ const EMPTY_TIME_FORMAT = "--:--";
 
 export default function ProgressBar() {
   const { state, dispatch } = useAudioPlayer();
-  const { audioRef, currentTime, currentAudio: currentPlaying } = state;
+  const {
+    audioRef,
+    currentTime,
+    currentAudio: currentPlaying,
+    playIndex,
+  } = state;
   const { duration } = currentPlaying || { duration: 0 };
   const [sliderValue, setSliderValue] = useState(0);
   const [isDraggingProgress, setIsDraggingProgress] = useState(false);
@@ -90,6 +95,7 @@ export default function ProgressBar() {
           onChangeEnd={handleSliderChangeEnd}
           onChange={handleSliderChange}
           focusThumbOnChange={false}
+          isDisabled={playIndex === undefined}
         >
           <SliderTrack>
             <SliderFilledTrack />
