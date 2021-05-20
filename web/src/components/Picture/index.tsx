@@ -1,10 +1,14 @@
-import { Button, useDisclosure } from "@chakra-ui/react";
-import NextImage from "next/image";
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import { Box, Button, useDisclosure } from "@chakra-ui/react";
+import React, {
+  PropsWithChildren,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { useDropzone } from "react-dropzone";
 import SETTINGS from "~/lib/config";
 import { apiErrorToast, errorToast } from "~/utils";
-import PictureContainer from "./PictureContainer";
 import PictureCropModal from "./PictureCropModal";
 import PictureModal from "./PictureModal";
 
@@ -26,8 +30,17 @@ const PictureContext = React.createContext<PictureContextType>(
   {} as PictureContextType
 );
 
-export default function Picture(props: PictureProps) {
-  const { src, title, onChange, isUploading, canEdit = false } = props;
+export default function PictureController(
+  props: PropsWithChildren<PictureProps>
+) {
+  const {
+    src,
+    title,
+    onChange,
+    isUploading,
+    canEdit = false,
+    children,
+  } = props;
 
   const {
     isOpen: isPictureModalOpen,
@@ -87,23 +100,17 @@ export default function Picture(props: PictureProps) {
   return (
     <PictureContext.Provider value={values}>
       <input {...getInputProps()} />
-      <PictureContainer
-        width={200}
+      <Box
         onClick={onPictureModalOpen}
         cursor="pointer"
         display="flex"
         justifyContent="center"
+        position="relative"
       >
-        {src && (
-          <NextImage
-            src={src}
-            layout="fill"
-            objectFit="cover"
-            loading="eager"
-          />
-        )}
+        {children}
         {canEdit && (
           <Button
+            colorScheme="primary"
             size="sm"
             position="absolute"
             bottom="5%"
@@ -112,12 +119,11 @@ export default function Picture(props: PictureProps) {
               e.stopPropagation();
               open();
             }}
-            colorScheme="primary"
           >
             Upload
           </Button>
         )}
-      </PictureContainer>
+      </Box>
       {file && (
         <PictureCropModal
           isOpen={isCropModalOpen}

@@ -1,16 +1,17 @@
 import { Button } from "@chakra-ui/react";
 import React from "react";
 import { useUser } from "~/lib/hooks/useUser";
-import { Profile } from "../types";
 
 interface ProfileEditButtonProps {
-  profile: Profile;
+  profileId: string;
 }
 
-export default function ProfileEditButton({ profile }: ProfileEditButtonProps) {
+export default function ProfileEditButton({
+  profileId,
+}: ProfileEditButtonProps) {
   const { user } = useUser();
 
-  if (!user || user.id !== profile.id) {
+  if (!user || user.id !== profileId) {
     return null;
   }
 

@@ -9,28 +9,23 @@ import {
   TabPanel,
   TabPanels,
   Tabs,
-  Button,
 } from "@chakra-ui/react";
 import { QueryClient, useQuery } from "react-query";
 import { dehydrate } from "react-query/hydration";
 import { GetServerSideProps } from "next";
-import NextLink from "next/link";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React from "react";
 import Page from "~/components/Page";
-import Picture from "~/components/Picture";
 import ProfileFollowButton from "~/features/user/components/ProfileFollowButton";
 import ProfileEditButton from "~/features/user/components/ProfileEditButton";
+import ProfilePicture from "~/features/user/components/ProfilePicture";
+import ProfileLatestAudios from "~/features/user/components/ProfileLatestAudios";
 import { fetchUserProfile } from "~/features/user/services";
-import { useAddUserPicture } from "~/features/user/hooks";
-import AudioList from "~/features/audio/components/List";
-import { useUser } from "~/lib/hooks/useUser";
-import { getAccessToken } from "~/utils";
-import useInfiniteCursorPagination from "~/lib/hooks/useInfiniteCursorPagination";
-import { Audio } from "~/features/audio/types";
 import { Profile } from "~/features/user/types";
-import { ErrorResponse } from "~/lib/types";
 import { useAuth } from "~/lib/hooks/useAuth";
+import { useUser } from "~/lib/hooks/useUser";
+import { ErrorResponse } from "~/lib/types";
+import { getAccessToken } from "~/utils";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const queryClient = new QueryClient();
@@ -66,36 +61,16 @@ export default function UserProfileNextPage() {
     }
   );
 
-  const {
-    mutateAsync: addPictureAsync,
-    isLoading: isAddingPicture,
-  } = useAddUserPicture(username);
-
-  const [picture, setPicture] = useState(profile?.picture ?? "");
-
-  const { items: latestAudios } = useInfiniteCursorPagination<Audio>(
-    `users/${username}/audios`,
-    { size: 5 },
-    {
-      staleTime: 1000,
-    }
-  );
-
   if (!profile) return null;
 
   return (
     <Page title={`${profile.username} | Audiochan`}>
       <Flex marginBottom={4}>
         <Box flex="1" marginRight={4}>
-          <Picture
-            title={profile.username}
-            src={picture}
-            onChange={async (croppedData) => {
-              const data = await addPictureAsync(croppedData);
-              setPicture(data.image);
-            }}
-            isUploading={isAddingPicture}
-            canEdit={profile.id === user?.id}
+          <ProfilePicture
+            pictureSrc={profile.picture}
+            username={profile.username}
+            canModify={user?.id === profile.id}
           />
         </Box>
         <Flex flex="4">
@@ -105,8 +80,12 @@ export default function UserProfileNextPage() {
             </Box>
             <Spacer />
             <Flex justifyContent="flex-end" flex="1">
-              <ProfileFollowButton profile={profile} />
-              <ProfileEditButton profile={profile} />
+              <ProfileFollowButton
+                profileId={profile.id}
+                username={profile.username}
+                isFollowing={profile.isFollowing}
+              />
+              <ProfileEditButton profileId={profile.id} />
             </Flex>
           </VStack>
           <Box></Box>
@@ -115,20 +94,12 @@ export default function UserProfileNextPage() {
       <Box>
         <Tabs>
           <TabList>
-            <Tab>Latest Audios</Tab>
+            <Tab>Uploads</Tab>
           </TabList>
 
           <TabPanels>
             <TabPanel>
-              <AudioList
-                audios={latestAudios}
-                notFoundContent={<p>No uploads.</p>}
-                defaultLayout="list"
-                hideLayoutToggle
-              />
-              <NextLink href={`/users/${username}/audios`}>
-                <Button width="100%">View More</Button>
-              </NextLink>
+              <ProfileLatestAudios username={profile.username} />
             </TabPanel>
           </TabPanels>
         </Tabs>

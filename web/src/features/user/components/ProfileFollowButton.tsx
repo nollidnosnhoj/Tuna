@@ -2,23 +2,23 @@ import { Button } from "@chakra-ui/react";
 import React from "react";
 import { useUser } from "~/lib/hooks/useUser";
 import { useFollow } from "../hooks";
-import { Profile } from "../types";
 
 interface ProfileFollowButtonProps {
-  profile: Profile;
+  profileId: string;
+  username: string;
+  isFollowing?: boolean;
 }
 
 export default function ProfileFollowButton({
-  profile,
+  profileId,
+  username,
+  isFollowing: isInitiallyFollowing,
 }: ProfileFollowButtonProps) {
   const { user } = useUser();
 
-  const { isFollowing, follow } = useFollow(
-    profile.username,
-    profile.isFollowing
-  );
+  const { isFollowing, follow } = useFollow(username, isInitiallyFollowing);
 
-  if (!user || user.id === profile.id) {
+  if (!user || user.id === profileId) {
     return null;
   }
 

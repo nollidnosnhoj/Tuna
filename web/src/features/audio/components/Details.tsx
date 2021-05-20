@@ -17,21 +17,20 @@ import {
   MenuList,
 } from "@chakra-ui/react";
 import Router from "next/router";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { EditIcon } from "@chakra-ui/icons";
 import { FaPause, FaPlay } from "react-icons/fa";
 import { MdQueueMusic } from "react-icons/md";
 import { HiDotsVertical } from "react-icons/hi";
+import AudioEditDrawer from "./AudioEditDrawer";
+import AudioTags from "./AudioTags";
+import AudioPicture from "./AudioPicture";
 import Link from "~/components/Link";
-import Picture from "~/components/Picture";
-import { mapAudioForAudioQueue } from "~/utils/audioplayer";
-import { useAddAudioPicture } from "~/features/audio/hooks/useAddAudioPicture";
 import { AudioDetail } from "~/features/audio/types";
 import { useAudioPlayer } from "~/lib/hooks/useAudioPlayer";
 import { useUser } from "~/lib/hooks/useUser";
 import { relativeDate } from "~/utils/time";
-import AudioEditDrawer from "./AudioEditDrawer";
-import AudioTags from "./AudioTags";
+import { mapAudioForAudioQueue } from "~/utils/audioplayer";
 
 interface AudioDetailProps {
   audio: AudioDetail;
@@ -44,11 +43,6 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
   const { isPlaying, currentAudio } = state;
 
   const {
-    mutateAsync: uploadArtwork,
-    isLoading: isAddingArtwork,
-  } = useAddAudioPicture(audio.id);
-
-  const {
     isOpen: isEditOpen,
     onOpen: onEditOpen,
     onClose: onEditClose,
@@ -58,8 +52,6 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
     if (!currentAudio) return false;
     return currentAudio.audioId === audio.id;
   }, [currentAudio?.audioId, audio]);
-
-  const [picture, setPicture] = useState(audio?.picture ?? "");
 
   const clickPlayButton = useCallback(() => {
     if (isActivelyPlaying) {
@@ -81,15 +73,11 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
     <Box>
       <Flex marginBottom={4} justifyContent="center">
         <Box flex="1" marginRight={4}>
-          <Picture
-            title={audio.title}
-            src={picture}
-            onChange={async (croppedData) => {
-              const data = await uploadArtwork(croppedData);
-              setPicture(data.image);
-            }}
-            isUploading={isAddingArtwork}
-            canEdit={audio.author.id === currentUser?.id}
+          <AudioPicture
+            audioId={audio.id}
+            pictureTitle={audio.title}
+            pictureSrc={audio.picture || ""}
+            canModify={currentUser?.id === audio.author.id}
           />
         </Box>
         <Box flex="5">

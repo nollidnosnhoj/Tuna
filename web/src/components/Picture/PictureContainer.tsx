@@ -21,6 +21,7 @@ const PictureContainer: React.FC<PictureContainerProps> = ({
         paddingBottom: "100%",
       }}
       position="relative"
+      borderWidth="1px"
       {...boxProps}
     >
       {children}
