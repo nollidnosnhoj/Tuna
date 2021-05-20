@@ -59,7 +59,7 @@ namespace Audiochan.Core.Features.Users.UpdatePicture
                 var response = await _imageService.UploadImage(request.Data, container, blobName, cancellationToken);
                 
                 if (!string.IsNullOrEmpty(user.Picture))
-                    await _storageService.RemoveAsync(_storageSettings.Audio.Bucket, user.Picture, cancellationToken);
+                    await _storageService.RemoveAsync(_storageSettings.Audio.Bucket, container, user.Picture, cancellationToken);
                 
                 user.UpdatePicture(blobName);
                 await _userManager.UpdateAsync(user);

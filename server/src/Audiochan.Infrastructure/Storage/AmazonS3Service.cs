@@ -41,12 +41,7 @@ namespace Audiochan.Infrastructure.Storage
         public async Task RemoveAsync(string bucket, string container, string blobName,
             CancellationToken cancellationToken = default)
         {
-            await RemoveAsync(bucket, GetKeyName(container, blobName), cancellationToken);
-        }
-
-        public async Task RemoveAsync(string bucket, string key, CancellationToken cancellationToken = default)
-        {
-            var deleteRequest = new DeleteObjectRequest {BucketName = bucket, Key = key};
+            var deleteRequest = new DeleteObjectRequest {BucketName = bucket, Key = GetKeyName(container, blobName)};
 
             try
             {

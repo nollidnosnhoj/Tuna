@@ -62,7 +62,7 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
                 
                 // TODO: Maybe instead of deleting it, set a expiration for the old picture object.
                 if (!string.IsNullOrEmpty(audio.Picture))
-                    await _storageService.RemoveAsync(_storageSettings.Audio.Bucket, audio.Picture, cancellationToken);
+                    await _storageService.RemoveAsync(_storageSettings.Image.Bucket, container, audio.Picture, cancellationToken);
                 
                 audio.UpdatePicture(blobName);
                 await _dbContext.SaveChangesAsync(cancellationToken);

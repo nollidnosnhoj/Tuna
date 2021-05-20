@@ -51,12 +51,15 @@ namespace Audiochan.Core.Features.Audios.RemoveAudio
                 _storageService.RemoveAsync(
                     _storageSettings.Audio.Bucket,
                     _storageSettings.Audio.Container,
-                    BlobHelpers.GetAudioBlobName(audio),
+                    $"{audio.Id}/{audio.FileName}",
                     cancellationToken)
             };
             if (!string.IsNullOrEmpty(audio.Picture))
             {
-                tasks.Add(_storageService.RemoveAsync(_storageSettings.Audio.Bucket, audio.Picture, cancellationToken));
+                tasks.Add(_storageService.RemoveAsync(_storageSettings.Image.Bucket, 
+                    string.Join('/', _storageSettings.Image.Container, "audios"), 
+                    audio.Picture, 
+                    cancellationToken));
             }
 
             await Task.WhenAll(tasks);
