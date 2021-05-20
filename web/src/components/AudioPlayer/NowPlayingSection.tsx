@@ -22,7 +22,12 @@ export default function NowPlayingSection(props: NowPlayingSectionProps) {
   return (
     <Flex fontSize="16px" alignItems="center">
       <Box marginRight={4}>
-        <PictureContainer width={75} borderWidth="1px" onClick={onOpen}>
+        <PictureContainer
+          width={75}
+          borderWidth="1px"
+          onClick={onOpen}
+          cursor="pointer"
+        >
           {cover && (
             <NextImage
               src={cover}

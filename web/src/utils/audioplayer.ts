@@ -10,9 +10,7 @@ export function mapAudioForAudioQueue(audio: AudioDetail): AudioPlayerItem[] {
       title: audio.title,
       artist: audio.author.username,
       artistId: audio.author.id,
-      cover: audio.picture
-        ? `https://audiochan.s3.amazonaws.com/${audio.picture}`
-        : "",
+      cover: audio.picture ?? "",
       duration: audio.duration,
       privateKey: audio.privateKey,
       source: audio.audioUrl,
@@ -31,9 +29,7 @@ export function mapAudiosForAudioQueue(
     title: audio.title,
     artist: audio.author.username,
     artistId: audio.author.id,
-    cover: audio.picture
-      ? `https://audiochan.s3.amazonaws.com/${audio.picture}`
-      : "",
+    cover: audio.picture ?? "",
     duration: audio.duration,
     source: audio.audioUrl,
     related: isRelatedAudio,
