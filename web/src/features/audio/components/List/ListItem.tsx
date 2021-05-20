@@ -9,10 +9,9 @@ import {
   MenuList,
   Stack,
   Text,
-  Tooltip,
 } from "@chakra-ui/react";
 import NextImage from "next/image";
-import React from "react";
+import React, { useState } from "react";
 import { FaPause, FaPlay } from "react-icons/fa";
 import { HiDotsVertical } from "react-icons/hi";
 import { MdQueueMusic } from "react-icons/md";
@@ -37,10 +36,20 @@ const AudioListItem: React.FC<AudioListItemProps> = ({
   removeArtistName = false,
 }) => {
   const { dispatch } = useAudioPlayer();
+  const [hoverImage, setHoverImage] = useState(false);
 
   return (
     <Box as="article" display="flex">
-      <PictureContainer width={100} borderWidth="1px">
+      <PictureContainer
+        width={125}
+        borderWidth="1px"
+        position="relative"
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        onMouseOver={() => setHoverImage(true)}
+        onMouseLeave={() => setHoverImage(false)}
+      >
         {audio.picture && (
           <NextImage
             src={audio.picture}
@@ -49,23 +58,18 @@ const AudioListItem: React.FC<AudioListItemProps> = ({
             loading="lazy"
           />
         )}
+        <IconButton
+          display={hoverImage ? "flex" : "none"}
+          isRound
+          colorScheme="pink"
+          size="lg"
+          icon={isPlaying ? <FaPause /> : <FaPlay />}
+          aria-label="Play"
+          onClick={onPlayClick}
+        />
       </PictureContainer>
       <Flex width="100%" mx={4} marginTop={2}>
         <Flex flex="3">
-          <Box marginRight={4}>
-            <Tooltip label="Play" placement="top">
-              <span>
-                <IconButton
-                  isRound
-                  colorScheme="pink"
-                  size="lg"
-                  icon={isPlaying ? <FaPause /> : <FaPlay />}
-                  aria-label="Play"
-                  onClick={onPlayClick}
-                />
-              </span>
-            </Tooltip>
-          </Box>
           <Box>
             <Flex align="center">
               <Link
