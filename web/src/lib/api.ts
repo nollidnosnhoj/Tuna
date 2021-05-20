@@ -152,14 +152,14 @@ function request<TResponse = any, TRequest = unknown>(
   });
 }
 
-export interface FetchAudioOptions {
+export interface FetchRequestOptions {
   accessToken?: string;
 }
 
 export function fetch<TResponse>(
   route: string,
   params: Record<string, any> = {},
-  options: FetchAudioOptions = {}
+  options: FetchRequestOptions = {}
 ): Promise<TResponse> {
   const { accessToken = getAccessToken() } = options;
   return new Promise<TResponse>((resolve, reject) => {
@@ -175,7 +175,7 @@ export const fetchPages = async <TData>(
   key: string,
   params: Record<string, any> = {},
   page = 1,
-  options: FetchAudioOptions = {}
+  options: FetchRequestOptions = {}
 ): Promise<PagedList<TData>> => {
   const { accessToken = getAccessToken() } = options;
   return new Promise<PagedList<TData>>((resolve, reject) => {

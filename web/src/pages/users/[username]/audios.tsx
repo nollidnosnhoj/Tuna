@@ -9,7 +9,7 @@ import { getAccessToken } from "~/utils";
 import { fetch } from "~/lib/api";
 import { Audio } from "~/features/audio/types";
 import { CursorPagedList } from "~/lib/types";
-import { useUserAudioListQuery } from "~/features/user/hooks";
+import useInfiniteCursorPagination from "~/lib/hooks/useInfiniteCursorPagination";
 
 interface TagAudioPageProps {
   username: string;
@@ -40,12 +40,13 @@ export const getServerSideProps: GetServerSideProps<TagAudioPageProps> = async (
 
 export default function UserAudiosPage(props: TagAudioPageProps) {
   const { username, audios: initAudio, nextCursor } = props;
+
   const {
     items: audios,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useUserAudioListQuery(username, undefined, {
+  } = useInfiniteCursorPagination(`users/${username}/audios`, undefined, {
     initialData: {
       pageParams: [nextCursor],
       pages: [{ items: initAudio, next: nextCursor }],

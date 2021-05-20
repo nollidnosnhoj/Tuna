@@ -11,7 +11,7 @@ import {
   Tabs,
   Button,
 } from "@chakra-ui/react";
-import { QueryClient } from "react-query";
+import { QueryClient, useQuery } from "react-query";
 import { dehydrate } from "react-query/hydration";
 import { GetServerSideProps } from "next";
 import NextLink from "next/link";
@@ -22,14 +22,15 @@ import Picture from "~/components/Picture";
 import ProfileFollowButton from "~/features/user/components/ProfileFollowButton";
 import ProfileEditButton from "~/features/user/components/ProfileEditButton";
 import { fetchUserProfile } from "~/features/user/services";
-import {
-  useAddUserPicture,
-  useUserAudioListQuery,
-} from "~/features/user/hooks";
-import { useProfile } from "~/features/user/hooks";
+import { useAddUserPicture } from "~/features/user/hooks";
 import AudioList from "~/features/audio/components/List";
 import { useUser } from "~/lib/hooks/useUser";
 import { getAccessToken } from "~/utils";
+import useInfiniteCursorPagination from "~/lib/hooks/useInfiniteCursorPagination";
+import { Audio } from "~/features/audio/types";
+import { Profile } from "~/features/user/types";
+import { ErrorResponse } from "~/lib/types";
+import { useAuth } from "~/lib/hooks/useAuth";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const queryClient = new QueryClient();
@@ -55,8 +56,15 @@ export default function UserProfileNextPage() {
   const { user } = useUser();
   const { query } = useRouter();
   const username = query.username as string;
+  const { accessToken } = useAuth();
 
-  const { data: profile } = useProfile(username, { staleTime: 1000 });
+  const { data: profile } = useQuery<Profile, ErrorResponse>(
+    ["users", username],
+    () => fetchUserProfile(username, { accessToken }),
+    {
+      staleTime: 1000,
+    }
+  );
 
   const {
     mutateAsync: addPictureAsync,
@@ -65,9 +73,13 @@ export default function UserProfileNextPage() {
 
   const [picture, setPicture] = useState(profile?.picture ?? "");
 
-  const { items: latestAudios } = useUserAudioListQuery(username, 5, {
-    staleTime: 1000,
-  });
+  const { items: latestAudios } = useInfiniteCursorPagination<Audio>(
+    `users/${username}/audios`,
+    { size: 5 },
+    {
+      staleTime: 1000,
+    }
+  );
 
   if (!profile) return null;
 

@@ -4,7 +4,9 @@ import {
   UseInfiniteQueryOptions,
   UseInfiniteQueryResult,
 } from "react-query";
+import { fetchPages } from "../api";
 import { PagedList } from "../types";
+import { useAuth } from "./useAuth";
 
 export interface UseInfinitePaginationReturnType<TItem>
   extends Omit<UseInfiniteQueryResult<PagedList<TItem>>, "data"> {
@@ -13,13 +15,14 @@ export interface UseInfinitePaginationReturnType<TItem>
 
 export default function useInfinitePagination<TItem>(
   key: string,
-  fetcher: (page: number) => Promise<PagedList<TItem>>,
   params?: Record<string, unknown>,
   options?: UseInfiniteQueryOptions<PagedList<TItem>>
 ): UseInfinitePaginationReturnType<TItem> {
+  const { accessToken } = useAuth();
   const { data, ...result } = useInfiniteQuery<PagedList<TItem>>(
     [key, params],
-    ({ pageParam = 1 }) => fetcher(pageParam),
+    ({ pageParam = 1 }) =>
+      fetchPages<TItem>(key, params, pageParam, { accessToken }),
     {
       getNextPageParam: (lastPage) =>
         lastPage.hasNext ? lastPage.page + 1 : undefined,

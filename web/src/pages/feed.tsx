@@ -2,8 +2,8 @@ import React from "react";
 import InfiniteListControls from "~/components/InfiniteListControls";
 import Page from "~/components/Page";
 import AudioList from "~/features/audio/components/List";
-import { useAudioFeedQuery } from "~/features/audio/hooks";
 import { Audio } from "~/features/audio/types";
+import useInfinitePagination from "~/lib/hooks/useInfinitePagination";
 import { PagedList } from "~/lib/types";
 
 export interface AudioFeedPageProps {
@@ -17,7 +17,7 @@ export default function UserAudioFeedNextPage() {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useAudioFeedQuery();
+  } = useInfinitePagination<Audio>("me/feed");
 
   return (
     <Page title="Your Feed">

@@ -9,7 +9,6 @@ import { fetch } from "~/lib/api";
 import { Audio } from "~/features/audio/types";
 import { CursorPagedList } from "~/lib/types";
 import useInfiniteCursorPagination from "~/lib/hooks/useInfiniteCursorPagination";
-import { useAuth } from "~/lib/hooks/useAuth";
 
 interface TagAudioPageProps {
   tag: string;
@@ -40,29 +39,18 @@ export const getServerSideProps: GetServerSideProps<TagAudioPageProps> = async (
 
 export default function TagAudioPage(props: TagAudioPageProps) {
   const { tag, audios: initAudio, nextCursor } = props;
-  const { accessToken } = useAuth();
 
   const {
     items: audios,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useInfiniteCursorPagination<Audio>(
-    "audios",
-    (cursor) =>
-      fetch<CursorPagedList<Audio>>(
-        "audios",
-        { tag: tag, cursor: cursor },
-        { accessToken }
-      ),
-    undefined,
-    {
-      initialData: {
-        pageParams: [nextCursor],
-        pages: [{ items: initAudio, next: nextCursor }],
-      },
-    }
-  );
+  } = useInfiniteCursorPagination<Audio>("audios", undefined, {
+    initialData: {
+      pageParams: [nextCursor],
+      pages: [{ items: initAudio, next: nextCursor }],
+    },
+  });
 
   return (
     <Page title="Browse Latest Public Audios">

@@ -3,7 +3,8 @@ import React from "react";
 import Page from "~/components/Page";
 import InfiniteListControls from "~/components/InfiniteListControls";
 import AudioList from "~/features/audio/components/List";
-import { useAudioListQuery } from "~/features/audio/hooks";
+import useInfiniteCursorPagination from "~/lib/hooks/useInfiniteCursorPagination";
+import { Audio } from "~/features/audio/types";
 
 const Index = () => {
   const {
@@ -11,7 +12,7 @@ const Index = () => {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useAudioListQuery();
+  } = useInfiniteCursorPagination<Audio>("audios", undefined, undefined);
 
   return (
     <Page title="Audiochan | Listen and Share Your Music">
