@@ -69,6 +69,7 @@ const UserSection: React.FC = () => {
         colorScheme="primary"
         textTransform="uppercase"
         onClick={openRegister}
+        display={{ base: "none", md: "flex" }}
       >
         Register
       </Button>

@@ -1,6 +1,5 @@
 import { HamburgerIcon, MoonIcon, SearchIcon, SunIcon } from "@chakra-ui/icons";
 import {
-  Box,
   Button,
   ButtonProps,
   Drawer,
@@ -12,6 +11,7 @@ import {
   Heading,
   HStack,
   IconButton,
+  Spacer,
   useColorMode,
   useColorModeValue,
   useDisclosure,
@@ -83,58 +83,55 @@ const Header: React.FC = () => {
         bgColor={headerColor}
         zIndex={3}
       >
-        <Flex
+        <HStack
           width="100%"
           my={3}
           h={16}
           alignItems="center"
-          justifyContent="space-between"
+          position="relative"
         >
-          <Flex align="center" width={{ md: "full" }}>
-            <IconButton
-              variant="ghost"
-              size="lg"
-              icon={<HamburgerIcon />}
-              aria-label="Open menu"
-              onClick={onMenuDrawerToggle}
-              position="relative"
-              ref={menuButtonRef}
-              isRound
-            />
-            <Box display={{ base: "none", md: "flex" }} marginLeft={14}>
-              <Heading size="lg">
-                <Link
-                  href="/"
-                  _hover={{
-                    textDecoration: "none",
-                  }}
-                >
-                  Audiochan
-                </Link>
-              </Heading>
-            </Box>
-          </Flex>
-          <Flex marginX={8} justify="center" width="full">
-            <Box width="100%">
-              <SearchBar />
-            </Box>
-          </Flex>
-          <HStack
-            spacing={4}
-            marginRight={{ base: 2, md: 8 }}
-            width={{ md: "full" }}
-            justifyContent="flex-end"
+          <IconButton
+            variant="ghost"
+            size="lg"
+            icon={<HamburgerIcon />}
+            aria-label="Open menu"
+            onClick={onMenuDrawerToggle}
+            position="relative"
+            ref={menuButtonRef}
+            marginRight={8}
+            isRound
+          />
+          <Heading size="lg" display={{ base: "none", md: "flex" }}>
+            <Link
+              href="/"
+              _hover={{
+                textDecoration: "none",
+              }}
+            >
+              Audiochan
+            </Link>
+          </Heading>
+          <Flex
+            position="absolute"
+            width="100%"
+            maxWidth={{ xl: "720px", lg: "480px", base: "240px" }}
+            left="50%"
+            top="50%"
+            transform="translate(-50%, -50%)"
+            display={{ base: "none", md: "flex" }}
           >
-            <IconButton
-              aria-label="Change color mode"
-              icon={<ColorModeIcon />}
-              size="md"
-              variant="ghost"
-              onClick={toggleColorMode}
-            />
-            <UserSection />
-          </HStack>
-        </Flex>
+            <SearchBar />
+          </Flex>
+          <Spacer />
+          <IconButton
+            aria-label="Change color mode"
+            icon={<ColorModeIcon />}
+            size="md"
+            variant="ghost"
+            onClick={toggleColorMode}
+          />
+          <UserSection />
+        </HStack>
       </Flex>
       <Drawer
         placement="left"
