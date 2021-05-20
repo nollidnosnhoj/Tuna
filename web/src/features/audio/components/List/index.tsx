@@ -12,15 +12,15 @@ import React, { useCallback, useState } from "react";
 import { FaList } from "react-icons/fa";
 import { IoMdGrid } from "react-icons/io";
 import AudioGridItem from "./GridItem";
-import AudioListItem from "./ListItem";
+import AudioStackItem from "./StackItem";
 import { mapAudiosForAudioQueue } from "~/utils/audioplayer";
-import { Audio } from "~/features/audio/types";
+import { AudioData } from "~/features/audio/types";
 import { useAudioPlayer } from "~/lib/hooks/useAudioPlayer";
 
 type AudioListLayout = "list" | "grid";
 
 type AudioListProps = {
-  audios: Audio[];
+  audios: AudioData[];
   defaultLayout?: AudioListLayout;
   hideLayoutToggle?: boolean;
   notFoundContent?: string | React.ReactNode;
@@ -39,12 +39,13 @@ export default function AudioList(props: AudioListProps) {
   const [layout, setLayout] = useState<AudioListLayout>(defaultLayout);
 
   const isAudioPlaying = useCallback(
-    (audio: Audio) => !!currentPlaying && currentPlaying.audioId === audio.id,
+    (audio: AudioData) =>
+      !!currentPlaying && currentPlaying.audioId === audio.id,
     [currentPlaying?.queueId]
   );
 
   const onPlayClick = useCallback(
-    (audio: Audio, index: number) => {
+    (audio: AudioData, index: number) => {
       if (isAudioPlaying(audio)) {
         dispatch({ type: "SET_PLAYING", payload: !isPlaying });
       } else {
@@ -102,7 +103,7 @@ export default function AudioList(props: AudioListProps) {
                     paddingBottom={4}
                     key={index}
                   >
-                    <AudioListItem
+                    <AudioStackItem
                       audio={audio}
                       isPlaying={isAudioPlaying(audio) && isPlaying}
                       onPlayClick={() => onPlayClick(audio, index)}

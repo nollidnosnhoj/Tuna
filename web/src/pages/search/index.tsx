@@ -4,7 +4,7 @@ import React from "react";
 import Page from "~/components/Page";
 import PaginationListControls from "~/components/PaginationListControls";
 import AudioList from "~/features/audio/components/List";
-import { Audio } from "~/features/audio/types";
+import { AudioData } from "~/features/audio/types";
 import { useGetPageParam } from "~/lib/hooks/useGetPageParam";
 import usePagination from "~/lib/hooks/usePagination";
 
@@ -12,7 +12,7 @@ export default function AudioSearchNextPage() {
   const { query } = useRouter();
   const [queryPage, queryParams] = useGetPageParam(query);
   const { q } = queryParams;
-  const { items: audios, page, setPage, totalPages } = usePagination<Audio>(
+  const { items: audios, page, setPage, totalPages } = usePagination<AudioData>(
     "search/audios",
     { ...queryParams },
     queryPage

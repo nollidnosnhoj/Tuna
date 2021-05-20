@@ -7,13 +7,13 @@ import AudioList from "~/features/audio/components/List";
 import { GetServerSideProps } from "next";
 import { getAccessToken } from "~/utils";
 import { fetch } from "~/lib/api";
-import { Audio } from "~/features/audio/types";
+import { AudioData } from "~/features/audio/types";
 import { CursorPagedList } from "~/lib/types";
 import useInfiniteCursorPagination from "~/lib/hooks/useInfiniteCursorPagination";
 
 interface TagAudioPageProps {
   username: string;
-  audios: Audio[];
+  audios: AudioData[];
   nextCursor?: string;
 }
 
@@ -23,7 +23,7 @@ export const getServerSideProps: GetServerSideProps<TagAudioPageProps> = async (
   const username = context.params?.username as string;
   const accessToken = getAccessToken(context);
 
-  const response = await fetch<CursorPagedList<Audio>>(
+  const response = await fetch<CursorPagedList<AudioData>>(
     `users/${username}/audios`,
     undefined,
     { accessToken }

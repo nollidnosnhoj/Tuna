@@ -16,7 +16,7 @@ import { fetchAudioById } from "~/features/audio/services/mutations/fetchAudioBy
 import { getAccessToken } from "~/utils";
 import AudioDetails from "~/features/audio/components/Details";
 import AudioFileInfo from "~/features/audio/components/AudioFileInfo";
-import { AudioDetail } from "~/features/audio/types";
+import { AudioDetailData } from "~/features/audio/types";
 import { ErrorResponse } from "~/lib/types";
 import { useAuth } from "~/lib/hooks/useAuth";
 
@@ -45,7 +45,7 @@ export default function ViewAudioNextPage() {
   const { query } = useRouter();
   const id = query.id as string;
   const { accessToken } = useAuth();
-  const { data: audio } = useQuery<AudioDetail, ErrorResponse>(
+  const { data: audio } = useQuery<AudioDetailData, ErrorResponse>(
     ["audios", id],
     () => fetchAudioById(id, { accessToken }),
     {

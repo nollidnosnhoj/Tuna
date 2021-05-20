@@ -16,12 +16,12 @@ import Router from "next/router";
 import * as yup from "yup";
 import { apiErrorToast, successfulToast } from "~/utils/toast";
 import { useEditAudio, useRemoveAudio } from "../hooks";
-import { AudioDetail, AudioRequest } from "../types";
+import { AudioDetailData, AudioRequest } from "../types";
 import AudioForm from "./AudioForm";
 import { validationMessages } from "~/utils";
 
 interface AudioEditDrawerProps {
-  audio: AudioDetail;
+  audio: AudioDetailData;
   isOpen: boolean;
   onClose: () => void;
   buttonRef?: React.RefObject<HTMLButtonElement>;

@@ -2,7 +2,7 @@ import { Box, Text } from "@chakra-ui/react";
 import NextImage from "next/image";
 import React from "react";
 import Link from "~/components/Link";
-import { AudioListItemProps } from "./ListItem";
+import { AudioListItemProps } from "./StackItem";
 import PictureContainer from "~/components/Picture/PictureContainer";
 
 export default function AudioGridItem(props: AudioListItemProps) {

@@ -1,10 +1,6 @@
 import { MetaAuthor } from "~/lib/types";
 
-export type AudioSearchType = "audios" | "user" | "feed";
-
-export type Visibility = "unlisted" | "public" | "private";
-
-export type Audio = {
+export interface AudioData {
   id: string;
   title: string;
   isPublic: boolean;
@@ -13,24 +9,16 @@ export type Audio = {
   uploaded: string;
   audioUrl: string;
   author: MetaAuthor;
-};
+}
 
-export type AudioDetail = {
-  id: string;
-  title: string;
+export interface AudioDetailData extends AudioData {
   description?: string;
-  isPublic: boolean;
-  privateKey?: string;
   tags: string[];
-  duration: number;
   fileSize: number;
   fileExt: string;
-  picture?: string;
   uploaded: string;
   lastModified?: string;
-  audioUrl: string;
-  author: MetaAuthor;
-};
+}
 
 export interface AudioRequest {
   title: string;

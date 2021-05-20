@@ -7,7 +7,6 @@ import {
   Spacer,
   Stack,
   Text,
-  Tooltip,
   useColorModeValue,
   useDisclosure,
   VStack,
@@ -17,53 +16,35 @@ import {
   MenuList,
 } from "@chakra-ui/react";
 import Router from "next/router";
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useEffect } from "react";
 import { EditIcon } from "@chakra-ui/icons";
-import { FaPause, FaPlay } from "react-icons/fa";
 import { MdQueueMusic } from "react-icons/md";
 import { HiDotsVertical } from "react-icons/hi";
 import AudioEditDrawer from "./AudioEditDrawer";
 import AudioTags from "./AudioTags";
 import AudioPicture from "./AudioPicture";
 import Link from "~/components/Link";
-import { AudioDetail } from "~/features/audio/types";
+import { AudioDetailData } from "~/features/audio/types";
 import { useAudioPlayer } from "~/lib/hooks/useAudioPlayer";
 import { useUser } from "~/lib/hooks/useUser";
 import { relativeDate } from "~/utils/time";
 import { mapAudioForAudioQueue } from "~/utils/audioplayer";
+import AudioPlayButton from "./AudioPlayButton";
 
 interface AudioDetailProps {
-  audio: AudioDetail;
+  audio: AudioDetailData;
 }
 
 const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
   const secondaryColor = useColorModeValue("black.300", "gray.300");
   const { user: currentUser } = useUser();
-  const { state, dispatch } = useAudioPlayer();
-  const { isPlaying, currentAudio } = state;
+  const { dispatch } = useAudioPlayer();
 
   const {
     isOpen: isEditOpen,
     onOpen: onEditOpen,
     onClose: onEditClose,
   } = useDisclosure();
-
-  const isActivelyPlaying = useMemo(() => {
-    if (!currentAudio) return false;
-    return currentAudio.audioId === audio.id;
-  }, [currentAudio?.audioId, audio]);
-
-  const clickPlayButton = useCallback(() => {
-    if (isActivelyPlaying) {
-      dispatch({ type: "SET_PLAYING", payload: !isPlaying });
-    } else {
-      dispatch({
-        type: "SET_NEW_QUEUE",
-        payload: mapAudioForAudioQueue(audio),
-        index: 0,
-      });
-    }
-  }, [isActivelyPlaying, isPlaying, audio.id]);
 
   useEffect(() => {
     Router.prefetch(`/users/${audio.author.username}`);
@@ -82,20 +63,7 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
         </Box>
         <Box flex="5">
           <Stack direction="row" marginBottom={4}>
-            <Tooltip label="Play" placement="top">
-              <span>
-                <IconButton
-                  isRound
-                  colorScheme="pink"
-                  size="lg"
-                  icon={
-                    isPlaying && isActivelyPlaying ? <FaPause /> : <FaPlay />
-                  }
-                  aria-label="Play"
-                  onClick={clickPlayButton}
-                />
-              </span>
-            </Tooltip>
+            <AudioPlayButton audio={audio} />
             <Stack direction="column" spacing="0" fontSize="sm">
               <Link href={`/users/${audio.author.username}`}>
                 <Text fontWeight="500">{audio.author.username}</Text>

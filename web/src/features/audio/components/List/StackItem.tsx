@@ -18,18 +18,18 @@ import { MdQueueMusic } from "react-icons/md";
 import Link from "~/components/Link";
 import { mapAudiosForAudioQueue } from "~/utils/audioplayer";
 import { useAudioPlayer } from "~/lib/hooks/useAudioPlayer";
-import { Audio } from "~/features/audio/types";
+import { AudioData } from "~/features/audio/types";
 import { formatDuration } from "~/utils/format";
 import PictureContainer from "~/components/Picture/PictureContainer";
 
 export interface AudioListItemProps {
-  audio: Audio;
+  audio: AudioData;
   isPlaying?: boolean;
   onPlayClick?: () => void;
   removeArtistName?: boolean;
 }
 
-const AudioListItem: React.FC<AudioListItemProps> = ({
+const AudioStackItem: React.FC<AudioListItemProps> = ({
   audio,
   onPlayClick,
   isPlaying,
@@ -124,4 +124,4 @@ const AudioListItem: React.FC<AudioListItemProps> = ({
   );
 };
 
-export default AudioListItem;
+export default AudioStackItem;

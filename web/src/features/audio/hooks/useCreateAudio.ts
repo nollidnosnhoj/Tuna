@@ -1,10 +1,10 @@
 import { useMutation, UseMutationResult } from "react-query";
 import { useAuth } from "~/lib/hooks/useAuth";
 import api from "~/lib/api";
-import { AudioDetail, CreateAudioRequest } from "../types";
+import { AudioDetailData, CreateAudioRequest } from "../types";
 
 export function useCreateAudio(): UseMutationResult<
-  AudioDetail,
+  AudioDetailData,
   unknown,
   CreateAudioRequest,
   unknown
@@ -12,8 +12,8 @@ export function useCreateAudio(): UseMutationResult<
   const { accessToken } = useAuth();
   const createAudio = async (
     request: CreateAudioRequest
-  ): Promise<AudioDetail> => {
-    const { data } = await api.post<AudioDetail>("audios", request, {
+  ): Promise<AudioDetailData> => {
+    const { data } = await api.post<AudioDetailData>("audios", request, {
       accessToken,
     });
     return data;
