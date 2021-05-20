@@ -31,6 +31,7 @@ import { useAudioPlayer } from "~/lib/hooks/useAudioPlayer";
 import { useUser } from "~/lib/hooks/useUser";
 import { relativeDate } from "~/utils/time";
 import AudioEditDrawer from "./AudioEditDrawer";
+import AudioTags from "./AudioTags";
 
 interface AudioDetailProps {
   audio: AudioDetail;
@@ -160,6 +161,7 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
                 {!audio.isPublic && <Badge>PRIVATE</Badge>}
               </VStack>
             </Flex>
+            <AudioTags tags={audio.tags} />
           </Stack>
         </Box>
       </Flex>

@@ -15,7 +15,6 @@ import Page from "~/components/Page";
 import { fetchAudioById } from "~/features/audio/services/mutations/fetchAudioById";
 import { getAccessToken } from "~/utils";
 import AudioDetails from "~/features/audio/components/Details";
-import AudioTags from "~/features/audio/components/AudioTags";
 import AudioFileInfo from "~/features/audio/components/AudioFileInfo";
 import { AudioDetail } from "~/features/audio/types";
 import { ErrorResponse } from "~/lib/types";
@@ -71,19 +70,6 @@ export default function ViewAudioNextPage() {
           </h2>
           <AccordionPanel pb={4}>
             {audio.description || "No information given."}
-          </AccordionPanel>
-        </AccordionItem>
-        <AccordionItem isDisabled={audio.tags.length === 0}>
-          <h2>
-            <AccordionButton>
-              <Box flex="1" textAlign="left">
-                Tags
-              </Box>
-              <AccordionIcon />
-            </AccordionButton>
-          </h2>
-          <AccordionPanel pb={4}>
-            <AudioTags tags={audio.tags} />
           </AccordionPanel>
         </AccordionItem>
         <AccordionItem>
