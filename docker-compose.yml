@@ -14,9 +14,9 @@ services:
     restart: on-failure:1
     container_name: backend
     build:
-      context: server/src/Audiochan
+      context: api/src/Audiochan
     env_file:
-      - server/.env
+      - api/.env
     depends_on:
       - database
     networks:
