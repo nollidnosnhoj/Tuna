@@ -2,18 +2,15 @@ import { useMutation, UseMutationResult, useQueryClient } from "react-query";
 import { useAuth } from "~/lib/hooks/useAuth";
 import api from "~/lib/api";
 import { ErrorResponse } from "~/lib/types";
-
-type ImageResult = {
-  image: string;
-};
+import { AudioDetailData } from "../types";
 
 export function useAddAudioPicture(
   id: string
-): UseMutationResult<ImageResult, ErrorResponse, string> {
+): UseMutationResult<AudioDetailData, ErrorResponse, string> {
   const queryClient = useQueryClient();
   const { accessToken } = useAuth();
-  const uploadArtwork = async (imageData: string): Promise<ImageResult> => {
-    const { data } = await api.patch<ImageResult>(
+  const uploadArtwork = async (imageData: string): Promise<AudioDetailData> => {
+    const { data } = await api.patch<AudioDetailData>(
       `audios/${id}/picture`,
       { data: imageData },
       { accessToken }
@@ -22,9 +19,9 @@ export function useAddAudioPicture(
   };
 
   return useMutation(uploadArtwork, {
-    onSuccess() {
+    onSuccess(data) {
+      queryClient.setQueryData<AudioDetailData>([`audios`, id], data);
       queryClient.invalidateQueries(`audios`);
-      queryClient.invalidateQueries([`audios`, id], { exact: true });
     },
   });
 }

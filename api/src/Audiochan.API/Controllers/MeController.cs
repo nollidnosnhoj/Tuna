@@ -223,7 +223,7 @@ namespace Audiochan.API.Controllers
             request.UserId = _currentUserId;
             var result = await _mediator.Send(request, cancellationToken);
             return result.IsSuccess
-                ? Ok(new {Image = result.Data})
+                ? Ok(result.Data)
                 : result.ReturnErrorResponse();
         }
     }

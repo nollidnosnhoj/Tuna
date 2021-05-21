@@ -1,24 +1,27 @@
 ﻿using System;
+using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Enums;
+using Audiochan.Core.Common.Extensions.MappingExtensions;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models.Interfaces;
 using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Common.Settings;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Audios.UpdatePicture
 {
-    public class UpdateAudioPictureRequest : IRequest<IResult<string>>
+    public class UpdateAudioPictureRequest : IRequest<IResult<AudioDetailViewModel>>
     {
         [JsonIgnore] public Guid AudioId { get; set; }
         public string Data { get; init; } = null!;
     }
 
-    public class UpdateAudioPictureRequestHandler : IRequestHandler<UpdateAudioPictureRequest, IResult<string>>
+    public class UpdateAudioPictureRequestHandler : IRequestHandler<UpdateAudioPictureRequest, IResult<AudioDetailViewModel>>
     {
         private readonly MediaStorageSettings _storageSettings;
         private readonly IApplicationDbContext _dbContext;
@@ -42,31 +45,37 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
             _dateTimeProvider = dateTimeProvider;
         }
 
-        public async Task<IResult<string>> Handle(UpdateAudioPictureRequest request,
+        public async Task<IResult<AudioDetailViewModel>> Handle(UpdateAudioPictureRequest request,
             CancellationToken cancellationToken)
         {
             var container = string.Join('/', _storageSettings.Image.Container, "audios");
             var currentUserId = _currentUserService.GetUserId();
+            
             var audio = await _dbContext.Audios
-                .FindAsync(new object[]{ request.AudioId }, cancellationToken);
+                .Include(x => x.Tags)
+                .Include(x => x.User)
+                .Where(x => x.Id == request.AudioId)
+                .SingleOrDefaultAsync(cancellationToken);
+            
             if (audio == null) 
-                return Result<string>.Fail(ResultError.NotFound);
+                return Result<AudioDetailViewModel>.Fail(ResultError.NotFound);
+            
             if (!audio.CanModify(currentUserId)) 
-                return Result<string>.Fail(ResultError.Forbidden);
+                return Result<AudioDetailViewModel>.Fail(ResultError.Forbidden);
             
             var blobName = $"{audio.Id}/{_dateTimeProvider.Now:yyyyMMddHHmmss}.jpg";
 
             try
             {
-                var response = await _imageService.UploadImage(request.Data, container, blobName, cancellationToken);
+                await _imageService.UploadImage(request.Data, container, blobName, cancellationToken);
                 
-                // TODO: Maybe instead of deleting it, set a expiration for the old picture object.
                 if (!string.IsNullOrEmpty(audio.Picture))
                     await _storageService.RemoveAsync(_storageSettings.Image.Bucket, container, audio.Picture, cancellationToken);
                 
                 audio.UpdatePicture(blobName);
                 await _dbContext.SaveChangesAsync(cancellationToken);
-                return Result<string>.Success(response.Url);
+                
+                return Result<AudioDetailViewModel>.Success(audio.MapToDetail(_storageSettings));
             }
             catch (Exception)
             {

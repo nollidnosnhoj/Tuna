@@ -117,7 +117,7 @@ namespace Audiochan.API.Controllers
             request.AudioId = audioId;
             var result = await _mediator.Send(request, cancellationToken);
             return result.IsSuccess
-                ? Ok(new {Image = result.Data})
+                ? Ok(result.Data)
                 : result.ReturnErrorResponse();
         }
     }
