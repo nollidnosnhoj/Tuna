@@ -30,8 +30,10 @@ namespace Audiochan.Infrastructure.Search
         {
             var queryable = _dbContext.Audios
                 .AsNoTracking()
-                .ExcludePrivateAudios()
-                .FilterByTags(request.Tags);
+                .Include(x => x.Tags)
+                .Include(x => x.User)
+                .FilterByTags(request.Tags)
+                .ExcludePrivateAudios();
             
             if (!string.IsNullOrWhiteSpace(request.Q))
                 queryable = queryable.Where(a => EF.Functions

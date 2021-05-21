@@ -24,13 +24,6 @@ namespace Audiochan.Core.Common.Extensions.QueryableExtensions
             return queryable.FilterByTags(parsedTags);
         }
 
-        public static IQueryable<Audio> FilterByTags(this IQueryable<Audio> queryable, string[] tags)
-        {
-            return tags.Length > 0
-                ? queryable.Where(a => a.Tags.Any(t => tags.Contains(t.Name)))
-                : queryable;
-        }
-        
         public static IQueryable<Audio> FilterUsingCursor(this IQueryable<Audio> queryable, string? cursor)
         {
             if (string.IsNullOrEmpty(cursor)) return queryable;
@@ -47,7 +40,16 @@ namespace Audiochan.Core.Common.Extensions.QueryableExtensions
                                                      && a.Id.CompareTo(audioId) < 0));
             }
 
-            return queryable;
+            return queryable
+                .OrderByDescending(a => a.Created)
+                .ThenByDescending(a => a.Id);
+        }
+        
+        private static IQueryable<Audio> FilterByTags(this IQueryable<Audio> queryable, string[] tags)
+        {
+            return tags.Length > 0
+                ? queryable.Where(a => a.Tags.Any(t => tags.Contains(t.Name)))
+                : queryable;
         }
     }
 }

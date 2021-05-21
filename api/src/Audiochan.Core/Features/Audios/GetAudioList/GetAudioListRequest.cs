@@ -37,10 +37,9 @@ namespace Audiochan.Core.Features.Audios.GetAudioList
         {
             var audios = await _dbContext.Audios
                 .AsNoTracking()
+                .Include(x => x.User)
                 .ExcludePrivateAudios()
                 .FilterUsingCursor(request.Cursor)
-                .OrderByDescending(a => a.Created)
-                .ThenByDescending(a => a.Id)
                 .ProjectToList(_storageSettings)
                 .Take(request.Size)
                 .ToListAsync(cancellationToken);

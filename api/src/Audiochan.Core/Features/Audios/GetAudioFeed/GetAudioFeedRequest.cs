@@ -40,6 +40,7 @@ namespace Audiochan.Core.Features.Audios.GetAudioFeed
 
             return await _dbContext.Audios
                 .AsNoTracking()
+                .Include(x => x.User)
                 .ExcludePrivateAudios()
                 .Where(a => followedIds.Contains(a.UserId))
                 .ProjectToList(_storageSettings)
