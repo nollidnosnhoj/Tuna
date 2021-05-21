@@ -3,17 +3,17 @@ import React, { PropsWithChildren, useEffect, useMemo, useState } from "react";
 import { LoginFormValues } from "~/features/auth/components/LoginForm";
 import {
   authenticateUser,
-  refreshAccessToken,
   revokeRefreshToken,
+  refreshAccessToken,
 } from "~/features/auth/services";
-import { useUser } from "~/features/user/hooks/useUser";
 import {
   ACCESS_TOKEN_EXPIRATION_KEY,
   AuthContextProviderProps,
   AuthContext,
-} from "~/features/auth/contexts/AuthContext";
-import { getAccessToken, errorToast } from "~/utils";
+} from "~/features/auth/contexts";
 import { useGetCurrentUser } from "~/features/auth/hooks";
+import { useUser } from "~/features/user/hooks/useUser";
+import { getAccessToken, errorToast } from "~/utils";
 
 interface AuthProviderProps {
   accessToken?: string;

@@ -1,7 +1,7 @@
 import React from "react";
 import { AudioPlayerAction } from "./actions/audioPlayerActions";
 import { REPEAT_MODE } from "./types";
-import { AudioPlayerItem } from "~/lib/contexts/types";
+import { AudioPlayerItem } from "~/features/audio/contexts/types";
 
 export interface AudioPlayerState {
   audioRef: HTMLAudioElement | null;

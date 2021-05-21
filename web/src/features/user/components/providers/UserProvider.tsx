@@ -1,9 +1,6 @@
 import React, { PropsWithChildren, useMemo, useState } from "react";
-import { CurrentUser } from "../types";
-import {
-  UserContextType,
-  UserContext,
-} from "../../../lib/contexts/UserContext";
+import { CurrentUser } from "../../types";
+import { UserContextType, UserContext } from "../../contexts";
 
 interface UserProviderProps {
   initialUser: CurrentUser | null;

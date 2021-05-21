@@ -5,22 +5,23 @@ import dynamic from "next/dynamic";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Hydrate } from "react-query/hydration";
 import PageLoader from "~/components/PageLoader";
-import {
-  AudioPlayerProvider,
-  AuthProvider,
-  UserProvider,
-} from "~/components/providers";
+import { UserProvider } from "~/features/user/components/providers";
+import { CurrentUser } from "~/features/user/types";
+import { AuthProvider } from "~/features/auth/components/providers";
+import { AudioPlayerProvider } from "~/features/audio/components/providers";
 import theme from "~/lib/theme";
 import queryClient from "~/lib/queryClient";
-import { CurrentUser } from "~/features/user/types";
 
 interface AppProps extends NextAppProps {
   user?: CurrentUser;
 }
 
-const AudioPlayer = dynamic(() => import("~/components/AudioPlayer"), {
-  ssr: false,
-});
+const AudioPlayer = dynamic(
+  () => import("~/features/audio/components/AudioPlayer"),
+  {
+    ssr: false,
+  }
+);
 
 function App({ Component, user, pageProps }: AppProps) {
   const queryClientRef = React.useRef<QueryClient>();

@@ -4,9 +4,9 @@ import React, {
   useMemo,
   useReducer,
 } from "react";
-import { AudioPlayerContext } from "../../lib/contexts";
-import { audioPlayerReducer } from "../../lib/contexts/reducers";
-import { REPEAT_MODE } from "../../lib/contexts/types";
+import { AudioPlayerContext } from "../../contexts";
+import { audioPlayerReducer } from "../../contexts/reducers";
+import { REPEAT_MODE } from "../../contexts/types";
 
 const AUDIO_PLAYER_SETTING = "audiochan_player_setting";
 

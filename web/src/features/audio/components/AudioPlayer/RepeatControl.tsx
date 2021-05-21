@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { chakra, Icon } from "@chakra-ui/react";
-import { useAudioPlayer } from "~/lib/hooks/useAudioPlayer";
-import { REPEAT_MODE } from "~/lib/contexts/types";
+import { useAudioPlayer } from "~/features/audio/hooks/";
+import { REPEAT_MODE } from "~/features/audio/contexts/types";
 import { MdRepeat, MdRepeatOne } from "react-icons/md";
 
 const repeatLabels = {

@@ -1,7 +1,7 @@
 import { useMutation, UseMutationResult, useQueryClient } from "react-query";
 import { useAuth } from "~/features/auth/hooks/useAuth";
 import api from "~/lib/api";
-import { useAudioPlayer } from "~/lib/hooks/useAudioPlayer";
+import { useAudioPlayer } from "~/features/audio/hooks/";
 
 export function useRemoveAudio(id: string): UseMutationResult<void> {
   const { dispatch } = useAudioPlayer();

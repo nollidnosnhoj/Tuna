@@ -15,7 +15,7 @@ import AudioGridItem from "./GridItem";
 import AudioStackItem from "./StackItem";
 import { mapAudiosForAudioQueue } from "~/utils/audioplayer";
 import { AudioData } from "~/features/audio/types";
-import { useAudioPlayer } from "~/lib/hooks/useAudioPlayer";
+import { useAudioPlayer } from "~/features/audio/hooks/";
 
 type AudioListLayout = "list" | "grid";
 

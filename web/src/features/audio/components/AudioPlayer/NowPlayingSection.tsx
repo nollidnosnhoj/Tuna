@@ -2,9 +2,9 @@ import { Box, Flex, chakra, useDisclosure } from "@chakra-ui/react";
 import React from "react";
 import NextImage from "next/image";
 import Link from "~/components/Link";
-import { AudioPlayerItem } from "~/lib/contexts/types";
-import PictureContainer from "../Picture/PictureContainer";
-import PictureModal from "../Picture/PictureModal";
+import PictureContainer from "~/components/Picture/PictureContainer";
+import PictureModal from "~/components/Picture/PictureModal";
+import { AudioPlayerItem } from "~/features/audio/contexts/types";
 
 interface NowPlayingSectionProps {
   current?: AudioPlayerItem;

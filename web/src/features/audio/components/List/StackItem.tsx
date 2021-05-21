@@ -17,7 +17,7 @@ import { HiDotsVertical } from "react-icons/hi";
 import { MdQueueMusic } from "react-icons/md";
 import Link from "~/components/Link";
 import { mapAudiosForAudioQueue } from "~/utils/audioplayer";
-import { useAudioPlayer } from "~/lib/hooks/useAudioPlayer";
+import { useAudioPlayer } from "~/features/audio/hooks/";
 import { AudioData } from "~/features/audio/types";
 import { formatDuration } from "~/utils/format";
 import PictureContainer from "~/components/Picture/PictureContainer";

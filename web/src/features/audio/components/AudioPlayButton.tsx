@@ -1,7 +1,7 @@
 import { IconButton } from "@chakra-ui/react";
 import React, { useCallback, useMemo } from "react";
 import { FaPause, FaPlay } from "react-icons/fa";
-import { useAudioPlayer } from "~/lib/hooks/useAudioPlayer";
+import { useAudioPlayer } from "~/features/audio/hooks/";
 import { mapAudioForAudioQueue } from "~/utils";
 import { AudioData } from "../types";
 
