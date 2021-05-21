@@ -4,19 +4,19 @@ import React from "react";
 import Page from "~/components/Page";
 import PaginationListControls from "~/components/PaginationListControls";
 import AudioList from "~/features/audio/components/List";
-import { AudioData } from "~/features/audio/types";
+import { useSearchAudio } from "~/features/audio/hooks";
 import { useGetPageParam } from "~/lib/hooks/useGetPageParam";
-import usePagination from "~/lib/hooks/usePagination";
 
 export default function AudioSearchNextPage() {
   const { query } = useRouter();
   const [queryPage, queryParams] = useGetPageParam(query);
   const { q } = queryParams;
-  const { items: audios, page, setPage, totalPages } = usePagination<AudioData>(
-    "search/audios",
-    { ...queryParams },
-    queryPage
-  );
+  const {
+    items: audios,
+    page,
+    setPage,
+    totalPages,
+  } = useSearchAudio(queryPage, queryParams);
 
   return (
     <Page title="Search audios | Audiochan">

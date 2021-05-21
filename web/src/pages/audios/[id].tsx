@@ -8,7 +8,7 @@ import {
 } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
 import React from "react";
-import { QueryClient, useQuery } from "react-query";
+import { QueryClient } from "react-query";
 import { useRouter } from "next/router";
 import { dehydrate } from "react-query/hydration";
 import Page from "~/components/Page";
@@ -16,9 +16,7 @@ import { fetchAudioById } from "~/features/audio/services/mutations/fetchAudioBy
 import { getAccessToken } from "~/utils";
 import AudioDetails from "~/features/audio/components/Details";
 import AudioFileInfo from "~/features/audio/components/AudioFileInfo";
-import { AudioDetailData } from "~/features/audio/types";
-import { ErrorResponse } from "~/lib/types";
-import { useAuth } from "~/lib/hooks/useAuth";
+import { useGetAudio } from "~/features/audio/hooks";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const queryClient = new QueryClient();
@@ -44,14 +42,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 export default function ViewAudioNextPage() {
   const { query } = useRouter();
   const id = query.id as string;
-  const { accessToken } = useAuth();
-  const { data: audio } = useQuery<AudioDetailData, ErrorResponse>(
-    ["audios", id],
-    () => fetchAudioById(id, { accessToken }),
-    {
-      staleTime: 1000,
-    }
-  );
+  const { data: audio } = useGetAudio(id, {
+    staleTime: 1000,
+  });
 
   if (!audio) return null;
 

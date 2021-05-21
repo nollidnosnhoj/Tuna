@@ -3,8 +3,7 @@ import { Button } from "@chakra-ui/react";
 import React from "react";
 import NextLink from "next/link";
 import AudioList from "~/features/audio/components/List";
-import { AudioData } from "~/features/audio/types";
-import useInfiniteCursorPagination from "~/lib/hooks/useInfiniteCursorPagination";
+import { useGetUserAudios } from "../hooks";
 
 interface ProfileLatestAudiosProps {
   username: string;
@@ -13,12 +12,10 @@ interface ProfileLatestAudiosProps {
 export default function ProfileLatestAudios({
   username,
 }: ProfileLatestAudiosProps) {
-  const { items: latestAudios } = useInfiniteCursorPagination<AudioData>(
-    `users/${username}/audios`,
+  const { items: latestAudios } = useGetUserAudios(
+    username,
     { size: 5 },
-    {
-      staleTime: 1000,
-    }
+    { staleTime: 1000 }
   );
 
   return (

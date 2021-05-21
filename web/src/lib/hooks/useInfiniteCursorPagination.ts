@@ -13,6 +13,10 @@ export interface UseInfiniteCursorPaginationReturnType<TItem>
   items: TItem[];
 }
 
+export type UseInfiniteCursorPaginationOptions<TItem> = UseInfiniteQueryOptions<
+  CursorPagedList<TItem>
+>;
+
 export const fetchCursorList = <TItem>(
   key: string,
   cursor?: string,
@@ -29,7 +33,7 @@ export const fetchCursorList = <TItem>(
 export default function useInfiniteCursorPagination<TItem>(
   key: string,
   params?: Record<string, unknown>,
-  options?: UseInfiniteQueryOptions<CursorPagedList<TItem>>
+  options?: UseInfiniteCursorPaginationOptions<TItem>
 ): UseInfiniteCursorPaginationReturnType<TItem> {
   const { accessToken } = useAuth();
   const { data, ...result } = useInfiniteQuery<CursorPagedList<TItem>>(

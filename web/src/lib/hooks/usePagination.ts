@@ -15,6 +15,8 @@ export interface UsePaginationResultType<TItem>
   hasNext: boolean;
 }
 
+export type UsePaginationOptions<TItem> = UseQueryOptions<PagedList<TItem>>;
+
 export default function usePagination<TItem>(
   key: string,
   params: Record<string, unknown> = {},

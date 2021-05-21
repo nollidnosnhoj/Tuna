@@ -13,6 +13,10 @@ export interface UseInfinitePaginationReturnType<TItem>
   items: TItem[];
 }
 
+export type UseInfinitePaginationOptions<TItem> = UseInfiniteQueryOptions<
+  PagedList<TItem>
+>;
+
 export default function useInfinitePagination<TItem>(
   key: string,
   params?: Record<string, unknown>,

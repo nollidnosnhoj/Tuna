@@ -8,7 +8,7 @@ import { getAccessToken } from "~/utils";
 import { fetch } from "~/lib/api";
 import { AudioData } from "~/features/audio/types";
 import { CursorPagedList } from "~/lib/types";
-import useInfiniteCursorPagination from "~/lib/hooks/useInfiniteCursorPagination";
+import { useGetAudioList } from "~/features/audio/hooks";
 
 interface TagAudioPageProps {
   tag: string;
@@ -45,12 +45,15 @@ export default function TagAudioPage(props: TagAudioPageProps) {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useInfiniteCursorPagination<AudioData>("audios", undefined, {
-    initialData: {
-      pageParams: [nextCursor],
-      pages: [{ items: initAudio, next: nextCursor }],
-    },
-  });
+  } = useGetAudioList(
+    { tag },
+    {
+      initialData: {
+        pageParams: [nextCursor],
+        pages: [{ items: initAudio, next: nextCursor }],
+      },
+    }
+  );
 
   return (
     <Page title="Browse Latest Public Audios">

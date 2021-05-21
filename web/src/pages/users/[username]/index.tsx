@@ -10,7 +10,7 @@ import {
   TabPanels,
   Tabs,
 } from "@chakra-ui/react";
-import { QueryClient, useQuery } from "react-query";
+import { QueryClient } from "react-query";
 import { dehydrate } from "react-query/hydration";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
@@ -21,11 +21,9 @@ import ProfileEditButton from "~/features/user/components/ProfileEditButton";
 import ProfilePicture from "~/features/user/components/ProfilePicture";
 import ProfileLatestAudios from "~/features/user/components/ProfileLatestAudios";
 import { fetchUserProfile } from "~/features/user/services";
-import { Profile } from "~/features/user/types";
-import { useAuth } from "~/lib/hooks/useAuth";
 import { useUser } from "~/lib/hooks/useUser";
-import { ErrorResponse } from "~/lib/types";
 import { getAccessToken } from "~/utils";
+import { useProfile } from "~/features/user/hooks";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const queryClient = new QueryClient();
@@ -51,15 +49,10 @@ export default function UserProfileNextPage() {
   const { user } = useUser();
   const { query } = useRouter();
   const username = query.username as string;
-  const { accessToken } = useAuth();
 
-  const { data: profile } = useQuery<Profile, ErrorResponse>(
-    ["users", username],
-    () => fetchUserProfile(username, { accessToken }),
-    {
-      staleTime: 1000,
-    }
-  );
+  const { data: profile } = useProfile(username, {
+    staleTime: 1000,
+  });
 
   if (!profile) return null;
 
