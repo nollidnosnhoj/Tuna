@@ -17,7 +17,7 @@ export type UseInfinitePaginationOptions<TItem> = UseInfiniteQueryOptions<
   PagedList<TItem>
 >;
 
-export default function useInfinitePagination<TItem>(
+export function useInfinitePagination<TItem>(
   key: string,
   params?: Record<string, unknown>,
   options?: UseInfiniteQueryOptions<PagedList<TItem>>

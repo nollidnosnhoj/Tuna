@@ -5,7 +5,7 @@ import Page from "~/components/Page";
 import PaginationListControls from "~/components/PaginationListControls";
 import AudioList from "~/features/audio/components/List";
 import { useSearchAudio } from "~/features/audio/hooks";
-import { useGetPageParam } from "~/lib/hooks/useGetPageParam";
+import { useGetPageParam } from "~/lib/hooks";
 
 export default function AudioSearchNextPage() {
   const { query } = useRouter();

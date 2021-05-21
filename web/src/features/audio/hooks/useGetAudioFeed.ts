@@ -1,7 +1,8 @@
-import useInfinitePagination, {
+import {
+  useInfinitePagination,
   UseInfinitePaginationOptions,
   UseInfinitePaginationReturnType,
-} from "~/lib/hooks/useInfinitePagination";
+} from "~/lib/hooks";
 import { AudioData } from "../types";
 
 type UseGetAudioFeedParams = {

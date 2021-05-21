@@ -1,7 +1,8 @@
-import useInfiniteCursorPagination, {
+import {
+  useInfiniteCursorPagination,
   UseInfiniteCursorPaginationOptions,
   UseInfiniteCursorPaginationReturnType,
-} from "~/lib/hooks/useInfiniteCursorPagination";
+} from "~/lib/hooks";
 import { AudioData } from "../types";
 
 export type UseGetAudioListParams = {

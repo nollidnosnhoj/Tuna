@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
  *
  * @see https://git.io/JOskG
  */
-const useNavigationLock = (
+export const useNavigationLock = (
   isEnabled = true,
   warningText = "You have unsaved changes – are you sure you wish to leave this page?"
 ): void => {
@@ -35,5 +35,3 @@ const useNavigationLock = (
     };
   }, [isEnabled]);
 };
-
-export default useNavigationLock;

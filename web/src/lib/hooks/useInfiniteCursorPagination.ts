@@ -30,7 +30,7 @@ export const fetchCursorList = <TItem>(
   );
 };
 
-export default function useInfiniteCursorPagination<TItem>(
+export function useInfiniteCursorPagination<TItem>(
   key: string,
   params?: Record<string, unknown>,
   options?: UseInfiniteCursorPaginationOptions<TItem>

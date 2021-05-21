@@ -19,7 +19,7 @@ import AudioForm from "~/features/audio/components/AudioForm";
 import { useCreateAudio } from "~/features/audio/hooks";
 import { getS3PresignedUrl } from "~/features/audio/services";
 import { AudioRequest } from "~/features/audio/types";
-import useNavigationLock from "~/lib/hooks/useNavigationLock";
+import { useNavigationLock } from "~/lib/hooks";
 import {
   toast,
   errorToast,

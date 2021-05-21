@@ -1,8 +1,9 @@
 import { AudioData } from "~/features/audio/types";
-import useInfiniteCursorPagination, {
+import {
+  useInfiniteCursorPagination,
   UseInfiniteCursorPaginationOptions,
   UseInfiniteCursorPaginationReturnType,
-} from "~/lib/hooks/useInfiniteCursorPagination";
+} from "~/lib/hooks";
 
 type UseGetUserAudiosParams = {
   size?: number;

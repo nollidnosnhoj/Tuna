@@ -15,7 +15,7 @@ import { FaUserAlt } from "react-icons/fa";
 import NextLink from "next/link";
 import { useUser } from "~/features/user/hooks/useUser";
 import { useAuth } from "~/features/auth/hooks/useAuth";
-import { usePage } from "~/components/Page";
+import { usePage } from "~/lib/hooks";
 
 const UserSection: React.FC = () => {
   const { user } = useUser();

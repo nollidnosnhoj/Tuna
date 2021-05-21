@@ -1,7 +1,8 @@
-import usePagination, {
+import {
+  usePagination,
   UsePaginationOptions,
   UsePaginationResultType,
-} from "~/lib/hooks/usePagination";
+} from "~/lib/hooks";
 import { AudioData } from "../types";
 
 type UseSearchAudioParams = {
