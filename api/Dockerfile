@@ -10,7 +10,7 @@ WORKDIR /src
 
 # Copy csproj files to its project folders
 COPY *.sln .
-COPY src/Audiochan/*.csproj Audiochan/
+COPY src/Audiochan.API/*.csproj Audiochan.API/
 COPY src/Audiochan.Core/*.csproj Audiochan.Core/
 COPY src/Audiochan.Infrastructure/*.csproj Audiochan.Infrastructure/
 COPY tests/Audiochan.IntegrationTests/*.csproj Audiochan.IntegrationTests/
@@ -21,11 +21,11 @@ RUN dotnet restore
 COPY src/. .
 COPY tests/ .
 
-WORKDIR /src/Audiochan
-RUN dotnet build "./Audiochan.csproj" -c Release -o /app/build
+WORKDIR /src/Audiochan.API
+RUN dotnet build "./Audiochan.API.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "./Audiochan.csproj" -c Release -o /app/publish
+RUN dotnet publish "./Audiochan.API.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
