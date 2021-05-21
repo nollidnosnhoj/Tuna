@@ -33,6 +33,7 @@ namespace Audiochan.Core.Features.Audios.GetAudio
         public async Task<AudioDetailViewModel> Handle(GetAudioRequest request, CancellationToken cancellationToken)
         {
             return await _dbContext.Audios
+                .AsNoTracking()
                 .Where(x => x.Id == request.Id)
                 .ProjectToDetail(_storageSettings)
                 .SingleOrDefaultAsync(cancellationToken);

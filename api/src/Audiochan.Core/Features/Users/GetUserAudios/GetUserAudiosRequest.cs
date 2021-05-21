@@ -42,6 +42,7 @@ namespace Audiochan.Core.Features.Users.GetUserAudios
         {
             var currentUserId = _currentUserService.GetUserId();
             var audios = await _dbContext.Audios
+                .AsNoTracking()
                 .ExcludePrivateAudios(currentUserId)
                 .Where(a => request.Username != null && a.User.UserName == request.Username.ToLower())
                 .FilterUsingCursor(request.Cursor)

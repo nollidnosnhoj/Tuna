@@ -36,6 +36,7 @@ namespace Audiochan.Core.Features.Audios.GetAudioList
             CancellationToken cancellationToken)
         {
             var audios = await _dbContext.Audios
+                .AsNoTracking()
                 .ExcludePrivateAudios()
                 .FilterUsingCursor(request.Cursor)
                 .OrderByDescending(a => a.Created)
