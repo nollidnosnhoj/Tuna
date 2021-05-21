@@ -15,7 +15,7 @@ import Page from "~/components/Page";
 import { fetchAudioById } from "~/features/audio/services/mutations/fetchAudioById";
 import { getAccessToken } from "~/utils";
 import AudioDetails from "~/features/audio/components/Details";
-import AudioFileInfo from "~/features/audio/components/AudioFileInfo";
+import AudioFileInfo from "~/features/audio/components/Details/AudioFileInfo";
 import { useGetAudio } from "~/features/audio/hooks";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {

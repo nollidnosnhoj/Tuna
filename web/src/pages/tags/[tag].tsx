@@ -56,7 +56,7 @@ export default function TagAudioPage(props: TagAudioPageProps) {
   );
 
   return (
-    <Page title="Browse Latest Public Audios">
+    <Page title={`Showing '${tag}' audios`}>
       {tag && (
         <Heading as="h2" size="lg">
           Showing '{tag}' audios

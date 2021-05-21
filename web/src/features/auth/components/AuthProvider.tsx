@@ -6,12 +6,12 @@ import {
   refreshAccessToken,
   revokeRefreshToken,
 } from "~/features/auth/services";
-import { useUser } from "~/lib/hooks/useUser";
+import { useUser } from "~/features/user/hooks/useUser";
 import {
   ACCESS_TOKEN_EXPIRATION_KEY,
   AuthContextProviderProps,
   AuthContext,
-} from "~/lib/contexts/AuthContext";
+} from "~/features/auth/contexts/AuthContext";
 import { getAccessToken, errorToast } from "~/utils";
 import { useGetCurrentUser } from "~/features/auth/hooks";
 

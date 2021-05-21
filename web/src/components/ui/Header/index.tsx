@@ -20,7 +20,7 @@ import React, { useRef } from "react";
 import { FaCloudUploadAlt } from "react-icons/fa";
 import NextLink from "next/link";
 import Link from "../../Link";
-import { useUser } from "~/lib/hooks/useUser";
+import { useUser } from "~/features/user/hooks/useUser";
 import UserSection from "./UserSection";
 import SearchBar from "./SearchBar";
 

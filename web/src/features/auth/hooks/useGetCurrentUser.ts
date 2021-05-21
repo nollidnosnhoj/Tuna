@@ -1,7 +1,7 @@
 import { useQuery, UseQueryResult } from "react-query";
 import { CurrentUser } from "~/features/user/types";
 import API from "~/lib/api";
-import { useUser } from "~/lib/hooks/useUser";
+import { useUser } from "~/features/user/hooks/useUser";
 
 export function useGetCurrentUser(
   accessToken: string

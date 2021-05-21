@@ -1,3 +1,3 @@
 export * from "./AudioPlayerProvider";
-export * from "./AuthProvider";
-export * from "./UserProvider";
+export * from "../../features/auth/components/AuthProvider";
+export * from "../../features/user/components/UserProvider";

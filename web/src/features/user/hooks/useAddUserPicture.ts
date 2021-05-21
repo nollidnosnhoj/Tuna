@@ -1,5 +1,5 @@
 import { useQueryClient, useMutation, UseMutationResult } from "react-query";
-import { useAuth } from "~/lib/hooks/useAuth";
+import { useAuth } from "~/features/auth/hooks/useAuth";
 import api from "~/lib/api";
 import { ErrorResponse } from "~/lib/types";
 import { Profile } from "../types";

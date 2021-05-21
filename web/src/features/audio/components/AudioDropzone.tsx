@@ -27,32 +27,27 @@ export default function AudioDropzone(props: AudioDropzoneProps) {
     name: name,
   });
 
-  const {
-    getRootProps,
-    getInputProps,
-    open,
-    isDragReject,
-    isDragAccept,
-  } = useDropzone({
-    accept: SETTINGS.UPLOAD.AUDIO.accept,
-    maxSize: SETTINGS.UPLOAD.AUDIO.maxSize,
-    maxFiles: 1,
-    multiple: false,
-    noClick: true,
-    onDropAccepted: ([acceptedFile]) => {
-      setValue(acceptedFile, false);
-    },
-    onDropRejected: (fileRejections) => {
-      fileRejections.forEach((fileRejection) => {
-        fileRejection.errors.forEach((err) => {
-          errorToast({
-            title: "Invalid Audio",
-            message: err.message,
+  const { getRootProps, getInputProps, open, isDragReject, isDragAccept } =
+    useDropzone({
+      accept: SETTINGS.UPLOAD.AUDIO.accept,
+      maxSize: SETTINGS.UPLOAD.AUDIO.maxSize,
+      maxFiles: 1,
+      multiple: false,
+      noClick: true,
+      onDropAccepted: ([acceptedFile]) => {
+        setValue(acceptedFile, false);
+      },
+      onDropRejected: (fileRejections) => {
+        fileRejections.forEach((fileRejection) => {
+          fileRejection.errors.forEach((err) => {
+            errorToast({
+              title: "Invalid Audio",
+              message: err.message,
+            });
           });
         });
-      });
-    },
-  });
+      },
+    });
 
   const borderColor = useMemo<string>(() => {
     if (isDragReject) return "red.500";

@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import Router from "next/router";
 import withRequiredAuth from "~/components/hoc/withRequiredAuth";
 import Page from "~/components/Page";
-import { useAuth } from "~/lib/hooks/useAuth";
+import { useAuth } from "~/features/auth/hooks/useAuth";
 import { toast } from "~/utils/toast";
 
 const LogoutPage: React.FC = () => {

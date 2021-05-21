@@ -3,9 +3,9 @@ import { useFormikContext } from "formik";
 import React from "react";
 import * as yup from "yup";
 import slugify from "slugify";
-import InputCheckbox from "~/components/form/Checkbox";
-import TagInput from "~/components/form/TagInput";
-import TextInput from "~/components/form/TextInput";
+import InputCheckbox from "~/components/form/inputs/Checkbox";
+import TagInput from "~/components/form/inputs/TagInput";
+import TextInput from "~/components/form/inputs/TextInput";
 import { AudioRequest } from "../types";
 
 interface AudioFormProps {
@@ -15,13 +15,8 @@ interface AudioFormProps {
 export default function AudioForm(props: AudioFormProps) {
   const { disableFields = false } = props;
 
-  const {
-    values,
-    errors,
-    isSubmitting,
-    handleChange,
-    setFieldValue,
-  } = useFormikContext<AudioRequest>();
+  const { values, errors, isSubmitting, handleChange, setFieldValue } =
+    useFormikContext<AudioRequest>();
 
   return (
     <Box marginBottom={8}>

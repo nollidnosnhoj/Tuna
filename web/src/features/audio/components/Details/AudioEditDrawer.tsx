@@ -15,9 +15,9 @@ import React, { useState } from "react";
 import Router from "next/router";
 import * as yup from "yup";
 import { errorToast, toast } from "~/utils/toast";
-import { useEditAudio, useRemoveAudio } from "../hooks";
-import { AudioDetailData, AudioRequest } from "../types";
-import AudioForm from "./AudioForm";
+import { useEditAudio, useRemoveAudio } from "../../hooks";
+import { AudioDetailData, AudioRequest } from "../../types";
+import AudioForm from "../AudioForm";
 import { validationMessages } from "~/utils";
 
 interface AudioEditDrawerProps {

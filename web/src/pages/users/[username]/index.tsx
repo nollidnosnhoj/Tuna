@@ -21,9 +21,9 @@ import ProfileEditButton from "~/features/user/components/ProfileEditButton";
 import ProfilePicture from "~/features/user/components/ProfilePicture";
 import ProfileLatestAudios from "~/features/user/components/ProfileLatestAudios";
 import { fetchUserProfile } from "~/features/user/services";
-import { useUser } from "~/lib/hooks/useUser";
+import { useUser } from "~/features/user/hooks/useUser";
 import { getAccessToken } from "~/utils";
-import { useProfile } from "~/features/user/hooks";
+import { useGetProfile } from "~/features/user/hooks";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const queryClient = new QueryClient();
@@ -50,7 +50,7 @@ export default function UserProfileNextPage() {
   const { query } = useRouter();
   const username = query.username as string;
 
-  const { data: profile } = useProfile(username, {
+  const { data: profile } = useGetProfile(username, {
     staleTime: 1000,
   });
 

@@ -6,7 +6,7 @@ import {
 } from "react-query";
 import { fetchPages } from "../api";
 import { PagedList } from "../types";
-import { useAuth } from "./useAuth";
+import { useAuth } from "../../features/auth/hooks/useAuth";
 
 export interface UseInfinitePaginationReturnType<TItem>
   extends Omit<UseInfiniteQueryResult<PagedList<TItem>>, "data"> {

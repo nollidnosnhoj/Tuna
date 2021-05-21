@@ -22,14 +22,14 @@ import { MdQueueMusic } from "react-icons/md";
 import { HiDotsVertical } from "react-icons/hi";
 import AudioEditDrawer from "./AudioEditDrawer";
 import AudioTags from "./AudioTags";
-import AudioPicture from "./AudioPicture";
+import AudioPicture from "../AudioPicture";
 import Link from "~/components/Link";
 import { AudioDetailData } from "~/features/audio/types";
 import { useAudioPlayer } from "~/lib/hooks/useAudioPlayer";
-import { useUser } from "~/lib/hooks/useUser";
+import { useUser } from "~/features/user/hooks/useUser";
 import { relativeDate } from "~/utils/time";
 import { mapAudioForAudioQueue } from "~/utils/audioplayer";
-import AudioPlayButton from "./AudioPlayButton";
+import AudioPlayButton from "../AudioPlayButton";
 
 interface AudioDetailProps {
   audio: AudioDetailData;

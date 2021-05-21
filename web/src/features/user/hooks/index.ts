@@ -1,4 +1,5 @@
 export * from "./useAddUserPicture";
 export * from "./useFollow";
 export * from "./useGetUserAudios";
-export * from "./useProfile";
+export * from "./useGetProfile";
+export * from "./useUser";

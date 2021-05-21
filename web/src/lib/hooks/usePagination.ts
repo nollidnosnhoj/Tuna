@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { useQuery, UseQueryOptions, UseQueryResult } from "react-query";
 import { fetchPages } from "../api";
 import { ErrorResponse, PagedList } from "../types";
-import { useAuth } from "./useAuth";
+import { useAuth } from "../../features/auth/hooks/useAuth";
 
 export interface UsePaginationResultType<TItem>
   extends Omit<UseQueryResult<PagedList<TItem>>, "data"> {

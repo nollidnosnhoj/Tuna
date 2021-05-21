@@ -2,10 +2,10 @@ import React from "react";
 import { Button } from "@chakra-ui/react";
 import * as yup from "yup";
 import { useFormik } from "formik";
-import TextInput from "~/components/form/TextInput";
+import TextInput from "~/components/form/inputs/TextInput";
 import api from "~/lib/api";
 import { validationMessages, errorToast } from "~/utils";
-import { useAuth } from "~/lib/hooks/useAuth";
+import { useAuth } from "~/features/auth/hooks/useAuth";
 import { passwordRule } from "../schemas";
 
 type UpdatePasswordValues = {

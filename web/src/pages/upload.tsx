@@ -26,7 +26,7 @@ import {
   getDurationFromAudioFile,
   validationMessages,
 } from "~/utils";
-import { useUser } from "~/lib/hooks/useUser";
+import { useUser } from "~/features/user/hooks/useUser";
 
 interface CreateAudioRequestValues extends AudioRequest {
   file: File | null;

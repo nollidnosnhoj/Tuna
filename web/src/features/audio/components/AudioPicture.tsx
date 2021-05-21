@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import NextImage from "next/image";
 import PictureController from "~/components/Picture";
 import PictureContainer from "~/components/Picture/PictureContainer";
@@ -17,20 +17,15 @@ export default function AudioPicture({
   canModify = false,
   pictureSrc,
 }: AudioPictureProps) {
-  const [picture, setPicture] = useState(pictureSrc);
-
-  const {
-    mutateAsync: addPictureAsync,
-    isLoading: isAddingPicture,
-  } = useAddAudioPicture(audioId);
+  const { mutateAsync: addPictureAsync, isLoading: isAddingPicture } =
+    useAddAudioPicture(audioId);
 
   return (
     <PictureController
       title={pictureTitle}
-      src={picture}
+      src={pictureSrc}
       onChange={async (croppedData) => {
-        const data = await addPictureAsync(croppedData);
-        setPicture(data.image);
+        await addPictureAsync(croppedData);
       }}
       isUploading={isAddingPicture}
       canEdit={canModify}

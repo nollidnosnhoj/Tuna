@@ -6,7 +6,7 @@ import {
 } from "react-query";
 import { fetch, FetchRequestOptions } from "../api";
 import { CursorPagedList } from "../types";
-import { useAuth } from "./useAuth";
+import { useAuth } from "../../features/auth/hooks/useAuth";
 
 export interface UseInfiniteCursorPaginationReturnType<TItem>
   extends Omit<UseInfiniteQueryResult<CursorPagedList<TItem>>, "data"> {

@@ -1,5 +1,5 @@
 import { useQuery, UseQueryOptions, UseQueryResult } from "react-query";
-import { useAuth } from "~/lib/hooks/useAuth";
+import { useAuth } from "~/features/auth/hooks/useAuth";
 import { ErrorResponse } from "~/lib/types";
 import { fetchAudioById } from "../services/mutations";
 import { AudioDetailData } from "../types";

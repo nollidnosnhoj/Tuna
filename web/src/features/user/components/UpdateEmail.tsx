@@ -2,8 +2,8 @@ import { Button } from "@chakra-ui/react";
 import React from "react";
 import * as yup from "yup";
 import { useFormik } from "formik";
-import TextInput from "~/components/form/TextInput";
-import { useUser } from "~/lib/hooks/useUser";
+import TextInput from "~/components/form/inputs/TextInput";
+import { useUser } from "~/features/user/hooks/useUser";
 import { validationMessages, errorToast, toast } from "~/utils";
 import api from "~/lib/api";
 

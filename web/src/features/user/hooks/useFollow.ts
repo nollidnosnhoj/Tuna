@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { useAuth } from "~/lib/hooks/useAuth";
-import { useUser } from "~/lib/hooks/useUser";
+import { useAuth } from "~/features/auth/hooks/useAuth";
+import { useUser } from "~/features/user/hooks/useUser";
 import api from "~/lib/api";
 import { errorToast } from "~/utils";
 

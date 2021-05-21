@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import NextImage from "next/image";
 import PictureController from "~/components/Picture";
 import PictureContainer from "~/components/Picture/PictureContainer";
@@ -15,20 +15,15 @@ export default function ProfilePicture({
   pictureSrc,
   canModify = false,
 }: ProfilePictureProps) {
-  const [picture, setPicture] = useState(pictureSrc);
-
-  const {
-    mutateAsync: addPictureAsync,
-    isLoading: isAddingPicture,
-  } = useAddUserPicture(username);
+  const { mutateAsync: addPictureAsync, isLoading: isAddingPicture } =
+    useAddUserPicture(username);
 
   return (
     <PictureController
       title={username}
-      src={picture}
+      src={pictureSrc}
       onChange={async (croppedData) => {
-        const data = await addPictureAsync(croppedData);
-        setPicture(data.image);
+        await addPictureAsync(croppedData);
       }}
       isUploading={isAddingPicture}
       canEdit={canModify}
