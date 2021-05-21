@@ -14,7 +14,7 @@ import { Formik, FormikHelpers } from "formik";
 import React, { useState } from "react";
 import Router from "next/router";
 import * as yup from "yup";
-import { apiErrorToast, successfulToast } from "~/utils/toast";
+import { errorToast, toast } from "~/utils/toast";
 import { useEditAudio, useRemoveAudio } from "../hooks";
 import { AudioDetailData, AudioRequest } from "../types";
 import AudioForm from "./AudioForm";
@@ -64,11 +64,11 @@ const AudioEditDrawer: React.FC<AudioEditDrawerProps> = (props) => {
     setIsProcessing(true);
     updateAudio(values)
       .then(() => {
-        successfulToast({ title: "Audio updated" });
+        toast("success", { title: "Audio updated" });
         onClose();
       })
       .catch((err) => {
-        apiErrorToast(err);
+        errorToast(err);
       })
       .finally(() => {
         setIsProcessing(false);
@@ -89,13 +89,13 @@ const AudioEditDrawer: React.FC<AudioEditDrawerProps> = (props) => {
     deleteAudio(undefined)
       .then(() => {
         Router.push("/").then(() => {
-          successfulToast({
+          toast("success", {
             title: "Audio deleted!",
           });
         });
       })
       .catch((err) => {
-        apiErrorToast(err);
+        errorToast(err);
         setIsProcessing(false);
       });
   };

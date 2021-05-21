@@ -4,8 +4,7 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 import TextInput from "../../../components/form/TextInput";
 import { useAuth } from "~/lib/hooks/useAuth";
-import { successfulToast } from "~/utils/toast";
-import { isAxiosError } from "~/utils/http";
+import { toast, isAxiosError } from "~/utils";
 import { ErrorResponse } from "~/lib/types";
 
 export type LoginFormValues = {
@@ -26,7 +25,7 @@ export default function LoginForm(props: LoginFormProps) {
     onSubmit: async (values) => {
       try {
         await login(values);
-        successfulToast({ message: "You have logged in successfully. " });
+        toast("success", { title: "You have logged in successfully. " });
         if (props.onSuccess) props.onSuccess();
       } catch (err) {
         let errorMessage = "An error has occurred.";

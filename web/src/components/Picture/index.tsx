@@ -8,7 +8,7 @@ import React, {
 } from "react";
 import { useDropzone } from "react-dropzone";
 import SETTINGS from "~/lib/config";
-import { apiErrorToast, errorToast } from "~/utils";
+import { errorToast, toast } from "~/utils";
 import PictureCropModal from "./PictureCropModal";
 import PictureModal from "./PictureModal";
 
@@ -66,9 +66,9 @@ export default function PictureController(
     onDropRejected: ([fileRejection]) => {
       /** Display error toasts */
       fileRejection.errors.forEach((err) => {
-        errorToast({
+        toast("error", {
           title: "Invalid Image",
-          message: err.message,
+          description: err.message,
         });
       });
     },
@@ -78,7 +78,7 @@ export default function PictureController(
     try {
       await onChange(imageData);
     } catch (err) {
-      apiErrorToast(err);
+      errorToast(err);
     }
   };
 

@@ -5,9 +5,8 @@ import { useFormik } from "formik";
 import TextInput from "../../../components/form/TextInput";
 import { validationMessages } from "~/utils";
 import api from "~/lib/api";
-import { successfulToast } from "~/utils/toast";
+import { toast, isAxiosError } from "~/utils";
 import { ErrorResponse } from "~/lib/types";
-import { isAxiosError } from "~/utils/http";
 import { usernameRule, passwordRule } from "~/features/user/schemas";
 
 type RegisterFormInputs = {
@@ -58,9 +57,9 @@ export default function RegisterForm(props: RegisterFormProps) {
 
       try {
         await api.post("auth/register", registrationRequest);
-        successfulToast({
+        toast("success", {
           title: "Thank you for registering.",
-          message: "You can now login to your account.",
+          description: "You can now login to your account.",
         });
         if (props.onSuccess) props.onSuccess();
       } catch (err) {

@@ -1,4 +1,5 @@
 export default {
+  IS_PRODUCTION: process.env.NEXT_PUBLIC_IS_PRODUCTION,
   BACKEND_API: process.env.NEXT_PUBLIC_BACKEND_API,
   IDENTITY: {
     usernameMinLength: 3,

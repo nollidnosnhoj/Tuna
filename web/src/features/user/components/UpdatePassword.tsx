@@ -4,8 +4,7 @@ import * as yup from "yup";
 import { useFormik } from "formik";
 import TextInput from "~/components/form/TextInput";
 import api from "~/lib/api";
-import { apiErrorToast } from "~/utils/toast";
-import { validationMessages } from "~/utils";
+import { validationMessages, errorToast } from "~/utils";
 import { useAuth } from "~/lib/hooks/useAuth";
 import { passwordRule } from "../schemas";
 
@@ -43,7 +42,7 @@ export default function UpdatePassword() {
         resetForm();
         await logout();
       } catch (err) {
-        apiErrorToast(err);
+        errorToast(err);
       } finally {
         setSubmitting(false);
       }

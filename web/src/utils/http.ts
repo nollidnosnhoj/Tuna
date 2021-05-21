@@ -24,3 +24,21 @@ export const extractPaginationInfoFromQuery = (
   const size = extractQueryParam<number>(query["size"], 15);
   return { page, size };
 };
+
+export function objectToFormData(values: Record<string, any>): FormData {
+  const formData = new FormData();
+
+  Object.entries(values).forEach(([key, value]) => {
+    if (value) {
+      if (Array.isArray(value)) {
+        value.forEach((val) => formData.append(key, val));
+      } else if (value instanceof File) {
+        formData.append(key, value);
+      } else {
+        formData.append(key, value.toString());
+      }
+    }
+  });
+
+  return formData;
+}

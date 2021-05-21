@@ -4,7 +4,7 @@ import Router from "next/router";
 import withRequiredAuth from "~/components/hoc/withRequiredAuth";
 import Page from "~/components/Page";
 import { useAuth } from "~/lib/hooks/useAuth";
-import { successfulToast } from "~/utils/toast";
+import { toast } from "~/utils/toast";
 
 const LogoutPage: React.FC = () => {
   const { logout } = useAuth();
@@ -13,8 +13,8 @@ const LogoutPage: React.FC = () => {
     logout()
       .then(() => {
         Router.push("/").then(() => {
-          successfulToast({
-            message: "You have successfully logged out.",
+          toast("success", {
+            title: "You have successfully logged out.",
           });
         });
       })

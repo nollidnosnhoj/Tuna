@@ -4,9 +4,8 @@ import * as yup from "yup";
 import { useFormik } from "formik";
 import TextInput from "~/components/form/TextInput";
 import { useUser } from "~/lib/hooks/useUser";
-import { validationMessages } from "~/utils";
+import { validationMessages, errorToast, toast } from "~/utils";
 import api from "~/lib/api";
-import { apiErrorToast, successfulToast } from "~/utils/toast";
 
 export default function UpdateEmail() {
   const { user, updateUser } = useUser();
@@ -25,15 +24,15 @@ export default function UpdateEmail() {
 
       try {
         await api.patch("me/email", { newEmail });
-        successfulToast({
+        toast("success", {
           title: "Email updated.",
-          message: "You have successfully updated your email.",
+          description: "You have successfully updated your email.",
         });
         if (user) {
           updateUser({ ...user, email: newEmail.trim() });
         }
       } catch (err) {
-        apiErrorToast(err);
+        errorToast(err);
       } finally {
         setSubmitting(false);
       }

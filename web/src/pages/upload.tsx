@@ -17,13 +17,15 @@ import Page from "~/components/Page";
 import AudioDropzone from "~/features/audio/components/AudioDropzone";
 import AudioForm from "~/features/audio/components/AudioForm";
 import { useCreateAudio } from "~/features/audio/hooks";
-import {
-  getDurationFromAudio,
-  getS3PresignedUrl,
-} from "~/features/audio/services";
+import { getS3PresignedUrl } from "~/features/audio/services";
 import { AudioRequest } from "~/features/audio/types";
 import useNavigationLock from "~/lib/hooks/useNavigationLock";
-import { apiErrorToast, errorToast, validationMessages } from "~/utils";
+import {
+  toast,
+  errorToast,
+  getDurationFromAudioFile,
+  validationMessages,
+} from "~/utils";
 import { useUser } from "~/lib/hooks/useUser";
 
 interface CreateAudioRequestValues extends AudioRequest {
@@ -86,7 +88,7 @@ const AudioUploadNextPage: React.FC = () => {
             setUploadProgress(currentProgress);
           },
         });
-        const duration = await getDurationFromAudio(file);
+        const duration = await getDurationFromAudioFile(file);
         const { id } = await createAudio({
           ...formValues,
           uploadId: uploadId,
@@ -97,13 +99,13 @@ const AudioUploadNextPage: React.FC = () => {
         });
         setAudioId(id);
       } catch (err) {
-        apiErrorToast(err);
+        errorToast(err);
         setValues(values);
       } finally {
         setUploading(false);
       }
     } else {
-      errorToast({ message: "File and/or audio not defined." });
+      toast("error", { description: "File and/or audio not defined." });
     }
   };
 

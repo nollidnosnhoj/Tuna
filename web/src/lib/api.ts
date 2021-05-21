@@ -26,13 +26,11 @@ createAuthRefreshInterceptor(backendServerAxios, async (failedRequest) => {
         isAxiosError(failedRequest) &&
         failedRequest.response
       ) {
-        failedRequest.response.config.headers["Authorization"] = getBearer(
-          newToken
-        );
+        failedRequest.response.config.headers["Authorization"] =
+          getBearer(newToken);
       }
-      backendServerAxios.defaults.headers["Authorization"] = getBearer(
-        newToken
-      );
+      backendServerAxios.defaults.headers["Authorization"] =
+        getBearer(newToken);
       return Promise.resolve();
     })
     .catch((err) => Promise.reject(err));

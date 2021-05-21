@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "~/lib/hooks/useAuth";
 import { useUser } from "~/lib/hooks/useUser";
 import api from "~/lib/api";
-import { apiErrorToast } from "~/utils/toast";
+import { errorToast } from "~/utils";
 
 type UseFollowResult = {
   isFollowing?: boolean;
@@ -15,9 +15,8 @@ export function useFollow(
 ): UseFollowResult {
   const { user } = useUser();
   const { accessToken } = useAuth();
-  const [isFollowing, setIsFollowing] = useState<boolean | undefined>(
-    initialData
-  );
+  const [isFollowing, setIsFollowing] =
+    useState<boolean | undefined>(initialData);
 
   useEffect(() => {
     if (user && isFollowing === undefined) {
@@ -37,7 +36,7 @@ export function useFollow(
     api
       .request(method, `me/followings/${username}`, { accessToken })
       .then(() => setIsFollowing(!isFollowing))
-      .catch((err) => apiErrorToast(err));
+      .catch((err) => errorToast(err));
   };
 
   return { isFollowing, follow: followHandler };
