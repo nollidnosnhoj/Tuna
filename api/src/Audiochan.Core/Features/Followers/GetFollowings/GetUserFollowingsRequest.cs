@@ -6,8 +6,10 @@ using Audiochan.Core.Common.Extensions.MappingExtensions;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models.Interfaces;
 using Audiochan.Core.Common.Models.Responses;
+using Audiochan.Core.Common.Settings;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Followers.GetFollowings
 {
@@ -18,14 +20,15 @@ namespace Audiochan.Core.Features.Followers.GetFollowings
         public int Size { get; init; }
     }
 
-    public class
-        GetUserFollowingsRequestHandler : IRequestHandler<GetUserFollowingsRequest, PagedList<FollowingViewModel>>
+    public class GetUserFollowingsRequestHandler : IRequestHandler<GetUserFollowingsRequest, PagedList<FollowingViewModel>>
     {
         private readonly IApplicationDbContext _dbContext;
+        private readonly MediaStorageSettings _storageSettings;
 
-        public GetUserFollowingsRequestHandler(IApplicationDbContext dbContext)
+        public GetUserFollowingsRequestHandler(IApplicationDbContext dbContext, IOptions<MediaStorageSettings> options)
         {
             _dbContext = dbContext;
+            _storageSettings = options.Value;
         }
 
         public async Task<PagedList<FollowingViewModel>> Handle(GetUserFollowingsRequest request,
@@ -36,7 +39,7 @@ namespace Audiochan.Core.Features.Followers.GetFollowings
                 .Include(u => u.Target)
                 .Include(u => u.Observer)
                 .Where(u => request.Username != null && u.Observer.UserName == request.Username.Trim().ToLower())
-                .ProjectToFollowing()
+                .ProjectToFollowing(_storageSettings)
                 .PaginateAsync(request, cancellationToken);
         }
     }

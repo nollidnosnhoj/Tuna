@@ -33,7 +33,7 @@ namespace Audiochan.Core.Common.Extensions.MappingExtensions
                 {
                     Id = audio.User.Id,
                     Picture = audio.User.Picture != null
-                        ? $"https://{options.Image.Bucket}.s3.amazonaws.com/{options.Audio.Container}/{audio.Id}/{audio.User.Picture}"
+                        ? $"https://{options.Image.Bucket}.s3.amazonaws.com/{options.Audio.Container}/users/{audio.User.Picture}"
                         : null,
                     Username = audio.User.UserName
                 }
@@ -58,7 +58,7 @@ namespace Audiochan.Core.Common.Extensions.MappingExtensions
                 {
                     Id = audio.User.Id,
                     Picture = audio.User.Picture != null
-                        ? $"https://{options.Image.Bucket}.s3.amazonaws.com/{options.Audio.Container}/{audio.Id}/{audio.User.Picture}"
+                        ? $"https://{options.Image.Bucket}.s3.amazonaws.com/{options.Audio.Container}/users/{audio.User.Picture}"
                         : null,
                     Username = audio.User.UserName
                 }
