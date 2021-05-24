@@ -45,6 +45,8 @@ namespace Audiochan.Core.Features.Followers.GetFollowers
             return await _dbContext.Users
                 .Include(u => u.Followers)
                 .Where(u => u.UserName == request.Username)
+                .SelectMany(u => u.Followers)
+                .OrderBy(u => u.UserName)
                 .ProjectToFollower(_storageSettings)
                 .PaginateAsync(request, cancellationToken);
         }
