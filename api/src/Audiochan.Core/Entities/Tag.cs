@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Audiochan.Core.Entities.Base;
 
 namespace Audiochan.Core.Entities
 {

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Features.Audios.UploadAudio;
 using Audiochan.UnitTests.Builders;

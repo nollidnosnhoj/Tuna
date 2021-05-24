@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using Slugify;
 
@@ -35,13 +33,6 @@ namespace Audiochan.Core.Common.Extensions
 
             var startUnderscores = Regex.Match(input, @"^_+");
             return startUnderscores + Regex.Replace(input, @"([a-z0-9])([A-Z])", "$1_$2").ToLower();
-        }
-
-        public static string Truncate(this string input, int length)
-        {
-            var stringBuilder = new StringBuilder(length);
-            stringBuilder.Append(input.Length > 30 ? input[..length] : input);
-            return stringBuilder.ToString();
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Audiochan.Core.Common.Extensions.MappingExtensions;
+﻿using Audiochan.Core.Common.Extensions.MappingExtensions;
 using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Entities;
 using Audiochan.UnitTests.Builders;

@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using Audiochan.Core.Common.Models.Responses;
 
 namespace Audiochan.Core.Common.Helpers
 {

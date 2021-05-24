@@ -2,8 +2,6 @@
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Enums;
-using Audiochan.Core.Common.Models.Responses;
 
 namespace Audiochan.Core.Common.Interfaces
 {
@@ -15,7 +13,7 @@ namespace Audiochan.Core.Common.Interfaces
         Task RemoveAsync(string bucket, string container, string blobName,
             CancellationToken cancellationToken = default);
         
-        Task<SaveBlobResponse> SaveAsync(Stream stream, string bucket, string container, string blobName,
+        Task SaveAsync(Stream stream, string bucket, string container, string blobName,
             Dictionary<string, string>? metadata = null, CancellationToken cancellationToken = default);
 
         Task<bool> ExistsAsync(string bucket, string container, string blobName,

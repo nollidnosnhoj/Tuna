@@ -11,7 +11,6 @@ using Amazon.S3.Model;
 using Amazon.S3.Transfer;
 using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Interfaces;
-using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Infrastructure.Storage.Options;
 using Microsoft.Extensions.Options;
 
@@ -53,7 +52,7 @@ namespace Audiochan.Infrastructure.Storage
             }
         }
 
-        public async Task<SaveBlobResponse> SaveAsync(Stream stream,
+        public async Task SaveAsync(Stream stream,
             string bucket,
             string container,
             string blobName,
@@ -115,14 +114,6 @@ namespace Audiochan.Infrastructure.Storage
                     throw new StorageException(ex.Message, ex);
                 }
             }
-
-            return new SaveBlobResponse
-            {
-                Bucket = bucket,
-                Path = GetKeyName(container, blobName),
-                Url = GetBlobUrl(bucket, container, blobName),
-                ContentType = contentType
-            };
         }
 
         public async Task<bool> ExistsAsync(string bucket, string container, string blobName,
@@ -229,11 +220,6 @@ namespace Audiochan.Infrastructure.Storage
         private string GetKeyName(string container, string blobName)
         {
             return $"{container}/{blobName}";
-        }
-
-        private string GetBlobUrl(string bucket, string container, string blobName)
-        {
-            return $"http://{bucket}.s3.amazonaws.com/{GetKeyName(container, blobName)}";
         }
     }
 

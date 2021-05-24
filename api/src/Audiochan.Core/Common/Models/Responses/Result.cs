@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Common.Models.Interfaces;
-using MediatR;
 
 namespace Audiochan.Core.Common.Models.Responses
 {

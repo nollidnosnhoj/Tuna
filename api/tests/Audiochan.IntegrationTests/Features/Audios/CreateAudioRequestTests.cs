@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Audiochan.Core.Common.Enums;
-using Audiochan.Core.Common.Extensions;
-using Audiochan.Core.Features.Audios.CreateAudio;
-using Audiochan.Core.Features.Audios.UploadAudio;
-using Bogus;
-using FluentAssertions;
+﻿using Bogus;
 using Xunit;
 
 namespace Audiochan.IntegrationTests.Features.Audios

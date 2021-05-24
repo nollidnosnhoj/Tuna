@@ -6,7 +6,6 @@ using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Features.Audios;
 using Audiochan.Core.Features.Audios.GetAudioFeed;
-using Audiochan.Core.Features.Auth;
 using Audiochan.Core.Features.Auth.GetCurrentUser;
 using Audiochan.Core.Features.Followers.CheckIfFollowing;
 using Audiochan.Core.Features.Followers.SetFollow;

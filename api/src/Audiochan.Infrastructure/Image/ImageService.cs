@@ -3,7 +3,6 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Interfaces;
-using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Common.Settings;
 using Microsoft.Extensions.Options;
 using SixLabors.ImageSharp;
@@ -23,7 +22,7 @@ namespace Audiochan.Infrastructure.Image
             _storageSettings = storageSettings.Value;
         }
 
-        public async Task<SaveBlobResponse> UploadImage(string data, string container, string blobName,
+        public async Task UploadImage(string data, string container, string blobName,
             CancellationToken cancellationToken = default)
         {
             var bytes = FromBase64StringToBytes(data);
@@ -32,7 +31,7 @@ namespace Audiochan.Infrastructure.Image
             var resizedImage = ModifyImage(imageContext);
             var imageStream = await SaveImageAsJpeg(resizedImage, cancellationToken);
 
-            return await _storageService.SaveAsync(
+            await _storageService.SaveAsync(
                 stream: imageStream,
                 bucket: _storageSettings.Audio.Bucket,
                 container: container,

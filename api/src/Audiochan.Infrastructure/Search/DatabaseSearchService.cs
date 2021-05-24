@@ -9,7 +9,6 @@ using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Features.Audios;
 using Audiochan.Core.Features.Audios.SearchAudios;
-using MediatR.Pipeline;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
