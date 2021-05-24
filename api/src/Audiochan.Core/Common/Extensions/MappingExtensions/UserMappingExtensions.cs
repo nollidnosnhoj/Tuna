@@ -3,9 +3,9 @@ using System.Linq;
 using System.Linq.Expressions;
 using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Entities;
-using Audiochan.Core.Features.Auth;
 using Audiochan.Core.Features.Auth.GetCurrentUser;
 using Audiochan.Core.Features.Users;
+using FastExpressionCompiler;
 
 namespace Audiochan.Core.Common.Extensions.MappingExtensions
 {
@@ -17,8 +17,8 @@ namespace Audiochan.Core.Common.Extensions.MappingExtensions
         public static IQueryable<UserViewModel> ProjectToUser(this IQueryable<User> queryable, string userId, MediaStorageSettings storageSettings) =>
             queryable.Select(UserProjection(userId, storageSettings));
 
-        public static UserViewModel MapToProfile(this User user, string userId, MediaStorageSettings storageSettings) =>
-            UserProjection(userId, storageSettings).Compile().Invoke(user);
+        public static UserViewModel MapToProfile(this User user, string userId, MediaStorageSettings storageSettings, bool returnNullIfFail = false) =>
+            UserProjection(userId, storageSettings).CompileFast(returnNullIfFail).Invoke(user);
 
         private static Expression<Func<User, CurrentUserViewModel>> CurrentUserProjection()
         {

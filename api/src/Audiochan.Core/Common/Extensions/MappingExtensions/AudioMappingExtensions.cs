@@ -5,11 +5,22 @@ using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Audios;
+using FastExpressionCompiler;
 
 namespace Audiochan.Core.Common.Extensions.MappingExtensions
 {
     public static class AudioMappingExtensions
     {
+        public static IQueryable<AudioDetailViewModel> ProjectToDetail(this IQueryable<Audio> queryable,
+            MediaStorageSettings options) => queryable.Select(AudioToDetailProjection(options));
+
+        public static IQueryable<AudioViewModel> ProjectToList(this IQueryable<Audio> queryable,
+            MediaStorageSettings options) =>
+            queryable.Select(AudioToListProjection(options));
+
+        public static AudioDetailViewModel MapToDetail(this Audio audio, MediaStorageSettings options, bool returnNullIfFail = false) =>
+            AudioToDetailProjection(options).CompileFast(returnNullIfFail).Invoke(audio);
+        
         private static Expression<Func<Audio, AudioDetailViewModel>> AudioToDetailProjection(
             MediaStorageSettings options)
         {
@@ -64,15 +75,5 @@ namespace Audiochan.Core.Common.Extensions.MappingExtensions
                 }
             };
         }
-
-        public static IQueryable<AudioDetailViewModel> ProjectToDetail(this IQueryable<Audio> queryable,
-            MediaStorageSettings options) => queryable.Select(AudioToDetailProjection(options));
-
-        public static IQueryable<AudioViewModel> ProjectToList(this IQueryable<Audio> queryable,
-            MediaStorageSettings options) =>
-            queryable.Select(AudioToListProjection(options));
-
-        public static AudioDetailViewModel MapToDetail(this Audio audio, MediaStorageSettings options) =>
-            AudioToDetailProjection(options).Compile().Invoke(audio);
     }
 }
