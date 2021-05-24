@@ -8,6 +8,7 @@ namespace Audiochan.Core.Common.Interfaces
     public interface IApplicationDbContext
     {
         DbSet<Audio> Audios { get; }
+        DbSet<FollowedUser> FollowedUsers { get; }
         DbSet<Tag> Tags { get; }
         DbSet<User> Users { get; }
         void BeginTransaction();

@@ -4,7 +4,6 @@ using System.Linq.Expressions;
 using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Auth.GetCurrentUser;
-using Audiochan.Core.Features.Followers;
 using Audiochan.Core.Features.Users;
 using FastExpressionCompiler;
 
@@ -17,12 +16,6 @@ namespace Audiochan.Core.Common.Extensions.MappingExtensions
 
         public static IQueryable<UserViewModel> ProjectToUser(this IQueryable<User> queryable, string userId, MediaStorageSettings storageSettings) =>
             queryable.Select(UserProjection(userId, storageSettings));
-        
-        public static IQueryable<FollowerViewModel> ProjectToFollower(this IQueryable<User> queryable, MediaStorageSettings options) =>
-            queryable.Select(FollowerToListProjection(options));
-
-        public static IQueryable<FollowingViewModel> ProjectToFollowing(this IQueryable<User> queryable, MediaStorageSettings options) =>
-            queryable.Select(FollowingToListProjection(options));
 
         public static UserViewModel MapToProfile(this User user, string userId, MediaStorageSettings storageSettings, bool returnNullIfFail = false) =>
             UserProjection(userId, storageSettings).CompileFast(returnNullIfFail).Invoke(user);
@@ -52,30 +45,8 @@ namespace Audiochan.Core.Common.Extensions.MappingExtensions
                 FollowerCount = user.Followers.Count,
                 FollowingCount = user.Followings.Count,
                 IsFollowing = userId.Length > 0
-                    ? user.Followers.Any(f => f.Id == userId)
+                    ? user.Followers.Any(f => f.ObserverId == userId)
                     : null
-            };
-        }
-        
-        private static Expression<Func<User, FollowerViewModel>> FollowerToListProjection(MediaStorageSettings options)
-        {
-            return user => new FollowerViewModel
-            {
-                Username = user.UserName,
-                Picture = user.Picture != null
-                    ? $"https://{options.Image.Bucket}.s3.amazonaws.com/{options.Image.Container}/users/{user.Picture}"
-                    : null
-            };
-        }
-
-        private static Expression<Func<User, FollowingViewModel>> FollowingToListProjection(MediaStorageSettings options)
-        {
-            return user => new FollowingViewModel
-            {
-                Picture = user.Picture != null
-                    ? $"https://{options.Image.Bucket}.s3.amazonaws.com/{options.Image.Container}/users/{user.Picture}"
-                    : null,
-                Username = user.UserName
             };
         }
     }

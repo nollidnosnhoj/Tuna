@@ -32,11 +32,10 @@ namespace Audiochan.Core.Features.Audios.GetAudioFeed
         public async Task<PagedList<AudioViewModel>> Handle(GetAudioFeedRequest request,
             CancellationToken cancellationToken)
         {
-            var followedIds = await _dbContext.Users
-                .Include(u => u.Followings)
+            var followedIds = await _dbContext.FollowedUsers
                 .AsNoTracking()
-                .Where(user => user.Id == request.UserId)
-                .SelectMany(u => u.Followers.Select(f => f.Id))
+                .Where(user => user.ObserverId == request.UserId)
+                .Select(user => user.TargetId)
                 .ToListAsync(cancellationToken);
 
             return await _dbContext.Audios

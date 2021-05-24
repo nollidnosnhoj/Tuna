@@ -35,7 +35,7 @@ namespace Audiochan.IntegrationTests.Features.Followers
             });
 
             user.Followers.Should().NotBeEmpty();
-            user.Followers.Should().Contain(x => x.Id == observerId);
+            user.Followers.Should().Contain(x => x.ObserverId == observerId && x.TargetId == targetId);
         }
     }
 }

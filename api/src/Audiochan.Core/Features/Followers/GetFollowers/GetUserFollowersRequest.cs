@@ -34,20 +34,13 @@ namespace Audiochan.Core.Features.Followers.GetFollowers
         public async Task<PagedList<FollowerViewModel>> Handle(GetUserFollowersRequest request,
             CancellationToken cancellationToken)
         {
-            // return await _dbContext.FollowedUsers
-            //     .AsNoTracking()
-            //     .Include(u => u.Target)
-            //     .Include(u => u.Observer)
-            //     .Where(u => request.Username != null && u.Target.UserName == request.Username.Trim().ToLower())
-            //     .ProjectToFollower(_storageSettings)
-            //     .PaginateAsync(request, cancellationToken);
-
-            return await _dbContext.Users
-                .Include(u => u.Followers)
-                .Where(u => u.UserName == request.Username)
-                .SelectMany(u => u.Followers)
-                .OrderBy(u => u.UserName)
+            return await _dbContext.FollowedUsers
+                .AsNoTracking()
+                .Include(u => u.Target)
+                .Include(u => u.Observer)
+                .Where(u => request.Username != null && u.Target.UserName == request.Username.Trim().ToLower())
                 .ProjectToFollower(_storageSettings)
+                .OrderByDescending(x => x.FollowedDate)
                 .PaginateAsync(request, cancellationToken);
         }
     }

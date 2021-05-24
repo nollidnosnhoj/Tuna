@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Interfaces;
 using MediatR;
@@ -22,17 +21,11 @@ namespace Audiochan.Core.Features.Followers.CheckIfFollowing
 
         public async Task<bool> Handle(CheckIfUserIsFollowingRequest request, CancellationToken cancellationToken)
         {
-            return await _dbContext.Users
-                .Include(u => u.Followings)
-                .AnyAsync(u => u.UserName == request.Username 
-                               && u.Followings.Any(f => f.Id == request.UserId), cancellationToken);
-
-
-            // return await _dbContext.FollowedUsers
-            //     .AsNoTracking()
-            //     .Include(u => u.Target)
-            //     .AnyAsync(u => u.ObserverId == request.UserId
-            //                    && u.Target.UserName == request.Username.Trim().ToLower(), cancellationToken);
+            return await _dbContext.FollowedUsers
+                .AsNoTracking()
+                .Include(u => u.Target)
+                .AnyAsync(u => u.ObserverId == request.UserId
+                               && u.Target.UserName == request.Username.Trim().ToLower(), cancellationToken);
         }
     }
 }

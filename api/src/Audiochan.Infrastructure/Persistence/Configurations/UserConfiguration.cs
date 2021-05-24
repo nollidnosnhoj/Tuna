@@ -15,10 +15,6 @@ namespace Audiochan.Infrastructure.Persistence.Configurations
             builder.Property(x => x.Joined)
                 .IsRequired();
 
-            builder.HasMany(u => u.Followers)
-                .WithMany(u => u.Followings)
-                .UsingEntity(u => u.ToTable("followed_users"));
-
             builder.OwnsMany(u => u.RefreshTokens, refreshToken =>
             {
                 refreshToken.WithOwner().HasForeignKey(r => r.UserId);

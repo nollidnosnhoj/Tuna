@@ -25,6 +25,7 @@ namespace Audiochan.Infrastructure.Persistence
         }
 
         public DbSet<Audio> Audios { get; set; } = null!;
+        public DbSet<FollowedUser> FollowedUsers { get; set; } = null!;
         public DbSet<Tag> Tags { get; set; } = null!;
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new())
