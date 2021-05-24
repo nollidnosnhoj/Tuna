@@ -123,22 +123,21 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                 name: "followed_users",
                 columns: table => new
                 {
-                    observer_id = table.Column<string>(type: "text", nullable: false),
-                    target_id = table.Column<string>(type: "text", nullable: false),
-                    id = table.Column<long>(type: "bigint", nullable: false)
+                    followers_id = table.Column<string>(type: "text", nullable: false),
+                    followings_id = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_followed_users", x => new { x.observer_id, x.target_id });
+                    table.PrimaryKey("pk_followed_users", x => new { x.followers_id, x.followings_id });
                     table.ForeignKey(
-                        name: "fk_followed_users_users_observer_id",
-                        column: x => x.observer_id,
+                        name: "fk_followed_users_users_followers_id",
+                        column: x => x.followers_id,
                         principalTable: "users",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "fk_followed_users_users_target_id",
-                        column: x => x.target_id,
+                        name: "fk_followed_users_users_followings_id",
+                        column: x => x.followings_id,
                         principalTable: "users",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
@@ -296,9 +295,9 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                 column: "user_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_followed_users_target_id",
+                name: "ix_followed_users_followings_id",
                 table: "followed_users",
-                column: "target_id");
+                column: "followings_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_refresh_tokens_user_id",

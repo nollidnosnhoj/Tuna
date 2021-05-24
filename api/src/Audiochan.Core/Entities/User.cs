@@ -10,8 +10,8 @@ namespace Audiochan.Core.Entities
         public User()
         {
             Audios = new HashSet<Audio>();
-            Followings = new HashSet<FollowedUser>();
-            Followers = new HashSet<FollowedUser>();
+            Followings = new HashSet<User>();
+            Followers = new HashSet<User>();
             RefreshTokens = new HashSet<RefreshToken>();
         }
 
@@ -29,8 +29,8 @@ namespace Audiochan.Core.Entities
         public string? Website { get; set; }
         public DateTime Joined { get; set; }
         public ICollection<Audio> Audios { get; set; }
-        public ICollection<FollowedUser> Followings { get; set; }
-        public ICollection<FollowedUser> Followers { get; set; }
+        public ICollection<User> Followings { get; set; }
+        public ICollection<User> Followers { get; set; }
         public ICollection<RefreshToken> RefreshTokens { get; set; }
 
         public void UpdateDisplayName(string? displayName)
@@ -63,41 +63,26 @@ namespace Audiochan.Core.Entities
                 this.Picture = picturePath;
         }
 
-        public bool AddFollower(string userId)
+        public bool AddFollower(User user)
         {
-            if (string.IsNullOrWhiteSpace(userId))
-                throw new ArgumentNullException(nameof(userId));
+            var followerExist = this.Followers.Any(u => u.Id == user.Id);
 
-            var follower = GetFollower(userId);
-
-            if (follower is null)
+            if (!followerExist)
             {
-                follower = new FollowedUser {TargetId = this.Id, ObserverId = userId};
-                this.Followers.Add(follower);
+                this.Followers.Add(user);
             }
 
             return true;
         }
 
-        public bool RemoveFollower(string userId)
+        public bool RemoveFollower(User user)
         {
-            if (string.IsNullOrWhiteSpace(userId))
-                throw new ArgumentNullException(nameof(userId));
+            var followerExist = this.Followers.Any(u => u.Id == user.Id);
 
-            var follower = GetFollower(userId);
-
-            if (follower is not null)
-                this.Followers.Remove(follower);
+            if (followerExist)
+                this.Followers.Remove(user);
 
             return false;
-        }
-
-        private FollowedUser? GetFollower(string userId)
-        {
-            if (string.IsNullOrWhiteSpace(userId))
-                throw new ArgumentNullException(nameof(userId));
-
-            return this.Followers.FirstOrDefault(f => f.ObserverId == userId);
         }
     }
 }

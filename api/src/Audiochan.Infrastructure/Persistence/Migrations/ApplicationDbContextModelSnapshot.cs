@@ -17,7 +17,7 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
             modelBuilder
                 .HasPostgresExtension("uuid-ossp")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63)
-                .HasAnnotation("ProductVersion", "5.0.5")
+                .HasAnnotation("ProductVersion", "5.0.6")
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
             modelBuilder.Entity("AudioTag", b =>
@@ -119,29 +119,6 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                         .HasDatabaseName("ix_audios_user_id");
 
                     b.ToTable("audios");
-                });
-
-            modelBuilder.Entity("Audiochan.Core.Entities.FollowedUser", b =>
-                {
-                    b.Property<string>("ObserverId")
-                        .HasColumnType("text")
-                        .HasColumnName("observer_id");
-
-                    b.Property<string>("TargetId")
-                        .HasColumnType("text")
-                        .HasColumnName("target_id");
-
-                    b.Property<long>("Id")
-                        .HasColumnType("bigint")
-                        .HasColumnName("id");
-
-                    b.HasKey("ObserverId", "TargetId")
-                        .HasName("pk_followed_users");
-
-                    b.HasIndex("TargetId")
-                        .HasDatabaseName("ix_followed_users_target_id");
-
-                    b.ToTable("followed_users");
                 });
 
             modelBuilder.Entity("Audiochan.Core.Entities.Role", b =>
@@ -427,6 +404,25 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                     b.ToTable("user_tokens");
                 });
 
+            modelBuilder.Entity("UserUser", b =>
+                {
+                    b.Property<string>("FollowersId")
+                        .HasColumnType("text")
+                        .HasColumnName("followers_id");
+
+                    b.Property<string>("FollowingsId")
+                        .HasColumnType("text")
+                        .HasColumnName("followings_id");
+
+                    b.HasKey("FollowersId", "FollowingsId")
+                        .HasName("pk_followed_users");
+
+                    b.HasIndex("FollowingsId")
+                        .HasDatabaseName("ix_followed_users_followings_id");
+
+                    b.ToTable("followed_users");
+                });
+
             modelBuilder.Entity("AudioTag", b =>
                 {
                     b.HasOne("Audiochan.Core.Entities.Audio", null)
@@ -454,27 +450,6 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Audiochan.Core.Entities.FollowedUser", b =>
-                {
-                    b.HasOne("Audiochan.Core.Entities.User", "Observer")
-                        .WithMany("Followings")
-                        .HasForeignKey("ObserverId")
-                        .HasConstraintName("fk_followed_users_users_observer_id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Audiochan.Core.Entities.User", "Target")
-                        .WithMany("Followers")
-                        .HasForeignKey("TargetId")
-                        .HasConstraintName("fk_followed_users_users_target_id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Observer");
-
-                    b.Navigation("Target");
                 });
 
             modelBuilder.Entity("Audiochan.Core.Entities.User", b =>
@@ -578,13 +553,26 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("UserUser", b =>
+                {
+                    b.HasOne("Audiochan.Core.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("FollowersId")
+                        .HasConstraintName("fk_followed_users_users_followers_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Audiochan.Core.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("FollowingsId")
+                        .HasConstraintName("fk_followed_users_users_followings_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Audiochan.Core.Entities.User", b =>
                 {
                     b.Navigation("Audios");
-
-                    b.Navigation("Followers");
-
-                    b.Navigation("Followings");
                 });
 #pragma warning restore 612, 618
         }

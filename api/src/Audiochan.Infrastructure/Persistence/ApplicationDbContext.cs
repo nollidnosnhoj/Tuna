@@ -25,7 +25,6 @@ namespace Audiochan.Infrastructure.Persistence
         }
 
         public DbSet<Audio> Audios { get; set; } = null!;
-        public DbSet<FollowedUser> FollowedUsers { get; set; } = null!;
         public DbSet<Tag> Tags { get; set; } = null!;
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new())
@@ -96,39 +95,13 @@ namespace Audiochan.Infrastructure.Persistence
         {
             base.OnModelCreating(builder);
             builder.HasPostgresExtension("uuid-ossp");
-            builder.Entity<User>(entity =>
-            {
-                entity.ToTable("users");
-                entity.Property(u => u.DisplayName)
-                    .IsRequired()
-                    .HasMaxLength(256);
-                entity.Property(x => x.Joined)
-                    .IsRequired();
-
-                entity.OwnsMany(u => u.RefreshTokens, refreshToken =>
-                {
-                    refreshToken.WithOwner().HasForeignKey(r => r.UserId);
-                    refreshToken.Property<long>("Id");
-                    refreshToken.HasKey("Id");
-                    refreshToken.Property(x => x.Token).IsRequired();
-                    refreshToken.Property(x => x.Expiry).IsRequired();
-                    refreshToken.Property(x => x.Created).IsRequired();
-                    refreshToken.ToTable("refresh_tokens");
-                });
-            });
-
+            builder.Entity<User>(entity => { entity.ToTable("users"); });
             builder.Entity<Role>(entity => { entity.ToTable("roles"); });
-
             builder.Entity<IdentityUserRole<string>>(entity => { entity.ToTable("user_roles"); });
-
             builder.Entity<IdentityUserClaim<string>>(entity => { entity.ToTable("user_claims"); });
-
             builder.Entity<IdentityUserLogin<string>>(entity => { entity.ToTable("user_logins"); });
-
             builder.Entity<IdentityRoleClaim<string>>(entity => { entity.ToTable("role_claims"); });
-
             builder.Entity<IdentityUserToken<string>>(entity => { entity.ToTable("user_tokens"); });
-
             builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
             RenameToSnakeCase(builder);
         }
