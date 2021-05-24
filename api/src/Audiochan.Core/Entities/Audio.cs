@@ -5,7 +5,7 @@ using Audiochan.Core.Entities.Base;
 
 namespace Audiochan.Core.Entities
 {
-    public class Audio : BaseEntity<Guid>
+    public class Audio : BaseEntity
     {
         public Audio()
         {
