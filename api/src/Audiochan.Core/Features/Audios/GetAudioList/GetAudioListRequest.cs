@@ -10,6 +10,7 @@ using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Common.Settings;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Audios.GetAudioList
@@ -23,36 +24,18 @@ namespace Audiochan.Core.Features.Audios.GetAudioList
 
     public class GetAudioListRequestHandler : IRequestHandler<GetAudioListRequest, CursorList<AudioViewModel>>
     {
-        private readonly IApplicationDbContext _dbContext;
-        private readonly MediaStorageSettings _storageSettings;
+        private readonly IAudioRepository _audioRepository;
 
-        public GetAudioListRequestHandler(IApplicationDbContext dbContext, IOptions<MediaStorageSettings> options)
+        public GetAudioListRequestHandler(IAudioRepository audioRepository)
         {
-            _dbContext = dbContext;
-            _storageSettings = options.Value;
+            _audioRepository = audioRepository;
         }
 
         public async Task<CursorList<AudioViewModel>> Handle(GetAudioListRequest request,
             CancellationToken cancellationToken)
         {
-            var audios = await _dbContext.Audios
-                .AsNoTracking()
-                .Include(x => x.User)
-                .ExcludePrivateAudios()
-                .FilterUsingCursor(request.Cursor)
-                .ProjectToList(_storageSettings)
-                .Take(request.Size)
-                .ToListAsync(cancellationToken);
-
-            var lastAudio = audios.LastOrDefault();
-
-            var nextCursor = audios.Count < request.Size
-                ? null
-                : lastAudio != null
-                    ? CursorHelpers.EncodeCursor(lastAudio.Uploaded, lastAudio.Id.ToString())
-                    : null;
-
-            return new CursorList<AudioViewModel>(audios, nextCursor);
+            return await _audioRepository.GetCursorPaginationAsync(new GetAudioListSpecification(request.Size, request.Tag),
+                request.Cursor, cancellationToken);
         }
     }
 }

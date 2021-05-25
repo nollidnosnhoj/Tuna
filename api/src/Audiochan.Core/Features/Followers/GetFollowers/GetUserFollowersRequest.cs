@@ -15,7 +15,7 @@ namespace Audiochan.Core.Features.Followers.GetFollowers
 {
     public record GetUserFollowersRequest : IHasPage, IRequest<PagedList<FollowerViewModel>>
     {
-        public string? Username { get; init; }
+        public string Username { get; init; } = string.Empty;
         public int Page { get; init; }
         public int Size { get; init; }
     }
@@ -24,24 +24,20 @@ namespace Audiochan.Core.Features.Followers.GetFollowers
     {
         private readonly IApplicationDbContext _dbContext;
         private readonly MediaStorageSettings _storageSettings;
+        private readonly IFollowedUserRepository _followedUserRepository;
 
-        public GetUserFollowersRequestHandler(IApplicationDbContext dbContext, IOptions<MediaStorageSettings> options)
+        public GetUserFollowersRequestHandler(IApplicationDbContext dbContext, IOptions<MediaStorageSettings> options, IFollowedUserRepository followedUserRepository)
         {
             _dbContext = dbContext;
+            _followedUserRepository = followedUserRepository;
             _storageSettings = options.Value;
         }
 
         public async Task<PagedList<FollowerViewModel>> Handle(GetUserFollowersRequest request,
             CancellationToken cancellationToken)
         {
-            return await _dbContext.FollowedUsers
-                .AsNoTracking()
-                .Include(u => u.Target)
-                .Include(u => u.Observer)
-                .Where(u => request.Username != null && u.Target.UserName == request.Username.Trim().ToLower())
-                .ProjectToFollower(_storageSettings)
-                .OrderByDescending(x => x.FollowedDate)
-                .PaginateAsync(request, cancellationToken);
+            return await _followedUserRepository.GetPagedListBySpec(new GetUserFollowersSpecification(request.Username),
+                request.Page, request.Size, cancellationToken: cancellationToken);
         }
     }
 }

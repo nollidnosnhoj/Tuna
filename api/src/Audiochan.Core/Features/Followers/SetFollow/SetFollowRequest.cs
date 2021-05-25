@@ -7,7 +7,6 @@ using Audiochan.Core.Common.Models.Interfaces;
 using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Entities;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Followers.SetFollow
 {
@@ -17,24 +16,20 @@ namespace Audiochan.Core.Features.Followers.SetFollow
 
     public class SetFollowRequestHandler : IRequestHandler<SetFollowRequest, IResult<bool>>
     {
-        private readonly IApplicationDbContext _dbContext;
         private readonly IDateTimeProvider _dateTimeProvider;
+        private readonly IUserRepository _userRepository;
 
-        public SetFollowRequestHandler(IApplicationDbContext dbContext, IDateTimeProvider dateTimeProvider)
+        public SetFollowRequestHandler(IDateTimeProvider dateTimeProvider, IUserRepository userRepository)
         {
-            _dbContext = dbContext;
             _dateTimeProvider = dateTimeProvider;
+            _userRepository = userRepository;
         }
 
         public async Task<IResult<bool>> Handle(SetFollowRequest request, CancellationToken cancellationToken)
         {
-            if (!await _dbContext.Users.AsNoTracking().AnyAsync(u => u.Id == request.UserId, cancellationToken))
-                return Result<bool>.Fail(ResultError.Unauthorized);
-
-            var target = await _dbContext.Users
-                .Include(u => u.Followers)
-                .IgnoreQueryFilters()
-                .SingleOrDefaultAsync(u => u.UserName == request.Username.Trim().ToLower(), cancellationToken);
+            var target = await _userRepository.GetBySpecAsync(new GetTargetUserSpecification(request.Username), 
+                true,
+                cancellationToken);
 
             if (target == null)
                 return Result<bool>.Fail(ResultError.NotFound);
@@ -46,7 +41,7 @@ namespace Audiochan.Core.Features.Followers.SetFollow
                 ? await Follow(target, request.UserId, cancellationToken)
                 : await Unfollow(target, request.UserId, cancellationToken);
 
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            await _userRepository.SaveChangesAsync(cancellationToken);
 
             return Result<bool>.Success(isFollowed);
         }

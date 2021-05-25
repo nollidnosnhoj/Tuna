@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Linq.Expressions;
-using Audiochan.Core.Common.Settings;
+using Audiochan.Core.Common.Constants;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Auth.GetCurrentUser;
 using Audiochan.Core.Features.Users;
@@ -14,13 +14,13 @@ namespace Audiochan.Core.Common.Extensions.MappingExtensions
         public static IQueryable<CurrentUserViewModel> ProjectToCurrentUser(this IQueryable<User> queryable) =>
             queryable.Select(CurrentUserProjection());
 
-        public static IQueryable<UserViewModel> ProjectToUser(this IQueryable<User> queryable, string userId, MediaStorageSettings storageSettings) =>
-            queryable.Select(UserProjection(userId, storageSettings));
+        public static IQueryable<ProfileViewModel> ProjectToUser(this IQueryable<User> queryable, string userId) =>
+            queryable.Select(UserProjection(userId));
 
-        public static UserViewModel MapToProfile(this User user, string userId, MediaStorageSettings storageSettings, bool returnNullIfFail = false) =>
-            UserProjection(userId, storageSettings).CompileFast(returnNullIfFail).Invoke(user);
+        public static ProfileViewModel MapToProfile(this User user, string userId, bool returnNullIfFail = false) =>
+            UserProjection(userId).CompileFast(returnNullIfFail).Invoke(user);
 
-        private static Expression<Func<User, CurrentUserViewModel>> CurrentUserProjection()
+        public static Expression<Func<User, CurrentUserViewModel>> CurrentUserProjection()
         {
             return user => new CurrentUserViewModel
             {
@@ -30,15 +30,15 @@ namespace Audiochan.Core.Common.Extensions.MappingExtensions
             };
         }
 
-        private static Expression<Func<User, UserViewModel>> UserProjection(string userId, MediaStorageSettings options)
+        public static Expression<Func<User, ProfileViewModel>> UserProjection(string userId)
         {
-            return user => new UserViewModel
+            return user => new ProfileViewModel
             {
                 Id = user.Id,
                 Username = user.UserName,
                 About = user.About ?? "",
                 Picture = user.Picture != null
-                    ? $"https://{options.Image.Bucket}.s3.amazonaws.com/{options.Image.Container}/users/{user.Picture}"
+                    ? string.Format(MediaLinkInvariants.UserPictureUrl, user.Picture)
                     : null,
                 Website = user.Website ?? "",
                 AudioCount = user.Audios.Count,

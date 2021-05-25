@@ -6,7 +6,7 @@ using Audiochan.Core.Features.Audios;
 using Audiochan.Core.Features.Followers.GetFollowers;
 using Audiochan.Core.Features.Followers.GetFollowings;
 using Audiochan.Core.Features.Users;
-using Audiochan.Core.Features.Users.GetUser;
+using Audiochan.Core.Features.Users.GetProfile;
 using Audiochan.Core.Features.Users.GetUserAudios;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -26,12 +26,12 @@ namespace Audiochan.API.Controllers
         }
 
         [HttpGet("{username}", Name = "GetProfile")]
-        [ProducesResponseType(typeof(UserViewModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProfileViewModel), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [SwaggerOperation(Summary = "Return user's profile.", OperationId = "GetProfile", Tags = new[] {"users"})]
         public async Task<IActionResult> GetUser(string username, CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(new GetUserRequest(username), cancellationToken);
+            var result = await _mediator.Send(new GetProfileRequest(username), cancellationToken);
 
             return result != null
                 ? Ok(result)

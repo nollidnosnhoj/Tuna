@@ -9,7 +9,6 @@ using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Entities;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Audios.RemoveAudio
@@ -19,19 +18,18 @@ namespace Audiochan.Core.Features.Audios.RemoveAudio
     public class RemoveAudioRequestHandler : IRequestHandler<RemoveAudioRequest, IResult<bool>>
     {
         private readonly MediaStorageSettings _storageSettings;
-        private readonly IApplicationDbContext _dbContext;
         private readonly IStorageService _storageService;
         private readonly ICurrentUserService _currentUserService;
+        private readonly IAudioRepository _audioRepository;
 
         public RemoveAudioRequestHandler(IOptions<MediaStorageSettings> options,
-            IApplicationDbContext dbContext,
             IStorageService storageService,
-            ICurrentUserService currentUserService)
+            ICurrentUserService currentUserService, IAudioRepository audioRepository)
         {
             _storageSettings = options.Value;
-            _dbContext = dbContext;
             _storageService = storageService;
             _currentUserService = currentUserService;
+            _audioRepository = audioRepository;
         }
 
         public async Task<IResult<bool>> Handle(RemoveAudioRequest request, CancellationToken cancellationToken)
@@ -41,9 +39,7 @@ namespace Audiochan.Core.Features.Audios.RemoveAudio
             if (audio == null)
                 return result;
 
-            _dbContext.Audios.Remove(audio);
-
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            await _audioRepository.RemoveAsync(audio, cancellationToken);
 
             var tasks = new List<Task>
             {
@@ -69,8 +65,7 @@ namespace Audiochan.Core.Features.Audios.RemoveAudio
         {
             var currentUserId = _currentUserService.GetUserId();
 
-            var audio = await _dbContext.Audios
-                .SingleOrDefaultAsync(a => a.Id == audioId, cancellationToken);
+            var audio = await _audioRepository.GetByIdAsync(audioId, cancellationToken);
 
             if (audio == null)
                 return (null, Result<bool>.Fail(ResultError.NotFound));

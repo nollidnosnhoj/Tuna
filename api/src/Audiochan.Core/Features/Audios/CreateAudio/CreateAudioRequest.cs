@@ -10,7 +10,6 @@ using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Entities;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Audios.CreateAudio
@@ -26,23 +25,26 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
 
     public class CreateAudioRequestHandler : IRequestHandler<CreateAudioRequest, Result<AudioDetailViewModel>>
     {
-        private readonly IApplicationDbContext _dbContext;
         private readonly IStorageService _storageService;
         private readonly ICurrentUserService _currentUserService;
         private readonly ITagRepository _tagRepository;
         private readonly MediaStorageSettings _storageSettings;
+        private readonly IAudioRepository _audioRepository;
+        private readonly IUserRepository _userRepository;
 
         public CreateAudioRequestHandler(IOptions<MediaStorageSettings> mediaStorageOptions,
-            IApplicationDbContext dbContext,
             IStorageService storageService,
             ICurrentUserService currentUserService,
-            ITagRepository tagRepository)
+            ITagRepository tagRepository, 
+            IAudioRepository audioRepository, 
+            IUserRepository userRepository)
         {
             _storageSettings = mediaStorageOptions.Value;
-            _dbContext = dbContext;
             _storageService = storageService;
             _currentUserService = currentUserService;
             _tagRepository = tagRepository;
+            _audioRepository = audioRepository;
+            _userRepository = userRepository;
         }
 
         public async Task<Result<AudioDetailViewModel>> Handle(CreateAudioRequest request,
@@ -52,13 +54,17 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
 
             if (!existsInTempStorage)
                 return Result<AudioDetailViewModel>.Fail(ResultError.BadRequest, "Cannot find audio in temp storage.");
+            
+            var currentUser = await _userRepository.GetByIdAsync(_currentUserService.GetUserId(), cancellationToken);
 
-            var audio = await CreateAudioFromRequestAsync(request, cancellationToken);
+            if (currentUser is null)
+                return Result<AudioDetailViewModel>.Fail(ResultError.Unauthorized);
 
-            await _dbContext.Audios.AddAsync(audio, cancellationToken);
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            var audio = await CreateAudioFromRequestAsync(request, currentUser, cancellationToken);
 
-            var viewModel = audio.MapToDetail(_storageSettings);
+            await _audioRepository.AddAsync(audio, cancellationToken);
+
+            var viewModel = audio.MapToDetail();
 
             // Copy temp audio to public bucket
             await _storageService.MoveBlobAsync(
@@ -73,14 +79,11 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
             return Result<AudioDetailViewModel>.Success(viewModel);
         }
 
-        private async Task<Audio> CreateAudioFromRequestAsync(CreateAudioRequest request, CancellationToken cancellationToken)
+        private async Task<Audio> CreateAudioFromRequestAsync(CreateAudioRequest request, User user, CancellationToken cancellationToken)
         {
-            var currentUser = await _dbContext.Users
-                .SingleOrDefaultAsync(x => x.Id == _currentUserService.GetUserId(), cancellationToken);
-
             var audio = new Audio
             {
-                User = currentUser,
+                User = user,
                 ContentType = request.ContentType,
                 OriginalFileName = request.FileName,
                 FileExt = Path.GetExtension(request.UploadId),
@@ -92,7 +95,7 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
             };
             audio.FileName = request.UploadId;
             audio.Tags = request.Tags.Count > 0
-                ? await _tagRepository.GetListAsync(request.Tags, cancellationToken)
+                ? await _tagRepository.GetAppropriateTags(request.Tags, cancellationToken)
                 : new List<Tag>();
             return audio;
         }

@@ -48,7 +48,11 @@ namespace Audiochan.Infrastructure
 
         private static void ConfigureRepositories(IServiceCollection services)
         {
+            services.AddScoped(typeof(IGenericRepository<>), typeof(EfRepository<>));
+            services.AddScoped<IAudioRepository, AudioRepository>();
+            services.AddScoped<IFollowedUserRepository, FollowedUserRepository>();
             services.AddScoped<ITagRepository, TagRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
         }
     }
 }

@@ -339,6 +339,6 @@ ASALocalRun/
 # BeatPulse healthcheck temp database
 healthchecksdb
 
-**/appsettings.json
+src/Audiochan.API/appsettings.json
 
 **/wwwroot/*

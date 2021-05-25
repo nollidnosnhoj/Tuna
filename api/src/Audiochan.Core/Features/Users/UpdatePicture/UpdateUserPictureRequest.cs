@@ -15,13 +15,13 @@ using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Users.UpdatePicture
 {
-    public record UpdateUserPictureRequest : IRequest<IResult<UserViewModel>>
+    public record UpdateUserPictureRequest : IRequest<IResult<ProfileViewModel>>
     {
         [JsonIgnore] public string? UserId { get; set; }
         public string Data { get; init; } = null!;
     }
 
-    public class UpdateUserPictureRequestHandler : IRequestHandler<UpdateUserPictureRequest, IResult<UserViewModel>>
+    public class UpdateUserPictureRequestHandler : IRequestHandler<UpdateUserPictureRequest, IResult<ProfileViewModel>>
     {
         private readonly MediaStorageSettings _storageSettings;
         private readonly UserManager<User> _userManager;
@@ -44,17 +44,17 @@ namespace Audiochan.Core.Features.Users.UpdatePicture
             _currentUserService = currentUserService;
         }
 
-        public async Task<IResult<UserViewModel>> Handle(UpdateUserPictureRequest request, CancellationToken cancellationToken)
+        public async Task<IResult<ProfileViewModel>> Handle(UpdateUserPictureRequest request, CancellationToken cancellationToken)
         {
             var container = string.Join('/', _storageSettings.Image.Container, "users");
             
             var user = await _userManager.FindByIdAsync(request.UserId + "");
             
             if (user == null) 
-                return Result<UserViewModel>.Fail(ResultError.NotFound);
+                return Result<ProfileViewModel>.Fail(ResultError.NotFound);
             
             if (user.Id != _currentUserService.GetUserId())
-                return Result<UserViewModel>.Fail(ResultError.Forbidden);
+                return Result<ProfileViewModel>.Fail(ResultError.Forbidden);
             
             var blobName = $"{user.Id}/{_dateTimeProvider.Now:yyyyMMddHHmmss}.jpg";
             
@@ -67,7 +67,7 @@ namespace Audiochan.Core.Features.Users.UpdatePicture
                 
                 user.UpdatePicture(blobName);
                 await _userManager.UpdateAsync(user);
-                return Result<UserViewModel>.Success(user.MapToProfile(_currentUserService.GetUserId(), _storageSettings));
+                return Result<ProfileViewModel>.Success(user.MapToProfile(_currentUserService.GetUserId()));
             }
             catch (Exception)
             {

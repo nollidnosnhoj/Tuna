@@ -23,7 +23,7 @@ namespace Audiochan.UnitTests.Extensions
                 .UseTestDefaults(user.Id)
                 .AddUser(user)
                 .Build("uploadId");
-            FluentActions.Invoking(() => audio.MapToDetail(_storageSettings)).Should().NotThrow();
+            FluentActions.Invoking(() => audio.MapToDetail()).Should().NotThrow();
         }
         
         [Fact]
@@ -34,7 +34,7 @@ namespace Audiochan.UnitTests.Extensions
                 .UseTestDefaults(user.Id)
                 .AddUser(user)
                 .Build("uploadId");
-            var model = audio.MapToDetail(_storageSettings, true);
+            var model = audio.MapToDetail(true);
             model.Should().NotBeNull();
             model.Id.Should().Be(audio.Id);
             model.Title.Should().Be(audio.Title);

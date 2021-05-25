@@ -12,20 +12,17 @@ namespace Audiochan.Core.Features.Followers.CheckIfFollowing
 
     public class CheckIfUserIsFollowingRequestHandler : IRequestHandler<CheckIfUserIsFollowingRequest, bool>
     {
-        private readonly IApplicationDbContext _dbContext;
+        private readonly IFollowedUserRepository _followedUserRepository;
 
-        public CheckIfUserIsFollowingRequestHandler(IApplicationDbContext dbContext)
+        public CheckIfUserIsFollowingRequestHandler(IFollowedUserRepository followedUserRepository)
         {
-            _dbContext = dbContext;
+            _followedUserRepository = followedUserRepository;
         }
 
         public async Task<bool> Handle(CheckIfUserIsFollowingRequest request, CancellationToken cancellationToken)
         {
-            return await _dbContext.FollowedUsers
-                .AsNoTracking()
-                .Include(u => u.Target)
-                .AnyAsync(u => u.ObserverId == request.UserId
-                               && u.Target.UserName == request.Username.Trim().ToLower(), cancellationToken);
+            return await _followedUserRepository.ExistsAsync(
+                new CheckIfUserIsFollowingSpecification(request.Username, request.UserId), cancellationToken: cancellationToken);
         }
     }
 }

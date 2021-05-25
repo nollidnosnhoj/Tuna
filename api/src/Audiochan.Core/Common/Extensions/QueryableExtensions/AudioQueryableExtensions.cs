@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Linq;
+using Audiochan.Core.Common.Extensions.MappingExtensions;
 using Audiochan.Core.Common.Helpers;
 using Audiochan.Core.Entities;
+using Audiochan.Core.Features.Audios;
 
 namespace Audiochan.Core.Common.Extensions.QueryableExtensions
 {
@@ -24,24 +26,21 @@ namespace Audiochan.Core.Common.Extensions.QueryableExtensions
             return queryable.FilterByTags(parsedTags);
         }
 
-        public static IQueryable<Audio> FilterUsingCursor(this IQueryable<Audio> queryable, string? cursor)
+        public static IQueryable<AudioViewModel> FilterUsingCursor(this IQueryable<AudioViewModel> queryable, string? cursor)
         {
-            if (string.IsNullOrEmpty(cursor)) return queryable;
-            var (since, id) = CursorHelpers.DecodeCursor(cursor);
-            if (Guid.TryParse(id, out var audioId))
+            if (!string.IsNullOrEmpty(cursor))
             {
-                return queryable;
-            }
-            
-            if (since.HasValue && !string.IsNullOrEmpty(id))
-            {
-                return queryable.Where(a => a.Created < since.GetValueOrDefault()
-                                                 || (a.Created == since.GetValueOrDefault() 
-                                                     && a.Id.CompareTo(audioId) < 0));
+                var (since, id) = CursorHelpers.DecodeCursor(cursor);
+                if (Guid.TryParse(id, out var audioId) && since.HasValue)
+                {
+                    queryable = queryable.Where(a => a.Uploaded < since.GetValueOrDefault()
+                                                     || (a.Uploaded == since.GetValueOrDefault() 
+                                                         && a.Id.CompareTo(audioId) < 0));
+                }
             }
 
             return queryable
-                .OrderByDescending(a => a.Created)
+                .OrderByDescending(a => a.Uploaded)
                 .ThenByDescending(a => a.Id);
         }
         

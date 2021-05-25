@@ -11,33 +11,30 @@ using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Audios.GetAudio
 {
-    public record GetAudioRequest(Guid Id) : IRequest<AudioDetailViewModel>
+    public record GetAudioRequest(Guid Id) : IRequest<AudioDetailViewModel?>
     {
     }
 
-    public class GetAudioRequestHandler : IRequestHandler<GetAudioRequest, AudioDetailViewModel>
+    public class GetAudioRequestHandler : IRequestHandler<GetAudioRequest, AudioDetailViewModel?>
     {
-        private readonly IApplicationDbContext _dbContext;
-        private readonly ICurrentUserService _currentUserService;
-        private readonly MediaStorageSettings _storageSettings;
+        private readonly IAudioRepository _audioRepository;
 
-        public GetAudioRequestHandler(IApplicationDbContext dbContext, ICurrentUserService currentUserService,
-            IOptions<MediaStorageSettings> options)
+        public GetAudioRequestHandler(IAudioRepository audioRepository)
         {
-            _dbContext = dbContext;
-            _currentUserService = currentUserService;
-            _storageSettings = options.Value;
+            _audioRepository = audioRepository;
         }
 
-        public async Task<AudioDetailViewModel> Handle(GetAudioRequest request, CancellationToken cancellationToken)
+        public async Task<AudioDetailViewModel?> Handle(GetAudioRequest request, CancellationToken cancellationToken)
         {
-            return await _dbContext.Audios
-                .AsNoTracking()
-                .Include(x => x.Tags)
-                .Include(x => x.User)
-                .Where(x => x.Id == request.Id)
-                .ProjectToDetail(_storageSettings)
-                .SingleOrDefaultAsync(cancellationToken);
+            // return await _dbContext.Audios
+            //     .AsNoTracking()
+            //     .Include(x => x.Tags)
+            //     .Include(x => x.User)
+            //     .Where(x => x.Id == request.Id)
+            //     .ProjectToDetail(_storageSettings)
+            //     .SingleOrDefaultAsync(cancellationToken);
+
+            return await _audioRepository.GetBySpecAsync(new GetAudioSpecification(request.Id), cancellationToken: cancellationToken);
         }
     }
 }

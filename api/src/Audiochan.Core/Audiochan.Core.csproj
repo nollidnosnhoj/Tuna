@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Ardalis.Specification" Version="5.1.0" />
     <PackageReference Include="FastExpressionCompiler" Version="3.1.0" />
     <PackageReference Include="FluentValidation" Version="10.1.0" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="10.1.0" />

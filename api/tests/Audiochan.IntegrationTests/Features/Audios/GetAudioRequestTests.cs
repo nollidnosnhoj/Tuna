@@ -53,7 +53,7 @@ namespace Audiochan.IntegrationTests.Features.Audios
             var tags = await _fixture.ExecuteScopeWithTransactionAsync(sp =>
             {
                 var repo = sp.GetRequiredService<ITagRepository>();
-                return repo.GetListAsync(userTags);
+                return repo.GetAppropriateTags(userTags);
             });
 
             var audio = new AudioBuilder()
@@ -74,7 +74,7 @@ namespace Audiochan.IntegrationTests.Features.Audios
             // Assert
             result.Should().NotBeNull();
             result.Should().BeOfType<AudioDetailViewModel>();
-            result.Title.Should().Be(audio.Title);
+            result!.Title.Should().Be(audio.Title);
             result.Tags.Count.Should().Be(2);
             result.Tags.Should().Contain("apples");
             result.Tags.Should().Contain("oranges");

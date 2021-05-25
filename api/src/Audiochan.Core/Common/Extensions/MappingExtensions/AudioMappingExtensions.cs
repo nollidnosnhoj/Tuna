@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Linq.Expressions;
+using Audiochan.Core.Common.Constants;
 using Audiochan.Core.Common.Models.Responses;
-using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Audios;
 using FastExpressionCompiler;
@@ -11,18 +11,16 @@ namespace Audiochan.Core.Common.Extensions.MappingExtensions
 {
     public static class AudioMappingExtensions
     {
-        public static IQueryable<AudioDetailViewModel> ProjectToDetail(this IQueryable<Audio> queryable,
-            MediaStorageSettings options) => queryable.Select(AudioToDetailProjection(options));
+        public static IQueryable<AudioDetailViewModel> ProjectToDetail(this IQueryable<Audio> queryable) => 
+            queryable.Select(AudioToDetailProjection());
 
-        public static IQueryable<AudioViewModel> ProjectToList(this IQueryable<Audio> queryable,
-            MediaStorageSettings options) =>
-            queryable.Select(AudioToListProjection(options));
+        public static IQueryable<AudioViewModel> ProjectToList(this IQueryable<Audio> queryable) =>
+            queryable.Select(AudioToListProjection());
 
-        public static AudioDetailViewModel MapToDetail(this Audio audio, MediaStorageSettings options, bool returnNullIfFail = false) =>
-            AudioToDetailProjection(options).CompileFast(returnNullIfFail).Invoke(audio);
+        public static AudioDetailViewModel MapToDetail(this Audio audio, bool returnNullIfFail = false) =>
+            AudioToDetailProjection().CompileFast(returnNullIfFail).Invoke(audio);
         
-        private static Expression<Func<Audio, AudioDetailViewModel>> AudioToDetailProjection(
-            MediaStorageSettings options)
+        public static Expression<Func<Audio, AudioDetailViewModel>> AudioToDetailProjection()
         {
             return audio => new AudioDetailViewModel
             {
@@ -31,7 +29,7 @@ namespace Audiochan.Core.Common.Extensions.MappingExtensions
                 Description = audio.Description,
                 Duration = audio.Duration,
                 Picture = audio.Picture != null 
-                    ? $"https://{options.Image.Bucket}.s3.amazonaws.com/{options.Image.Container}/audios/{audio.Picture}"
+                    ? string.Format(MediaLinkInvariants.AudioPictureUrl, audio.Picture)
                     : null,
                 Created = audio.Created,
                 Tags = audio.Tags.Select(t => t.Name).ToList(),
@@ -39,19 +37,19 @@ namespace Audiochan.Core.Common.Extensions.MappingExtensions
                 FileExt = audio.FileExt,
                 FileSize = audio.FileSize,
                 LastModified = audio.LastModified,
-                AudioUrl = $"https://{options.Audio.Bucket}.s3.amazonaws.com/{options.Audio.Container}/{audio.Id}/{audio.FileName}",
+                AudioUrl = string.Format(MediaLinkInvariants.AudioUrl, audio.Id, audio.FileName),
                 Author = new MetaAuthorDto
                 {
                     Id = audio.User.Id,
                     Picture = audio.User.Picture != null
-                        ? $"https://{options.Image.Bucket}.s3.amazonaws.com/{options.Audio.Container}/users/{audio.User.Picture}"
+                        ? string.Format(MediaLinkInvariants.UserPictureUrl, audio.User.Picture)
                         : null,
                     Username = audio.User.UserName
                 }
             };
         }
 
-        private static Expression<Func<Audio, AudioViewModel>> AudioToListProjection(MediaStorageSettings options)
+        public static Expression<Func<Audio, AudioViewModel>> AudioToListProjection()
         {
             return audio => new AudioViewModel
             {
@@ -59,17 +57,16 @@ namespace Audiochan.Core.Common.Extensions.MappingExtensions
                 Title = audio.Title,
                 Duration = audio.Duration,
                 Picture = audio.Picture != null 
-                    ? $"https://{options.Image.Bucket}.s3.amazonaws.com/{options.Image.Container}/audios/{audio.Picture}"
+                    ? string.Format(MediaLinkInvariants.AudioPictureUrl, audio.Picture)
                     : null,
                 Uploaded = audio.Created,
                 IsPublic = audio.IsPublic,
-                AudioUrl =
-                    $"https://{options.Audio.Bucket}.s3.amazonaws.com/{options.Audio.Container}/{audio.Id}/{audio.FileName}",
+                AudioUrl = string.Format(MediaLinkInvariants.AudioUrl, audio.Id, audio.FileName),
                 Author = new MetaAuthorDto
                 {
                     Id = audio.User.Id,
                     Picture = audio.User.Picture != null
-                        ? $"https://{options.Image.Bucket}.s3.amazonaws.com/{options.Audio.Container}/users/{audio.User.Picture}"
+                        ? string.Format(MediaLinkInvariants.UserPictureUrl, audio.User.Picture)
                         : null,
                     Username = audio.User.UserName
                 }

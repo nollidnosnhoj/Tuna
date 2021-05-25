@@ -24,42 +24,23 @@ namespace Audiochan.Core.Features.Users.GetUserAudios
 
     public class GetUserAudiosRequestHandler : IRequestHandler<GetUserAudiosRequest, CursorList<AudioViewModel>>
     {
-        private readonly IApplicationDbContext _dbContext;
+        private readonly IAudioRepository _audioRepository;
         private readonly ICurrentUserService _currentUserService;
-        private readonly MediaStorageSettings _storageSettings;
 
-        public GetUserAudiosRequestHandler(IApplicationDbContext dbContext, ICurrentUserService currentUserService,
-            IOptions<MediaStorageSettings> options)
+        public GetUserAudiosRequestHandler(ICurrentUserService currentUserService, IAudioRepository audioRepository)
         {
-            _dbContext = dbContext;
             _currentUserService = currentUserService;
-            _storageSettings = options.Value;
+            _audioRepository = audioRepository;
         }
 
         public async Task<CursorList<AudioViewModel>> Handle(GetUserAudiosRequest request,
             CancellationToken cancellationToken)
         {
             var currentUserId = _currentUserService.GetUserId();
-            var audios = await _dbContext.Audios
-                .AsNoTracking()
-                .ExcludePrivateAudios(currentUserId)
-                .Where(a => request.Username != null && a.User.UserName == request.Username.ToLower())
-                .FilterUsingCursor(request.Cursor)
-                .OrderByDescending(a => a.Created)
-                .ThenByDescending(a => a.Id)
-                .ProjectToList(_storageSettings)
-                .Take(request.Size)
-                .ToListAsync(cancellationToken);
-            
-            var lastAudio = audios.LastOrDefault();
 
-            var nextCursor = audios.Count < request.Size
-                ? null
-                : lastAudio != null
-                    ? CursorHelpers.EncodeCursor(lastAudio.Uploaded, lastAudio.Id.ToString())
-                    : null;
-
-            return new CursorList<AudioViewModel>(audios, nextCursor);
+            return await _audioRepository.GetCursorPaginationAsync(
+                new GetUserAudiosSpecification(request.Username, currentUserId, request.Size), 
+                request.Cursor, cancellationToken);
         }
     }
 }

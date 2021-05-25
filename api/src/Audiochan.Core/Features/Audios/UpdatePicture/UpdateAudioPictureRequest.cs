@@ -9,6 +9,7 @@ using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models.Interfaces;
 using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Common.Settings;
+using Audiochan.Core.Features.Audios.UpdateAudio;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -23,6 +24,7 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
 
     public class UpdateAudioPictureRequestHandler : IRequestHandler<UpdateAudioPictureRequest, IResult<AudioDetailViewModel>>
     {
+        private readonly IAudioRepository _audioRepository;
         private readonly MediaStorageSettings _storageSettings;
         private readonly IApplicationDbContext _dbContext;
         private readonly IDateTimeProvider _dateTimeProvider;
@@ -35,7 +37,7 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
             IStorageService storageService,
             ICurrentUserService currentUserService,
             IImageService imageService,
-            IDateTimeProvider dateTimeProvider)
+            IDateTimeProvider dateTimeProvider, IAudioRepository audioRepository)
         {
             _storageSettings = options.Value;
             _dbContext = dbContext;
@@ -43,6 +45,7 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
             _currentUserService = currentUserService;
             _imageService = imageService;
             _dateTimeProvider = dateTimeProvider;
+            _audioRepository = audioRepository;
         }
 
         public async Task<IResult<AudioDetailViewModel>> Handle(UpdateAudioPictureRequest request,
@@ -50,12 +53,9 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
         {
             var container = string.Join('/', _storageSettings.Image.Container, "audios");
             var currentUserId = _currentUserService.GetUserId();
-            
-            var audio = await _dbContext.Audios
-                .Include(x => x.Tags)
-                .Include(x => x.User)
-                .Where(x => x.Id == request.AudioId)
-                .SingleOrDefaultAsync(cancellationToken);
+
+            var audio = await _audioRepository.GetBySpecAsync(new GetAudioForUpdateSpecification(request.AudioId),
+                cancellationToken: cancellationToken);
             
             if (audio == null) 
                 return Result<AudioDetailViewModel>.Fail(ResultError.NotFound);
@@ -75,7 +75,7 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
                 audio.UpdatePicture(blobName);
                 await _dbContext.SaveChangesAsync(cancellationToken);
                 
-                return Result<AudioDetailViewModel>.Success(audio.MapToDetail(_storageSettings));
+                return Result<AudioDetailViewModel>.Success(audio.MapToDetail());
             }
             catch (Exception)
             {
