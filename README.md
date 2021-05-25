@@ -2,23 +2,23 @@
 
 Audiochan is a platform to listen to music created by independent artists.
 
+## Demos
+
+- [Demo #1](https://www.youtube.com/watch?v=XFWvhNB-YW4). Demonstrates uploading and audio player.
+
 ## Branches
 
 - `staging` - Pull request from and to this branch
 - `production` - Do not touch this! This branch goes live.
 
-## Current Features
+## TODOS
 
-- Authentication
-- Upload audio into the platform.
-- Create a queue of audio to listen using the audio player.
-
-## Upcoming Features
-
-- Create a playlist of audio to be saved into your account.
-- Give feedback on audios.
-- Use comfortably on mobile devices.
-- Display waveform on audio detail page.
+- Add more testings
+- Dockerize
+- Make frontend more mobile-responsive
+- Add Favorites
+- Add Playlists
+- Refactor User Profile
 
 ## Tech Stack
 
@@ -27,10 +27,20 @@ Audiochan is a platform to listen to music created by independent artists.
 - ASP.NET Core
 - Entity Framework Core
 - PostgreSQL
+- Serilog
+- Swagger
+- FluentValidation
+- Mediatr
+- ASP.NET Core Identity
+- Imagesharp (thumbnail creation)
+- Amazon S3 (media storage)
+- Ardalis.Specification (specification pattern)
 
 ### Frontend
 
 - Next.js
+- Chakra UI
+- Formik
 
 ## Contributing
 
