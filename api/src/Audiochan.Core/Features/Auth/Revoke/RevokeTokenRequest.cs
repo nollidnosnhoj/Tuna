@@ -1,12 +1,13 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models.Interfaces;
 using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Entities;
+using Audiochan.Core.Features.Auth.Refresh;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Auth.Revoke
 {
@@ -18,20 +19,21 @@ namespace Audiochan.Core.Features.Auth.Revoke
     public class RevokeTokenRequestHandler : IRequestHandler<RevokeTokenRequest, IResult<bool>>
     {
         private readonly UserManager<User> _userManager;
+        private readonly IUserRepository _userRepository;
 
-        public RevokeTokenRequestHandler(UserManager<User> userManager)
+        public RevokeTokenRequestHandler(UserManager<User> userManager, IUserRepository userRepository)
         {
             _userManager = userManager;
+            _userRepository = userRepository;
         }
 
         public async Task<IResult<bool>> Handle(RevokeTokenRequest request, CancellationToken cancellationToken)
         {
             if (!string.IsNullOrWhiteSpace(request.RefreshToken))
             {
-                var user = await _userManager.Users
-                    .Include(u => u.RefreshTokens)
-                    .SingleOrDefaultAsync(u => u.RefreshTokens
-                        .Any(r => r.Token == request.RefreshToken && u.Id == r.UserId), cancellationToken);
+                var user = await _userRepository.GetBySpecAsync(
+                    new GetUserBasedOnRefreshTokenSpecification(request.RefreshToken),
+                    cancellationToken: cancellationToken);
 
                 if (user != null)
                 {
@@ -40,7 +42,7 @@ namespace Audiochan.Core.Features.Auth.Revoke
 
                     user.RefreshTokens.Remove(existingRefreshToken);
 
-                    await _userManager.UpdateAsync(user);
+                    await _userRepository.UpdateAsync(user, cancellationToken);
                 }
             }
 

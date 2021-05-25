@@ -14,37 +14,34 @@ namespace Audiochan.Core.Features.Users.UpdateUsername
 {
     public record UpdateUsernameRequest : IRequest<IResult<bool>>
     {
-        [JsonIgnore] public string? UserId { get; init; }
+        [JsonIgnore] public string UserId { get; init; } = string.Empty;
         public string NewUsername { get; init; } = null!;
     }
 
     public class UpdateUsernameRequestHandler : IRequestHandler<UpdateUsernameRequest, IResult<bool>>
     {
-        private readonly UserManager<User> _userManager;
         private readonly ICurrentUserService _currentUserService;
+        private readonly IUserRepository _userRepository;
+        private readonly IIdentityService _identityService;
 
-        public UpdateUsernameRequestHandler(UserManager<User> userManger, ICurrentUserService currentUserService)
+        public UpdateUsernameRequestHandler(ICurrentUserService currentUserService, IUserRepository userRepository, 
+            IIdentityService identityService)
         {
-            _userManager = userManger;
             _currentUserService = currentUserService;
+            _userRepository = userRepository;
+            _identityService = identityService;
         }
 
         public async Task<IResult<bool>> Handle(UpdateUsernameRequest request, CancellationToken cancellationToken)
         {
-            var user = await _userManager.FindByIdAsync(request.UserId);
+            var user = await _userRepository.GetByIdAsync(request.UserId, cancellationToken);
             if (user == null) return Result<bool>.Fail(ResultError.Unauthorized);
             if (user.Id != _currentUserService.GetUserId())
                 return Result<bool>.Fail(ResultError.Forbidden);
 
             // update username
-            var result = await _userManager.SetUserNameAsync(user, request.NewUsername);
-            if (!result.Succeeded) result.ToResult();
-            // update normalized username
-            await _userManager.UpdateNormalizedUserNameAsync(user);
-            // update display name
-            user.DisplayName = user.UserName;
-            await _userManager.UpdateAsync(user);
-            return Result<bool>.Success(true);
+            var result = await _identityService.UpdateUsername(user, request.NewUsername);
+            return result.ToResult();
         }
     }
 }

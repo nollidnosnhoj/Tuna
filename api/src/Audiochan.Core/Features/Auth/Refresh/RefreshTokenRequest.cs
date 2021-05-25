@@ -5,10 +5,7 @@ using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models.Interfaces;
 using Audiochan.Core.Common.Models.Responses;
-using Audiochan.Core.Entities;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Auth.Refresh
 {
@@ -19,25 +16,21 @@ namespace Audiochan.Core.Features.Auth.Refresh
 
     public class RefreshTokenRequestHandler : IRequestHandler<RefreshTokenRequest, IResult<AuthResultViewModel>>
     {
-        private readonly UserManager<User> _userManager;
         private readonly ITokenProvider _tokenProvider;
-        private readonly IDateTimeProvider _dateTimeProvider;
+        private readonly IUserRepository _userRepository;
 
-        public RefreshTokenRequestHandler(UserManager<User> userManager, ITokenProvider tokenProvider,
-            IDateTimeProvider dateTimeProvider)
+        public RefreshTokenRequestHandler(ITokenProvider tokenProvider, IUserRepository userRepository)
         {
-            _userManager = userManager;
             _tokenProvider = tokenProvider;
-            _dateTimeProvider = dateTimeProvider;
+            _userRepository = userRepository;
         }
 
         public async Task<IResult<AuthResultViewModel>> Handle(RefreshTokenRequest request,
             CancellationToken cancellationToken)
         {
-            var user = await _userManager.Users
-                .Include(u => u.RefreshTokens)
-                .SingleOrDefaultAsync(u => u.RefreshTokens
-                    .Any(t => t.Token == request.RefreshToken && t.UserId == u.Id), cancellationToken);
+            var user = await _userRepository.GetBySpecAsync(
+                new GetUserBasedOnRefreshTokenSpecification(request.RefreshToken),
+                cancellationToken: cancellationToken);
 
             if (user == null)
                 return Result<AuthResultViewModel>.Fail(ResultError.BadRequest,

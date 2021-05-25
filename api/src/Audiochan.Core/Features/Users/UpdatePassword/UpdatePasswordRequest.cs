@@ -6,39 +6,39 @@ using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models.Interfaces;
 using Audiochan.Core.Common.Models.Responses;
-using Audiochan.Core.Entities;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
 
 namespace Audiochan.Core.Features.Users.UpdatePassword
 {
     public record UpdatePasswordRequest : IRequest<IResult<bool>>
     {
-        [JsonIgnore] public string? UserId { get; init; }
+        [JsonIgnore] public string UserId { get; init; } = string.Empty;
         public string CurrentPassword { get; init; } = "";
         public string NewPassword { get; init; } = "";
     }
 
     public class UpdatePasswordRequestHandler : IRequestHandler<UpdatePasswordRequest, IResult<bool>>
     {
-        private readonly UserManager<User> _userManager;
         private readonly ICurrentUserService _currentUserService;
+        private readonly IUserRepository _userRepository;
+        private readonly IIdentityService _identityService;
 
-        public UpdatePasswordRequestHandler(UserManager<User> userManger, ICurrentUserService currentUserService)
+        public UpdatePasswordRequestHandler(ICurrentUserService currentUserService, IUserRepository userRepository, 
+            IIdentityService identityService)
         {
-            _userManager = userManger;
             _currentUserService = currentUserService;
+            _userRepository = userRepository;
+            _identityService = identityService;
         }
 
         public async Task<IResult<bool>> Handle(UpdatePasswordRequest request, CancellationToken cancellationToken)
         {
-            var user = await _userManager.FindByIdAsync(request.UserId);
+            var user = await _userRepository.GetByIdAsync(request.UserId, cancellationToken);            
             if (user == null) return Result<bool>.Fail(ResultError.Unauthorized);
             if (user.Id != _currentUserService.GetUserId())
                 return Result<bool>.Fail(ResultError.Forbidden);
 
-            // TEMPORARY UNTIL EMAIL CONFIRMATION IS SETUP
-            var result = await _userManager.ChangePasswordAsync(user, request.CurrentPassword, request.NewPassword);
+            var result = await _identityService.UpdatePassword(user, request.CurrentPassword, request.NewPassword);
             return result.ToResult();
         }
     }

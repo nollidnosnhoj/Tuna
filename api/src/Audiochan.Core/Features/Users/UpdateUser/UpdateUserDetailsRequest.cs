@@ -5,9 +5,7 @@ using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models.Interfaces;
 using Audiochan.Core.Common.Models.Responses;
-using Audiochan.Core.Entities;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
 
 namespace Audiochan.Core.Features.Users.UpdateUser
 {
@@ -21,18 +19,18 @@ namespace Audiochan.Core.Features.Users.UpdateUser
 
     public class UpdateUserDetailsRequestHandler : IRequestHandler<UpdateUserDetailsRequest, IResult<bool>>
     {
-        private readonly UserManager<User> _userManager;
         private readonly ICurrentUserService _currentUserService;
+        private readonly IUserRepository _userRepository;
 
-        public UpdateUserDetailsRequestHandler(UserManager<User> userManger, ICurrentUserService currentUserService)
+        public UpdateUserDetailsRequestHandler(ICurrentUserService currentUserService, IUserRepository userRepository)
         {
-            _userManager = userManger;
             _currentUserService = currentUserService;
+            _userRepository = userRepository;
         }
 
         public async Task<IResult<bool>> Handle(UpdateUserDetailsRequest request, CancellationToken cancellationToken)
         {
-            var user = await _userManager.FindByIdAsync(request.UserId);
+            var user = await _userRepository.GetByIdAsync(_currentUserService.GetUserId(), cancellationToken);
             if (user == null) return Result<bool>.Fail(ResultError.NotFound);
             if (user.Id != _currentUserService.GetUserId())
                 return Result<bool>.Fail(ResultError.Forbidden);
@@ -41,7 +39,7 @@ namespace Audiochan.Core.Features.Users.UpdateUser
             user.UpdateAbout(request.About);
             user.UpdateWebsite(request.Website);
 
-            await _userManager.UpdateAsync(user);
+            await _userRepository.UpdateAsync(user, cancellationToken);
             return Result<bool>.Success(true);
         }
     }

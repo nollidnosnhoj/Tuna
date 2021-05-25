@@ -14,34 +14,34 @@ namespace Audiochan.Core.Features.Users.UpdateEmail
 {
     public record UpdateEmailRequest : IRequest<IResult<bool>>
     {
-        [JsonIgnore] public string? UserId { get; init; }
+        [JsonIgnore] public string UserId { get; init; } = string.Empty;
         public string NewEmail { get; init; } = null!;
     }
 
 
     public class UpdateEmailRequestHandler : IRequestHandler<UpdateEmailRequest, IResult<bool>>
     {
-        private readonly UserManager<User> _userManager;
         private readonly ICurrentUserService _currentUserService;
+        private readonly IUserRepository _userRepository;
+        private readonly IIdentityService _identityService;
 
-        public UpdateEmailRequestHandler(UserManager<User> userManger, ICurrentUserService currentUserService)
+        public UpdateEmailRequestHandler(ICurrentUserService currentUserService, IUserRepository userRepository, 
+            IIdentityService identityService)
         {
-            _userManager = userManger;
             _currentUserService = currentUserService;
+            _userRepository = userRepository;
+            _identityService = identityService;
         }
 
         public async Task<IResult<bool>> Handle(UpdateEmailRequest request, CancellationToken cancellationToken)
         {
-            var user = await _userManager.FindByIdAsync(request.UserId);
+            var user = await _userRepository.GetByIdAsync(request.UserId, cancellationToken);
             if (user == null) return Result<bool>.Fail(ResultError.Unauthorized);
             if (user.Id != _currentUserService.GetUserId())
                 return Result<bool>.Fail(ResultError.Forbidden);
 
-            // TEMPORARY UNTIL EMAIL CONFIRMATION IS SETUP
-            var result = await _userManager.SetEmailAsync(user, request.NewEmail);
-            if (!result.Succeeded) return result.ToResult();
-            await _userManager.UpdateNormalizedEmailAsync(user);
-            return Result<bool>.Success(true);
+            var result = await _identityService.UpdateEmail(user, request.NewEmail);
+            return result.ToResult();
         }
     }
 }

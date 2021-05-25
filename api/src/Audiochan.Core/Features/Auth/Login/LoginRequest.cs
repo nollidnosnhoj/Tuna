@@ -7,7 +7,6 @@ using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Auth.Login
 {
@@ -22,19 +21,20 @@ namespace Audiochan.Core.Features.Auth.Login
     {
         private readonly UserManager<User> _userManager;
         private readonly ITokenProvider _tokenProvider;
+        private readonly IUserRepository _userRepository;
 
-        public LoginRequestHandler(UserManager<User> userManager, ITokenProvider tokenProvider)
+        public LoginRequestHandler(UserManager<User> userManager, ITokenProvider tokenProvider, IUserRepository userRepository)
         {
             _userManager = userManager;
             _tokenProvider = tokenProvider;
+            _userRepository = userRepository;
         }
 
         public async Task<IResult<AuthResultViewModel>> Handle(LoginRequest request,
             CancellationToken cancellationToken)
         {
-            var user = await _userManager.Users
-                .SingleOrDefaultAsync(u =>
-                    u.UserName == request.Login.Trim().ToLower() || u.Email == request.Login, cancellationToken);
+            var user = await _userRepository.GetBySpecAsync(new GetUserBasedOnLoginSpecification(request.Login),
+                cancellationToken: cancellationToken);
 
             if (user == null || !await _userManager.CheckPasswordAsync(user, request.Password))
                 return Result<AuthResultViewModel>.Fail(ResultError.BadRequest, "Invalid Username/Password");
