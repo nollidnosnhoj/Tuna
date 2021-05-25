@@ -13,6 +13,8 @@ Audiochan is a platform to listen to music created by independent artists.
 
 ## TODOS
 
+- Add more testings
+- Dockerize
 - Make frontend more mobile-responsive
 - Add Favorites
 - Add Playlists
