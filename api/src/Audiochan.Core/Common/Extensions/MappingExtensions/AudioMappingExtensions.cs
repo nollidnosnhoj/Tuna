@@ -11,9 +11,6 @@ namespace Audiochan.Core.Common.Extensions.MappingExtensions
 {
     public static class AudioMappingExtensions
     {
-        public static IQueryable<AudioDetailViewModel> ProjectToDetail(this IQueryable<Audio> queryable) => 
-            queryable.Select(AudioToDetailProjection());
-
         public static IQueryable<AudioViewModel> ProjectToList(this IQueryable<Audio> queryable) =>
             queryable.Select(AudioToListProjection());
 

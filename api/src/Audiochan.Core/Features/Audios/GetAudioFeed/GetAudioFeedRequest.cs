@@ -1,15 +1,8 @@
-﻿using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Extensions;
-using Audiochan.Core.Common.Extensions.MappingExtensions;
-using Audiochan.Core.Common.Extensions.QueryableExtensions;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models.Responses;
-using Audiochan.Core.Common.Settings;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Audios.GetAudioFeed
 {

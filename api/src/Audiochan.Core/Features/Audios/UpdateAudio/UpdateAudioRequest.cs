@@ -11,7 +11,6 @@ using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Entities;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Audios.UpdateAudio

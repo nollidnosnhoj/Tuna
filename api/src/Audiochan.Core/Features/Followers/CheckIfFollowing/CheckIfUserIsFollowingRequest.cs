@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Interfaces;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Followers.CheckIfFollowing
 {

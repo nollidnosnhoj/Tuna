@@ -1,5 +1,4 @@
-﻿using System.Text;
-using Ardalis.Specification;
+﻿using Ardalis.Specification;
 using Audiochan.Core.Common.Extensions.MappingExtensions;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Audios;

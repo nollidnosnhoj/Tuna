@@ -14,9 +14,6 @@ namespace Audiochan.Core.Common.Extensions.MappingExtensions
         public static IQueryable<CurrentUserViewModel> ProjectToCurrentUser(this IQueryable<User> queryable) =>
             queryable.Select(CurrentUserProjection());
 
-        public static IQueryable<ProfileViewModel> ProjectToUser(this IQueryable<User> queryable, string userId) =>
-            queryable.Select(UserProjection(userId));
-
         public static ProfileViewModel MapToProfile(this User user, string userId, bool returnNullIfFail = false) =>
             UserProjection(userId).CompileFast(returnNullIfFail).Invoke(user);
 
