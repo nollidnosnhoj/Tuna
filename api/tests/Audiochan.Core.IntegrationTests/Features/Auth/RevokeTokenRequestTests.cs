@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Features.Auth.Login;
 using Audiochan.Core.Features.Auth.Revoke;
-using Bogus;
+using Audiochan.Tests.Common.Fakers.Auth;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
@@ -23,11 +22,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Auth
         [Fact]
         public async Task ShouldSuccessfullyRevokeToken()
         {
-            var loginRequestFaker = new Faker<LoginRequest>()
-                .RuleFor(x => x.Login, f => f.Name.FirstName().GenerateSlug())
-                .RuleFor(x => x.Password, f => f.Internet.Password());
-
-            var loginRequest = loginRequestFaker.Generate();
+            var loginRequest = new LoginRequestFaker().Generate();
 
             var (userId, _) = await _fixture.RunAsUserAsync(loginRequest.Login, loginRequest.Password, Array.Empty<string>());
             
@@ -53,11 +48,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Auth
         [Fact]
         public async Task ShouldSuccessfullyRevokeOneToken()
         {
-            var loginRequestFaker = new Faker<LoginRequest>()
-                .RuleFor(x => x.Login, f => f.Name.FirstName().GenerateSlug())
-                .RuleFor(x => x.Password, f => f.Internet.Password());
-
-            var loginRequest = loginRequestFaker.Generate();
+            var loginRequest = new LoginRequestFaker().Generate();
 
             var (userId, _) = await _fixture.RunAsUserAsync(loginRequest.Login, loginRequest.Password, Array.Empty<string>());
             

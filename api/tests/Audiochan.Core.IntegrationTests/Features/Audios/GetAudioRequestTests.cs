@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Interfaces;
+using Audiochan.Core.Common.Constants;
 using Audiochan.Core.Features.Audios;
 using Audiochan.Core.Features.Audios.GetAudio;
-using Audiochan.Tests.Common.Builders;
-using Audiochan.Tests.Common.Extensions;
+using Audiochan.Tests.Common.Fakers.Audios;
 using FluentAssertions;
-using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace Audiochan.Core.IntegrationTests.Features.Audios
@@ -27,9 +24,8 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
         {
             // Assign
             var (ownerId, _) = await _fixture.RunAsDefaultUserAsync();
-            var audio = new AudioBuilder()
-                .UseTestDefaults(ownerId, "myaudio.mp3")
-                .Build("test");
+            var audio = new AudioFaker(ownerId).Generate();
+            
             await _fixture.InsertAsync(audio);
 
             // Act
@@ -45,26 +41,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             // Assign
             var (userId, _) = await _fixture.RunAsDefaultUserAsync();
 
-            var userTags = new List<string>
-            {
-                "oranges", "apples"
-            };
-
-            var tags = await _fixture.ExecuteScopeWithTransactionAsync(sp =>
-            {
-                var repo = sp.GetRequiredService<ITagRepository>();
-                return repo.GetAppropriateTags(userTags);
-            });
-
-            var audio = new AudioBuilder()
-                .AddFileName("test.mp3")
-                .AddTitle("Test Song")
-                .AddFileSize(100)
-                .AddDuration(100)
-                .AddTags(tags)
-                .AddUserId(userId)
-                .SetPublic(true)
-                .Build("test");
+            var audio = new AudioFaker(userId).Generate();
             
             await _fixture.InsertAsync(audio);
 
@@ -75,9 +52,16 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             result.Should().NotBeNull();
             result.Should().BeOfType<AudioDetailViewModel>();
             result!.Title.Should().Be(audio.Title);
-            result.Tags.Count.Should().Be(2);
-            result.Tags.Should().Contain("apples");
-            result.Tags.Should().Contain("oranges");
+            result.Description.Should().Be(audio.Description);
+            result.Created.Should().BeCloseTo(audio.Created);
+            result.Duration.Should().Be(audio.Duration);
+            result.Picture.Should().BeNullOrEmpty();
+            result.Tags.Count.Should().Be(audio.Tags.Count);
+            result.AudioUrl.Should().Be(string.Format(MediaLinkInvariants.AudioUrl, audio.Id, audio.FileName));
+            result.FileExt.Should().Be(audio.FileExt);
+            result.FileSize.Should().Be(audio.FileSize);
+            result.IsPublic.Should().Be(audio.IsPublic);
+            result.LastModified.Should().BeNull();
         }
     }
 }

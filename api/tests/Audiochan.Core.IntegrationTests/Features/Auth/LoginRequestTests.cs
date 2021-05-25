@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Extensions;
-using Audiochan.Core.Features.Auth.Login;
-using Bogus;
+using Audiochan.Tests.Common.Fakers.Auth;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
@@ -22,11 +20,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Auth
         [Fact]
         public async Task ShouldSuccessfullyLoginAndCreateRefreshToken()
         {
-            var loginRequestFaker = new Faker<LoginRequest>()
-                .RuleFor(x => x.Login, f => f.Name.FirstName().GenerateSlug())
-                .RuleFor(x => x.Password, f => f.Internet.Password());
-
-            var request = loginRequestFaker.Generate();
+            var request = new LoginRequestFaker().Generate();
             
             var (userId, _) = await _fixture.RunAsUserAsync(request.Login, request.Password, Array.Empty<string>());
             

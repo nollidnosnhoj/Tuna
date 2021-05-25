@@ -3,8 +3,7 @@ using System.Threading.Tasks;
 using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Audios.RemoveAudio;
-using Audiochan.Tests.Common.Builders;
-using Audiochan.Tests.Common.Extensions;
+using Audiochan.Tests.Common.Fakers.Audios;
 using FluentAssertions;
 using Xunit;
 
@@ -27,9 +26,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             var (ownerId, _) =
                 await _fixture.RunAsUserAsync("kopacetic", Guid.NewGuid().ToString(), Array.Empty<string>());
 
-            var audio = new AudioBuilder()
-                .UseTestDefaults(ownerId, "testaudio.mp3")
-                .Build("test");
+            var audio = new AudioFaker(ownerId).Generate();
 
             await _fixture.InsertAsync(audio);
 
@@ -50,9 +47,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
         public async Task ShouldRemoveAudio()
         {
             var (ownerId, _) = await _fixture.RunAsDefaultUserAsync();
-            var audio = new AudioBuilder()
-                .UseTestDefaults(ownerId, "testaudio.mp3")
-                .Build("test");
+            var audio = new AudioFaker(ownerId).Generate();
             await _fixture.InsertAsync(audio);
 
             var command = new RemoveAudioRequest(audio.Id);

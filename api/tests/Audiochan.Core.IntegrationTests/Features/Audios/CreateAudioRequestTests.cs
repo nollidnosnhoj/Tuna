@@ -1,8 +1,7 @@
-﻿using System;
-using System.Threading.Tasks;
-using Audiochan.Core.Common.Extensions;
+﻿using System.Threading.Tasks;
 using Audiochan.Core.Features.Audios.CreateAudio;
 using Audiochan.Tests.Common.Fakers;
+using Audiochan.Tests.Common.Fakers.Audios;
 using Bogus;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
@@ -14,19 +13,17 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
     public class CreateAudioRequestTests
     {
         private readonly SliceFixture _fixture;
-        private readonly Faker<CreateAudioRequest> _faker;
 
         public CreateAudioRequestTests(SliceFixture fixture)
         {
             _fixture = fixture;
-            _faker = AudioFakers.CreateAudioRequestFaker();
         }
 
         [Fact]
         public async Task SuccessfullyCreateAudio()
         {
             var (adminId, adminUsername) = await _fixture.RunAsAdministratorAsync();
-            var request = _faker.Generate();
+            var request = new CreateAudioRequestFaker().Generate();
 
             var response = await _fixture.SendAsync(request);
 

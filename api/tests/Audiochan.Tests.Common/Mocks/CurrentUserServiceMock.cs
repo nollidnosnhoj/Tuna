@@ -1,7 +1,7 @@
 ﻿using Audiochan.Core.Common.Interfaces;
 using Moq;
 
-namespace Audiochan.Core.IntegrationTests.Mocks
+namespace Audiochan.Tests.Common.Mocks
 {
     public static class CurrentUserServiceMock
     {
