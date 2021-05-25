@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -55,6 +56,9 @@ namespace Audiochan.IntegrationTests
 
         public class AudiochanTestApplicationFactory : WebApplicationFactory<Startup>
         {
+            private readonly string _connectionString =
+                "Server=localhost;Port=5433;Database=audiochan_test;Username=postgres;Password=pokemon123;";
+            
             protected override IHost CreateHost(IHostBuilder builder)
             {
                 builder.UseContentRoot(Directory.GetCurrentDirectory());
@@ -63,10 +67,12 @@ namespace Audiochan.IntegrationTests
 
             protected override void ConfigureWebHost(IWebHostBuilder builder)
             {
-                builder.ConfigureAppConfiguration((hostingBuilder, configBuilder) =>
+                builder.ConfigureAppConfiguration((_, configBuilder) =>
                 {
-                    configBuilder.AddJsonFile("appsettings.json", true, true);
-                    configBuilder.AddEnvironmentVariables();
+                    configBuilder.AddInMemoryCollection(new Dictionary<string, string>
+                    {
+                        {"ConnectionStrings:Database", _connectionString}
+                    });
                 });
 
                 builder.ConfigureServices(services =>
