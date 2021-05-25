@@ -2,6 +2,10 @@
 
 Audiochan is a platform to listen to music created by independent artists.
 
+## Demos
+
+- [Demo #1](https://www.youtube.com/watch?v=XFWvhNB-YW4). Demonstrates uploading and audio player.
+
 ## Branches
 
 - `staging` - Pull request from and to this branch
