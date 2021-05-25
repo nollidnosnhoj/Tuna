@@ -27,7 +27,8 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
         {
             var taggifyTags = tags.FormatTags();
 
-            var tagEntities = await GetListBySpecAsync(new GetListOfTagsSpecification(taggifyTags), cancellationToken: cancellationToken);
+            var tagEntities = await GetListBySpecAsync(new GetListOfTagsSpecification(taggifyTags), 
+                cancellationToken: cancellationToken);
 
             foreach (var tag in taggifyTags.Where(tag => tagEntities.All(t => t.Name != tag)))
             {

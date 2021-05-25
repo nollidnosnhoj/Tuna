@@ -107,7 +107,7 @@ namespace Audiochan.Core.Entities
             {
                 foreach (var audioTag in this.Tags)
                 {
-                    if (tags.All(t => t.Id != audioTag.Id))
+                    if (tags.All(t => t.Name != audioTag.Name))
                     {
                         this.Tags.Remove(audioTag);
                     }
@@ -115,7 +115,7 @@ namespace Audiochan.Core.Entities
 
                 foreach (var tag in tags)
                 {
-                    if (this.Tags.All(t => t.Id != tag.Id))
+                    if (this.Tags.All(t => t.Name != tag.Name))
                         this.Tags.Add(tag);
                 }
             }
