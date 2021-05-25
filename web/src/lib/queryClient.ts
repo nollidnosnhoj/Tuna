@@ -1,5 +1,4 @@
 import { QueryClient } from "react-query";
-import { isAxiosError } from "~/utils/http";
 import { errorToast } from "~/utils/toast";
 
 const queryClient = new QueryClient({

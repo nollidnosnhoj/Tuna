@@ -12,7 +12,6 @@ namespace Audiochan.Core.Features.Users.GetUserAudios
             Query.Select(AudioMappingExtensions.AudioToListProjection())
                 .AsNoTracking()
                 .Include(a => a.User)
-                .Where(a => a.IsPublic)
                 .Where(a => username != null && username == a.User.UserName.ToLower() )
                 .Take(size);
 

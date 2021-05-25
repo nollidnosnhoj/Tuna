@@ -7,6 +7,7 @@ import {
   VStack,
   Text,
   Progress,
+  chakra,
 } from "@chakra-ui/react";
 import { Formik, FormikHelpers } from "formik";
 import { useRouter } from "next/router";
@@ -133,11 +134,23 @@ const AudioUploadNextPage: React.FC = () => {
     return (
       <Page title="Uploading...">
         <Box display="flex" justifyContent="center">
-          <VStack marginY={10}>
-            <Progress hasStripe value={uploadProgress} />
-            <Heading as="h2" size="md">
-              Uploading...
-            </Heading>
+          <VStack marginY={10} width="100%" spacing={4}>
+            <Progress
+              colorScheme="primary"
+              hasStripe
+              value={uploadProgress}
+              width="full"
+            />
+            <chakra.div
+              display="flex"
+              flexDirection="column"
+              alignItems="center"
+            >
+              <Heading as="h2" size="md">
+                Uploading Your Audio into the Internet...
+              </Heading>
+              <chakra.p>Do not leave this page!</chakra.p>
+            </chakra.div>
           </VStack>
         </Box>
       </Page>

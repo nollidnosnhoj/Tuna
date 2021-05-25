@@ -67,7 +67,7 @@ export default function AudioDropzone(props: AudioDropzoneProps) {
         {value ? (
           <VStack>
             <Flex alignItems="center">
-              <Heading size="md">{value.name}</Heading>
+              <Heading size="sm">{value.name}</Heading>
               <CloseButton
                 marginLeft={4}
                 aria-label="Remove File"
@@ -78,7 +78,7 @@ export default function AudioDropzone(props: AudioDropzoneProps) {
           </VStack>
         ) : (
           <VStack>
-            <Heading size="md">Drag and drop your audio file here.</Heading>
+            <Heading size="sm">Drag and drop your audio file here.</Heading>
             <chakra.div>
               <Button colorScheme="primary" onClick={open}>
                 Or click to upload your file.
