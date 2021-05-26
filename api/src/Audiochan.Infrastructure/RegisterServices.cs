@@ -1,11 +1,9 @@
 ﻿using Amazon.S3;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Infrastructure.Identity;
-using Audiochan.Infrastructure.Image;
 using Audiochan.Infrastructure.Persistence;
 using Audiochan.Infrastructure.Persistence.Repositories;
 using Audiochan.Infrastructure.Persistence.UnitOfWorks;
-using Audiochan.Infrastructure.Security;
 using Audiochan.Infrastructure.Shared;
 using Audiochan.Infrastructure.Storage;
 using Microsoft.EntityFrameworkCore;
@@ -25,7 +23,7 @@ namespace Audiochan.Infrastructure
             services.AddAWSService<IAmazonS3>();
             services.AddTransient<IStorageService, AmazonS3Service>();
             services.AddTransient<IIdentityService, IdentityService>();
-            services.AddTransient<IImageService, ImageService>();
+            services.AddTransient<IImageProcessingService, ImageProcessingService>();
             services.AddTransient<ITokenProvider, TokenProvider>();
             services.AddTransient<IDateTimeProvider, DateTimeProvider>();
             return services;

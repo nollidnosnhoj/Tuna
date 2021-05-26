@@ -28,19 +28,19 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
         private readonly IDateTimeProvider _dateTimeProvider;
         private readonly IStorageService _storageService;
         private readonly ICurrentUserService _currentUserService;
-        private readonly IImageService _imageService;
+        private readonly IImageProcessingService _imageProcessingService;
         private readonly IUnitOfWork _unitOfWork;
 
         public UpdateAudioPictureRequestHandler(IOptions<MediaStorageSettings> options,
             IStorageService storageService,
             ICurrentUserService currentUserService,
-            IImageService imageService,
+            IImageProcessingService imageProcessingService,
             IDateTimeProvider dateTimeProvider, IUnitOfWork unitOfWork)
         {
             _storageSettings = options.Value;
             _storageService = storageService;
             _currentUserService = currentUserService;
-            _imageService = imageService;
+            _imageProcessingService = imageProcessingService;
             _dateTimeProvider = dateTimeProvider;
             _unitOfWork = unitOfWork;
         }
@@ -62,7 +62,7 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
         
             var blobName = $"{audio.Id}/{_dateTimeProvider.Now:yyyyMMddHHmmss}.jpg";
             
-            await _imageService.UploadImage(request.Data, container, blobName, cancellationToken);
+            await _imageProcessingService.UploadImage(request.Data, container, blobName, cancellationToken);
             
             if (!string.IsNullOrEmpty(audio.Picture))
                 await _storageService.RemoveAsync(_storageSettings.Image.Bucket, container, audio.Picture, cancellationToken);

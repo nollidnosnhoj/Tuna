@@ -13,7 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Audiochan.Infrastructure.Security
+namespace Audiochan.Infrastructure.Identity
 {
     public class TokenProvider : ITokenProvider
     {

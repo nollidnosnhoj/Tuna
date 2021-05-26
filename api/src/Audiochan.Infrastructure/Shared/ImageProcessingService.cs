@@ -9,14 +9,14 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 
-namespace Audiochan.Infrastructure.Image
+namespace Audiochan.Infrastructure.Shared
 {
-    public class ImageService : IImageService
+    public class ImageProcessingService : IImageProcessingService
     {
         private readonly IStorageService _storageService;
         private readonly MediaStorageSettings _storageSettings;
 
-        public ImageService(IStorageService storageService, IOptions<MediaStorageSettings> storageSettings)
+        public ImageProcessingService(IStorageService storageService, IOptions<MediaStorageSettings> storageSettings)
         {
             _storageService = storageService;
             _storageSettings = storageSettings.Value;
