@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.Specification;
@@ -30,9 +31,24 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
             ISpecification<Audio, AudioViewModel> specification,
             string? cursor, CancellationToken cancellationToken = default)
         {
-            var list = await ApplySpecification(specification)
-                .FilterUsingCursor(cursor)
+            var queryable = ApplySpecification(specification);
+            
+            if (!string.IsNullOrEmpty(cursor))
+            {
+                var (since, id) = CursorHelpers.DecodeCursor(cursor);
+                if (Guid.TryParse(id, out var audioId) && since.HasValue)
+                {
+                    queryable = queryable
+                        .Where(a => a.Uploaded < since.GetValueOrDefault() 
+                                    || a.Uploaded == since.GetValueOrDefault() && a.Id.CompareTo(audioId) < 0);
+                }
+            }
+
+            var list = await queryable
+                .OrderByDescending(a => a.Uploaded)
+                .ThenByDescending(a => a.Id)
                 .ToListAsync(cancellationToken);
+
 
             var lastAudio = list.LastOrDefault();
 

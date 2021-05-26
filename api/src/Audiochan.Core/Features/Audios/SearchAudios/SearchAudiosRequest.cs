@@ -1,4 +1,6 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models.Interfaces;
@@ -18,17 +20,25 @@ namespace Audiochan.Core.Features.Audios.SearchAudios
 
     public class SearchAudiosRequestHandler : IRequestHandler<SearchAudiosRequest, PagedList<AudioViewModel>>
     {
-        private readonly ISearchService _searchService;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public SearchAudiosRequestHandler(ISearchService searchService)
+        public SearchAudiosRequestHandler(IUnitOfWork unitOfWork)
         {
-            _searchService = searchService;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<PagedList<AudioViewModel>> Handle(SearchAudiosRequest request,
             CancellationToken cancellationToken)
         {
-            return await _searchService.SearchAudios(request, cancellationToken);
+            var parsedTags = !string.IsNullOrWhiteSpace(request.Tags)
+                ? request.Tags.Split(',')
+                    .Select(t => t.Trim().ToLower())
+                    .Where(t => !string.IsNullOrWhiteSpace(t))
+                    .ToList()
+                : new List<string>();
+            
+            return await _unitOfWork.Audios.GetPagedListBySpec(new SearchAudioSpecification(request.Q, parsedTags),
+                request.Page, request.Size, cancellationToken: cancellationToken);
         }
     }
 }

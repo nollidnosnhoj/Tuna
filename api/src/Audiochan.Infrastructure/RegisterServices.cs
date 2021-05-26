@@ -5,7 +5,6 @@ using Audiochan.Infrastructure.Image;
 using Audiochan.Infrastructure.Persistence;
 using Audiochan.Infrastructure.Persistence.Repositories;
 using Audiochan.Infrastructure.Persistence.UnitOfWorks;
-using Audiochan.Infrastructure.Search;
 using Audiochan.Infrastructure.Security;
 using Audiochan.Infrastructure.Shared;
 using Audiochan.Infrastructure.Storage;
@@ -25,7 +24,6 @@ namespace Audiochan.Infrastructure
             ConfigureRepositories(services);
             services.AddAWSService<IAmazonS3>();
             services.AddTransient<IStorageService, AmazonS3Service>();
-            services.AddTransient<ISearchService, DatabaseSearchService>();
             services.AddTransient<IIdentityService, IdentityService>();
             services.AddTransient<IImageService, ImageService>();
             services.AddTransient<ITokenProvider, TokenProvider>();

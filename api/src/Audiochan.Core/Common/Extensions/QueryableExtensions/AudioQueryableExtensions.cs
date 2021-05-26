@@ -26,24 +26,6 @@ namespace Audiochan.Core.Common.Extensions.QueryableExtensions
             return queryable.FilterByTags(parsedTags);
         }
 
-        public static IQueryable<AudioViewModel> FilterUsingCursor(this IQueryable<AudioViewModel> queryable, string? cursor)
-        {
-            if (!string.IsNullOrEmpty(cursor))
-            {
-                var (since, id) = CursorHelpers.DecodeCursor(cursor);
-                if (Guid.TryParse(id, out var audioId) && since.HasValue)
-                {
-                    queryable = queryable.Where(a => a.Uploaded < since.GetValueOrDefault()
-                                                     || (a.Uploaded == since.GetValueOrDefault() 
-                                                         && a.Id.CompareTo(audioId) < 0));
-                }
-            }
-
-            return queryable
-                .OrderByDescending(a => a.Uploaded)
-                .ThenByDescending(a => a.Id);
-        }
-        
         private static IQueryable<Audio> FilterByTags(this IQueryable<Audio> queryable, string[] tags)
         {
             return tags.Length > 0
