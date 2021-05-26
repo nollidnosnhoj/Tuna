@@ -7,18 +7,18 @@ namespace Audiochan.Core.Features.Audios.GetAudioList
 {
     public sealed class GetAudioListSpecification : Specification<Audio, AudioViewModel>
     {
-        public GetAudioListSpecification(int size, string? tag = null)
+        public GetAudioListSpecification(string? tag = null)
         {
-            Query.Select(AudioMappingExtensions.AudioToListProjection())
-                .AsNoTracking()
+            Query.AsNoTracking()
                 .Include(a => a.User)
-                .Where(a => a.IsPublic)
-                .Take(size);
+                .Where(a => a.IsPublic);
 
             if (!string.IsNullOrWhiteSpace(tag))
             {
                 Query.Where(a => a.Tags.Any(t => t.Name == tag));
             }
+
+            Query.Select(AudioMappingExtensions.AudioToListProjection());
         }
     }
 }

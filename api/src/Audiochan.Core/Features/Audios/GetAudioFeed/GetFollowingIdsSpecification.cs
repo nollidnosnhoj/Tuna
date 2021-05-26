@@ -7,9 +7,10 @@ namespace Audiochan.Core.Features.Audios.GetAudioFeed
     {
         public GetFollowingIdsSpecification(string userId)
         {
-            Query.Select(user => user.TargetId)
-                .AsNoTracking()
+            Query.AsNoTracking()
                 .Where(user => user.ObserverId == userId);
+
+            Query.Select(user => user.TargetId);
         }
     }
 }

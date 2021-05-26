@@ -26,8 +26,8 @@ namespace Audiochan.Core.Features.Audios.GetAudioList
         public async Task<CursorList<AudioViewModel>> Handle(GetAudioListRequest request,
             CancellationToken cancellationToken)
         {
-            return await _unitOfWork.Audios.GetCursorPaginationAsync(new GetAudioListSpecification(request.Size, request.Tag),
-                request.Cursor, cancellationToken);
+            return await _unitOfWork.Audios.GetCursorPaginationAsync(
+                new GetAudioListSpecification(request.Tag), request.Cursor, request.Size, cancellationToken);
         }
     }
 }

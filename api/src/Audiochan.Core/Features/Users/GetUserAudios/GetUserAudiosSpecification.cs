@@ -8,13 +8,11 @@ namespace Audiochan.Core.Features.Users.GetUserAudios
 {
     public sealed class GetUserAudiosSpecification : Specification<Audio, AudioViewModel>
     {
-        public GetUserAudiosSpecification(string? username, string currentUserId = "", int size = 15)
+        public GetUserAudiosSpecification(string? username, string currentUserId = "")
         {
-            Query.Select(AudioMappingExtensions.AudioToListProjection())
-                .AsNoTracking()
+            Query.AsNoTracking()
                 .Include(a => a.User)
-                .Where(a => username != null && username == a.User.UserName.ToLower() )
-                .Take(size);
+                .Where(a => username != null && username == a.User.UserName.ToLower());
 
             if (!string.IsNullOrEmpty(currentUserId))
             {
@@ -24,6 +22,8 @@ namespace Audiochan.Core.Features.Users.GetUserAudios
             {
                 Query.Where(a => a.IsPublic);
             }
+
+            Query.Select(AudioMappingExtensions.AudioToListProjection());
         }
     }
 }

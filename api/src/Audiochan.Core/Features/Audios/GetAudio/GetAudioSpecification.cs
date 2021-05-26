@@ -9,11 +9,12 @@ namespace Audiochan.Core.Features.Audios.GetAudio
     {
         public GetAudioSpecification(Guid audioId)
         {
-            Query.Select(AudioMappingExtensions.AudioToDetailProjection())
-                .AsNoTracking()
+            Query.AsNoTracking()
                 .Include(a => a.Tags)
                 .Include(a => a.User)
                 .Where(a => a.Id == audioId);
+
+            Query.Select(AudioMappingExtensions.AudioToDetailProjection());
         }
     }
 }

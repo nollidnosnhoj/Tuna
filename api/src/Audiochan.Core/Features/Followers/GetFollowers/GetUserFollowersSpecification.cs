@@ -8,13 +8,13 @@ namespace Audiochan.Core.Features.Followers.GetFollowers
     {
         public GetUserFollowersSpecification(string username)
         {
-            Query
-                .Select(FollowerMappingExtensions.FollowerToListProjection())
-                .AsNoTracking()
+            Query.AsNoTracking()
                 .Include(u => u.Target)
                 .Include(u => u.Observer)
                 .Where(u => u.Target.UserName == username.Trim().ToLower())
                 .OrderByDescending(x => x.FollowedDate);
+
+            Query.Select(FollowerMappingExtensions.FollowerToListProjection());
         }
     }
 }

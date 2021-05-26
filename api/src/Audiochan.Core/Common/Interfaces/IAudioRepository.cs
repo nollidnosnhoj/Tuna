@@ -11,6 +11,6 @@ namespace Audiochan.Core.Common.Interfaces
     public interface IAudioRepository : IGenericRepository<Audio>
     {
         Task<CursorList<AudioViewModel>> GetCursorPaginationAsync(ISpecification<Audio, AudioViewModel> specification,
-            string? cursor, CancellationToken cancellationToken = default);
+            string? cursor, int size = 30, CancellationToken cancellationToken = default);
     }
 }

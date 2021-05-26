@@ -33,8 +33,8 @@ namespace Audiochan.Core.Features.Users.GetUserAudios
             var currentUserId = _currentUserService.GetUserId();
 
             return await _unitOfWork.Audios.GetCursorPaginationAsync(
-                new GetUserAudiosSpecification(request.Username, currentUserId, request.Size), 
-                request.Cursor, cancellationToken);
+                new GetUserAudiosSpecification(request.Username, currentUserId), 
+                request.Cursor, request.Size, cancellationToken);
         }
     }
 }

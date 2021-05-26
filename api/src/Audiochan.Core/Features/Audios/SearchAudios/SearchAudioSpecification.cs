@@ -11,8 +11,7 @@ namespace Audiochan.Core.Features.Audios.SearchAudios
     {
         public SearchAudioSpecification(string searchTerm, IReadOnlyCollection<string> tags)
         {
-            Query.Select(AudioMappingExtensions.AudioToListProjection())
-                .AsNoTracking()
+            Query.AsNoTracking()
                 .Include(x => x.Tags)
                 .Include(x => x.User)
                 .Where(x => x.IsPublic);
@@ -22,6 +21,8 @@ namespace Audiochan.Core.Features.Audios.SearchAudios
 
             if (tags.Count > 0)
                 Query.Where(a => a.Tags.Any(x => tags.Contains(x.Name)));
+
+            Query.Select(AudioMappingExtensions.AudioToListProjection());
         }
     }
 }

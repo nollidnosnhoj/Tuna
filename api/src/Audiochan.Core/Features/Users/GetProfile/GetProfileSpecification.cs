@@ -8,12 +8,13 @@ namespace Audiochan.Core.Features.Users.GetProfile
     {
         public GetProfileSpecification(string username, string currentUserId = "")
         {
-            Query.Select(UserMappingExtensions.UserProjection(currentUserId))
-                .AsNoTracking()
+            Query.AsNoTracking()
                 .Include(u => u.Followers)
                 .Include(u => u.Followings)
                 .Include(u => u.Audios)
                 .Where(u => u.UserName == username.Trim().ToLower());
+
+            Query.Select(UserMappingExtensions.UserProjection(currentUserId));
         }
     }
 }

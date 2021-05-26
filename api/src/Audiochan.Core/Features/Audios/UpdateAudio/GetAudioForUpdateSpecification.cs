@@ -8,8 +8,7 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
     {
         public GetAudioForUpdateSpecification(Guid audioId)
         {
-            Query
-                .Include(a => a.User)
+            Query.Include(a => a.User)
                 .Include(a => a.Tags)
                 .Where(a => a.Id == audioId);
         }

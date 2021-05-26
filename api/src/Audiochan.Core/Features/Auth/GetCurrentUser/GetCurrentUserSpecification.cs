@@ -8,9 +8,10 @@ namespace Audiochan.Core.Features.Auth.GetCurrentUser
     {
         public GetCurrentUserSpecification(string currentUserId)
         {
-            Query.Select(UserMappingExtensions.CurrentUserProjection())
-                .AsNoTracking()
+            Query.AsNoTracking()
                 .Where(u => u.Id == currentUserId);
+
+            Query.Select(UserMappingExtensions.CurrentUserProjection());
         }
     }
 }

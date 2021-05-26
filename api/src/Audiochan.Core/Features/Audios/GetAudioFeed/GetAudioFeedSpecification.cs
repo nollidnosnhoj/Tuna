@@ -10,13 +10,13 @@ namespace Audiochan.Core.Features.Audios.GetAudioFeed
     {
         public GetAudioFeedSpecification(List<string> followedIds, int size = 15)
         {
-            Query.Select(AudioMappingExtensions.AudioToListProjection())
-                .AsNoTracking()
+            Query.AsNoTracking()
                 .Include(a => a.User)
                 .Where(a => a.IsPublic)
                 .Where(a => followedIds.Contains(a.UserId))
-                .OrderByDescending(a => a.Created)
-                .Take(size);
+                .OrderByDescending(a => a.Created);
+
+            Query.Select(AudioMappingExtensions.AudioToListProjection());
         }
     }
 }

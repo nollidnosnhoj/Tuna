@@ -29,7 +29,7 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
 
         public async Task<CursorList<AudioViewModel>> GetCursorPaginationAsync(
             ISpecification<Audio, AudioViewModel> specification,
-            string? cursor, CancellationToken cancellationToken = default)
+            string? cursor, int size = 30, CancellationToken cancellationToken = default)
         {
             var queryable = ApplySpecification(specification);
             
@@ -47,6 +47,7 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
             var list = await queryable
                 .OrderByDescending(a => a.Uploaded)
                 .ThenByDescending(a => a.Id)
+                .Take(size)
                 .ToListAsync(cancellationToken);
 
 

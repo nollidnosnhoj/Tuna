@@ -29,7 +29,7 @@ namespace Audiochan.Core.Features.Audios.GetAudioFeed
                 .GetListBySpecAsync(new GetFollowingIdsSpecification(request.UserId), cancellationToken: cancellationToken);
 
             return await _unitOfWork.Audios
-                .GetCursorPaginationAsync(new GetAudioFeedSpecification(followedIds), request.Cursor, cancellationToken);
+                .GetCursorPaginationAsync(new GetAudioFeedSpecification(followedIds), request.Cursor, cancellationToken: cancellationToken);
         }
     }
 }
