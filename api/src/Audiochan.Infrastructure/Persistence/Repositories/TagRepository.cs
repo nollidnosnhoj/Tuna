@@ -11,7 +11,7 @@ using Audiochan.Core.Entities;
 
 namespace Audiochan.Infrastructure.Persistence.Repositories
 {
-    public class TagRepository : EfRepository<Tag>, ITagRepository
+    internal class TagRepository : EfRepository<Tag>, ITagRepository
     {
         public TagRepository([NotNull] ApplicationDbContext dbContext) : base(dbContext)
         {

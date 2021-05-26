@@ -5,7 +5,7 @@ using JetBrains.Annotations;
 
 namespace Audiochan.Infrastructure.Persistence.Repositories
 {
-    public class UserRepository : EfRepository<User>, IUserRepository
+    internal class UserRepository : EfRepository<User>, IUserRepository
     {
         public UserRepository([NotNull] ApplicationDbContext dbContext) : base(dbContext)
         {

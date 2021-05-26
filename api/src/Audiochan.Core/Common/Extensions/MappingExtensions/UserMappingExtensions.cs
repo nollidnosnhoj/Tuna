@@ -12,11 +12,8 @@ namespace Audiochan.Core.Common.Extensions.MappingExtensions
 {
     public static class UserMappingExtensions
     {
-        public static IQueryable<CurrentUserViewModel> ProjectToCurrentUser(this IQueryable<User> queryable) =>
-            queryable.Select(CurrentUserProjection());
-
         public static ProfileViewModel MapToProfile(this User user, string userId, bool returnNullIfFail = false) =>
-            UserProjection(userId).CompileFast(returnNullIfFail).Invoke(user);
+            ProfileProjection(userId).CompileFast(returnNullIfFail).Invoke(user);
 
         public static Expression<Func<User, CurrentUserViewModel>> CurrentUserProjection()
         {
@@ -28,7 +25,7 @@ namespace Audiochan.Core.Common.Extensions.MappingExtensions
             };
         }
 
-        public static Expression<Func<User, ProfileViewModel>> UserProjection(string userId)
+        public static Expression<Func<User, ProfileViewModel>> ProfileProjection(string userId)
         {
             return user => new ProfileViewModel
             {

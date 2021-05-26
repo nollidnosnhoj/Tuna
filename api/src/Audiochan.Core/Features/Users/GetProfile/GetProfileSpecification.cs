@@ -14,7 +14,7 @@ namespace Audiochan.Core.Features.Users.GetProfile
                 .Include(u => u.Audios)
                 .Where(u => u.UserName == username.Trim().ToLower());
 
-            Query.Select(UserMappingExtensions.UserProjection(currentUserId));
+            Query.Select(UserMappingExtensions.ProfileProjection(currentUserId));
         }
     }
 }

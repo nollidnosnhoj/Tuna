@@ -14,7 +14,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Infrastructure.Persistence.Repositories
 {
-    public class EfRepository<T> : IGenericRepository<T> where T : class
+    internal class EfRepository<T> : IGenericRepository<T> where T : class
     {
         protected readonly ApplicationDbContext DbContext;
         protected readonly DbSet<T> DbSet;

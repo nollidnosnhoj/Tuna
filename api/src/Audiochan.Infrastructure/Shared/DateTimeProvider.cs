@@ -3,7 +3,7 @@ using Audiochan.Core.Common.Interfaces;
 
 namespace Audiochan.Infrastructure.Shared
 {
-    public class DateTimeProvider : IDateTimeProvider
+    internal class DateTimeProvider : IDateTimeProvider
     {
         public DateTime Now => DateTime.UtcNow;
     }

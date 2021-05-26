@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Audiochan.Infrastructure.Persistence.UnitOfWorks
 {
-    public class UnitOfWork : IUnitOfWork
+    internal class UnitOfWork : IUnitOfWork
     {
         private readonly ApplicationDbContext _dbContext;
         private IDbContextTransaction? _currentTransaction;

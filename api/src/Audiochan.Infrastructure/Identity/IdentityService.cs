@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Audiochan.Infrastructure.Identity
 {
-    public class IdentityService : IIdentityService
+    internal class IdentityService : IIdentityService
     {
         private readonly UserManager<User> _userManager;
 

@@ -11,7 +11,7 @@ using SixLabors.ImageSharp.Processing;
 
 namespace Audiochan.Infrastructure.Shared
 {
-    public class ImageProcessingService : IImageProcessingService
+    internal class ImageProcessingService : IImageProcessingService
     {
         private readonly IStorageService _storageService;
         private readonly MediaStorageSettings _storageSettings;

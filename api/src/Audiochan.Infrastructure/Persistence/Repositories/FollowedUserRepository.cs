@@ -5,7 +5,7 @@ using JetBrains.Annotations;
 
 namespace Audiochan.Infrastructure.Persistence.Repositories
 {
-    public class FollowedUserRepository : EfRepository<FollowedUser>, IFollowedUserRepository
+    internal class FollowedUserRepository : EfRepository<FollowedUser>, IFollowedUserRepository
     {
         public FollowedUserRepository([NotNull] ApplicationDbContext dbContext) : base(dbContext)
         {

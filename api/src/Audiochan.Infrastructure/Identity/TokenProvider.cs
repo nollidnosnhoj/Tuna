@@ -15,7 +15,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Audiochan.Infrastructure.Identity
 {
-    public class TokenProvider : ITokenProvider
+    internal class TokenProvider : ITokenProvider
     {
         private readonly JwtSettings _jwtSettings;
         private readonly IDateTimeProvider _dateTimeProvider;

@@ -16,7 +16,7 @@ using Microsoft.Extensions.Options;
 
 namespace Audiochan.Infrastructure.Storage
 {
-    public class AmazonS3Service : IStorageService
+    internal class AmazonS3Service : IStorageService
     {
         private readonly IAmazonS3 _client;
         private readonly IDateTimeProvider _dateTimeProvider;
