@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Interfaces;
@@ -19,21 +20,21 @@ namespace Audiochan.Core.Features.Auth.Revoke
     public class RevokeTokenRequestHandler : IRequestHandler<RevokeTokenRequest, IResult<bool>>
     {
         private readonly UserManager<User> _userManager;
-        private readonly IUserRepository _userRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public RevokeTokenRequestHandler(UserManager<User> userManager, IUserRepository userRepository)
+        public RevokeTokenRequestHandler(UserManager<User> userManager, IUnitOfWork unitOfWork)
         {
             _userManager = userManager;
-            _userRepository = userRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<IResult<bool>> Handle(RevokeTokenRequest request, CancellationToken cancellationToken)
         {
             if (!string.IsNullOrWhiteSpace(request.RefreshToken))
             {
-                var user = await _userRepository.GetBySpecAsync(
-                    new GetUserBasedOnRefreshTokenSpecification(request.RefreshToken),
-                    cancellationToken: cancellationToken);
+                var user = await _unitOfWork.Users.GetBySpecAsync(
+                        new GetUserBasedOnRefreshTokenSpecification(request.RefreshToken),
+                        cancellationToken: cancellationToken);
 
                 if (user != null)
                 {
@@ -42,7 +43,8 @@ namespace Audiochan.Core.Features.Auth.Revoke
 
                     user.RefreshTokens.Remove(existingRefreshToken);
 
-                    await _userRepository.UpdateAsync(user, cancellationToken);
+                    _unitOfWork.Users.Update(user);
+                    await _unitOfWork.SaveChangesAsync(cancellationToken);
                 }
             }
 

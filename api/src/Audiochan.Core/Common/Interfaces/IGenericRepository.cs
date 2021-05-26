@@ -30,10 +30,10 @@ namespace Audiochan.Core.Common.Interfaces
             CancellationToken cancellationToken = default);
         Task<T> AddAsync(T entity, CancellationToken cancellationToken = default);
         Task<List<T>> AddRangeAsync(List<T> entities, CancellationToken cancellationToken = default);
-        Task UpdateAsync(T entity, CancellationToken cancellationToken = default);
-        Task UpdateRangeAsync(List<T> entities, CancellationToken cancellationToken = default);
-        Task RemoveAsync(T entity, CancellationToken cancellationToken = default);
-        Task RemoveRangeAsync(List<T> entities, CancellationToken cancellationToken = default);
+        void Update(T entity);
+        void UpdateRange(List<T> entities);
+        void Remove(T entity);
+        void RemoveRange(List<T> entities);
         Task SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }

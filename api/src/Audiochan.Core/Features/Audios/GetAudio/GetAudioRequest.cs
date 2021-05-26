@@ -12,24 +12,16 @@ namespace Audiochan.Core.Features.Audios.GetAudio
 
     public class GetAudioRequestHandler : IRequestHandler<GetAudioRequest, AudioDetailViewModel?>
     {
-        private readonly IAudioRepository _audioRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public GetAudioRequestHandler(IAudioRepository audioRepository)
+        public GetAudioRequestHandler(IUnitOfWork unitOfWork)
         {
-            _audioRepository = audioRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<AudioDetailViewModel?> Handle(GetAudioRequest request, CancellationToken cancellationToken)
         {
-            // return await _dbContext.Audios
-            //     .AsNoTracking()
-            //     .Include(x => x.Tags)
-            //     .Include(x => x.User)
-            //     .Where(x => x.Id == request.Id)
-            //     .ProjectToDetail(_storageSettings)
-            //     .SingleOrDefaultAsync(cancellationToken);
-
-            return await _audioRepository.GetBySpecAsync(new GetAudioSpecification(request.Id), cancellationToken: cancellationToken);
+            return await _unitOfWork.Audios.GetBySpecAsync(new GetAudioSpecification(request.Id), cancellationToken: cancellationToken);
         }
     }
 }

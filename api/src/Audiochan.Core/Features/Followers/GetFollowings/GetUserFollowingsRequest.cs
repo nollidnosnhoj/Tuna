@@ -16,17 +16,17 @@ namespace Audiochan.Core.Features.Followers.GetFollowings
 
     public class GetUserFollowingsRequestHandler : IRequestHandler<GetUserFollowingsRequest, PagedList<FollowingViewModel>>
     {
-        private readonly IFollowedUserRepository _followedUserRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public GetUserFollowingsRequestHandler(IFollowedUserRepository followedUserRepository)
+        public GetUserFollowingsRequestHandler(IUnitOfWork unitOfWork)
         {
-            _followedUserRepository = followedUserRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<PagedList<FollowingViewModel>> Handle(GetUserFollowingsRequest request,
             CancellationToken cancellationToken)
         {
-            return await _followedUserRepository.GetPagedListBySpec(
+            return await _unitOfWork.FollowedUsers.GetPagedListBySpec(
                 new GetUserFollowingsSpecification(request.Username), request.Page, request.Size, cancellationToken: cancellationToken);
         }
     }

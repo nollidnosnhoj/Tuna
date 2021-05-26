@@ -17,18 +17,18 @@ namespace Audiochan.Core.Features.Auth.Refresh
     public class RefreshTokenRequestHandler : IRequestHandler<RefreshTokenRequest, IResult<AuthResultViewModel>>
     {
         private readonly ITokenProvider _tokenProvider;
-        private readonly IUserRepository _userRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public RefreshTokenRequestHandler(ITokenProvider tokenProvider, IUserRepository userRepository)
+        public RefreshTokenRequestHandler(ITokenProvider tokenProvider, IUnitOfWork unitOfWork)
         {
             _tokenProvider = tokenProvider;
-            _userRepository = userRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<IResult<AuthResultViewModel>> Handle(RefreshTokenRequest request,
             CancellationToken cancellationToken)
         {
-            var user = await _userRepository.GetBySpecAsync(
+            var user = await _unitOfWork.Users.GetBySpecAsync(
                 new GetUserBasedOnRefreshTokenSpecification(request.RefreshToken),
                 cancellationToken: cancellationToken);
 

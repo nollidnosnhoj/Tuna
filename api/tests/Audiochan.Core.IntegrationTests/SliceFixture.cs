@@ -57,7 +57,7 @@ namespace Audiochan.Core.IntegrationTests
         public class AudiochanTestApplicationFactory : WebApplicationFactory<Startup>
         {
             private readonly string _connectionString =
-                "Server=localhost;Port=5433;Database=audiochan_test;Username=postgres;Password=pokemon123;";
+                "Server=localhost;Port=5433;Database=audiochan_test;Username=postgres;Password=pokemon123;Timeout=300;CommandTimeout=300";
             
             protected override IHost CreateHost(IHostBuilder builder)
             {
@@ -89,17 +89,17 @@ namespace Audiochan.Core.IntegrationTests
         public async Task ExecuteScopeWithTransactionAsync(Func<IServiceProvider, Task> action)
         {
             using var scope = _scopeFactory.CreateScope();
-            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
 
             try
             {
-                dbContext.BeginTransaction();
+                await unitOfWork.BeginTransactionAsync();
                 await action(scope.ServiceProvider);
-                dbContext.CommitTransaction();
+                await unitOfWork.CommitTransactionAsync();
             }
             catch (Exception)
             {
-                dbContext.RollbackTransaction();
+                await unitOfWork.RollbackTransactionAsync();
                 throw;
             }
         }
@@ -107,18 +107,18 @@ namespace Audiochan.Core.IntegrationTests
         public async Task<T> ExecuteScopeWithTransactionAsync<T>(Func<IServiceProvider, Task<T>> action)
         {
             using var scope = _scopeFactory.CreateScope();
-            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
 
             try
             {
-                dbContext.BeginTransaction();
+                await unitOfWork.BeginTransactionAsync();
                 var result = await action(scope.ServiceProvider);
-                dbContext.CommitTransaction();
+                await unitOfWork.CommitTransactionAsync();
                 return result;
             }
             catch (Exception)
             {
-                dbContext.RollbackTransaction();
+                await unitOfWork.RollbackTransactionAsync();
                 throw;
             }
         }
@@ -202,6 +202,18 @@ namespace Audiochan.Core.IntegrationTests
             _currentTime = nowDateTime;
             return nowDateTime;
         }
+        
+        public Task ExecuteUnitOfWorkAsync(Func<IUnitOfWork, Task> action) =>
+            ExecuteScopeAsync(sp => action(sp.GetService<IUnitOfWork>()!));
+        
+        public Task ExecuteUnitOfWorkAsync(Func<IUnitOfWork, ValueTask> action) =>
+            ExecuteScopeAsync(sp => action(sp.GetService<IUnitOfWork>()!).AsTask());
+        
+        public Task<T> ExecuteUnitOfWorkAsync<T>(Func<IUnitOfWork, Task<T>> action) =>
+            ExecuteScopeAsync(sp => action(sp.GetService<IUnitOfWork>()!));
+        
+        public Task<T> ExecuteUnitOfWorkAsync<T>(Func<IUnitOfWork, ValueTask<T>> action) =>
+            ExecuteScopeAsync(sp => action(sp.GetService<IUnitOfWork>()!).AsTask());
 
         public Task ExecuteDbContextAsync(Func<ApplicationDbContext, Task> action)
             => ExecuteScopeAsync(sp => action(sp.GetService<ApplicationDbContext>()!));

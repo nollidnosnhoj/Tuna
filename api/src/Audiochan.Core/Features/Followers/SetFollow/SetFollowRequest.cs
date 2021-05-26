@@ -17,17 +17,17 @@ namespace Audiochan.Core.Features.Followers.SetFollow
     public class SetFollowRequestHandler : IRequestHandler<SetFollowRequest, IResult<bool>>
     {
         private readonly IDateTimeProvider _dateTimeProvider;
-        private readonly IUserRepository _userRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public SetFollowRequestHandler(IDateTimeProvider dateTimeProvider, IUserRepository userRepository)
+        public SetFollowRequestHandler(IDateTimeProvider dateTimeProvider, IUnitOfWork unitOfWork)
         {
             _dateTimeProvider = dateTimeProvider;
-            _userRepository = userRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<IResult<bool>> Handle(SetFollowRequest request, CancellationToken cancellationToken)
         {
-            var target = await _userRepository.GetBySpecAsync(new GetTargetUserSpecification(request.Username), 
+            var target = await _unitOfWork.Users.GetBySpecAsync(new GetTargetUserSpecification(request.Username),
                 true,
                 cancellationToken);
 
@@ -41,7 +41,8 @@ namespace Audiochan.Core.Features.Followers.SetFollow
                 ? await Follow(target, request.UserId, cancellationToken)
                 : await Unfollow(target, request.UserId, cancellationToken);
 
-            await _userRepository.SaveChangesAsync(cancellationToken);
+            _unitOfWork.Users.Update(target);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result<bool>.Success(isFollowed);
         }

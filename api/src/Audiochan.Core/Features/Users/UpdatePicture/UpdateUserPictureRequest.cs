@@ -17,63 +17,56 @@ namespace Audiochan.Core.Features.Users.UpdatePicture
 {
     public record UpdateUserPictureRequest : IRequest<IResult<ProfileViewModel>>
     {
-        [JsonIgnore] public string? UserId { get; set; }
+        [JsonIgnore] public string UserId { get; set; } = string.Empty;
         public string Data { get; init; } = null!;
     }
 
     public class UpdateUserPictureRequestHandler : IRequestHandler<UpdateUserPictureRequest, IResult<ProfileViewModel>>
     {
         private readonly MediaStorageSettings _storageSettings;
-        private readonly UserManager<User> _userManager;
         private readonly IImageService _imageService;
         private readonly IStorageService _storageService;
         private readonly IDateTimeProvider _dateTimeProvider;
         private readonly ICurrentUserService _currentUserService;
+        private readonly IUnitOfWork _unitOfWork;
 
         public UpdateUserPictureRequestHandler(IOptions<MediaStorageSettings> options,
-            UserManager<User> userManager,
             IImageService imageService,
             IStorageService storageService,
-            IDateTimeProvider dateTimeProvider, ICurrentUserService currentUserService)
+            IDateTimeProvider dateTimeProvider, ICurrentUserService currentUserService, IUnitOfWork unitOfWork)
         {
             _storageSettings = options.Value;
-            _userManager = userManager;
             _imageService = imageService;
             _storageService = storageService;
             _dateTimeProvider = dateTimeProvider;
             _currentUserService = currentUserService;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<IResult<ProfileViewModel>> Handle(UpdateUserPictureRequest request, CancellationToken cancellationToken)
         {
+            var currentUserId = _currentUserService.GetUserId();
             var container = string.Join('/', _storageSettings.Image.Container, "users");
-            
-            var user = await _userManager.FindByIdAsync(request.UserId + "");
+            var user = await _unitOfWork.Users.GetByIdAsync(request.UserId, cancellationToken);
             
             if (user == null) 
                 return Result<ProfileViewModel>.Fail(ResultError.NotFound);
-            
+        
             if (user.Id != _currentUserService.GetUserId())
                 return Result<ProfileViewModel>.Fail(ResultError.Forbidden);
-            
+        
             var blobName = $"{user.Id}/{_dateTimeProvider.Now:yyyyMMddHHmmss}.jpg";
             
-            try
-            {
-                await _imageService.UploadImage(request.Data, container, blobName, cancellationToken);
-                
-                if (!string.IsNullOrEmpty(user.Picture))
-                    await _storageService.RemoveAsync(_storageSettings.Audio.Bucket, container, user.Picture, cancellationToken);
-                
-                user.UpdatePicture(blobName);
-                await _userManager.UpdateAsync(user);
-                return Result<ProfileViewModel>.Success(user.MapToProfile(_currentUserService.GetUserId()));
-            }
-            catch (Exception)
-            {
-                await _storageService.RemoveAsync(_storageSettings.Audio.Bucket, container, blobName, cancellationToken);
-                throw;
-            }
+            await _imageService.UploadImage(request.Data, container, blobName, cancellationToken);
+            
+            if (!string.IsNullOrEmpty(user.Picture))
+                await _storageService.RemoveAsync(_storageSettings.Audio.Bucket, container, user.Picture, cancellationToken);
+            
+            user.UpdatePicture(blobName);
+            _unitOfWork.Users.Update(user);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            return Result<ProfileViewModel>.Success(user.MapToProfile(currentUserId));
         }
     }
 }

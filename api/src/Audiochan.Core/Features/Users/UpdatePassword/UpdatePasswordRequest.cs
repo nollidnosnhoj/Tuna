@@ -20,20 +20,20 @@ namespace Audiochan.Core.Features.Users.UpdatePassword
     public class UpdatePasswordRequestHandler : IRequestHandler<UpdatePasswordRequest, IResult<bool>>
     {
         private readonly ICurrentUserService _currentUserService;
-        private readonly IUserRepository _userRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IIdentityService _identityService;
 
-        public UpdatePasswordRequestHandler(ICurrentUserService currentUserService, IUserRepository userRepository, 
+        public UpdatePasswordRequestHandler(ICurrentUserService currentUserService, IUnitOfWork unitOfWork, 
             IIdentityService identityService)
         {
             _currentUserService = currentUserService;
-            _userRepository = userRepository;
+            _unitOfWork = unitOfWork;
             _identityService = identityService;
         }
 
         public async Task<IResult<bool>> Handle(UpdatePasswordRequest request, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.GetByIdAsync(request.UserId, cancellationToken);            
+            var user = await _unitOfWork.Users.GetByIdAsync(request.UserId, cancellationToken);            
             if (user == null) return Result<bool>.Fail(ResultError.Unauthorized);
             if (user.Id != _currentUserService.GetUserId())
                 return Result<bool>.Fail(ResultError.Forbidden);

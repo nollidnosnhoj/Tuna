@@ -20,20 +20,20 @@ namespace Audiochan.Core.Features.Users.UpdateEmail
     public class UpdateEmailRequestHandler : IRequestHandler<UpdateEmailRequest, IResult<bool>>
     {
         private readonly ICurrentUserService _currentUserService;
-        private readonly IUserRepository _userRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IIdentityService _identityService;
 
-        public UpdateEmailRequestHandler(ICurrentUserService currentUserService, IUserRepository userRepository, 
+        public UpdateEmailRequestHandler(ICurrentUserService currentUserService, IUnitOfWork unitOfWork, 
             IIdentityService identityService)
         {
             _currentUserService = currentUserService;
-            _userRepository = userRepository;
+            _unitOfWork = unitOfWork;
             _identityService = identityService;
         }
 
         public async Task<IResult<bool>> Handle(UpdateEmailRequest request, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.GetByIdAsync(request.UserId, cancellationToken);
+            var user = await _unitOfWork.Users.GetByIdAsync(request.UserId, cancellationToken);
             if (user == null) return Result<bool>.Fail(ResultError.Unauthorized);
             if (user.Id != _currentUserService.GetUserId())
                 return Result<bool>.Fail(ResultError.Forbidden);

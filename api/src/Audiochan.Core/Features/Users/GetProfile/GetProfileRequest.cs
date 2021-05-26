@@ -12,19 +12,19 @@ namespace Audiochan.Core.Features.Users.GetProfile
     public class GetProfileRequestHandler : IRequestHandler<GetProfileRequest, ProfileViewModel?>
     {
         private readonly ICurrentUserService _currentUserService;
-        private readonly IUserRepository _userRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public GetProfileRequestHandler(ICurrentUserService currentUserService, IUserRepository userRepository)
+        public GetProfileRequestHandler(ICurrentUserService currentUserService, IUnitOfWork unitOfWork)
         {
             _currentUserService = currentUserService;
-            _userRepository = userRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<ProfileViewModel?> Handle(GetProfileRequest request, CancellationToken cancellationToken)
         {
             var currentUserId = _currentUserService.GetUserId();
 
-            return await _userRepository.GetBySpecAsync(new GetProfileSpecification(request.Username, currentUserId),
+            return await _unitOfWork.Users.GetBySpecAsync(new GetProfileSpecification(request.Username, currentUserId),
                 cancellationToken: cancellationToken);
         }
     }

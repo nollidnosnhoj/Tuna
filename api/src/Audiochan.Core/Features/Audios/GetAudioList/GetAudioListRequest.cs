@@ -16,17 +16,17 @@ namespace Audiochan.Core.Features.Audios.GetAudioList
 
     public class GetAudioListRequestHandler : IRequestHandler<GetAudioListRequest, CursorList<AudioViewModel>>
     {
-        private readonly IAudioRepository _audioRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public GetAudioListRequestHandler(IAudioRepository audioRepository)
+        public GetAudioListRequestHandler(IUnitOfWork unitOfWork)
         {
-            _audioRepository = audioRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<CursorList<AudioViewModel>> Handle(GetAudioListRequest request,
             CancellationToken cancellationToken)
         {
-            return await _audioRepository.GetCursorPaginationAsync(new GetAudioListSpecification(request.Size, request.Tag),
+            return await _unitOfWork.Audios.GetCursorPaginationAsync(new GetAudioListSpecification(request.Size, request.Tag),
                 request.Cursor, cancellationToken);
         }
     }

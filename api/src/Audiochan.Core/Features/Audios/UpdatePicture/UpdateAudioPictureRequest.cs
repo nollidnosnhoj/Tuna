@@ -8,6 +8,7 @@ using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models.Interfaces;
 using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Common.Settings;
+using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Audios.UpdateAudio;
 using MediatR;
 using Microsoft.Extensions.Options;
@@ -22,28 +23,25 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
 
     public class UpdateAudioPictureRequestHandler : IRequestHandler<UpdateAudioPictureRequest, IResult<AudioDetailViewModel>>
     {
-        private readonly IAudioRepository _audioRepository;
         private readonly MediaStorageSettings _storageSettings;
-        private readonly IApplicationDbContext _dbContext;
         private readonly IDateTimeProvider _dateTimeProvider;
         private readonly IStorageService _storageService;
         private readonly ICurrentUserService _currentUserService;
         private readonly IImageService _imageService;
+        private readonly IUnitOfWork _unitOfWork;
 
         public UpdateAudioPictureRequestHandler(IOptions<MediaStorageSettings> options,
-            IApplicationDbContext dbContext,
             IStorageService storageService,
             ICurrentUserService currentUserService,
             IImageService imageService,
-            IDateTimeProvider dateTimeProvider, IAudioRepository audioRepository)
+            IDateTimeProvider dateTimeProvider, IUnitOfWork unitOfWork)
         {
             _storageSettings = options.Value;
-            _dbContext = dbContext;
             _storageService = storageService;
             _currentUserService = currentUserService;
             _imageService = imageService;
             _dateTimeProvider = dateTimeProvider;
-            _audioRepository = audioRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<IResult<AudioDetailViewModel>> Handle(UpdateAudioPictureRequest request,
@@ -51,35 +49,28 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
         {
             var container = string.Join('/', _storageSettings.Image.Container, "audios");
             var currentUserId = _currentUserService.GetUserId();
-
-            var audio = await _audioRepository.GetBySpecAsync(new GetAudioForUpdateSpecification(request.AudioId),
-                cancellationToken: cancellationToken);
             
+            var audio = await _unitOfWork.Audios.GetBySpecAsync(new GetAudioForUpdateSpecification(request.AudioId),
+                cancellationToken: cancellationToken);
+        
             if (audio == null) 
                 return Result<AudioDetailViewModel>.Fail(ResultError.NotFound);
-            
+        
             if (!audio.CanModify(currentUserId)) 
                 return Result<AudioDetailViewModel>.Fail(ResultError.Forbidden);
-            
+        
             var blobName = $"{audio.Id}/{_dateTimeProvider.Now:yyyyMMddHHmmss}.jpg";
+            
+            await _imageService.UploadImage(request.Data, container, blobName, cancellationToken);
+            
+            if (!string.IsNullOrEmpty(audio.Picture))
+                await _storageService.RemoveAsync(_storageSettings.Image.Bucket, container, audio.Picture, cancellationToken);
+            
+            audio.UpdatePicture(blobName);
+            _unitOfWork.Audios.Update(audio);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            try
-            {
-                await _imageService.UploadImage(request.Data, container, blobName, cancellationToken);
-                
-                if (!string.IsNullOrEmpty(audio.Picture))
-                    await _storageService.RemoveAsync(_storageSettings.Image.Bucket, container, audio.Picture, cancellationToken);
-                
-                audio.UpdatePicture(blobName);
-                await _dbContext.SaveChangesAsync(cancellationToken);
-                
-                return Result<AudioDetailViewModel>.Success(audio.MapToDetail());
-            }
-            catch (Exception)
-            {
-                await _storageService.RemoveAsync(_storageSettings.Audio.Bucket, container, blobName, cancellationToken);
-                throw;
-            }
+            return Result<AudioDetailViewModel>.Success(audio.MapToDetail());
         }
     }
 }

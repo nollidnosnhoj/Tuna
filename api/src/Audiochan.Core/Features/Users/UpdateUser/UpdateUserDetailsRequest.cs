@@ -11,7 +11,7 @@ namespace Audiochan.Core.Features.Users.UpdateUser
 {
     public record UpdateUserDetailsRequest : IRequest<IResult<bool>>
     {
-        [JsonIgnore] public string? UserId { get; init; }
+        [JsonIgnore] public string UserId { get; init; } = string.Empty;
         public string? DisplayName { get; init; }
         public string? About { get; init; }
         public string? Website { get; init; }
@@ -20,17 +20,17 @@ namespace Audiochan.Core.Features.Users.UpdateUser
     public class UpdateUserDetailsRequestHandler : IRequestHandler<UpdateUserDetailsRequest, IResult<bool>>
     {
         private readonly ICurrentUserService _currentUserService;
-        private readonly IUserRepository _userRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public UpdateUserDetailsRequestHandler(ICurrentUserService currentUserService, IUserRepository userRepository)
+        public UpdateUserDetailsRequestHandler(ICurrentUserService currentUserService, IUnitOfWork unitOfWork)
         {
             _currentUserService = currentUserService;
-            _userRepository = userRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<IResult<bool>> Handle(UpdateUserDetailsRequest request, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.GetByIdAsync(_currentUserService.GetUserId(), cancellationToken);
+            var user = await _unitOfWork.Users.GetByIdAsync(request.UserId, cancellationToken);
             if (user == null) return Result<bool>.Fail(ResultError.NotFound);
             if (user.Id != _currentUserService.GetUserId())
                 return Result<bool>.Fail(ResultError.Forbidden);
@@ -39,7 +39,9 @@ namespace Audiochan.Core.Features.Users.UpdateUser
             user.UpdateAbout(request.About);
             user.UpdateWebsite(request.Website);
 
-            await _userRepository.UpdateAsync(user, cancellationToken);
+            _unitOfWork.Users.Update(user);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+
             return Result<bool>.Success(true);
         }
     }

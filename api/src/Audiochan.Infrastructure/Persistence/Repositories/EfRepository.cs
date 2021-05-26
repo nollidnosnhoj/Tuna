@@ -113,39 +113,33 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
         public virtual async Task<T> AddAsync(T entity, CancellationToken cancellationToken = default)
         {
             await DbSet.AddAsync(entity, cancellationToken);
-            await DbContext.SaveChangesAsync(cancellationToken);
             return entity;
         }
 
         public virtual async Task<List<T>> AddRangeAsync(List<T> entities, CancellationToken cancellationToken = default)
         {
             await DbSet.AddRangeAsync(entities, cancellationToken);
-            await DbContext.SaveChangesAsync(cancellationToken);
             return entities;
         }
 
-        public virtual async Task UpdateAsync(T entity, CancellationToken cancellationToken = default)
+        public virtual void Update(T entity)
         {
             DbSet.Update(entity);
-            await DbContext.SaveChangesAsync(cancellationToken);
         }
 
-        public virtual async Task UpdateRangeAsync(List<T> entities, CancellationToken cancellationToken = default)
+        public virtual void UpdateRange(List<T> entities)
         {
             DbSet.UpdateRange(entities);
-            await DbContext.SaveChangesAsync(cancellationToken);
         }
 
-        public virtual async Task RemoveAsync(T entity, CancellationToken cancellationToken = default)
+        public virtual void Remove(T entity)
         {
             DbSet.Remove(entity);
-            await DbContext.SaveChangesAsync(cancellationToken);
         }
 
-        public virtual async Task RemoveRangeAsync(List<T> entities, CancellationToken cancellationToken = default)
+        public virtual void RemoveRange(List<T> entities)
         {
             DbSet.RemoveRange(entities);
-            await DbContext.SaveChangesAsync(cancellationToken);
         }
 
         public async Task SaveChangesAsync(CancellationToken cancellationToken = default)

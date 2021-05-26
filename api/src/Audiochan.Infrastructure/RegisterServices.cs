@@ -4,6 +4,7 @@ using Audiochan.Infrastructure.Identity;
 using Audiochan.Infrastructure.Image;
 using Audiochan.Infrastructure.Persistence;
 using Audiochan.Infrastructure.Persistence.Repositories;
+using Audiochan.Infrastructure.Persistence.UnitOfWorks;
 using Audiochan.Infrastructure.Search;
 using Audiochan.Infrastructure.Security;
 using Audiochan.Infrastructure.Shared;
@@ -44,8 +45,6 @@ namespace Audiochan.Infrastructure
                     o.EnableSensitiveDataLogging();
                 }
             });
-
-            services.AddScoped<IApplicationDbContext>(provider => provider.GetService<ApplicationDbContext>()!);
         }
 
         private static void ConfigureRepositories(IServiceCollection services)
@@ -55,6 +54,7 @@ namespace Audiochan.Infrastructure
             services.AddScoped<IFollowedUserRepository, FollowedUserRepository>();
             services.AddScoped<ITagRepository, TagRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
         }
     }
 }

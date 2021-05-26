@@ -11,15 +11,13 @@ namespace Audiochan.Core.Features.Auth.GetCurrentUser
 
     public class GetCurrentUserRequestHandler : IRequestHandler<GetCurrentUserRequest, CurrentUserViewModel?>
     {
-        private readonly IApplicationDbContext _dbContext;
         private readonly ICurrentUserService _currentUserService;
-        private readonly IUserRepository _userRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public GetCurrentUserRequestHandler(ICurrentUserService currentUserService, IApplicationDbContext dbContext, IUserRepository userRepository)
+        public GetCurrentUserRequestHandler(ICurrentUserService currentUserService, IUnitOfWork unitOfWork)
         {
             _currentUserService = currentUserService;
-            _dbContext = dbContext;
-            _userRepository = userRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<CurrentUserViewModel?> Handle(GetCurrentUserRequest request,
@@ -27,7 +25,7 @@ namespace Audiochan.Core.Features.Auth.GetCurrentUser
         {
             var currentUserId = _currentUserService.GetUserId();
 
-            return await _userRepository.GetBySpecAsync(new GetCurrentUserSpecification(currentUserId),
+            return await _unitOfWork.Users.GetBySpecAsync(new GetCurrentUserSpecification(currentUserId),
                 cancellationToken: cancellationToken);
         }
     }

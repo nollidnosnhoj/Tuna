@@ -9,14 +9,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Audiochan.Infrastructure.Persistence
 {
-    public class ApplicationDbContext : IdentityDbContext<User, Role, string>, IApplicationDbContext
+    public class ApplicationDbContext : IdentityDbContext<User, Role, string>
     {
         private readonly IDateTimeProvider _dateTimeProvider;
-        private IDbContextTransaction? _currentTransaction;
 
         public ApplicationDbContext(DbContextOptions options,
             IDateTimeProvider dateTimeProvider) : base(options)
@@ -47,49 +45,6 @@ namespace Audiochan.Infrastructure.Persistence
             var result = await base.SaveChangesAsync(cancellationToken);
 
             return result;
-        }
-
-        public void BeginTransaction()
-        {
-            if (_currentTransaction != null) return;
-            _currentTransaction = Database.BeginTransaction();
-        }
-
-        public void CommitTransaction()
-        {
-            try
-            {
-                _currentTransaction?.Commit();
-            }
-            catch
-            {
-                RollbackTransaction();
-                throw;
-            }
-            finally
-            {
-                if (_currentTransaction != null)
-                {
-                    _currentTransaction.Dispose();
-                    _currentTransaction = null;
-                }
-            }
-        }
-
-        public void RollbackTransaction()
-        {
-            try
-            {
-                _currentTransaction?.Rollback();
-            }
-            finally
-            {
-                if (_currentTransaction != null)
-                {
-                    _currentTransaction.Dispose();
-                    _currentTransaction = null;
-                }
-            }
         }
 
         protected override void OnModelCreating(ModelBuilder builder)

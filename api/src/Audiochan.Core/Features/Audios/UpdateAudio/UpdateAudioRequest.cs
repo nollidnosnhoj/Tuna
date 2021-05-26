@@ -23,35 +23,32 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
 
     public class UpdateAudioRequestHandler : IRequestHandler<UpdateAudioRequest, IResult<AudioDetailViewModel>>
     {
-        private readonly IApplicationDbContext _dbContext;
         private readonly ICurrentUserService _currentUserService;
-        private readonly ITagRepository _tagRepository;
-        private readonly MediaStorageSettings _storageSettings;
-        private readonly IAudioRepository _audioRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public UpdateAudioRequestHandler(IApplicationDbContext dbContext,
-            ICurrentUserService currentUserService,
-            ITagRepository tagRepository,
-            IOptions<MediaStorageSettings> options, IAudioRepository audioRepository)
+        public UpdateAudioRequestHandler(ICurrentUserService currentUserService,
+            IUnitOfWork unitOfWork)
         {
-            _dbContext = dbContext;
             _currentUserService = currentUserService;
-            _tagRepository = tagRepository;
-            _audioRepository = audioRepository;
-            _storageSettings = options.Value;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<IResult<AudioDetailViewModel>> Handle(UpdateAudioRequest request,
             CancellationToken cancellationToken)
         {
-            var (audio, errorResult) = await GetAudioAsync(request.AudioId, cancellationToken);
+            var currentUserId = _currentUserService.GetUserId();
+            var audio = await _unitOfWork.Audios.GetBySpecAsync(new GetAudioForUpdateSpecification(request.AudioId),
+                    cancellationToken: cancellationToken);
 
             if (audio == null)
-                return errorResult!;
+                return Result<AudioDetailViewModel>.Fail(ResultError.NotFound);
+
+            if (!audio.CanModify(currentUserId))
+                return Result<AudioDetailViewModel>.Fail(ResultError.NotFound);
 
             if (request.Tags.Count > 0)
             {
-                var newTags = await _tagRepository.GetAppropriateTags(request.Tags, cancellationToken);
+                var newTags = await _unitOfWork.Tags.GetAppropriateTags(request.Tags, cancellationToken);
 
                 audio.UpdateTags(newTags);
             }
@@ -62,28 +59,10 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
             if (request.IsPublic.HasValue)
                 audio.UpdatePublicity(request.IsPublic.GetValueOrDefault());
 
-            await _audioRepository.UpdateAsync(audio, cancellationToken);
-            
-            var viewModel = audio.MapToDetail();
+            _unitOfWork.Audios.Update(audio);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return Result<AudioDetailViewModel>.Success(viewModel);
+            return Result<AudioDetailViewModel>.Success(audio.MapToDetail());
         }
-
-        public async Task<(Audio?, Result<AudioDetailViewModel>?)> GetAudioAsync(Guid audioId,
-            CancellationToken cancellationToken = default)
-        {
-            var currentUserId = _currentUserService.GetUserId();
-
-            var audio = await _audioRepository.GetBySpecAsync(new GetAudioForUpdateSpecification(audioId),
-                cancellationToken: cancellationToken);
-
-            if (audio == null)
-                return (null, Result<AudioDetailViewModel>.Fail(ResultError.NotFound));
-
-            if (!audio.CanModify(currentUserId))
-                return (null, Result<AudioDetailViewModel>.Fail(ResultError.NotFound));
-
-            return (audio, null);
-        } 
     }
 }

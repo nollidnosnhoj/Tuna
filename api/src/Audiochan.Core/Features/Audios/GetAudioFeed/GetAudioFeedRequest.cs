@@ -14,31 +14,21 @@ namespace Audiochan.Core.Features.Audios.GetAudioFeed
 
     public class GetAudioFeedRequestHandler : IRequestHandler<GetAudioFeedRequest, CursorList<AudioViewModel>>
     {
-        private readonly IAudioRepository _audioRepository;
-        private readonly IFollowedUserRepository _followedUserRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public GetAudioFeedRequestHandler(IFollowedUserRepository followedUserRepository, IAudioRepository audioRepository)
+        public GetAudioFeedRequestHandler(IUnitOfWork unitOfWork)
         {
-            _followedUserRepository = followedUserRepository;
-            _audioRepository = audioRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<CursorList<AudioViewModel>> Handle(GetAudioFeedRequest request,
             CancellationToken cancellationToken)
         {
-            var followedIds = await _followedUserRepository
+            var followedIds = await _unitOfWork.FollowedUsers
                 .GetListBySpecAsync(new GetFollowingIdsSpecification(request.UserId), cancellationToken: cancellationToken);
 
-            return await _audioRepository.GetCursorPaginationAsync(new GetAudioFeedSpecification(followedIds), request.Cursor, cancellationToken);
-
-            // return await _dbContext.Audios
-            //     .AsNoTracking()
-            //     .Include(x => x.User)
-            //     .ExcludePrivateAudios()
-            //     .Where(a => followedIds.Contains(a.UserId))
-            //     .ProjectToList()
-            //     .OrderByDescending(a => a.Uploaded)
-            //     .PaginateAsync(cancellationToken: cancellationToken);
+            return await _unitOfWork.Audios
+                .GetCursorPaginationAsync(new GetAudioFeedSpecification(followedIds), request.Cursor, cancellationToken);
         }
     }
 }

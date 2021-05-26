@@ -27,24 +27,18 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
     {
         private readonly IStorageService _storageService;
         private readonly ICurrentUserService _currentUserService;
-        private readonly ITagRepository _tagRepository;
         private readonly MediaStorageSettings _storageSettings;
-        private readonly IAudioRepository _audioRepository;
-        private readonly IUserRepository _userRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
         public CreateAudioRequestHandler(IOptions<MediaStorageSettings> mediaStorageOptions,
             IStorageService storageService,
             ICurrentUserService currentUserService,
-            ITagRepository tagRepository, 
-            IAudioRepository audioRepository, 
-            IUserRepository userRepository)
+            IUnitOfWork unitOfWork)
         {
             _storageSettings = mediaStorageOptions.Value;
             _storageService = storageService;
             _currentUserService = currentUserService;
-            _tagRepository = tagRepository;
-            _audioRepository = audioRepository;
-            _userRepository = userRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<Result<AudioDetailViewModel>> Handle(CreateAudioRequest request,
@@ -55,28 +49,28 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
             if (!existsInTempStorage)
                 return Result<AudioDetailViewModel>.Fail(ResultError.BadRequest, "Cannot find audio in temp storage.");
             
-            var currentUser = await _userRepository.GetByIdAsync(_currentUserService.GetUserId(), cancellationToken);
+            var currentUser =
+                await _unitOfWork.Users.GetByIdAsync(_currentUserService.GetUserId(), cancellationToken);
 
             if (currentUser is null)
                 return Result<AudioDetailViewModel>.Fail(ResultError.Unauthorized);
 
             var audio = await CreateAudioFromRequestAsync(request, currentUser, cancellationToken);
 
-            await _audioRepository.AddAsync(audio, cancellationToken);
-
-            var viewModel = audio.MapToDetail();
+            await _unitOfWork.Audios.AddAsync(audio, cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             // Copy temp audio to public bucket
             await _storageService.MoveBlobAsync(
-                _storageSettings.Audio.TempBucket, 
-                _storageSettings.Audio.Container, 
-                audio.FileName, 
-                _storageSettings.Audio.Bucket, 
+                _storageSettings.Audio.TempBucket,
+                _storageSettings.Audio.Container,
+                audio.FileName,
+                _storageSettings.Audio.Bucket,
                 _storageSettings.Audio.Container,
                 $"{audio.Id}/{audio.FileName}",
                 cancellationToken);
-            
-            return Result<AudioDetailViewModel>.Success(viewModel);
+
+            return Result<AudioDetailViewModel>.Success(audio.MapToDetail());
         }
 
         private async Task<Audio> CreateAudioFromRequestAsync(CreateAudioRequest request, User user, CancellationToken cancellationToken)
@@ -95,7 +89,7 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
             };
             audio.FileName = request.UploadId;
             audio.Tags = request.Tags.Count > 0
-                ? await _tagRepository.GetAppropriateTags(request.Tags, cancellationToken)
+                ? await _unitOfWork.Tags.GetAppropriateTags(request.Tags, cancellationToken)
                 : new List<Tag>();
             return audio;
         }

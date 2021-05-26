@@ -7,7 +7,6 @@ using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models.Interfaces;
 using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Common.Settings;
-using Audiochan.Core.Entities;
 using MediatR;
 using Microsoft.Extensions.Options;
 
@@ -20,26 +19,33 @@ namespace Audiochan.Core.Features.Audios.RemoveAudio
         private readonly MediaStorageSettings _storageSettings;
         private readonly IStorageService _storageService;
         private readonly ICurrentUserService _currentUserService;
-        private readonly IAudioRepository _audioRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
         public RemoveAudioRequestHandler(IOptions<MediaStorageSettings> options,
             IStorageService storageService,
-            ICurrentUserService currentUserService, IAudioRepository audioRepository)
+            ICurrentUserService currentUserService, 
+            IUnitOfWork unitOfWork)
         {
             _storageSettings = options.Value;
             _storageService = storageService;
             _currentUserService = currentUserService;
-            _audioRepository = audioRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<IResult<bool>> Handle(RemoveAudioRequest request, CancellationToken cancellationToken)
         {
-            var (audio, result) = await GetAudio(request.Id, cancellationToken);
-
+            var currentUserId = _currentUserService.GetUserId();
+        
+            var audio = await _unitOfWork.Audios.GetByIdAsync(request.Id, cancellationToken);
+            
             if (audio == null)
-                return result;
+                return Result<bool>.Fail(ResultError.NotFound);
 
-            await _audioRepository.RemoveAsync(audio, cancellationToken);
+            if (!audio.CanModify(currentUserId))
+                return Result<bool>.Fail(ResultError.Forbidden);
+
+            _unitOfWork.Audios.Remove(audio);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             var tasks = new List<Task>
             {
@@ -51,28 +57,14 @@ namespace Audiochan.Core.Features.Audios.RemoveAudio
             };
             if (!string.IsNullOrEmpty(audio.Picture))
             {
-                tasks.Add(_storageService.RemoveAsync(_storageSettings.Image.Bucket, 
-                    string.Join('/', _storageSettings.Image.Container, "audios"), 
-                    audio.Picture, 
+                tasks.Add(_storageService.RemoveAsync(_storageSettings.Image.Bucket,
+                    string.Join('/', _storageSettings.Image.Container, "audios"),
+                    audio.Picture,
                     cancellationToken));
             }
 
             await Task.WhenAll(tasks);
-            return result;
-        }
-
-        private async Task<(Audio?, IResult<bool>)> GetAudio(Guid audioId, CancellationToken cancellationToken = default)
-        {
-            var currentUserId = _currentUserService.GetUserId();
-
-            var audio = await _audioRepository.GetByIdAsync(audioId, cancellationToken);
-
-            if (audio == null)
-                return (null, Result<bool>.Fail(ResultError.NotFound));
-
-            return !audio.CanModify(currentUserId) 
-                ? (null, Result<bool>.Fail(ResultError.Forbidden)) 
-                : (audio, Result<bool>.Success(true));
+            return Result<bool>.Success(true);
         }
     }
 }

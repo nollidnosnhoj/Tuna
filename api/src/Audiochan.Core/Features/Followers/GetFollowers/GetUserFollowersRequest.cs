@@ -18,21 +18,17 @@ namespace Audiochan.Core.Features.Followers.GetFollowers
 
     public class GetUserFollowersRequestHandler : IRequestHandler<GetUserFollowersRequest, PagedList<FollowerViewModel>>
     {
-        private readonly IApplicationDbContext _dbContext;
-        private readonly MediaStorageSettings _storageSettings;
-        private readonly IFollowedUserRepository _followedUserRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public GetUserFollowersRequestHandler(IApplicationDbContext dbContext, IOptions<MediaStorageSettings> options, IFollowedUserRepository followedUserRepository)
+        public GetUserFollowersRequestHandler(IUnitOfWork unitOfWork)
         {
-            _dbContext = dbContext;
-            _followedUserRepository = followedUserRepository;
-            _storageSettings = options.Value;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<PagedList<FollowerViewModel>> Handle(GetUserFollowersRequest request,
             CancellationToken cancellationToken)
         {
-            return await _followedUserRepository.GetPagedListBySpec(new GetUserFollowersSpecification(request.Username),
+            return await _unitOfWork.FollowedUsers.GetPagedListBySpec(new GetUserFollowersSpecification(request.Username),
                 request.Page, request.Size, cancellationToken: cancellationToken);
         }
     }

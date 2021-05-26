@@ -9,6 +9,7 @@ using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Features.Audios;
 using Audiochan.Core.Features.Audios.SearchAudios;
+using Audiochan.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
@@ -16,13 +17,11 @@ namespace Audiochan.Infrastructure.Search
 {
     public class DatabaseSearchService : ISearchService
     {
-        private readonly IApplicationDbContext _dbContext;
-        private readonly MediaStorageSettings _storageSettings;
+        private readonly ApplicationDbContext _dbContext;
 
-        public DatabaseSearchService(IApplicationDbContext dbContext, IOptions<MediaStorageSettings> options)
+        public DatabaseSearchService(ApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
-            _storageSettings = options.Value;
         }
 
         public async Task<PagedList<AudioViewModel>> SearchAudios(SearchAudiosRequest request, CancellationToken cancellationToken = default)

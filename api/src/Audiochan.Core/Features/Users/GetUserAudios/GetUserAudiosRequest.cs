@@ -17,13 +17,13 @@ namespace Audiochan.Core.Features.Users.GetUserAudios
 
     public class GetUserAudiosRequestHandler : IRequestHandler<GetUserAudiosRequest, CursorList<AudioViewModel>>
     {
-        private readonly IAudioRepository _audioRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly ICurrentUserService _currentUserService;
 
-        public GetUserAudiosRequestHandler(ICurrentUserService currentUserService, IAudioRepository audioRepository)
+        public GetUserAudiosRequestHandler(ICurrentUserService currentUserService, IUnitOfWork unitOfWork)
         {
             _currentUserService = currentUserService;
-            _audioRepository = audioRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<CursorList<AudioViewModel>> Handle(GetUserAudiosRequest request,
@@ -31,7 +31,7 @@ namespace Audiochan.Core.Features.Users.GetUserAudios
         {
             var currentUserId = _currentUserService.GetUserId();
 
-            return await _audioRepository.GetCursorPaginationAsync(
+            return await _unitOfWork.Audios.GetCursorPaginationAsync(
                 new GetUserAudiosSpecification(request.Username, currentUserId, request.Size), 
                 request.Cursor, cancellationToken);
         }

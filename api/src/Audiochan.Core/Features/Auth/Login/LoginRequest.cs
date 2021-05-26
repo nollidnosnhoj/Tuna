@@ -21,19 +21,19 @@ namespace Audiochan.Core.Features.Auth.Login
     {
         private readonly UserManager<User> _userManager;
         private readonly ITokenProvider _tokenProvider;
-        private readonly IUserRepository _userRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public LoginRequestHandler(UserManager<User> userManager, ITokenProvider tokenProvider, IUserRepository userRepository)
+        public LoginRequestHandler(UserManager<User> userManager, ITokenProvider tokenProvider, IUnitOfWork unitOfWork)
         {
             _userManager = userManager;
             _tokenProvider = tokenProvider;
-            _userRepository = userRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<IResult<AuthResultViewModel>> Handle(LoginRequest request,
             CancellationToken cancellationToken)
         {
-            var user = await _userRepository.GetBySpecAsync(new GetUserBasedOnLoginSpecification(request.Login),
+            var user = await _unitOfWork.Users.GetBySpecAsync(new GetUserBasedOnLoginSpecification(request.Login),
                 cancellationToken: cancellationToken);
 
             if (user == null || !await _userManager.CheckPasswordAsync(user, request.Password))

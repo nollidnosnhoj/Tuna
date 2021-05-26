@@ -14,11 +14,11 @@ namespace Audiochan.Core.Common.Pipelines
     public class DbContextTransactionPipelineBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
         where TRequest : notnull
     {
-        private readonly IApplicationDbContext _dbContext;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public DbContextTransactionPipelineBehavior(IApplicationDbContext dbContext)
+        public DbContextTransactionPipelineBehavior(IUnitOfWork unitOfWork)
         {
-            _dbContext = dbContext;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken,
@@ -28,13 +28,13 @@ namespace Audiochan.Core.Common.Pipelines
 
             try
             {
-                _dbContext.BeginTransaction();
+                await _unitOfWork.BeginTransactionAsync(cancellationToken);
                 result = await next();
-                _dbContext.CommitTransaction();
+                await _unitOfWork.CommitTransactionAsync(cancellationToken);
             }
             catch (Exception)
             {
-                _dbContext.RollbackTransaction();
+                await _unitOfWork.RollbackTransactionAsync(cancellationToken);
                 throw;
             }
 
