@@ -5,6 +5,7 @@ using Audiochan.Core.Common.Constants;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Auth.GetCurrentUser;
 using Audiochan.Core.Features.Users;
+using Audiochan.Core.Features.Users.GetProfile;
 using FastExpressionCompiler;
 
 namespace Audiochan.Core.Common.Extensions.MappingExtensions

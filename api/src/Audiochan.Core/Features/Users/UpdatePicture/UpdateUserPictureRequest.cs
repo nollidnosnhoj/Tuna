@@ -9,6 +9,7 @@ using Audiochan.Core.Common.Models.Interfaces;
 using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Entities;
+using Audiochan.Core.Features.Users.GetProfile;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;

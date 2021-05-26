@@ -5,6 +5,8 @@ using Audiochan.Core.Common.Constants;
 using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Audios;
+using Audiochan.Core.Features.Audios.GetAudio;
+using Audiochan.Core.Features.Audios.GetAudioList;
 using FastExpressionCompiler;
 
 namespace Audiochan.Core.Common.Extensions.MappingExtensions

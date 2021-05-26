@@ -10,14 +10,14 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Audiochan.Core.Features.Auth.Login
 {
-    public record LoginRequest : IRequest<IResult<AuthResultViewModel>>
+    public record LoginRequest : IRequest<IResult<LoginSuccessViewModel>>
     {
         public string Login { get; init; } = null!;
         public string Password { get; init; } = null!;
     }
 
 
-    public class LoginRequestHandler : IRequestHandler<LoginRequest, IResult<AuthResultViewModel>>
+    public class LoginRequestHandler : IRequestHandler<LoginRequest, IResult<LoginSuccessViewModel>>
     {
         private readonly UserManager<User> _userManager;
         private readonly ITokenProvider _tokenProvider;
@@ -30,20 +30,20 @@ namespace Audiochan.Core.Features.Auth.Login
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<IResult<AuthResultViewModel>> Handle(LoginRequest request,
+        public async Task<IResult<LoginSuccessViewModel>> Handle(LoginRequest request,
             CancellationToken cancellationToken)
         {
             var user = await _unitOfWork.Users.GetBySpecAsync(new GetUserBasedOnLoginSpecification(request.Login),
                 cancellationToken: cancellationToken);
 
             if (user == null || !await _userManager.CheckPasswordAsync(user, request.Password))
-                return Result<AuthResultViewModel>.Fail(ResultError.BadRequest, "Invalid Username/Password");
+                return Result<LoginSuccessViewModel>.Fail(ResultError.BadRequest, "Invalid Username/Password");
 
             var (accessToken, accessTokenExpiration) = await _tokenProvider.GenerateAccessToken(user);
 
             var (refreshToken, refreshTokenExpiration) = await _tokenProvider.GenerateRefreshToken(user);
 
-            var result = new AuthResultViewModel
+            var result = new LoginSuccessViewModel
             {
                 AccessToken = accessToken,
                 AccessTokenExpires = accessTokenExpiration,
@@ -51,7 +51,7 @@ namespace Audiochan.Core.Features.Auth.Login
                 RefreshTokenExpires = refreshTokenExpiration
             };
 
-            return Result<AuthResultViewModel>.Success(result);
+            return Result<LoginSuccessViewModel>.Success(result);
         }
     }
 }

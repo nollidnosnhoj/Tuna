@@ -2,6 +2,7 @@
 using Audiochan.Core.Common.Extensions.MappingExtensions;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Audios;
+using Audiochan.Core.Features.Audios.GetAudioList;
 
 namespace Audiochan.Core.Features.Users.GetUserAudios
 {

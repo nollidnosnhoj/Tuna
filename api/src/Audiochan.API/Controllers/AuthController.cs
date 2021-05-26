@@ -25,7 +25,7 @@ namespace Audiochan.API.Controllers
         }
 
         [HttpPost("login", Name = "Login")]
-        [ProducesResponseType(typeof(AuthResultViewModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(LoginSuccessViewModel), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [SwaggerOperation(
             Summary = "Obtain access and refresh token using your login credentials.",
@@ -60,7 +60,7 @@ namespace Audiochan.API.Controllers
         }
 
         [HttpPost("refresh", Name = "RefreshAccessToken")]
-        [ProducesResponseType(typeof(AuthResultViewModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(LoginSuccessViewModel), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [SwaggerOperation(
             Summary = "Refresh access token using valid refresh token.",

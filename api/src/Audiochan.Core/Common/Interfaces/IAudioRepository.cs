@@ -4,6 +4,7 @@ using Ardalis.Specification;
 using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Audios;
+using Audiochan.Core.Features.Audios.GetAudioList;
 
 namespace Audiochan.Core.Common.Interfaces
 {

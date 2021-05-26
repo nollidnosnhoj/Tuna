@@ -3,6 +3,7 @@ using System.Linq;
 using Audiochan.Core.Common.Helpers;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Audios;
+using Audiochan.Core.Features.Audios.GetAudioList;
 
 namespace Audiochan.Core.Common.Extensions.QueryableExtensions
 {

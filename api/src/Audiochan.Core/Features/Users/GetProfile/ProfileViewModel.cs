@@ -1,4 +1,4 @@
-﻿namespace Audiochan.Core.Features.Users
+﻿namespace Audiochan.Core.Features.Users.GetProfile
 {
     public record ProfileViewModel
     {

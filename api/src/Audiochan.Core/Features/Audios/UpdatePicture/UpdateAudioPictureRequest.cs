@@ -9,6 +9,7 @@ using Audiochan.Core.Common.Models.Interfaces;
 using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Entities;
+using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Features.Audios.UpdateAudio;
 using MediatR;
 using Microsoft.Extensions.Options;

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Audiochan.Core.Features.Followers
+namespace Audiochan.Core.Features.Followers.GetFollowers
 {
     public record FollowerViewModel
     {
