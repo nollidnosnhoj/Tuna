@@ -4,13 +4,13 @@ using FluentValidation;
 using FluentValidation.TestHelper;
 using Xunit;
 
-namespace Audiochan.Core.UnitTests.Validations
+namespace Audiochan.Core.UnitTests.Validations.Audios
 {
-    public class UpdateAudioValidationTests
+    public class UpdateAudioRequestValidationTests
     {
         private readonly IValidator<UpdateAudioRequest> _validator;
 
-        public UpdateAudioValidationTests()
+        public UpdateAudioRequestValidationTests()
         {
             _validator = new UpdateAudioRequestValidator();
         }

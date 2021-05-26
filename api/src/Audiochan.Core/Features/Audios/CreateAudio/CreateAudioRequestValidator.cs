@@ -11,6 +11,9 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
         public CreateAudioRequestValidator(IOptions<MediaStorageSettings> options)
         {
             var uploadOptions = options.Value.Audio;
+            RuleFor(req => req.UploadId)
+                .NotEmpty()
+                .WithMessage("UploadId is required.");
             RuleFor(req => req.Duration)
                 .NotEmpty()
                 .WithMessage("Duration is required.");

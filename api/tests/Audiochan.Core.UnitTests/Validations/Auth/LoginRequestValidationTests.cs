@@ -3,13 +3,13 @@ using FluentValidation;
 using FluentValidation.TestHelper;
 using Xunit;
 
-namespace Audiochan.Core.UnitTests.Validations
+namespace Audiochan.Core.UnitTests.Validations.Auth
 {
-    public class LoginValidationTests
+    public class LoginRequestValidationTests
     {
         private readonly IValidator<LoginRequest> _validator;
 
-        public LoginValidationTests()
+        public LoginRequestValidationTests()
         {
             _validator = new LoginRequestValidator();
         }

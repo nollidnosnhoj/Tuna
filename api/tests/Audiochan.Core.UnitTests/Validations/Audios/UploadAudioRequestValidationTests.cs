@@ -9,14 +9,14 @@ using FluentValidation.TestHelper;
 using Microsoft.Extensions.Options;
 using Xunit;
 
-namespace Audiochan.Core.UnitTests.Validations
+namespace Audiochan.Core.UnitTests.Validations.Audios
 {
-    public class UploadAudioValidationTests
+    public class UploadAudioRequestValidationTests
     {
         private readonly IValidator<UploadAudioRequest> _validator;
         private readonly Randomizer _randomizer;
 
-        public UploadAudioValidationTests()
+        public UploadAudioRequestValidationTests()
         {
             var options = Options.Create(new MediaStorageSettings
             {

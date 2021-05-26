@@ -6,13 +6,13 @@ using FluentValidation.TestHelper;
 using Microsoft.Extensions.Options;
 using Xunit;
 
-namespace Audiochan.Core.UnitTests.Validations
+namespace Audiochan.Core.UnitTests.Validations.Auth
 {
-    public class CreateUserValidationTests
+    public class RegisterUserRequestValidationTests
     {
         private readonly IValidator<RegisterUserRequest> _validator;
 
-        public CreateUserValidationTests()
+        public RegisterUserRequestValidationTests()
         {
             var options = Options.Create(new IdentitySettings
             {
