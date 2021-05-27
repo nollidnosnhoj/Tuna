@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.Repositories;
 
-namespace Audiochan.Core.Persistence
+namespace Audiochan.Core.Services
 {
     public interface IUnitOfWork : IDisposable
     {

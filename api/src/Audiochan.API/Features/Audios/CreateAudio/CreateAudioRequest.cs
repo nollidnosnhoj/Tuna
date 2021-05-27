@@ -7,7 +7,7 @@ using Audiochan.API.Features.Shared.Requests;
 using Audiochan.API.Mappings;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Models;
-using Audiochan.Core.Persistence;
+using Audiochan.Core.Repositories;
 using Audiochan.Core.Services;
 using Audiochan.Core.Settings;
 using MediatR;

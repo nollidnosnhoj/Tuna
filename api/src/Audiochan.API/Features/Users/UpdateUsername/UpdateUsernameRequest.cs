@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Models;
-using Audiochan.Core.Persistence;
+using Audiochan.Core.Repositories;
 using Audiochan.Core.Services;
 using MediatR;
 

@@ -8,7 +8,7 @@ using Ardalis.Specification;
 using Ardalis.Specification.EntityFrameworkCore;
 using Audiochan.Core.Extensions;
 using Audiochan.Core.Models;
-using Audiochan.Core.Persistence;
+using Audiochan.Core.Repositories;
 using Audiochan.Infrastructure.Persistence.Extensions;
 using Microsoft.EntityFrameworkCore;
 

@@ -6,7 +6,7 @@ using Audiochan.API.Features.Audios.GetAudio;
 using Audiochan.API.Features.Audios.UpdateAudio;
 using Audiochan.API.Mappings;
 using Audiochan.Core.Models;
-using Audiochan.Core.Persistence;
+using Audiochan.Core.Repositories;
 using Audiochan.Core.Services;
 using Audiochan.Core.Settings;
 using MediatR;

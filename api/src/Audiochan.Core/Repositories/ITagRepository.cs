@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Entities;
 
-namespace Audiochan.Core.Persistence
+namespace Audiochan.Core.Repositories
 {
     public interface ITagRepository : IGenericRepository<Tag>
     {

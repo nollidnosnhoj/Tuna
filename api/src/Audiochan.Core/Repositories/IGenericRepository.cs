@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Ardalis.Specification;
 using Audiochan.Core.Models;
 
-namespace Audiochan.Core.Persistence
+namespace Audiochan.Core.Repositories
 {
     public interface IGenericRepository<T> where T : class
     {

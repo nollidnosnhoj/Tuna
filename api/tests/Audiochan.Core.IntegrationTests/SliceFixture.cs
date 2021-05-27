@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Audiochan.API;
 using Audiochan.Core.Constants;
 using Audiochan.Core.Entities;
-using Audiochan.Core.Persistence;
+using Audiochan.Core.Repositories;
 using Audiochan.Core.Services;
 using Audiochan.Infrastructure.Identity;
 using Audiochan.Infrastructure.Persistence;

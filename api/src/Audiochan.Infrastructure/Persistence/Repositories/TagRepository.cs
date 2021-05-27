@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Ardalis.Specification;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Extensions;
-using Audiochan.Core.Persistence;
+using Audiochan.Core.Repositories;
 
 namespace Audiochan.Infrastructure.Persistence.Repositories
 {

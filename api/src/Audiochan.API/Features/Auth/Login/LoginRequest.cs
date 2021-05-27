@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Models;
-using Audiochan.Core.Persistence;
+using Audiochan.Core.Repositories;
 using Audiochan.Core.Services;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
