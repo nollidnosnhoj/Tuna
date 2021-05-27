@@ -1,5 +1,6 @@
 ﻿using Amazon.S3;
-using Audiochan.Core.Interfaces;
+using Audiochan.Core.Persistence;
+using Audiochan.Core.Services;
 using Audiochan.Infrastructure.Identity;
 using Audiochan.Infrastructure.Persistence;
 using Audiochan.Infrastructure.Persistence.Repositories;

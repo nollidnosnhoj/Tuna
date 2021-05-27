@@ -2,14 +2,14 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.API.Extensions;
+using Audiochan.API.Features.Audios.CreateAudio;
+using Audiochan.API.Features.Audios.GetAudio;
+using Audiochan.API.Features.Audios.GetAudioList;
+using Audiochan.API.Features.Audios.RemoveAudio;
+using Audiochan.API.Features.Audios.UpdateAudio;
+using Audiochan.API.Features.Audios.UpdatePicture;
 using Audiochan.API.Models;
-using Audiochan.Core.Common.Models.Responses;
-using Audiochan.Core.Features.Audios.CreateAudio;
-using Audiochan.Core.Features.Audios.GetAudio;
-using Audiochan.Core.Features.Audios.GetAudioList;
-using Audiochan.Core.Features.Audios.RemoveAudio;
-using Audiochan.Core.Features.Audios.UpdateAudio;
-using Audiochan.Core.Features.Audios.UpdatePicture;
+using Audiochan.Core.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -42,14 +42,14 @@ namespace Audiochan.API.Controllers
         [HttpGet("{audioId:guid}", Name = "GetAudio")]
         [AllowAnonymous]
         [ProducesResponseType(typeof(AudioDetailViewModel), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorApiResponse), StatusCodes.Status404NotFound)]
         [SwaggerOperation(Summary = "Return an audio by ID.", OperationId = "GetAudio", Tags = new[] {"audios"})]
         public async Task<IActionResult> Get(Guid audioId, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new GetAudioRequest(audioId), cancellationToken);
             return result != null
                 ? Ok(result)
-                : NotFound(ErrorViewModel.NotFound("Audio was not found."));
+                : NotFound(ErrorApiResponse.NotFound("Audio was not found."));
         }
 
         [HttpPost(Name = "CreateAudio")]
@@ -91,7 +91,7 @@ namespace Audiochan.API.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorApiResponse), StatusCodes.Status404NotFound)]
         [SwaggerOperation(
             Summary = "Remove audio.",
             Description = "Requires authentication.",

@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Audiochan.Core.Entities.Base;
+using Audiochan.Core.Entities.Abstractions;
 
 namespace Audiochan.Core.Entities
 {
-    public class Audio : BaseEntity
+    public class Audio : IAudited
     {
         public Audio()
         {
@@ -13,6 +13,10 @@ namespace Audiochan.Core.Entities
         }
         
         public Guid Id { get; set; }
+        
+        public DateTime Created { get; set; }
+        
+        public DateTime? LastModified { get; set; }
 
         /// <summary>
         /// The name of the audio. Will default to using the original filename without the extension.

@@ -1,19 +1,19 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.API.Extensions;
+using Audiochan.API.Features.Audios.GetAudioFeed;
+using Audiochan.API.Features.Audios.GetAudioList;
+using Audiochan.API.Features.Auth.GetCurrentUser;
+using Audiochan.API.Features.Followers.CheckIfFollowing;
+using Audiochan.API.Features.Followers.SetFollow;
+using Audiochan.API.Features.Users.UpdateEmail;
+using Audiochan.API.Features.Users.UpdatePassword;
+using Audiochan.API.Features.Users.UpdatePicture;
+using Audiochan.API.Features.Users.UpdateUser;
+using Audiochan.API.Features.Users.UpdateUsername;
 using Audiochan.API.Models;
-using Audiochan.Core.Common.Models.Responses;
-using Audiochan.Core.Features.Audios.GetAudioFeed;
-using Audiochan.Core.Features.Audios.GetAudioList;
-using Audiochan.Core.Features.Auth.GetCurrentUser;
-using Audiochan.Core.Features.Followers.CheckIfFollowing;
-using Audiochan.Core.Features.Followers.SetFollow;
-using Audiochan.Core.Features.Users.UpdateEmail;
-using Audiochan.Core.Features.Users.UpdatePassword;
-using Audiochan.Core.Features.Users.UpdatePicture;
-using Audiochan.Core.Features.Users.UpdateUser;
-using Audiochan.Core.Features.Users.UpdateUsername;
-using Audiochan.Core.Interfaces;
+using Audiochan.Core.Models;
+using Audiochan.Core.Services;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -64,7 +64,7 @@ namespace Audiochan.API.Controllers
             var result = await _mediator.Send(new GetCurrentUserRequest(), cancellationToken);
             return result != null
                 ? Ok(result)
-                : Unauthorized(ErrorViewModel.Unauthorized("You are not authorized access."));
+                : Unauthorized(ErrorApiResponse.Unauthorized("You are not authorized access."));
         }
 
         [HttpGet("feed", Name = "GetAuthenticatedUserFeed")]

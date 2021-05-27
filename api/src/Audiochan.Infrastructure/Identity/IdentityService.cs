@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Audiochan.Core.Entities;
-using Audiochan.Core.Interfaces;
+using Audiochan.Core.Models;
+using Audiochan.Core.Services;
 using Microsoft.AspNetCore.Identity;
 
 namespace Audiochan.Infrastructure.Identity
@@ -14,12 +15,17 @@ namespace Audiochan.Infrastructure.Identity
             _userManager = userManager;
         }
 
-        public async Task<IdentityResult> UpdatePassword(User user, string currentPassword, string newPassword)
+        public async Task<Result<bool>> CreateUser(User user, string password)
         {
-            return await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
+            return (await _userManager.CreateAsync(user, password)).ToResult();
         }
 
-        public async Task<IdentityResult> UpdateEmail(User user, string newEmail)
+        public async Task<Result<bool>> UpdatePassword(User user, string currentPassword, string newPassword)
+        {
+            return (await _userManager.ChangePasswordAsync(user, currentPassword, newPassword)).ToResult();
+        }
+
+        public async Task<Result<bool>> UpdateEmail(User user, string newEmail)
         {
             var result = await _userManager.SetEmailAsync(user, newEmail);
             
@@ -28,10 +34,10 @@ namespace Audiochan.Infrastructure.Identity
                 await _userManager.UpdateNormalizedEmailAsync(user);
             }
 
-            return result;
+            return result.ToResult();
         }
 
-        public async Task<IdentityResult> UpdateUsername(User user, string newUsername)
+        public async Task<Result<bool>> UpdateUsername(User user, string newUsername)
         {
             var result = await _userManager.SetUserNameAsync(user, newUsername);
             
@@ -42,7 +48,7 @@ namespace Audiochan.Infrastructure.Identity
                 await _userManager.UpdateAsync(user);
             }
 
-            return result;
+            return result.ToResult();
         }
     }
 }

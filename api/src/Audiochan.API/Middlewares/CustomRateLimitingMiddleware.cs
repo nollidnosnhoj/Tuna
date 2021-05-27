@@ -31,7 +31,7 @@ namespace Audiochan.API.Middlewares
                 httpContext.Response.Headers["Retry-After"] = (StringValues) retryAfter;
             var code = _rateLimitOptions.QuotaExceededResponse?.StatusCode ?? _rateLimitOptions.HttpStatusCode;
             var contentType = _rateLimitOptions.QuotaExceededResponse?.ContentType ?? "text/plain";
-            var response = new ErrorViewModel(code, message, null);
+            var response = new ErrorApiResponse(code, message, null);
             httpContext.Response.StatusCode = code;
             httpContext.Response.ContentType = contentType;
             return httpContext.Response.WriteAsync(JsonSerializer.Serialize(response));

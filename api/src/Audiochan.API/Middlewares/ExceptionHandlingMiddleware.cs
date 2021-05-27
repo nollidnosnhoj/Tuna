@@ -50,7 +50,7 @@ namespace Audiochan.API.Middlewares
                 ? ex.Message
                 : "An unknown error has occurred. Please contact the administrators.";
 
-            var response = new ErrorViewModel(StatusCodes.Status500InternalServerError, message, null);
+            var response = new ErrorApiResponse(StatusCodes.Status500InternalServerError, message, null);
 
             context.Response.StatusCode = response.Code;
             context.Response.ContentType = "application/json";

@@ -1,6 +1,5 @@
 ﻿using Audiochan.API.Models;
-using Audiochan.Core.Common.Enums;
-using Audiochan.Core.Common.Models.Interfaces;
+using Audiochan.Core.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,13 +7,13 @@ namespace Audiochan.API.Extensions
 {
     public static class ResultExtensions
     {
-        public static IActionResult ReturnErrorResponse<TResponse>(this IResult<TResponse> result)
+        public static IActionResult ReturnErrorResponse<TResponse>(this Result<TResponse> result)
         {
-            var response = new ErrorViewModel(result.ToErrorCode(), result.Message, result.Errors);
+            var response = new ErrorApiResponse(result.ToErrorCode(), result.Message, result.Errors);
             return new ObjectResult(response) {StatusCode = response.Code};
         }
 
-        private static int ToErrorCode<TResponse>(this IResult<TResponse> result)
+        private static int ToErrorCode<TResponse>(this Result<TResponse> result)
         {
             return result.ErrorCode switch
             {

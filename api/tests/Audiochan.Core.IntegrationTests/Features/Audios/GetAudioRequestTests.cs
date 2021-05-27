@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Constants;
-using Audiochan.Core.Features.Audios.GetAudio;
+using Audiochan.API.Features.Audios.GetAudio;
+using Audiochan.Core.Constants;
 using Audiochan.Tests.Common.Fakers.Audios;
 using FluentAssertions;
 using Xunit;

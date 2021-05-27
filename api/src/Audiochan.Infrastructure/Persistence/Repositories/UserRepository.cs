@@ -1,6 +1,6 @@
 ﻿using Ardalis.Specification;
 using Audiochan.Core.Entities;
-using Audiochan.Core.Interfaces;
+using Audiochan.Core.Persistence;
 using JetBrains.Annotations;
 
 namespace Audiochan.Infrastructure.Persistence.Repositories

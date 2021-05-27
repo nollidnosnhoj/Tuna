@@ -6,9 +6,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.Specification;
 using Ardalis.Specification.EntityFrameworkCore;
-using Audiochan.Core.Common.Extensions;
-using Audiochan.Core.Common.Models.Responses;
-using Audiochan.Core.Interfaces;
+using Audiochan.Core.Extensions;
+using Audiochan.Core.Models;
+using Audiochan.Core.Persistence;
 using Audiochan.Infrastructure.Persistence.Extensions;
 using Microsoft.EntityFrameworkCore;
 
@@ -38,7 +38,15 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
             return await DbSet.FindAsync(new object[] {id}, cancellationToken: cancellationToken);
         }
 
-        public virtual async Task<T?> GetBySpecAsync(ISpecification<T> specification, bool ignoreGlobalFilter = false,
+        public async Task<T?> GetAsync(Expression<Func<T, bool>> criteriaExpression, bool ignoreGlobalFilter = false,
+            CancellationToken cancellationToken = default)
+        {
+            return await DbSet.Where(criteriaExpression)
+                .IgnoreGlobalQueryFilters(ignoreGlobalFilter)
+                .SingleOrDefaultAsync(cancellationToken);
+        }
+
+        public virtual async Task<T?> GetAsync(ISpecification<T> specification, bool ignoreGlobalFilter = false,
             CancellationToken cancellationToken = default)
         {
             return await ApplySpecification(specification)
@@ -46,7 +54,15 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
                 .SingleOrDefaultAsync(cancellationToken);
         }
 
-        public virtual async Task<List<T>> GetListBySpecAsync(ISpecification<T> specification, bool ignoreGlobalFilter = false, 
+        public async Task<List<T>> GetListAsync(Expression<Func<T, bool>> criteriaExpression, bool ignoreGlobalFilter = false,
+            CancellationToken cancellationToken = default)
+        {
+            return await DbSet.Where(criteriaExpression)
+                .IgnoreGlobalQueryFilters(ignoreGlobalFilter)
+                .ToListAsync(cancellationToken);
+        }
+
+        public virtual async Task<List<T>> GetListAsync(ISpecification<T> specification, bool ignoreGlobalFilter = false, 
             CancellationToken cancellationToken = default)
         {
             return await ApplySpecification(specification)
@@ -54,7 +70,7 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
                 .ToListAsync(cancellationToken);
         }
 
-        public virtual async Task<TDto?> GetBySpecAsync<TDto>(ISpecification<T, TDto> specification, bool ignoreGlobalFilter = false, 
+        public virtual async Task<TDto?> GetAsync<TDto>(ISpecification<T, TDto> specification, bool ignoreGlobalFilter = false, 
             CancellationToken cancellationToken = default) where TDto : class
         {
             return await ApplySpecification(specification)
@@ -62,7 +78,7 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
                 .SingleOrDefaultAsync(cancellationToken);
         }
 
-        public virtual async Task<List<TDto>> GetListBySpecAsync<TDto>(ISpecification<T, TDto> specification, bool ignoreGlobalFilter = false, 
+        public virtual async Task<List<TDto>> GetListAsync<TDto>(ISpecification<T, TDto> specification, bool ignoreGlobalFilter = false, 
             CancellationToken cancellationToken = default) where TDto : class
         {
             return await ApplySpecification(specification)

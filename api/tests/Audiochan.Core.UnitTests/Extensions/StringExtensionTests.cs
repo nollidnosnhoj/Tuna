@@ -1,4 +1,4 @@
-using Audiochan.Core.Common.Extensions;
+using Audiochan.Core.Extensions;
 using FluentAssertions;
 using Xunit;
 

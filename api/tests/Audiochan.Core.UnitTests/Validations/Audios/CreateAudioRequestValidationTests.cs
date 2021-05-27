@@ -1,5 +1,5 @@
-﻿using Audiochan.Core.Common.Settings;
-using Audiochan.Core.Features.Audios.CreateAudio;
+﻿using Audiochan.API.Features.Audios.CreateAudio;
+using Audiochan.Core.Settings;
 using Audiochan.Tests.Common.Builders;
 using Audiochan.Tests.Common.Fakers.Audios;
 using FluentAssertions;

@@ -1,6 +1,6 @@
-﻿using Audiochan.Core.Common.Constants;
-using Audiochan.Core.Common.Settings;
-using Audiochan.Core.Features.Auth.Register;
+﻿using Audiochan.API.Features.Auth.Register;
+using Audiochan.Core.Constants;
+using Audiochan.Core.Settings;
 using FluentValidation;
 using FluentValidation.TestHelper;
 using Microsoft.Extensions.Options;
@@ -42,7 +42,7 @@ namespace Audiochan.Core.UnitTests.Validations.Auth
             var req = new RegisterUserRequest {Username = "@pplesAnd&&&&"};
             _validator.TestValidate(req)
                 .ShouldHaveValidationErrorFor(x => x.Username)
-                .WithErrorCode(ValidationErrorCodes.Username.RequireCharacters);
+                .WithErrorCode(ValidationErrorCodes.Username.Characters);
         }
 
         [Fact]
@@ -63,7 +63,7 @@ namespace Audiochan.Core.UnitTests.Validations.Auth
 
             validationResult
                 .ShouldHaveValidationErrorFor(x => x.Password)
-                .WithErrorCode(ValidationErrorCodes.Password.RequireDigits);
+                .WithErrorCode(ValidationErrorCodes.Password.Digits);
         }
 
         [Fact]
@@ -75,7 +75,7 @@ namespace Audiochan.Core.UnitTests.Validations.Auth
 
             validationResult
                 .ShouldHaveValidationErrorFor(x => x.Password)
-                .WithErrorCode(ValidationErrorCodes.Password.RequireLowercase);
+                .WithErrorCode(ValidationErrorCodes.Password.Lowercase);
         }
 
         [Fact]
@@ -87,7 +87,7 @@ namespace Audiochan.Core.UnitTests.Validations.Auth
 
             validationResult
                 .ShouldHaveValidationErrorFor(x => x.Password)
-                .WithErrorCode(ValidationErrorCodes.Password.RequireUppercase);
+                .WithErrorCode(ValidationErrorCodes.Password.Uppercase);
         }
 
         [Fact]
@@ -99,7 +99,7 @@ namespace Audiochan.Core.UnitTests.Validations.Auth
 
             validationResult
                 .ShouldHaveValidationErrorFor(x => x.Password)
-                .WithErrorCode(ValidationErrorCodes.Password.RequireNonAlphanumeric);
+                .WithErrorCode(ValidationErrorCodes.Password.NonAlphanumeric);
         }
 
         [Fact]
@@ -111,7 +111,7 @@ namespace Audiochan.Core.UnitTests.Validations.Auth
 
             validationResult
                 .ShouldHaveValidationErrorFor(x => x.Password)
-                .WithErrorCode(ValidationErrorCodes.Password.RequireLength);
+                .WithErrorCode(ValidationErrorCodes.Password.Length);
         }
     }
 }

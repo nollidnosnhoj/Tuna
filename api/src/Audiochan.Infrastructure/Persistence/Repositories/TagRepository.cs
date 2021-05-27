@@ -4,10 +4,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.Specification;
-using Audiochan.Core.Common.Extensions;
-using Audiochan.Core.Common.Specifications;
 using Audiochan.Core.Entities;
-using Audiochan.Core.Interfaces;
+using Audiochan.Core.Extensions;
+using Audiochan.Core.Persistence;
 
 namespace Audiochan.Infrastructure.Persistence.Repositories
 {
@@ -27,8 +26,8 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
         {
             var taggifyTags = tags.FormatTags();
 
-            var tagEntities = await GetListBySpecAsync(new GetListOfTagsSpecification(taggifyTags), 
-                cancellationToken: cancellationToken);
+            var tagEntities =
+                await GetListAsync(tag => tags.Contains(tag.Name), cancellationToken: cancellationToken);
 
             foreach (var tag in taggifyTags.Where(tag => tagEntities.All(t => t.Name != tag)))
             {

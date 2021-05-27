@@ -1,4 +1,4 @@
-﻿using Audiochan.Core.Features.Auth.Login;
+﻿using Audiochan.API.Features.Auth.Login;
 using Bogus;
 
 namespace Audiochan.Tests.Common.Fakers.Auth

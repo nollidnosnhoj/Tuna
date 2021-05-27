@@ -1,11 +1,11 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.API.Extensions;
+using Audiochan.API.Features.Auth.Login;
+using Audiochan.API.Features.Auth.Refresh;
+using Audiochan.API.Features.Auth.Register;
+using Audiochan.API.Features.Auth.Revoke;
 using Audiochan.API.Models;
-using Audiochan.Core.Features.Auth.Login;
-using Audiochan.Core.Features.Auth.Refresh;
-using Audiochan.Core.Features.Auth.Register;
-using Audiochan.Core.Features.Auth.Revoke;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -79,7 +79,7 @@ namespace Audiochan.API.Controllers
 
         [HttpPost("revoke", Name = "RevokeRefreshToken")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorApiResponse), StatusCodes.Status400BadRequest)]
         [SwaggerOperation(
             Summary = "Revoke a refresh token",
             OperationId = "RevokeRefreshToken",

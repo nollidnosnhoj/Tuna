@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Audiochan.Core.Common.Settings;
+using Audiochan.Core.Settings;
 
 namespace Audiochan.Tests.Common.Builders
 {

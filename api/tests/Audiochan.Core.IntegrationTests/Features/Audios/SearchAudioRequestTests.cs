@@ -2,9 +2,9 @@
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Extensions;
+using Audiochan.API.Features.Audios.SearchAudios;
 using Audiochan.Core.Entities;
-using Audiochan.Core.Features.Audios.SearchAudios;
+using Audiochan.Core.Extensions;
 using Bogus;
 using FluentAssertions;
 using Xunit;

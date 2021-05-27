@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Interfaces;
+using Audiochan.Core.Persistence;
 using Microsoft.EntityFrameworkCore.Storage;
 
 // ReSharper disable MethodHasAsyncOverloadWithCancellation

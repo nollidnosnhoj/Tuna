@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Audiochan.Core.Features.Auth.Refresh;
+using Audiochan.API.Features.Auth.Refresh;
 using Audiochan.Tests.Common.Fakers.Auth;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
