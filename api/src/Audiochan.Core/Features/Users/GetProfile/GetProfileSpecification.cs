@@ -1,5 +1,5 @@
 ﻿using Ardalis.Specification;
-using Audiochan.Core.Common.Extensions.MappingExtensions;
+using Audiochan.Core.Common.Mappings;
 using Audiochan.Core.Entities;
 
 namespace Audiochan.Core.Features.Users.GetProfile
@@ -14,7 +14,7 @@ namespace Audiochan.Core.Features.Users.GetProfile
                 .Include(u => u.Audios)
                 .Where(u => u.UserName == username.Trim().ToLower());
 
-            Query.Select(UserMappingExtensions.ProfileProjection(currentUserId));
+            Query.Select(UserMappings.ProfileProjection(currentUserId));
         }
     }
 }

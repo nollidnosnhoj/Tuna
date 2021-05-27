@@ -4,14 +4,13 @@ using System.Linq.Expressions;
 using Audiochan.Core.Common.Constants;
 using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Entities;
-using Audiochan.Core.Features.Audios;
 using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Features.Audios.GetAudioList;
 using FastExpressionCompiler;
 
-namespace Audiochan.Core.Common.Extensions.MappingExtensions
+namespace Audiochan.Core.Common.Mappings
 {
-    public static class AudioMappingExtensions
+    public static class AudioMappings
     {
         public static AudioDetailViewModel MapToDetail(this Audio audio, bool returnNullIfFail = false) =>
             AudioToDetailProjection().CompileFast(returnNullIfFail).Invoke(audio);

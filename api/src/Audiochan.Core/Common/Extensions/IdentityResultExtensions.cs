@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Audiochan.Core.Common.Enums;
+using Audiochan.Core.Common.Models;
 using Audiochan.Core.Common.Models.Interfaces;
-using Audiochan.Core.Common.Models.Responses;
 using Microsoft.AspNetCore.Identity;
 
 namespace Audiochan.Core.Common.Extensions

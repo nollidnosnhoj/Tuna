@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Audiochan.Core.Common.Models.Responses
 {
-    public record PagedList<T>(List<T> Items, int Count, int Page, int Size)
+    public record PagedListDto<T>(List<T> Items, int Count, int Page, int Size)
     {
         public int TotalPages => (int) Math.Ceiling(Count / (double) Size);
         public bool HasPrevious => Page > 1;

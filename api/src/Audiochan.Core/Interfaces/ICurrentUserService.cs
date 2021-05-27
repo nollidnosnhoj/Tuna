@@ -1,4 +1,4 @@
-﻿namespace Audiochan.Core.Common.Interfaces
+﻿namespace Audiochan.Core.Interfaces
 {
     public interface ICurrentUserService
     {

@@ -2,15 +2,15 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models.Interfaces;
 using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Features.Audios.GetAudioList;
+using Audiochan.Core.Interfaces;
 using MediatR;
 
 namespace Audiochan.Core.Features.Audios.SearchAudios
 {
-    public record SearchAudiosRequest : IHasPage, IRequest<PagedList<AudioViewModel>>
+    public record SearchAudiosRequest : IHasPage, IRequest<PagedListDto<AudioViewModel>>
     {
         public string Q { get; init; } = string.Empty;
         public string Tags { get; init; } = string.Empty;
@@ -18,7 +18,7 @@ namespace Audiochan.Core.Features.Audios.SearchAudios
         public int Size { get; init; }
     }
 
-    public class SearchAudiosRequestHandler : IRequestHandler<SearchAudiosRequest, PagedList<AudioViewModel>>
+    public class SearchAudiosRequestHandler : IRequestHandler<SearchAudiosRequest, PagedListDto<AudioViewModel>>
     {
         private readonly IUnitOfWork _unitOfWork;
 
@@ -27,7 +27,7 @@ namespace Audiochan.Core.Features.Audios.SearchAudios
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<PagedList<AudioViewModel>> Handle(SearchAudiosRequest request,
+        public async Task<PagedListDto<AudioViewModel>> Handle(SearchAudiosRequest request,
             CancellationToken cancellationToken)
         {
             var parsedTags = !string.IsNullOrWhiteSpace(request.Tags)

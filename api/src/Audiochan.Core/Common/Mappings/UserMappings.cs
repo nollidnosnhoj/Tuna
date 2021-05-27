@@ -4,13 +4,12 @@ using System.Linq.Expressions;
 using Audiochan.Core.Common.Constants;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Auth.GetCurrentUser;
-using Audiochan.Core.Features.Users;
 using Audiochan.Core.Features.Users.GetProfile;
 using FastExpressionCompiler;
 
-namespace Audiochan.Core.Common.Extensions.MappingExtensions
+namespace Audiochan.Core.Common.Mappings
 {
-    public static class UserMappingExtensions
+    public static class UserMappings
     {
         public static ProfileViewModel MapToProfile(this User user, string userId, bool returnNullIfFail = false) =>
             ProfileProjection(userId).CompileFast(returnNullIfFail).Invoke(user);

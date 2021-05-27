@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Ardalis.Specification;
 using Audiochan.Core.Common.Models.Responses;
 
-namespace Audiochan.Core.Common.Interfaces
+namespace Audiochan.Core.Interfaces
 {
     public interface IGenericRepository<T> where T : class
     {
@@ -18,7 +18,7 @@ namespace Audiochan.Core.Common.Interfaces
             CancellationToken cancellationToken = default) where TDto : class;
         Task<List<TDto>> GetListBySpecAsync<TDto>(ISpecification<T, TDto> specification, bool ignoreGlobalFilter = false, 
             CancellationToken cancellationToken = default) where TDto : class;
-        Task<PagedList<TDto>> GetPagedListBySpec<TDto>(ISpecification<T, TDto> specification, int page, int size, bool ignoreGlobalFilter = false, 
+        Task<PagedListDto<TDto>> GetPagedListBySpec<TDto>(ISpecification<T, TDto> specification, int page, int size, bool ignoreGlobalFilter = false, 
             CancellationToken cancellationToken = default) where TDto : class;
         Task<bool> ExistsAsync(Expression<Func<T, bool>> criteriaExpression, bool ignoreGlobalFilter = false, 
             CancellationToken cancellationToken = default);

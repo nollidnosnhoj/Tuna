@@ -1,19 +1,19 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Features.Audios.GetAudioList;
+using Audiochan.Core.Interfaces;
 using MediatR;
 
 namespace Audiochan.Core.Features.Audios.GetAudioFeed
 {
-    public record GetAudioFeedRequest : IRequest<CursorList<AudioViewModel>>
+    public record GetAudioFeedRequest : IRequest<CursorListDto<AudioViewModel>>
     {
         public string UserId { get; init; } = string.Empty;
         public string? Cursor { get; init; }
     }
 
-    public class GetAudioFeedRequestHandler : IRequestHandler<GetAudioFeedRequest, CursorList<AudioViewModel>>
+    public class GetAudioFeedRequestHandler : IRequestHandler<GetAudioFeedRequest, CursorListDto<AudioViewModel>>
     {
         private readonly IUnitOfWork _unitOfWork;
 
@@ -22,7 +22,7 @@ namespace Audiochan.Core.Features.Audios.GetAudioFeed
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<CursorList<AudioViewModel>> Handle(GetAudioFeedRequest request,
+        public async Task<CursorListDto<AudioViewModel>> Handle(GetAudioFeedRequest request,
             CancellationToken cancellationToken)
         {
             var followedIds = await _unitOfWork.FollowedUsers

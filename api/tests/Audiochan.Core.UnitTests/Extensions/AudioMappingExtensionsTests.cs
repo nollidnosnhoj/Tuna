@@ -1,4 +1,4 @@
-﻿using Audiochan.Core.Common.Extensions.MappingExtensions;
+﻿using Audiochan.Core.Common.Mappings;
 using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Entities;
 using Audiochan.Tests.Common.Builders;

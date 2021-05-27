@@ -1,5 +1,5 @@
 ﻿using System.Security.Claims;
-using Audiochan.Core.Common.Interfaces;
+using Audiochan.Core.Interfaces;
 using Microsoft.AspNetCore.Http;
 
 namespace Audiochan.API.Services

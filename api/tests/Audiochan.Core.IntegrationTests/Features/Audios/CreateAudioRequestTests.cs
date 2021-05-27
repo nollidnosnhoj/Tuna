@@ -1,8 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Audiochan.Core.Features.Audios.CreateAudio;
-using Audiochan.Tests.Common.Fakers;
 using Audiochan.Tests.Common.Fakers.Audios;
-using Bogus;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Xunit;

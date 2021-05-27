@@ -1,7 +1,6 @@
 ﻿using Ardalis.Specification;
-using Audiochan.Core.Common.Extensions.MappingExtensions;
+using Audiochan.Core.Common.Mappings;
 using Audiochan.Core.Entities;
-using Audiochan.Core.Features.Audios;
 using Audiochan.Core.Features.Audios.GetAudioList;
 
 namespace Audiochan.Core.Features.Users.GetUserAudios
@@ -23,7 +22,7 @@ namespace Audiochan.Core.Features.Users.GetUserAudios
                 Query.Where(a => a.IsPublic);
             }
 
-            Query.Select(AudioMappingExtensions.AudioToListProjection());
+            Query.Select(AudioMappings.AudioToListProjection());
         }
     }
 }

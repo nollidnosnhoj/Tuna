@@ -1,6 +1,6 @@
 ﻿using System;
 using Ardalis.Specification;
-using Audiochan.Core.Common.Extensions.MappingExtensions;
+using Audiochan.Core.Common.Mappings;
 using Audiochan.Core.Entities;
 
 namespace Audiochan.Core.Features.Audios.GetAudio
@@ -14,7 +14,7 @@ namespace Audiochan.Core.Features.Audios.GetAudio
                 .Include(a => a.User)
                 .Where(a => a.Id == audioId);
 
-            Query.Select(AudioMappingExtensions.AudioToDetailProjection());
+            Query.Select(AudioMappings.AudioToDetailProjection());
         }
     }
 }

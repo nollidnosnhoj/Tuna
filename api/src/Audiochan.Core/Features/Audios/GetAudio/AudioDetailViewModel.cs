@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Audiochan.Core.Common.Extensions.MappingExtensions;
 using Audiochan.Core.Common.Models.Responses;
-using Audiochan.Core.Entities;
-using FastExpressionCompiler;
 
 namespace Audiochan.Core.Features.Audios.GetAudio
 {

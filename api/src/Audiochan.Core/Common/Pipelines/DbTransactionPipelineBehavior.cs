@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Interfaces;
+using Audiochan.Core.Interfaces;
 using MediatR;
 
 namespace Audiochan.Core.Common.Pipelines
@@ -11,12 +11,12 @@ namespace Audiochan.Core.Common.Pipelines
     /// </summary>
     /// <typeparam name="TRequest">The Request object</typeparam>
     /// <typeparam name="TResponse">The Response object</typeparam>
-    public class DbContextTransactionPipelineBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+    public class DbTransactionPipelineBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
         where TRequest : notnull
     {
         private readonly IUnitOfWork _unitOfWork;
 
-        public DbContextTransactionPipelineBehavior(IUnitOfWork unitOfWork)
+        public DbTransactionPipelineBehavior(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }

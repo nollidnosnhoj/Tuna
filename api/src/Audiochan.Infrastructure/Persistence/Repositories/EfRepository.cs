@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 using Ardalis.Specification;
 using Ardalis.Specification.EntityFrameworkCore;
 using Audiochan.Core.Common.Extensions;
-using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models.Responses;
+using Audiochan.Core.Interfaces;
 using Audiochan.Infrastructure.Persistence.Extensions;
 using Microsoft.EntityFrameworkCore;
 
@@ -70,7 +70,7 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
                 .ToListAsync(cancellationToken);
         }
 
-        public virtual async Task<PagedList<TDto>> GetPagedListBySpec<TDto>(ISpecification<T, TDto> specification, int page, int size, 
+        public virtual async Task<PagedListDto<TDto>> GetPagedListBySpec<TDto>(ISpecification<T, TDto> specification, int page, int size, 
             bool ignoreGlobalFilter = false, CancellationToken cancellationToken = default) where TDto : class
         {
             return await ApplySpecification(specification)

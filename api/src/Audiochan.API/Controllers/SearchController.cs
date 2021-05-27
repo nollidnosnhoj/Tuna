@@ -1,7 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Models.Responses;
-using Audiochan.Core.Features.Audios;
 using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Features.Audios.SearchAudios;
 using MediatR;
@@ -22,7 +21,7 @@ namespace Audiochan.API.Controllers
         }
 
         [HttpGet("audios")]
-        [ProducesResponseType(typeof(PagedList<AudioDetailViewModel>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PagedListDto<AudioDetailViewModel>), StatusCodes.Status200OK)]
         [SwaggerOperation(Summary = "Search for audios", OperationId = "SearchAudio", Tags = new[] {"search"})]
         public async Task<IActionResult> SearchAudios([FromQuery] SearchAudiosRequest request,
             CancellationToken cancellationToken)

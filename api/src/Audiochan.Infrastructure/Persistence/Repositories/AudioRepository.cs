@@ -4,10 +4,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.Specification;
 using Audiochan.Core.Common.Helpers;
-using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Audios.GetAudioList;
+using Audiochan.Core.Interfaces;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 
@@ -25,7 +25,7 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
         {
         }
 
-        public async Task<CursorList<AudioViewModel>> GetCursorPaginationAsync(
+        public async Task<CursorListDto<AudioViewModel>> GetCursorPaginationAsync(
             ISpecification<Audio, AudioViewModel> specification,
             string? cursor, int size = 30, CancellationToken cancellationToken = default)
         {
@@ -57,7 +57,7 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
                     ? CursorHelpers.EncodeCursor(lastAudio.Uploaded, lastAudio.Id.ToString())
                     : null;
 
-            return new CursorList<AudioViewModel>(list, nextCursor);
+            return new CursorListDto<AudioViewModel>(list, nextCursor);
         }
     }
 }

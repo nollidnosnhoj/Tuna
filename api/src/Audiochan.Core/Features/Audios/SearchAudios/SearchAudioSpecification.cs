@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Ardalis.Specification;
-using Audiochan.Core.Common.Extensions.MappingExtensions;
+using Audiochan.Core.Common.Mappings;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Audios.GetAudioList;
 
@@ -22,7 +22,7 @@ namespace Audiochan.Core.Features.Audios.SearchAudios
             if (tags.Count > 0)
                 Query.Where(a => a.Tags.Any(x => tags.Contains(x.Name)));
 
-            Query.Select(AudioMappingExtensions.AudioToListProjection());
+            Query.Select(AudioMappings.AudioToListProjection());
         }
     }
 }

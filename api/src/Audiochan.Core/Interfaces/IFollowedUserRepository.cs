@@ -1,6 +1,6 @@
 ﻿using Audiochan.Core.Entities;
 
-namespace Audiochan.Core.Common.Interfaces
+namespace Audiochan.Core.Interfaces
 {
     public interface IFollowedUserRepository : IGenericRepository<FollowedUser>
     {

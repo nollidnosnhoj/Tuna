@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Audiochan.API.Extensions;
 using Audiochan.API.Models;
 using Audiochan.Core.Common.Models.Responses;
-using Audiochan.Core.Features.Audios;
 using Audiochan.Core.Features.Audios.CreateAudio;
 using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Features.Audios.GetAudioList;
@@ -32,7 +31,7 @@ namespace Audiochan.API.Controllers
 
         [HttpGet(Name = "GetAudios")]
         [AllowAnonymous]
-        [ProducesResponseType(typeof(PagedList<AudioViewModel>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PagedListDto<AudioViewModel>), StatusCodes.Status200OK)]
         [SwaggerOperation(Summary = "Returns a list of audios.", OperationId = "GetAudios", Tags = new[] {"audios"})]
         public async Task<IActionResult> GetList([FromQuery] GetAudioListRequest query,
             CancellationToken cancellationToken)

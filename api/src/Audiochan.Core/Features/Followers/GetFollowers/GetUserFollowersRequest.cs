@@ -1,22 +1,20 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models.Interfaces;
 using Audiochan.Core.Common.Models.Responses;
-using Audiochan.Core.Common.Settings;
+using Audiochan.Core.Interfaces;
 using MediatR;
-using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Followers.GetFollowers
 {
-    public record GetUserFollowersRequest : IHasPage, IRequest<PagedList<FollowerViewModel>>
+    public record GetUserFollowersRequest : IHasPage, IRequest<PagedListDto<FollowerViewModel>>
     {
         public string Username { get; init; } = string.Empty;
         public int Page { get; init; }
         public int Size { get; init; }
     }
 
-    public class GetUserFollowersRequestHandler : IRequestHandler<GetUserFollowersRequest, PagedList<FollowerViewModel>>
+    public class GetUserFollowersRequestHandler : IRequestHandler<GetUserFollowersRequest, PagedListDto<FollowerViewModel>>
     {
         private readonly IUnitOfWork _unitOfWork;
 
@@ -25,7 +23,7 @@ namespace Audiochan.Core.Features.Followers.GetFollowers
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<PagedList<FollowerViewModel>> Handle(GetUserFollowersRequest request,
+        public async Task<PagedListDto<FollowerViewModel>> Handle(GetUserFollowersRequest request,
             CancellationToken cancellationToken)
         {
             return await _unitOfWork.FollowedUsers.GetPagedListBySpec(new GetUserFollowersSpecification(request.Username),

@@ -3,14 +3,13 @@ using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Enums;
-using Audiochan.Core.Common.Extensions.MappingExtensions;
-using Audiochan.Core.Common.Interfaces;
+using Audiochan.Core.Common.Mappings;
+using Audiochan.Core.Common.Models;
 using Audiochan.Core.Common.Models.Interfaces;
-using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Common.Settings;
-using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Features.Audios.UpdateAudio;
+using Audiochan.Core.Interfaces;
 using MediatR;
 using Microsoft.Extensions.Options;
 

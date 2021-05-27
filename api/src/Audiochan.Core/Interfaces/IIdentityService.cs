@@ -2,7 +2,7 @@
 using Audiochan.Core.Entities;
 using Microsoft.AspNetCore.Identity;
 
-namespace Audiochan.Core.Common.Interfaces
+namespace Audiochan.Core.Interfaces
 {
     public interface IIdentityService
     {

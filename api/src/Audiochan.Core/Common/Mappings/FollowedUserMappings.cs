@@ -2,13 +2,12 @@
 using System.Linq.Expressions;
 using Audiochan.Core.Common.Constants;
 using Audiochan.Core.Entities;
-using Audiochan.Core.Features.Followers;
 using Audiochan.Core.Features.Followers.GetFollowers;
 using Audiochan.Core.Features.Followers.GetFollowings;
 
-namespace Audiochan.Core.Common.Extensions.MappingExtensions
+namespace Audiochan.Core.Common.Mappings
 {
-    public static class FollowerMappingExtensions
+    public static class FollowedUserMappings
     {
         public static Expression<Func<FollowedUser, FollowerViewModel>> FollowerToListProjection()
         {

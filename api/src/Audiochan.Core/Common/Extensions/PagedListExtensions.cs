@@ -13,7 +13,7 @@ namespace Audiochan.Core.Common.Extensions
         private const int DefaultPageNumber = 1;
         private const int DefaultPageSize = 30;
 
-        public static async Task<PagedList<TResponse>> PaginateAsync<TResponse>(
+        public static async Task<PagedListDto<TResponse>> PaginateAsync<TResponse>(
             this IQueryable<TResponse> queryable,
             int page = DefaultPageNumber,
             int limit = DefaultPageSize,
@@ -28,10 +28,10 @@ namespace Audiochan.Core.Common.Extensions
                 .Skip((pageNumber - 1) * pageLimit)
                 .Take(pageLimit)
                 .ToListAsync(cancellationToken);
-            return new PagedList<TResponse>(list, count, page, limit);
+            return new PagedListDto<TResponse>(list, count, page, limit);
         }
 
-        public static async Task<PagedList<TResponse>> PaginateAsync<TResponse>(this IQueryable<TResponse> queryable
+        public static async Task<PagedListDto<TResponse>> PaginateAsync<TResponse>(this IQueryable<TResponse> queryable
             , IHasPage paginationQuery
             , CancellationToken cancellationToken = default)
         {

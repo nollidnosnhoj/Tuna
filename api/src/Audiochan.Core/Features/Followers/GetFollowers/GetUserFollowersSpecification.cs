@@ -1,5 +1,5 @@
 ﻿using Ardalis.Specification;
-using Audiochan.Core.Common.Extensions.MappingExtensions;
+using Audiochan.Core.Common.Mappings;
 using Audiochan.Core.Entities;
 
 namespace Audiochan.Core.Features.Followers.GetFollowers
@@ -14,7 +14,7 @@ namespace Audiochan.Core.Features.Followers.GetFollowers
                 .Where(u => u.Target.UserName == username.Trim().ToLower())
                 .OrderByDescending(x => x.FollowedDate);
 
-            Query.Select(FollowerMappingExtensions.FollowerToListProjection());
+            Query.Select(FollowedUserMappings.FollowerToListProjection());
         }
     }
 }

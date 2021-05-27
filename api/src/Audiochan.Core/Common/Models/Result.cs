@@ -2,7 +2,7 @@
 using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Common.Models.Interfaces;
 
-namespace Audiochan.Core.Common.Models.Responses
+namespace Audiochan.Core.Common.Models
 {
     public record Result<TResponse> : IResult<TResponse>
     {

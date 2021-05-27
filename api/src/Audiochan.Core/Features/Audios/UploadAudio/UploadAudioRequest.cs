@@ -2,8 +2,8 @@
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Settings;
+using Audiochan.Core.Interfaces;
 using MediatR;
 using Microsoft.Extensions.Options;
 

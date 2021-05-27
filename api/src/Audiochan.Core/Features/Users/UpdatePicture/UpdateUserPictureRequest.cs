@@ -1,17 +1,14 @@
-﻿using System;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Enums;
-using Audiochan.Core.Common.Extensions.MappingExtensions;
-using Audiochan.Core.Common.Interfaces;
+using Audiochan.Core.Common.Mappings;
+using Audiochan.Core.Common.Models;
 using Audiochan.Core.Common.Models.Interfaces;
-using Audiochan.Core.Common.Models.Responses;
 using Audiochan.Core.Common.Settings;
-using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Users.GetProfile;
+using Audiochan.Core.Interfaces;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Users.UpdatePicture

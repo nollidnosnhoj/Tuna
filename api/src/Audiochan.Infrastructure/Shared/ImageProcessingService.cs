@@ -2,8 +2,8 @@
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Settings;
+using Audiochan.Core.Interfaces;
 using Microsoft.Extensions.Options;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
@@ -27,7 +27,7 @@ namespace Audiochan.Infrastructure.Shared
         {
             var bytes = FromBase64StringToBytes(data);
 
-            using var imageContext = SixLabors.ImageSharp.Image.Load(bytes);
+            using var imageContext = Image.Load(bytes);
             var resizedImage = ModifyImage(imageContext);
             var imageStream = await SaveImageAsJpeg(resizedImage, cancellationToken);
 
@@ -40,7 +40,7 @@ namespace Audiochan.Infrastructure.Shared
                 cancellationToken: cancellationToken);
         }
 
-        private static async Task<MemoryStream> SaveImageAsJpeg(SixLabors.ImageSharp.Image imageContext,
+        private static async Task<MemoryStream> SaveImageAsJpeg(Image imageContext,
             CancellationToken cancellationToken)
         {
             // Save the image context to JPEG

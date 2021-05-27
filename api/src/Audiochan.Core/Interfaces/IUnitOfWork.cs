@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Audiochan.Core.Common.Interfaces
+namespace Audiochan.Core.Interfaces
 {
     public interface IUnitOfWork : IDisposable
     {

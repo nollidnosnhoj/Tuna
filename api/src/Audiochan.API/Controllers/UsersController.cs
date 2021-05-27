@@ -2,11 +2,9 @@
 using System.Threading.Tasks;
 using Audiochan.API.Models;
 using Audiochan.Core.Common.Models.Responses;
-using Audiochan.Core.Features.Audios;
 using Audiochan.Core.Features.Audios.GetAudioList;
 using Audiochan.Core.Features.Followers.GetFollowers;
 using Audiochan.Core.Features.Followers.GetFollowings;
-using Audiochan.Core.Features.Users;
 using Audiochan.Core.Features.Users.GetProfile;
 using Audiochan.Core.Features.Users.GetUserAudios;
 using MediatR;
@@ -40,7 +38,7 @@ namespace Audiochan.API.Controllers
         }
 
         [HttpGet("{username}/audios", Name = "GetUserAudios")]
-        [ProducesResponseType(typeof(PagedList<AudioViewModel>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PagedListDto<AudioViewModel>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
         [SwaggerOperation(Summary = "Return a list of the user's audios.", OperationId = "GetUserAudios",
             Tags = new[] {"users"})]
@@ -55,7 +53,7 @@ namespace Audiochan.API.Controllers
         }
 
         [HttpGet("{username}/followers", Name = "GetUserFollowers")]
-        [ProducesResponseType(typeof(PagedList<MetaAuthorDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PagedListDto<MetaAuthorDto>), StatusCodes.Status200OK)]
         [SwaggerOperation(Summary = "Return a list of the user's followers.", OperationId = "GetUserFollowers",
             Tags = new[] {"users"})]
         public async Task<IActionResult> GetFollowers(string username,
@@ -71,7 +69,7 @@ namespace Audiochan.API.Controllers
         }
 
         [HttpGet("{username}/followings", Name = "GetUserFollowings")]
-        [ProducesResponseType(typeof(PagedList<MetaAuthorDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PagedListDto<MetaAuthorDto>), StatusCodes.Status200OK)]
         [SwaggerOperation(Summary = "Return a list of the user's followings.", OperationId = "GetUserFollowings",
             Tags = new[] {"users"})]
         public async Task<IActionResult> GetFollowings(string username,

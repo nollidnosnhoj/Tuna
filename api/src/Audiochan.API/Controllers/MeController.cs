@@ -2,9 +2,7 @@
 using System.Threading.Tasks;
 using Audiochan.API.Extensions;
 using Audiochan.API.Models;
-using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models.Responses;
-using Audiochan.Core.Features.Audios;
 using Audiochan.Core.Features.Audios.GetAudioFeed;
 using Audiochan.Core.Features.Audios.GetAudioList;
 using Audiochan.Core.Features.Auth.GetCurrentUser;
@@ -15,6 +13,7 @@ using Audiochan.Core.Features.Users.UpdatePassword;
 using Audiochan.Core.Features.Users.UpdatePicture;
 using Audiochan.Core.Features.Users.UpdateUser;
 using Audiochan.Core.Features.Users.UpdateUsername;
+using Audiochan.Core.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -70,7 +69,7 @@ namespace Audiochan.API.Controllers
 
         [HttpGet("feed", Name = "GetAuthenticatedUserFeed")]
         [Produces("application/json")]
-        [ProducesResponseType(typeof(PagedList<AudioViewModel>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PagedListDto<AudioViewModel>), StatusCodes.Status200OK)]
         [SwaggerOperation(
             Summary = "Returns a list of tracks uploaded by authenticated user's followings.",
             Description = "Requires authentication.",
