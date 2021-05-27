@@ -6,7 +6,7 @@ using Audiochan.Core.Interfaces;
 using Audiochan.Core.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Audiochan.Core.Extensions
+namespace Audiochan.Infrastructure.Persistence.Extensions
 {
     public static class PagedListExtensions
     {
