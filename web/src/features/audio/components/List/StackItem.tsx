@@ -20,7 +20,7 @@ import { mapAudiosForAudioQueue } from "~/utils/audioplayer";
 import { AudioData } from "~/features/audio/types";
 import { formatDuration } from "~/utils/format";
 import PictureContainer from "~/components/Picture/PictureContainer";
-import { useAudioPlayer } from "~/lib/hooks";
+import { useAudioPlayer } from "~/lib/stores";
 
 export interface AudioListItemProps {
   audio: AudioData;

@@ -70,14 +70,16 @@ export const formatFileSize = (size: number): string => {
 };
 
 export const formatDuration = (seconds?: number): string | null => {
-  const addHeadingZero = (num: number): string => {
-    return num > 9 ? num.toString() : `0${num}`;
+  const pad = (seconds: number): string => {
+    return ("0" + seconds).slice(-2);
   };
-
   if (seconds === undefined || !isFinite(seconds)) return null;
-  const minutes = Math.floor(seconds / 60);
-  const minuteStr = addHeadingZero(minutes);
-  const secondStr = addHeadingZero(Math.floor(seconds % 60));
-
-  return `${minuteStr}:${secondStr}`;
+  const date = new Date(seconds * 1000);
+  const hh = date.getUTCHours();
+  const mm = date.getUTCMinutes();
+  const ss = pad(date.getUTCSeconds());
+  if (hh) {
+    return `${hh}:${pad(mm)}:${ss}`;
+  }
+  return `${mm}:${ss}`;
 };

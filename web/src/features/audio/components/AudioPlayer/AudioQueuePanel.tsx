@@ -9,7 +9,7 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import React from "react";
-import { useAudioPlayer } from "~/lib/hooks";
+import { useAudioPlayer } from "~/lib/stores";
 
 interface AudioQueueProps {
   isOpen: boolean;

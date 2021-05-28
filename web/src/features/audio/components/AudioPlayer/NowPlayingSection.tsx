@@ -4,7 +4,7 @@ import NextImage from "next/image";
 import Link from "~/components/Link";
 import PictureContainer from "~/components/Picture/PictureContainer";
 import PictureModal from "~/components/Picture/PictureModal";
-import { AudioPlayerItem } from "~/lib/hooks/useAudioPlayer";
+import { AudioPlayerItem } from "~/lib/stores/useAudioPlayer";
 
 interface NowPlayingSectionProps {
   current?: AudioPlayerItem;

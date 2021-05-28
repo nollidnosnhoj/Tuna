@@ -29,7 +29,7 @@ import { useUser } from "~/features/user/hooks/useUser";
 import { relativeDate } from "~/utils/time";
 import { mapAudioForAudioQueue } from "~/utils/audioplayer";
 import AudioPlayButton from "../AudioPlayButton";
-import { useAudioPlayer } from "~/lib/hooks";
+import { useAudioPlayer } from "~/lib/stores";
 
 interface AudioDetailProps {
   audio: AudioDetailData;

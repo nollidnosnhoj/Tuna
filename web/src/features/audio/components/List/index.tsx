@@ -15,7 +15,7 @@ import AudioGridItem from "./GridItem";
 import AudioStackItem from "./StackItem";
 import { mapAudiosForAudioQueue } from "~/utils/audioplayer";
 import { AudioData } from "~/features/audio/types";
-import { useAudioPlayer } from "~/lib/hooks";
+import { useAudioPlayer } from "~/lib/stores";
 
 type AudioListLayout = "list" | "grid";
 
@@ -33,19 +33,15 @@ export default function AudioList(props: AudioListProps) {
     defaultLayout = "list",
     hideLayoutToggle = false,
   } = props;
-  const {
-    currentAudio: currentPlaying,
-    isPlaying,
-    setIsPlaying,
-    setNewQueue,
-  } = useAudioPlayer();
+  const { queue, playIndex, isPlaying, setIsPlaying, setNewQueue } =
+    useAudioPlayer();
 
   const [layout, setLayout] = useState<AudioListLayout>(defaultLayout);
 
   const isAudioPlaying = useCallback(
     (audio: AudioData) =>
-      !!currentPlaying && currentPlaying.audioId === audio.id,
-    [currentPlaying?.queueId]
+      queue[playIndex] !== undefined && queue[playIndex]?.audioId === audio.id,
+    [queue[playIndex]?.queueId]
   );
 
   const onPlayClick = useCallback(

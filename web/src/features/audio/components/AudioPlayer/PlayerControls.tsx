@@ -6,7 +6,7 @@ import {
   MdSkipNext,
   MdSkipPrevious,
 } from "react-icons/md";
-import { useAudioPlayer } from "~/lib/hooks";
+import { useAudioPlayer } from "~/lib/stores";
 
 interface PlayerControlsProps {
   size?: "desktop";
@@ -37,7 +37,7 @@ export default function PlayerControls(props: PlayerControlsProps) {
         aria-label="Previous"
         title="Previous"
         onClick={() => playPrevious()}
-        disabled={playIndex === 0 || playIndex === undefined}
+        disabled={playIndex === 0 || queue.length === 0}
         isRound
         variant="ghost"
         size={buttonSize}
@@ -52,14 +52,14 @@ export default function PlayerControls(props: PlayerControlsProps) {
         size={buttonSize}
         colorScheme="primary"
         fontSize="25px"
-        disabled={playIndex === undefined}
+        disabled={queue.length === 0}
       />
       <IconButton
         icon={<MdSkipNext />}
         aria-label="Next"
         title="Next"
         onClick={() => playNext()}
-        disabled={playIndex === queue.length - 1 || playIndex === undefined}
+        disabled={playIndex === queue.length - 1 || queue.length === 0}
         isRound
         variant="ghost"
         size={buttonSize}

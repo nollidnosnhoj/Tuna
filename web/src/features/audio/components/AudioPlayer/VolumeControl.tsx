@@ -10,7 +10,7 @@ import {
 } from "@chakra-ui/react";
 import React, { useEffect, useMemo, useRef } from "react";
 import { MdVolumeDown, MdVolumeMute, MdVolumeUp } from "react-icons/md";
-import { useAudioPlayer } from "~/lib/hooks";
+import { useAudioPlayer } from "~/lib/stores";
 
 export default function VolumeControl() {
   const { audioRef, volume, setVolume } = useAudioPlayer();
