@@ -12,6 +12,7 @@ namespace Audiochan.API.Extensions.ConfigurationExtensions
             IConfiguration configuration)
         {
             services
+                .AddInMemoryRateLimiting()
                 .Configure<IpRateLimitOptions>(configuration.GetSection("RateLimitingOptions"))
                 .Configure<IpRateLimitPolicies>(configuration.GetSection("RateLimitPolicies"))
                 .AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>()
