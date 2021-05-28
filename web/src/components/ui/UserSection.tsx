@@ -15,12 +15,12 @@ import { FaUserAlt } from "react-icons/fa";
 import NextLink from "next/link";
 import { useUser } from "~/features/user/hooks/useUser";
 import { useAuth } from "~/features/auth/hooks/useAuth";
-import { usePage } from "~/lib/hooks";
+import { useLoginModal } from "~/lib/stores";
 
 const UserSection: React.FC = () => {
   const { user } = useUser();
   const { isLoggedIn } = useAuth();
-  const { openLogin, openRegister } = usePage();
+  const openAuthModal = useLoginModal((state) => state.onOpen);
 
   if (isLoggedIn) {
     return (
@@ -60,7 +60,7 @@ const UserSection: React.FC = () => {
         colorScheme="gray"
         variant="ghost"
         textTransform="uppercase"
-        onClick={openLogin}
+        onClick={() => openAuthModal("login")}
       >
         Login
       </Button>
@@ -68,7 +68,7 @@ const UserSection: React.FC = () => {
         size="md"
         colorScheme="primary"
         textTransform="uppercase"
-        onClick={openRegister}
+        onClick={() => openAuthModal("register")}
         display={{ base: "none", md: "flex" }}
       >
         Register

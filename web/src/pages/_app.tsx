@@ -10,6 +10,7 @@ import { CurrentUser } from "~/features/user/types";
 import { AuthProvider } from "~/features/auth/components/providers";
 import theme from "~/lib/theme";
 import queryClient from "~/lib/queryClient";
+import LoginModal from "~/features/auth/components/AuthModal";
 
 interface AppProps extends NextAppProps {
   user?: CurrentUser;
@@ -38,6 +39,7 @@ function App({ Component, user, pageProps }: AppProps) {
                 <PageLoader color={theme.colors.primary[500]} />
                 <Component {...pageProps} />
                 <AudioPlayer />
+                <LoginModal />
               </AuthProvider>
             </UserProvider>
           </ChakraProvider>

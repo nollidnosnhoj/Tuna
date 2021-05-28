@@ -11,27 +11,29 @@ import {
   TabPanels,
   TabPanel,
 } from "@chakra-ui/react";
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { useLoginModal } from "~/lib/stores";
 import LoginForm from "./LoginForm";
 import RegisterForm from "./RegisterForm";
 
-interface AuthModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  tabIndex: number;
-  onTabChange: (i: number) => void;
-}
-
-export default function AuthModal({
-  isOpen,
-  onClose,
-  tabIndex,
-  onTabChange,
-}: AuthModalProps) {
+export default function LoginModal() {
+  const { modalState, open, onClose } = useLoginModal();
+  const [tabIndex, setTabIndex] = useState(0);
   const authInputRef = useRef<HTMLInputElement | null>(null);
 
+  useEffect(() => {
+    switch (modalState) {
+      case "login":
+        setTabIndex(0);
+        break;
+      case "register":
+        setTabIndex(1);
+        break;
+    }
+  }, [modalState]);
+
   return (
-    <Modal initialFocusRef={authInputRef} isOpen={isOpen} onClose={onClose}>
+    <Modal initialFocusRef={authInputRef} isOpen={open} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>
@@ -44,7 +46,7 @@ export default function AuthModal({
             isLazy
             isFitted
             index={tabIndex}
-            onChange={(index) => onTabChange(index)}
+            onChange={(index) => setTabIndex(index)}
           >
             <TabList>
               <Tab>Login</Tab>

@@ -1,7 +1,11 @@
 import React from "react";
+import Head from "next/head";
+import { Box } from "@chakra-ui/react";
 import Header from "~/components/ui/Header";
 import Container from "~/components/ui/Container";
-import { PageProvider } from "./providers";
+import SearchBar from "./ui/SearchBar";
+import UserSection from "./ui/UserSection";
+import Logo from "./ui/Logo";
 
 interface PageProps {
   title?: string;
@@ -15,12 +19,21 @@ const Page: React.FC<PageProps> = ({
   ...props
 }) => {
   return (
-    <PageProvider title={title}>
-      {!removeHeader && <Header />}
+    <Box>
+      <Head>
+        <title>{title}</title>
+      </Head>
+      {!removeHeader && (
+        <Header
+          logo={<Logo />}
+          searchBar={<SearchBar />}
+          userMenu={<UserSection />}
+        />
+      )}
       <Container mt="120px" mb="100px" {...props}>
         {children}
       </Container>
-    </PageProvider>
+    </Box>
   );
 };
 

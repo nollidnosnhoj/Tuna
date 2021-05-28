@@ -8,7 +8,6 @@ import {
   DrawerContent,
   DrawerOverlay,
   Flex,
-  Heading,
   HStack,
   IconButton,
   Spacer,
@@ -19,10 +18,7 @@ import {
 import React, { useRef } from "react";
 import { FaCloudUploadAlt } from "react-icons/fa";
 import NextLink from "next/link";
-import Link from "../../Link";
 import { useUser } from "~/features/user/hooks/useUser";
-import UserSection from "./UserSection";
-import SearchBar from "./SearchBar";
 
 interface HeaderMenuLinkProps extends ButtonProps {
   label: string;
@@ -56,7 +52,13 @@ const HeaderMenuLink = (props: HeaderMenuLinkProps) => {
   );
 };
 
-const Header: React.FC = () => {
+interface HeaderProps {
+  logo?: JSX.Element;
+  searchBar?: JSX.Element;
+  userMenu?: JSX.Element;
+}
+
+const Header: React.FC<HeaderProps> = ({ logo, searchBar, userMenu }) => {
   const { user } = useUser();
   const { toggleColorMode } = useColorMode();
   const headerColor = useColorModeValue("white", "gray.800");
@@ -101,16 +103,7 @@ const Header: React.FC = () => {
             marginRight={8}
             isRound
           />
-          <Heading size="lg" display={{ base: "none", md: "flex" }}>
-            <Link
-              href="/"
-              _hover={{
-                textDecoration: "none",
-              }}
-            >
-              Audiochan
-            </Link>
-          </Heading>
+          {logo}
           <Flex
             position="absolute"
             width="100%"
@@ -120,7 +113,7 @@ const Header: React.FC = () => {
             transform="translate(-50%, -50%)"
             display={{ base: "none", md: "flex" }}
           >
-            <SearchBar />
+            {searchBar}
           </Flex>
           <Spacer />
           <IconButton
@@ -130,7 +123,7 @@ const Header: React.FC = () => {
             variant="ghost"
             onClick={toggleColorMode}
           />
-          <UserSection />
+          {userMenu}
         </HStack>
       </Flex>
       <Drawer
