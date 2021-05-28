@@ -6,4 +6,3 @@ export * from "./useGetAudio";
 export * from "./useGetAudioList";
 export * from "./useSearchAudio";
 export * from "./useGetAudioFeed";
-export * from "./useAudioPlayer";

@@ -1,8 +1,8 @@
 import React, { useCallback } from "react";
 import { chakra, Icon } from "@chakra-ui/react";
-import { useAudioPlayer } from "~/features/audio/hooks/";
-import { REPEAT_MODE } from "~/features/audio/contexts/types";
 import { MdRepeat, MdRepeatOne } from "react-icons/md";
+import { useAudioPlayer } from "~/lib/hooks";
+import { REPEAT_MODE } from "~/lib/hooks/useAudioPlayer";
 
 const repeatLabels = {
   [REPEAT_MODE.DISABLE]: "No Repeat",
@@ -17,14 +17,13 @@ const repeatModeOrder = [
 ];
 
 export default function RepeatControl() {
-  const { state, dispatch } = useAudioPlayer();
-  const { repeat } = state;
+  const { repeat, setRepeatMode } = useAudioPlayer();
 
   const handleButtonClick = useCallback(() => {
     let newIndex = repeatModeOrder.findIndex((m) => m === repeat) + 1;
     if (newIndex === 0) throw new Error("Cannot find repeat mode");
     if (newIndex > repeatModeOrder.length - 1) newIndex = 0;
-    dispatch({ type: "SET_REPEAT", payload: repeatModeOrder[newIndex] });
+    setRepeatMode(repeatModeOrder[newIndex]);
   }, [repeat]);
 
   let icon: React.ReactNode;

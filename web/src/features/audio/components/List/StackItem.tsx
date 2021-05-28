@@ -17,10 +17,10 @@ import { HiDotsVertical } from "react-icons/hi";
 import { MdQueueMusic } from "react-icons/md";
 import Link from "~/components/Link";
 import { mapAudiosForAudioQueue } from "~/utils/audioplayer";
-import { useAudioPlayer } from "~/features/audio/hooks/";
 import { AudioData } from "~/features/audio/types";
 import { formatDuration } from "~/utils/format";
 import PictureContainer from "~/components/Picture/PictureContainer";
+import { useAudioPlayer } from "~/lib/hooks";
 
 export interface AudioListItemProps {
   audio: AudioData;
@@ -35,7 +35,7 @@ const AudioStackItem: React.FC<AudioListItemProps> = ({
   isPlaying,
   removeArtistName = false,
 }) => {
-  const { dispatch } = useAudioPlayer();
+  const { addToQueue } = useAudioPlayer();
   const [hoverImage, setHoverImage] = useState(false);
 
   return (
@@ -109,12 +109,7 @@ const AudioStackItem: React.FC<AudioListItemProps> = ({
         <MenuList>
           <MenuItem
             icon={<MdQueueMusic />}
-            onClick={() =>
-              dispatch({
-                type: "ADD_TO_QUEUE",
-                payload: mapAudiosForAudioQueue([audio]),
-              })
-            }
+            onClick={() => addToQueue(mapAudiosForAudioQueue([audio]))}
           >
             Add To Queue
           </MenuItem>

@@ -30,7 +30,8 @@
     "slugify": "^1.5.3",
     "uuid": "^8.3.2",
     "wavesurfer.js": "^4.6.0",
-    "yup": "^0.32.8"
+    "yup": "^0.32.8",
+    "zustand": "^3.5.1"
   },
   "devDependencies": {
     "@types/cookie": "^0.4.0",

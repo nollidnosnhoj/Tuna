@@ -9,7 +9,7 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import React from "react";
-import { useAudioPlayer } from "~/features/audio/hooks/";
+import { useAudioPlayer } from "~/lib/hooks";
 
 interface AudioQueueProps {
   isOpen: boolean;
@@ -18,8 +18,8 @@ interface AudioQueueProps {
 
 export default function AudioQueuePanel(props: AudioQueueProps) {
   const { isOpen, onClose } = props;
-  const { state, dispatch } = useAudioPlayer();
-  const { queue, playIndex } = state;
+  const { queue, playIndex, setPlayIndex, removeFromQueueByPlayIndex } =
+    useAudioPlayer();
   const bgColor = useColorModeValue("white", "gray.800");
   const hoverColor = useColorModeValue("gray.300", "gray.900");
 
@@ -73,8 +73,7 @@ export default function AudioQueuePanel(props: AudioQueueProps) {
               paddingX={4}
               paddingY={2}
               onClick={() => {
-                playIndex !== index &&
-                  dispatch({ type: "SET_PLAY_INDEX", payload: index });
+                playIndex !== index && setPlayIndex(index);
               }}
               bgColor={playIndex === index ? hoverColor : undefined}
               _hover={{ bgColor: hoverColor }}
@@ -90,7 +89,7 @@ export default function AudioQueuePanel(props: AudioQueueProps) {
                 <CloseButton
                   onClick={(e) => {
                     e.stopPropagation();
-                    dispatch({ type: "REMOVE_FROM_QUEUE", payload: index });
+                    removeFromQueueByPlayIndex(index);
                   }}
                 />
               </Flex>

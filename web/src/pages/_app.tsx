@@ -8,7 +8,6 @@ import PageLoader from "~/components/PageLoader";
 import { UserProvider } from "~/features/user/components/providers";
 import { CurrentUser } from "~/features/user/types";
 import { AuthProvider } from "~/features/auth/components/providers";
-import { AudioPlayerProvider } from "~/features/audio/components/providers";
 import theme from "~/lib/theme";
 import queryClient from "~/lib/queryClient";
 
@@ -36,11 +35,9 @@ function App({ Component, user, pageProps }: AppProps) {
           <ChakraProvider resetCSS theme={theme}>
             <UserProvider initialUser={user || null}>
               <AuthProvider>
-                <AudioPlayerProvider>
-                  <PageLoader color={theme.colors.primary[500]} />
-                  <Component {...pageProps} />
-                  <AudioPlayer />
-                </AudioPlayerProvider>
+                <PageLoader color={theme.colors.primary[500]} />
+                <Component {...pageProps} />
+                <AudioPlayer />
               </AuthProvider>
             </UserProvider>
           </ChakraProvider>

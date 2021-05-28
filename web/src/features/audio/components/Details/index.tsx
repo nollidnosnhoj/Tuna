@@ -25,11 +25,11 @@ import AudioTags from "./AudioTags";
 import AudioPicture from "../AudioPicture";
 import Link from "~/components/Link";
 import { AudioDetailData } from "~/features/audio/types";
-import { useAudioPlayer } from "~/features/audio/hooks/";
 import { useUser } from "~/features/user/hooks/useUser";
 import { relativeDate } from "~/utils/time";
 import { mapAudioForAudioQueue } from "~/utils/audioplayer";
 import AudioPlayButton from "../AudioPlayButton";
+import { useAudioPlayer } from "~/lib/hooks";
 
 interface AudioDetailProps {
   audio: AudioDetailData;
@@ -38,7 +38,7 @@ interface AudioDetailProps {
 const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
   const secondaryColor = useColorModeValue("black.300", "gray.300");
   const { user: currentUser } = useUser();
-  const { dispatch } = useAudioPlayer();
+  const { addToQueue } = useAudioPlayer();
 
   const {
     isOpen: isEditOpen,
@@ -86,12 +86,7 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
                 )}
                 <MenuItem
                   icon={<MdQueueMusic />}
-                  onClick={() =>
-                    dispatch({
-                      type: "ADD_TO_QUEUE",
-                      payload: mapAudioForAudioQueue(audio),
-                    })
-                  }
+                  onClick={() => addToQueue(mapAudioForAudioQueue(audio))}
                 >
                   Add to queue
                 </MenuItem>

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
+import { useAudioPlayer } from "~/lib/hooks";
+import { REPEAT_MODE } from "~/lib/hooks/useAudioPlayer";
 import DesktopAudioPlayer from "./DesktopPlayer";
-import { useAudioPlayer } from "~/features/audio/hooks/";
-import { REPEAT_MODE } from "~/features/audio/contexts/types";
 
 interface AudioPlayerProps {
   preload?: "none" | "metadata" | "auto";
@@ -9,8 +9,13 @@ interface AudioPlayerProps {
 
 export default function AudioPlayer(props: AudioPlayerProps) {
   const { preload = "auto" } = props;
-  const { state, dispatch } = useAudioPlayer();
-  const { currentAudio: currentPlaying, isPlaying, repeat } = state;
+  const {
+    currentAudio: currentPlaying,
+    isPlaying,
+    repeat,
+    setAudioRef,
+    playNext,
+  } = useAudioPlayer();
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const playAudioPromise = () => {
@@ -23,14 +28,14 @@ export default function AudioPlayer(props: AudioPlayerProps) {
   };
 
   useEffect(() => {
-    dispatch({ type: "SET_AUDIO_REF", payload: audioRef.current });
+    setAudioRef(audioRef.current);
   }, []);
 
   // Register any audio event listeners here
   useEffect(() => {
     const handleOnEnded = () => {
       if (repeat === REPEAT_MODE.REPEAT) {
-        dispatch({ type: "PLAY_NEXT" });
+        playNext();
       }
     };
     const audio = audioRef.current;

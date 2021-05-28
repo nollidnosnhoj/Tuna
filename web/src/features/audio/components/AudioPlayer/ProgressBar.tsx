@@ -9,18 +9,18 @@ import {
   SliderTrack,
 } from "@chakra-ui/react";
 import { formatDuration } from "~/utils/format";
-import { useAudioPlayer } from "~/features/audio/hooks/";
+import { useAudioPlayer } from "~/lib/hooks";
 
 const EMPTY_TIME_FORMAT = "--:--";
 
 export default function ProgressBar() {
-  const { state, dispatch } = useAudioPlayer();
   const {
     audioRef,
     currentTime,
     currentAudio: currentPlaying,
     playIndex,
-  } = state;
+    setCurrentTime,
+  } = useAudioPlayer();
   const { duration } = currentPlaying || { duration: 0 };
   const [sliderValue, setSliderValue] = useState(0);
   const [isDraggingProgress, setIsDraggingProgress] = useState(false);
@@ -55,7 +55,7 @@ export default function ProgressBar() {
       console.log("slider change end");
       if (isDraggingProgress) {
         if (audioRef) audioRef.currentTime = value;
-        dispatch({ type: "SET_CURRENT_TIME", payload: value });
+        setCurrentTime(value);
       }
       setIsDraggingProgress(false);
     },
@@ -65,7 +65,7 @@ export default function ProgressBar() {
   const updateSeek = useCallback(
     _.throttle(() => {
       const time = audioRef?.currentTime ?? (currentTime || 0);
-      dispatch({ type: "SET_CURRENT_TIME", payload: time });
+      setCurrentTime(time);
       if (!isDraggingProgress) {
         setSliderValue(time);
       }

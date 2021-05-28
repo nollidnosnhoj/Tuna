@@ -1,10 +1,10 @@
 import { useMutation, UseMutationResult, useQueryClient } from "react-query";
 import { useAuth } from "~/features/auth/hooks/useAuth";
 import api from "~/lib/api";
-import { useAudioPlayer } from "~/features/audio/hooks/";
+import { useAudioPlayer } from "~/lib/hooks";
 
 export function useRemoveAudio(id: string): UseMutationResult<void> {
-  const { dispatch } = useAudioPlayer();
+  const { removeFromQueueByAudioId } = useAudioPlayer();
   const queryClient = useQueryClient();
   const { accessToken } = useAuth();
   const removeAudio = async (): Promise<void> => {
@@ -13,7 +13,7 @@ export function useRemoveAudio(id: string): UseMutationResult<void> {
 
   return useMutation(removeAudio, {
     onSuccess() {
-      dispatch({ type: "REMOVE_AUDIO_ID_FROM_QUEUE", payload: id });
+      removeFromQueueByAudioId(id);
       queryClient.invalidateQueries(`audios`);
       queryClient.invalidateQueries([`audios`, id], { exact: true });
     },

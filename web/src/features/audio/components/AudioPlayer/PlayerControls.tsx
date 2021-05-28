@@ -6,7 +6,7 @@ import {
   MdSkipNext,
   MdSkipPrevious,
 } from "react-icons/md";
-import { useAudioPlayer } from "~/features/audio/hooks/";
+import { useAudioPlayer } from "~/lib/hooks";
 
 interface PlayerControlsProps {
   size?: "desktop";
@@ -14,8 +14,8 @@ interface PlayerControlsProps {
 
 export default function PlayerControls(props: PlayerControlsProps) {
   const { size = "desktop" } = props;
-  const { state, dispatch } = useAudioPlayer();
-  const { isPlaying, playIndex, queue } = state;
+  const { isPlaying, playIndex, queue, togglePlaying, playPrevious, playNext } =
+    useAudioPlayer();
 
   const buttonSize = useMemo(() => {
     switch (size) {
@@ -26,7 +26,7 @@ export default function PlayerControls(props: PlayerControlsProps) {
 
   const handleTogglePlay = useCallback(() => {
     if (playIndex !== undefined) {
-      dispatch({ type: "TOGGLE_PLAYING" });
+      togglePlaying();
     }
   }, [playIndex]);
 
@@ -36,7 +36,7 @@ export default function PlayerControls(props: PlayerControlsProps) {
         icon={<MdSkipPrevious />}
         aria-label="Previous"
         title="Previous"
-        onClick={() => dispatch({ type: "PLAY_PREVIOUS" })}
+        onClick={() => playPrevious()}
         disabled={playIndex === 0 || playIndex === undefined}
         isRound
         variant="ghost"
@@ -58,7 +58,7 @@ export default function PlayerControls(props: PlayerControlsProps) {
         icon={<MdSkipNext />}
         aria-label="Next"
         title="Next"
-        onClick={() => dispatch({ type: "PLAY_NEXT" })}
+        onClick={() => playNext()}
         disabled={playIndex === queue.length - 1 || playIndex === undefined}
         isRound
         variant="ghost"
