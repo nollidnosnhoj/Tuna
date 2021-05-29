@@ -6,7 +6,7 @@ import {
   MdSkipNext,
   MdSkipPrevious,
 } from "react-icons/md";
-import { useAudioPlayer } from "~/lib/stores";
+import { useAudioPlayer, useAudioQueue } from "~/lib/stores";
 
 interface PlayerControlsProps {
   size?: "desktop";
@@ -14,8 +14,21 @@ interface PlayerControlsProps {
 
 export default function PlayerControls(props: PlayerControlsProps) {
   const { size = "desktop" } = props;
-  const { isPlaying, playIndex, queue, togglePlaying, playPrevious, playNext } =
-    useAudioPlayer();
+  // const { isPlaying, playIndex, queue, togglePlaying, playPrevious, playNext } =
+  //   useAudioPlayer();
+
+  const { queue, playIndex, playPrevious, playNext } = useAudioQueue(
+    (state) => ({
+      queue: state.queue,
+      playIndex: state.playIndex,
+      playPrevious: state.playPrevious,
+      playNext: state.playNext,
+    })
+  );
+  const [isPlaying, togglePlaying] = useAudioPlayer((state) => [
+    state.isPlaying,
+    state.togglePlaying,
+  ]);
 
   const buttonSize = useMemo(() => {
     switch (size) {

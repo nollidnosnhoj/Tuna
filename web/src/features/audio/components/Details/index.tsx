@@ -29,7 +29,7 @@ import { useUser } from "~/features/user/hooks/useUser";
 import { relativeDate } from "~/utils/time";
 import { mapAudioForAudioQueue } from "~/utils/audioplayer";
 import AudioPlayButton from "../AudioPlayButton";
-import { useAudioPlayer } from "~/lib/stores";
+import { useAudioQueue } from "~/lib/stores";
 
 interface AudioDetailProps {
   audio: AudioDetailData;
@@ -38,7 +38,7 @@ interface AudioDetailProps {
 const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
   const secondaryColor = useColorModeValue("black.300", "gray.300");
   const { user: currentUser } = useUser();
-  const { addToQueue } = useAudioPlayer();
+  const addToQueue = useAudioQueue((state) => state.addToQueue);
 
   const {
     isOpen: isEditOpen,

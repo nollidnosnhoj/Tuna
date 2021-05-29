@@ -15,7 +15,7 @@ import AudioGridItem from "./GridItem";
 import AudioStackItem from "./StackItem";
 import { mapAudiosForAudioQueue } from "~/utils/audioplayer";
 import { AudioData } from "~/features/audio/types";
-import { useAudioPlayer } from "~/lib/stores";
+import { useAudioPlayer, useAudioQueue } from "~/lib/stores";
 
 type AudioListLayout = "list" | "grid";
 
@@ -33,8 +33,12 @@ export default function AudioList(props: AudioListProps) {
     defaultLayout = "list",
     hideLayoutToggle = false,
   } = props;
-  const { currentAudio, isPlaying, setIsPlaying, setNewQueue } =
-    useAudioPlayer();
+  const [isPlaying, setIsPlaying] = useAudioPlayer((state) => [
+    state.isPlaying,
+    state.setIsPlaying,
+  ]);
+  const currentAudio = useAudioQueue((state) => state.current);
+  const setNewQueue = useAudioQueue((state) => state.setNewQueue);
 
   const [layout, setLayout] = useState<AudioListLayout>(defaultLayout);
 

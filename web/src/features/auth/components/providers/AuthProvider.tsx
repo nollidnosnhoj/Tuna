@@ -92,7 +92,7 @@ export function AuthProvider(props: PropsWithChildren<AuthProviderProps>) {
       login,
       logout,
     }),
-    [accessToken, isFetching, login, logout, isSuccess]
+    [accessToken, isFetching, login, logout, isSuccess, user]
   );
 
   return (

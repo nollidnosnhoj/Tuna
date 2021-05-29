@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 import { AudioData } from "~/features/audio/types";
-import { AudioPlayerItem } from "~/lib/stores/useAudioPlayer";
+import { AudioPlayerItem } from "~/lib/stores/useAudioQueue";
 
 export function mapAudioForAudioQueue(audio: AudioData): AudioPlayerItem[] {
   return [

@@ -20,7 +20,7 @@ import { mapAudiosForAudioQueue } from "~/utils/audioplayer";
 import { AudioData } from "~/features/audio/types";
 import { formatDuration } from "~/utils/format";
 import PictureContainer from "~/components/Picture/PictureContainer";
-import { useAudioPlayer } from "~/lib/stores";
+import { useAudioQueue } from "~/lib/stores";
 
 export interface AudioListItemProps {
   audio: AudioData;
@@ -35,7 +35,7 @@ const AudioStackItem: React.FC<AudioListItemProps> = ({
   isPlaying,
   removeArtistName = false,
 }) => {
-  const { addToQueue } = useAudioPlayer();
+  const addToQueue = useAudioQueue((state) => state.addToQueue);
   const [hoverImage, setHoverImage] = useState(false);
 
   return (

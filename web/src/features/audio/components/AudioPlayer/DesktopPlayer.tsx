@@ -10,7 +10,6 @@ import {
 } from "@chakra-ui/react";
 import React, { useRef } from "react";
 import { RiPlayListFill } from "react-icons/ri";
-import { useAudioPlayer } from "~/lib/stores";
 import AudioQueuePanel from "./AudioQueuePanel";
 import NowPlayingSection from "./NowPlayingSection";
 import PlayerControls from "./PlayerControls";
@@ -24,8 +23,6 @@ interface DesktopAudioPlayerProps {
 
 export default function DesktopAudioPlayer(props: DesktopAudioPlayerProps) {
   const { isHidden = false } = props;
-
-  const { currentAudio } = useAudioPlayer();
 
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -62,7 +59,7 @@ export default function DesktopAudioPlayer(props: DesktopAudioPlayerProps) {
       >
         <HStack justifyContent="space-between" width="100%" marginX={4}>
           <Box width="30%">
-            <NowPlayingSection current={currentAudio} />
+            <NowPlayingSection />
           </Box>
           <VStack width="500px">
             <PlayerControls />
