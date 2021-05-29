@@ -33,15 +33,15 @@ export default function AudioList(props: AudioListProps) {
     defaultLayout = "list",
     hideLayoutToggle = false,
   } = props;
-  const { queue, playIndex, isPlaying, setIsPlaying, setNewQueue } =
+  const { currentAudio, isPlaying, setIsPlaying, setNewQueue } =
     useAudioPlayer();
 
   const [layout, setLayout] = useState<AudioListLayout>(defaultLayout);
 
   const isAudioPlaying = useCallback(
     (audio: AudioData) =>
-      queue[playIndex] !== undefined && queue[playIndex]?.audioId === audio.id,
-    [queue[playIndex]?.queueId]
+      currentAudio !== undefined && currentAudio?.audioId === audio.id,
+    [currentAudio?.queueId]
   );
 
   const onPlayClick = useCallback(

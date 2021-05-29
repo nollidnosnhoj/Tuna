@@ -8,7 +8,7 @@ interface AudioPlayerProps {
 
 export default function AudioPlayer(props: AudioPlayerProps) {
   const { preload = "auto" } = props;
-  const { queue, playIndex, isPlaying, repeat, setAudioRef, playNext } =
+  const { currentAudio, isPlaying, repeat, setAudioRef, playNext } =
     useAudioPlayer();
   const audioRef = useRef<HTMLAudioElement>(null);
 
@@ -49,18 +49,18 @@ export default function AudioPlayer(props: AudioPlayerProps) {
   useEffect(() => {
     const audio = audioRef.current;
     if (audio) {
-      if (isPlaying && queue[playIndex]?.source) {
+      if (isPlaying && currentAudio?.source) {
         playAudioPromise();
       } else {
         audio.pause();
       }
     }
-  }, [isPlaying, queue[playIndex]?.source]);
+  }, [isPlaying, currentAudio?.source]);
 
   return (
     <React.Fragment>
       <audio
-        src={queue[playIndex]?.source}
+        src={currentAudio?.source}
         ref={audioRef}
         controls={false}
         preload={preload}

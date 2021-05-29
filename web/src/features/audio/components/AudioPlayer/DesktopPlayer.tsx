@@ -25,7 +25,7 @@ interface DesktopAudioPlayerProps {
 export default function DesktopAudioPlayer(props: DesktopAudioPlayerProps) {
   const { isHidden = false } = props;
 
-  const { queue, playIndex } = useAudioPlayer();
+  const { currentAudio } = useAudioPlayer();
 
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -62,7 +62,7 @@ export default function DesktopAudioPlayer(props: DesktopAudioPlayerProps) {
       >
         <HStack justifyContent="space-between" width="100%" marginX={4}>
           <Box width="30%">
-            <NowPlayingSection current={queue[playIndex]} />
+            <NowPlayingSection current={currentAudio} />
           </Box>
           <VStack width="500px">
             <PlayerControls />

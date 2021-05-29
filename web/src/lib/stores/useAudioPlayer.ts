@@ -14,15 +14,15 @@ export type AudioPlayerItem = {
   artistId: string;
   duration: number;
   cover: string;
-  source?: string;
-  privateKey?: string;
+  source: string;
   related: boolean;
 };
 
 type AudioPlayerState = {
   audioRef: HTMLAudioElement | null;
   queue: AudioPlayerItem[];
-  playIndex: number;
+  currentAudio?: AudioPlayerItem;
+  playIndex?: number;
   isPlaying: boolean;
   repeat: REPEAT_MODE;
   currentTime?: number;
@@ -59,65 +59,78 @@ export const useAudioPlayer = create<AudioPlayerState>((set, get) => ({
     set({
       queue: [],
       playIndex: 0,
+      currentAudio: undefined,
     }),
   playNext: () => {
     const { playIndex, queue, repeat } = get();
-    if (playIndex === undefined) return set({});
-    let newIndex = playIndex + 1;
+    let newIndex = (playIndex ?? 0) + 1;
     if (newIndex > queue.length - 1) {
       newIndex = repeat === REPEAT_MODE.REPEAT ? 0 : queue.length - 1;
     }
-    return set({
+    return set((state) => ({
       isPlaying: true,
       playIndex: newIndex,
-    });
+      currentAudio: state.queue[newIndex],
+    }));
   },
   playPrevious: () => {
     const { playIndex, queue } = get();
-    if (playIndex === undefined) return set({});
-    const newIndex = Math.max(0, Math.min(queue.length - 1, playIndex - 1));
-    return set({
+    const newIndex = Math.max(
+      0,
+      Math.min(queue.length - 1, (playIndex ?? queue.length - 1) - 1)
+    );
+    return set((state) => ({
       isPlaying: true,
       playIndex: newIndex,
-    });
+      currentAudio: state.queue[newIndex],
+    }));
   },
   removeFromQueueByAudioId: (id) => {
-    const { queue, playIndex } = get();
-    const newState = {};
-    const filtered = queue.filter((x) => x.audioId !== id);
-    if (queue[playIndex]?.audioId === id) {
-      Object.assign(newState, {
+    const { queue, currentAudio } = get();
+    const newQueue = queue.filter((x) => x.audioId !== id);
+    if (currentAudio?.audioId === id) {
+      return set({
+        queue: newQueue,
+        playIndex: undefined,
         isPlaying: false,
-        playIndex: 0,
-      });
-    } else {
-      const newPlayIndex = filtered.findIndex(
-        (x) => x.queueId === queue[playIndex]?.queueId
-      );
-
-      Object.assign(newState, {
-        playIndex: newPlayIndex,
+        currentAudio: undefined,
       });
     }
-    return set({
-      ...newState,
-      queue: filtered,
-    });
-  },
-  removeFromQueueByPlayIndex: (index) => {
-    const { queue, playIndex } = get();
-    let newPlayIndex = playIndex;
-    if (playIndex !== undefined && index < playIndex) {
-      newPlayIndex = playIndex - 1;
-    }
-    const newQueue = [...queue].filter((_, i) => i !== index);
-
-    if (newQueue.length === 0) {
-      newPlayIndex = 0;
-    }
+    const newPlayIndex = newQueue.findIndex(
+      (x) => x.queueId === currentAudio?.queueId
+    );
     return set({
       queue: newQueue,
       playIndex: newPlayIndex,
+      currentAudio: newQueue[newPlayIndex],
+    });
+  },
+  removeFromQueueByPlayIndex: (index) => {
+    const { queue, currentAudio } = get();
+    const currentAudioQueueId = currentAudio?.queueId;
+
+    const newQueue = [...queue];
+    newQueue.splice(index, 1);
+
+    if (currentAudioQueueId !== undefined) {
+      const newPlayIndex = newQueue.findIndex(
+        (x) => x.queueId === currentAudioQueueId
+      );
+
+      if (newPlayIndex > -1) {
+        return set({
+          queue: newQueue,
+          playIndex: newPlayIndex,
+          currentAudio: newQueue[newPlayIndex],
+        });
+      }
+    }
+
+    return set({
+      queue: newQueue,
+      isPlaying: false,
+      playIndex: undefined,
+      currentAudio: undefined,
     });
   },
   setAudioRef: (ref) =>
@@ -133,18 +146,23 @@ export const useAudioPlayer = create<AudioPlayerState>((set, get) => ({
       isPlaying: isPlaying,
     }),
   setNewQueue: (queue, defaultIndex = 0) => {
-    if (queue.length === 0) return set({});
-    return set({
-      queue: queue,
-      playIndex: defaultIndex,
-      isPlaying: true,
-    });
+    if (queue.length > 0) {
+      return set({
+        queue: queue,
+        currentAudio: queue[defaultIndex],
+        playIndex: defaultIndex,
+        isPlaying: true,
+      });
+    }
   },
   setPlayIndex: (index) => {
-    return set((state) => ({
+    const { queue } = get();
+    const newPlayIndex = Math.max(0, Math.min(index, queue.length - 1));
+    return set({
       isPlaying: true,
-      playIndex: Math.max(0, Math.min(index, state.queue.length - 1)),
-    }));
+      playIndex: newPlayIndex,
+      currentAudio: queue[newPlayIndex],
+    });
   },
   setRepeatMode: (mode) =>
     set({

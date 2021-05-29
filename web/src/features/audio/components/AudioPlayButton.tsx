@@ -10,12 +10,12 @@ interface AudioPlayButtonProps {
 }
 
 export default function AudioPlayButton({ audio }: AudioPlayButtonProps) {
-  const { isPlaying, queue, playIndex, setIsPlaying, setNewQueue } =
+  const { currentAudio, isPlaying, setIsPlaying, setNewQueue } =
     useAudioPlayer();
 
   const isAudioPlaying = useMemo(() => {
-    return isPlaying && queue[playIndex]?.audioId === audio.id;
-  }, [isPlaying, queue[playIndex]?.audioId, audio.id]);
+    return isPlaying && currentAudio?.audioId === audio.id;
+  }, [isPlaying, currentAudio?.audioId, audio.id]);
 
   const clickPlayButton = useCallback(() => {
     if (isAudioPlaying) {

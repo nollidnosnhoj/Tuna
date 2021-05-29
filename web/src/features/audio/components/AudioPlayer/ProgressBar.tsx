@@ -14,9 +14,9 @@ import { useAudioPlayer } from "~/lib/stores";
 const EMPTY_TIME_FORMAT = "--:--";
 
 export default function ProgressBar() {
-  const { queue, audioRef, currentTime, playIndex, setCurrentTime } =
+  const { currentAudio, audioRef, currentTime, playIndex, setCurrentTime } =
     useAudioPlayer();
-  const { duration } = queue[playIndex] || { duration: 0 };
+  const { duration } = currentAudio || { duration: 0 };
   const [sliderValue, setSliderValue] = useState(0);
   const [isDraggingProgress, setIsDraggingProgress] = useState(false);
 
