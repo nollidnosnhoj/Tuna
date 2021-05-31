@@ -9,7 +9,7 @@ import { AudioData } from "../types";
 
 export const GET_TAG_AUDIO_LIST_QUERY_KEY = "audios";
 
-export function useGetAudioList(
+export function useGetTagAudioList(
   tag: string,
   params: Record<string, string | boolean | number> = {},
   options: UseInfiniteCursorPaginationOptions<AudioData> = {}

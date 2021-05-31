@@ -8,7 +8,7 @@ import { getAccessToken } from "~/utils";
 import { fetch } from "~/lib/api";
 import { AudioData } from "~/features/audio/types";
 import { CursorPagedList } from "~/lib/types";
-import { useGetAudioList } from "~/features/audio/hooks";
+import { useGetTagAudioList } from "~/features/audio/hooks";
 
 interface TagAudioPageProps {
   tag: string;
@@ -45,15 +45,12 @@ export default function TagAudioPage(props: TagAudioPageProps) {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useGetAudioList(
-    { tag },
-    {
-      initialData: {
-        pageParams: [nextCursor],
-        pages: [{ items: initAudio, next: nextCursor }],
-      },
-    }
-  );
+  } = useGetTagAudioList(tag, undefined, {
+    initialData: {
+      pageParams: [nextCursor],
+      pages: [{ items: initAudio, next: nextCursor }],
+    },
+  });
 
   return (
     <Page title={`Showing '${tag}' audios`}>
