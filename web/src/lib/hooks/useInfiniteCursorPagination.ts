@@ -1,12 +1,16 @@
 import { useMemo } from "react";
 import {
+  QueryKey,
   useInfiniteQuery,
   UseInfiniteQueryOptions,
   UseInfiniteQueryResult,
 } from "react-query";
 import { fetch, FetchRequestOptions } from "../api";
 import { CursorPagedList } from "../types";
-import { useAuth } from "../../features/auth/hooks/useAuth";
+
+type InfiniteCursorPaginationQueryFunction<TItem> = (
+  cursor: string
+) => Promise<CursorPagedList<TItem>>;
 
 export interface UseInfiniteCursorPaginationReturnType<TItem>
   extends Omit<UseInfiniteQueryResult<CursorPagedList<TItem>>, "data"> {
@@ -18,28 +22,26 @@ export type UseInfiniteCursorPaginationOptions<TItem> = UseInfiniteQueryOptions<
 >;
 
 export const fetchCursorList = <TItem>(
-  key: string,
+  route: string,
   cursor?: string,
   queryParams?: Record<string, unknown>,
   fetchOptions?: FetchRequestOptions
 ): Promise<CursorPagedList<TItem>> => {
   return fetch<CursorPagedList<TItem>>(
-    key,
+    route,
     { ...queryParams, cursor: cursor },
     fetchOptions
   );
 };
 
 export function useInfiniteCursorPagination<TItem>(
-  key: string,
-  params?: Record<string, unknown>,
+  key: QueryKey,
+  func: InfiniteCursorPaginationQueryFunction<TItem>,
   options?: UseInfiniteCursorPaginationOptions<TItem>
 ): UseInfiniteCursorPaginationReturnType<TItem> {
-  const { accessToken } = useAuth();
   const { data, ...result } = useInfiniteQuery<CursorPagedList<TItem>>(
-    [key, params],
-    ({ pageParam = undefined }) =>
-      fetchCursorList<TItem>(key, pageParam, params, { accessToken }),
+    key,
+    ({ pageParam = undefined }) => func(pageParam),
     {
       getNextPageParam: (lastPage) => lastPage.next,
       ...options,

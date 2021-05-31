@@ -3,12 +3,14 @@ import { CurrentUser } from "~/features/user/types";
 import API from "~/lib/api";
 import { useUser } from "~/features/user/hooks/useUser";
 
+export const ME_QUERY_KEY = "me";
+
 export function useGetCurrentUser(
   accessToken: string
 ): UseQueryResult<CurrentUser> {
   const { updateUser } = useUser();
   return useQuery<CurrentUser>(
-    "me",
+    ME_QUERY_KEY,
     async () => {
       const { data } = await API.get<CurrentUser>("me", undefined, {
         accessToken,

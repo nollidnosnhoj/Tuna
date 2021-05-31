@@ -13,10 +13,10 @@ import React, { useMemo } from "react";
 import { useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { useUser } from "~/features/user/hooks";
+import api from "~/lib/api";
 import SETTINGS from "~/lib/config";
 import { formatFileSize } from "~/utils/format";
 import { errorToast } from "~/utils/toast";
-import { getS3PresignedUrl } from "../services";
 
 interface AudioDropzoneProps {
   onFileDrop: (file: File | null) => void;
@@ -41,7 +41,13 @@ export default function AudioDropzone(props: AudioDropzoneProps) {
         onFileDrop(file);
         try {
           setUploading(true);
-          const response = await getS3PresignedUrl(file);
+          const { data: response } = await api.post<{
+            uploadId: string;
+            uploadUrl: string;
+          }>("upload", {
+            fileName: file.name,
+            fileSize: file.size,
+          });
           await axios.put(response.uploadUrl, file, {
             headers: {
               "Content-Type": file.type,

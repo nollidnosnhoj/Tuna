@@ -1,8 +1,15 @@
 import { useMemo, useState } from "react";
-import { useQuery, UseQueryOptions, UseQueryResult } from "react-query";
-import { fetchPages } from "../api";
+import {
+  QueryKey,
+  useQuery,
+  UseQueryOptions,
+  UseQueryResult,
+} from "react-query";
 import { ErrorResponse, PagedList } from "../types";
-import { useAuth } from "../../features/auth/hooks/useAuth";
+
+type PaginationQueryFunction<TItem> = (
+  page: number
+) => Promise<PagedList<TItem>>;
 
 export interface UsePaginationResultType<TItem>
   extends Omit<UseQueryResult<PagedList<TItem>>, "data"> {
@@ -18,19 +25,15 @@ export interface UsePaginationResultType<TItem>
 export type UsePaginationOptions<TItem> = UseQueryOptions<PagedList<TItem>>;
 
 export function usePagination<TItem>(
-  key: string,
-  params: Record<string, unknown> = {},
+  key: QueryKey,
+  func: PaginationQueryFunction<TItem>,
   initialPage = 1,
   options?: UseQueryOptions<PagedList<TItem>>
 ): UsePaginationResultType<TItem> {
-  const { accessToken } = useAuth();
   const [page, setPage] = useState(initialPage);
   const { data, ...result } = useQuery<PagedList<TItem>, ErrorResponse>(
-    [key, { ...params, page }],
-    () =>
-      fetchPages<TItem>("search/audios", params, page, {
-        accessToken,
-      }),
+    key,
+    () => func(page),
     {
       keepPreviousData: true,
       ...options,

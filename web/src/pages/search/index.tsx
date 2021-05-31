@@ -16,7 +16,7 @@ export default function AudioSearchNextPage() {
     page,
     setPage,
     totalPages,
-  } = useSearchAudio(queryPage, queryParams);
+  } = useSearchAudio(q as string, queryPage, queryParams);
 
   return (
     <Page title="Search audios | Audiochan">

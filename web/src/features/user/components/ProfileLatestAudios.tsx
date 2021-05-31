@@ -3,7 +3,7 @@ import { Button } from "@chakra-ui/react";
 import React from "react";
 import NextLink from "next/link";
 import AudioList from "~/features/audio/components/List";
-import { useGetUserAudios } from "../hooks";
+import { useGetUserAudios } from "../hooks/useGetUserAudios";
 
 interface ProfileLatestAudiosProps {
   username: string;

@@ -20,17 +20,20 @@ import ProfileFollowButton from "~/features/user/components/ProfileFollowButton"
 import ProfileEditButton from "~/features/user/components/ProfileEditButton";
 import ProfilePicture from "~/features/user/components/ProfilePicture";
 import ProfileLatestAudios from "~/features/user/components/ProfileLatestAudios";
-import { fetchUserProfile } from "~/features/user/services";
 import { useUser } from "~/features/user/hooks/useUser";
 import { getAccessToken } from "~/utils";
-import { useGetProfile } from "~/features/user/hooks";
+import {
+  fetchUserProfile,
+  GET_PROFILE_QUERY_KEY,
+  useGetProfile,
+} from "~/features/user/hooks/useGetProfile";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const queryClient = new QueryClient();
   const username = context.params?.username as string;
   const accessToken = getAccessToken(context);
   try {
-    await queryClient.fetchQuery(["users", username], () =>
+    await queryClient.fetchQuery(GET_PROFILE_QUERY_KEY(username), () =>
       fetchUserProfile(username, { accessToken })
     );
     return {

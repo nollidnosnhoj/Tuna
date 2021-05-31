@@ -12,11 +12,14 @@ import { QueryClient } from "react-query";
 import { useRouter } from "next/router";
 import { dehydrate } from "react-query/hydration";
 import Page from "~/components/Page";
-import { fetchAudioById } from "~/features/audio/services/mutations/fetchAudioById";
 import { getAccessToken } from "~/utils";
 import AudioDetails from "~/features/audio/components/Details";
 import AudioFileInfo from "~/features/audio/components/Details/AudioFileInfo";
 import { useGetAudio } from "~/features/audio/hooks";
+import {
+  fetchAudioById,
+  GET_AUDIO_QUERY_KEY,
+} from "~/features/audio/hooks/useGetAudio";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const queryClient = new QueryClient();
@@ -24,7 +27,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const accessToken = getAccessToken(context);
 
   try {
-    await queryClient.fetchQuery(["audios", id], () =>
+    await queryClient.fetchQuery(GET_AUDIO_QUERY_KEY(id), () =>
       fetchAudioById(id, { accessToken })
     );
     return {

@@ -1,8 +1,10 @@
 import { useQueryClient, useMutation, UseMutationResult } from "react-query";
+import { ME_QUERY_KEY } from "~/features/auth/hooks";
 import { useAuth } from "~/features/auth/hooks/useAuth";
 import api from "~/lib/api";
 import { ErrorResponse } from "~/lib/types";
 import { Profile } from "../types";
+import { GET_PROFILE_QUERY_KEY } from "./useGetProfile";
 
 export function useAddUserPicture(
   username: string
@@ -20,9 +22,8 @@ export function useAddUserPicture(
 
   return useMutation(uploadArtwork, {
     onSuccess(data) {
-      queryClient.setQueryData<Profile>([`users`, username], data);
-      queryClient.invalidateQueries(`me`);
-      queryClient.invalidateQueries(`users`);
+      queryClient.setQueryData<Profile>(GET_PROFILE_QUERY_KEY(username), data);
+      queryClient.invalidateQueries(ME_QUERY_KEY);
     },
   });
 }
