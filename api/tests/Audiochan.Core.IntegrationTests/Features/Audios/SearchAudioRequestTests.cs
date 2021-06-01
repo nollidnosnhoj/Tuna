@@ -38,16 +38,16 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             var audioFaker = new Faker<Audio>()
                 .RuleFor(x => x.FileExt, f => ".mp3")
                 .RuleFor(x => x.ContentType, f => "audio/mp3")
-                .RuleFor(x => x.OriginalFileName, f => f.System.FileName("mp3"))
+                .RuleFor(x => x.FileName, f => f.System.FileName("mp3"))
                 .RuleFor(x => x.FileSize, f => f.Random.Number(1, 2_000_000))
                 .RuleFor(x => x.Duration, f => f.Random.Number(1, 300))
                 .RuleFor(x => x.IsPublic, _ => true)
                 .FinishWith((f, a) =>
                 {
                     a.Tags = new List<Tag> {new() {Name = tags[0]}, new() {Name = tags[1]}};
-                    a.Title = Path.GetFileNameWithoutExtension(a.OriginalFileName);
+                    a.Title = Path.GetFileNameWithoutExtension(a.FileName);
                     a.UserId = ownerId;
-                    a.FileName = "test" + a.FileExt;
+                    a.BlobName = "test" + a.FileExt;
                 });
 
             var audio = audioFaker.Generate();

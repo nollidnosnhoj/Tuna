@@ -46,6 +46,11 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
+                    b.Property<string>("BlobName")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("blob_name");
+
                     b.Property<string>("ContentType")
                         .IsRequired()
                         .HasColumnType("text")
@@ -86,14 +91,9 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamp without time zone")
                         .HasColumnName("last_modified");
 
-                    b.Property<string>("OriginalFileName")
-                        .IsRequired()
+                    b.Property<string>("PictureBlobName")
                         .HasColumnType("text")
-                        .HasColumnName("original_file_name");
-
-                    b.Property<string>("Picture")
-                        .HasColumnType("text")
-                        .HasColumnName("picture");
+                        .HasColumnName("picture_blob_name");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -266,9 +266,9 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("phone_number_confirmed");
 
-                    b.Property<string>("Picture")
+                    b.Property<string>("PictureBlobName")
                         .HasColumnType("text")
-                        .HasColumnName("picture");
+                        .HasColumnName("picture_blob_name");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text")

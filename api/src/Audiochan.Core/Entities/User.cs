@@ -23,7 +23,7 @@ namespace Audiochan.Core.Entities
         }
 
         public string DisplayName { get; set; } = null!;
-        public string? Picture { get; set; }
+        public string? PictureBlobName { get; set; }
         public string? About { get; set; }
         public string? Website { get; set; }
         public DateTime Joined { get; set; }
@@ -59,7 +59,7 @@ namespace Audiochan.Core.Entities
         public void UpdatePicture(string picturePath)
         {
             if (!string.IsNullOrWhiteSpace(picturePath))
-                this.Picture = picturePath;
+                this.PictureBlobName = picturePath;
         }
     }
 }

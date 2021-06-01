@@ -6,6 +6,7 @@ using Audiochan.API.Features.Audios.GetAudio;
 using Audiochan.API.Features.Shared.Requests;
 using Audiochan.API.Mappings;
 using Audiochan.Core.Entities;
+using Audiochan.Core.Extensions;
 using Audiochan.Core.Models;
 using Audiochan.Core.Repositories;
 using Audiochan.Core.Services;
@@ -60,14 +61,14 @@ namespace Audiochan.API.Features.Audios.CreateAudio
             {
                 User = currentUser,
                 ContentType = request.ContentType,
-                OriginalFileName = request.FileName,
+                FileName = request.FileName,
                 FileExt = Path.GetExtension(request.UploadId),
                 FileSize = request.FileSize,
                 Duration = request.Duration,
                 Title = request.Title,
                 Description = request.Description,
                 IsPublic = request.IsPublic ?? false,
-                FileName = request.UploadId,
+                BlobName = request.UploadId,
                 Tags = request.Tags.Count > 0
                     ? await _unitOfWork.Tags.GetAppropriateTags(request.Tags, cancellationToken)
                     : new List<Tag>(),
@@ -80,10 +81,10 @@ namespace Audiochan.API.Features.Audios.CreateAudio
             await _storageService.MoveBlobAsync(
                 _storageSettings.Audio.TempBucket,
                 _storageSettings.Audio.Container,
-                audio.FileName,
+                audio.BlobName,
                 _storageSettings.Audio.Bucket,
                 _storageSettings.Audio.Container,
-                $"{audio.Id}/{audio.FileName}",
+                $"{audio.Id}/{audio.BlobName}",
                 cancellationToken);
 
             return Result<AudioDetailViewModel>.Success(audio.MapToDetail());

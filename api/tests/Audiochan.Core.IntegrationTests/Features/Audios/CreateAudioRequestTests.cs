@@ -47,10 +47,10 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             response.Data.Author.Username.Should().Be(adminUsername);
 
             audio.Should().NotBeNull();
-            audio.OriginalFileName.Should().Be(request.FileName);
+            audio.FileName.Should().Be(request.FileName);
             audio.ContentType.Should().Be(request.ContentType);
-            audio.FileName.Should().Contain(request.UploadId);
-            audio.FileName.Should().EndWith(".mp3");
+            audio.BlobName.Should().Contain(request.UploadId);
+            audio.BlobName.Should().EndWith(".mp3");
         }
     }
 }

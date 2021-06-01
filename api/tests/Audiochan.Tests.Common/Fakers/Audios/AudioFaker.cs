@@ -17,8 +17,8 @@ namespace Audiochan.Tests.Common.Fakers.Audios
             RuleFor(x => x.ContentType, "audio/mp3");
             RuleFor(x => x.FileExt, ".mp3");
             RuleFor(x => x.Duration, f => f.Random.Number(1, 300));
-            RuleFor(x => x.FileName, f => f.Random.String2(12) + ".mp3");
-            RuleFor(x => x.OriginalFileName, f => f.System.FileName("mp3"));
+            RuleFor(x => x.BlobName, f => f.Random.String2(12) + ".mp3");
+            RuleFor(x => x.FileName, f => f.System.FileName("mp3"));
             RuleFor(x => x.Tags, f => f.Make(f.Random.Number(1, 5), () => 
                     new Tag {Name = f.Random.String2(5, 10)}));
         }

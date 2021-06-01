@@ -31,8 +31,8 @@ namespace Audiochan.API.Mappings
                 Id = user.Id,
                 Username = user.UserName,
                 About = user.About ?? "",
-                Picture = user.Picture != null
-                    ? string.Format(MediaLinkInvariants.UserPictureUrl, user.Picture)
+                Picture = user.PictureBlobName != null
+                    ? string.Format(MediaLinkInvariants.UserPictureUrl, user.PictureBlobName)
                     : null,
                 Website = user.Website ?? "",
                 AudioCount = user.Audios.Count,

@@ -56,7 +56,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             result.Duration.Should().Be(audio.Duration);
             result.Picture.Should().BeNullOrEmpty();
             result.Tags.Count.Should().Be(audio.Tags.Count);
-            result.AudioUrl.Should().Be(string.Format(MediaLinkInvariants.AudioUrl, audio.Id, audio.FileName));
+            result.AudioUrl.Should().Be(string.Format(MediaLinkInvariants.AudioUrl, audio.Id, audio.BlobName));
             result.FileExt.Should().Be(audio.FileExt);
             result.FileSize.Should().Be(audio.FileSize);
             result.IsPublic.Should().Be(audio.IsPublic);

@@ -44,7 +44,7 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                 {
                     id = table.Column<string>(type: "text", nullable: false),
                     display_name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
-                    picture = table.Column<string>(type: "text", nullable: true),
+                    picture_blob_name = table.Column<string>(type: "text", nullable: true),
                     about = table.Column<string>(type: "text", nullable: true),
                     website = table.Column<string>(type: "text", nullable: true),
                     joined = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
@@ -94,19 +94,19 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
+                    created = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    last_modified = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     title = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     description = table.Column<string>(type: "text", nullable: true),
                     duration = table.Column<decimal>(type: "numeric", nullable: false),
+                    blob_name = table.Column<string>(type: "text", nullable: false),
                     file_name = table.Column<string>(type: "text", nullable: false),
-                    original_file_name = table.Column<string>(type: "text", nullable: false),
                     file_size = table.Column<long>(type: "bigint", nullable: false),
                     file_ext = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: false),
                     content_type = table.Column<string>(type: "text", nullable: false),
-                    picture = table.Column<string>(type: "text", nullable: true),
+                    picture_blob_name = table.Column<string>(type: "text", nullable: true),
                     is_public = table.Column<bool>(type: "boolean", nullable: false),
-                    user_id = table.Column<string>(type: "text", nullable: false),
-                    created = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    last_modified = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                    user_id = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {

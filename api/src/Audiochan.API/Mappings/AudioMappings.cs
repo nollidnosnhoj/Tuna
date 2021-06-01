@@ -23,8 +23,8 @@ namespace Audiochan.API.Mappings
                 Title = audio.Title,
                 Description = audio.Description,
                 Duration = audio.Duration,
-                Picture = audio.Picture != null 
-                    ? string.Format(MediaLinkInvariants.AudioPictureUrl, audio.Picture)
+                Picture = audio.PictureBlobName != null 
+                    ? string.Format(MediaLinkInvariants.AudioPictureUrl, audio.PictureBlobName)
                     : null,
                 Created = audio.Created,
                 Tags = audio.Tags.Select(t => t.Name).ToList(),
@@ -32,12 +32,12 @@ namespace Audiochan.API.Mappings
                 FileExt = audio.FileExt,
                 FileSize = audio.FileSize,
                 LastModified = audio.LastModified,
-                AudioUrl = string.Format(MediaLinkInvariants.AudioUrl, audio.Id, audio.FileName),
+                AudioUrl = string.Format(MediaLinkInvariants.AudioUrl, audio.Id, audio.BlobName),
                 Author = new MetaAuthorDto
                 {
                     Id = audio.User.Id,
-                    Picture = audio.User.Picture != null
-                        ? string.Format(MediaLinkInvariants.UserPictureUrl, audio.User.Picture)
+                    Picture = audio.User.PictureBlobName != null
+                        ? string.Format(MediaLinkInvariants.UserPictureUrl, audio.User.PictureBlobName)
                         : null,
                     Username = audio.User.UserName
                 }
@@ -51,17 +51,17 @@ namespace Audiochan.API.Mappings
                 Id = audio.Id,
                 Title = audio.Title,
                 Duration = audio.Duration,
-                Picture = audio.Picture != null 
-                    ? string.Format(MediaLinkInvariants.AudioPictureUrl, audio.Picture)
+                Picture = audio.PictureBlobName != null 
+                    ? string.Format(MediaLinkInvariants.AudioPictureUrl, audio.PictureBlobName)
                     : null,
                 Uploaded = audio.Created,
                 IsPublic = audio.IsPublic,
-                AudioUrl = string.Format(MediaLinkInvariants.AudioUrl, audio.Id, audio.FileName),
+                AudioUrl = string.Format(MediaLinkInvariants.AudioUrl, audio.Id, audio.BlobName),
                 Author = new MetaAuthorDto
                 {
                     Id = audio.User.Id,
-                    Picture = audio.User.Picture != null
-                        ? string.Format(MediaLinkInvariants.UserPictureUrl, audio.User.Picture)
+                    Picture = audio.User.PictureBlobName != null
+                        ? string.Format(MediaLinkInvariants.UserPictureUrl, audio.User.PictureBlobName)
                         : null,
                     Username = audio.User.UserName
                 }
