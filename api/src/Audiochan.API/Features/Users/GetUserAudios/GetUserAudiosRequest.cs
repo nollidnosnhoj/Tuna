@@ -12,7 +12,6 @@ namespace Audiochan.API.Features.Users.GetUserAudios
     public class GetUserAudiosRequest : IHasPage, IRequest<PagedListDto<AudioViewModel>>
     {
         public string? Username { get; set; }
-        public string? Cursor { get; init; }
         public int Page { get; init; } = 1;
         public int Size { get; init; } = 30;
     }

@@ -56,7 +56,22 @@ namespace Audiochan.API.Features.Audios.CreateAudio
             if (currentUser is null)
                 return Result<AudioDetailViewModel>.Fail(ResultError.Unauthorized);
 
-            var audio = await CreateAudioFromRequestAsync(request, currentUser, cancellationToken);
+            var audio = new Audio
+            {
+                User = currentUser,
+                ContentType = request.ContentType,
+                OriginalFileName = request.FileName,
+                FileExt = Path.GetExtension(request.UploadId),
+                FileSize = request.FileSize,
+                Duration = request.Duration,
+                Title = request.Title,
+                Description = request.Description,
+                IsPublic = request.IsPublic ?? false,
+                FileName = request.UploadId,
+                Tags = request.Tags.Count > 0
+                    ? await _unitOfWork.Tags.GetAppropriateTags(request.Tags, cancellationToken)
+                    : new List<Tag>(),
+            };
 
             await _unitOfWork.Audios.AddAsync(audio, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
@@ -72,27 +87,6 @@ namespace Audiochan.API.Features.Audios.CreateAudio
                 cancellationToken);
 
             return Result<AudioDetailViewModel>.Success(audio.MapToDetail());
-        }
-
-        private async Task<Audio> CreateAudioFromRequestAsync(CreateAudioRequest request, User user, CancellationToken cancellationToken)
-        {
-            var audio = new Audio
-            {
-                User = user,
-                ContentType = request.ContentType,
-                OriginalFileName = request.FileName,
-                FileExt = Path.GetExtension(request.UploadId),
-                FileSize = request.FileSize,
-                Duration = request.Duration,
-                Title = request.Title,
-                Description = request.Description,
-                IsPublic = request.IsPublic ?? false,
-            };
-            audio.FileName = request.UploadId;
-            audio.Tags = request.Tags.Count > 0
-                ? await _unitOfWork.Tags.GetAppropriateTags(request.Tags, cancellationToken)
-                : new List<Tag>();
-            return audio;
         }
 
         private async Task<bool> ExistsInTempStorageAsync(string blobName, CancellationToken cancellationToken = default)
