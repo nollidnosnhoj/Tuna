@@ -8,6 +8,7 @@ namespace Audiochan.Core.Services
     public interface IUnitOfWork : IDisposable
     {
         IAudioRepository Audios { get; }
+        IFavoriteAudioRepository FavoriteAudios { get; }
         IFollowedUserRepository FollowedUsers { get; }
         ITagRepository Tags { get; }
         IUserRepository Users { get; }

@@ -14,6 +14,7 @@ namespace Audiochan.Infrastructure.Persistence.UnitOfWorks
         private IDbContextTransaction? _currentTransaction;
         
         public IAudioRepository Audios { get; }
+        public IFavoriteAudioRepository FavoriteAudios { get; }
         public IFollowedUserRepository FollowedUsers { get; }
         public ITagRepository Tags { get; }
         public IUserRepository Users { get; }
@@ -22,13 +23,15 @@ namespace Audiochan.Infrastructure.Persistence.UnitOfWorks
             IAudioRepository audios, 
             IFollowedUserRepository followedUsers, 
             ITagRepository tags, 
-            IUserRepository users)
+            IUserRepository users, 
+            IFavoriteAudioRepository favoriteAudios)
         {
             _dbContext = dbContext;
             Audios = audios;
             FollowedUsers = followedUsers;
             Tags = tags;
             Users = users;
+            FavoriteAudios = favoriteAudios;
         }
 
         public bool HasActiveTransaction => _currentTransaction != null;
