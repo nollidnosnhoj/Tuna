@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Audiochan.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210601101556_InitialMigration")]
+    [Migration("20210601200644_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -144,6 +144,9 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                     b.HasKey("ObserverId", "TargetId")
                         .HasName("pk_followed_users");
 
+                    b.HasIndex("FollowedDate")
+                        .HasDatabaseName("ix_followed_users_followed_date");
+
                     b.HasIndex("TargetId")
                         .HasDatabaseName("ix_followed_users_target_id");
 
@@ -196,6 +199,10 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id")
                         .HasName("pk_tags");
+
+                    b.HasIndex("Name")
+                        .IsUnique()
+                        .HasDatabaseName("ix_tags_name");
 
                     b.ToTable("tags");
                 });

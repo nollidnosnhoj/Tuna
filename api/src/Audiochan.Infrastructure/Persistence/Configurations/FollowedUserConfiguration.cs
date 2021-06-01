@@ -20,6 +20,7 @@ namespace Audiochan.Infrastructure.Persistence.Configurations
                 .HasForeignKey(o => o.TargetId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            builder.HasIndex(f => f.FollowedDate);
             builder.HasQueryFilter(f => f.UnfollowedDate == null);
         }
     }

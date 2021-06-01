@@ -297,6 +297,11 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                 column: "user_id");
 
             migrationBuilder.CreateIndex(
+                name: "ix_followed_users_followed_date",
+                table: "followed_users",
+                column: "followed_date");
+
+            migrationBuilder.CreateIndex(
                 name: "ix_followed_users_target_id",
                 table: "followed_users",
                 column: "target_id");
@@ -315,6 +320,12 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                 name: "role_name_index",
                 table: "roles",
                 column: "normalized_name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "ix_tags_name",
+                table: "tags",
+                column: "name",
                 unique: true);
 
             migrationBuilder.CreateIndex(
