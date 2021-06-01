@@ -25,6 +25,23 @@ namespace Audiochan.Infrastructure.Persistence.Configurations
                 refreshToken.Property(x => x.Created).IsRequired();
                 refreshToken.ToTable("refresh_tokens");
             });
+            
+            builder.HasMany(x => x.Followers)
+                .WithMany(x => x.Followings)
+                .UsingEntity<FollowedUser>(
+                    j => j.HasOne(x => x.Observer)
+                        .WithMany(x => x.FollowingsTable)
+                        .HasForeignKey(x => x.ObserverId),
+                    j => j.HasOne(x => x.Target)
+                        .WithMany(x => x.FollowersTable)
+                        .HasForeignKey(x => x.TargetId),
+                    j =>
+                    {
+                        j.HasKey(x => new {x.TargetId, x.ObserverId});
+                        j.HasIndex(x => x.FollowedDate);
+                        j.HasIndex(x => x.UnfollowedDate);
+                        j.HasQueryFilter(x => x.UnfollowedDate == null);
+                    });
         }
     }
 }

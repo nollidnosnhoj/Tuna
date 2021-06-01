@@ -6,6 +6,5 @@ namespace Audiochan.API.Features.Followers.GetFollowers
     {
         public string Username { get; init; } = null!;
         public string? Picture { get; init; }
-        public DateTime FollowedDate { get; init; }
     }
 }

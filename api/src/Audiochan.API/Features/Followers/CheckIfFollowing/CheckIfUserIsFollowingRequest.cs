@@ -21,7 +21,7 @@ namespace Audiochan.API.Features.Followers.CheckIfFollowing
 
         public async Task<bool> Handle(CheckIfUserIsFollowingRequest request, CancellationToken cancellationToken)
         {
-            return await _unitOfWork.FollowedUsers.ExistsAsync(
+            return await _unitOfWork.Users.ExistsAsync(
                 new CheckIfUserIsFollowingSpecification(request.Username, request.UserId), 
                 cancellationToken: cancellationToken);
         }

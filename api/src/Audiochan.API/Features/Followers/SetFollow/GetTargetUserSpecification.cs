@@ -7,7 +7,7 @@ namespace Audiochan.API.Features.Followers.SetFollow
     {
         public GetTargetUserSpecification(string targetUsername)
         {
-            Query.Include(u => u.Followers)
+            Query.Include(u => u.FollowersTable)
                 .Where(u => u.UserName == targetUsername.Trim().ToLower());
         }
     }

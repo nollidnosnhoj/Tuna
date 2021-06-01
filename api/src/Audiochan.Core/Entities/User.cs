@@ -9,8 +9,10 @@ namespace Audiochan.Core.Entities
         public User()
         {
             Audios = new HashSet<Audio>();
-            Followings = new HashSet<FollowedUser>();
-            Followers = new HashSet<FollowedUser>();
+            Followings = new HashSet<User>();
+            FollowingsTable = new HashSet<FollowedUser>();
+            Followers = new HashSet<User>();
+            FollowersTable = new HashSet<FollowedUser>();
             RefreshTokens = new HashSet<RefreshToken>();
         }
 
@@ -28,8 +30,10 @@ namespace Audiochan.Core.Entities
         public string? Website { get; set; }
         public DateTime Joined { get; set; }
         public ICollection<Audio> Audios { get; set; }
-        public ICollection<FollowedUser> Followings { get; set; }
-        public ICollection<FollowedUser> Followers { get; set; }
+        public ICollection<User> Followings { get; set; }
+        public ICollection<FollowedUser> FollowingsTable { get; set; }
+        public ICollection<User> Followers { get; set; }
+        public ICollection<FollowedUser> FollowersTable { get; set; }
         public ICollection<RefreshToken> RefreshTokens { get; set; }
 
         public void UpdateDisplayName(string? displayName)
