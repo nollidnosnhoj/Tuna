@@ -37,7 +37,7 @@ namespace Audiochan.API.Features.Audios.UploadAudio
             var objectId = await Nanoid.Nanoid.GenerateAsync();
             var blobName = objectId + fileExt;
 
-            var metadata = new Dictionary<string, string> {{"UserId", userId}, {"OriginalFilename", request.FileName}};
+            var metadata = new Dictionary<string, string> {{"UserId", userId}};
             var presignedUrl = _storageService.CreatePutPresignedUrl(
                 _storageSettings.Audio.TempBucket,
                 _storageSettings.Audio.Container,

@@ -52,7 +52,6 @@ export default function AudioDropzone(props: AudioDropzoneProps) {
             headers: {
               "Content-Type": file.type,
               "x-amz-meta-userId": `${user?.id}`,
-              "x-amz-meta-originalFilename": `${file.name}`,
             },
             onUploadProgress: (evt) => {
               const currentProgress = (evt.loaded / evt.total) * 100;
