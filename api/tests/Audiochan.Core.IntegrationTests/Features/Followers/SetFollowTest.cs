@@ -31,12 +31,12 @@ namespace Audiochan.Core.IntegrationTests.Features.Followers
             {
                 return database.Users
                     .AsNoTracking()
-                    .Include(u => u.FollowersTable)
+                    .Include(u => u.Followers)
                     .SingleOrDefaultAsync(u => u.Id == targetId);
             });
 
-            user.FollowersTable.Should().NotBeEmpty();
-            user.FollowersTable.Should().Contain(x => x.ObserverId == observerId && x.TargetId == targetId);
+            user.Followers.Should().NotBeEmpty();
+            user.Followers.Should().Contain(x => x.ObserverId == observerId && x.TargetId == targetId);
         }
     }
 }

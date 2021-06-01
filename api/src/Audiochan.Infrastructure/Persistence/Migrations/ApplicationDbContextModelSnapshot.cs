@@ -123,13 +123,13 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Audiochan.Core.Entities.FollowedUser", b =>
                 {
-                    b.Property<string>("TargetId")
-                        .HasColumnType("text")
-                        .HasColumnName("target_id");
-
                     b.Property<string>("ObserverId")
                         .HasColumnType("text")
                         .HasColumnName("observer_id");
+
+                    b.Property<string>("TargetId")
+                        .HasColumnType("text")
+                        .HasColumnName("target_id");
 
                     b.Property<DateTime>("FollowedDate")
                         .HasColumnType("timestamp without time zone")
@@ -139,17 +139,11 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamp without time zone")
                         .HasColumnName("unfollowed_date");
 
-                    b.HasKey("TargetId", "ObserverId")
+                    b.HasKey("ObserverId", "TargetId")
                         .HasName("pk_followed_users");
 
-                    b.HasIndex("FollowedDate")
-                        .HasDatabaseName("ix_followed_users_followed_date");
-
-                    b.HasIndex("ObserverId")
-                        .HasDatabaseName("ix_followed_users_observer_id");
-
-                    b.HasIndex("UnfollowedDate")
-                        .HasDatabaseName("ix_followed_users_unfollowed_date");
+                    b.HasIndex("TargetId")
+                        .HasDatabaseName("ix_followed_users_target_id");
 
                     b.ToTable("followed_users");
                 });
@@ -469,14 +463,14 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Audiochan.Core.Entities.FollowedUser", b =>
                 {
                     b.HasOne("Audiochan.Core.Entities.User", "Observer")
-                        .WithMany("FollowingsTable")
+                        .WithMany("Followings")
                         .HasForeignKey("ObserverId")
                         .HasConstraintName("fk_followed_users_users_observer_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Audiochan.Core.Entities.User", "Target")
-                        .WithMany("FollowersTable")
+                        .WithMany("Followers")
                         .HasForeignKey("TargetId")
                         .HasConstraintName("fk_followed_users_users_target_id")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -592,9 +586,9 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                 {
                     b.Navigation("Audios");
 
-                    b.Navigation("FollowersTable");
+                    b.Navigation("Followers");
 
-                    b.Navigation("FollowingsTable");
+                    b.Navigation("Followings");
                 });
 #pragma warning restore 612, 618
         }

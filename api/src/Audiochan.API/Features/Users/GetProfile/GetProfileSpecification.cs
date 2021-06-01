@@ -9,8 +9,8 @@ namespace Audiochan.API.Features.Users.GetProfile
         public GetProfileSpecification(string username, string currentUserId = "")
         {
             Query.AsNoTracking()
-                .Include(u => u.FollowersTable)
-                .Include(u => u.FollowingsTable)
+                .Include(u => u.Followers)
+                .Include(u => u.Followings)
                 .Include(u => u.Audios)
                 .Where(u => u.UserName == username.Trim().ToLower());
 

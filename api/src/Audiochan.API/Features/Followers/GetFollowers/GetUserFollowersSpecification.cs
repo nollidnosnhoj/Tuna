@@ -14,7 +14,7 @@ namespace Audiochan.API.Features.Followers.GetFollowers
                 .Where(u => u.Target.UserName == username.Trim().ToLower())
                 .OrderByDescending(x => x.FollowedDate);
 
-            Query.Select(FollowedUserMappings.FollowerToListProjection());
+            Query.Select<FollowedUser, FollowerViewModel>(FollowedUserMappings.FollowerToListProjection());
         }
     }
 }

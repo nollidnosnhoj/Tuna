@@ -36,10 +36,10 @@ namespace Audiochan.API.Mappings
                     : null,
                 Website = user.Website ?? "",
                 AudioCount = user.Audios.Count,
-                FollowerCount = user.FollowersTable.Count,
-                FollowingCount = user.FollowingsTable.Count,
+                FollowerCount = user.Followers.Count,
+                FollowingCount = user.Followings.Count,
                 IsFollowing = userId.Length > 0
-                    ? user.FollowersTable.Any(f => f.ObserverId == userId)
+                    ? user.Followers.Any(f => f.ObserverId == userId)
                     : null
             };
         }

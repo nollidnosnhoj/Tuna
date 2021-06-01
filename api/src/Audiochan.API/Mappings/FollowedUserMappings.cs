@@ -13,6 +13,7 @@ namespace Audiochan.API.Mappings
         {
             return followedUser => new FollowerViewModel
             {
+                FollowedDate = followedUser.FollowedDate,
                 Username = followedUser.Observer.UserName,
                 Picture = followedUser.Observer.PictureBlobName != null
                     ? string.Format(MediaLinkInvariants.UserPictureUrl, followedUser.Observer.PictureBlobName)
@@ -24,6 +25,7 @@ namespace Audiochan.API.Mappings
         {
             return followedUser => new FollowingViewModel
             {
+                FollowedDate = followedUser.FollowedDate,
                 Picture = followedUser.Target.PictureBlobName != null
                     ? string.Format(MediaLinkInvariants.UserPictureUrl, followedUser.Target.PictureBlobName)
                     : null,

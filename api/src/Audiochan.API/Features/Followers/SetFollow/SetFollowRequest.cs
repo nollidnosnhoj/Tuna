@@ -48,7 +48,7 @@ namespace Audiochan.API.Features.Followers.SetFollow
 
         private Task<bool> Follow(User target, string observerId, CancellationToken cancellationToken = default)
         {
-            var follower = target.FollowersTable.FirstOrDefault(f => f.ObserverId == observerId);
+            var follower = target.Followers.FirstOrDefault(f => f.ObserverId == observerId);
 
             if (follower is null)
             {
@@ -59,7 +59,7 @@ namespace Audiochan.API.Features.Followers.SetFollow
                     FollowedDate = _dateTimeProvider.Now
                 };
                 
-                target.FollowersTable.Add(follower);
+                target.Followers.Add(follower);
             }
             else if (follower.UnfollowedDate is not null)
             {
@@ -72,7 +72,7 @@ namespace Audiochan.API.Features.Followers.SetFollow
 
         private Task<bool> Unfollow(User target, string observerId, CancellationToken cancellationToken = default)
         {
-            var follower = target.FollowersTable.FirstOrDefault(f => f.ObserverId == observerId);
+            var follower = target.Followers.FirstOrDefault(f => f.ObserverId == observerId);
 
             if (follower is not null)
             {
