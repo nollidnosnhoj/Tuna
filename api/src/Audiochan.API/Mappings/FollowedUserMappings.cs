@@ -1,14 +1,22 @@
 ﻿using System;
+using System.Linq;
 using System.Linq.Expressions;
 using Audiochan.API.Features.Followers.GetFollowers;
 using Audiochan.API.Features.Followers.GetFollowings;
 using Audiochan.Core.Constants;
 using Audiochan.Core.Entities;
+using Audiochan.Core.Settings;
 
 namespace Audiochan.API.Mappings
 {
     public static class FollowedUserMappings
     {
+        public static IQueryable<FollowerViewModel> ProjectToFollower(this IQueryable<FollowedUser> queryable) =>
+            queryable.Select(FollowerToListProjection());
+
+        public static IQueryable<FollowingViewModel> ProjectToFollowing(this IQueryable<FollowedUser> queryable) =>
+            queryable.Select(FollowingToListProjection());
+        
         public static Expression<Func<FollowedUser, FollowerViewModel>> FollowerToListProjection()
         {
             return followedUser => new FollowerViewModel

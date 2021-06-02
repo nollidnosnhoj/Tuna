@@ -1,8 +1,12 @@
-﻿using System.Threading;
+﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.API.Mappings;
+using Audiochan.Core.Interfaces;
 using Audiochan.Core.Repositories;
 using Audiochan.Core.Services;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.API.Features.Users.GetProfile
 {
@@ -25,8 +29,13 @@ namespace Audiochan.API.Features.Users.GetProfile
         {
             var currentUserId = _currentUserService.GetUserId();
 
-            return await _unitOfWork.Users.GetAsync(new GetProfileSpecification(request.Username, currentUserId),
-                cancellationToken: cancellationToken);
+            return await _unitOfWork.Users.AsNoTracking()
+                .Include(u => u.Followers)
+                .Include(u => u.Followings)
+                .Include(u => u.Audios)
+                .Where(u => u.UserName == request.Username.Trim().ToLower())
+                .ProjectToUser(currentUserId)
+                .SingleOrDefaultAsync(cancellationToken);
         }
     }
 }

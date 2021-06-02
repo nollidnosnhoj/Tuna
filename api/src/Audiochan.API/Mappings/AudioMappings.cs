@@ -12,6 +12,12 @@ namespace Audiochan.API.Mappings
 {
     public static class AudioMappings
     {
+        public static IQueryable<AudioDetailViewModel> ProjectToDetail(this IQueryable<Audio> queryable) => 
+            queryable.Select(AudioToDetailProjection());
+
+        public static IQueryable<AudioViewModel> ProjectToList(this IQueryable<Audio> queryable) =>
+            queryable.Select(AudioToListProjection());
+        
         public static AudioDetailViewModel MapToDetail(this Audio audio, bool returnNullIfFail = false) =>
             AudioToDetailProjection().CompileFast(returnNullIfFail).Invoke(audio);
         

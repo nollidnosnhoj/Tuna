@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Repositories;
-using Audiochan.Core.Services;
+using Audiochan.Core.Interfaces;
 using MediatR;
 
 namespace Audiochan.API.Middlewares.Pipelines
@@ -29,13 +28,13 @@ namespace Audiochan.API.Middlewares.Pipelines
 
             try
             {
-                await _unitOfWork.BeginTransactionAsync(cancellationToken);
+                _unitOfWork.BeginTransaction();
                 result = await next();
-                await _unitOfWork.CommitTransactionAsync(cancellationToken);
+                _unitOfWork.CommitTransaction();
             }
             catch (Exception)
             {
-                await _unitOfWork.RollbackTransactionAsync(cancellationToken);
+                _unitOfWork.RollbackTransaction();
                 throw;
             }
 

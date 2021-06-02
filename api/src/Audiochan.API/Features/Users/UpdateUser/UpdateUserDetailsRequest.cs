@@ -1,6 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.Interfaces;
 using Audiochan.Core.Models;
 using Audiochan.Core.Repositories;
 using Audiochan.Core.Services;
@@ -29,7 +30,7 @@ namespace Audiochan.API.Features.Users.UpdateUser
 
         public async Task<Result<bool>> Handle(UpdateUserDetailsRequest request, CancellationToken cancellationToken)
         {
-            var user = await _unitOfWork.Users.GetByIdAsync(request.UserId, cancellationToken);
+            var user = await _unitOfWork.Users.FindAsync(new object[]{request.UserId}, cancellationToken);
             if (user == null) return Result<bool>.Fail(ResultError.NotFound);
             if (user.Id != _currentUserService.GetUserId())
                 return Result<bool>.Fail(ResultError.Forbidden);

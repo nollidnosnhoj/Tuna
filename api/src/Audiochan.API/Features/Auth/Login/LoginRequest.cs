@@ -1,11 +1,13 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Entities;
+using Audiochan.Core.Interfaces;
 using Audiochan.Core.Models;
 using Audiochan.Core.Repositories;
 using Audiochan.Core.Services;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.API.Features.Auth.Login
 {
@@ -32,8 +34,9 @@ namespace Audiochan.API.Features.Auth.Login
         public async Task<Result<LoginSuccessViewModel>> Handle(LoginRequest request,
             CancellationToken cancellationToken)
         {
-            var user = await _unitOfWork.Users.GetAsync(new GetUserBasedOnLoginSpecification(request.Login),
-                cancellationToken: cancellationToken);
+            var user = await _unitOfWork.Users
+                .SingleOrDefaultAsync(u => u.UserName == request.Login.Trim().ToLower() 
+                                           || u.Email == request.Login, cancellationToken);
 
             if (user == null || !await _userManager.CheckPasswordAsync(user, request.Password))
                 return Result<LoginSuccessViewModel>.Fail(ResultError.BadRequest, "Invalid Username/Password");

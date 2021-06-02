@@ -3,11 +3,12 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.API.Features.Audios.GetAudioList;
+using Audiochan.API.Mappings;
 using Audiochan.Core.Interfaces;
 using Audiochan.Core.Models;
-using Audiochan.Core.Repositories;
-using Audiochan.Core.Services;
+using Audiochan.Infrastructure.Persistence.Extensions;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.API.Features.Audios.SearchAudios
 {
@@ -38,8 +39,19 @@ namespace Audiochan.API.Features.Audios.SearchAudios
                     .ToList()
                 : new List<string>();
             
-            return await _unitOfWork.Audios.GetPagedListBySpec(new SearchAudioSpecification(request.Q, parsedTags),
-                request.Page, request.Size, cancellationToken: cancellationToken);
+            var queryable = _unitOfWork.Audios.AsNoTracking()
+                .Include(x => x.Tags)
+                .Include(x => x.User)
+                .Where(x => x.IsPublic);
+
+            if (!string.IsNullOrWhiteSpace(request.Q))
+                queryable = queryable.Where(a => EF.Functions.ILike(a.Title, $"%{request.Q}%"));
+
+            if (parsedTags.Count > 0)
+                queryable = queryable.Where(a => a.Tags.Any(x => parsedTags.Contains(x.Name)));
+
+            return await queryable.Select(AudioMappings.AudioToListProjection())
+                .PaginateAsync(request, cancellationToken);
         }
     }
 }

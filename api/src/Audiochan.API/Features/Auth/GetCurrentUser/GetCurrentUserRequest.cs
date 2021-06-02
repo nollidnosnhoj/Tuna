@@ -1,8 +1,12 @@
-﻿using System.Threading;
+﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.API.Mappings;
+using Audiochan.Core.Interfaces;
 using Audiochan.Core.Repositories;
 using Audiochan.Core.Services;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.API.Features.Auth.GetCurrentUser
 {
@@ -26,8 +30,11 @@ namespace Audiochan.API.Features.Auth.GetCurrentUser
         {
             var currentUserId = _currentUserService.GetUserId();
 
-            return await _unitOfWork.Users.GetAsync(new GetCurrentUserSpecification(currentUserId),
-                cancellationToken: cancellationToken);
+            return await _unitOfWork.Users
+                .AsNoTracking()
+                .Where(u => u.Id == currentUserId)
+                .ProjectToCurrentUser()
+                .SingleOrDefaultAsync(cancellationToken);
         }
     }
 }

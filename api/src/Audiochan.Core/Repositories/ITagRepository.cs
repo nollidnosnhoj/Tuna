@@ -5,7 +5,7 @@ using Audiochan.Core.Entities;
 
 namespace Audiochan.Core.Repositories
 {
-    public interface ITagRepository : IGenericRepository<Tag>
+    public interface ITagRepository
     {
         Task<List<Tag>> GetAppropriateTags(List<string> tags, CancellationToken cancellationToken = default);
     }

@@ -2,10 +2,12 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.API.Features.Auth.Login;
+using Audiochan.Core.Interfaces;
 using Audiochan.Core.Models;
 using Audiochan.Core.Repositories;
 using Audiochan.Core.Services;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.API.Features.Auth.Refresh
 {
@@ -28,9 +30,10 @@ namespace Audiochan.API.Features.Auth.Refresh
         public async Task<Result<LoginSuccessViewModel>> Handle(RefreshTokenRequest request,
             CancellationToken cancellationToken)
         {
-            var user = await _unitOfWork.Users.GetAsync(
-                new GetUserBasedOnRefreshTokenSpecification(request.RefreshToken),
-                cancellationToken: cancellationToken);
+            var user = await _unitOfWork.Users
+                .Include(u => u.RefreshTokens)
+                .SingleOrDefaultAsync(u => u.RefreshTokens
+                    .Any(t => t.Token == request.RefreshToken && t.UserId == u.Id), cancellationToken);
 
             if (user == null)
                 return Result<LoginSuccessViewModel>.Fail(ResultError.BadRequest,
