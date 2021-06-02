@@ -5,7 +5,7 @@ import { useFormik } from "formik";
 import TextInput from "~/components/form/inputs/TextInput";
 import api from "~/lib/api";
 import { validationMessages, errorToast } from "~/utils";
-import { useAuth } from "~/features/auth/hooks/useAuth";
+import { useAuth } from "~/features/auth/hooks";
 import { passwordRule } from "../schemas";
 
 type UpdatePasswordValues = {

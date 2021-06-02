@@ -3,7 +3,7 @@ import { Alert, Box, Button, CloseButton } from "@chakra-ui/react";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import TextInput from "../../../components/form/inputs/TextInput";
-import { useAuth } from "~/features/auth/hooks/useAuth";
+import { useAuth } from "~/features/auth/hooks";
 import { toast, isAxiosError } from "~/utils";
 import { ErrorResponse } from "~/lib/types";
 

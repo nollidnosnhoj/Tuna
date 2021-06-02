@@ -7,23 +7,28 @@ import AudioList from "~/features/audio/components/List";
 import { GetServerSideProps } from "next";
 import { getAccessToken } from "~/utils";
 import { AudioData } from "~/features/audio/types";
-import {
-  fetchUserAudios,
-  useGetUserAudios,
-} from "~/features/user/hooks/useGetUserAudios";
 import { PagedList } from "~/lib/types";
+import {
+  fetchUserFavoriteAudios,
+  useGetUserFavoriteAudios,
+} from "~/features/user/hooks/useGetUserFavoriteAudios";
 
-interface UserAudiosPageProps {
+interface UserFavoriteAudiosPageProps {
   username: string;
   response: PagedList<AudioData>;
 }
 
-export const getServerSideProps: GetServerSideProps<UserAudiosPageProps> =
+export const getServerSideProps: GetServerSideProps<UserFavoriteAudiosPageProps> =
   async (context) => {
     const username = context.params?.username as string;
     const accessToken = getAccessToken(context);
 
-    const response = await fetchUserAudios(username, 1, {}, accessToken);
+    const response = await fetchUserFavoriteAudios(
+      username,
+      1,
+      {},
+      accessToken
+    );
 
     return {
       props: {
@@ -33,7 +38,9 @@ export const getServerSideProps: GetServerSideProps<UserAudiosPageProps> =
     };
   };
 
-export default function UserAudiosPage(props: UserAudiosPageProps) {
+export default function UserFavoriteAudiosPage(
+  props: UserFavoriteAudiosPageProps
+) {
   const { username, response } = props;
 
   const {
@@ -41,7 +48,7 @@ export default function UserAudiosPage(props: UserAudiosPageProps) {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useGetUserAudios(
+  } = useGetUserFavoriteAudios(
     username,
     {},
     {
@@ -57,12 +64,12 @@ export default function UserAudiosPage(props: UserAudiosPageProps) {
       {username && (
         <Heading as="h2" size="lg">
           Showing {<NextLink href={`/users/${username}/`}>{username}</NextLink>}
-          's audios
+          's favorite audios
         </Heading>
       )}
       <AudioList
         audios={audios}
-        notFoundContent={<Text>The user hasn't uploaded anything.</Text>}
+        notFoundContent={<Text>The user hasn't favorited anything.</Text>}
         hideLayoutToggle
       />
       <InfiniteListControls

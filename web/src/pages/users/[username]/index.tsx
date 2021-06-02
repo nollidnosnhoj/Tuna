@@ -20,13 +20,14 @@ import ProfileFollowButton from "~/features/user/components/ProfileFollowButton"
 import ProfileEditButton from "~/features/user/components/ProfileEditButton";
 import ProfilePicture from "~/features/user/components/ProfilePicture";
 import ProfileLatestAudios from "~/features/user/components/ProfileLatestAudios";
-import { useUser } from "~/features/user/hooks/useUser";
+import { useUser } from "~/features/user/hooks";
 import { getAccessToken } from "~/utils";
 import {
   fetchUserProfile,
   GET_PROFILE_QUERY_KEY,
-  useGetProfile,
 } from "~/features/user/hooks/useGetProfile";
+import { useGetProfile } from "~/features/user/hooks";
+import ProfileFavoriteAudios from "~/features/user/components/ProfileFavoriteAudios";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const queryClient = new QueryClient();
@@ -88,14 +89,18 @@ export default function UserProfileNextPage() {
         </Flex>
       </Flex>
       <Box>
-        <Tabs>
+        <Tabs isLazy>
           <TabList>
             <Tab>Uploads</Tab>
+            <Tab>Favorites</Tab>
           </TabList>
 
           <TabPanels>
             <TabPanel>
               <ProfileLatestAudios username={profile.username} />
+            </TabPanel>
+            <TabPanel>
+              <ProfileFavoriteAudios username={profile.username} />
             </TabPanel>
           </TabPanels>
         </Tabs>

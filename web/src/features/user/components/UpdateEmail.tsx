@@ -3,7 +3,7 @@ import React from "react";
 import * as yup from "yup";
 import { useFormik } from "formik";
 import TextInput from "~/components/form/inputs/TextInput";
-import { useUser } from "~/features/user/hooks/useUser";
+import { useUser } from "~/features/user/hooks";
 import { validationMessages, errorToast, toast } from "~/utils";
 import api from "~/lib/api";
 

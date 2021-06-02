@@ -1,6 +1,6 @@
 import { useQueryClient, useMutation, UseMutationResult } from "react-query";
 import { ME_QUERY_KEY } from "~/features/auth/hooks";
-import { useAuth } from "~/features/auth/hooks/useAuth";
+import { useAuth } from "~/features/auth/hooks";
 import api from "~/lib/api";
 import { ErrorResponse } from "~/lib/types";
 import { Profile } from "../types";

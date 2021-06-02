@@ -26,7 +26,7 @@ import AudioTags from "./AudioTags";
 import AudioPicture from "../AudioPicture";
 import Link from "~/components/Link";
 import { AudioDetailData } from "~/features/audio/types";
-import { useUser } from "~/features/user/hooks/useUser";
+import { useUser } from "~/features/user/hooks";
 import { relativeDate } from "~/utils/time";
 import { mapAudioForAudioQueue } from "~/utils/audioplayer";
 import AudioPlayButton from "../AudioPlayButton";

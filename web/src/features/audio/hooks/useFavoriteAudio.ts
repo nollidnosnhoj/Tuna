@@ -1,6 +1,6 @@
 import { QueryKey, useMutation, useQuery, useQueryClient } from "react-query";
-import { useAuth } from "~/features/auth/hooks/useAuth";
-import { useUser } from "~/features/user/hooks/useUser";
+import { useAuth } from "~/features/auth/hooks";
+import { useUser } from "~/features/user/hooks";
 import api from "~/lib/api";
 import { isAxiosError } from "~/utils";
 

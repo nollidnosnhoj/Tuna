@@ -6,6 +6,7 @@ using Audiochan.API.Features.Followers.GetFollowings;
 using Audiochan.API.Features.Shared.Responses;
 using Audiochan.API.Features.Users.GetProfile;
 using Audiochan.API.Features.Users.GetUserAudios;
+using Audiochan.API.Features.Users.GetUserFavoriteAudios;
 using Audiochan.API.Models;
 using Audiochan.Core.Models;
 using MediatR;
@@ -45,6 +46,16 @@ namespace Audiochan.API.Controllers
             Tags = new[] {"users"})]
         public async Task<IActionResult> GetUserAudios(string username, [FromQuery] GetUserAudiosRequest request,
             CancellationToken cancellationToken)
+        {
+            request.Username = username;
+            var list = await _mediator.Send(request, cancellationToken);
+
+            return Ok(list);
+        }
+
+        [HttpGet("{username}/favorite/audios", Name = "GetUserFavoriteAudios")]
+        public async Task<IActionResult> GetUserFavoriteAudios(string username,
+            [FromQuery] GetUserFavoriteAudiosRequest request, CancellationToken cancellationToken)
         {
             request.Username = username;
             var list = await _mediator.Send(request, cancellationToken);

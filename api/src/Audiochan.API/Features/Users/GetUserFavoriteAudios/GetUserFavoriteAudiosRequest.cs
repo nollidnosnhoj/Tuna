@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.API.Features.Audios.GetAudioList;
@@ -14,7 +15,7 @@ namespace Audiochan.API.Features.Users.GetUserFavoriteAudios
 {
     public record GetUserFavoriteAudiosRequest : IHasPage, IRequest<PagedListDto<AudioViewModel>>
     {
-        public string? Username { get; set; }
+        [JsonIgnore] public string? Username { get; set; }
         public int Page { get; init; } = 1;
         public int Size { get; init; } = 30;
     }
