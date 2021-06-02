@@ -30,6 +30,7 @@ namespace Audiochan.API.Features.FavoriteAudios.SetFavorite
         {
             var audio = await _unitOfWork.Audios
                 .Include(a => a.Favorited)
+                .IgnoreQueryFilters()
                 .Where(a => a.Id == request.AudioId)
                 .SingleOrDefaultAsync(cancellationToken);
             
