@@ -12,7 +12,7 @@ import {
   AuthContext,
 } from "~/features/auth/contexts";
 import { useGetCurrentUser } from "~/features/auth/hooks";
-import { useUser } from "~/features/user/hooks/useUser";
+import { useUser } from "~/features/user/hooks";
 import { getAccessToken, errorToast } from "~/utils";
 
 interface AuthProviderProps {

@@ -14,6 +14,7 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
+  HStack,
 } from "@chakra-ui/react";
 import Router from "next/router";
 import React, { useEffect } from "react";
@@ -25,11 +26,12 @@ import AudioTags from "./AudioTags";
 import AudioPicture from "../AudioPicture";
 import Link from "~/components/Link";
 import { AudioDetailData } from "~/features/audio/types";
-import { useUser } from "~/features/user/hooks/useUser";
+import { useUser } from "~/features/user/hooks";
 import { relativeDate } from "~/utils/time";
 import { mapAudioForAudioQueue } from "~/utils/audioplayer";
 import AudioPlayButton from "../AudioPlayButton";
 import { useAudioQueue } from "~/lib/stores";
+import AudioFavoriteButton from "./AudioFavoriteButton";
 
 interface AudioDetailProps {
   audio: AudioDetailData;
@@ -71,27 +73,30 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
               <Text color={secondaryColor}>{relativeDate(audio.uploaded)}</Text>
             </Stack>
             <Spacer />
-            <Menu placement="bottom-end">
-              <MenuButton
-                as={IconButton}
-                icon={<HiDotsVertical />}
-                variant="ghost"
-                isRound
-              />
-              <MenuList>
-                {audio.author.id === currentUser?.id && (
-                  <MenuItem icon={<EditIcon />} onClick={onEditOpen}>
-                    Edit
+            <HStack>
+              <AudioFavoriteButton audioId={audio.id} />
+              <Menu placement="bottom-end">
+                <MenuButton
+                  as={IconButton}
+                  icon={<HiDotsVertical />}
+                  variant="ghost"
+                  isRound
+                />
+                <MenuList>
+                  {audio.author.id === currentUser?.id && (
+                    <MenuItem icon={<EditIcon />} onClick={onEditOpen}>
+                      Edit
+                    </MenuItem>
+                  )}
+                  <MenuItem
+                    icon={<MdQueueMusic />}
+                    onClick={() => addToQueue(mapAudioForAudioQueue(audio))}
+                  >
+                    Add to queue
                   </MenuItem>
-                )}
-                <MenuItem
-                  icon={<MdQueueMusic />}
-                  onClick={() => addToQueue(mapAudioForAudioQueue(audio))}
-                >
-                  Add to queue
-                </MenuItem>
-              </MenuList>
-            </Menu>
+                </MenuList>
+              </Menu>
+            </HStack>
             <AudioEditDrawer
               audio={audio}
               isOpen={isEditOpen}

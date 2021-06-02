@@ -4,7 +4,7 @@ import {
   UseQueryOptions,
   UseQueryResult,
 } from "react-query";
-import { useAuth } from "~/features/auth/hooks/useAuth";
+import { useAuth } from "~/features/auth/hooks";
 import api from "~/lib/api";
 import { ErrorResponse } from "~/lib/types";
 import { Profile } from "../types";

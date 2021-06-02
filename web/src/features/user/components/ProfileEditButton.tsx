@@ -1,6 +1,6 @@
 import { Button } from "@chakra-ui/react";
 import React from "react";
-import { useUser } from "~/features/user/hooks/useUser";
+import { useUser } from "~/features/user/hooks";
 
 interface ProfileEditButtonProps {
   profileId: string;

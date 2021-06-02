@@ -9,35 +9,39 @@ import {
 } from "~/lib/hooks";
 import { PagedList } from "~/lib/types";
 
-type UseGetUserAudiosParams = {
+type UseGetUserFavoriteAudiosParams = {
   size?: number;
 };
 
-export const GET_USER_AUDIOS_QUERY_KEY = (username: string): QueryKey => [
-  "userAudios",
-  username,
-];
+export const GET_USER_FAVORITE_AUDIOS_QUERY_KEY = (
+  username: string
+): QueryKey => ["userFavoriteAudios", username];
 
-export const fetchUserAudios = async (
+export const fetchUserFavoriteAudios = async (
   username: string,
-  page: number,
+  page?: number,
   params?: Record<string, string | number | boolean>,
   accessToken?: string
 ): Promise<PagedList<AudioData>> => {
-  return fetchPages<AudioData>(`users/${username}/audios`, params, page, {
-    accessToken,
-  });
+  return fetchPages<AudioData>(
+    `users/${username}/favorite/audios`,
+    params,
+    page,
+    {
+      accessToken,
+    }
+  );
 };
 
-export function useGetUserAudios(
+export function useGetUserFavoriteAudios(
   username: string,
-  params: UseGetUserAudiosParams = {},
+  params: UseGetUserFavoriteAudiosParams = {},
   options: UseInfinitePaginationOptions<AudioData>
 ): UseInfinitePaginationReturnType<AudioData> {
   const { accessToken } = useAuth();
   return useInfinitePagination(
-    GET_USER_AUDIOS_QUERY_KEY(username),
-    (page) => fetchUserAudios(username, page, params, accessToken),
+    GET_USER_FAVORITE_AUDIOS_QUERY_KEY(username),
+    (page) => fetchUserFavoriteAudios(username, page, params, accessToken),
     options
   );
 }

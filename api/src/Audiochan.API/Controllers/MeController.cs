@@ -1,9 +1,12 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.API.Extensions;
 using Audiochan.API.Features.Audios.GetAudioFeed;
 using Audiochan.API.Features.Audios.GetAudioList;
 using Audiochan.API.Features.Auth.GetCurrentUser;
+using Audiochan.API.Features.FavoriteAudios.CheckIfFavoriting;
+using Audiochan.API.Features.FavoriteAudios.SetFavorite;
 using Audiochan.API.Features.Followers.CheckIfFollowing;
 using Audiochan.API.Features.Followers.SetFollow;
 using Audiochan.API.Features.Users.UpdateEmail;
@@ -223,6 +226,53 @@ namespace Audiochan.API.Controllers
             var result = await _mediator.Send(request, cancellationToken);
             return result.IsSuccess
                 ? Ok(result.Data)
+                : result.ReturnErrorResponse();
+        }
+
+        [HttpHead("favorites/audio/{audioId:guid}", Name="CheckIfUserFavoritedAudio")]
+        [SwaggerOperation(
+            Summary = "Check if the authenticated user favorited an audio",
+            Description = "Requires authentication.",
+            OperationId = "CheckIfUserFavoritedAudio",
+            Tags = new[] {"me"}
+        )]
+        public async Task<IActionResult> IsFavoriteAudio(Guid audioId, CancellationToken cancellationToken)
+        {
+            return await _mediator.Send(new CheckIfUserFavoritedAudioRequest(audioId, _currentUserId),
+                cancellationToken)
+                ? Ok()
+                : NotFound();
+        }
+        
+        [HttpPut("favorites/audio/{audioId:guid}", Name = "FavoriteAudio")]
+        [SwaggerOperation(
+            Summary = "Favorite an audio",
+            Description = "Requires authentication.",
+            OperationId = "FavoriteAudio",
+            Tags = new[] {"me"}
+        )]
+        public async Task<IActionResult> FavoriteAudio(Guid audioId, CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(new SetFavoriteAudioRequest(audioId, _currentUserId, true), 
+                cancellationToken);
+            return result.IsSuccess
+                ? Ok()
+                : result.ReturnErrorResponse();
+        }
+
+        [HttpDelete("favorites/audio/{audioId:guid}", Name = "UnfavoriteAudio")]
+        [SwaggerOperation(
+            Summary = "Unfavorite an audio",
+            Description = "Requires authentication.",
+            OperationId = "UnfavoriteAudio",
+            Tags = new[] {"me"}
+        )]
+        public async Task<IActionResult> UnfavoriteAudio(Guid audioId, CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(new SetFavoriteAudioRequest(audioId, _currentUserId, false), 
+                cancellationToken);
+            return result.IsSuccess
+                ? NoContent()
                 : result.ReturnErrorResponse();
         }
     }

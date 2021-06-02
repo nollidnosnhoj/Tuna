@@ -1,5 +1,5 @@
 import { useMutation, UseMutationResult } from "react-query";
-import { useAuth } from "~/features/auth/hooks/useAuth";
+import { useAuth } from "~/features/auth/hooks";
 import api from "~/lib/api";
 import { AudioDetailData, CreateAudioRequest } from "../types";
 

@@ -10,6 +10,7 @@ namespace Audiochan.Core.Entities
     {
         public Audio()
         {
+            this.Favorited = new HashSet<FavoriteAudio>();
             this.Tags = new HashSet<Tag>();
         }
         
@@ -29,6 +30,7 @@ namespace Audiochan.Core.Entities
         public string UserId { get; set; } = null!;
         
         public User User { get; set; } = null!;
+        public ICollection<FavoriteAudio> Favorited { get; set; }
         public ICollection<Tag> Tags { get; set; }
 
         public void UpdateTitle(string title)
