@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Audiochan.API.Features.FavoriteAudios.SetFavorite;
 using Audiochan.Tests.Common.Fakers.Audios;
+using Bogus;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
@@ -12,10 +13,12 @@ namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
     public class SetFavoriteAudioTests
     {
         private readonly SliceFixture _sliceFixture;
+        private readonly Faker _faker;
 
         public SetFavoriteAudioTests(SliceFixture sliceFixture)
         {
             _sliceFixture = sliceFixture;
+            _faker = new Faker();
         }
         
         [Fact]
@@ -23,8 +26,10 @@ namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
         {
             var (targetId, _) = await _sliceFixture.RunAsDefaultUserAsync();
             
-            var (observerId, _) =
-                await _sliceFixture.RunAsUserAsync("kopacetic", "kopacetic123!", Array.Empty<string>());
+            var (observerId, _) = await _sliceFixture.RunAsUserAsync(
+                    _faker.Random.String2(15), 
+                    _faker.Internet.Password(), 
+                    Array.Empty<string>());
 
             var audio = new AudioFaker(targetId).Generate();
             await _sliceFixture.InsertAsync(audio);

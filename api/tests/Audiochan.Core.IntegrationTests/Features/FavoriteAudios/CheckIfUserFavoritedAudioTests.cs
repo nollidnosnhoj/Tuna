@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Audiochan.API.Features.FavoriteAudios.CheckIfFavoriting;
 using Audiochan.Tests.Common.Fakers.Audios;
+using Bogus;
 using FluentAssertions;
 using Xunit;
 
@@ -11,10 +12,12 @@ namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
     public class CheckIfUserFavoritedAudioTests
     {
         private readonly SliceFixture _sliceFixture;
+        private readonly Faker _faker;
 
         public CheckIfUserFavoritedAudioTests(SliceFixture sliceFixture)
         {
             _sliceFixture = sliceFixture;
+            _faker = new Faker();
         }
 
         [Fact]
@@ -23,7 +26,10 @@ namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
             var (targetId, _) = await _sliceFixture.RunAsAdministratorAsync();
             var audio = new AudioFaker(targetId).Generate();
             await _sliceFixture.InsertAsync(audio);
-            var (observerId, _) = await _sliceFixture.RunAsDefaultUserAsync();
+            var (observerId, _) = await _sliceFixture.RunAsUserAsync(
+                _faker.Random.String2(15), 
+                _faker.Internet.Password(), 
+                Array.Empty<string>());
             var favoriteAudio = new Entities.FavoriteAudio
             {
                 AudioId = audio.Id,
@@ -43,7 +49,10 @@ namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
             var (targetId, _) = await _sliceFixture.RunAsAdministratorAsync();
             var audio = new AudioFaker(targetId).Generate();
             await _sliceFixture.InsertAsync(audio);
-            var (observerId, _) = await _sliceFixture.RunAsDefaultUserAsync();
+            var (observerId, _) = await _sliceFixture.RunAsUserAsync(
+                _faker.Random.String2(15), 
+                _faker.Internet.Password(), 
+                Array.Empty<string>());
 
             var isFavorited = await _sliceFixture.SendAsync(new CheckIfUserFavoritedAudioRequest(audio.Id, observerId));
 
@@ -56,7 +65,10 @@ namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
             var (targetId, _) = await _sliceFixture.RunAsAdministratorAsync();
             var audio = new AudioFaker(targetId).Generate();
             await _sliceFixture.InsertAsync(audio);
-            var (observerId, _) = await _sliceFixture.RunAsDefaultUserAsync();
+            var (observerId, _) = await _sliceFixture.RunAsUserAsync(
+                _faker.Random.String2(15), 
+                _faker.Internet.Password(), 
+                Array.Empty<string>());
             var now = DateTime.UtcNow;
             var favoriteAudio = new Entities.FavoriteAudio
             {
