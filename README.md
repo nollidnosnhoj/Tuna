@@ -13,12 +13,9 @@ Audiochan is a platform to listen to music created by independent artists.
 
 ## TODOS
 
-- Add more testings
 - Dockerize
 - Make frontend more mobile-responsive
-- Add Favorites
 - Add Playlists
-- Refactor User Profile
 
 ## Tech Stack
 
@@ -34,7 +31,6 @@ Audiochan is a platform to listen to music created by independent artists.
 - ASP.NET Core Identity
 - Imagesharp (thumbnail creation)
 - Amazon S3 (media storage)
-- Ardalis.Specification (specification pattern)
 
 ### Frontend
 
