@@ -4,17 +4,20 @@ using System.Threading.Tasks;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Entities.Abstractions;
 using Audiochan.Core.Extensions;
+using Audiochan.Core.Interfaces;
 using Audiochan.Core.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Audiochan.Infrastructure.Persistence
 {
-    public class ApplicationDbContext : IdentityDbContext<User, Role, string>
+    public class ApplicationDbContext : IdentityDbContext<User, Role, string>, IUnitOfWork
     {
         private readonly IDateTimeProvider _dateTimeProvider;
+        private IDbContextTransaction? _currentTransaction;
 
         public ApplicationDbContext(DbContextOptions options,
             IDateTimeProvider dateTimeProvider) : base(options)
@@ -26,6 +29,49 @@ namespace Audiochan.Infrastructure.Persistence
         public DbSet<FavoriteAudio> FavoriteAudios { get; set; } = null!;
         public DbSet<FollowedUser> FollowedUsers { get; set; } = null!;
         public DbSet<Tag> Tags { get; set; } = null!;
+        
+        public void BeginTransaction()
+        {
+            if (_currentTransaction != null) return;
+            _currentTransaction = Database.BeginTransaction();
+        }
+
+        public void CommitTransaction()
+        {
+            try
+            {
+                _currentTransaction?.Commit();
+            }
+            catch
+            {
+                RollbackTransaction();
+                throw;
+            }
+            finally
+            {
+                if (_currentTransaction != null)
+                {
+                    _currentTransaction.Dispose();
+                    _currentTransaction = null;
+                }
+            }
+        }
+
+        public void RollbackTransaction()
+        {
+            try
+            {
+                _currentTransaction?.Rollback();
+            }
+            finally
+            {
+                if (_currentTransaction != null)
+                {
+                    _currentTransaction.Dispose();
+                    _currentTransaction = null;
+                }
+            }
+        }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new())
         {

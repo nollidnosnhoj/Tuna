@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.Interfaces;
 using Audiochan.Core.Models;
 using Audiochan.Core.Repositories;
 using Audiochan.Core.Services;
 using Audiochan.Core.Settings;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace Audiochan.API.Features.Audios.RemoveAudio
@@ -35,7 +37,8 @@ namespace Audiochan.API.Features.Audios.RemoveAudio
         {
             var currentUserId = _currentUserService.GetUserId();
         
-            var audio = await _unitOfWork.Audios.GetByIdAsync(request.Id, cancellationToken);
+            var audio = await _unitOfWork.Audios
+                .SingleOrDefaultAsync(a => a.Id == request.Id, cancellationToken);
             
             if (audio == null)
                 return Result<bool>.Fail(ResultError.NotFound);

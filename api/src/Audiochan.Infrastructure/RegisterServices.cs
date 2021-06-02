@@ -1,10 +1,10 @@
 ﻿using Amazon.S3;
+using Audiochan.Core.Interfaces;
 using Audiochan.Core.Repositories;
 using Audiochan.Core.Services;
 using Audiochan.Infrastructure.Identity;
 using Audiochan.Infrastructure.Persistence;
 using Audiochan.Infrastructure.Persistence.Repositories;
-using Audiochan.Infrastructure.Persistence.UnitOfWorks;
 using Audiochan.Infrastructure.Shared;
 using Audiochan.Infrastructure.Storage;
 using Microsoft.EntityFrameworkCore;
@@ -42,17 +42,12 @@ namespace Audiochan.Infrastructure
                     o.EnableSensitiveDataLogging();
                 }
             });
+            services.AddScoped<IUnitOfWork>(provider => provider.GetService<ApplicationDbContext>()!);
         }
 
         private static void ConfigureRepositories(IServiceCollection services)
         {
-            services.AddScoped(typeof(IGenericRepository<>), typeof(EfRepository<>));
-            services.AddScoped<IAudioRepository, AudioRepository>();
-            services.AddScoped<IFavoriteAudioRepository, FavoriteAudioRepository>();
-            services.AddScoped<IFollowedUserRepository, FollowedUserRepository>();
             services.AddScoped<ITagRepository, TagRepository>();
-            services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
         }
     }
 }

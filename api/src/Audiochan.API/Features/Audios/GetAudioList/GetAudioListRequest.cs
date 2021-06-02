@@ -1,10 +1,12 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.API.Features.Shared.Helpers;
-using Audiochan.Core.Repositories;
-using Audiochan.Core.Services;
+using Audiochan.API.Mappings;
+using Audiochan.Core.Interfaces;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.API.Features.Audios.GetAudioList
 {
@@ -27,9 +29,25 @@ namespace Audiochan.API.Features.Audios.GetAudioList
         public async Task<GetAudioListViewModel> Handle(GetAudioListRequest request,
             CancellationToken cancellationToken)
         {
-            var spec = new GetAudioListSpecification(request.Cursor, request.Size, request.Tag);
-            var audios = await _unitOfWork.Audios.GetListAsync(spec, 
-                cancellationToken: cancellationToken);
+            var queryable = _unitOfWork.Audios
+                .AsNoTracking()
+                .Include(x => x.User)
+                .Where(x => x.IsPublic);
+            
+            if (!string.IsNullOrWhiteSpace(request.Cursor))
+            {
+                var (since, id) = CursorHelpers.DecodeCursor(request.Cursor);
+                if (Guid.TryParse(id, out var audioId) && since.HasValue)
+                {
+                    queryable = queryable.Where(a => a.Created < since.GetValueOrDefault() 
+                                        || a.Created == since.GetValueOrDefault() && a.Id.CompareTo(audioId) < 0);
+                }
+            }
+
+            var audios = await queryable
+                .ProjectToList()
+                .Take(request.Size)
+                .ToListAsync(cancellationToken);
             
             var lastAudio = audios.LastOrDefault();
 

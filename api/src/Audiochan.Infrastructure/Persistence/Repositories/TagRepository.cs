@@ -1,33 +1,30 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Ardalis.Specification;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Extensions;
 using Audiochan.Core.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Infrastructure.Persistence.Repositories
 {
-    internal class TagRepository : EfRepository<Tag>, ITagRepository
+    internal class TagRepository : ITagRepository
     {
-        public TagRepository([NotNull] ApplicationDbContext dbContext) : base(dbContext)
+        private readonly ApplicationDbContext _dbContext;
+
+        public TagRepository(ApplicationDbContext dbContext)
         {
+            _dbContext = dbContext;
         }
 
-        public TagRepository([NotNull] ApplicationDbContext dbContext, [NotNull] ISpecificationEvaluator specificationEvaluator) 
-            : base(dbContext, specificationEvaluator)
-        {
-        }
-
-        public async Task<List<Tag>> GetAppropriateTags(List<string> tags,
-            CancellationToken cancellationToken = default)
+        public async Task<List<Tag>> GetAppropriateTags(List<string> tags, CancellationToken cancellationToken = default)
         {
             var taggifyTags = tags.FormatTags();
 
-            var tagEntities =
-                await GetListAsync(tag => tags.Contains(tag.Name), cancellationToken: cancellationToken);
+            var tagEntities = await _dbContext.Tags
+                .Where(tag => taggifyTags.Contains(tag.Name))
+                .ToListAsync(cancellationToken);
 
             foreach (var tag in taggifyTags.Where(tag => tagEntities.All(t => t.Name != tag)))
             {

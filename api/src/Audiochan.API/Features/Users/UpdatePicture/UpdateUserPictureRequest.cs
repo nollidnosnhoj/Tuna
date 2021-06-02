@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.API.Features.Users.GetProfile;
 using Audiochan.API.Mappings;
+using Audiochan.Core.Interfaces;
 using Audiochan.Core.Models;
 using Audiochan.Core.Repositories;
 using Audiochan.Core.Services;
@@ -44,7 +45,7 @@ namespace Audiochan.API.Features.Users.UpdatePicture
         {
             var currentUserId = _currentUserService.GetUserId();
             var container = string.Join('/', _storageSettings.Image.Container, "users");
-            var user = await _unitOfWork.Users.GetByIdAsync(request.UserId, cancellationToken);
+            var user = await _unitOfWork.Users.FindAsync(new object[]{request.UserId}, cancellationToken);
             
             if (user == null) 
                 return Result<ProfileViewModel>.Fail(ResultError.NotFound);

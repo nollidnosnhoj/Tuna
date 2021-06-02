@@ -1,6 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.Interfaces;
 using Audiochan.Core.Models;
 using Audiochan.Core.Repositories;
 using Audiochan.Core.Services;
@@ -17,20 +18,20 @@ namespace Audiochan.API.Features.Users.UpdateUsername
     public class UpdateUsernameRequestHandler : IRequestHandler<UpdateUsernameRequest, Result<bool>>
     {
         private readonly ICurrentUserService _currentUserService;
-        private readonly IUserRepository _userRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IIdentityService _identityService;
 
-        public UpdateUsernameRequestHandler(ICurrentUserService currentUserService, IUserRepository userRepository, 
-            IIdentityService identityService)
+        public UpdateUsernameRequestHandler(ICurrentUserService currentUserService, IIdentityService identityService, 
+            IUnitOfWork unitOfWork)
         {
             _currentUserService = currentUserService;
-            _userRepository = userRepository;
             _identityService = identityService;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<Result<bool>> Handle(UpdateUsernameRequest request, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.GetByIdAsync(request.UserId, cancellationToken);
+            var user = await _unitOfWork.Users.FindAsync(new object[]{request.UserId}, cancellationToken);
             if (user == null) return Result<bool>.Fail(ResultError.Unauthorized);
             if (user.Id != _currentUserService.GetUserId())
                 return Result<bool>.Fail(ResultError.Forbidden);

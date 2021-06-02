@@ -1,11 +1,13 @@
-﻿using System.Threading;
+﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.API.Features.Audios.GetAudioList;
+using Audiochan.API.Mappings;
 using Audiochan.Core.Interfaces;
 using Audiochan.Core.Models;
-using Audiochan.Core.Repositories;
-using Audiochan.Core.Services;
+using Audiochan.Infrastructure.Persistence.Extensions;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.API.Features.Audios.GetAudioFeed
 {
@@ -28,11 +30,21 @@ namespace Audiochan.API.Features.Audios.GetAudioFeed
         public async Task<PagedListDto<AudioViewModel>> Handle(GetAudioFeedRequest request,
             CancellationToken cancellationToken)
         {
-            var followedIds = await _unitOfWork.FollowedUsers
-                .GetListAsync(new GetFollowingIdsSpecification(request.UserId), cancellationToken: cancellationToken);
+            var followedIds = await _unitOfWork.Users
+                .Include(u => u.Followings)
+                .AsNoTracking()
+                .Where(user => user.Id == request.UserId)
+                .SelectMany(u => u.Followings.Select(f => f.TargetId))
+                .ToListAsync(cancellationToken);
 
             return await _unitOfWork.Audios
-                .GetPagedListBySpec(new GetAudioFeedSpecification(followedIds), request.Page, request.Size, cancellationToken: cancellationToken);
+                .AsNoTracking()
+                .Include(x => x.User)
+                .Where(a => a.IsPublic)
+                .Where(a => followedIds.Contains(a.UserId))
+                .ProjectToList()
+                .OrderByDescending(a => a.Uploaded)
+                .PaginateAsync(cancellationToken: cancellationToken);
         }
     }
 }

@@ -3,11 +3,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.API.Features.Auth.Refresh;
 using Audiochan.Core.Entities;
+using Audiochan.Core.Interfaces;
 using Audiochan.Core.Models;
 using Audiochan.Core.Repositories;
 using Audiochan.Core.Services;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.API.Features.Auth.Revoke
 {
@@ -31,9 +33,10 @@ namespace Audiochan.API.Features.Auth.Revoke
         {
             if (!string.IsNullOrWhiteSpace(request.RefreshToken))
             {
-                var user = await _unitOfWork.Users.GetAsync(
-                        new GetUserBasedOnRefreshTokenSpecification(request.RefreshToken),
-                        cancellationToken: cancellationToken);
+                var user = await _unitOfWork.Users
+                    .Include(u => u.RefreshTokens)
+                    .SingleOrDefaultAsync(u => u.RefreshTokens
+                        .Any(r => r.Token == request.RefreshToken && u.Id == r.UserId), cancellationToken);
 
                 if (user != null)
                 {

@@ -1,15 +1,18 @@
 ﻿using System;
+using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.API.Features.Audios.GetAudio;
 using Audiochan.API.Features.Audios.UpdateAudio;
 using Audiochan.API.Mappings;
+using Audiochan.Core.Interfaces;
 using Audiochan.Core.Models;
 using Audiochan.Core.Repositories;
 using Audiochan.Core.Services;
 using Audiochan.Core.Settings;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace Audiochan.API.Features.Audios.UpdatePicture
@@ -49,8 +52,11 @@ namespace Audiochan.API.Features.Audios.UpdatePicture
             var container = string.Join('/', _storageSettings.Image.Container, "audios");
             var currentUserId = _currentUserService.GetUserId();
             
-            var audio = await _unitOfWork.Audios.GetAsync(new GetAudioForUpdateSpecification(request.AudioId),
-                cancellationToken: cancellationToken);
+            var audio = await _unitOfWork.Audios
+                .Include(x => x.Tags)
+                .Include(x => x.User)
+                .Where(x => x.Id == request.AudioId)
+                .SingleOrDefaultAsync(cancellationToken);
         
             if (audio == null) 
                 return Result<AudioDetailViewModel>.Fail(ResultError.NotFound);

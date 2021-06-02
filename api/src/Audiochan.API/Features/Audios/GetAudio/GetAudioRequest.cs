@@ -1,9 +1,13 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.API.Mappings;
+using Audiochan.Core.Interfaces;
 using Audiochan.Core.Repositories;
 using Audiochan.Core.Services;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.API.Features.Audios.GetAudio
 {
@@ -22,7 +26,13 @@ namespace Audiochan.API.Features.Audios.GetAudio
 
         public async Task<AudioDetailViewModel?> Handle(GetAudioRequest request, CancellationToken cancellationToken)
         {
-            return await _unitOfWork.Audios.GetAsync(new GetAudioSpecification(request.Id), cancellationToken: cancellationToken);
+            return await _unitOfWork.Audios
+                .AsNoTracking()
+                .Include(x => x.Tags)
+                .Include(x => x.User)
+                .Where(x => x.Id == request.Id)
+                .ProjectToDetail()
+                .SingleOrDefaultAsync(cancellationToken);
         }
     }
 }

@@ -2,15 +2,24 @@
 using System.Linq;
 using System.Linq.Expressions;
 using Audiochan.API.Features.Auth.GetCurrentUser;
+using Audiochan.API.Features.Followers.GetFollowers;
+using Audiochan.API.Features.Followers.GetFollowings;
 using Audiochan.API.Features.Users.GetProfile;
 using Audiochan.Core.Constants;
 using Audiochan.Core.Entities;
+using Audiochan.Core.Settings;
 using FastExpressionCompiler;
 
 namespace Audiochan.API.Mappings
 {
     public static class UserMappings
     {
+        public static IQueryable<CurrentUserViewModel> ProjectToCurrentUser(this IQueryable<User> queryable) =>
+            queryable.Select(CurrentUserProjection());
+
+        public static IQueryable<ProfileViewModel> ProjectToUser(this IQueryable<User> queryable, string userId) =>
+            queryable.Select(ProfileProjection(userId));
+
         public static ProfileViewModel MapToProfile(this User user, string userId, bool returnNullIfFail = false) =>
             ProfileProjection(userId).CompileFast(returnNullIfFail).Invoke(user);
 
