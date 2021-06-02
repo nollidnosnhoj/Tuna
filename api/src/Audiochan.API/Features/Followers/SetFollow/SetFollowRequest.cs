@@ -30,6 +30,7 @@ namespace Audiochan.API.Features.Followers.SetFollow
         {
             var target = await _unitOfWork.Users
                 .Include(u => u.Followers)
+                .IgnoreQueryFilters()
                 .Where(u => u.UserName == request.Username.Trim().ToLower())
                 .SingleOrDefaultAsync(cancellationToken);
 
