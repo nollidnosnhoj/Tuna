@@ -3,9 +3,11 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Entities;
+using Audiochan.Core.Interfaces;
 using Audiochan.Core.Models;
 using Audiochan.Core.Services;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.API.Features.FavoriteAudios.SetFavorite
 {
@@ -26,8 +28,10 @@ namespace Audiochan.API.Features.FavoriteAudios.SetFavorite
 
         public async Task<Result<bool>> Handle(SetFavoriteAudioRequest request, CancellationToken cancellationToken)
         {
-            var audio = await _unitOfWork.Audios.GetAsync(
-                new GetTargetAudioForFavoritingSpecification(request.AudioId), true, cancellationToken);
+            var audio = await _unitOfWork.Audios
+                .Include(a => a.Favorited)
+                .Where(a => a.Id == request.AudioId)
+                .SingleOrDefaultAsync(cancellationToken);
             
             if (audio == null)
                 return Result<bool>.Fail(ResultError.NotFound);
