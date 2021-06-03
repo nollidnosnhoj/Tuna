@@ -2,12 +2,9 @@
 using System.Linq;
 using System.Linq.Expressions;
 using Audiochan.API.Features.Auth.GetCurrentUser;
-using Audiochan.API.Features.Followers.GetFollowers;
-using Audiochan.API.Features.Followers.GetFollowings;
 using Audiochan.API.Features.Users.GetProfile;
 using Audiochan.Core.Constants;
 using Audiochan.Core.Entities;
-using Audiochan.Core.Settings;
 using FastExpressionCompiler;
 
 namespace Audiochan.API.Mappings

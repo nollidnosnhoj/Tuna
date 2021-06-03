@@ -1,5 +1,4 @@
-﻿using System;
-using Audiochan.Core.Entities;
+﻿using Audiochan.Core.Entities;
 using Bogus;
 
 namespace Audiochan.Tests.Common.Fakers.Audios

@@ -4,11 +4,9 @@ using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.API.Features.Audios.GetAudio;
-using Audiochan.API.Features.Audios.UpdateAudio;
 using Audiochan.API.Mappings;
 using Audiochan.Core.Interfaces;
 using Audiochan.Core.Models;
-using Audiochan.Core.Repositories;
 using Audiochan.Core.Services;
 using Audiochan.Core.Settings;
 using MediatR;
@@ -20,7 +18,7 @@ namespace Audiochan.API.Features.Audios.UpdatePicture
     public class UpdateAudioPictureRequest : IRequest<Result<AudioDetailViewModel>>
     {
         [JsonIgnore] public Guid AudioId { get; set; }
-        public string Data { get; init; } = null!;
+        public string Data { get; set; } = string.Empty;
     }
 
     public class UpdateAudioPictureRequestHandler : IRequestHandler<UpdateAudioPictureRequest, Result<AudioDetailViewModel>>

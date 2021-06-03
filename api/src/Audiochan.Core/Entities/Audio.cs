@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Audiochan.Core.Entities.Abstractions;
-using Audiochan.Core.Extensions;
 
 namespace Audiochan.Core.Entities
 {

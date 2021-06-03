@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Interfaces;
-using Audiochan.Core.Services;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 

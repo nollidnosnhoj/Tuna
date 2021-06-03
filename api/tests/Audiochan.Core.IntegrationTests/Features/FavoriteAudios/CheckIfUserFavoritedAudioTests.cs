@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Audiochan.API.Features.FavoriteAudios.CheckIfFavoriting;
+using Audiochan.Core.Entities;
 using Audiochan.Tests.Common.Fakers.Audios;
 using Bogus;
 using FluentAssertions;
@@ -30,7 +31,7 @@ namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
                 _faker.Random.String2(15), 
                 _faker.Internet.Password(), 
                 Array.Empty<string>());
-            var favoriteAudio = new Entities.FavoriteAudio
+            var favoriteAudio = new FavoriteAudio
             {
                 AudioId = audio.Id,
                 UserId = observerId,
@@ -70,7 +71,7 @@ namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
                 _faker.Internet.Password(), 
                 Array.Empty<string>());
             var now = DateTime.UtcNow;
-            var favoriteAudio = new Entities.FavoriteAudio
+            var favoriteAudio = new FavoriteAudio
             {
                 AudioId = audio.Id,
                 UserId = observerId,

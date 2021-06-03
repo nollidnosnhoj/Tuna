@@ -5,7 +5,6 @@ using Audiochan.API.Features.Followers.GetFollowers;
 using Audiochan.API.Features.Followers.GetFollowings;
 using Audiochan.Core.Constants;
 using Audiochan.Core.Entities;
-using Audiochan.Core.Settings;
 
 namespace Audiochan.API.Mappings
 {

@@ -2,8 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Interfaces;
-using Audiochan.Core.Repositories;
-using Audiochan.Core.Services;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 

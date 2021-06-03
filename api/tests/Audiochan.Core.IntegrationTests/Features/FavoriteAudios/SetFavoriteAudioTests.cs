@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Audiochan.API.Features.FavoriteAudios.SetFavorite;
 using Audiochan.Core.Entities;
-using Audiochan.Infrastructure.Persistence.Migrations;
 using Audiochan.Tests.Common.Fakers.Audios;
 using Bogus;
 using FluentAssertions;
@@ -63,7 +62,7 @@ namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
             var audio = new AudioFaker(targetId).Generate();
             await _sliceFixture.InsertAsync(audio);
 
-            var favoriteAudio = new Entities.FavoriteAudio
+            var favoriteAudio = new FavoriteAudio
             {
                 AudioId = audio.Id,
                 UserId = observerId,

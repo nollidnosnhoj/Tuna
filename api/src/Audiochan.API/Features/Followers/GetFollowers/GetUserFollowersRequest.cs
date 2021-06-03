@@ -4,8 +4,6 @@ using System.Threading.Tasks;
 using Audiochan.API.Mappings;
 using Audiochan.Core.Interfaces;
 using Audiochan.Core.Models;
-using Audiochan.Core.Repositories;
-using Audiochan.Core.Services;
 using Audiochan.Infrastructure.Persistence.Extensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
