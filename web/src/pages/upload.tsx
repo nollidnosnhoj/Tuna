@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import withRequiredAuth from "~/components/hoc/withRequiredAuth";
 import Page from "~/components/Page";
 import { useNavigationLock } from "~/lib/hooks";
 import AudioUploadPage from "~/features/audio/components/Page/AudioUpload";
@@ -13,7 +12,7 @@ const AudioUploadNextPage: React.FC = () => {
   );
 
   return (
-    <Page title="Upload">
+    <Page title="Upload" requiresAuth>
       <AudioUploadPage
         onUploading={() => setBlockFromLeaving(true)}
         onComplete={() => setBlockFromLeaving(false)}
@@ -22,4 +21,4 @@ const AudioUploadNextPage: React.FC = () => {
   );
 };
 
-export default withRequiredAuth(AudioUploadNextPage);
+export default AudioUploadNextPage;

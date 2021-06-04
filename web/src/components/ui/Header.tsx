@@ -59,7 +59,7 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ logo, searchBar, userMenu }) => {
-  const { user } = useUser();
+  const [user] = useUser();
   const { toggleColorMode } = useColorMode();
   const headerColor = useColorModeValue("white", "gray.800");
   const ColorModeIcon = useColorModeValue(MoonIcon, SunIcon);

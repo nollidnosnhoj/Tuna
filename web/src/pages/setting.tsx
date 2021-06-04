@@ -1,6 +1,5 @@
 import { Stack, Box, Heading } from "@chakra-ui/react";
 import React from "react";
-import withRequiredAuth from "~/components/hoc/withRequiredAuth";
 import Page from "~/components/Page";
 import UpdateEmail from "~/features/user/components/UpdateEmail";
 import UpdatePassword from "~/features/user/components/UpdatePassword";
@@ -8,7 +7,7 @@ import UpdateUsername from "~/features/user/components/UpdateUsername";
 
 const SettingPage: React.FC = () => {
   return (
-    <Page title="Settings">
+    <Page title="Settings" requiresAuth>
       <Stack direction="column" spacing={4}>
         <Box>
           <Heading>Account</Heading>
@@ -24,4 +23,4 @@ const SettingPage: React.FC = () => {
   );
 };
 
-export default withRequiredAuth(SettingPage);
+export default SettingPage;

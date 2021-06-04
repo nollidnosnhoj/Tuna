@@ -25,7 +25,7 @@ interface AudioDropzoneProps {
 
 export default function AudioDropzone(props: AudioDropzoneProps) {
   const { onUploaded, onFileDrop } = props;
-  const { user } = useUser();
+  const [user] = useUser();
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploading, setUploading] = useState(false);
   const [uploaded, setUploaded] = useState(false);

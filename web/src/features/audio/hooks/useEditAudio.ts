@@ -10,7 +10,7 @@ import { GET_AUDIO_LIST_QUERY_KEY } from "./useGetAudioList";
 export function useEditAudio(id: string): UseMutationResult<AudioDetailData> {
   const queryClient = useQueryClient();
   const { accessToken } = useAuth();
-  const { user } = useUser();
+  const [user] = useUser();
   const updateAudio = async (input: AudioRequest): Promise<AudioDetailData> => {
     const { data } = await api.put<AudioDetailData>(`audios/${id}`, input, {
       accessToken,

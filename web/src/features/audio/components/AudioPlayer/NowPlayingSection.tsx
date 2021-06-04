@@ -1,7 +1,7 @@
 import { Box, Flex, chakra, useDisclosure } from "@chakra-ui/react";
 import React from "react";
 import NextImage from "next/image";
-import Link from "~/components/Link";
+import Link from "~/components/ui/Link";
 import PictureContainer from "~/components/Picture/PictureContainer";
 import PictureModal from "~/components/Picture/PictureModal";
 import { useAudioQueue } from "~/lib/stores";

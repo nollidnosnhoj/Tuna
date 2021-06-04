@@ -20,7 +20,7 @@ interface AuthProviderProps {
 }
 
 export function AuthProvider(props: PropsWithChildren<AuthProviderProps>) {
-  const { user, updateUser } = useUser();
+  const [user, updateUser] = useUser();
   const [accessToken, setAccessToken] = useState(
     () => props.accessToken || getAccessToken()
   );

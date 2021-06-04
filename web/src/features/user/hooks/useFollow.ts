@@ -18,7 +18,7 @@ export function useFollow(
   username: string,
   initialData?: boolean
 ): UseFollowResult {
-  const { user } = useUser();
+  const [user] = useUser();
   const { accessToken } = useAuth();
   const queryClient = useQueryClient();
   const [isFollowing, setIsFollowing] =

@@ -15,7 +15,7 @@ import React, { useState } from "react";
 import { FaPause, FaPlay } from "react-icons/fa";
 import { HiDotsVertical } from "react-icons/hi";
 import { MdQueueMusic } from "react-icons/md";
-import Link from "~/components/Link";
+import Link from "~/components/ui/Link";
 import { mapAudiosForAudioQueue } from "~/utils/audioplayer";
 import { AudioData } from "~/features/audio/types";
 import { formatDuration } from "~/utils/format";

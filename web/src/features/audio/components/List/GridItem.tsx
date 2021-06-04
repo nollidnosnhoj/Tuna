@@ -1,7 +1,7 @@
 import { Box, Text } from "@chakra-ui/react";
 import NextImage from "next/image";
 import React from "react";
-import Link from "~/components/Link";
+import Link from "~/components/ui/Link";
 import { AudioListItemProps } from "./StackItem";
 import PictureContainer from "~/components/Picture/PictureContainer";
 

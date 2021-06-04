@@ -1,8 +1,14 @@
 import { useContext } from "react";
 import { UserContext } from "../contexts";
+import { CurrentUser } from "../types";
 
-export function useUser() {
+type CurrentUserOrNull = CurrentUser | null;
+
+export function useUser(): [
+  CurrentUserOrNull,
+  (user: CurrentUserOrNull | null) => void
+] {
   const context = useContext(UserContext);
   if (!context) throw new Error("Cannot find UserContext.");
-  return context;
+  return [context.user, context.updateUser];
 }

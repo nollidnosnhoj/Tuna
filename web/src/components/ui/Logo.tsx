@@ -1,6 +1,6 @@
 import { Heading } from "@chakra-ui/react";
 import React from "react";
-import ChakraLink from "../Link";
+import ChakraLink from "./Link";
 
 export default function Logo() {
   return (

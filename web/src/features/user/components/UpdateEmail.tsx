@@ -8,7 +8,7 @@ import { validationMessages, errorToast, toast } from "~/utils";
 import api from "~/lib/api";
 
 export default function UpdateEmail() {
-  const { user, updateUser } = useUser();
+  const [user, updateUser] = useUser();
 
   const formik = useFormik<{ email: string }>({
     initialValues: { email: user?.email ?? "" },

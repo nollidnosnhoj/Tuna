@@ -18,9 +18,8 @@ import React from "react";
 import Page from "~/components/Page";
 import ProfileFollowButton from "~/features/user/components/ProfileFollowButton";
 import ProfileEditButton from "~/features/user/components/ProfileEditButton";
-import ProfilePicture from "~/features/user/components/ProfilePicture";
 import ProfileLatestAudios from "~/features/user/components/ProfileLatestAudios";
-import { useUser } from "~/features/user/hooks";
+import { useAddUserPicture, useUser } from "~/features/user/hooks";
 import { getAccessToken } from "~/utils";
 import {
   fetchUserProfile,
@@ -28,6 +27,7 @@ import {
 } from "~/features/user/hooks/useGetProfile";
 import { useGetProfile } from "~/features/user/hooks";
 import ProfileFavoriteAudios from "~/features/user/components/ProfileFavoriteAudios";
+import PictureController from "~/components/Picture";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const queryClient = new QueryClient();
@@ -50,7 +50,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 export default function UserProfileNextPage() {
-  const { user } = useUser();
+  const [user] = useUser();
   const { query } = useRouter();
   const username = query.username as string;
 
@@ -58,16 +58,23 @@ export default function UserProfileNextPage() {
     staleTime: 1000,
   });
 
+  const { mutateAsync: addPictureAsync, isLoading: isAddingPicture } =
+    useAddUserPicture(username);
+
   if (!profile) return null;
 
   return (
     <Page title={`${profile.username} | Audiochan`}>
       <Flex marginBottom={4}>
         <Box flex="1" marginRight={4}>
-          <ProfilePicture
-            pictureSrc={profile.picture}
-            username={profile.username}
-            canModify={user?.id === profile.id}
+          <PictureController
+            title={profile.username}
+            src={profile.picture}
+            onChange={async (croppedData) => {
+              await addPictureAsync(croppedData);
+            }}
+            isUploading={isAddingPicture}
+            canEdit={user?.id === profile.id}
           />
         </Box>
         <Flex flex="4">

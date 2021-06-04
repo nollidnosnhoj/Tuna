@@ -8,7 +8,8 @@ export const ME_QUERY_KEY = "me";
 export function useGetCurrentUser(
   accessToken: string
 ): UseQueryResult<CurrentUser> {
-  const { updateUser } = useUser();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_, updateUser] = useUser();
   return useQuery<CurrentUser>(
     ME_QUERY_KEY,
     async () => {

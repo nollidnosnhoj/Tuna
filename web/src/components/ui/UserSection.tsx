@@ -18,7 +18,7 @@ import { useAuth } from "~/features/auth/hooks/useAuth";
 import { useLoginModal } from "~/lib/stores";
 
 const UserSection: React.FC = () => {
-  const { user } = useUser();
+  const [user] = useUser();
   const { isLoggedIn } = useAuth();
   const openAuthModal = useLoginModal((state) => state.onOpen);
 

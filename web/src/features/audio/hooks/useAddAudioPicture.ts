@@ -13,7 +13,7 @@ export function useAddAudioPicture(
 ): UseMutationResult<AudioDetailData, ErrorResponse, string> {
   const queryClient = useQueryClient();
   const { accessToken } = useAuth();
-  const { user } = useUser();
+  const [user] = useUser();
   const uploadArtwork = async (imageData: string): Promise<AudioDetailData> => {
     const { data } = await api.patch<AudioDetailData>(
       `audios/${id}/picture`,

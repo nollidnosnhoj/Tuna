@@ -11,7 +11,7 @@ interface AudioFavoriteButtonProps {
 export default function AudioFavoriteButton({
   audioId,
 }: AudioFavoriteButtonProps) {
-  const { user } = useUser();
+  const [user] = useUser();
   const { isFavorite, favorite, isLoading } = useFavoriteAudio(audioId);
 
   if (!user) {

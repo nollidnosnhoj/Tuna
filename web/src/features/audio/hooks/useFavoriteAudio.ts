@@ -19,7 +19,7 @@ export function useFavoriteAudio(
   audioId: string,
   initialData?: boolean
 ): UseFavoriteAudioResult {
-  const { user } = useUser();
+  const [user] = useUser();
   const { accessToken } = useAuth();
   const queryClient = useQueryClient();
 

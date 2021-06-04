@@ -9,7 +9,7 @@ interface ProfileEditButtonProps {
 export default function ProfileEditButton({
   profileId,
 }: ProfileEditButtonProps) {
-  const { user } = useUser();
+  const [user] = useUser();
 
   if (!user || user.id !== profileId) {
     return null;

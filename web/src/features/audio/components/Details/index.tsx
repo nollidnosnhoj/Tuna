@@ -23,8 +23,7 @@ import { MdQueueMusic } from "react-icons/md";
 import { HiDotsVertical } from "react-icons/hi";
 import AudioEditDrawer from "./AudioEditDrawer";
 import AudioTags from "./AudioTags";
-import AudioPicture from "../AudioPicture";
-import Link from "~/components/Link";
+import Link from "~/components/ui/Link";
 import { AudioDetailData } from "~/features/audio/types";
 import { useUser } from "~/features/user/hooks";
 import { relativeDate } from "~/utils/time";
@@ -32,6 +31,8 @@ import { mapAudioForAudioQueue } from "~/utils/audioplayer";
 import AudioPlayButton from "../AudioPlayButton";
 import { useAudioQueue } from "~/lib/stores";
 import AudioFavoriteButton from "./AudioFavoriteButton";
+import PictureController from "~/components/Picture";
+import { useAddAudioPicture } from "../../hooks";
 
 interface AudioDetailProps {
   audio: AudioDetailData;
@@ -39,7 +40,7 @@ interface AudioDetailProps {
 
 const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
   const secondaryColor = useColorModeValue("black.300", "gray.300");
-  const { user: currentUser } = useUser();
+  const [currentUser] = useUser();
   const addToQueue = useAudioQueue((state) => state.addToQueue);
 
   const {
@@ -47,6 +48,9 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
     onOpen: onEditOpen,
     onClose: onEditClose,
   } = useDisclosure();
+
+  const { mutateAsync: addPictureAsync, isLoading: isAddingPicture } =
+    useAddAudioPicture(audio.id);
 
   useEffect(() => {
     Router.prefetch(`/users/${audio.author.username}`);
@@ -56,11 +60,14 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
     <Box>
       <Flex marginBottom={4} justifyContent="center">
         <Box flex="1" marginRight={4}>
-          <AudioPicture
-            audioId={audio.id}
-            pictureTitle={audio.title}
-            pictureSrc={audio.picture || ""}
-            canModify={currentUser?.id === audio.author.id}
+          <PictureController
+            title={audio.title}
+            src={audio.picture || ""}
+            onChange={async (croppedData) => {
+              await addPictureAsync(croppedData);
+            }}
+            isUploading={isAddingPicture}
+            canEdit={currentUser?.id === audio.author.id}
           />
         </Box>
         <Box flex="5">

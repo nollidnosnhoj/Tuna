@@ -1,14 +1,10 @@
 import { Box, Button, useDisclosure } from "@chakra-ui/react";
-import React, {
-  PropsWithChildren,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import NextImage from "next/image";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import SETTINGS from "~/lib/config";
 import { errorToast, toast } from "~/utils";
+import PictureContainer from "./PictureContainer";
 import PictureCropModal from "./PictureCropModal";
 import PictureModal from "./PictureModal";
 
@@ -30,17 +26,8 @@ const PictureContext = React.createContext<PictureContextType>(
   {} as PictureContextType
 );
 
-export default function PictureController(
-  props: PropsWithChildren<PictureProps>
-) {
-  const {
-    src,
-    title,
-    onChange,
-    isUploading,
-    canEdit = false,
-    children,
-  } = props;
+export default function PictureController(props: PictureProps) {
+  const { src, title, onChange, isUploading, canEdit = false } = props;
 
   const {
     isOpen: isPictureModalOpen,
@@ -107,7 +94,17 @@ export default function PictureController(
         justifyContent="center"
         position="relative"
       >
-        {children}
+        <PictureContainer width={200}>
+          {src && (
+            <NextImage
+              src={src}
+              layout="fill"
+              objectFit="cover"
+              loading="eager"
+              alt={title}
+            />
+          )}
+        </PictureContainer>
         {canEdit && (
           <Button
             colorScheme="primary"

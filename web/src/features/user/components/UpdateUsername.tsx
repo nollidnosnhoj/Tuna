@@ -9,7 +9,7 @@ import { errorToast, toast } from "~/utils";
 import { usernameRule } from "../schemas";
 
 export default function UpdateUsername() {
-  const { user, updateUser } = useUser();
+  const [user, updateUser] = useUser();
 
   const formik = useFormik<{ username: string }>({
     initialValues: { username: user?.username ?? "" },

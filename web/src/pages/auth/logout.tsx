@@ -1,7 +1,6 @@
 import { chakra } from "@chakra-ui/react";
 import { useEffect } from "react";
 import Router from "next/router";
-import withRequiredAuth from "~/components/hoc/withRequiredAuth";
 import Page from "~/components/Page";
 import { useAuth } from "~/features/auth/hooks";
 import { toast } from "~/utils/toast";
@@ -22,10 +21,10 @@ const LogoutPage: React.FC = () => {
   }, []);
 
   return (
-    <Page title="Logging out">
+    <Page title="Logging out" requiresAuth>
       <chakra.span>Logging out...</chakra.span>
     </Page>
   );
 };
 
-export default withRequiredAuth(LogoutPage);
+export default LogoutPage;
