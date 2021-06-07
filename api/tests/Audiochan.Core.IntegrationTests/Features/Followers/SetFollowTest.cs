@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Audiochan.API.Features.Followers.SetFollow;
+using Audiochan.Core.Features.Followers.SetFollow;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Xunit;

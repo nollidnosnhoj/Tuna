@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
+using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Entities;
-using Audiochan.Core.Settings;
 using Audiochan.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;

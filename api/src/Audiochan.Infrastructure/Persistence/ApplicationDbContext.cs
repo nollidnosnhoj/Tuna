@@ -1,10 +1,10 @@
 ﻿using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Extensions;
+using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Entities.Abstractions;
-using Audiochan.Core.Extensions;
-using Audiochan.Core.Interfaces;
 using Audiochan.Core.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;

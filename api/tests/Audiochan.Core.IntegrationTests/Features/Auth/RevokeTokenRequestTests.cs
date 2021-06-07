@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Audiochan.API.Features.Auth.Login;
-using Audiochan.API.Features.Auth.Revoke;
+using Audiochan.Core.Features.Auth.Login;
+using Audiochan.Core.Features.Auth.Revoke;
 using Audiochan.Tests.Common.Fakers.Auth;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;

@@ -2,8 +2,8 @@
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Services;
-using Audiochan.Core.Settings;
 using Microsoft.Extensions.Options;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;

@@ -1,6 +1,6 @@
-﻿using Audiochan.API.Mappings;
+﻿using Audiochan.Core.Common.Mappings;
+using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Entities;
-using Audiochan.Core.Settings;
 using Audiochan.Tests.Common.Builders;
 using Audiochan.Tests.Common.Extensions;
 using FluentAssertions;

@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
-using Audiochan.API.Features.Audios.UploadAudio;
-using Audiochan.Core.Settings;
+using Audiochan.Core.Common.Settings;
+using Audiochan.Core.Features.Audios.UploadAudio;
 using Audiochan.Tests.Common.Builders;
 using Bogus;
 using FluentAssertions;

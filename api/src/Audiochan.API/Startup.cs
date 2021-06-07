@@ -3,9 +3,10 @@ using System.Text.Json;
 using Audiochan.API.Extensions.ConfigurationExtensions;
 using Audiochan.API.Middlewares;
 using Audiochan.API.Services;
-using Audiochan.Core.Pipelines;
+using Audiochan.Core;
+using Audiochan.Core.Common.Pipelines;
+using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Services;
-using Audiochan.Core.Settings;
 using Audiochan.Infrastructure;
 using Audiochan.Infrastructure.Storage.Options;
 using FluentValidation;
@@ -46,9 +47,7 @@ namespace Audiochan.API
 
             services
                 .AddMemoryCache()
-                .AddValidatorsFromAssembly(Assembly.GetExecutingAssembly())
-                .AddMediatR(Assembly.GetExecutingAssembly())
-                .AddScoped(typeof(IPipelineBehavior<,>), typeof(DbTransactionPipelineBehavior<,>))
+                .AddCore()
                 .AddInfrastructure(Configuration, Environment.IsDevelopment())
                 .Configure<JsonSerializerOptions>(options =>
                 {

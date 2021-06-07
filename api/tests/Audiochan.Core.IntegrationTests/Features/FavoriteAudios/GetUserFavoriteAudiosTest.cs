@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Audiochan.API.Features.Users.GetUserFavoriteAudios;
 using Audiochan.Core.Entities;
+using Audiochan.Core.Features.Users.GetUserFavoriteAudios;
 using Audiochan.Tests.Common.Fakers.Audios;
 using Bogus;
 using FluentAssertions;

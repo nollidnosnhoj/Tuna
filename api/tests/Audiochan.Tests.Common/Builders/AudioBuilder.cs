@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Entities;
-using Audiochan.Core.Extensions;
 
 namespace Audiochan.Tests.Common.Builders
 {

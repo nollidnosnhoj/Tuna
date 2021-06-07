@@ -1,6 +1,6 @@
 ﻿using System;
-using Audiochan.API.Features.Audios.UpdateAudio;
-using Audiochan.Core.Extensions;
+using Audiochan.Core.Common.Extensions;
+using Audiochan.Core.Features.Audios.UpdateAudio;
 using Bogus;
 
 namespace Audiochan.Tests.Common.Fakers.Audios
