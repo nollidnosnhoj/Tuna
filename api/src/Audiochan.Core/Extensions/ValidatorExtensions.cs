@@ -2,11 +2,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Audiochan.Core.Constants;
-using Audiochan.Core.Extensions;
 using Audiochan.Core.Settings;
 using FluentValidation;
 
-namespace Audiochan.API.Extensions
+namespace Audiochan.Core.Extensions
 {
     public static class ValidatorExtensions
     {

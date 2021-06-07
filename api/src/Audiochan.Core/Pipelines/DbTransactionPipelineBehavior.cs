@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Audiochan.Core.Interfaces;
 using MediatR;
 
-namespace Audiochan.API.Middlewares.Pipelines
+namespace Audiochan.Core.Pipelines
 {
     /// <summary>
     /// This pipeline handles the database transaction
