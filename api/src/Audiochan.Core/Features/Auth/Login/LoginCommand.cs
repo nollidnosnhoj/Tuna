@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
@@ -33,9 +34,10 @@ namespace Audiochan.Core.Features.Auth.Login
         public async Task<Result<LoginSuccessViewModel>> Handle(LoginCommand command,
             CancellationToken cancellationToken)
         {
-            var user = await _unitOfWork.Users
-                .SingleOrDefaultAsync(u => u.UserName == command.Login.Trim().ToLower() 
-                                           || u.Email == command.Login, cancellationToken);
+            var user = await _userManager.Users
+                .Include(u => u.RefreshTokens)
+                .Where(u => u.UserName == command.Login || u.Email == command.Login)
+                .SingleOrDefaultAsync(cancellationToken);
 
             if (user == null || !await _userManager.CheckPasswordAsync(user, command.Password))
                 return Result<LoginSuccessViewModel>.Fail(ResultError.BadRequest, "Invalid Username/Password");

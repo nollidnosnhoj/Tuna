@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Services;
+using Audiochan.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -20,15 +21,18 @@ namespace Audiochan.Infrastructure.Identity
         private readonly JwtSettings _jwtSettings;
         private readonly IDateTimeProvider _dateTimeProvider;
         private readonly UserManager<User> _userManager;
+        private readonly ApplicationDbContext _dbContext;
         private readonly TokenValidationParameters _tokenValidationParameters;
 
         public TokenProvider(IOptions<JwtSettings> jwtOptions, UserManager<User> userManager,
-            IDateTimeProvider dateTimeProvider, TokenValidationParameters tokenValidationParameters)
+            IDateTimeProvider dateTimeProvider, TokenValidationParameters tokenValidationParameters, 
+            ApplicationDbContext dbContext)
         {
             _jwtSettings = jwtOptions.Value;
             _userManager = userManager;
             _dateTimeProvider = dateTimeProvider;
             _tokenValidationParameters = tokenValidationParameters;
+            _dbContext = dbContext;
         }
 
         public async Task<(string, long)> GenerateAccessToken(User user)
@@ -62,8 +66,10 @@ namespace Audiochan.Infrastructure.Identity
                     user.RefreshTokens.Remove(oldRefreshToken);
                 }
             }
-
-            await _userManager.UpdateAsync(user);
+            
+            // Update using DbContext's SaveChanges because using UserManager.UpdateAsync() would update in a
+            // disconnected scenario, meaning it will update field, when it doesn't need to.
+            await _dbContext.SaveChangesAsync();
             return (token, expirationDateEpoch);
         }
 
