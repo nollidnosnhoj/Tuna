@@ -33,7 +33,7 @@ namespace Audiochan.API.Controllers
         [AllowAnonymous]
         [ProducesResponseType(typeof(PagedListDto<AudioViewModel>), StatusCodes.Status200OK)]
         [SwaggerOperation(Summary = "Returns a list of audios.", OperationId = "GetAudios", Tags = new[] {"audios"})]
-        public async Task<IActionResult> GetList([FromQuery] GetAudioListRequest query,
+        public async Task<IActionResult> GetList([FromQuery] GetLatestAudioQuery query,
             CancellationToken cancellationToken)
         {
             return Ok(await _mediator.Send(query, cancellationToken));
@@ -46,7 +46,7 @@ namespace Audiochan.API.Controllers
         [SwaggerOperation(Summary = "Return an audio by ID.", OperationId = "GetAudio", Tags = new[] {"audios"})]
         public async Task<IActionResult> Get(Guid audioId, CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(new GetAudioRequest(audioId), cancellationToken);
+            var result = await _mediator.Send(new GetAudioQuery(audioId), cancellationToken);
             return result != null
                 ? Ok(result)
                 : NotFound(ErrorApiResponse.NotFound("Audio was not found."));
@@ -58,12 +58,12 @@ namespace Audiochan.API.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        public async Task<IActionResult> Create([FromBody] CreateAudioRequest request,
+        public async Task<IActionResult> Create([FromBody] CreateAudioCommand command,
             CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(request, cancellationToken);
+            var result = await _mediator.Send(command, cancellationToken);
             return result.IsSuccess
-                ? CreatedAtAction(nameof(Get), new {audioId = result.Data.Id}, result.Data)
+                ? CreatedAtAction(nameof(Get), new {audioId = result.Data!.Id}, result.Data)
                 : result.ReturnErrorResponse();
         }
 
@@ -82,8 +82,7 @@ namespace Audiochan.API.Controllers
             [FromBody] UpdateAudioRequest request,
             CancellationToken cancellationToken)
         {
-            request.AudioId = audioId;
-            var result = await _mediator.Send(request, cancellationToken);
+            var result = await _mediator.Send(UpdateAudioCommand.FromRequest(audioId, request), cancellationToken);
             return result.IsSuccess ? Ok(result.Data) : result.ReturnErrorResponse();
         }
 
@@ -99,7 +98,7 @@ namespace Audiochan.API.Controllers
             Tags = new[] {"audios"})]
         public async Task<IActionResult> Destroy(Guid audioId, CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(new RemoveAudioRequest(audioId), cancellationToken);
+            var result = await _mediator.Send(new RemoveAudioCommand(audioId), cancellationToken);
             return result.IsSuccess ? NoContent() : result.ReturnErrorResponse();
         }
 
@@ -113,8 +112,7 @@ namespace Audiochan.API.Controllers
             [FromBody] UpdateAudioPictureRequest request,
             CancellationToken cancellationToken)
         {
-            request.AudioId = audioId;
-            var result = await _mediator.Send(request, cancellationToken);
+            var result = await _mediator.Send(UpdateAudioPictureCommand.FromRequest(audioId, request), cancellationToken);
             return result.IsSuccess
                 ? Ok(result.Data)
                 : result.ReturnErrorResponse();

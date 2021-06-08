@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Audiochan.Core.Features.Shared.Responses;
+using Audiochan.Core.Common.Models;
 
 namespace Audiochan.Core.Features.Audios.GetAudio
 {

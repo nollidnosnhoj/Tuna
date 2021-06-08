@@ -37,7 +37,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Auth
             loginResult.Data.Should().NotBeNull();
             user.Should().NotBeNull();
             user.RefreshTokens.Count.Should().BeGreaterThan(0);
-            user.RefreshTokens.Should().Contain(x => x.Token == loginResult.Data.RefreshToken);
+            user.RefreshTokens.Should().Contain(x => x.Token == loginResult.Data!.RefreshToken);
         }
     }
 }

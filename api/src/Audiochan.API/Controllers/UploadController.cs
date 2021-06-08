@@ -20,9 +20,9 @@ namespace Audiochan.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> GetUploadUrl([FromBody] UploadAudioRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetUploadUrl([FromBody] UploadAudioCommand command, CancellationToken cancellationToken)
         {
-            var response = await _mediator.Send(request, cancellationToken);
+            var response = await _mediator.Send(command, cancellationToken);
             return new JsonResult(response);
         }
     }

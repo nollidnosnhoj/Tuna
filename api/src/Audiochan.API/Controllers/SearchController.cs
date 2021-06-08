@@ -23,10 +23,10 @@ namespace Audiochan.API.Controllers
         [HttpGet("audios")]
         [ProducesResponseType(typeof(PagedListDto<AudioDetailViewModel>), StatusCodes.Status200OK)]
         [SwaggerOperation(Summary = "Search for audios", OperationId = "SearchAudio", Tags = new[] {"search"})]
-        public async Task<IActionResult> SearchAudios([FromQuery] SearchAudiosRequest request,
+        public async Task<IActionResult> SearchAudios([FromQuery] SearchAudiosQuery query,
             CancellationToken cancellationToken)
         {
-            var results = await _mediator.Send(request, cancellationToken);
+            var results = await _mediator.Send(query, cancellationToken);
             return new JsonResult(results);
         }
     }

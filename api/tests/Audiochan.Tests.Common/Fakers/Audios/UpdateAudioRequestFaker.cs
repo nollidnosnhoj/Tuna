@@ -5,7 +5,7 @@ using Bogus;
 
 namespace Audiochan.Tests.Common.Fakers.Audios
 {
-    public sealed class UpdateAudioRequestFaker : Faker<UpdateAudioRequest>
+    public sealed class UpdateAudioRequestFaker : Faker<UpdateAudioCommand>
     {
         public UpdateAudioRequestFaker(Guid audioId)
         {

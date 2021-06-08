@@ -13,7 +13,7 @@ namespace Audiochan.Core.UnitTests.Validations.Audios
     public class CreateAudioRequestValidationTests
     {
         private readonly MediaStorageSettings.StorageSettings _audioStorageSettings;
-        private readonly IValidator<CreateAudioRequest> _validator;
+        private readonly IValidator<CreateAudioCommand> _validator;
 
         public CreateAudioRequestValidationTests()
         {
@@ -22,7 +22,7 @@ namespace Audiochan.Core.UnitTests.Validations.Audios
                 Audio = MediaStorageSettingBuilder.BuildAudioDefault()
             });
             _audioStorageSettings = options.Value.Audio;
-            _validator = new CreateAudioRequestValidator(options);
+            _validator = new CreateAudioCommandValidator(options);
         }
 
         [Fact]

@@ -73,14 +73,14 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             result.Data.Should().NotBeNull();
             result.Data.Should().BeOfType<AudioDetailViewModel>();
             result.Data.Should().NotBeNull();
-            result.Data.Title.Should().Be(command.Title);
+            result.Data!.Title.Should().Be(command.Title);
             result.Data.Description.Should().Be(command.Description);
-            result.Data.Tags.Count.Should().Be(command.Tags.Count);
+            result.Data.Tags.Count.Should().Be(command.Tags!.Count);
 
             created.Should().NotBeNull();
             created.Title.Should().Be(command.Title);
             created.Description.Should().Be(command.Description);
-            created.Tags.Count.Should().Be(command.Tags.Count);
+            created.Tags.Count.Should().Be(command.Tags!.Count);
         }
     }
 }

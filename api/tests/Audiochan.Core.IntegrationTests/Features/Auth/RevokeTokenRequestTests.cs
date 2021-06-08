@@ -28,9 +28,9 @@ namespace Audiochan.Core.IntegrationTests.Features.Auth
             
             var loginResult = await _fixture.SendAsync(loginRequest);
 
-            var revokeResult = await _fixture.SendAsync(new RevokeTokenRequest
+            var revokeResult = await _fixture.SendAsync(new RevokeTokenCommand
             {
-                RefreshToken = loginResult.Data.RefreshToken
+                RefreshToken = loginResult.Data!.RefreshToken
             });
             
             var user = await _fixture.ExecuteDbContextAsync(dbContext =>
@@ -54,15 +54,15 @@ namespace Audiochan.Core.IntegrationTests.Features.Auth
             
             var loginResult1 = await _fixture.SendAsync(loginRequest);
             
-            var loginResult2 = await _fixture.SendAsync(new LoginRequest
+            var loginResult2 = await _fixture.SendAsync(new LoginCommand
             {
                 Login = loginRequest.Login,
                 Password = loginRequest.Password
             });
 
-            var revokeResult = await _fixture.SendAsync(new RevokeTokenRequest
+            var revokeResult = await _fixture.SendAsync(new RevokeTokenCommand
             {
-                RefreshToken = loginResult2.Data.RefreshToken
+                RefreshToken = loginResult2.Data!.RefreshToken
             });
             
             var user = await _fixture.ExecuteDbContextAsync(dbContext =>
@@ -76,7 +76,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Auth
             user.Should().NotBeNull();
             user.RefreshTokens.Count.Should().Be(1);
             user.RefreshTokens.Should().NotContain(x => x.Token == loginResult2.Data.RefreshToken);
-            user.RefreshTokens.Should().Contain(x => x.Token == loginResult1.Data.RefreshToken);
+            user.RefreshTokens.Should().Contain(x => x.Token == loginResult1.Data!.RefreshToken);
         }
     }
 }

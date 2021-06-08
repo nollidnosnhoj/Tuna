@@ -3,7 +3,7 @@ using Bogus;
 
 namespace Audiochan.Tests.Common.Fakers.Auth
 {
-    public sealed class LoginRequestFaker : Faker<LoginRequest>
+    public sealed class LoginRequestFaker : Faker<LoginCommand>
     {
         public LoginRequestFaker()
         {

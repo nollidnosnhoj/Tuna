@@ -1,72 +1,12 @@
-﻿using System;
-using System.Text.Json.Serialization;
-using System.Threading;
-using System.Threading.Tasks;
-using Audiochan.Core.Common.Interfaces;
-using Audiochan.Core.Common.Mappings;
-using Audiochan.Core.Common.Models;
-using Audiochan.Core.Features.Audios.GetAudio;
-using Audiochan.Core.Features.Shared.Requests;
-using Audiochan.Core.Repositories;
-using Audiochan.Core.Services;
-using MediatR;
-using Microsoft.EntityFrameworkCore;
+﻿using System.Collections.Generic;
 
 namespace Audiochan.Core.Features.Audios.UpdateAudio
 {
-    public class UpdateAudioRequest : AudioAbstractRequest, IRequest<Result<AudioDetailViewModel>>
+    public class UpdateAudioRequest
     {
-        [JsonIgnore] public Guid AudioId { get; set; }
-    }
-
-
-    public class UpdateAudioRequestHandler : IRequestHandler<UpdateAudioRequest, Result<AudioDetailViewModel>>
-    {
-        private readonly ICurrentUserService _currentUserService;
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly ITagRepository _tagRepository;
-
-        public UpdateAudioRequestHandler(ICurrentUserService currentUserService,
-            IUnitOfWork unitOfWork, ITagRepository tagRepository)
-        {
-            _currentUserService = currentUserService;
-            _unitOfWork = unitOfWork;
-            _tagRepository = tagRepository;
-        }
-
-        public async Task<Result<AudioDetailViewModel>> Handle(UpdateAudioRequest request,
-            CancellationToken cancellationToken)
-        {
-            var currentUserId = _currentUserService.GetUserId();
-            
-            var audio = await _unitOfWork.Audios
-                .Include(a => a.User)
-                .Include(a => a.Tags)
-                .SingleOrDefaultAsync(a => a.Id == request.AudioId, cancellationToken);
-
-            if (audio == null)
-                return Result<AudioDetailViewModel>.Fail(ResultError.NotFound);
-
-            if (!audio.CanModify(currentUserId))
-                return Result<AudioDetailViewModel>.Fail(ResultError.NotFound);
-
-            if (request.Tags.Count > 0)
-            {
-                var newTags = await _tagRepository.GetAppropriateTags(request.Tags, cancellationToken);
-
-                audio.UpdateTags(newTags);
-            }
-
-            audio.UpdateTitle(request.Title);
-            audio.UpdateDescription(request.Description);
-
-            if (request.IsPublic.HasValue)
-                audio.UpdatePublicity(request.IsPublic.GetValueOrDefault());
-
-            _unitOfWork.Audios.Update(audio);
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-            return Result<AudioDetailViewModel>.Success(audio.MapToDetail());
-        }
+        public string? Title { get; init; }
+        public string? Description { get; init; }
+        public bool? IsPublic { get; init; }
+        public List<string>? Tags { get; init; }
     }
 }

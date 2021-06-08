@@ -27,9 +27,9 @@ namespace Audiochan.Core.IntegrationTests.Features.Auth
             
             var loginResult = await _fixture.SendAsync(loginRequest);
 
-            var refreshResult = await _fixture.SendAsync(new RefreshTokenRequest
+            var refreshResult = await _fixture.SendAsync(new RefreshTokenCommand
             {
-                RefreshToken = loginResult.Data.RefreshToken
+                RefreshToken = loginResult.Data!.RefreshToken
             });
             
             var user = await _fixture.ExecuteDbContextAsync(dbContext =>
@@ -43,7 +43,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Auth
             refreshResult.Data.Should().NotBeNull();
             user.Should().NotBeNull();
             user.RefreshTokens.Count.Should().BeGreaterThan(0);
-            user.RefreshTokens.Should().Contain(x => x.Token == refreshResult.Data.RefreshToken);
+            user.RefreshTokens.Should().Contain(x => x.Token == refreshResult.Data!.RefreshToken);
             user.RefreshTokens.Should().NotContain(x => x.Token == loginResult.Data.RefreshToken);
         }
     }

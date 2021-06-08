@@ -2,10 +2,10 @@
 using System.Linq;
 using System.Linq.Expressions;
 using Audiochan.Core.Common.Constants;
+using Audiochan.Core.Common.Models;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Features.Audios.GetAudioList;
-using Audiochan.Core.Features.Shared.Responses;
 using FastExpressionCompiler;
 
 namespace Audiochan.Core.Common.Mappings

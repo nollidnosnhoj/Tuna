@@ -4,7 +4,7 @@ using Audiochan.API.Extensions;
 using Audiochan.API.Models;
 using Audiochan.Core.Features.Auth.Login;
 using Audiochan.Core.Features.Auth.Refresh;
-using Audiochan.Core.Features.Auth.Register;
+using Audiochan.Core.Features.Auth.CreateUser;
 using Audiochan.Core.Features.Auth.Revoke;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -31,10 +31,10 @@ namespace Audiochan.API.Controllers
             OperationId = "Login",
             Tags = new[] {"auth"}
         )]
-        public async Task<IActionResult> Login([FromBody] LoginRequest request,
+        public async Task<IActionResult> Login([FromBody] LoginCommand command,
             CancellationToken cancellationToken)
         {
-            var authResult = await _mediator.Send(request, cancellationToken);
+            var authResult = await _mediator.Send(command, cancellationToken);
             return authResult.IsSuccess
                 ? Ok(authResult.Data)
                 : authResult.ReturnErrorResponse();
@@ -49,10 +49,10 @@ namespace Audiochan.API.Controllers
             OperationId = "CreateAccount",
             Tags = new[] {"auth"}
         )]
-        public async Task<IActionResult> Register([FromBody] RegisterUserRequest request,
+        public async Task<IActionResult> Register([FromBody] CreateUserCommand command,
             CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(request, cancellationToken);
+            var result = await _mediator.Send(command, cancellationToken);
             return result.IsSuccess
                 ? Ok()
                 : result.ReturnErrorResponse();
@@ -68,10 +68,10 @@ namespace Audiochan.API.Controllers
             OperationId = "RefreshAccessToken",
             Tags = new[] {"auth"}
         )]
-        public async Task<IActionResult> Refresh([FromBody] RefreshTokenRequest request,
+        public async Task<IActionResult> Refresh([FromBody] RefreshTokenCommand command,
             CancellationToken cancellationToken)
         {
-            var authResult = await _mediator.Send(request, cancellationToken);
+            var authResult = await _mediator.Send(command, cancellationToken);
             return authResult.IsSuccess
                 ? Ok(authResult.Data)
                 : authResult.ReturnErrorResponse();
@@ -85,10 +85,10 @@ namespace Audiochan.API.Controllers
             OperationId = "RevokeRefreshToken",
             Tags = new[] {"auth"}
         )]
-        public async Task<IActionResult> Revoke([FromBody] RevokeTokenRequest request,
+        public async Task<IActionResult> Revoke([FromBody] RevokeTokenCommand command,
             CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(request, cancellationToken);
+            var result = await _mediator.Send(command, cancellationToken);
             return result.IsSuccess
                 ? Ok()
                 : result.ReturnErrorResponse();
