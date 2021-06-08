@@ -28,7 +28,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Auth
             
             var loginResult = await _fixture.SendAsync(loginRequest);
 
-            var revokeResult = await _fixture.SendAsync(new RevokeTokenRequest
+            var revokeResult = await _fixture.SendAsync(new RevokeTokenCommand
             {
                 RefreshToken = loginResult.Data.RefreshToken
             });
@@ -54,13 +54,13 @@ namespace Audiochan.Core.IntegrationTests.Features.Auth
             
             var loginResult1 = await _fixture.SendAsync(loginRequest);
             
-            var loginResult2 = await _fixture.SendAsync(new LoginRequest
+            var loginResult2 = await _fixture.SendAsync(new LoginCommand
             {
                 Login = loginRequest.Login,
                 Password = loginRequest.Password
             });
 
-            var revokeResult = await _fixture.SendAsync(new RevokeTokenRequest
+            var revokeResult = await _fixture.SendAsync(new RevokeTokenCommand
             {
                 RefreshToken = loginResult2.Data.RefreshToken
             });

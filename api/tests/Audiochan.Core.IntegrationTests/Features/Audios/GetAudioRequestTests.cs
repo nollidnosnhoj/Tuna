@@ -28,7 +28,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             await _fixture.InsertAsync(audio);
 
             // Act
-            var result = await _fixture.SendAsync(new GetAudioRequest(Guid.Empty));
+            var result = await _fixture.SendAsync(new GetAudioQuery(Guid.Empty));
 
             // Assert
             result.Should().BeNull();
@@ -45,7 +45,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             await _fixture.InsertAsync(audio);
 
             // Act
-            var result = await _fixture.SendAsync(new GetAudioRequest(audio.Id));
+            var result = await _fixture.SendAsync(new GetAudioQuery(audio.Id));
 
             // Assert
             result.Should().NotBeNull();

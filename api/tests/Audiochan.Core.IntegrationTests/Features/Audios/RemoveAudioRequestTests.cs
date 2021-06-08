@@ -33,7 +33,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             // Act
             await _fixture.RunAsDefaultUserAsync();
 
-            var command = new RemoveAudioRequest(audio.Id);
+            var command = new RemoveAudioCommand(audio.Id);
 
             var result = await _fixture.SendAsync(command);
 
@@ -50,7 +50,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             var audio = new AudioFaker(ownerId).Generate();
             await _fixture.InsertAsync(audio);
 
-            var command = new RemoveAudioRequest(audio.Id);
+            var command = new RemoveAudioCommand(audio.Id);
             var result = await _fixture.SendAsync(command);
 
             var created = await _fixture.FindAsync<Audio, Guid>(audio.Id);

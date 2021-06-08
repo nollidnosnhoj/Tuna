@@ -35,7 +35,7 @@ namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
             var audio = new AudioFaker(targetId).Generate();
             await _sliceFixture.InsertAsync(audio);
 
-            await _sliceFixture.SendAsync(new SetFavoriteAudioRequest(audio.Id, observerId, true));
+            await _sliceFixture.SendAsync(new SetFavoriteAudioCommand(audio.Id, observerId, true));
 
             var refetchAudio = await _sliceFixture.ExecuteDbContextAsync(database =>
             {
@@ -70,7 +70,7 @@ namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
             };
             await _sliceFixture.InsertAsync(favoriteAudio);
 
-            await _sliceFixture.SendAsync(new SetFavoriteAudioRequest(audio.Id, observerId, false));
+            await _sliceFixture.SendAsync(new SetFavoriteAudioCommand(audio.Id, observerId, false));
 
             var refetchAudio = await _sliceFixture.ExecuteDbContextAsync(database =>
             {

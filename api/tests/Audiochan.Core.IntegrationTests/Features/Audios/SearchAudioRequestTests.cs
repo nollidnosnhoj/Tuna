@@ -55,7 +55,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             await _fixture.InsertAsync(audio);
 
             // Act
-            var request = new SearchAudiosRequest
+            var request = new SearchAudiosQuery
             {
                 Q = audio.Title,
                 Tags = $"{tags[0]},{tags[1]}"

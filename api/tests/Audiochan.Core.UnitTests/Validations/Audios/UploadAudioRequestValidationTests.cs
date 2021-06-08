@@ -13,7 +13,7 @@ namespace Audiochan.Core.UnitTests.Validations.Audios
 {
     public class UploadAudioRequestValidationTests
     {
-        private readonly IValidator<UploadAudioRequest> _validator;
+        private readonly IValidator<UploadAudioCommand> _validator;
         private readonly Randomizer _randomizer;
 
         public UploadAudioRequestValidationTests()
@@ -22,7 +22,7 @@ namespace Audiochan.Core.UnitTests.Validations.Audios
             {
                 Audio = MediaStorageSettingBuilder.BuildAudioDefault()
             });
-            _validator = new UploadAudioRequestValidator(options);
+            _validator = new UploadAudioCommandValidator(options);
             _randomizer = new Randomizer();
         }
 
@@ -30,7 +30,7 @@ namespace Audiochan.Core.UnitTests.Validations.Audios
         public async Task ShouldValidateSuccessfully()
         {
             // Assign
-            var request = new UploadAudioRequest
+            var request = new UploadAudioCommand
             {
                 FileSize = _randomizer.Number(1, (int)MediaStorageSettingBuilder.MaxAudioSize),
                 FileName = _randomizer.Word() + ".mp3"
@@ -47,7 +47,7 @@ namespace Audiochan.Core.UnitTests.Validations.Audios
         public async Task ShouldNotValidate_WhenRequiredFieldsAreMissing()
         {
             // Assign
-            var request = new UploadAudioRequest();
+            var request = new UploadAudioCommand();
 
             // Act
             var result = await _validator.TestValidateAsync(request);
@@ -62,7 +62,7 @@ namespace Audiochan.Core.UnitTests.Validations.Audios
         public async Task ShouldNotValidate_WhenFileNameHasNoExtension()
         {
             // Assign
-            var request = new UploadAudioRequest {FileName = _randomizer.Word()};
+            var request = new UploadAudioCommand {FileName = _randomizer.Word()};
             
             // Act
             var result = await _validator.TestValidateAsync(request);
@@ -76,7 +76,7 @@ namespace Audiochan.Core.UnitTests.Validations.Audios
         public async Task ShouldNotValidate_WhenFileNameHaveInvalidContentType()
         {
             // Assign
-            var request = new UploadAudioRequest {FileName = _randomizer.Word() + ".jpg"};
+            var request = new UploadAudioCommand {FileName = _randomizer.Word() + ".jpg"};
             
             // Act
             var result = await _validator.TestValidateAsync(request);
@@ -90,7 +90,7 @@ namespace Audiochan.Core.UnitTests.Validations.Audios
         public async Task ShouldNotValidate_WhenFileSizeIsTooLarge()
         {
             // Assign
-            var request = new UploadAudioRequest {FileSize = MediaStorageSettingBuilder.MaxAudioSize + 1};
+            var request = new UploadAudioCommand {FileSize = MediaStorageSettingBuilder.MaxAudioSize + 1};
             
             // Act
             var result = await _validator.TestValidateAsync(request);

@@ -49,7 +49,7 @@ namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
 
             await _sliceFixture.InsertAsync(favoriteAudios.ToArray());
 
-            var response = await _sliceFixture.SendAsync(new GetUserFavoriteAudiosRequest
+            var response = await _sliceFixture.SendAsync(new GetUserFavoriteAudiosQuery
             {
                 Username = observerUsername
             });

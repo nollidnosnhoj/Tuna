@@ -7,24 +7,24 @@ namespace Audiochan.Core.UnitTests.Validations.Auth
 {
     public class LoginRequestValidationTests
     {
-        private readonly IValidator<LoginRequest> _validator;
+        private readonly IValidator<LoginCommand> _validator;
 
         public LoginRequestValidationTests()
         {
-            _validator = new LoginRequestValidator();
+            _validator = new LoginCommandValidator();
         }
 
         [Fact]
         public void CheckIfUsernameIsEmpty()
         {
-            var result = _validator.TestValidate(new LoginRequest());
+            var result = _validator.TestValidate(new LoginCommand());
             result.ShouldHaveValidationErrorFor(x => x.Login);
         }
 
         [Fact]
         public void CheckIfPasswordIsEmpty()
         {
-            var result = _validator.TestValidate(new LoginRequest());
+            var result = _validator.TestValidate(new LoginCommand());
             result.ShouldHaveValidationErrorFor(x => x.Password);
         }
     }

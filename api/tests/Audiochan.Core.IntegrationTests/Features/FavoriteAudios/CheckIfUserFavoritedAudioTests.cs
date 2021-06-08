@@ -39,7 +39,7 @@ namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
             };
             await _sliceFixture.InsertAsync(favoriteAudio);
 
-            var isFavorited = await _sliceFixture.SendAsync(new CheckIfUserFavoritedAudioRequest(audio.Id, observerId));
+            var isFavorited = await _sliceFixture.SendAsync(new CheckIfUserFavoritedAudioQuery(audio.Id, observerId));
 
             isFavorited.Should().BeTrue();
         }
@@ -55,7 +55,7 @@ namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
                 _faker.Internet.Password(), 
                 Array.Empty<string>());
 
-            var isFavorited = await _sliceFixture.SendAsync(new CheckIfUserFavoritedAudioRequest(audio.Id, observerId));
+            var isFavorited = await _sliceFixture.SendAsync(new CheckIfUserFavoritedAudioQuery(audio.Id, observerId));
 
             isFavorited.Should().BeFalse();
         }
@@ -80,7 +80,7 @@ namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
             };
             await _sliceFixture.InsertAsync(favoriteAudio);
 
-            var isFavorited = await _sliceFixture.SendAsync(new CheckIfUserFavoritedAudioRequest(audio.Id, observerId));
+            var isFavorited = await _sliceFixture.SendAsync(new CheckIfUserFavoritedAudioQuery(audio.Id, observerId));
 
             isFavorited.Should().BeFalse();
         }

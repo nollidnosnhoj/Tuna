@@ -27,7 +27,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Auth
             
             var loginResult = await _fixture.SendAsync(loginRequest);
 
-            var refreshResult = await _fixture.SendAsync(new RefreshTokenRequest
+            var refreshResult = await _fixture.SendAsync(new RefreshTokenCommand
             {
                 RefreshToken = loginResult.Data.RefreshToken
             });

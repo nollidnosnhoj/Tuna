@@ -32,7 +32,7 @@ namespace Audiochan.API.Controllers
         [SwaggerOperation(Summary = "Return user's profile.", OperationId = "GetProfile", Tags = new[] {"users"})]
         public async Task<IActionResult> GetUser(string username, CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(new GetProfileRequest(username), cancellationToken);
+            var result = await _mediator.Send(new GetProfileQuery(username), cancellationToken);
 
             return result != null
                 ? Ok(result)
@@ -47,7 +47,7 @@ namespace Audiochan.API.Controllers
         public async Task<IActionResult> GetUserAudios(string username, [FromQuery] PaginationQueryParams paginationQueryParams,
             CancellationToken cancellationToken)
         {
-            var list = await _mediator.Send(new GetUserAudiosRequest
+            var list = await _mediator.Send(new GetUsersAudioQuery
             {
                 Username = username,
                 Page = paginationQueryParams.Page,
@@ -61,7 +61,7 @@ namespace Audiochan.API.Controllers
         public async Task<IActionResult> GetUserFavoriteAudios(string username,
             [FromQuery] PaginationQueryParams paginationQueryParams, CancellationToken cancellationToken)
         {
-            var list = await _mediator.Send(new GetUserFavoriteAudiosRequest
+            var list = await _mediator.Send(new GetUserFavoriteAudiosQuery
             {
                 Username = username,
                 Page = paginationQueryParams.Page,
@@ -77,7 +77,7 @@ namespace Audiochan.API.Controllers
         public async Task<IActionResult> GetFollowers(string username, [FromQuery] PaginationQueryParams paginationQueryParams, 
             CancellationToken cancellationToken)
         {
-            return Ok(await _mediator.Send(new GetUserFollowersRequest
+            return Ok(await _mediator.Send(new GetUserFollowersQuery
             {
                 Username = username,
                 Page = paginationQueryParams.Page,
@@ -92,7 +92,7 @@ namespace Audiochan.API.Controllers
         public async Task<IActionResult> GetFollowings(string username, [FromQuery] PaginationQueryParams paginationQueryParams, 
             CancellationToken cancellationToken)
         {
-            return Ok(await _mediator.Send(new GetUserFollowingsRequest
+            return Ok(await _mediator.Send(new GetUserFollowingsQuery
             {
                 Username = username,
                 Page = paginationQueryParams.Page,
