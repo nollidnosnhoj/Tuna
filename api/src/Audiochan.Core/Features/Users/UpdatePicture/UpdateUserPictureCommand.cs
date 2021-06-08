@@ -14,8 +14,14 @@ namespace Audiochan.Core.Features.Users.UpdatePicture
 {
     public record UpdateUserPictureCommand : IRequest<Result<ProfileViewModel>>
     {
-        [JsonIgnore] public string UserId { get; set; } = string.Empty;
+        public string UserId { get; set; } = string.Empty;
         public string Data { get; init; } = null!;
+
+        public static UpdateUserPictureCommand FromRequest(string userId, ImageDataDto request) => new()
+        {
+            UserId = userId,
+            Data = request.Data
+        };
     }
 
     public class UpdateUserPictureCommandHandler : IRequestHandler<UpdateUserPictureCommand, Result<ProfileViewModel>>

@@ -5,7 +5,6 @@ using Audiochan.Core.Common.Models;
 using Audiochan.Core.Features.Audios.GetAudioList;
 using Audiochan.Core.Features.Followers.GetFollowers;
 using Audiochan.Core.Features.Followers.GetFollowings;
-using Audiochan.Core.Features.Shared.Responses;
 using Audiochan.Core.Features.Users.GetProfile;
 using Audiochan.Core.Features.Users.GetUserAudios;
 using Audiochan.Core.Features.Users.GetUserFavoriteAudios;

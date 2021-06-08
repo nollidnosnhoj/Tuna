@@ -15,7 +15,7 @@ namespace Audiochan.Core.Features.Users.GetUserFavoriteAudios
 {
     public record GetUserFavoriteAudiosQuery : IHasPage, IRequest<PagedListDto<AudioViewModel>>
     {
-        [JsonIgnore] public string? Username { get; set; }
+        public string? Username { get; set; }
         public int Page { get; init; } = 1;
         public int Size { get; init; } = 30;
     }

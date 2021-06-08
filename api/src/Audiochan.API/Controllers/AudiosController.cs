@@ -63,7 +63,7 @@ namespace Audiochan.API.Controllers
         {
             var result = await _mediator.Send(command, cancellationToken);
             return result.IsSuccess
-                ? CreatedAtAction(nameof(Get), new {audioId = result.Data.Id}, result.Data)
+                ? CreatedAtAction(nameof(Get), new {audioId = result.Data!.Id}, result.Data)
                 : result.ReturnErrorResponse();
         }
 
@@ -79,11 +79,10 @@ namespace Audiochan.API.Controllers
             OperationId = "UpdateAudio",
             Tags = new[] {"audios"})]
         public async Task<IActionResult> Update(Guid audioId,
-            [FromBody] UpdateAudioCommand request,
+            [FromBody] UpdateAudioRequest request,
             CancellationToken cancellationToken)
         {
-            request.AudioId = audioId;
-            var result = await _mediator.Send(request, cancellationToken);
+            var result = await _mediator.Send(UpdateAudioCommand.FromRequest(audioId, request), cancellationToken);
             return result.IsSuccess ? Ok(result.Data) : result.ReturnErrorResponse();
         }
 
@@ -110,11 +109,10 @@ namespace Audiochan.API.Controllers
             OperationId = "AddAudioPicture",
             Tags = new[] {"audios"})]
         public async Task<IActionResult> AddPicture(Guid audioId,
-            [FromBody] UpdateAudioPictureCommand command,
+            [FromBody] UpdateAudioPictureRequest request,
             CancellationToken cancellationToken)
         {
-            command.AudioId = audioId;
-            var result = await _mediator.Send(command, cancellationToken);
+            var result = await _mediator.Send(UpdateAudioPictureCommand.FromRequest(audioId, request), cancellationToken);
             return result.IsSuccess
                 ? Ok(result.Data)
                 : result.ReturnErrorResponse();

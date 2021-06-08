@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Text.Json.Serialization;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Mappings;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Features.Audios.GetAudio;
-using Audiochan.Core.Features.Shared.Requests;
 using Audiochan.Core.Repositories;
 using Audiochan.Core.Services;
 using MediatR;
@@ -14,11 +13,23 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Audios.UpdateAudio
 {
-    public class UpdateAudioCommand : AudioAbstractRequest, IRequest<Result<AudioDetailViewModel>>
+    public class UpdateAudioCommand : IRequest<Result<AudioDetailViewModel>>
     {
         public Guid AudioId { get; set; }
-    }
+        public string? Title { get; init; }
+        public string? Description { get; init; }
+        public bool? IsPublic { get; init; }
+        public List<string>? Tags { get; init; }
 
+        public static UpdateAudioCommand FromRequest(Guid audioId, UpdateAudioRequest request) => new()
+        {
+            AudioId = audioId,
+            Tags = request.Tags,
+            Title = request.Title,
+            IsPublic = request.IsPublic,
+            Description = request.Description,
+        };
+    }
 
     public class UpdateAudioCommandHandler : IRequestHandler<UpdateAudioCommand, Result<AudioDetailViewModel>>
     {
@@ -50,18 +61,34 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
             if (!audio.CanModify(currentUserId))
                 return Result<AudioDetailViewModel>.Fail(ResultError.NotFound);
 
-            if (command.Tags.Count > 0)
+            if (command.Tags is not null)
             {
-                var newTags = await _tagRepository.GetAppropriateTags(command.Tags, cancellationToken);
+                if (command.Tags.Count == 0)
+                {
+                    audio.Tags.Clear();
+                }
+                else
+                {
+                    var newTags = await _tagRepository.GetAppropriateTags(command.Tags, cancellationToken);
 
-                audio.UpdateTags(newTags);
+                    audio.UpdateTags(newTags);
+                }
             }
 
-            audio.UpdateTitle(command.Title);
-            audio.UpdateDescription(command.Description);
+            if (command.Title is not null)
+            {
+                audio.UpdateTitle(command.Title);
+            }
+
+            if (command.Description is not null)
+            {
+                audio.UpdateDescription(command.Description);
+            }
 
             if (command.IsPublic.HasValue)
-                audio.UpdatePublicity(command.IsPublic.GetValueOrDefault());
+            {
+                audio.UpdatePublicity(command.IsPublic.Value);
+            }
 
             _unitOfWork.Audios.Update(audio);
             await _unitOfWork.SaveChangesAsync(cancellationToken);

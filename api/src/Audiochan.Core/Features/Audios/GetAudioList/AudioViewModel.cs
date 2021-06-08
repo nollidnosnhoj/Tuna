@@ -1,5 +1,5 @@
 ﻿using System;
-using Audiochan.Core.Features.Shared.Responses;
+using Audiochan.Core.Common.Models;
 
 namespace Audiochan.Core.Features.Audios.GetAudioList
 {

@@ -1,6 +1,5 @@
 ﻿using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Settings;
-using Audiochan.Core.Features.Shared.Validators;
 using FluentValidation;
 using Microsoft.Extensions.Options;
 
@@ -26,7 +25,21 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
                 .WithMessage("Content Type is required.")
                 .Must((type) => uploadOptions.ValidContentTypes.Contains(type))
                 .WithMessage("Content Type is invalid.");
-            Include(new AudioAbstractRequestValidator());
+            RuleFor(req => req.Title)
+                .NotEmpty()
+                .WithMessage("Title is required.")
+                .MaximumLength(30)
+                .WithMessage("Title cannot be no more than 30 characters long.");
+            RuleFor(req => req.Description)
+                .NotNull()
+                .WithMessage("Description cannot be null.")
+                .MaximumLength(500)
+                .WithMessage("Description cannot be more than 500 characters long.");
+            RuleFor(req => req.Tags)
+                .NotNull()
+                .WithMessage("Tags cannot be null.")
+                .Must(u => u!.Count <= 10)
+                .WithMessage("Can only have up to 10 tags per audio upload.");
         }
     }
 }

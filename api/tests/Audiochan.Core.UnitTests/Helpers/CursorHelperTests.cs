@@ -1,5 +1,5 @@
 ﻿using System;
-using Audiochan.Core.Features.Shared.Helpers;
+using Audiochan.Core.Common.Helpers;
 using FluentAssertions;
 using Xunit;
 

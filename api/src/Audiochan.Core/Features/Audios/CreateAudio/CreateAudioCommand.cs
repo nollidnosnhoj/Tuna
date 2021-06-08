@@ -8,7 +8,6 @@ using Audiochan.Core.Common.Models;
 using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Audios.GetAudio;
-using Audiochan.Core.Features.Shared.Requests;
 using Audiochan.Core.Repositories;
 using Audiochan.Core.Services;
 using MediatR;
@@ -17,13 +16,17 @@ using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Audios.CreateAudio
 {
-    public class CreateAudioCommand : AudioAbstractRequest, IRequest<Result<AudioDetailViewModel>>
+    public class CreateAudioCommand : IRequest<Result<AudioDetailViewModel>>
     {
         public string UploadId { get; init; } = null!;
         public string FileName { get; init; } = null!;
         public long FileSize { get; init; }
         public string ContentType { get; init; } = null!;
         public decimal Duration { get; init; }
+        public string Title { get; init; } = null!;
+        public string Description { get; init; } = string.Empty;
+        public bool IsPublic { get; init; }
+        public List<string> Tags { get; init; } = new();
     }
 
     public class CreateAudioCommandHandler : IRequestHandler<CreateAudioCommand, Result<AudioDetailViewModel>>
@@ -71,7 +74,7 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
                 Duration = command.Duration,
                 Title = command.Title,
                 Description = command.Description,
-                IsPublic = command.IsPublic ?? false,
+                IsPublic = command.IsPublic,
                 BlobName = command.UploadId,
                 Tags = command.Tags.Count > 0
                     ? await _tagRepository.GetAppropriateTags(command.Tags, cancellationToken)

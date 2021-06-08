@@ -17,8 +17,15 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
 {
     public class UpdateAudioPictureCommand : IRequest<Result<AudioDetailViewModel>>
     {
-        [JsonIgnore] public Guid AudioId { get; set; }
+        public Guid AudioId { get; set; }
         public string Data { get; set; } = string.Empty;
+
+        public static UpdateAudioPictureCommand FromRequest(Guid audioId, UpdateAudioPictureRequest request) =>
+            new()
+            {
+                AudioId = audioId,
+                Data = request.Data
+            };
     }
 
     public class UpdateAudioCommandHandler : IRequestHandler<UpdateAudioPictureCommand, Result<AudioDetailViewModel>>

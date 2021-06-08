@@ -1,4 +1,4 @@
-﻿namespace Audiochan.Core.Features.Shared.Responses
+﻿namespace Audiochan.Core.Common.Models
 {
     public record MetaAuthorDto
     {

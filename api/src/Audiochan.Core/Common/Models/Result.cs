@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using MediatR;
 
 namespace Audiochan.Core.Common.Models
 {
@@ -71,11 +72,6 @@ namespace Audiochan.Core.Common.Models
     {
         public T? Data { get; private set; }
 
-        public Result() : base()
-        {
-            
-        }
-
         public Result(T data) : base()
         {
             Data = data;
@@ -83,7 +79,7 @@ namespace Audiochan.Core.Common.Models
 
         public Result(ResultError error, string message = "") : base(error, message)
         {
-            Data = default;
+            Data = default(T);
         }
         
         public new static Result<T> Fail(ResultError errorCode, string message = "", Dictionary<string, string[]>? errors = null)

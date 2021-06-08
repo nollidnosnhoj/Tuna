@@ -2,9 +2,9 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Helpers;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Mappings;
-using Audiochan.Core.Features.Shared.Helpers;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 

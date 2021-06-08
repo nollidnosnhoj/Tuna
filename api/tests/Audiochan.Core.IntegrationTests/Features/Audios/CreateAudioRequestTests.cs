@@ -29,16 +29,16 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
                 return dbContext.Audios
                     .Include(a => a.Tags)
                     .Include(a => a.User)
-                    .SingleOrDefaultAsync(a => a.Id == response.Data.Id);
+                    .SingleOrDefaultAsync(a => a.Id == response.Data!.Id);
             });
 
             response.Should().NotBeNull();
             response.IsSuccess.Should().BeTrue();
             response.Data.Should().NotBeNull();
-            response.Data.Id.Should().NotBeEmpty();
+            response.Data!.Id.Should().NotBeEmpty();
             response.Data.Title.Should().Be(request.Title);
             response.Data.Description.Should().Be(request.Description);
-            response.Data.IsPublic.Should().Be(request.IsPublic ?? false);
+            response.Data.IsPublic.Should().Be(request.IsPublic);
             response.Data.Duration.Should().Be(request.Duration);
             response.Data.FileSize.Should().Be(request.FileSize);
             response.Data.FileExt.Should().Be(".mp3");

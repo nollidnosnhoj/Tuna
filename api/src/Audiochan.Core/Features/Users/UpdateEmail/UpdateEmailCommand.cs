@@ -10,8 +10,14 @@ namespace Audiochan.Core.Features.Users.UpdateEmail
 {
     public record UpdateEmailCommand : IRequest<Result<bool>>
     {
-        [JsonIgnore] public string UserId { get; init; } = string.Empty;
+        public string UserId { get; init; } = null!;
         public string NewEmail { get; init; } = null!;
+
+        public static UpdateEmailCommand FromRequest(string userId, UpdateEmailRequest request) => new()
+        {
+            UserId = userId,
+            NewEmail = request.NewEmail
+        };
     }
 
 

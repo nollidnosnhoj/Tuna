@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
+using Audiochan.Core.Features.Audios.UpdatePicture;
 using Audiochan.Core.Services;
 using MediatR;
 
@@ -10,9 +11,16 @@ namespace Audiochan.Core.Features.Users.UpdatePassword
 {
     public record UpdatePasswordCommand : IRequest<Result<bool>>
     {
-        [JsonIgnore] public string UserId { get; init; } = string.Empty;
+        public string UserId { get; init; } = string.Empty;
         public string CurrentPassword { get; init; } = "";
         public string NewPassword { get; init; } = "";
+
+        public static UpdatePasswordCommand FromRequest(string userId, UpdatePasswordRequest request) => new()
+        {
+            UserId = userId,
+            CurrentPassword = request.CurrentPassword,
+            NewPassword = request.NewPassword
+        };
     }
 
     public class UpdatePasswordCommandHandler : IRequestHandler<UpdatePasswordCommand, Result<bool>>

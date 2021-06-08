@@ -10,10 +10,18 @@ namespace Audiochan.Core.Features.Users.UpdateProfile
 {
     public record UpdateProfileCommand : IRequest<Result<bool>>
     {
-        [JsonIgnore] public string UserId { get; init; } = string.Empty;
+        public string UserId { get; init; } = string.Empty;
         public string? DisplayName { get; init; }
         public string? About { get; init; }
         public string? Website { get; init; }
+
+        public static UpdateProfileCommand FromRequest(string userId, UpdateProfileRequest request) => new()
+        {
+            UserId = userId,
+            About = request.About,
+            Website = request.Website,
+            DisplayName = request.DisplayName
+        };
     }
 
     public class UpdateProfileCommandHandler : IRequestHandler<UpdateProfileCommand, Result<bool>>

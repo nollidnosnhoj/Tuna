@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-namespace Audiochan.Core.Features.Shared.Helpers
+namespace Audiochan.Core.Common.Helpers
 {
     public static class CursorHelpers
     {

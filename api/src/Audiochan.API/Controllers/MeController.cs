@@ -149,10 +149,10 @@ namespace Audiochan.API.Controllers
             OperationId = "UpdateUser",
             Tags = new[] {"me"}
         )]
-        public async Task<IActionResult> UpdateUser([FromBody] UpdateProfileCommand command,
+        public async Task<IActionResult> UpdateUser([FromBody] UpdateProfileRequest request,
             CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(command with {UserId = _currentUserId}, cancellationToken);
+            var result = await _mediator.Send(UpdateProfileCommand.FromRequest(_currentUserId, request), cancellationToken);
             return result.IsSuccess
                 ? Ok()
                 : result.ReturnErrorResponse();
@@ -167,10 +167,10 @@ namespace Audiochan.API.Controllers
             OperationId = "UpdateUsername",
             Tags = new[] {"me"}
         )]
-        public async Task<IActionResult> ChangeUsername([FromBody] UpdateUsernameCommand command,
+        public async Task<IActionResult> ChangeUsername([FromBody] UpdateUsernameRequest request,
             CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(command with {UserId = _currentUserId}, cancellationToken);
+            var result = await _mediator.Send(UpdateUsernameCommand.FromRequest(_currentUserId, request), cancellationToken);
             return result.IsSuccess
                 ? Ok()
                 : result.ReturnErrorResponse();
@@ -185,10 +185,10 @@ namespace Audiochan.API.Controllers
             OperationId = "UpdateEmail",
             Tags = new[] {"me"}
         )]
-        public async Task<IActionResult> ChangeEmail([FromBody] UpdateEmailCommand command,
+        public async Task<IActionResult> ChangeEmail([FromBody] UpdateEmailRequest request,
             CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(command with {UserId = _currentUserId}, cancellationToken);
+            var result = await _mediator.Send(UpdateEmailCommand.FromRequest(_currentUserId, request), cancellationToken);
             return result.IsSuccess
                 ? Ok()
                 : result.ReturnErrorResponse();
@@ -203,10 +203,10 @@ namespace Audiochan.API.Controllers
             OperationId = "UpdatePassword",
             Tags = new[] {"me"}
         )]
-        public async Task<IActionResult> ChangePassword([FromBody] UpdatePasswordCommand command,
+        public async Task<IActionResult> ChangePassword([FromBody] UpdatePasswordRequest request,
             CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(command with {UserId = _currentUserId}, cancellationToken);
+            var result = await _mediator.Send(UpdatePasswordCommand.FromRequest(_currentUserId, request), cancellationToken);
             return result.IsSuccess
                 ? Ok()
                 : result.ReturnErrorResponse();
@@ -219,11 +219,10 @@ namespace Audiochan.API.Controllers
             OperationId = "AddUserPicture",
             Tags = new[] {"me"}
         )]
-        public async Task<IActionResult> AddPicture([FromBody] UpdateUserPictureCommand command,
+        public async Task<IActionResult> AddPicture([FromBody] ImageDataDto request,
             CancellationToken cancellationToken)
         {
-            command.UserId = _currentUserId;
-            var result = await _mediator.Send(command, cancellationToken);
+            var result = await _mediator.Send(UpdateUserPictureCommand.FromRequest(_currentUserId, request), cancellationToken);
             return result.IsSuccess
                 ? Ok(result.Data)
                 : result.ReturnErrorResponse();
