@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Page from "~/components/Page";
 import { useNavigationLock } from "~/lib/hooks";
-import AudioUploadPage from "~/features/audio/components/Page/AudioUpload";
+import AudioUploader from "~/features/audio/components/AudioUploader";
 
 const AudioUploadNextPage: React.FC = () => {
   const [blockFromLeaving, setBlockFromLeaving] = useState(false);
@@ -13,7 +13,7 @@ const AudioUploadNextPage: React.FC = () => {
 
   return (
     <Page title="Upload" requiresAuth>
-      <AudioUploadPage
+      <AudioUploader
         onUploading={() => setBlockFromLeaving(true)}
         onComplete={() => setBlockFromLeaving(false)}
       />

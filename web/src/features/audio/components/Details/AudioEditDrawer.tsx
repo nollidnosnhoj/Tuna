@@ -12,13 +12,13 @@ import {
 } from "@chakra-ui/react";
 import { Formik, FormikHelpers } from "formik";
 import React, { useState } from "react";
-import Router from "next/router";
 import * as yup from "yup";
 import { errorToast, toast } from "~/utils/toast";
 import { useEditAudio, useRemoveAudio } from "../../hooks";
 import { AudioDetailData, AudioRequest } from "../../types";
 import AudioForm from "../AudioForm";
 import { validationMessages } from "~/utils";
+import { useRouter } from "next/router";
 
 interface AudioEditDrawerProps {
   audio: AudioDetailData;
@@ -51,8 +51,8 @@ const validationSchema = yup
 
 const AudioEditDrawer: React.FC<AudioEditDrawerProps> = (props) => {
   const { audio, isOpen, onClose, buttonRef } = props;
-
   const { id: audioId } = audio;
+  const router = useRouter();
   const { mutateAsync: updateAudio } = useEditAudio(audioId);
   const { mutateAsync: deleteAudio } = useRemoveAudio(audioId);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -88,10 +88,8 @@ const AudioEditDrawer: React.FC<AudioEditDrawerProps> = (props) => {
     setIsProcessing(true);
     deleteAudio(undefined)
       .then(() => {
-        Router.push("/").then(() => {
-          toast("success", {
-            title: "Audio deleted!",
-          });
+        router.push("/").then(() => {
+          toast("success", { description: "Audio have successfully removed." });
         });
       })
       .catch((err) => {
