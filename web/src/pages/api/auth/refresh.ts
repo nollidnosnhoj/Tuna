@@ -1,11 +1,13 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import api from "~/lib/api";
 import {
-  isAxiosError,
+  createBareApiAxiosInstance,
   getRefreshToken,
-  setAccessTokenCookie,
-  setRefreshTokenCookie,
-} from "~/utils";
+  removeAccessToken,
+  removeRefreshToken,
+  setAccessToken,
+  setRefreshToken,
+} from "~/lib/http/utils";
+import { isAxiosError } from "~/utils";
 
 export default async (
   req: NextApiRequest,
@@ -17,25 +19,27 @@ export default async (
       return;
     }
 
-    const body = {
-      refreshToken: getRefreshToken({ req }) || "",
-    };
+    const instance = createBareApiAxiosInstance();
 
-    const { status, data } = await api.post("auth/refresh", body, {
-      skipAuthRefresh: true,
+    const { status, data } = await instance.request({
+      url: "auth/refresh",
+      method: "post",
+      data: {
+        refreshToken: getRefreshToken(req) || "",
+      },
     });
 
-    setAccessTokenCookie(data.accessToken, 60 * 60 * 24 * 7, { res });
-    setRefreshTokenCookie(data.refreshToken, data.refreshTokenExpires, { res });
+    setAccessToken(data.accessToken, res);
+    setRefreshToken(data.refreshToken, data.refreshTokenExpires, res);
     res.status(status).json(data);
   } catch (err) {
-    if (!isAxiosError(err)) {
-      res.status(500).end();
+    removeAccessToken(res);
+    removeRefreshToken(res);
+    const status = err?.response?.status || 500;
+    if (isAxiosError(err) && err.response?.data) {
+      res.status(status).json(err.response?.data);
     } else {
-      setAccessTokenCookie("", 0, { res });
-      setRefreshTokenCookie("", 0, { res });
-      const status = err?.response?.status || 500;
-      res.status(status).json(err?.response?.data);
+      res.status(status).end();
     }
   }
 };

@@ -4,7 +4,6 @@ import { AppProps as NextAppProps } from "next/app";
 import dynamic from "next/dynamic";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
-import { Hydrate } from "react-query/hydration";
 import PageLoader from "~/components/PageLoader";
 import { UserProvider } from "~/features/user/components/providers";
 import { CurrentUser } from "~/features/user/types";
@@ -33,19 +32,17 @@ function App({ Component, user, pageProps }: AppProps) {
   return (
     <>
       <QueryClientProvider client={queryClientRef.current}>
-        <Hydrate state={pageProps.dehydratedState}>
-          <ChakraProvider resetCSS theme={theme}>
-            <UserProvider initialUser={user || null}>
-              <AuthProvider>
-                <ReactQueryDevtools initialIsOpen={false} />
-                <PageLoader color={theme.colors.primary[500]} />
-                <Component {...pageProps} />
-                <AudioPlayer />
-                <LoginModal />
-              </AuthProvider>
-            </UserProvider>
-          </ChakraProvider>
-        </Hydrate>
+        <ChakraProvider resetCSS theme={theme}>
+          <UserProvider initialUser={user || null}>
+            <AuthProvider>
+              <ReactQueryDevtools initialIsOpen={false} />
+              <PageLoader color={theme.colors.primary[500]} />
+              <Component {...pageProps} />
+              <AudioPlayer />
+              <LoginModal />
+            </AuthProvider>
+          </UserProvider>
+        </ChakraProvider>
       </QueryClientProvider>
     </>
   );

@@ -1,6 +1,7 @@
 export default {
   IS_PRODUCTION: process.env.NEXT_PUBLIC_IS_PRODUCTION,
   BACKEND_API: process.env.NEXT_PUBLIC_BACKEND_API,
+  FRONTEND_URL: process.env.NEXT_PUBLIC_FRONTEND_URL,
   IDENTITY: {
     usernameMinLength: 3,
     usernameMaxLength: 20,

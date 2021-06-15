@@ -10,8 +10,6 @@ import {
   TabPanels,
   Tabs,
 } from "@chakra-ui/react";
-import { QueryClient } from "react-query";
-import { dehydrate } from "react-query/hydration";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import React from "react";
@@ -20,26 +18,25 @@ import ProfileFollowButton from "~/features/user/components/ProfileFollowButton"
 import ProfileEditButton from "~/features/user/components/ProfileEditButton";
 import ProfileLatestAudios from "~/features/user/components/ProfileLatestAudios";
 import { useAddUserPicture, useUser } from "~/features/user/hooks";
-import { getAccessToken } from "~/utils";
-import {
-  fetchUserProfile,
-  GET_PROFILE_QUERY_KEY,
-} from "~/features/user/hooks/useGetProfile";
 import { useGetProfile } from "~/features/user/hooks";
 import ProfileFavoriteAudios from "~/features/user/components/ProfileFavoriteAudios";
 import PictureController from "~/components/Picture";
+import { fetchProfile } from "~/features/user/api";
+import { Profile } from "~/features/user/types";
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const queryClient = new QueryClient();
+interface ProfilePageProps {
+  profile?: Profile;
+}
+
+export const getServerSideProps: GetServerSideProps<ProfilePageProps> = async (
+  context
+) => {
   const username = context.params?.username as string;
-  const accessToken = getAccessToken(context);
   try {
-    await queryClient.fetchQuery(GET_PROFILE_QUERY_KEY(username), () =>
-      fetchUserProfile(username, { accessToken })
-    );
+    const data = await fetchProfile(username, context);
     return {
       props: {
-        dehydratedState: dehydrate(queryClient),
+        profile: data,
       },
     };
   } catch (err) {
@@ -49,13 +46,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 };
 
-export default function UserProfileNextPage() {
+export default function UserProfileNextPage(props: ProfilePageProps) {
   const [user] = useUser();
   const { query } = useRouter();
   const username = query.username as string;
 
   const { data: profile } = useGetProfile(username, {
     staleTime: 1000,
+    initialData: props.profile,
   });
 
   const { mutateAsync: addPictureAsync, isLoading: isAddingPicture } =

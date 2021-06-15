@@ -3,7 +3,7 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import React, { useEffect, useMemo, useState } from "react";
 import { useUser } from "~/features/user/hooks";
-import api from "~/lib/api";
+import request from "~/lib/http";
 import {
   getDurationFromAudioFile,
   errorToast,
@@ -49,12 +49,16 @@ export default function AudioUploader({
       setDuration(duration);
       setFile(droppedFile);
       onUploading();
-      const { data: response } = await api.post<{
+      const { data: response } = await request<{
         uploadId: string;
         uploadUrl: string;
-      }>("upload", {
-        fileName: droppedFile.name,
-        fileSize: droppedFile.size,
+      }>({
+        method: "post",
+        route: "upload",
+        body: {
+          fileName: droppedFile.name,
+          fileSize: droppedFile.size,
+        },
       });
       await axios.put(response.uploadUrl, droppedFile, {
         headers: {

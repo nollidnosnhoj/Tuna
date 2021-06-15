@@ -3,53 +3,20 @@ import { Heading, Text } from "@chakra-ui/react";
 import InfiniteListControls from "~/components/ui/InfiniteListControls";
 import Page from "~/components/Page";
 import AudioList from "~/features/audio/components/List";
-import { GetServerSideProps } from "next";
-import { getAccessToken } from "~/utils";
-import { fetch } from "~/lib/api";
-import { AudioData } from "~/features/audio/types";
-import { CursorPagedList } from "~/lib/types";
 import { useGetTagAudioList } from "~/features/audio/hooks";
+import { useRouter } from "next/router";
 
-interface TagAudioPageProps {
-  tag: string;
-  audios: AudioData[];
-  nextCursor?: string;
-}
-
-export const getServerSideProps: GetServerSideProps<TagAudioPageProps> = async (
-  context
-) => {
-  const tag = context.params?.tag as string;
-  const accessToken = getAccessToken(context);
-
-  const response = await fetch<CursorPagedList<AudioData>>(
-    "audios",
-    { tag: tag },
-    { accessToken }
-  );
-
-  return {
-    props: {
-      tag: tag,
-      audios: response.items,
-      nextCursor: response.next,
-    },
-  };
-};
-
-export default function TagAudioPage(props: TagAudioPageProps) {
-  const { tag, audios: initAudio, nextCursor } = props;
+export default function TagAudioPage() {
+  const router = useRouter();
+  const { tag, ...otherParams } = router.query;
 
   const {
     items: audios,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useGetTagAudioList(tag, undefined, {
-    initialData: {
-      pageParams: [nextCursor],
-      pages: [{ items: initAudio, next: nextCursor }],
-    },
+  } = useGetTagAudioList((tag as string) || "", {
+    ...otherParams,
   });
 
   return (

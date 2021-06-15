@@ -1,12 +1,15 @@
-import { useState } from "react";
 import { QueryKey, useMutation, useQuery, useQueryClient } from "react-query";
-import { useAuth } from "~/features/auth/hooks";
 import { useUser } from "~/features/user/hooks";
-import api from "~/lib/api";
+import {
+  followUserHandler,
+  isFollowingHandler,
+  unFollowUserHandler,
+} from "../api";
 
 type UseFollowResult = {
   isFollowing?: boolean;
   follow: () => void;
+  isLoading: boolean;
 };
 
 export const IS_FOLLOWING_QUERY_KEY = (username: string): QueryKey => [
@@ -19,36 +22,25 @@ export function useFollow(
   initialData?: boolean
 ): UseFollowResult {
   const [user] = useUser();
-  const { accessToken } = useAuth();
   const queryClient = useQueryClient();
-  const [isFollowing, setIsFollowing] =
-    useState<boolean | undefined>(initialData);
 
-  useQuery(
+  const { data, isLoading } = useQuery(
     IS_FOLLOWING_QUERY_KEY(username),
-    () => api.head(`me/following/${username}`, { accessToken }),
+    () => isFollowingHandler(username),
     {
-      onSuccess() {
-        setIsFollowing(true);
-      },
-      onError() {
-        setIsFollowing(false);
-      },
-      enabled: isFollowing === undefined && !!user,
+      enabled: !!user,
+      initialData: initialData,
     }
   );
 
-  const followHandler = (): Promise<unknown> => {
-    const method = isFollowing ? "DELETE" : "PUT";
-    return api.request(method, `me/followings/${username}`, { accessToken });
-  };
+  const { mutateAsync } = useMutation(
+    () => (data ? followUserHandler(username) : unFollowUserHandler(username)),
+    {
+      onSuccess(data) {
+        queryClient.setQueryData(IS_FOLLOWING_QUERY_KEY(username), data);
+      },
+    }
+  );
 
-  const { mutateAsync } = useMutation(followHandler, {
-    onSuccess() {
-      setIsFollowing((prev) => !prev);
-      queryClient.setQueryData(IS_FOLLOWING_QUERY_KEY(username), !isFollowing);
-    },
-  });
-
-  return { isFollowing, follow: mutateAsync };
+  return { isFollowing: data, follow: mutateAsync, isLoading };
 }

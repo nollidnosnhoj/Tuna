@@ -1,8 +1,10 @@
 import { QueryKey, useMutation, useQuery, useQueryClient } from "react-query";
-import { useAuth } from "~/features/auth/hooks";
 import { useUser } from "~/features/user/hooks";
-import api from "~/lib/api";
-import { isAxiosError } from "~/utils";
+import {
+  favoriteAudioHandler,
+  isFavoriteHandler,
+  unFavoriteAudioHandler,
+} from "../api";
 
 type UseFavoriteAudioResult = {
   isFavorite?: boolean;
@@ -20,44 +22,20 @@ export function useFavoriteAudio(
   initialData?: boolean
 ): UseFavoriteAudioResult {
   const [user] = useUser();
-  const { accessToken } = useAuth();
   const queryClient = useQueryClient();
 
   const { data, isLoading: isQueryLoading } = useQuery(
     IS_FAVORITE_AUDIO_QUERY_KEY(audioId),
-    async () => {
-      try {
-        await api.head(`me/favorites/audio/${audioId}`, {
-          accessToken,
-        });
-        return true;
-      } catch (err) {
-        if (!isAxiosError(err)) {
-          console.log(err);
-        }
-        return false;
-      }
-    },
+    () => isFavoriteHandler(audioId),
     {
       enabled: !!user,
       initialData: initialData,
     }
   );
 
-  const favoriteAudioHandler = async (): Promise<boolean> => {
-    const method = data ? "DELETE" : "PUT";
-    const response = await api.request(
-      method,
-      `me/favorites/audio/${audioId}`,
-      {
-        accessToken,
-      }
-    );
-    return response.status === 200 ? true : false;
-  };
-
   const { mutateAsync, isLoading: isMutationLoading } = useMutation<boolean>(
-    favoriteAudioHandler,
+    () =>
+      data ? favoriteAudioHandler(audioId) : unFavoriteAudioHandler(audioId),
     {
       onSuccess(data) {
         queryClient.setQueryData(IS_FAVORITE_AUDIO_QUERY_KEY(audioId), data);

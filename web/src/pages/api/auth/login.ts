@@ -1,11 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { AuthResult } from "~/features/auth/types";
-import api from "~/lib/api";
 import {
-  isAxiosError,
-  setAccessTokenCookie,
-  setRefreshTokenCookie,
-} from "~/utils";
+  createBareApiAxiosInstance,
+  setAccessToken,
+  setRefreshToken,
+} from "~/lib/http/utils";
+import { isAxiosError } from "~/utils";
 
 export type BackendAuthResult = {
   accessToken: string;
@@ -15,26 +14,35 @@ export type BackendAuthResult = {
 
 export default async (
   req: NextApiRequest,
-  res: NextApiResponse<AuthResult>
+  res: NextApiResponse
 ): Promise<void> => {
   try {
     if (req.method?.toUpperCase() !== "POST") {
       res.status(404).end();
     }
 
-    const { status, data } = await api.post("auth/login", req.body, {
-      skipAuthRefresh: true,
+    const instance = createBareApiAxiosInstance();
+
+    const { status, data } = await instance.request({
+      url: "auth/login",
+      method: "post",
+      data: req.body,
     });
 
-    setAccessTokenCookie(data.accessToken, 60 * 60 * 24 * 7, { res });
-    setRefreshTokenCookie(data.refreshToken, data.refreshTokenExpires, { res });
+    setAccessToken(data.accessToken, res);
+    setRefreshToken(data.refreshToken, data.refreshTokenExpires, res);
     res.status(status).json(data);
   } catch (err) {
     if (!isAxiosError(err)) {
       res.status(500).end();
     } else {
       const status = err.response?.status ?? 500;
-      res.status(status).json(err?.response?.data);
+      const data = err.response?.data;
+      if (data) {
+        res.status(status).json(err?.response?.data);
+      } else {
+        res.status(status).end();
+      }
     }
   }
 };
