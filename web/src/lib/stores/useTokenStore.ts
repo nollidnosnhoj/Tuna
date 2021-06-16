@@ -14,7 +14,6 @@ const getDefaults = (): {
   accessToken: string;
   accessTokenExpires: number;
 } => {
-  console.log("yolo");
   try {
     return {
       accessToken: parseCookies()[TOKEN_CONSTANTS.ACCESS_TOKEN] || "",

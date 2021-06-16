@@ -92,8 +92,7 @@ export default function AudioList(props: AudioListProps) {
         </Flex>
       )}
       <Box>
-        {audios.length === 0 && notFoundContent}
-        {audios.length > 0 && (
+        {audios.length > 0 ? (
           <React.Fragment>
             {layout === "list" && (
               <List spacing={4}>
@@ -120,6 +119,8 @@ export default function AudioList(props: AudioListProps) {
               </SimpleGrid>
             )}
           </React.Fragment>
+        ) : (
+          notFoundContent
         )}
       </Box>
     </Box>

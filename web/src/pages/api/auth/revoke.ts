@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import {
-  createBareApiAxiosInstance,
+  createApiAxiosInstance,
   getRefreshToken,
   removeAccessToken,
   removeRefreshToken,
@@ -15,7 +15,7 @@ export default async (
     return;
   }
 
-  const instance = createBareApiAxiosInstance();
+  const instance = createApiAxiosInstance();
 
   try {
     await instance.request({

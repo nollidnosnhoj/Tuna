@@ -37,8 +37,8 @@ export default function UpdatePassword() {
       try {
         await request({
           method: "patch",
-          route: "me/password",
-          body: {
+          url: "me/password",
+          data: {
             currentPassword: currentPassword,
             newPassword: newPassword,
           },

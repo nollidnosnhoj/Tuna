@@ -8,13 +8,13 @@ export async function fetchProfile(
   username: string,
   ctx?: GetServerSidePropsContext
 ): Promise<Profile> {
-  const { data } = await request<Profile>(
-    {
-      method: "get",
-      route: `users/${username}`,
-    },
-    ctx
-  );
+  const { req, res } = ctx ?? {};
+  const { data } = await request<Profile>({
+    method: "get",
+    url: `users/${username}`,
+    req,
+    res,
+  });
 
   return data;
 }
@@ -26,7 +26,7 @@ export async function fetchUserAudios(
 ): Promise<PagedList<AudioData>> {
   const { data } = await request<PagedList<AudioData>>({
     method: "get",
-    route: `users/${username}/audios`,
+    url: `users/${username}/audios`,
     params: {
       ...params,
       page,
@@ -42,7 +42,7 @@ export async function fetchUserFavoriteAudios(
 ): Promise<PagedList<AudioData>> {
   const { data } = await request<PagedList<AudioData>>({
     method: "get",
-    route: `users/${username}/favorite/audios`,
+    url: `users/${username}/favorite/audios`,
     params: {
       ...params,
       page,
@@ -56,8 +56,8 @@ export async function uploadUserPictureHandler(
 ): Promise<Profile> {
   const { data } = await request<Profile>({
     method: "patch",
-    route: "me/picture",
-    body: {
+    url: "me/picture",
+    data: {
       data: imageData,
     },
   });
@@ -68,7 +68,7 @@ export async function isFollowingHandler(username: string): Promise<boolean> {
   try {
     const res = await request({
       method: "head",
-      route: `me/following/${username}`,
+      url: `me/following/${username}`,
       validateStatus: (status) => status === 404 || status < 400,
     });
     return res.status !== 404;
@@ -80,7 +80,7 @@ export async function isFollowingHandler(username: string): Promise<boolean> {
 export async function followUserHandler(username: string): Promise<boolean> {
   await request({
     method: "PUT",
-    route: `me/followings/${username}`,
+    url: `me/followings/${username}`,
   });
   return true;
 }
@@ -88,7 +88,7 @@ export async function followUserHandler(username: string): Promise<boolean> {
 export async function unFollowUserHandler(username: string): Promise<boolean> {
   await request({
     method: "DELETE",
-    route: `me/followings/${username}`,
+    url: `me/followings/${username}`,
   });
   return false;
 }

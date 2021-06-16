@@ -26,8 +26,8 @@ export default function UpdateUsername() {
       try {
         await request({
           method: "patch",
-          route: "me/username",
-          body: { newUsername },
+          url: "me/username",
+          data: { newUsername },
         });
         toast("success", {
           title: "Username updated.",

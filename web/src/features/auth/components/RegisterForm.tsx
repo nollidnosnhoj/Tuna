@@ -58,8 +58,8 @@ export default function RegisterForm(props: RegisterFormProps) {
       try {
         await request({
           method: "post",
-          route: "auth/register",
-          body: registrationRequest,
+          url: "auth/register",
+          data: registrationRequest,
         });
         toast("success", {
           title: "Thank you for registering.",

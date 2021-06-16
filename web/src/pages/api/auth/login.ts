@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import {
-  createBareApiAxiosInstance,
+  createApiAxiosInstance,
   setAccessToken,
   setRefreshToken,
 } from "~/lib/http/utils";
@@ -21,7 +21,7 @@ export default async (
       res.status(404).end();
     }
 
-    const instance = createBareApiAxiosInstance();
+    const instance = createApiAxiosInstance();
 
     const { status, data } = await instance.request({
       url: "auth/login",

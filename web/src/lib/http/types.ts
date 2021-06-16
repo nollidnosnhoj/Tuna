@@ -1,25 +1,10 @@
-import { Method } from "axios";
-import { GetServerSidePropsContext, NextPageContext } from "next";
+import { AxiosAuthRefreshRequestConfig } from "axios-auth-refresh";
+import { IncomingMessage, ServerResponse } from "http";
 
-export type ApiMethod = Method;
-export type NextSSRContext = NextPageContext | GetServerSidePropsContext;
-
-export interface ApiRequestConfig {
-  route: string;
-  method: ApiMethod;
-  params?: {
-    [key: string]:
-      | string
-      | string[]
-      | number
-      | number[]
-      | boolean
-      | boolean[]
-      | undefined;
-  };
-  body?: any;
-  skipAuthRefresh?: boolean;
-  validateStatus?: (status: number) => boolean;
+export interface ApiRequestConfig
+  extends Omit<AxiosAuthRefreshRequestConfig, "baseURL"> {
+  res?: ServerResponse;
+  req?: IncomingMessage;
 }
 
 export const TOKEN_CONSTANTS = {

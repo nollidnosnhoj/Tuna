@@ -7,6 +7,7 @@ import {
 } from "~/features/auth/contexts";
 import { useGetCurrentUser } from "~/features/auth/hooks";
 import { useUser } from "~/features/user/hooks";
+import { getAccessToken } from "~/lib/http/utils";
 
 interface AuthProviderProps {
   accessToken?: string;
@@ -14,8 +15,13 @@ interface AuthProviderProps {
 
 export function AuthProvider(props: PropsWithChildren<AuthProviderProps>) {
   const [user, updateUser] = useUser();
+  const accessToken = getAccessToken();
 
-  const { isFetching, refetch, isSuccess } = useGetCurrentUser();
+  const { isFetching, refetch, isSuccess } = useGetCurrentUser({
+    enabled: !user && !!accessToken,
+    onSuccess: (data) => updateUser(data),
+    onError: () => updateUser(null),
+  });
 
   const login = async (inputs: LoginFormValues) => {
     await authenticateUser(inputs);

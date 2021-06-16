@@ -14,7 +14,7 @@ export async function fetchAudiosHandler(
 ): Promise<CursorPagedList<AudioData>> {
   const { data } = await request<CursorPagedList<AudioData>>({
     method: "get",
-    route: "audios",
+    url: "audios",
     params: { ...params, cursor: cursor },
   });
   return data;
@@ -24,22 +24,22 @@ export async function fetchAudioHandler(
   id: string,
   ctx?: GetServerSidePropsContext
 ): Promise<AudioDetailData> {
-  const { data } = await request<AudioDetailData>(
-    {
-      method: "get",
-      route: `audios/${id}`,
-    },
-    ctx
-  );
+  const { res, req } = ctx ?? {};
+  const { data } = await request<AudioDetailData>({
+    method: "get",
+    url: `audios/${id}`,
+    req,
+    res,
+  });
   return data;
 }
 
 export async function fetchAudioFeedHandler(
   pageNumber: number
 ): Promise<PagedList<AudioData>> {
-  const { data } = await request({
+  const { data } = await request<PagedList<AudioData>>({
     method: "get",
-    route: "me/feed",
+    url: "me/feed",
     params: { page: pageNumber },
   });
   return data;
@@ -57,7 +57,7 @@ export async function searchAudiosHandler(
 ): Promise<PagedList<AudioData>> {
   const { data } = await request<PagedList<AudioData>>({
     method: "get",
-    route: "search/audios",
+    url: "search/audios",
     params: {
       ...params,
       q: searchTerm,
@@ -71,9 +71,9 @@ export async function createAudioHandler(
   input: CreateAudioRequest
 ): Promise<AudioDetailData> {
   const { data } = await request<AudioDetailData>({
-    route: "audios",
+    url: "audios",
     method: "post",
-    body: input,
+    data: input,
   });
   return data;
 }
@@ -83,9 +83,9 @@ export async function editAudioHandler(
   input: AudioRequest
 ): Promise<AudioDetailData> {
   const { data } = await request<AudioDetailData>({
-    route: `audios/${audioId}`,
+    url: `audios/${audioId}`,
     method: "put",
-    body: input,
+    data: input,
   });
   return data;
 }
@@ -93,7 +93,7 @@ export async function editAudioHandler(
 export async function removeAudioHandler(audioId: string): Promise<void> {
   await request({
     method: "delete",
-    route: `audios/${audioId}`,
+    url: `audios/${audioId}`,
   });
 }
 
@@ -103,8 +103,8 @@ export async function uploadAudioPictureHandler(
 ): Promise<AudioDetailData> {
   const { data } = await request<AudioDetailData>({
     method: "patch",
-    route: `audios/${audioId}/picture`,
-    body: {
+    url: `audios/${audioId}/picture`,
+    data: {
       data: imageData,
     },
   });
@@ -115,7 +115,7 @@ export async function isFavoriteHandler(audioId: string): Promise<boolean> {
   try {
     const res = await request({
       method: "head",
-      route: `me/favorites/audio/${audioId}`,
+      url: `me/favorites/audio/${audioId}`,
       validateStatus: (status) => {
         return status === 404 || status < 400;
       },
@@ -130,7 +130,7 @@ export async function isFavoriteHandler(audioId: string): Promise<boolean> {
 export async function favoriteAudioHandler(audioId: string): Promise<boolean> {
   await request({
     method: "PUT",
-    route: `me/favorites/audio/${audioId}`,
+    url: `me/favorites/audio/${audioId}`,
   });
   return true;
 }
@@ -140,7 +140,7 @@ export async function unFavoriteAudioHandler(
 ): Promise<boolean> {
   await request({
     method: "DELETE",
-    route: `me/favorites/audio/${audioId}`,
+    url: `me/favorites/audio/${audioId}`,
   });
   return true;
 }

@@ -54,8 +54,8 @@ export default function AudioUploader({
         uploadUrl: string;
       }>({
         method: "post",
-        route: "upload",
-        body: {
+        url: "upload",
+        data: {
           fileName: droppedFile.name,
           fileSize: droppedFile.size,
         },

@@ -25,8 +25,8 @@ export default function UpdateEmail() {
       try {
         await request({
           method: "patch",
-          route: "me/email",
-          body: { newEmail },
+          url: "me/email",
+          data: { newEmail },
         });
         toast("success", {
           title: "Email updated.",

@@ -1,15 +1,12 @@
 import axios, { AxiosInstance } from "axios";
-import createAuthRefreshInterceptor, {
-  AxiosAuthRefreshRequestConfig,
-} from "axios-auth-refresh";
+import { AxiosAuthRefreshRequestConfig } from "axios-auth-refresh";
 import { IncomingMessage, ServerResponse } from "http";
+import qs from "query-string";
 import { NextApiRequest, NextApiResponse } from "next";
 import { destroyCookie, parseCookies, setCookie } from "nookies";
 import { useTokenStore } from "../stores";
-import { ApiRequestConfig, NextSSRContext, TOKEN_CONSTANTS } from "./types";
+import { ApiRequestConfig, TOKEN_CONSTANTS } from "./types";
 import SETTINGS from "~/lib/config";
-import { refreshAccessToken } from "~/features/auth/api";
-import { isAxiosError } from "~/utils";
 
 /**
  * Get the access token from the local storage.
@@ -124,41 +121,23 @@ export function removeRefreshToken(res?: ResponseContext): void {
 }
 
 /**
- * Get the necessary value for the Authorization Header.
- * @param token Access token
- * @returns Returns the value of the Authorization header.
- */
-export function getAuthorizationHeader(token: string): {
-  [key: string]: string;
-} {
-  if (!token) {
-    return {};
-  }
-  return { Authorization: `Bearer ${token}` };
-}
-
-/**
  * This configures the axios request config based on the input config.
  * @param config Configuration for the HTTP Request Config
  * @param ctx Context containing the request and response
  * @returns Axios Request Config
  */
 export async function createApiAxiosRequestConfig(
-  config: ApiRequestConfig,
-  ctx?: NextSSRContext
+  config: ApiRequestConfig
 ): Promise<AxiosAuthRefreshRequestConfig> {
-  const accessToken = getAccessToken(ctx?.req);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { res, req, ...axiosConfig } = config;
+  const accessToken = getAccessToken(req);
   return {
-    method: config.method,
-    url: config.route,
-    data: config.body ? config.body : undefined,
-    params: config.params,
+    ...axiosConfig,
     headers: {
-      ...(!!config.body && { "Content-Type": "application/json" }),
-      ...getAuthorizationHeader(accessToken),
+      ...(!!axiosConfig.data && { "Content-Type": "application/json" }),
+      ...(!!accessToken && { Authorization: `Bearer ${accessToken}` }),
     },
-    skipAuthRefresh: config.skipAuthRefresh ?? false,
-    validateStatus: config.validateStatus,
   };
 }
 
@@ -166,56 +145,10 @@ export async function createApiAxiosRequestConfig(
  * Create an axios instance that contains appropriate information for requesting data from the backend.
  * @returns Axios instance for the backend API
  */
-export function createBareApiAxiosInstance(): AxiosInstance {
+export function createApiAxiosInstance(): AxiosInstance {
   return axios.create({
     baseURL: SETTINGS.BACKEND_API,
     withCredentials: true,
+    paramsSerializer: (params) => qs.stringify(params),
   });
-}
-
-/**
- * Create an axios instance with the appropriate interceptors for authentication.
- * @param ctx Context containing the request and response
- * @returns Axios instance that contains interceptors for authentication
- */
-export function createApiAxiosInstance(ctx?: NextSSRContext): AxiosInstance {
-  const instance = createBareApiAxiosInstance();
-
-  createAuthRefreshInterceptor(instance, async (failedRequest) => {
-    return refreshAccessToken()
-      .then(([newToken]) => {
-        if (
-          failedRequest &&
-          isAxiosError(failedRequest) &&
-          failedRequest.response
-        ) {
-          const headers = failedRequest.response.config.headers;
-          failedRequest.response.config.headers = {
-            ...headers,
-            ...getAuthorizationHeader(newToken),
-          };
-        }
-        const headers = instance.defaults.headers;
-        instance.defaults.headers["Authorization"] = {
-          ...headers,
-          ...getAuthorizationHeader(newToken),
-        };
-        return Promise.resolve();
-      })
-      .catch((err) => Promise.reject(err));
-  });
-
-  instance.interceptors.request.use((request) => {
-    if (!request.headers.Authorization) {
-      const accessToken = getAccessToken(ctx?.req);
-      const headers = request.headers;
-      request.headers = {
-        ...headers,
-        ...getAuthorizationHeader(accessToken),
-      };
-    }
-    return request;
-  });
-
-  return instance;
 }
