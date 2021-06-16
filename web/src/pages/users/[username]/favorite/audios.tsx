@@ -5,35 +5,19 @@ import InfiniteListControls from "~/components/ui/InfiniteListControls";
 import Page from "~/components/Page";
 import AudioList from "~/features/audio/components/List";
 import { GetServerSideProps } from "next";
-import { getAccessToken } from "~/utils";
-import { AudioData } from "~/features/audio/types";
-import { PagedList } from "~/lib/types";
-import {
-  fetchUserFavoriteAudios,
-  useGetUserFavoriteAudios,
-} from "~/features/user/hooks/useGetUserFavoriteAudios";
+import { useGetUserFavoriteAudios } from "~/features/user/hooks";
 
 interface UserFavoriteAudiosPageProps {
   username: string;
-  response: PagedList<AudioData>;
 }
 
 export const getServerSideProps: GetServerSideProps<UserFavoriteAudiosPageProps> =
   async (context) => {
     const username = context.params?.username as string;
-    const accessToken = getAccessToken(context);
-
-    const response = await fetchUserFavoriteAudios(
-      username,
-      1,
-      {},
-      accessToken
-    );
 
     return {
       props: {
         username: username,
-        response,
       },
     };
   };
@@ -41,23 +25,14 @@ export const getServerSideProps: GetServerSideProps<UserFavoriteAudiosPageProps>
 export default function UserFavoriteAudiosPage(
   props: UserFavoriteAudiosPageProps
 ) {
-  const { username, response } = props;
+  const { username } = props;
 
   const {
     items: audios,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useGetUserFavoriteAudios(
-    username,
-    {},
-    {
-      initialData: {
-        pageParams: [response.page],
-        pages: [response],
-      },
-    }
-  );
+  } = useGetUserFavoriteAudios(username);
 
   return (
     <Page title={`Browse ${username}'s Audios`}>

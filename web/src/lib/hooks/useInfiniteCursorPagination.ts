@@ -5,7 +5,6 @@ import {
   UseInfiniteQueryOptions,
   UseInfiniteQueryResult,
 } from "react-query";
-import { fetch, FetchRequestOptions } from "../api";
 import { CursorPagedList } from "../types";
 
 type InfiniteCursorPaginationQueryFunction<TItem> = (
@@ -20,19 +19,6 @@ export interface UseInfiniteCursorPaginationReturnType<TItem>
 export type UseInfiniteCursorPaginationOptions<TItem> = UseInfiniteQueryOptions<
   CursorPagedList<TItem>
 >;
-
-export const fetchCursorList = <TItem>(
-  route: string,
-  cursor?: string,
-  queryParams?: Record<string, unknown>,
-  fetchOptions?: FetchRequestOptions
-): Promise<CursorPagedList<TItem>> => {
-  return fetch<CursorPagedList<TItem>>(
-    route,
-    { ...queryParams, cursor: cursor },
-    fetchOptions
-  );
-};
 
 export function useInfiniteCursorPagination<TItem>(
   key: QueryKey,

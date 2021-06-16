@@ -42,7 +42,7 @@ namespace Audiochan.Core.Features.Auth.Revoke
 
                     user.RefreshTokens.Remove(existingRefreshToken);
 
-                    _unitOfWork.Users.Update(user);
+                    // _unitOfWork.Users.Update(user);
                     await _unitOfWork.SaveChangesAsync(cancellationToken);
                 }
             }

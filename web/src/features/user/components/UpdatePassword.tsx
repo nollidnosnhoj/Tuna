@@ -3,10 +3,10 @@ import { Button } from "@chakra-ui/react";
 import * as yup from "yup";
 import { useFormik } from "formik";
 import TextInput from "~/components/form/inputs/TextInput";
-import api from "~/lib/api";
 import { validationMessages, errorToast } from "~/utils";
 import { useAuth } from "~/features/auth/hooks";
 import { passwordRule } from "../schemas";
+import request from "~/lib/http";
 
 type UpdatePasswordValues = {
   currentPassword: string;
@@ -35,9 +35,13 @@ export default function UpdatePassword() {
     onSubmit: async (values, { resetForm, setSubmitting }) => {
       const { currentPassword, newPassword } = values;
       try {
-        await api.patch("me/password", {
-          currentPassword: currentPassword,
-          newPassword: newPassword,
+        await request({
+          method: "patch",
+          url: "me/password",
+          data: {
+            currentPassword: currentPassword,
+            newPassword: newPassword,
+          },
         });
         resetForm();
         await logout();

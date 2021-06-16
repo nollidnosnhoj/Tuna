@@ -6,30 +6,22 @@ import {
   Heading,
   VStack,
   Text,
-  Progress,
 } from "@chakra-ui/react";
-import axios from "axios";
 import React, { useMemo } from "react";
-import { useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { useUser } from "~/features/user/hooks";
-import api from "~/lib/api";
 import SETTINGS from "~/lib/config";
 import { formatFileSize } from "~/utils/format";
 import { errorToast } from "~/utils/toast";
 
 interface AudioDropzoneProps {
-  onFileDrop: (file: File | null) => void;
-  onUploaded: (uploadId: string) => void;
+  onFileDrop: (file: File) => Promise<void>;
+  isHidden: boolean;
 }
 
-export default function AudioDropzone(props: AudioDropzoneProps) {
-  const { onUploaded, onFileDrop } = props;
-  const [user] = useUser();
-  const [uploadProgress, setUploadProgress] = useState(0);
-  const [uploading, setUploading] = useState(false);
-  const [uploaded, setUploaded] = useState(false);
-
+export default function AudioDropzone({
+  onFileDrop,
+  isHidden = false,
+}: AudioDropzoneProps) {
   const { getRootProps, getInputProps, open, isDragReject, isDragAccept } =
     useDropzone({
       accept: SETTINGS.UPLOAD.AUDIO.accept,
@@ -38,32 +30,7 @@ export default function AudioDropzone(props: AudioDropzoneProps) {
       multiple: false,
       noClick: true,
       onDropAccepted: async ([file]) => {
-        onFileDrop(file);
-        try {
-          setUploading(true);
-          const { data: response } = await api.post<{
-            uploadId: string;
-            uploadUrl: string;
-          }>("upload", {
-            fileName: file.name,
-            fileSize: file.size,
-          });
-          await axios.put(response.uploadUrl, file, {
-            headers: {
-              "Content-Type": file.type,
-              "x-amz-meta-userId": `${user?.id}`,
-            },
-            onUploadProgress: (evt) => {
-              const currentProgress = (evt.loaded / evt.total) * 100;
-              setUploadProgress(currentProgress);
-            },
-          });
-          setUploaded(true);
-          onUploaded(response.uploadId);
-        } catch (err) {
-          onFileDrop(null);
-          errorToast(err);
-        }
+        await onFileDrop(file);
       },
       onDropRejected: (fileRejections) => {
         fileRejections.forEach((fileRejection) => {
@@ -83,26 +50,13 @@ export default function AudioDropzone(props: AudioDropzoneProps) {
     return "gray.700";
   }, [isDragReject, isDragAccept]);
 
-  if (uploading) {
-    return (
-      <Box marginY={10} width="100%" spacing={4}>
-        {uploaded ? (
-          <chakra.span>Uploaded</chakra.span>
-        ) : (
-          <chakra.span>Uploading...</chakra.span>
-        )}
-        <Progress
-          colorScheme="primary"
-          hasStripe
-          value={uploadProgress}
-          width="full"
-        />
-      </Box>
-    );
-  }
-
   return (
-    <Flex align="center" justify="center" height="50vh">
+    <Flex
+      align="center"
+      justify="center"
+      height="50vh"
+      display={isHidden ? "none" : "flex"}
+    >
       <Flex
         borderRadius={4}
         borderWidth={1}

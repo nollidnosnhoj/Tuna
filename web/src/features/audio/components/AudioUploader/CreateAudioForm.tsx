@@ -2,9 +2,9 @@ import { Box, VStack, Button, Text } from "@chakra-ui/react";
 import { Formik } from "formik";
 import React from "react";
 import * as yup from "yup";
-import { getFilenameWithoutExtension, validationMessages } from "~/utils";
-import { AudioRequest } from "../types";
-import AudioForm from "./AudioForm";
+import { validationMessages } from "~/utils";
+import { AudioRequest } from "../../types";
+import AudioForm from "../AudioForm";
 
 const validationSchema = yup
   .object()
@@ -30,15 +30,17 @@ const validationSchema = yup
   .defined();
 
 interface CreateAudioFormProps {
-  file: File | null;
+  isHidden?: boolean;
+  initialValues: Partial<AudioRequest>;
   onSubmit: (values: AudioRequest) => void;
 }
 
 export default function CreateAudioForm({
-  file,
+  isHidden = false,
+  initialValues,
   onSubmit,
 }: CreateAudioFormProps) {
-  if (!file) return null;
+  if (isHidden) return null;
 
   const handleFormSubmit = (values: AudioRequest) => {
     onSubmit(values);
@@ -47,10 +49,11 @@ export default function CreateAudioForm({
   return (
     <Formik<AudioRequest>
       initialValues={{
-        title: getFilenameWithoutExtension(file.name).slice(0, 30),
+        title: "",
         description: "",
         tags: [],
         isPublic: false,
+        ...initialValues,
       }}
       validationSchema={validationSchema}
       onSubmit={handleFormSubmit}

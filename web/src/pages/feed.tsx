@@ -20,7 +20,7 @@ export default function UserAudioFeedNextPage() {
   } = useGetAudioFeed();
 
   return (
-    <Page title="Your Feed">
+    <Page title="Your Feed" requiresAuth>
       <AudioList audios={audios} />
       <InfiniteListControls
         fetchNext={fetchNextPage}

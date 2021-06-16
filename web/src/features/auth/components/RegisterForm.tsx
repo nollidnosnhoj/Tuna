@@ -4,10 +4,10 @@ import * as yup from "yup";
 import { useFormik } from "formik";
 import TextInput from "../../../components/form/inputs/TextInput";
 import { validationMessages } from "~/utils";
-import api from "~/lib/api";
 import { toast, isAxiosError } from "~/utils";
 import { ErrorResponse } from "~/lib/types";
 import { usernameRule, passwordRule } from "~/features/user/schemas";
+import request from "~/lib/http";
 
 type RegisterFormInputs = {
   username: string;
@@ -56,7 +56,11 @@ export default function RegisterForm(props: RegisterFormProps) {
       };
 
       try {
-        await api.post("auth/register", registrationRequest);
+        await request({
+          method: "post",
+          url: "auth/register",
+          data: registrationRequest,
+        });
         toast("success", {
           title: "Thank you for registering.",
           description: "You can now login to your account.",

@@ -1,29 +1,21 @@
-import { useAuth } from "~/features/auth/hooks";
 import {
-  fetchCursorList,
   useInfiniteCursorPagination,
   UseInfiniteCursorPaginationOptions,
   UseInfiniteCursorPaginationReturnType,
 } from "~/lib/hooks";
+import { fetchAudiosHandler } from "../api";
 import { AudioData } from "../types";
 
 export const GET_TAG_AUDIO_LIST_QUERY_KEY = "audios";
 
 export function useGetTagAudioList(
   tag: string,
-  params: Record<string, string | boolean | number> = {},
+  params: Record<string, any> = {},
   options: UseInfiniteCursorPaginationOptions<AudioData> = {}
 ): UseInfiniteCursorPaginationReturnType<AudioData> {
-  const { accessToken } = useAuth();
   return useInfiniteCursorPagination<AudioData>(
     GET_TAG_AUDIO_LIST_QUERY_KEY,
-    (cursor) =>
-      fetchCursorList<AudioData>(
-        "audios",
-        cursor,
-        { ...params, tag: tag },
-        { accessToken }
-      ),
+    (cursor) => fetchAudiosHandler(cursor, { ...params, tag: tag }),
     options
   );
 }

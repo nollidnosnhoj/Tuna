@@ -1,10 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import api from "~/lib/api";
 import {
+  createApiAxiosInstance,
   getRefreshToken,
-  setAccessTokenCookie,
-  setRefreshTokenCookie,
-} from "~/utils";
+  removeAccessToken,
+  removeRefreshToken,
+} from "~/lib/http/utils";
 
 export default async (
   req: NextApiRequest,
@@ -15,19 +15,21 @@ export default async (
     return;
   }
 
-  const refreshToken = getRefreshToken({ req });
-
-  const body = { refreshToken: refreshToken };
+  const instance = createApiAxiosInstance();
 
   try {
-    await api.post("auth/revoke", body, {
-      skipAuthRefresh: true,
+    await instance.request({
+      url: "auth/revoke",
+      method: "post",
+      data: {
+        refreshToken: getRefreshToken(req) || "",
+      },
     });
   } catch (err) {
     console.log("error when revoking haha");
   } finally {
-    setAccessTokenCookie("", 0, { res });
-    setRefreshTokenCookie("", 0, { res });
+    removeAccessToken(res);
+    removeRefreshToken(res);
     res.status(200).end();
   }
 };

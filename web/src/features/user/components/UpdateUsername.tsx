@@ -4,9 +4,9 @@ import * as yup from "yup";
 import { useFormik } from "formik";
 import TextInput from "~/components/form/inputs/TextInput";
 import { useUser } from "~/features/user/hooks";
-import api from "~/lib/api";
 import { errorToast, toast } from "~/utils";
 import { usernameRule } from "../schemas";
+import request from "~/lib/http";
 
 export default function UpdateUsername() {
   const [user, updateUser] = useUser();
@@ -24,7 +24,11 @@ export default function UpdateUsername() {
       if (newUsername.toLowerCase() === user?.username) return;
 
       try {
-        await api.patch("me/username", { newUsername });
+        await request({
+          method: "patch",
+          url: "me/username",
+          data: { newUsername },
+        });
         toast("success", {
           title: "Username updated.",
           description: "You have successfully updated your username.",
