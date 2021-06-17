@@ -3,4 +3,5 @@ export { useFollow } from "./useFollow";
 export { useGetUserAudios } from "./useGetUserAudios";
 export { useGetUserFavoriteAudios } from "./useGetUserFavoriteAudios";
 export { useGetProfile } from "./useGetProfile";
+export { useGetCurrentUser } from "./useGetCurrentUser";
 export { useUser } from "./useUser";

@@ -1,6 +1,6 @@
 import { useQuery, UseQueryOptions, UseQueryResult } from "react-query";
 import { CurrentUser } from "~/features/user/types";
-import { getCurrentUser } from "../api/getCurrentUser";
+import { getCurrentUser } from "../api";
 
 export const ME_QUERY_KEY = "me";
 

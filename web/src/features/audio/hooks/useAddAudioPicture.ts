@@ -11,7 +11,7 @@ export function useAddAudioPicture(
   id: string
 ): UseMutationResult<AudioDetailData, ErrorResponse, string> {
   const queryClient = useQueryClient();
-  const [user] = useUser();
+  const { user } = useUser();
   const uploadArtwork = async (imageData: string): Promise<AudioDetailData> => {
     return await uploadAudioPictureHandler(id, imageData);
   };

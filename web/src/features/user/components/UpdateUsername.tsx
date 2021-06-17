@@ -9,7 +9,7 @@ import { usernameRule } from "../schemas";
 import request from "~/lib/http";
 
 export default function UpdateUsername() {
-  const [user, updateUser] = useUser();
+  const { user, updateUser } = useUser();
 
   const formik = useFormik<{ username: string }>({
     initialValues: { username: user?.username ?? "" },

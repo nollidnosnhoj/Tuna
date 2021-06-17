@@ -40,7 +40,7 @@ interface AudioDetailProps {
 
 const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
   const secondaryColor = useColorModeValue("black.300", "gray.300");
-  const [currentUser] = useUser();
+  const { user: currentUser } = useUser();
   const addToQueue = useAudioQueue((state) => state.addToQueue);
 
   const {

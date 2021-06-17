@@ -3,9 +3,10 @@ import { Alert, Box, Button, CloseButton } from "@chakra-ui/react";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import TextInput from "../../../components/form/inputs/TextInput";
-import { useAuth } from "~/features/auth/hooks";
 import { toast, isAxiosError } from "~/utils";
 import { ErrorResponse } from "~/lib/types";
+import { authenticateUser } from "../api";
+import { useUser } from "~/features/user/hooks";
 
 export type LoginFormValues = {
   login: string;
@@ -18,13 +19,14 @@ interface LoginFormProps {
 }
 
 export default function LoginForm(props: LoginFormProps) {
-  const { login } = useAuth();
+  const { refreshUser } = useUser();
   const [error, setError] = useState("");
 
   const formik = useFormik<LoginFormValues>({
     onSubmit: async (values) => {
       try {
-        await login(values);
+        await authenticateUser(values);
+        await refreshUser();
         toast("success", { title: "You have logged in successfully. " });
         if (props.onSuccess) props.onSuccess();
       } catch (err) {

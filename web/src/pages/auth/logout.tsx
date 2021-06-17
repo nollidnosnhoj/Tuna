@@ -2,15 +2,16 @@ import { chakra } from "@chakra-ui/react";
 import { useEffect } from "react";
 import Router from "next/router";
 import Page from "~/components/Page";
-import { useAuth } from "~/features/auth/hooks";
 import { toast } from "~/utils/toast";
+import { revokeRefreshToken } from "~/features/auth/api";
+import { useUser } from "~/features/user/hooks";
 
 const LogoutPage: React.FC = () => {
-  const { logout } = useAuth();
-
+  const { updateUser } = useUser();
   useEffect(() => {
-    logout()
+    revokeRefreshToken()
       .then(() => {
+        updateUser(null);
         Router.push("/").then(() => {
           toast("success", {
             title: "You have successfully logged out.",
