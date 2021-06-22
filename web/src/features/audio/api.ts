@@ -9,7 +9,7 @@ import {
 } from "./types";
 
 export async function fetchAudiosHandler(
-  cursor?: string,
+  cursor?: number,
   params: Record<string, string | boolean | number> = {}
 ): Promise<CursorPagedList<AudioData>> {
   const { data } = await request<CursorPagedList<AudioData>>({

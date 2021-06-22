@@ -11,10 +11,9 @@ using Amazon.S3.Model;
 using Amazon.S3.Transfer;
 using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Services;
-using Audiochan.Infrastructure.Storage.Options;
 using Microsoft.Extensions.Options;
 
-namespace Audiochan.Infrastructure.Storage
+namespace Audiochan.Infrastructure.Storage.AmazonS3
 {
     internal class AmazonS3Service : IStorageService
     {

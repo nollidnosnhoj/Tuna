@@ -15,7 +15,8 @@ export function useGetTagAudioList(
 ): UseInfiniteCursorPaginationReturnType<AudioData> {
   return useInfiniteCursorPagination<AudioData>(
     GET_TAG_AUDIO_LIST_QUERY_KEY,
-    (cursor) => fetchAudiosHandler(cursor, { ...params, tag: tag }),
+    (cursor) =>
+      fetchAudiosHandler(parseInt(cursor, 10), { ...params, tag: tag }),
     options
   );
 }

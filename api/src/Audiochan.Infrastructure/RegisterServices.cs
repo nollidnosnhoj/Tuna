@@ -7,6 +7,7 @@ using Audiochan.Infrastructure.Persistence;
 using Audiochan.Infrastructure.Persistence.Repositories;
 using Audiochan.Infrastructure.Shared;
 using Audiochan.Infrastructure.Storage;
+using Audiochan.Infrastructure.Storage.AmazonS3;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,10 +20,8 @@ namespace Audiochan.Infrastructure
             IConfiguration configuration,
             bool isDevelopment)
         {
-            ConfigureDatabase(services, configuration, isDevelopment);
-            ConfigureRepositories(services);
-            services.AddAWSService<IAmazonS3>();
-            services.AddTransient<IStorageService, AmazonS3Service>();
+            services.ConfigurePersistence(configuration, isDevelopment);
+            services.ConfigureStorageService();
             services.AddTransient<IIdentityService, IdentityService>();
             services.AddTransient<IImageProcessingService, ImageProcessingService>();
             services.AddTransient<ITokenProvider, TokenProvider>();
@@ -30,7 +29,14 @@ namespace Audiochan.Infrastructure
             return services;
         }
 
-        private static void ConfigureDatabase(IServiceCollection services, IConfiguration configuration,
+        private static IServiceCollection ConfigureStorageService(this IServiceCollection services)
+        {
+            services.AddAWSService<IAmazonS3>();
+            services.AddTransient<IStorageService, AmazonS3Service>();
+            return services;
+        }
+        
+        private static IServiceCollection ConfigurePersistence(this IServiceCollection services, IConfiguration configuration,
             bool isDevelopment)
         {
             services.AddDbContext<ApplicationDbContext>(o =>
@@ -43,11 +49,8 @@ namespace Audiochan.Infrastructure
                 }
             });
             services.AddScoped<IUnitOfWork>(provider => provider.GetService<ApplicationDbContext>()!);
-        }
-
-        private static void ConfigureRepositories(IServiceCollection services)
-        {
             services.AddScoped<ITagRepository, TagRepository>();
+            return services;
         }
     }
 }

@@ -6,7 +6,7 @@ using Audiochan.Core;
 using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Services;
 using Audiochan.Infrastructure;
-using Audiochan.Infrastructure.Storage.Options;
+using Audiochan.Infrastructure.Storage.AmazonS3;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;

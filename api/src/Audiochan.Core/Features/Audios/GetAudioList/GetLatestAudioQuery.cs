@@ -1,8 +1,6 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Helpers;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Mappings;
 using Audiochan.Core.Entities.Enums;
@@ -14,7 +12,7 @@ namespace Audiochan.Core.Features.Audios.GetAudioList
     public record GetLatestAudioQuery : IRequest<GetAudioListViewModel>
     {
         public string? Tag { get; init; }
-        public string? Cursor { get; init; }
+        public long? Cursor { get; init; }
         public int Size { get; init; } = 30;
     }
 
@@ -35,15 +33,8 @@ namespace Audiochan.Core.Features.Audios.GetAudioList
                 .Include(x => x.User)
                 .Where(x => x.Visibility == Visibility.Public);
             
-            if (!string.IsNullOrWhiteSpace(request.Cursor))
-            {
-                var (since, id) = CursorHelpers.DecodeCursor(request.Cursor);
-                if (Guid.TryParse(id, out var audioId) && since.HasValue)
-                {
-                    queryable = queryable.Where(a => a.Created < since.GetValueOrDefault() 
-                                        || a.Created == since.GetValueOrDefault() && a.Id.CompareTo(audioId) < 0);
-                }
-            }
+            if (request.Cursor is not null)
+                queryable = queryable.Where(x => x.Id < request.Cursor.Value);
 
             var audios = await queryable
                 .ProjectToList()
@@ -52,10 +43,10 @@ namespace Audiochan.Core.Features.Audios.GetAudioList
             
             var lastAudio = audios.LastOrDefault();
 
-            var nextCursor = audios.Count < request.Size
+            long? nextCursor = audios.Count < request.Size
                 ? null
                 : lastAudio != null
-                    ? CursorHelpers.EncodeCursor(lastAudio.Uploaded, lastAudio.Id.ToString())
+                    ? lastAudio.Id
                     : null;
 
             return new GetAudioListViewModel(audios, nextCursor);

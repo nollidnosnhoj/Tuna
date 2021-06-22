@@ -1,4 +1,4 @@
-﻿namespace Audiochan.Infrastructure.Storage.Options
+﻿namespace Audiochan.Infrastructure.Storage.AmazonS3
 {
     public record AmazonS3Settings
     {
