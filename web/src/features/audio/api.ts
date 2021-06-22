@@ -22,12 +22,16 @@ export async function fetchAudiosHandler(
 
 export async function fetchAudioHandler(
   id: number,
+  privateKey?: string,
   ctx?: GetServerSidePropsContext
 ): Promise<AudioDetailData> {
   const { res, req } = ctx ?? {};
   const { data } = await request<AudioDetailData>({
     method: "get",
     url: `audios/${id}`,
+    params: {
+      ...(privateKey && { privateKey }),
+    },
     req,
     res,
   });
@@ -143,4 +147,12 @@ export async function unFavoriteAudioHandler(
     url: `me/favorites/audio/${audioId}`,
   });
   return true;
+}
+
+export async function resetPrivateKey(audioId: number): Promise<string> {
+  const { data } = await request<{ privateKey: string }>({
+    method: "PATCH",
+    url: `audios/${audioId}/reset-private-key`,
+  });
+  return data.privateKey;
 }

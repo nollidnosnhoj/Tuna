@@ -12,11 +12,12 @@ export const GET_AUDIO_QUERY_KEY = (id: number): QueryKey => ["audios", id];
 
 export function useGetAudio(
   id: number,
+  privateKey?: string,
   options: UseQueryOptions<AudioDetailData, ErrorResponse> = {}
 ): UseQueryResult<AudioDetailData, ErrorResponse> {
   return useQuery<AudioDetailData, ErrorResponse>(
     GET_AUDIO_QUERY_KEY(id),
-    () => fetchAudioHandler(id),
+    () => fetchAudioHandler(id, privateKey),
     options
   );
 }

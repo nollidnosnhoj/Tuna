@@ -15,6 +15,7 @@ export interface AudioData {
   uploaded: string;
   audioUrl: string;
   author: MetaAuthor;
+  privateKey?: string;
 }
 
 export interface AudioDetailData extends AudioData {

@@ -7,6 +7,7 @@ using Audiochan.Core.Features.Audios.CreateAudio;
 using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Features.Audios.GetAudioList;
 using Audiochan.Core.Features.Audios.RemoveAudio;
+using Audiochan.Core.Features.Audios.ResetPrivateKey;
 using Audiochan.Core.Features.Audios.UpdateAudio;
 using Audiochan.Core.Features.Audios.UpdatePicture;
 using MediatR;
@@ -116,6 +117,20 @@ namespace Audiochan.API.Controllers
             var result = await _mediator.Send(UpdateAudioPictureCommand.FromRequest(audioId, request), cancellationToken);
             return result.IsSuccess
                 ? Ok(result.Data)
+                : result.ReturnErrorResponse();
+        }
+
+        [HttpPatch("{audioId:long}/reset-private-key")]
+        [SwaggerOperation(
+            Summary = "Reset Private Key.",
+            Description = "Requires authentication.",
+            OperationId = "ResetPrivateKey",
+            Tags = new[] {"audios"})]
+        public async Task<IActionResult> ResetPrivateKey(long audioId, CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(new ResetPrivateKeyCommand(audioId), cancellationToken);
+            return result.IsSuccess
+                ? Ok(new {PrivateKey = result.Data})
                 : result.ReturnErrorResponse();
         }
     }

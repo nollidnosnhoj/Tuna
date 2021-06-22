@@ -25,7 +25,10 @@ const validationSchema = yup
       .max(10, validationMessages.max("Tags", 10))
       .ensure()
       .defined(),
-    isPublic: yup.boolean().defined(),
+    visibility: yup
+      .string()
+      .required(validationMessages.required("Visibility"))
+      .oneOf(Object.values(Visibility)),
   })
   .defined();
 

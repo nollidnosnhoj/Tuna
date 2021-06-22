@@ -1,11 +1,18 @@
-import { Box, Radio, RadioGroup, Stack } from "@chakra-ui/react";
+import {
+  Box,
+  FormControl,
+  FormErrorMessage,
+  Radio,
+  RadioGroup,
+  Stack,
+} from "@chakra-ui/react";
 import { useFormikContext } from "formik";
 import React from "react";
 import * as yup from "yup";
 import slugify from "slugify";
 import TagInput from "~/components/form/inputs/TagInput";
 import TextInput from "~/components/form/inputs/TextInput";
-import { AudioRequest, Visibility } from "../types";
+import { AudioRequest } from "../types";
 
 interface AudioFormProps {
   disableFields?: boolean;
@@ -56,31 +63,26 @@ export default function AudioForm(props: AudioFormProps) {
         error={Array.isArray(errors.tags) ? errors.tags[0] : errors.tags}
         disabled={isSubmitting || disableFields}
       />
-      <RadioGroup name="visibility">
-        <Stack spacing={4} direction="column">
-          <Radio
-            value="public"
-            isChecked={values.visibility === Visibility.Public}
-            onClick={() => setFieldValue("visibility", Visibility.Public)}
-          >
-            Public
-          </Radio>
-          <Radio
-            value="unlisted"
-            isChecked={values.visibility === Visibility.Unlisted}
-            onClick={() => setFieldValue("visibility", Visibility.Unlisted)}
-          >
-            Unlisted
-          </Radio>
-          {/* <Radio
+      <FormControl id="visibility" isInvalid={!!errors.visibility}>
+        <RadioGroup
+          name="visibility"
+          value={values.visibility}
+          onChange={(val) => setFieldValue("visibility", val)}
+        >
+          <Stack spacing={4} direction="column">
+            <Radio value="public">Public</Radio>
+            <Radio value="unlisted">Unlisted</Radio>
+            {/* <Radio
             value="private"
             isChecked={values.visibility === Visibility.Private}
             onClick={() => setFieldValue("visibility", Visibility.Private)}
           >
             Private
           </Radio> */}
-        </Stack>
-      </RadioGroup>
+          </Stack>
+        </RadioGroup>
+        <FormErrorMessage>{errors.visibility}</FormErrorMessage>
+      </FormControl>
     </Box>
   );
 }
