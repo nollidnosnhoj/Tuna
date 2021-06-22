@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Interfaces;
@@ -8,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.FavoriteAudios.CheckIfFavoriting
 {
-    public record CheckIfUserFavoritedAudioQuery(Guid AudioId, string UserId) : IRequest<bool>
+    public record CheckIfUserFavoritedAudioQuery(long AudioId, string UserId) : IRequest<bool>
     {
     }
     

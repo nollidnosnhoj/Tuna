@@ -34,7 +34,7 @@ namespace Audiochan.Core.Common.Mappings
                     : null,
                 Created = audio.Created,
                 Tags = audio.Tags.Select(t => t.Name).ToList(),
-                IsPublic = audio.IsPublic,
+                Visibility = audio.Visibility,
                 FileExt = audio.FileExt,
                 FileSize = audio.FileSize,
                 LastModified = audio.LastModified,
@@ -61,7 +61,7 @@ namespace Audiochan.Core.Common.Mappings
                     ? string.Format(MediaLinkInvariants.AudioPictureUrl, audio.PictureBlobName)
                     : null,
                 Uploaded = audio.Created,
-                IsPublic = audio.IsPublic,
+                Visibility = audio.Visibility,
                 AudioUrl = string.Format(MediaLinkInvariants.AudioUrl, audio.Id, audio.BlobName),
                 Author = new MetaAuthorDto
                 {

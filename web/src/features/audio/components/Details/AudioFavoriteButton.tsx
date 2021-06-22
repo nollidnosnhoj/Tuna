@@ -5,7 +5,7 @@ import { useUser } from "~/features/user/hooks";
 import { useFavoriteAudio } from "../../hooks";
 
 interface AudioFavoriteButtonProps {
-  audioId: string;
+  audioId: number;
 }
 
 export default function AudioFavoriteButton({

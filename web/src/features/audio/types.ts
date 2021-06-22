@@ -1,9 +1,15 @@
 import { MetaAuthor } from "~/lib/types";
 
+export enum Visibility {
+  Public = "public",
+  Unlisted = "unlisted",
+  Private = "private",
+}
+
 export interface AudioData {
-  id: string;
+  id: number;
   title: string;
-  isPublic: boolean;
+  visibility: Visibility;
   duration: number;
   picture?: string;
   uploaded: string;
@@ -24,7 +30,7 @@ export interface AudioRequest {
   title: string;
   description?: string;
   tags: string[];
-  isPublic?: boolean;
+  visibility: Visibility;
 }
 
 export interface CreateAudioRequest extends AudioRequest {

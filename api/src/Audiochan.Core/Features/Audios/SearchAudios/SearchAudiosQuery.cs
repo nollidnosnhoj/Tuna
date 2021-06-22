@@ -6,6 +6,7 @@ using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Mappings;
 using Audiochan.Core.Common.Models;
+using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Features.Audios.GetAudioList;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -42,7 +43,7 @@ namespace Audiochan.Core.Features.Audios.SearchAudios
             var queryable = _unitOfWork.Audios.AsNoTracking()
                 .Include(x => x.Tags)
                 .Include(x => x.User)
-                .Where(x => x.IsPublic);
+                .Where(x => x.Visibility == Visibility.Public);
 
             if (!string.IsNullOrWhiteSpace(query.Q))
                 queryable = queryable.Where(a => 

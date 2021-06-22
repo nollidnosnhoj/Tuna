@@ -53,7 +53,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             var command = new RemoveAudioCommand(audio.Id);
             var result = await _fixture.SendAsync(command);
 
-            var created = await _fixture.FindAsync<Audio, Guid>(audio.Id);
+            var created = await _fixture.FindAsync<Audio, long>(audio.Id);
 
             result.Should().NotBeNull();
             result.IsSuccess.Should().Be(true);

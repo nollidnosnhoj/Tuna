@@ -7,6 +7,7 @@ using Audiochan.Core.Common.Mappings;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Entities;
+using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Repositories;
 using Audiochan.Core.Services;
@@ -25,7 +26,7 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
         public decimal Duration { get; init; }
         public string Title { get; init; } = null!;
         public string Description { get; init; } = string.Empty;
-        public bool IsPublic { get; init; }
+        public Visibility Visibility { get; init; }
         public List<string> Tags { get; init; } = new();
     }
 
@@ -74,13 +75,18 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
                 Duration = command.Duration,
                 Title = command.Title,
                 Description = command.Description,
-                IsPublic = command.IsPublic,
+                Visibility = command.Visibility,
                 BlobName = command.UploadId,
                 Tags = command.Tags.Count > 0
                     ? await _tagRepository.GetAppropriateTags(command.Tags, cancellationToken)
                     : new List<Tag>(),
             };
 
+            if (audio.Visibility == Visibility.Private)
+            {
+                audio.ResetPrivateKey();
+            }
+            
             await _unitOfWork.Audios.AddAsync(audio, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 

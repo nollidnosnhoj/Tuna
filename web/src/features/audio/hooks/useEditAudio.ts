@@ -6,7 +6,7 @@ import { AudioDetailData, AudioRequest } from "../types";
 import { GET_AUDIO_QUERY_KEY } from "./useGetAudio";
 import { GET_AUDIO_LIST_QUERY_KEY } from "./useGetAudioList";
 
-export function useEditAudio(id: string): UseMutationResult<AudioDetailData> {
+export function useEditAudio(id: number): UseMutationResult<AudioDetailData> {
   const queryClient = useQueryClient();
   const { user } = useUser();
   const updateAudio = async (input: AudioRequest): Promise<AudioDetailData> => {

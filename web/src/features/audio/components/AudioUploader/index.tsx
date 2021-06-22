@@ -27,7 +27,7 @@ export default function AudioUploader({
 }: AudioUploaderProps) {
   const router = useRouter();
   const { user } = useUser();
-  const [audioId, setAudioId] = useState("");
+  const [audioId, setAudioId] = useState(0);
   const [uploadId, setUploadId] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [duration, setDuration] = useState(0);

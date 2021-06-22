@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Audiochan.Core.Entities.Abstractions;
+using Audiochan.Core.Entities.Enums;
 
 namespace Audiochan.Core.Entities
 {
@@ -13,7 +14,7 @@ namespace Audiochan.Core.Entities
             this.Tags = new HashSet<Tag>();
         }
         
-        public Guid Id { get; set; }
+        public long Id { get; set; }
         public DateTime Created { get; set; }
         public DateTime? LastModified { get; set; }
         public string Title { get; set; } = null!;
@@ -25,7 +26,8 @@ namespace Audiochan.Core.Entities
         public string FileExt { get; set; } = null!;
         public string ContentType { get; set; } = null!;
         public string? PictureBlobName { get; set; }
-        public bool IsPublic { get; set; }
+        public Visibility Visibility { get; set; }
+        public string? PrivateKey { get; set; }
         public string UserId { get; set; } = null!;
         
         public User User { get; set; } = null!;
@@ -46,16 +48,29 @@ namespace Audiochan.Core.Entities
                 this.Description = description;
         }
 
-        public void UpdatePublicity(bool isPublic)
+        public void UpdateVisibility(Visibility visibility)
         {
-            this.IsPublic = isPublic;
+            var old = this.Visibility;
+            this.Visibility = visibility;
+
+            if (old == Visibility.Private && this.Visibility != Visibility.Private)
+            {
+                this.PrivateKey = null;
+            }
+            else if (old != Visibility.Private && this.Visibility == Visibility.Private)
+            {
+                this.PrivateKey = GeneratePrivateKey();
+            }
         }
 
-        /// <summary>
-        /// Updates the tags for the audio. It will remove tags that are not in the input,
-        /// and will add the tags that are in the input, but not in the tags.
-        /// </summary>
-        /// <param name="tags"></param>
+        public void ResetPrivateKey()
+        {
+            if (this.Visibility == Visibility.Private)
+            {
+                this.PrivateKey = GeneratePrivateKey();
+            }
+        }
+        
         public void UpdateTags(List<Tag> tags)
         {
             if (this.Tags.Count > 0)
@@ -89,15 +104,14 @@ namespace Audiochan.Core.Entities
                 this.PictureBlobName = picturePath;
         }
 
-        /// <summary>
-        /// Determine whether the given user id has the rights to modify. Only the owner of the audio can modify their
-        /// audio.
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <returns></returns>
         public bool CanModify(string userId)
         {
             return this.UserId == userId;
+        }
+
+        private string GeneratePrivateKey()
+        {
+            return Nanoid.Nanoid.Generate(size: 8);
         }
     }
 }

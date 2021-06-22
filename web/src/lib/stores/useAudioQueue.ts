@@ -9,7 +9,7 @@ export enum REPEAT_MODE {
 
 export type AudioPlayerItem = {
   queueId: string;
-  audioId: string;
+  audioId: number;
   title: string;
   artist: string;
   artistId: string;
@@ -25,7 +25,7 @@ interface UseAudioQueueState {
   playIndex?: number;
   repeat: REPEAT_MODE;
   addToQueue: (audios: AudioPlayerItem[]) => void;
-  clearQueue: (audioId?: string) => void;
+  clearQueue: (audioId?: number) => void;
   playNext: () => void;
   playPrevious: () => void;
   removeFromQueue: (index: number) => void;
@@ -42,7 +42,7 @@ export const useAudioQueue = create<UseAudioQueueState>((set, get) => ({
     set((state) => ({
       queue: [...state.queue, ...audios],
     })),
-  clearQueue: (audioId?: string) => {
+  clearQueue: (audioId?: number) => {
     if (audioId) {
       const { queue, current } = get();
       // Create new queue without the specified audio.

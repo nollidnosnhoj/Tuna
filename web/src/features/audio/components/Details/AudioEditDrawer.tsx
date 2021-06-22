@@ -116,7 +116,7 @@ const AudioEditDrawer: React.FC<AudioEditDrawerProps> = (props) => {
               title: audio.title,
               description: audio.description,
               tags: audio.tags,
-              isPublic: audio.isPublic,
+              visibility: audio.visibility,
             }}
             validationSchema={validationSchema}
             onSubmit={onEditSubmit}

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Interfaces;
@@ -11,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.FavoriteAudios.SetFavorite
 {
-    public record SetFavoriteAudioCommand(Guid AudioId, string UserId, bool IsFavoriting) : IRequest<Result<bool>>
+    public record SetFavoriteAudioCommand(long AudioId, string UserId, bool IsFavoriting) : IRequest<Result<bool>>
     {
     }
     

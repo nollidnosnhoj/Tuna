@@ -17,7 +17,7 @@ import { HiDotsVertical } from "react-icons/hi";
 import { MdQueueMusic } from "react-icons/md";
 import Link from "~/components/ui/Link";
 import { mapAudiosForAudioQueue } from "~/utils/audioplayer";
-import { AudioData } from "~/features/audio/types";
+import { AudioData, Visibility } from "~/features/audio/types";
 import { formatDuration } from "~/utils/format";
 import PictureContainer from "~/components/Picture/PictureContainer";
 import { useAudioQueue } from "~/lib/stores";
@@ -93,7 +93,7 @@ const AudioStackItem: React.FC<AudioListItemProps> = ({
         </Flex>
         <Flex flex="1" justify="flex-end">
           <Stack direction="column" spacing={1} textAlign="right">
-            {!audio.isPublic && <Badge>PRIVATE</Badge>}
+            {audio.visibility === Visibility.Private && <Badge>PRIVATE</Badge>}
           </Stack>
         </Flex>
       </Flex>

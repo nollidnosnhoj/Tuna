@@ -44,7 +44,7 @@ namespace Audiochan.Core.UnitTests.Extensions
             model.FileExt.Should().Be(audio.FileExt);
             model.FileSize.Should().Be(audio.FileSize);
             model.Created.Should().Be(audio.Created);
-            model.IsPublic.Should().Be(audio.IsPublic);
+            model.Visibility.Should().Be(audio.Visibility);
             model.Picture.Should().BeNullOrEmpty();
             model.Author.Id.Should().Be(audio.User.Id);
             model.Author.Username.Should().Be(audio.User.UserName);

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Entities;
+using Audiochan.Core.Entities.Enums;
 
 namespace Audiochan.Tests.Common.Builders
 {
@@ -82,9 +83,9 @@ namespace Audiochan.Tests.Common.Builders
             return this;
         }
 
-        public AudioBuilder SetPublic(bool isPublic)
+        public AudioBuilder SetPublic(Visibility visibility)
         {
-            _audio.UpdatePublicity(isPublic);
+            _audio.UpdateVisibility(visibility);
             return this;
         }
 

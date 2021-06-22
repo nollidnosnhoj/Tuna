@@ -3,7 +3,7 @@ import { Formik } from "formik";
 import React from "react";
 import * as yup from "yup";
 import { validationMessages } from "~/utils";
-import { AudioRequest } from "../../types";
+import { AudioRequest, Visibility } from "../../types";
 import AudioForm from "../AudioForm";
 
 const validationSchema = yup
@@ -52,7 +52,7 @@ export default function CreateAudioForm({
         title: "",
         description: "",
         tags: [],
-        isPublic: false,
+        visibility: Visibility.Unlisted,
         ...initialValues,
       }}
       validationSchema={validationSchema}

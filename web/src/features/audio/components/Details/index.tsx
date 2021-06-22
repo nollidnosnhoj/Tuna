@@ -24,7 +24,7 @@ import { HiDotsVertical } from "react-icons/hi";
 import AudioEditDrawer from "./AudioEditDrawer";
 import AudioTags from "./AudioTags";
 import Link from "~/components/ui/Link";
-import { AudioDetailData } from "~/features/audio/types";
+import { AudioDetailData, Visibility } from "~/features/audio/types";
 import { useUser } from "~/features/user/hooks";
 import { relativeDate } from "~/utils/time";
 import { mapAudioForAudioQueue } from "~/utils/audioplayer";
@@ -121,7 +121,9 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
               </Box>
               <Spacer />
               <VStack spacing={2} alignItems="normal" textAlign="right">
-                {!audio.isPublic && <Badge>PRIVATE</Badge>}
+                {audio.visibility === Visibility.Private && (
+                  <Badge>PRIVATE</Badge>
+                )}
               </VStack>
             </Flex>
             <AudioTags tags={audio.tags} />

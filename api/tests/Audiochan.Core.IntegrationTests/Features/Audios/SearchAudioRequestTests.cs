@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Entities;
+using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Features.Audios.SearchAudios;
 using Bogus;
 using FluentAssertions;
@@ -41,7 +42,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
                 .RuleFor(x => x.FileName, f => f.System.FileName("mp3"))
                 .RuleFor(x => x.FileSize, f => f.Random.Number(1, 2_000_000))
                 .RuleFor(x => x.Duration, f => f.Random.Number(1, 300))
-                .RuleFor(x => x.IsPublic, _ => true)
+                .RuleFor(x => x.Visibility, _ => Visibility.Public)
                 .FinishWith((f, a) =>
                 {
                     a.Tags = new List<Tag> {new() {Name = tags[0]}, new() {Name = tags[1]}};

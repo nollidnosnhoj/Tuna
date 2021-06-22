@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Text.Json.Serialization;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Interfaces;
@@ -17,10 +15,10 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
 {
     public class UpdateAudioPictureCommand : IRequest<Result<AudioDetailViewModel>>
     {
-        public Guid AudioId { get; set; }
+        public long AudioId { get; set; }
         public string Data { get; set; } = string.Empty;
 
-        public static UpdateAudioPictureCommand FromRequest(Guid audioId, UpdateAudioPictureRequest request) =>
+        public static UpdateAudioPictureCommand FromRequest(long audioId, UpdateAudioPictureRequest request) =>
             new()
             {
                 AudioId = audioId,

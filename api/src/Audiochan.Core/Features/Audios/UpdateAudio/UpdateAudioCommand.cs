@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Mappings;
 using Audiochan.Core.Common.Models;
+using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Repositories;
 using Audiochan.Core.Services;
@@ -15,18 +15,18 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
 {
     public class UpdateAudioCommand : IRequest<Result<AudioDetailViewModel>>
     {
-        public Guid AudioId { get; set; }
+        public long AudioId { get; set; }
         public string? Title { get; init; }
         public string? Description { get; init; }
-        public bool? IsPublic { get; init; }
+        public Visibility? Visibility { get; init; }
         public List<string>? Tags { get; init; }
 
-        public static UpdateAudioCommand FromRequest(Guid audioId, UpdateAudioRequest request) => new()
+        public static UpdateAudioCommand FromRequest(long audioId, UpdateAudioRequest request) => new()
         {
             AudioId = audioId,
             Tags = request.Tags,
             Title = request.Title,
-            IsPublic = request.IsPublic,
+            Visibility = request.Visibility,
             Description = request.Description,
         };
     }
@@ -85,9 +85,9 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
                 audio.UpdateDescription(command.Description);
             }
 
-            if (command.IsPublic.HasValue)
+            if (command.Visibility.HasValue)
             {
-                audio.UpdatePublicity(command.IsPublic.Value);
+                audio.UpdateVisibility(command.Visibility.Value);
             }
 
             _unitOfWork.Audios.Update(audio);

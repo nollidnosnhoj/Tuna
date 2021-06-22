@@ -5,6 +5,7 @@ using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Mappings;
 using Audiochan.Core.Common.Models;
+using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Features.Audios.GetAudioList;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -40,7 +41,7 @@ namespace Audiochan.Core.Features.Audios.GetAudioFeed
             return await _unitOfWork.Audios
                 .AsNoTracking()
                 .Include(x => x.User)
-                .Where(a => a.IsPublic)
+                .Where(a => a.Visibility == Visibility.Public)
                 .Where(a => followedIds.Contains(a.UserId))
                 .ProjectToList()
                 .OrderByDescending(a => a.Uploaded)

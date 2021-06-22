@@ -26,7 +26,9 @@ export const getServerSideProps: GetServerSideProps<AudioPageProps> = async (
   const id = context.params?.id as string;
 
   try {
-    const data = await fetchAudioHandler(id, context);
+    const audioId = parseInt(id);
+    if (isNaN(audioId)) throw new Error();
+    const data = await fetchAudioHandler(audioId, context);
     return {
       props: {
         audio: data,
@@ -41,7 +43,7 @@ export const getServerSideProps: GetServerSideProps<AudioPageProps> = async (
 
 export default function ViewAudioNextPage(props: AudioPageProps) {
   const { query } = useRouter();
-  const id = query.id as string;
+  const id = parseInt(query.id as string);
   const { data: audio } = useGetAudio(id, {
     staleTime: 1000,
     initialData: props.audio,

@@ -8,7 +8,7 @@ import { GET_AUDIO_LIST_QUERY_KEY } from "./useGetAudioList";
 import { uploadAudioPictureHandler } from "../api";
 
 export function useAddAudioPicture(
-  id: string
+  id: number
 ): UseMutationResult<AudioDetailData, ErrorResponse, string> {
   const queryClient = useQueryClient();
   const { user } = useUser();

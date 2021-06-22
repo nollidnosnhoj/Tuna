@@ -1,16 +1,12 @@
-using System.Reflection;
 using System.Text.Json;
 using Audiochan.API.Extensions.ConfigurationExtensions;
 using Audiochan.API.Middlewares;
 using Audiochan.API.Services;
 using Audiochan.Core;
-using Audiochan.Core.Common.Pipelines;
 using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Services;
 using Audiochan.Infrastructure;
 using Audiochan.Infrastructure.Storage.Options;
-using FluentValidation;
-using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
