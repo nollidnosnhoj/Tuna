@@ -78,11 +78,13 @@ namespace Audiochan.API.Controllers
             OperationId = "GetAuthenticatedUserFeed",
             Tags = new[] {"me"}
         )]
-        public async Task<IActionResult> GetAuthenticatedUserFeed(CancellationToken cancellationToken)
+        public async Task<IActionResult> GetAuthenticatedUserFeed([FromQuery] PaginationQueryParams queryParams, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new GetAudioFeedQuery
             {
-                UserId = _currentUserId
+                UserId = _currentUserId,
+                Page = queryParams.Page,
+                Size = queryParams.Size
             }, cancellationToken);
             return Ok(result);
         }

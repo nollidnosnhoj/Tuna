@@ -9,10 +9,8 @@ using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Features.Audios.GetAudio;
-using Audiochan.Core.Repositories;
 using Audiochan.Core.Services;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Audios.CreateAudio
@@ -36,19 +34,16 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
         private readonly ICurrentUserService _currentUserService;
         private readonly MediaStorageSettings _storageSettings;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly ITagRepository _tagRepository;
 
         public CreateAudioCommandHandler(IOptions<MediaStorageSettings> mediaStorageOptions,
             IStorageService storageService,
             ICurrentUserService currentUserService,
-            IUnitOfWork unitOfWork, 
-            ITagRepository tagRepository)
+            IUnitOfWork unitOfWork)
         {
             _storageSettings = mediaStorageOptions.Value;
             _storageService = storageService;
             _currentUserService = currentUserService;
             _unitOfWork = unitOfWork;
-            _tagRepository = tagRepository;
         }
 
         public async Task<Result<AudioDetailViewModel>> Handle(CreateAudioCommand command,
@@ -60,7 +55,8 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
                 return Result<AudioDetailViewModel>.Fail(ResultError.BadRequest, "Cannot find audio in temp storage.");
             
             var currentUser = await _unitOfWork.Users
-                    .SingleOrDefaultAsync(x => x.Id == _currentUserService.GetUserId(), cancellationToken);
+                    .FindAsync(x => x.Id == _currentUserService.GetUserId(), 
+                        cancellationToken: cancellationToken);
 
             if (currentUser is null)
                 return Result<AudioDetailViewModel>.Fail(ResultError.Unauthorized);
@@ -78,7 +74,7 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
                 Visibility = command.Visibility,
                 BlobName = command.UploadId,
                 Tags = command.Tags.Count > 0
-                    ? await _tagRepository.GetAppropriateTags(command.Tags, cancellationToken)
+                    ? await _unitOfWork.Tags.GetAppropriateTags(command.Tags, cancellationToken)
                     : new List<Tag>(),
             };
 

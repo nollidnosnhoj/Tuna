@@ -6,10 +6,8 @@ using Audiochan.Core.Common.Mappings;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Features.Audios.GetAudio;
-using Audiochan.Core.Repositories;
 using Audiochan.Core.Services;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Audios.UpdateAudio
 {
@@ -35,25 +33,20 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
     {
         private readonly ICurrentUserService _currentUserService;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly ITagRepository _tagRepository;
 
-        public UpdateAudioCommandHandler(ICurrentUserService currentUserService,
-            IUnitOfWork unitOfWork, ITagRepository tagRepository)
+        public UpdateAudioCommandHandler(ICurrentUserService currentUserService, IUnitOfWork unitOfWork)
         {
             _currentUserService = currentUserService;
             _unitOfWork = unitOfWork;
-            _tagRepository = tagRepository;
         }
 
         public async Task<Result<AudioDetailViewModel>> Handle(UpdateAudioCommand command,
             CancellationToken cancellationToken)
         {
             var currentUserId = _currentUserService.GetUserId();
-            
+
             var audio = await _unitOfWork.Audios
-                .Include(a => a.User)
-                .Include(a => a.Tags)
-                .SingleOrDefaultAsync(a => a.Id == command.AudioId, cancellationToken);
+                .LoadForUpdate(command.AudioId, cancellationToken);
 
             if (audio == null)
                 return Result<AudioDetailViewModel>.Fail(ResultError.NotFound);
@@ -69,7 +62,7 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
                 }
                 else
                 {
-                    var newTags = await _tagRepository.GetAppropriateTags(command.Tags, cancellationToken);
+                    var newTags = await _unitOfWork.Tags.GetAppropriateTags(command.Tags, cancellationToken);
 
                     audio.UpdateTags(newTags);
                 }

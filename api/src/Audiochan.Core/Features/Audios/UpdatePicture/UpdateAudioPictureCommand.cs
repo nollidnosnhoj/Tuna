@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Mappings;
@@ -8,7 +7,6 @@ using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Services;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Audios.UpdatePicture
@@ -54,12 +52,9 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
         {
             var container = string.Join('/', _storageSettings.Image.Container, "audios");
             var currentUserId = _currentUserService.GetUserId();
-            
+
             var audio = await _unitOfWork.Audios
-                .Include(x => x.Tags)
-                .Include(x => x.User)
-                .Where(x => x.Id == command.AudioId)
-                .SingleOrDefaultAsync(cancellationToken);
+                .LoadForUpdate(command.AudioId, cancellationToken);
         
             if (audio == null) 
                 return Result<AudioDetailViewModel>.Fail(ResultError.NotFound);

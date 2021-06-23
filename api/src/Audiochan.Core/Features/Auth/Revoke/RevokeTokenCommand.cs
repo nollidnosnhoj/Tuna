@@ -6,7 +6,6 @@ using Audiochan.Core.Common.Models;
 using Audiochan.Core.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Auth.Revoke
 {
@@ -31,9 +30,7 @@ namespace Audiochan.Core.Features.Auth.Revoke
             if (!string.IsNullOrWhiteSpace(command.RefreshToken))
             {
                 var user = await _unitOfWork.Users
-                    .Include(u => u.RefreshTokens)
-                    .SingleOrDefaultAsync(u => u.RefreshTokens
-                        .Any(r => r.Token == command.RefreshToken && u.Id == r.UserId), cancellationToken);
+                    .LoadForRefreshToken(command.RefreshToken, cancellationToken);
 
                 if (user != null)
                 {

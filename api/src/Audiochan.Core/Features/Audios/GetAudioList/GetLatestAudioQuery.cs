@@ -2,10 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Interfaces;
-using Audiochan.Core.Common.Mappings;
-using Audiochan.Core.Entities.Enums;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Audios.GetAudioList
 {
@@ -28,18 +25,8 @@ namespace Audiochan.Core.Features.Audios.GetAudioList
         public async Task<GetAudioListViewModel> Handle(GetLatestAudioQuery request,
             CancellationToken cancellationToken)
         {
-            var queryable = _unitOfWork.Audios
-                .AsNoTracking()
-                .Include(x => x.User)
-                .Where(x => x.Visibility == Visibility.Public);
-            
-            if (request.Cursor is not null)
-                queryable = queryable.Where(x => x.Id < request.Cursor.Value);
-
-            var audios = await queryable
-                .ProjectToList()
-                .Take(request.Size)
-                .ToListAsync(cancellationToken);
+            var audios = await _unitOfWork.Audios
+                .GetLatestAudios(request, cancellationToken);
             
             var lastAudio = audios.LastOrDefault();
 

@@ -6,7 +6,6 @@ using Audiochan.Core.Common.Models;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Services;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.FavoriteAudios.SetFavorite
 {
@@ -28,10 +27,7 @@ namespace Audiochan.Core.Features.FavoriteAudios.SetFavorite
         public async Task<Result<bool>> Handle(SetFavoriteAudioCommand command, CancellationToken cancellationToken)
         {
             var audio = await _unitOfWork.Audios
-                .Include(a => a.Favorited)
-                .IgnoreQueryFilters()
-                .Where(a => a.Id == command.AudioId)
-                .SingleOrDefaultAsync(cancellationToken);
+                .LoadForSetFavorite(command.AudioId, cancellationToken);
             
             if (audio == null)
                 return Result<bool>.Fail(ResultError.NotFound);
