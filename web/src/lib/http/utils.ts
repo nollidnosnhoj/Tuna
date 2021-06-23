@@ -1,12 +1,12 @@
 import axios, { AxiosInstance } from "axios";
 import { AxiosAuthRefreshRequestConfig } from "axios-auth-refresh";
 import { IncomingMessage, ServerResponse } from "http";
-import qs from "query-string";
 import { NextApiRequest, NextApiResponse } from "next";
 import { destroyCookie, parseCookies, setCookie } from "nookies";
 import { useTokenStore } from "../stores";
 import { ApiRequestConfig, TOKEN_CONSTANTS } from "./types";
 import SETTINGS from "~/lib/config";
+import { stringifyQueryObject } from "~/utils";
 
 /**
  * Get the access token from the local storage.
@@ -149,6 +149,6 @@ export function createApiAxiosInstance(): AxiosInstance {
   return axios.create({
     baseURL: SETTINGS.BACKEND_API,
     withCredentials: true,
-    paramsSerializer: (params) => qs.stringify(params),
+    paramsSerializer: (params) => stringifyQueryObject(params),
   });
 }
