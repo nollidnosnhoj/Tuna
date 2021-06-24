@@ -33,4 +33,25 @@ namespace Audiochan.Infrastructure.Persistence.Configurations
             builder.HasIndex(x => x.Created);
         }
     }
+    
+    public class FavoriteAudioConfiguration : IEntityTypeConfiguration<FavoriteAudio>
+    {
+        public void Configure(EntityTypeBuilder<FavoriteAudio> builder)
+        {
+            builder.HasKey(fa => new {AudioId = fa.AudioId, UserId = fa.UserId});
+
+            builder.HasOne(o => o.User)
+                .WithMany(f => f.FavoriteAudios)
+                .HasForeignKey(o => o.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasOne(o => o.Audio)
+                .WithMany(f => f.Favorited)
+                .HasForeignKey(o => o.AudioId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasIndex(f => f.FavoriteDate);
+            builder.HasQueryFilter(f => f.UnfavoriteDate == null);
+        }
+    }
 }

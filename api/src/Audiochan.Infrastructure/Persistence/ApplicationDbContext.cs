@@ -35,14 +35,26 @@ namespace Audiochan.Infrastructure.Persistence
             // Add default created/updated date
             foreach (var entry in ChangeTracker.Entries<IAudited>())
             {
+                if (entry is null) continue;
+                var now = _dateTimeProvider.Now;
                 if (entry.State == EntityState.Added && entry.Entity.Created == default)
                 {
-                    entry.Property(nameof(IAudited.Created)).CurrentValue = _dateTimeProvider.Now;
+                    entry.Property(nameof(IAudited.Created)).CurrentValue = now;
                 }
 
                 if (entry.State == EntityState.Modified && entry.Entity.LastModified == default)
                 {
-                    entry.Property(nameof(IAudited.LastModified)).CurrentValue = _dateTimeProvider.Now;
+                    entry.Property(nameof(IAudited.LastModified)).CurrentValue = now;
+                }
+            }
+
+            foreach (var entry in ChangeTracker.Entries<ISoftDeletable>())
+            {
+                if (entry is null) continue;
+                if (entry.State == EntityState.Deleted)
+                {
+                    entry.State = EntityState.Modified;
+                    entry.Property(nameof(ISoftDeletable.Deleted)).CurrentValue = _dateTimeProvider.Now;
                 }
             }
 
