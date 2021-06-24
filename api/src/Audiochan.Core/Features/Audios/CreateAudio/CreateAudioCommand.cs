@@ -20,7 +20,6 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
         public string UploadId { get; init; } = null!;
         public string FileName { get; init; } = null!;
         public long FileSize { get; init; }
-        public string ContentType { get; init; } = null!;
         public decimal Duration { get; init; }
         public string Title { get; init; } = null!;
         public string Description { get; init; } = string.Empty;
@@ -49,7 +48,8 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
         public async Task<Result<AudioDetailViewModel>> Handle(CreateAudioCommand command,
             CancellationToken cancellationToken)
         {
-            var existsInTempStorage = await ExistsInTempStorageAsync(command.UploadId, cancellationToken);
+            var blobName = command.UploadId + Path.GetExtension(command.FileName);
+            var existsInTempStorage = await ExistsInTempStorageAsync(blobName, cancellationToken);
 
             if (!existsInTempStorage)
                 return Result<AudioDetailViewModel>.Fail(ResultError.BadRequest, "Cannot find audio in temp storage.");
@@ -64,15 +64,13 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
             var audio = new Audio
             {
                 User = currentUser,
-                ContentType = command.ContentType,
                 FileName = command.FileName,
-                FileExt = Path.GetExtension(command.UploadId),
                 FileSize = command.FileSize,
                 Duration = command.Duration,
                 Title = command.Title,
                 Description = command.Description,
                 Visibility = command.Visibility,
-                BlobName = command.UploadId,
+                BlobName = blobName,
                 Tags = command.Tags.Count > 0
                     ? await _unitOfWork.Tags.GetAppropriateTags(command.Tags, cancellationToken)
                     : new List<Tag>(),
@@ -85,7 +83,12 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
             
             await _unitOfWork.Audios.AddAsync(audio, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await MoveTempAudioToPublicAsync(audio, cancellationToken);
+            return Result<AudioDetailViewModel>.Success(audio.MapToDetail());
+        }
 
+        private async Task MoveTempAudioToPublicAsync(Audio audio, CancellationToken cancellationToken)
+        {
             // Copy temp audio to public bucket
             await _storageService.MoveBlobAsync(
                 _storageSettings.Audio.TempBucket,
@@ -95,8 +98,6 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
                 _storageSettings.Audio.Container,
                 $"{audio.Id}/{audio.BlobName}",
                 cancellationToken);
-
-            return Result<AudioDetailViewModel>.Success(audio.MapToDetail());
         }
 
         private async Task<bool> ExistsInTempStorageAsync(string blobName, CancellationToken cancellationToken = default)

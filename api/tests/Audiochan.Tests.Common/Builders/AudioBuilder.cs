@@ -42,19 +42,6 @@ namespace Audiochan.Tests.Common.Builders
         public AudioBuilder AddFileName(string fileName)
         {
             _audio.FileName = fileName;
-            _audio.FileExt = Path.GetExtension(fileName);
-            return this;
-        }
-
-        public AudioBuilder AddFileExtension(string fileExt)
-        {
-            _audio.FileExt = fileExt;
-            return this;
-        }
-
-        public AudioBuilder AddContentType(string contentType)
-        {
-            _audio.ContentType = contentType;
             return this;
         }
 
@@ -91,9 +78,7 @@ namespace Audiochan.Tests.Common.Builders
 
         public Audio Build(string objectId)
         {
-            _audio.FileExt = Path.GetExtension(_audio.FileName);
-            _audio.ContentType = _audio.BlobName.GetContentType();
-            _audio.BlobName = objectId + _audio.FileExt;
+            _audio.BlobName = objectId + Path.GetExtension(_audio.FileName);
             
             return _audio;
         }

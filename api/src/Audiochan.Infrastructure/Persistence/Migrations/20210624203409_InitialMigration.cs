@@ -103,8 +103,6 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                     blob_name = table.Column<string>(type: "text", nullable: false),
                     file_name = table.Column<string>(type: "text", nullable: false),
                     file_size = table.Column<long>(type: "bigint", nullable: false),
-                    file_ext = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: false),
-                    content_type = table.Column<string>(type: "text", nullable: false),
                     picture_blob_name = table.Column<string>(type: "text", nullable: true),
                     visibility = table.Column<int>(type: "integer", nullable: false),
                     private_key = table.Column<string>(type: "text", nullable: true),

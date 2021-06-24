@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.IO;
+using System.Threading.Tasks;
 using Audiochan.Tests.Common.Fakers.Audios;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
@@ -47,8 +48,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
 
             audio.Should().NotBeNull();
             audio.FileName.Should().Be(request.FileName);
-            audio.ContentType.Should().Be(request.ContentType);
-            audio.BlobName.Should().Contain(request.UploadId);
+            audio.BlobName.Should().Contain(request.UploadId + Path.GetExtension(request.FileName));
             audio.BlobName.Should().EndWith(".mp3");
         }
     }

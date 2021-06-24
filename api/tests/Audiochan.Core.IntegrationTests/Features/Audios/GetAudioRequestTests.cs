@@ -76,7 +76,6 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             result.Picture.Should().BeNullOrEmpty();
             result.Tags.Count.Should().Be(audio.Tags.Count);
             result.AudioUrl.Should().Be(string.Format(MediaLinkInvariants.AudioUrl, audio.Id, audio.BlobName));
-            result.FileExt.Should().Be(audio.FileExt);
             result.FileSize.Should().Be(audio.FileSize);
             result.Visibility.Should().Be(audio.Visibility);
             result.LastModified.Should().BeNull();
@@ -105,7 +104,6 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             result.Picture.Should().BeNullOrEmpty();
             result.Tags.Count.Should().Be(audio.Tags.Count);
             result.AudioUrl.Should().Be(string.Format(MediaLinkInvariants.AudioUrl, audio.Id, audio.BlobName));
-            result.FileExt.Should().Be(audio.FileExt);
             result.FileSize.Should().Be(audio.FileSize);
             result.Visibility.Should().Be(audio.Visibility);
             result.LastModified.Should().BeNull();
@@ -136,7 +134,6 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             result.Picture.Should().BeNullOrEmpty();
             result.Tags.Count.Should().Be(audio.Tags.Count);
             result.AudioUrl.Should().Be(string.Format(MediaLinkInvariants.AudioUrl, audio.Id, audio.BlobName));
-            result.FileExt.Should().Be(audio.FileExt);
             result.FileSize.Should().Be(audio.FileSize);
             result.Visibility.Should().Be(audio.Visibility);
             result.LastModified.Should().BeNull();

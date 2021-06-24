@@ -52,11 +52,6 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                         .HasColumnType("text")
                         .HasColumnName("blob_name");
 
-                    b.Property<string>("ContentType")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("content_type");
-
                     b.Property<DateTime>("Created")
                         .HasColumnType("timestamp without time zone")
                         .HasColumnName("created");
@@ -68,12 +63,6 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                     b.Property<decimal>("Duration")
                         .HasColumnType("numeric")
                         .HasColumnName("duration");
-
-                    b.Property<string>("FileExt")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("character varying(10)")
-                        .HasColumnName("file_ext");
 
                     b.Property<string>("FileName")
                         .IsRequired()

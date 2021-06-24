@@ -22,7 +22,6 @@ export interface AudioDetailData extends AudioData {
   description?: string;
   tags: string[];
   fileSize: number;
-  fileExt: string;
   uploaded: string;
   lastModified?: string;
 }
@@ -39,5 +38,4 @@ export interface CreateAudioRequest extends AudioRequest {
   fileName: string;
   fileSize: number;
   duration: number;
-  contentType: string;
 }

@@ -23,8 +23,6 @@ namespace Audiochan.Core.Entities
         public string BlobName { get; set; } = null!;
         public string FileName { get; set; } = null!;
         public long FileSize { get; set; }
-        public string FileExt { get; set; } = null!;
-        public string ContentType { get; set; } = null!;
         public string? PictureBlobName { get; set; }
         public Visibility Visibility { get; set; }
         public string? PrivateKey { get; set; }

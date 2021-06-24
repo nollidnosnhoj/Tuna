@@ -91,7 +91,6 @@ export default function AudioUploader({
         ...submitValues,
         fileName: file.name,
         fileSize: file.size,
-        contentType: file.type,
         duration: duration,
         uploadId: uploadId,
       })

@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Audiochan.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210624023348_InitialMigration")]
+    [Migration("20210624203409_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -54,11 +54,6 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                         .HasColumnType("text")
                         .HasColumnName("blob_name");
 
-                    b.Property<string>("ContentType")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("content_type");
-
                     b.Property<DateTime>("Created")
                         .HasColumnType("timestamp without time zone")
                         .HasColumnName("created");
@@ -70,12 +65,6 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                     b.Property<decimal>("Duration")
                         .HasColumnType("numeric")
                         .HasColumnName("duration");
-
-                    b.Property<string>("FileExt")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("character varying(10)")
-                        .HasColumnName("file_ext");
 
                     b.Property<string>("FileName")
                         .IsRequired()

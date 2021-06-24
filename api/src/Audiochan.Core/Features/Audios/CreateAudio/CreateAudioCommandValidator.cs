@@ -20,11 +20,6 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
                 .FileSizeValidation(uploadOptions.MaximumFileSize);
             RuleFor(req => req.FileName)
                 .FileNameValidation(uploadOptions.ValidContentTypes);
-            RuleFor(req => req.ContentType)
-                .NotEmpty()
-                .WithMessage("Content Type is required.")
-                .Must((type) => uploadOptions.ValidContentTypes.Contains(type))
-                .WithMessage("Content Type is invalid.");
             RuleFor(req => req.Title)
                 .NotEmpty()
                 .WithMessage("Title is required.")
