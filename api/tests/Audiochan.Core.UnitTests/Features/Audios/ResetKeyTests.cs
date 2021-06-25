@@ -31,19 +31,25 @@ namespace Audiochan.Core.UnitTests.Features.Audios
         [Fact]
         public async Task ShouldResetPrivateKey()
         {
+            // Assign
             var userId = Guid.NewGuid().ToString();
+            
             var audio = new AudioFaker(userId, true).Generate();
             audio.UpdateVisibility(Visibility.Private);
+            
             var ogKey = audio.PrivateKey;
+            
             _currentUserService.Setup(x => x.GetUserId()).Returns(userId);
             _unitOfWork.Setup(x => x.Audios.FindAsync(
                     It.IsAny<Expression<Func<Audio, bool>>>(), 
                     It.IsAny<bool>(),
                     It.IsAny<CancellationToken>()))
                 .ReturnsAsync(audio);
+            
+            // Act
             var result = await _handler.Handle(new ResetPrivateKeyCommand(audio.Id), CancellationToken.None);
 
-            audio.PrivateKey.Should().NotBeNullOrEmpty();
+            // Assert
             result.IsSuccess.Should().BeTrue();
             result.Data.Should().NotBeNullOrEmpty();
             result.Data.Should().NotBe(ogKey);

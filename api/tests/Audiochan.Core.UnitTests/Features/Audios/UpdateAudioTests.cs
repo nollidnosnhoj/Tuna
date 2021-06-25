@@ -65,9 +65,12 @@ namespace Audiochan.Core.UnitTests.Features.Audios
         {
             // Assign
             var user = new User {Id = Guid.NewGuid().ToString(), UserName = "testUser"};
+            
             var audio = new AudioFaker(user.Id, true).Generate();
             audio.User = user;
+            
             var command = new UpdateAudioRequestFaker(audio.Id).Generate();
+            
             _currentUserService.Setup(x => x.GetUserId())
                 .Returns(user.Id);
             _unitOfWork.Setup(x => x.Audios.LoadForUpdate(
@@ -94,11 +97,6 @@ namespace Audiochan.Core.UnitTests.Features.Audios
             result.Data!.Title.Should().Be(command.Title);
             result.Data.Description.Should().Be(command.Description);
             result.Data.Tags.Count.Should().Be(command.Tags!.Count);
-
-            audio.Should().NotBeNull();
-            audio.Title.Should().Be(command.Title);
-            audio.Description.Should().Be(command.Description);
-            audio.Tags.Count.Should().Be(command.Tags!.Count);
         }
     }
 }

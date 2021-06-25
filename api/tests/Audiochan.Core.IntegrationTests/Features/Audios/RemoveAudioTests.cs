@@ -10,11 +10,11 @@ using Xunit;
 namespace Audiochan.Core.IntegrationTests.Features.Audios
 {
     [Collection(nameof(SliceFixture))]
-    public class RemoveAudioRequestTests
+    public class RemoveAudioTests
     {
         private readonly SliceFixture _fixture;
 
-        public RemoveAudioRequestTests(SliceFixture fixture)
+        public RemoveAudioTests(SliceFixture fixture)
         {
             _fixture = fixture;
         }

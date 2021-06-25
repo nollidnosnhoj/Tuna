@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Audiochan.Core.Features.Auth.Login;
 using Audiochan.Core.Features.Auth.Revoke;
-using Audiochan.Tests.Common.Fakers.Auth;
+using Bogus;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
@@ -10,11 +10,11 @@ using Xunit;
 namespace Audiochan.Core.IntegrationTests.Features.Auth
 {
     [Collection(nameof(SliceFixture))]
-    public class RevokeTokenRequestTests
+    public class RevokeTokenTests
     {
         private readonly SliceFixture _fixture;
 
-        public RevokeTokenRequestTests(SliceFixture fixture)
+        public RevokeTokenTests(SliceFixture fixture)
         {
             _fixture = fixture;
         }
@@ -22,17 +22,22 @@ namespace Audiochan.Core.IntegrationTests.Features.Auth
         [Fact]
         public async Task ShouldSuccessfullyRevokeToken()
         {
-            var loginRequest = new LoginRequestFaker().Generate();
-
-            var (userId, _) = await _fixture.RunAsUserAsync(loginRequest.Login, loginRequest.Password, Array.Empty<string>());
+            // Assign
+            var faker = new Faker();
+            var username = faker.Random.String2(15);
+            var password = faker.Internet.Password();
+            var (userId, _) = await _fixture.RunAsUserAsync(username, password, Array.Empty<string>());
             
-            var loginResult = await _fixture.SendAsync(loginRequest);
-
+            // Act
+            var loginResult = await _fixture.SendAsync(new LoginCommand
+            {
+                Login = username,
+                Password = password
+            });
             var revokeResult = await _fixture.SendAsync(new RevokeTokenCommand
             {
                 RefreshToken = loginResult.Data!.RefreshToken
             });
-            
             var user = await _fixture.ExecuteDbContextAsync(dbContext =>
             {
                 return dbContext.Users
@@ -40,6 +45,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Auth
                     .SingleOrDefaultAsync(u => u.Id == userId);
             });
             
+            // Assert
             revokeResult.IsSuccess.Should().Be(true);
             user.Should().NotBeNull();
             user.RefreshTokens.Count.Should().Be(0);
@@ -48,18 +54,20 @@ namespace Audiochan.Core.IntegrationTests.Features.Auth
         [Fact]
         public async Task ShouldSuccessfullyRevokeOneToken()
         {
-            var loginRequest = new LoginRequestFaker().Generate();
-
-            var (userId, _) = await _fixture.RunAsUserAsync(loginRequest.Login, loginRequest.Password, Array.Empty<string>());
+            // Assign
+            var faker = new Faker();
+            var username = faker.Random.String2(15);
+            var password = faker.Internet.Password();
+            var (userId, _) = await _fixture.RunAsUserAsync(username, password, Array.Empty<string>());
             
-            var loginResult1 = await _fixture.SendAsync(loginRequest);
-            
-            var loginResult2 = await _fixture.SendAsync(new LoginCommand
+            // Act
+            var command = new LoginCommand
             {
-                Login = loginRequest.Login,
-                Password = loginRequest.Password
-            });
-
+                Login = username,
+                Password = password
+            };
+            var loginResult1 = await _fixture.SendAsync(command);
+            var loginResult2 = await _fixture.SendAsync(command);
             var revokeResult = await _fixture.SendAsync(new RevokeTokenCommand
             {
                 RefreshToken = loginResult2.Data!.RefreshToken
@@ -72,6 +80,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Auth
                     .SingleOrDefaultAsync(u => u.Id == userId);
             });
             
+            // Assert
             revokeResult.IsSuccess.Should().Be(true);
             user.Should().NotBeNull();
             user.RefreshTokens.Count.Should().Be(1);

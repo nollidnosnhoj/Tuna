@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Audiochan.Core.Features.Auth.Login;
 using Audiochan.Core.Features.Auth.Refresh;
-using Audiochan.Tests.Common.Fakers.Auth;
+using Bogus;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
@@ -9,11 +10,11 @@ using Xunit;
 namespace Audiochan.Core.IntegrationTests.Features.Auth
 {
     [Collection(nameof(SliceFixture))]
-    public class RefreshAccessTokenRequestTests
+    public class RefreshAccessTokenTests
     {
         private readonly SliceFixture _fixture;
 
-        public RefreshAccessTokenRequestTests(SliceFixture fixture)
+        public RefreshAccessTokenTests(SliceFixture fixture)
         {
             _fixture = fixture;
         }
@@ -21,17 +22,22 @@ namespace Audiochan.Core.IntegrationTests.Features.Auth
         [Fact]
         public async Task ShouldSuccessfullyRefreshAccessToken()
         {
-            var loginRequest = new LoginRequestFaker().Generate();
-
-            var (userId, _) = await _fixture.RunAsUserAsync(loginRequest.Login, loginRequest.Password, Array.Empty<string>());
+            // Assign
+            var faker = new Faker();
+            var username = faker.Random.String2(15);
+            var password = faker.Internet.Password();
+            var (userId, _) = await _fixture.RunAsUserAsync(username, password, Array.Empty<string>());
             
-            var loginResult = await _fixture.SendAsync(loginRequest);
-
+            // Act
+            var loginResult = await _fixture.SendAsync(new LoginCommand
+            {
+                Login = username,
+                Password = password
+            });
             var refreshResult = await _fixture.SendAsync(new RefreshTokenCommand
             {
                 RefreshToken = loginResult.Data!.RefreshToken
             });
-            
             var user = await _fixture.ExecuteDbContextAsync(dbContext =>
             {
                 return dbContext.Users
@@ -39,6 +45,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Auth
                     .SingleOrDefaultAsync(u => u.Id == userId);
             });
 
+            // Assert
             refreshResult.IsSuccess.Should().Be(true);
             refreshResult.Data.Should().NotBeNull();
             user.Should().NotBeNull();

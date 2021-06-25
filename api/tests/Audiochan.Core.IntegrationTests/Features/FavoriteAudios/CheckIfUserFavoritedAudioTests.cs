@@ -24,6 +24,7 @@ namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
         [Fact]
         public async Task ShouldReturnTrue_WhenUserFavoritedAudio()
         {
+            // Assign
             var (targetId, _) = await _sliceFixture.RunAsAdministratorAsync();
             var audio = new AudioFaker(targetId).Generate();
             await _sliceFixture.InsertAsync(audio);
@@ -39,14 +40,17 @@ namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
             };
             await _sliceFixture.InsertAsync(favoriteAudio);
 
+            // Act
             var isFavorited = await _sliceFixture.SendAsync(new CheckIfUserFavoritedAudioQuery(audio.Id, observerId));
 
+            // Assert
             isFavorited.Should().BeTrue();
         }
         
         [Fact]
         public async Task ShouldReturnFalse_WhenUserDidNotFavorite()
         {
+            // Assign
             var (targetId, _) = await _sliceFixture.RunAsAdministratorAsync();
             var audio = new AudioFaker(targetId).Generate();
             await _sliceFixture.InsertAsync(audio);
@@ -55,14 +59,17 @@ namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
                 _faker.Internet.Password(), 
                 Array.Empty<string>());
 
+            // Act
             var isFavorited = await _sliceFixture.SendAsync(new CheckIfUserFavoritedAudioQuery(audio.Id, observerId));
 
+            // Assert
             isFavorited.Should().BeFalse();
         }
         
         [Fact]
         public async Task ShouldReturnFalse_WhenUserUnfavorited()
         {
+            // Assign
             var (targetId, _) = await _sliceFixture.RunAsAdministratorAsync();
             var audio = new AudioFaker(targetId).Generate();
             await _sliceFixture.InsertAsync(audio);
@@ -80,8 +87,10 @@ namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
             };
             await _sliceFixture.InsertAsync(favoriteAudio);
 
+            // Act
             var isFavorited = await _sliceFixture.SendAsync(new CheckIfUserFavoritedAudioQuery(audio.Id, observerId));
 
+            // Assert
             isFavorited.Should().BeFalse();
         }
     }

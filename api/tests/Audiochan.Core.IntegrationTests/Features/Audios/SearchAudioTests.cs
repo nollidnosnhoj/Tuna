@@ -13,11 +13,11 @@ using Xunit;
 namespace Audiochan.Core.IntegrationTests.Features.Audios
 {
     [Collection(nameof(SliceFixture))]
-    public class SearchAudioRequestTests
+    public class SearchAudioTests
     {
         private readonly SliceFixture _fixture;
 
-        public SearchAudioRequestTests(SliceFixture fixture)
+        public SearchAudioTests(SliceFixture fixture)
         {
             _fixture = fixture;
         }

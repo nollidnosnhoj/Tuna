@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Audiochan.Tests.Common.Fakers.Auth;
+using Audiochan.Core.Features.Auth.Login;
+using Bogus;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
@@ -8,11 +9,11 @@ using Xunit;
 namespace Audiochan.Core.IntegrationTests.Features.Auth
 {
     [Collection(nameof(SliceFixture))]
-    public class LoginRequestTests
+    public class LoginTests
     {
         private readonly SliceFixture _fixture;
 
-        public LoginRequestTests(SliceFixture fixture)
+        public LoginTests(SliceFixture fixture)
         {
             _fixture = fixture;
         }
@@ -20,12 +21,18 @@ namespace Audiochan.Core.IntegrationTests.Features.Auth
         [Fact]
         public async Task ShouldSuccessfullyLoginAndCreateRefreshToken()
         {
-            var request = new LoginRequestFaker().Generate();
+            // Assign
+            var faker = new Faker();
+            var username = faker.Random.String2(15);
+            var password = faker.Internet.Password();
+            var (userId, _) = await _fixture.RunAsUserAsync(username, password, Array.Empty<string>());
             
-            var (userId, _) = await _fixture.RunAsUserAsync(request.Login, request.Password, Array.Empty<string>());
-            
-            var loginResult = await _fixture.SendAsync(request);
-            
+            // Act
+            var loginResult = await _fixture.SendAsync(new LoginCommand
+            {
+                Login = username,
+                Password = password
+            });
             var user = await _fixture.ExecuteDbContextAsync(dbContext =>
             {
                 return dbContext.Users
@@ -33,6 +40,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Auth
                     .SingleOrDefaultAsync(u => u.Id == userId);
             });
 
+            // Assert
             loginResult.IsSuccess.Should().Be(true);
             loginResult.Data.Should().NotBeNull();
             user.Should().NotBeNull();

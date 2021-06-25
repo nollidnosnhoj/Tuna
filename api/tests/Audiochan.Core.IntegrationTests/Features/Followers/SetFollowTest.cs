@@ -20,11 +20,12 @@ namespace Audiochan.Core.IntegrationTests.Features.Followers
         [Fact]
         public async Task AddFollowerTest()
         {
+            // Assign
             var (targetId, targetUsername) = await _sliceFixture.RunAsDefaultUserAsync();
-            
             var (observerId, _) =
                 await _sliceFixture.RunAsUserAsync("kopacetic", "kopacetic123!", Array.Empty<string>());
 
+            // Act
             await _sliceFixture.SendAsync(new SetFollowCommand(observerId, targetUsername, true));
 
             var user = await _sliceFixture.ExecuteDbContextAsync(database =>
@@ -35,6 +36,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Followers
                     .SingleOrDefaultAsync(u => u.Id == targetId);
             });
 
+            // Assert
             user.Followers.Should().NotBeEmpty();
             user.Followers.Should().Contain(x => x.ObserverId == observerId && x.TargetId == targetId);
         }

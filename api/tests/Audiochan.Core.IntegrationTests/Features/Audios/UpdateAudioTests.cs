@@ -10,11 +10,11 @@ using Xunit;
 namespace Audiochan.Core.IntegrationTests.Features.Audios
 {
     [Collection(nameof(SliceFixture))]
-    public class UpdateAudioRequestTests
+    public class UpdateAudioTests
     {
         private readonly SliceFixture _fixture;
 
-        public UpdateAudioRequestTests(SliceFixture fixture)
+        public UpdateAudioTests(SliceFixture fixture)
         {
             _fixture = fixture;
         }
@@ -57,7 +57,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             // Act
             var command = new UpdateAudioRequestFaker(audio.Id).Generate();
 
-            var result = await _fixture.SendAsync(command);
+            await _fixture.SendAsync(command);
 
             var created = await _fixture.ExecuteDbContextAsync(database =>
             {
@@ -68,15 +68,6 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             });
 
             // Assert
-            result.Should().NotBeNull();
-            result.IsSuccess.Should().Be(true);
-            result.Data.Should().NotBeNull();
-            result.Data.Should().BeOfType<AudioDetailViewModel>();
-            result.Data.Should().NotBeNull();
-            result.Data!.Title.Should().Be(command.Title);
-            result.Data.Description.Should().Be(command.Description);
-            result.Data.Tags.Count.Should().Be(command.Tags!.Count);
-
             created.Should().NotBeNull();
             created.Title.Should().Be(command.Title);
             created.Description.Should().Be(command.Description);

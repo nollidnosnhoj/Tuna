@@ -25,11 +25,11 @@ namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
         [Fact]
         public async Task ShouldReturnFavoriteAudioSuccessfully()
         {
+            // Assign
             var (targetId, _) = await _sliceFixture.RunAsAdministratorAsync();
             var audioFaker = new AudioFaker(targetId);
             var audios = audioFaker.Generate(3);
             await _sliceFixture.InsertAsync(audios.ToArray());
-
             var (observerId, observerUsername) = await _sliceFixture.RunAsUserAsync(
                 _faker.Random.String2(15), 
                 _faker.Internet.Password(), 
@@ -46,14 +46,15 @@ namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
                 
                 favoriteAudios.Add(favoriteAudio);
             }
-
             await _sliceFixture.InsertAsync(favoriteAudios.ToArray());
 
+            // Act
             var response = await _sliceFixture.SendAsync(new GetUserFavoriteAudiosQuery
             {
                 Username = observerUsername
             });
 
+            // Assert
             response.Should().NotBeNull();
             response.Count.Should().Be(3);
         }
