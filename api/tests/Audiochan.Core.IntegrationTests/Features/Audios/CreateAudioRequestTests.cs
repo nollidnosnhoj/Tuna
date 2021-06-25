@@ -41,7 +41,6 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             response.Data.Visibility.Should().Be(request.Visibility);
             response.Data.Duration.Should().Be(request.Duration);
             response.Data.FileSize.Should().Be(request.FileSize);
-            response.Data.FileExt.Should().Be(".mp3");
             response.Data.Author.Should().NotBeNull();
             response.Data.Author.Id.Should().Be(adminId);
             response.Data.Author.Username.Should().Be(adminUsername);

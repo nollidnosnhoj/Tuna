@@ -6,8 +6,12 @@ namespace Audiochan.Tests.Common.Fakers.Audios
 {
     public sealed class AudioFaker : Faker<Audio>
     {
-        public AudioFaker(string userId)
+        public AudioFaker(string userId, bool generateFakeAudioId = false)
         {
+            if (generateFakeAudioId)
+            {
+                RuleFor(x => x.Id, f => f.Random.Long(0));
+            }
             RuleFor(x => x.UserId, userId);
             RuleFor(x => x.Title, f => f.Random.String2(3, 30));
             RuleFor(x => x.Description, f => f.Lorem.Sentences(2));

@@ -73,7 +73,7 @@ namespace Audiochan.Core.Entities
         {
             if (this.Tags.Count > 0)
             {
-                foreach (var audioTag in this.Tags)
+                foreach (var audioTag in this.Tags.ToList())
                 {
                     if (tags.All(t => t.Name != audioTag.Name))
                     {
