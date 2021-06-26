@@ -10,7 +10,6 @@ namespace Audiochan.Infrastructure.Persistence
     public class UnitOfWork : IUnitOfWork
     {
         private readonly ApplicationDbContext _dbContext;
-
         public IAudioRepository Audios { get; }
         public ITagRepository Tags { get; }
         public IUserRepository Users { get; }
@@ -30,12 +29,15 @@ namespace Audiochan.Infrastructure.Persistence
             _dbContext.RollbackTransaction();
         }
 
-        public UnitOfWork(ICurrentUserService currentUserService, ApplicationDbContext dbContext)
+        public UnitOfWork(ApplicationDbContext dbContext, 
+            IAudioRepository audioRepository, 
+            ITagRepository tagRepository, 
+            IUserRepository userRepository)
         {
             _dbContext = dbContext;
-            Audios = new AudioRepository(dbContext, currentUserService);
-            Tags = new TagRepository(dbContext, currentUserService);
-            Users = new UserRepository(dbContext, currentUserService);
+            Audios = audioRepository;
+            Tags = tagRepository;
+            Users = userRepository;
         }
 
         public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

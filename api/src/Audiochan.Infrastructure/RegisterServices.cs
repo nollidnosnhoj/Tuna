@@ -1,8 +1,10 @@
 ﻿using Amazon.S3;
 using Audiochan.Core.Common.Interfaces;
+using Audiochan.Core.Repositories;
 using Audiochan.Core.Services;
 using Audiochan.Infrastructure.Identity;
 using Audiochan.Infrastructure.Persistence;
+using Audiochan.Infrastructure.Persistence.Repositories;
 using Audiochan.Infrastructure.Shared;
 using Audiochan.Infrastructure.Storage.AmazonS3;
 using Microsoft.EntityFrameworkCore;
@@ -45,6 +47,9 @@ namespace Audiochan.Infrastructure
                     o.EnableSensitiveDataLogging();
                 }
             });
+            services.AddScoped<IAudioRepository, AudioRepository>();
+            services.AddScoped<ITagRepository, TagRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             return services;
         }
