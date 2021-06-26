@@ -25,8 +25,6 @@ export default async (
         refreshToken: getRefreshToken(req) || "",
       },
     });
-  } catch (err) {
-    console.log("error when revoking haha");
   } finally {
     removeAccessToken(res);
     removeRefreshToken(res);

@@ -10,14 +10,13 @@ import {
   WrapItem,
 } from "@chakra-ui/react";
 import React, { useCallback, useMemo, useState } from "react";
+import slugify from "slugify";
 import * as yup from "yup";
 
 interface TagInputProps {
   name: string;
   value: string[];
   onChange: (value: string[]) => void;
-  validationSchema?: yup.SchemaOf<string>;
-  formatTagCallback?: (rawTag: string) => string;
   placeholder?: string;
   error?: string;
   disabled?: boolean;
@@ -27,8 +26,6 @@ const TagInput: React.FC<TagInputProps> = ({
   name,
   value,
   onChange,
-  validationSchema,
-  formatTagCallback,
   error,
   disabled = false,
 }) => {
@@ -36,6 +33,16 @@ const TagInput: React.FC<TagInputProps> = ({
   const [inputError, setInputError] = useState(error);
   const tags = useMemo(() => {
     return value.length === 0 ? [] : value.filter((val) => val.length > 0);
+  }, [value]);
+  const validationSchema = useMemo(() => {
+    return yup
+      .string()
+      .ensure()
+      .required("Input is invalid.")
+      .min(3, "Input must have at least 3 characters long.")
+      .max(25, "Input must have no more than 25 characters long.")
+      .notOneOf([...value], "No duplicate tags.")
+      .defined();
   }, [value]);
 
   const applyValidationSchema = useCallback(
@@ -68,7 +75,7 @@ const TagInput: React.FC<TagInputProps> = ({
   };
 
   const onAddTag = async () => {
-    const taggifyTag = formatTagCallback?.(currentInput) ?? currentInput;
+    const taggifyTag = slugify(currentInput, { lower: true });
     if (validationSchema) {
       const [isValid, errorMessage] = await applyValidationSchema(taggifyTag);
       if (!isValid) {

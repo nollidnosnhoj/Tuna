@@ -9,7 +9,6 @@ import { getAccessToken } from "~/lib/http/utils";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const accessToken = getAccessToken(context?.req);
-  console.log(accessToken);
   if (accessToken) {
     return {
       redirect: {

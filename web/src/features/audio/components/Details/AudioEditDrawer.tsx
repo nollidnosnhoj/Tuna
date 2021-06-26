@@ -5,19 +5,14 @@ import {
   DrawerCloseButton,
   DrawerHeader,
   DrawerBody,
-  DrawerFooter,
   Button,
-  Spacer,
-  HStack,
 } from "@chakra-ui/react";
-import { Formik, FormikHelpers } from "formik";
+import { FormikHelpers } from "formik";
 import React, { useState } from "react";
-import * as yup from "yup";
 import { errorToast, toast } from "~/utils/toast";
 import { useEditAudio, useRemoveAudio } from "../../hooks";
 import { AudioDetailData, AudioRequest } from "../../types";
 import AudioForm from "../AudioForm";
-import { validationMessages } from "~/utils";
 import { useRouter } from "next/router";
 
 interface AudioEditDrawerProps {
@@ -26,28 +21,6 @@ interface AudioEditDrawerProps {
   onClose: () => void;
   buttonRef?: React.RefObject<HTMLButtonElement>;
 }
-
-const validationSchema = yup
-  .object()
-  .shape({
-    title: yup
-      .string()
-      .required(validationMessages.required("Title"))
-      .max(30, validationMessages.max("Title", 30))
-      .defined(),
-    description: yup
-      .string()
-      .max(500, validationMessages.max("Description", 500))
-      .ensure()
-      .defined(),
-    tags: yup
-      .array(yup.string())
-      .max(10, validationMessages.max("Tags", 10))
-      .ensure()
-      .defined(),
-    isPublic: yup.boolean().defined(),
-  })
-  .defined();
 
 const AudioEditDrawer: React.FC<AudioEditDrawerProps> = (props) => {
   const { audio, isOpen, onClose, buttonRef } = props;
@@ -111,45 +84,27 @@ const AudioEditDrawer: React.FC<AudioEditDrawerProps> = (props) => {
         <DrawerCloseButton />
         <DrawerHeader>Edit</DrawerHeader>
         <DrawerBody>
-          <Formik
+          <AudioForm
             initialValues={{
               title: audio.title,
               description: audio.description,
               tags: audio.tags,
               visibility: audio.visibility,
             }}
-            validationSchema={validationSchema}
             onSubmit={onEditSubmit}
-          >
-            {({ handleSubmit }) => (
-              <form id="edit-form" onSubmit={handleSubmit}>
-                <AudioForm disableFields={isProcessing} />
-              </form>
-            )}
-          </Formik>
+            id="create-audio"
+            leftFooter={
+              <Button
+                colorScheme="red"
+                onClick={onDeleteSubmit}
+                disabled={isProcessing}
+              >
+                Remove
+              </Button>
+            }
+            submitText="Modify"
+          />
         </DrawerBody>
-
-        <DrawerFooter>
-          <HStack>
-            <Button
-              colorScheme="red"
-              onClick={onDeleteSubmit}
-              disabled={isProcessing}
-            >
-              Remove
-            </Button>
-            <Spacer />
-            <Button
-              colorScheme="blue"
-              type="submit"
-              isLoading={isProcessing}
-              loadingText="Processing..."
-              form="edit-form"
-            >
-              Modify
-            </Button>
-          </HStack>
-        </DrawerFooter>
       </DrawerContent>
     </Drawer>
   );

@@ -27,7 +27,6 @@ export default function ProgressBar() {
 
   const formattedCurrentTime = useMemo(() => {
     if (currentTime === undefined) return EMPTY_TIME_FORMAT;
-    console.log(currentTime);
     return formatDuration(currentTime);
   }, [currentTime]);
 
@@ -38,7 +37,6 @@ export default function ProgressBar() {
 
   const handleSliderChange = useCallback(
     (value: number) => {
-      console.log("slider change");
       if (isDraggingProgress) {
         setSliderValue(value);
       }
@@ -47,13 +45,11 @@ export default function ProgressBar() {
   );
 
   const handleSliderChangeStart = () => {
-    console.log("slider change start");
     setIsDraggingProgress(true);
   };
 
   const handleSliderChangeEnd = useCallback(
     (value: number) => {
-      console.log("slider change end");
       if (isDraggingProgress) {
         if (audioRef) audioRef.currentTime = value;
         setCurrentTime(value);
