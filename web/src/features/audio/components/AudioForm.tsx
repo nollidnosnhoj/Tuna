@@ -11,8 +11,8 @@ import {
 import { useFormik } from "formik";
 import React from "react";
 import * as yup from "yup";
-import TagInput from "~/components/form/inputs/TagInput";
-import TextInput from "~/components/form/inputs/TextInput";
+import TagInput from "~/components/form-inputs/TagInput";
+import TextInput from "~/components/form-inputs/TextInput";
 import { AudioRequest, Visibility } from "../types";
 import { validationMessages } from "~/utils";
 
