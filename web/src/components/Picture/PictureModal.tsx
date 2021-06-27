@@ -6,6 +6,7 @@ import {
   ModalCloseButton,
   ModalBody,
   Image,
+  Flex,
 } from "@chakra-ui/react";
 import React from "react";
 import PictureContainer from "./PictureContainer";
@@ -27,9 +28,11 @@ export default function PictureModal(props: PictureModalProps) {
         <ModalHeader>{title}</ModalHeader>
         <ModalCloseButton />
         <ModalBody marginY={4}>
-          <PictureContainer width="500px" height="500px">
-            <Image src={src} maxW="500px" />
-          </PictureContainer>
+          <Flex justify="center">
+            <PictureContainer width="500px" height="500px">
+              <Image src={src} maxW="500px" />
+            </PictureContainer>
+          </Flex>
         </ModalBody>
       </ModalContent>
     </Modal>
