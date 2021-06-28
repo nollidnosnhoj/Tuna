@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Constants;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Tests.Common.Fakers.Audios;
@@ -72,6 +73,24 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             created.Title.Should().Be(command.Title);
             created.Description.Should().Be(command.Description);
             created.Tags.Count.Should().Be(command.Tags!.Count);
+        }
+
+        [Fact]
+        public async Task ShouldInvalidateCacheSuccessfully()
+        {
+            // Assign
+            var (userId, _) = await _fixture.RunAsDefaultUserAsync();
+            var audio = new AudioFaker(userId).Generate();
+            await _fixture.InsertAsync(audio);
+            await _fixture.SendAsync(new GetAudioQuery(audio.Id));
+            var command = new UpdateAudioRequestFaker(audio.Id).Generate();
+            await _fixture.SendAsync(command);
+            
+            // Act
+            var (cacheExists, _) = await _fixture.GetCache<AudioDetailViewModel>(CacheKeys.Audio.GetAudio(audio.Id));
+            
+            // Assert
+            cacheExists.Should().BeFalse();
         }
     }
 }

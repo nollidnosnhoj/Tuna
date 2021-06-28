@@ -34,8 +34,7 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
                 .AnyAsync(u => u.UserId == userId, cancellationToken);
         }
 
-        public async Task<AudioDetailViewModel?> GetAudio(long id, string? privateKey = null, 
-            CancellationToken cancellationToken = default)
+        public async Task<AudioDetailViewModel?> GetAudio(long id, CancellationToken cancellationToken = default)
         {
             var currentUserId = CurrentUserService.GetUserId();
             return await DbSet
@@ -43,9 +42,6 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
                 .Include(x => x.Tags)
                 .Include(x => x.User)
                 .Where(x => x.Id == id)
-                .Where(x => x.Visibility != Visibility.Private
-                            || x.UserId == currentUserId
-                            || x.PrivateKey == privateKey)
                 .ProjectToDetail()
                 .SingleOrDefaultAsync(cancellationToken);
         }

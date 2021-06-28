@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Constants;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Mappings;
 using Audiochan.Core.Common.Models;
@@ -16,12 +17,14 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
         public long AudioId { get; set; }
         public string Data { get; set; } = string.Empty;
 
-        public static UpdateAudioPictureCommand FromRequest(long audioId, UpdateAudioPictureRequest request) =>
-            new()
+        public static UpdateAudioPictureCommand FromRequest(long audioId, UpdateAudioPictureRequest request)
+        {
+            return new()
             {
                 AudioId = audioId,
                 Data = request.Data
             };
+        }
     }
 
     public class UpdateAudioCommandHandler : IRequestHandler<UpdateAudioPictureCommand, Result<AudioDetailViewModel>>
@@ -32,12 +35,15 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
         private readonly ICurrentUserService _currentUserService;
         private readonly IImageProcessingService _imageProcessingService;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ICacheService _cacheService;
 
         public UpdateAudioCommandHandler(IOptions<MediaStorageSettings> options,
             IStorageService storageService,
             ICurrentUserService currentUserService,
             IImageProcessingService imageProcessingService,
-            IDateTimeProvider dateTimeProvider, IUnitOfWork unitOfWork)
+            IDateTimeProvider dateTimeProvider, 
+            IUnitOfWork unitOfWork, 
+            ICacheService cacheService)
         {
             _storageSettings = options.Value;
             _storageService = storageService;
@@ -45,6 +51,7 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
             _imageProcessingService = imageProcessingService;
             _dateTimeProvider = dateTimeProvider;
             _unitOfWork = unitOfWork;
+            _cacheService = cacheService;
         }
 
         public async Task<Result<AudioDetailViewModel>> Handle(UpdateAudioPictureCommand command,
@@ -72,7 +79,7 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
             audio.UpdatePicture(blobName);
             _unitOfWork.Audios.Update(audio);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
-
+            await _cacheService.RemoveAsync(new GetAudioCacheOptions(command.AudioId), cancellationToken);
             return Result<AudioDetailViewModel>.Success(audio.MapToDetail());
         }
     }

@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Serilog;
 
 namespace Audiochan.API
@@ -44,7 +43,7 @@ namespace Audiochan.API
             services
                 .AddMemoryCache()
                 .AddCore()
-                .AddInfrastructure(Configuration, Environment.IsDevelopment())
+                .AddInfrastructure(Configuration, Environment)
                 .Configure<JsonSerializerOptions>(options =>
                 {
                     options.IgnoreNullValues = jsonSerializerOptions.IgnoreNullValues;

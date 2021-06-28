@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Constants;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Mappings;
 using Audiochan.Core.Common.Models;
@@ -31,18 +33,20 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
     {
         private readonly IStorageService _storageService;
         private readonly ICurrentUserService _currentUserService;
+        private readonly ICacheService _cacheService;
         private readonly MediaStorageSettings _storageSettings;
         private readonly IUnitOfWork _unitOfWork;
 
         public CreateAudioCommandHandler(IOptions<MediaStorageSettings> mediaStorageOptions,
             IStorageService storageService,
             ICurrentUserService currentUserService,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork, ICacheService cacheService)
         {
             _storageSettings = mediaStorageOptions.Value;
             _storageService = storageService;
             _currentUserService = currentUserService;
             _unitOfWork = unitOfWork;
+            _cacheService = cacheService;
         }
 
         public async Task<Result<AudioDetailViewModel>> Handle(CreateAudioCommand command,
@@ -84,7 +88,14 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
             await _unitOfWork.Audios.AddAsync(audio, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             await MoveTempAudioToPublicAsync(audio, cancellationToken);
-            return Result<AudioDetailViewModel>.Success(audio.MapToDetail());
+            var result = audio.MapToDetail();
+            await CreateCache(result, cancellationToken);
+            return Result<AudioDetailViewModel>.Success(result);
+        }
+
+        private async Task CreateCache(AudioDetailViewModel value, CancellationToken cancellationToken = default)
+        {
+            await _cacheService.SetAsync(value, new GetAudioCacheOptions(value.Id), cancellationToken);
         }
 
         private async Task MoveTempAudioToPublicAsync(Audio audio, CancellationToken cancellationToken)

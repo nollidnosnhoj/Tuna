@@ -25,7 +25,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Auth
             var faker = new Faker();
             var username = faker.Random.String2(15);
             var password = faker.Internet.Password();
-            var (userId, _) = await _fixture.RunAsUserAsync(username, password, Array.Empty<string>());
+            var (userId, _) = await _fixture.RunAsUserAsync(username, password);
             
             // Act
             var loginResult = await _fixture.SendAsync(new LoginCommand

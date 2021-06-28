@@ -14,8 +14,7 @@ namespace Audiochan.Core.Repositories
     {
         Task<bool> CheckIfFavoriteAudioExists(long audioId, string userId, CancellationToken cancellationToken = default);
         
-        Task<AudioDetailViewModel?> GetAudio(long id, string? privateKey = null,
-            CancellationToken cancellationToken = default);
+        Task<AudioDetailViewModel?> GetAudio(long id, CancellationToken cancellationToken = default);
 
         Task<Audio?> LoadForUpdate(long id, CancellationToken cancellationToken = default);
 
