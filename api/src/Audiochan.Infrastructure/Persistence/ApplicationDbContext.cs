@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Extensions;
-using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Entities.Abstractions;
 using Audiochan.Core.Services;
@@ -14,7 +13,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Audiochan.Infrastructure.Persistence
 {
-    public class ApplicationDbContext : IdentityDbContext<User, Role, string>, IUnitOfWork
+    public class ApplicationDbContext : IdentityDbContext<User, Role, string>
     {
         private readonly IDateTimeProvider _dateTimeProvider;
         private IDbContextTransaction? _currentTransaction;
@@ -29,6 +28,40 @@ namespace Audiochan.Infrastructure.Persistence
         public DbSet<FavoriteAudio> FavoriteAudios { get; set; } = null!;
         public DbSet<FollowedUser> FollowedUsers { get; set; } = null!;
         public DbSet<Tag> Tags { get; set; } = null!;
+        
+
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new())
+        {
+            // Add default created/updated date
+            foreach (var entry in ChangeTracker.Entries<IAudited>())
+            {
+                if (entry is null) continue;
+                var now = _dateTimeProvider.Now;
+                if (entry.State == EntityState.Added && entry.Entity.Created == default)
+                {
+                    entry.Property(nameof(IAudited.Created)).CurrentValue = now;
+                }
+
+                if (entry.State == EntityState.Modified && entry.Entity.LastModified == default)
+                {
+                    entry.Property(nameof(IAudited.LastModified)).CurrentValue = now;
+                }
+            }
+
+            foreach (var entry in ChangeTracker.Entries<ISoftDeletable>())
+            {
+                if (entry is null) continue;
+                if (entry.State == EntityState.Deleted)
+                {
+                    entry.State = EntityState.Modified;
+                    entry.Property(nameof(ISoftDeletable.Deleted)).CurrentValue = _dateTimeProvider.Now;
+                }
+            }
+
+            var result = await base.SaveChangesAsync(cancellationToken);
+
+            return result;
+        }
         
         public void BeginTransaction()
         {
@@ -71,27 +104,6 @@ namespace Audiochan.Infrastructure.Persistence
                     _currentTransaction = null;
                 }
             }
-        }
-
-        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new())
-        {
-            // Add default created/updated date
-            foreach (var entry in ChangeTracker.Entries<IAudited>())
-            {
-                if (entry.State == EntityState.Added && entry.Entity.Created == default)
-                {
-                    entry.Property(nameof(IAudited.Created)).CurrentValue = _dateTimeProvider.Now;
-                }
-
-                if (entry.State == EntityState.Modified && entry.Entity.LastModified == default)
-                {
-                    entry.Property(nameof(IAudited.LastModified)).CurrentValue = _dateTimeProvider.Now;
-                }
-            }
-
-            var result = await base.SaveChangesAsync(cancellationToken);
-
-            return result;
         }
 
         protected override void OnModelCreating(ModelBuilder builder)

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Interfaces;
@@ -7,12 +6,11 @@ using Audiochan.Core.Common.Models;
 using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Services;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Audios.RemoveAudio
 {
-    public record RemoveAudioCommand(Guid Id) : IRequest<Result<bool>>;
+    public record RemoveAudioCommand(long Id) : IRequest<Result<bool>>;
 
     public class RemoveAudioCommandHandler : IRequestHandler<RemoveAudioCommand, Result<bool>>
     {
@@ -37,7 +35,7 @@ namespace Audiochan.Core.Features.Audios.RemoveAudio
             var currentUserId = _currentUserService.GetUserId();
         
             var audio = await _unitOfWork.Audios
-                .SingleOrDefaultAsync(a => a.Id == command.Id, cancellationToken);
+                .FindAsync(a => a.Id == command.Id, cancellationToken: cancellationToken);
             
             if (audio == null)
                 return Result<bool>.Fail(ResultError.NotFound);

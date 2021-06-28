@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Text.Json.Serialization;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Mappings;
@@ -10,17 +7,16 @@ using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Services;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Audios.UpdatePicture
 {
     public class UpdateAudioPictureCommand : IRequest<Result<AudioDetailViewModel>>
     {
-        public Guid AudioId { get; set; }
+        public long AudioId { get; set; }
         public string Data { get; set; } = string.Empty;
 
-        public static UpdateAudioPictureCommand FromRequest(Guid audioId, UpdateAudioPictureRequest request) =>
+        public static UpdateAudioPictureCommand FromRequest(long audioId, UpdateAudioPictureRequest request) =>
             new()
             {
                 AudioId = audioId,
@@ -56,12 +52,9 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
         {
             var container = string.Join('/', _storageSettings.Image.Container, "audios");
             var currentUserId = _currentUserService.GetUserId();
-            
+
             var audio = await _unitOfWork.Audios
-                .Include(x => x.Tags)
-                .Include(x => x.User)
-                .Where(x => x.Id == command.AudioId)
-                .SingleOrDefaultAsync(cancellationToken);
+                .LoadForUpdate(command.AudioId, cancellationToken);
         
             if (audio == null) 
                 return Result<AudioDetailViewModel>.Fail(ResultError.NotFound);

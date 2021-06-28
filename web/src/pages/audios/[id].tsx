@@ -23,10 +23,11 @@ interface AudioPageProps {
 export const getServerSideProps: GetServerSideProps<AudioPageProps> = async (
   context
 ) => {
-  const id = context.params?.id as string;
+  const id = parseInt(context.params?.id as string, 10);
+  const privateKey = context.query?.key as string;
 
   try {
-    const data = await fetchAudioHandler(id, context);
+    const data = await fetchAudioHandler(id, privateKey, context);
     return {
       props: {
         audio: data,
@@ -41,8 +42,9 @@ export const getServerSideProps: GetServerSideProps<AudioPageProps> = async (
 
 export default function ViewAudioNextPage(props: AudioPageProps) {
   const { query } = useRouter();
-  const id = query.id as string;
-  const { data: audio } = useGetAudio(id, {
+  const id = parseInt(query?.id as string, 10);
+  const privateKey = query.key as string;
+  const { data: audio } = useGetAudio(id, privateKey, {
     staleTime: 1000,
     initialData: props.audio,
   });

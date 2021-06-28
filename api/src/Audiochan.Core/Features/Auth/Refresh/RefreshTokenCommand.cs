@@ -6,7 +6,6 @@ using Audiochan.Core.Common.Models;
 using Audiochan.Core.Features.Auth.Login;
 using Audiochan.Core.Services;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Auth.Refresh
 {
@@ -30,9 +29,7 @@ namespace Audiochan.Core.Features.Auth.Refresh
             CancellationToken cancellationToken)
         {
             var user = await _unitOfWork.Users
-                .Include(u => u.RefreshTokens)
-                .SingleOrDefaultAsync(u => u.RefreshTokens
-                    .Any(t => t.Token == command.RefreshToken && t.UserId == u.Id), cancellationToken);
+                .LoadForRefreshToken(command.RefreshToken, cancellationToken);
 
             if (user == null)
                 return Result<LoginSuccessViewModel>.Fail(ResultError.BadRequest,

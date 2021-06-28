@@ -2,11 +2,11 @@ import React from "react";
 import { Button } from "@chakra-ui/react";
 import * as yup from "yup";
 import { useFormik } from "formik";
-import TextInput from "~/components/form/inputs/TextInput";
+import TextInput from "~/components/form-inputs/TextInput";
 import { validationMessages, errorToast } from "~/utils";
-import { useAuth } from "~/features/auth/hooks";
 import { passwordRule } from "../schemas";
 import request from "~/lib/http";
+import { useRouter } from "next/router";
 
 type UpdatePasswordValues = {
   currentPassword: string;
@@ -15,7 +15,7 @@ type UpdatePasswordValues = {
 };
 
 export default function UpdatePassword() {
-  const { logout } = useAuth();
+  const router = useRouter();
   const formik = useFormik<UpdatePasswordValues>({
     initialValues: {
       currentPassword: "",
@@ -44,7 +44,7 @@ export default function UpdatePassword() {
           },
         });
         resetForm();
-        await logout();
+        router.push("/logout");
       } catch (err) {
         errorToast(err);
       } finally {

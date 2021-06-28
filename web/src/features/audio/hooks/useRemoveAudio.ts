@@ -6,10 +6,10 @@ import { removeAudioHandler } from "../api";
 import { GET_AUDIO_QUERY_KEY } from "./useGetAudio";
 import { GET_AUDIO_LIST_QUERY_KEY } from "./useGetAudioList";
 
-export function useRemoveAudio(id: string): UseMutationResult<void> {
+export function useRemoveAudio(id: number): UseMutationResult<void> {
   const { clearQueue } = useAudioQueue();
   const queryClient = useQueryClient();
-  const [user] = useUser();
+  const { user } = useUser();
   const removeAudio = async (): Promise<void> => {
     await removeAudioHandler(id);
   };

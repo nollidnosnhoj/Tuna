@@ -21,7 +21,7 @@ export function useFollow(
   username: string,
   initialData?: boolean
 ): UseFollowResult {
-  const [user] = useUser();
+  const { user } = useUser();
   const queryClient = useQueryClient();
 
   const { data, isLoading } = useQuery(

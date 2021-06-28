@@ -14,7 +14,7 @@ export default function ProfileFollowButton({
   username,
   isFollowing: isInitiallyFollowing,
 }: ProfileFollowButtonProps) {
-  const [user] = useUser();
+  const { user } = useUser();
 
   const { isFollowing, follow } = useFollow(username, isInitiallyFollowing);
 

@@ -12,16 +12,16 @@ type UseFavoriteAudioResult = {
   isLoading: boolean;
 };
 
-export const IS_FAVORITE_AUDIO_QUERY_KEY = (audioId: string): QueryKey => [
+export const IS_FAVORITE_AUDIO_QUERY_KEY = (audioId: number): QueryKey => [
   "isFavoriteAudio",
   audioId,
 ];
 
 export function useFavoriteAudio(
-  audioId: string,
+  audioId: number,
   initialData?: boolean
 ): UseFavoriteAudioResult {
-  const [user] = useUser();
+  const { user } = useUser();
   const queryClient = useQueryClient();
 
   const { data, isLoading: isQueryLoading } = useQuery(

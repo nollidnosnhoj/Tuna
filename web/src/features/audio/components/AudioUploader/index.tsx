@@ -1,8 +1,11 @@
-import { Box, Flex, Spinner } from "@chakra-ui/react";
+import { Box, chakra, Flex, Spinner } from "@chakra-ui/react";
 import axios from "axios";
 import { useRouter } from "next/router";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
+import { useEffect } from "react";
+import { useCallback } from "react";
 import { useUser } from "~/features/user/hooks";
+import { useNavigationLock } from "~/lib/hooks";
 import request from "~/lib/http";
 import {
   getDurationFromAudioFile,
@@ -12,29 +15,25 @@ import {
 } from "~/utils";
 import { useCreateAudio } from "../../hooks";
 import { AudioRequest } from "../../types";
+import AudioForm from "../AudioForm";
 import AudioDropzone from "./AudioDropzone";
-import CreateAudioForm from "./CreateAudioForm";
 import UploadProgress from "./UploadProgress";
 
-interface AudioUploaderProps {
-  onUploading: () => void;
-  onComplete: () => void;
-}
-
-export default function AudioUploader({
-  onUploading,
-  onComplete,
-}: AudioUploaderProps) {
+export default function AudioUploader() {
   const router = useRouter();
-  const [user] = useUser();
-  const [audioId, setAudioId] = useState("");
+  const { user } = useUser();
+  const [audioId, setAudioId] = useState(0);
   const [uploadId, setUploadId] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [duration, setDuration] = useState(0);
-  const [submitValues, setSubmitValues] =
-    useState<AudioRequest | undefined>(undefined);
   const [uploadProgress, setUploadProgress] = useState(0);
-  const { mutateAsync: createAudio } = useCreateAudio();
+  const { mutateAsync: createAudio, isLoading: isCreatingAudio } =
+    useCreateAudio();
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [unsavedChanges, setUnsavedChanges] = useNavigationLock(
+    "Are you sure you want to leave page? You will lose progress."
+  );
 
   const initialFormValues = useMemo(
     () => ({
@@ -48,7 +47,7 @@ export default function AudioUploader({
       const duration = await getDurationFromAudioFile(droppedFile);
       setDuration(duration);
       setFile(droppedFile);
-      onUploading();
+      setUnsavedChanges(true);
       const { data: response } = await request<{
         uploadId: string;
         uploadUrl: string;
@@ -77,35 +76,46 @@ export default function AudioUploader({
     }
   };
 
+  const handleFormSubmit = useCallback(
+    async (values: AudioRequest) => {
+      if (!!file && !!uploadId) {
+        try {
+          const { id } = await createAudio({
+            ...values,
+            fileName: file.name,
+            fileSize: file.size,
+            duration: duration,
+            uploadId: uploadId,
+          });
+          setAudioId(id);
+          setUnsavedChanges(false);
+        } catch (err) {
+          errorToast(err);
+        }
+      }
+    },
+    [file, uploadId, duration]
+  );
+
   useEffect(() => {
-    if (audioId) {
+    if (audioId > 0 && !unsavedChanges) {
       router.push(`/audios/${audioId}`).then(() => {
         toast("success", { title: "Audio was successfully created." });
       });
     }
-  }, [audioId]);
+  }, [audioId, unsavedChanges]);
 
-  useEffect(() => {
-    if (!!file && !!submitValues && !!uploadId) {
-      createAudio({
-        ...submitValues,
-        fileName: file.name,
-        fileSize: file.size,
-        contentType: file.type,
-        duration: duration,
-        uploadId: uploadId,
-      })
-        .then(({ id }) => {
-          onComplete();
-          setAudioId(id);
-        })
-        .catch((err) => {
-          errorToast(err);
-        });
-    }
-  }, [file, duration, submitValues, uploadId]);
+  if (audioId > 0) {
+    return (
+      <Flex align="center" justify="center" height="25vh">
+        <chakra.span>
+          Audio created. You will be redirected to to newly created page.
+        </chakra.span>
+      </Flex>
+    );
+  }
 
-  if (uploadId && submitValues) {
+  if (isCreatingAudio) {
     return (
       <Flex align="center" justify="center" height="25vh">
         <Spinner thickness="4px" speed="0.65s" color="primary.500" size="xl" />
@@ -124,11 +134,21 @@ export default function AudioUploader({
         isUploading={(!!file || uploadProgress > 0) && !uploadId}
         progress={uploadProgress}
       />
-      <CreateAudioForm
-        initialValues={initialFormValues}
-        isHidden={!!submitValues || !file}
-        onSubmit={(values) => setSubmitValues(values)}
-      />
+      {!!file && (
+        <AudioForm
+          initialValues={initialFormValues}
+          onSubmit={handleFormSubmit}
+          id="create-audio"
+          leftFooter={
+            <chakra.span>
+              By publishing this audio, you have agreed to Audiochan's terms of
+              service and license agreement.
+            </chakra.span>
+          }
+          submitText="Upload"
+          isDisabledButton={!uploadId}
+        />
+      )}
     </Box>
   );
 }

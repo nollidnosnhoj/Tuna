@@ -9,7 +9,7 @@ import {
 } from "./types";
 
 export async function fetchAudiosHandler(
-  cursor?: string,
+  cursor?: number,
   params: Record<string, string | boolean | number> = {}
 ): Promise<CursorPagedList<AudioData>> {
   const { data } = await request<CursorPagedList<AudioData>>({
@@ -21,13 +21,17 @@ export async function fetchAudiosHandler(
 }
 
 export async function fetchAudioHandler(
-  id: string,
+  id: number,
+  privateKey?: string,
   ctx?: GetServerSidePropsContext
 ): Promise<AudioDetailData> {
   const { res, req } = ctx ?? {};
   const { data } = await request<AudioDetailData>({
     method: "get",
     url: `audios/${id}`,
+    params: {
+      ...(privateKey && { privateKey }),
+    },
     req,
     res,
   });
@@ -79,7 +83,7 @@ export async function createAudioHandler(
 }
 
 export async function editAudioHandler(
-  audioId: string,
+  audioId: number,
   input: AudioRequest
 ): Promise<AudioDetailData> {
   const { data } = await request<AudioDetailData>({
@@ -90,7 +94,7 @@ export async function editAudioHandler(
   return data;
 }
 
-export async function removeAudioHandler(audioId: string): Promise<void> {
+export async function removeAudioHandler(audioId: number): Promise<void> {
   await request({
     method: "delete",
     url: `audios/${audioId}`,
@@ -98,7 +102,7 @@ export async function removeAudioHandler(audioId: string): Promise<void> {
 }
 
 export async function uploadAudioPictureHandler(
-  audioId: string,
+  audioId: number,
   imageData: string
 ): Promise<AudioDetailData> {
   const { data } = await request<AudioDetailData>({
@@ -111,7 +115,7 @@ export async function uploadAudioPictureHandler(
   return data;
 }
 
-export async function isFavoriteHandler(audioId: string): Promise<boolean> {
+export async function isFavoriteHandler(audioId: number): Promise<boolean> {
   try {
     const res = await request({
       method: "head",
@@ -127,7 +131,7 @@ export async function isFavoriteHandler(audioId: string): Promise<boolean> {
   }
 }
 
-export async function favoriteAudioHandler(audioId: string): Promise<boolean> {
+export async function favoriteAudioHandler(audioId: number): Promise<boolean> {
   await request({
     method: "PUT",
     url: `me/favorites/audio/${audioId}`,
@@ -136,11 +140,19 @@ export async function favoriteAudioHandler(audioId: string): Promise<boolean> {
 }
 
 export async function unFavoriteAudioHandler(
-  audioId: string
+  audioId: number
 ): Promise<boolean> {
   await request({
     method: "DELETE",
     url: `me/favorites/audio/${audioId}`,
   });
   return true;
+}
+
+export async function resetPrivateKey(audioId: number): Promise<string> {
+  const { data } = await request<{ privateKey: string }>({
+    method: "PATCH",
+    url: `audios/${audioId}/reset-private-key`,
+  });
+  return data.privateKey;
 }

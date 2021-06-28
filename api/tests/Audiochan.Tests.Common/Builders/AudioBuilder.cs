@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Entities;
+using Audiochan.Core.Entities.Enums;
 
 namespace Audiochan.Tests.Common.Builders
 {
@@ -41,19 +42,6 @@ namespace Audiochan.Tests.Common.Builders
         public AudioBuilder AddFileName(string fileName)
         {
             _audio.FileName = fileName;
-            _audio.FileExt = Path.GetExtension(fileName);
-            return this;
-        }
-
-        public AudioBuilder AddFileExtension(string fileExt)
-        {
-            _audio.FileExt = fileExt;
-            return this;
-        }
-
-        public AudioBuilder AddContentType(string contentType)
-        {
-            _audio.ContentType = contentType;
             return this;
         }
 
@@ -82,17 +70,15 @@ namespace Audiochan.Tests.Common.Builders
             return this;
         }
 
-        public AudioBuilder SetPublic(bool isPublic)
+        public AudioBuilder SetPublic(Visibility visibility)
         {
-            _audio.UpdatePublicity(isPublic);
+            _audio.UpdateVisibility(visibility);
             return this;
         }
 
         public Audio Build(string objectId)
         {
-            _audio.FileExt = Path.GetExtension(_audio.FileName);
-            _audio.ContentType = _audio.BlobName.GetContentType();
-            _audio.BlobName = objectId + _audio.FileExt;
+            _audio.BlobName = objectId + Path.GetExtension(_audio.FileName);
             
             return _audio;
         }

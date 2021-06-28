@@ -44,7 +44,7 @@ namespace Audiochan.Core.Features.Audios.UploadAudio
                 blobName,
                 5,
                 metadata);
-            return new UploadAudioResponse {UploadUrl = presignedUrl, UploadId = blobName};
+            return new UploadAudioResponse {UploadUrl = presignedUrl, UploadId = objectId};
         }
     }
 }

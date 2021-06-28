@@ -6,8 +6,8 @@ import {
   InputRightElement,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import { stringifyUrl } from "query-string";
 import { SearchIcon } from "@chakra-ui/icons";
+import { stringifyUrl } from "~/utils";
 
 export default function SearchBar() {
   const { query, push: routerPush } = useRouter();
@@ -26,12 +26,7 @@ export default function SearchBar() {
 
   const handleSearch = useCallback(() => {
     if (!term) return;
-    routerPush(
-      stringifyUrl({
-        url: "/search",
-        query: { q: term },
-      })
-    );
+    routerPush(stringifyUrl("/search", { q: term }));
   }, [term, query]);
 
   return (

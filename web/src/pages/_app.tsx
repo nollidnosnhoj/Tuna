@@ -7,7 +7,6 @@ import { ReactQueryDevtools } from "react-query/devtools";
 import PageLoader from "~/components/PageLoader";
 import { UserProvider } from "~/features/user/components/providers";
 import { CurrentUser } from "~/features/user/types";
-import { AuthProvider } from "~/features/auth/components/providers";
 import theme from "~/lib/theme";
 import queryClient from "~/lib/queryClient";
 import LoginModal from "~/features/auth/components/AuthModal";
@@ -34,13 +33,11 @@ function App({ Component, user, pageProps }: AppProps) {
       <QueryClientProvider client={queryClientRef.current}>
         <ChakraProvider resetCSS theme={theme}>
           <UserProvider initialUser={user || null}>
-            <AuthProvider>
-              <ReactQueryDevtools initialIsOpen={false} />
-              <PageLoader color={theme.colors.primary[500]} />
-              <Component {...pageProps} />
-              <AudioPlayer />
-              <LoginModal />
-            </AuthProvider>
+            <ReactQueryDevtools initialIsOpen={false} />
+            <PageLoader color={theme.colors.primary[500]} />
+            <Component {...pageProps} />
+            <AudioPlayer />
+            <LoginModal />
           </UserProvider>
         </ChakraProvider>
       </QueryClientProvider>

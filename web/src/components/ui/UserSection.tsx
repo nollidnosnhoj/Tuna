@@ -14,12 +14,10 @@ import React from "react";
 import { FaUserAlt } from "react-icons/fa";
 import NextLink from "next/link";
 import { useUser } from "~/features/user/hooks/useUser";
-import { useAuth } from "~/features/auth/hooks/useAuth";
 import { useLoginModal } from "~/lib/stores";
 
 const UserSection: React.FC = () => {
-  const [user] = useUser();
-  const { isLoggedIn } = useAuth();
+  const { user, isLoggedIn } = useUser();
   const openAuthModal = useLoginModal((state) => state.onOpen);
 
   if (isLoggedIn) {

@@ -83,15 +83,5 @@ namespace Audiochan.Core.UnitTests.Validations.Audios
             var result = _validator.TestValidate(request);
             result.ShouldHaveValidationErrorFor(x => x.FileName);
         }
-
-        [Fact]
-        public void ShouldBeInvalid_WhenContentTypeIsInvalid()
-        {
-            var request = new CreateAudioRequestFaker()
-                .RuleFor(x => x.ContentType, "image/jpeg")
-                .Generate();
-            var result = _validator.TestValidate(request);
-            result.ShouldHaveValidationErrorFor(x => x.ContentType);
-        }
     }
 }

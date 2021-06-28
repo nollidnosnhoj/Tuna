@@ -8,7 +8,11 @@ namespace Audiochan.Infrastructure.Persistence.Configurations
     {
         public void Configure(EntityTypeBuilder<Tag> builder)
         {
-            builder.Property(x => x.Name).IsRequired();
+            builder.Property<long>("Id");
+            builder.HasKey("Id");
+            builder.Property(x => x.Name)
+                .IsRequired()
+                .HasMaxLength(30);
             builder.HasIndex(x => x.Name).IsUnique();
         }
     }

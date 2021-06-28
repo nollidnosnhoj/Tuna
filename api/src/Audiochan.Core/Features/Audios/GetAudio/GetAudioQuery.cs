@@ -1,15 +1,11 @@
-﻿using System;
-using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Interfaces;
-using Audiochan.Core.Common.Mappings;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Audios.GetAudio
 {
-    public record GetAudioQuery(Guid Id) : IRequest<AudioDetailViewModel?>
+    public record GetAudioQuery(long Id, string? PrivateKey = null) : IRequest<AudioDetailViewModel?>
     {
     }
 
@@ -25,12 +21,7 @@ namespace Audiochan.Core.Features.Audios.GetAudio
         public async Task<AudioDetailViewModel?> Handle(GetAudioQuery query, CancellationToken cancellationToken)
         {
             return await _unitOfWork.Audios
-                .AsNoTracking()
-                .Include(x => x.Tags)
-                .Include(x => x.User)
-                .Where(x => x.Id == query.Id)
-                .ProjectToDetail()
-                .SingleOrDefaultAsync(cancellationToken);
+                .GetAudio(query.Id, query.PrivateKey, cancellationToken);
         }
     }
 }

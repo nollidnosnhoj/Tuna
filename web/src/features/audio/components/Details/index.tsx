@@ -24,7 +24,7 @@ import { HiDotsVertical } from "react-icons/hi";
 import AudioEditDrawer from "./AudioEditDrawer";
 import AudioTags from "./AudioTags";
 import Link from "~/components/ui/Link";
-import { AudioDetailData } from "~/features/audio/types";
+import { AudioDetailData, Visibility } from "~/features/audio/types";
 import { useUser } from "~/features/user/hooks";
 import { relativeDate } from "~/utils/time";
 import { mapAudioForAudioQueue } from "~/utils/audioplayer";
@@ -33,6 +33,8 @@ import { useAudioQueue } from "~/lib/stores";
 import AudioFavoriteButton from "./AudioFavoriteButton";
 import PictureController from "~/components/Picture";
 import { useAddAudioPicture } from "../../hooks";
+import AudioShareModal from "./AudioShareModal";
+import { FaShare } from "react-icons/fa";
 
 interface AudioDetailProps {
   audio: AudioDetailData;
@@ -40,13 +42,19 @@ interface AudioDetailProps {
 
 const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
   const secondaryColor = useColorModeValue("black.300", "gray.300");
-  const [currentUser] = useUser();
+  const { user: currentUser } = useUser();
   const addToQueue = useAudioQueue((state) => state.addToQueue);
 
   const {
     isOpen: isEditOpen,
     onOpen: onEditOpen,
     onClose: onEditClose,
+  } = useDisclosure();
+
+  const {
+    isOpen: isShareOpen,
+    onOpen: onShareOpen,
+    onClose: onShareClose,
   } = useDisclosure();
 
   const { mutateAsync: addPictureAsync, isLoading: isAddingPicture } =
@@ -57,7 +65,7 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
   }, []);
 
   return (
-    <Box>
+    <>
       <Flex marginBottom={4} justifyContent="center">
         <Box flex="1" marginRight={4}>
           <PictureController
@@ -81,6 +89,14 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
             </Stack>
             <Spacer />
             <HStack>
+              <IconButton
+                aria-label="Share audio"
+                icon={<FaShare />}
+                colorScheme="primary"
+                variant="ghost"
+                isRound
+                onClick={onShareOpen}
+              />
               <AudioFavoriteButton audioId={audio.id} />
               <Menu placement="bottom-end">
                 <MenuButton
@@ -104,11 +120,6 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
                 </MenuList>
               </Menu>
             </HStack>
-            <AudioEditDrawer
-              audio={audio}
-              isOpen={isEditOpen}
-              onClose={onEditClose}
-            />
           </Stack>
           <Stack direction="column" spacing={2} width="100%">
             <Flex as="header">
@@ -121,14 +132,29 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
               </Box>
               <Spacer />
               <VStack spacing={2} alignItems="normal" textAlign="right">
-                {!audio.isPublic && <Badge>PRIVATE</Badge>}
+                {audio.visibility === Visibility.Private && (
+                  <Badge>PRIVATE</Badge>
+                )}
               </VStack>
             </Flex>
             <AudioTags tags={audio.tags} />
           </Stack>
         </Box>
       </Flex>
-    </Box>
+      <AudioEditDrawer
+        audio={audio}
+        isOpen={isEditOpen}
+        onClose={onEditClose}
+      />
+      <AudioShareModal
+        audioId={audio.id}
+        userId={audio.author.id}
+        isPrivate={audio.visibility === Visibility.Private}
+        privateKey={audio.privateKey}
+        isOpen={isShareOpen}
+        onClose={onShareClose}
+      />
+    </>
   );
 };
 

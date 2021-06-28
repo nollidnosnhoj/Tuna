@@ -8,11 +8,13 @@ namespace Audiochan.Infrastructure.Persistence.Configurations
     {
         public void Configure(EntityTypeBuilder<Audio> builder)
         {
+            builder.HasKey(x => x.Id);
+            
+            builder.Property(x => x.Id)
+                .ValueGeneratedOnAdd();
+
             builder.Property(x => x.Title)
                 .HasMaxLength(100);
-
-            builder.Property(x => x.FileExt)
-                .HasMaxLength(10);
 
             builder.HasMany(a => a.Tags)
                 .WithMany(t => t.Audios)
@@ -23,10 +25,30 @@ namespace Audiochan.Infrastructure.Persistence.Configurations
                 .IsRequired()
                 .HasForeignKey(x => x.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
-
-            builder.HasKey(x => x.Id);
+            
             builder.HasIndex(x => x.Title);
             builder.HasIndex(x => x.Created);
+        }
+    }
+    
+    public class FavoriteAudioConfiguration : IEntityTypeConfiguration<FavoriteAudio>
+    {
+        public void Configure(EntityTypeBuilder<FavoriteAudio> builder)
+        {
+            builder.HasKey(fa => new {AudioId = fa.AudioId, UserId = fa.UserId});
+
+            builder.HasOne(o => o.User)
+                .WithMany(f => f.FavoriteAudios)
+                .HasForeignKey(o => o.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasOne(o => o.Audio)
+                .WithMany(f => f.Favorited)
+                .HasForeignKey(o => o.AudioId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasIndex(f => f.FavoriteDate);
+            builder.HasQueryFilter(f => f.UnfavoriteDate == null);
         }
     }
 }

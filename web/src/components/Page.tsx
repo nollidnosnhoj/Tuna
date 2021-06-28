@@ -7,7 +7,7 @@ import Container from "~/components/ui/Container";
 import SearchBar from "./ui/SearchBar";
 import UserSection from "./ui/UserSection";
 import Logo from "./ui/Logo";
-import { useAuth } from "~/features/auth/hooks";
+import { useUser } from "~/features/user/hooks";
 
 const PageContainer: React.FC<BoxProps> = ({ children, ...props }) => (
   <Box>
@@ -33,7 +33,7 @@ const Page: React.FC<PageProps> = ({
   children,
   ...props
 }) => {
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn } = useUser();
 
   if (!isLoggedIn && requiresAuth) {
     return (

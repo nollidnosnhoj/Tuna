@@ -26,6 +26,7 @@ namespace Audiochan.Tests.Common.Builders
             {
                 Container = "audios",
                 Bucket = "audiochan",
+                TempBucket = "audiochan-temp",
                 ValidContentTypes = ValidAudioTypes,
                 MaximumFileSize = MaxAudioSize
             };

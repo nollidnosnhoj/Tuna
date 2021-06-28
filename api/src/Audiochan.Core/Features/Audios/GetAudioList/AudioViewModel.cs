@@ -1,13 +1,14 @@
 ﻿using System;
 using Audiochan.Core.Common.Models;
+using Audiochan.Core.Entities.Enums;
 
 namespace Audiochan.Core.Features.Audios.GetAudioList
 {
     public record AudioViewModel
     {
-        public Guid Id { get; init; }
+        public long Id { get; init; }
         public string Title { get; init; } = null!;
-        public bool IsPublic { get; init; }
+        public Visibility Visibility { get; init; }
         public decimal Duration { get; init; }
         public string? Picture { get; init; }
         public DateTime Uploaded { get; init; }

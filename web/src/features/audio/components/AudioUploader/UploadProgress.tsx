@@ -14,13 +14,9 @@ export default function UploadProgress(props: UploadProgressProps) {
       marginY={10}
       width="100%"
       spacing={4}
-      visibility={isUploading ? "visible" : "hidden"}
+      visibility={isUploading || isUploaded ? "visible" : "hidden"}
     >
-      {isUploaded ? (
-        <chakra.span>Uploaded</chakra.span>
-      ) : (
-        <chakra.span>Uploading...</chakra.span>
-      )}
+      <chakra.span>{isUploaded ? "Uploaded" : "Uploading..."}</chakra.span>
       <Progress colorScheme="primary" hasStripe value={progress} width="full" />
     </Box>
   );

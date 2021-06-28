@@ -2,7 +2,15 @@ import { GetServerSidePropsContext } from "next";
 import request from "~/lib/http";
 import { PagedList } from "~/lib/types";
 import { AudioData } from "../audio/types";
-import { Profile } from "./types";
+import { CurrentUser, Profile } from "./types";
+
+export async function getCurrentUser(): Promise<CurrentUser> {
+  const response = await request<CurrentUser>({
+    method: "get",
+    url: "me",
+  });
+  return response.data;
+}
 
 export async function fetchProfile(
   username: string,

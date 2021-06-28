@@ -15,10 +15,8 @@ namespace Audiochan.Tests.Common.Extensions
             audioBuilder = audioBuilder
                 .AddTitle(Path.GetFileNameWithoutExtension(fileName))
                 .AddFileName(fileName)
-                .AddFileExtension(Path.GetExtension(fileName))
                 .AddDuration(random.Number(30, 300))
                 .AddFileSize(random.Number(5000, 25000))
-                .AddContentType("audio/mp3")
                 .AddUserId(userId);
 
             return audioBuilder;

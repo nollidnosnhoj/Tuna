@@ -47,7 +47,7 @@ export const getServerSideProps: GetServerSideProps<ProfilePageProps> = async (
 };
 
 export default function UserProfileNextPage(props: ProfilePageProps) {
-  const [user] = useUser();
+  const { user } = useUser();
   const { query } = useRouter();
   const username = query.username as string;
 

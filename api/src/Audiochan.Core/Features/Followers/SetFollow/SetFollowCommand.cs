@@ -6,7 +6,6 @@ using Audiochan.Core.Common.Models;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Services;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Followers.SetFollow
 {
@@ -28,10 +27,7 @@ namespace Audiochan.Core.Features.Followers.SetFollow
         public async Task<Result<bool>> Handle(SetFollowCommand command, CancellationToken cancellationToken)
         {
             var target = await _unitOfWork.Users
-                .Include(u => u.Followers)
-                .IgnoreQueryFilters()
-                .Where(u => u.UserName == command.Username.Trim().ToLower())
-                .SingleOrDefaultAsync(cancellationToken);
+                .LoadForFollow(command.Username, cancellationToken);
 
             if (target == null)
                 return Result<bool>.Fail(ResultError.NotFound);
