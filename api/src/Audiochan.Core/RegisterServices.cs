@@ -13,6 +13,13 @@ namespace Audiochan.Core
             return services
                 .AddValidatorsFromAssembly(Assembly.GetExecutingAssembly())
                 .AddMediatR(Assembly.GetExecutingAssembly())
+                .AddBehaviorPipelines();
+        }
+
+        private static IServiceCollection AddBehaviorPipelines(this IServiceCollection services)
+        {
+            return services
+                .AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehavior<,>))
                 .AddScoped(typeof(IPipelineBehavior<,>), typeof(DbTransactionPipelineBehavior<,>));
         }
     }

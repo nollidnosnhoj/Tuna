@@ -35,6 +35,7 @@ namespace Audiochan.Core.Common.Mappings
                 Created = audio.Created,
                 Tags = audio.Tags.Select(t => t.Name).ToList(),
                 Visibility = audio.Visibility,
+                PrivateKey = audio.PrivateKey,
                 FileSize = audio.FileSize,
                 LastModified = audio.LastModified,
                 AudioUrl = string.Format(MediaLinkInvariants.AudioUrl, audio.Id, audio.BlobName),

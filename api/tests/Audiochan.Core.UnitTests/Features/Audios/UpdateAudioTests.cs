@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Amazon.Runtime.Internal.Util;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Entities;
@@ -21,6 +22,7 @@ namespace Audiochan.Core.UnitTests.Features.Audios
     {
         private readonly Mock<ICurrentUserService> _currentUserService;
         private readonly Mock<IUnitOfWork> _unitOfWork;
+        private readonly Mock<ICacheService> _cacheService;
         private readonly UpdateAudioCommandHandler _handler;
 
         public UpdateAudioTests()
@@ -28,7 +30,8 @@ namespace Audiochan.Core.UnitTests.Features.Audios
             _currentUserService = new Mock<ICurrentUserService>();
             _unitOfWork = new UnitOfWorkMock().Create();
             _unitOfWork.Setup(x => x.Audios.Update(It.IsAny<Audio>()));
-            _handler = new UpdateAudioCommandHandler(_currentUserService.Object, _unitOfWork.Object);
+            _cacheService = new CacheServiceMock().Create();
+            _handler = new UpdateAudioCommandHandler(_currentUserService.Object, _unitOfWork.Object, _cacheService.Object);
         }
 
         [Fact]

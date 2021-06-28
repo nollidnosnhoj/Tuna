@@ -2,6 +2,7 @@
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Repositories;
 using Audiochan.Core.Services;
+using Audiochan.Infrastructure.Caching;
 using Audiochan.Infrastructure.Identity;
 using Audiochan.Infrastructure.Persistence;
 using Audiochan.Infrastructure.Persistence.Repositories;
@@ -10,6 +11,8 @@ using Audiochan.Infrastructure.Storage.AmazonS3;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using StackExchange.Redis;
 
 namespace Audiochan.Infrastructure
 {
@@ -17,14 +20,30 @@ namespace Audiochan.Infrastructure
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services,
             IConfiguration configuration,
-            bool isDevelopment)
+            IHostEnvironment environment)
         {
-            services.ConfigurePersistence(configuration, isDevelopment);
-            services.ConfigureStorageService();
-            services.AddTransient<IIdentityService, IdentityService>();
-            services.AddTransient<IImageProcessingService, ImageProcessingService>();
-            services.AddTransient<ITokenProvider, TokenProvider>();
-            services.AddTransient<IDateTimeProvider, DateTimeProvider>();
+            return services
+                .ConfigureCaching(configuration, environment)
+                .ConfigurePersistence(configuration, environment)
+                .ConfigureStorageService()
+                .AddTransient<IIdentityService, IdentityService>()
+                .AddTransient<IImageProcessingService, ImageProcessingService>()
+                .AddTransient<ITokenProvider, TokenProvider>()
+                .AddTransient<IDateTimeProvider, DateTimeProvider>();
+        }
+
+        private static IServiceCollection ConfigureCaching(this IServiceCollection services, IConfiguration config, IHostEnvironment env)
+        {
+            if (env.IsDevelopment())
+            {
+                services.AddSingleton<ICacheService, MemoryCacheService>();
+            }
+            else
+            {
+                services.AddSingleton<IConnectionMultiplexer>(_ =>
+                    ConnectionMultiplexer.Connect("localhost"));
+                services.AddSingleton<ICacheService, RedisCacheService>();
+            }
             return services;
         }
 
@@ -35,14 +54,14 @@ namespace Audiochan.Infrastructure
             return services;
         }
         
-        private static IServiceCollection ConfigurePersistence(this IServiceCollection services, IConfiguration configuration,
-            bool isDevelopment)
+        private static IServiceCollection ConfigurePersistence(this IServiceCollection services, 
+            IConfiguration configuration, IHostEnvironment env)
         {
             services.AddDbContext<ApplicationDbContext>(o =>
             {
                 o.UseNpgsql(configuration.GetConnectionString("Database"));
                 o.UseSnakeCaseNamingConvention();
-                if (isDevelopment)
+                if (env.IsDevelopment())
                 {
                     o.EnableSensitiveDataLogging();
                 }

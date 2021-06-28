@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Constants;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Mappings;
 using Audiochan.Core.Common.Models;
@@ -33,11 +34,13 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
     {
         private readonly ICurrentUserService _currentUserService;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ICacheService _cacheService;
 
-        public UpdateAudioCommandHandler(ICurrentUserService currentUserService, IUnitOfWork unitOfWork)
+        public UpdateAudioCommandHandler(ICurrentUserService currentUserService, IUnitOfWork unitOfWork, ICacheService cacheService)
         {
             _currentUserService = currentUserService;
             _unitOfWork = unitOfWork;
+            _cacheService = cacheService;
         }
 
         public async Task<Result<AudioDetailViewModel>> Handle(UpdateAudioCommand command,
@@ -85,7 +88,7 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
 
             _unitOfWork.Audios.Update(audio);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
-
+            await _cacheService.RemoveAsync(new GetAudioCacheOptions(audio.Id), cancellationToken);
             return Result<AudioDetailViewModel>.Success(audio.MapToDetail());
         }
     }

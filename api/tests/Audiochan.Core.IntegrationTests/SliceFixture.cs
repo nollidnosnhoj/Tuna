@@ -146,7 +146,7 @@ namespace Audiochan.Core.IntegrationTests
             return await RunAsUserAsync("admin", "Administrator1234!", new[] {UserRoleConstants.Admin});
         }
 
-        public async Task<(string, string)> RunAsUserAsync(string userName, string password, string[] roles)
+        public async Task<(string, string)> RunAsUserAsync(string userName, string password = "", string[]? roles = null)
         {
             using var scope = _scopeFactory.CreateScope();
 
@@ -161,7 +161,7 @@ namespace Audiochan.Core.IntegrationTests
                 _currentUsername = user.UserName;
                 return (_currentUserId, _currentUsername);
             }
-
+            
             user = new User
             {
                 UserName = userName,
@@ -169,9 +169,15 @@ namespace Audiochan.Core.IntegrationTests
                 DisplayName = userName,
                 Joined = _currentTime
             };
+            
+            if (string.IsNullOrEmpty(password))
+                password = Guid.NewGuid().ToString("N");
+
 
             var result = await userManager.CreateAsync(user, password);
 
+            roles ??= Array.Empty<string>();
+            
             if (roles.Any())
             {
                 var roleManager = scope.ServiceProvider.GetService<RoleManager<Role>>()
@@ -287,6 +293,15 @@ namespace Audiochan.Core.IntegrationTests
                 db.Set<TEntity4>().Add(entity4);
 
                 return db.SaveChangesAsync();
+            });
+        }
+
+        public Task<(bool, TResponse?)> GetCache<TResponse>(string key)
+        {
+            return ExecuteScopeAsync(sp =>
+            {
+                var cache = sp.GetService<ICacheService>();
+                return cache?.GetAsync<TResponse>(key) ?? throw new Exception("ICacheService was not registered.");
             });
         }
 
