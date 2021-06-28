@@ -15,20 +15,12 @@ namespace Audiochan.Core.Common.Extensions
             return ruleBuilder
                 .NotEmpty()
                 .WithMessage("Filename cannot be empty.")
-                .Must(Path.HasExtension)
-                .WithMessage("Filename must have a file extension")
-                .Must(value => validContentTypes.Contains(value.GetContentType()))
-                .WithMessage("The file name's extension is invalid.");
-        }
-
-        public static IRuleBuilder<T, string> FileContentTypeValidation<T>(this IRuleBuilder<T, string> ruleBuilder,
-            IEnumerable<string> contentTypes)
-        {
-            return ruleBuilder
-                .NotEmpty()
-                .WithMessage("File's content type cannot be empty.")
-                .Must(contentTypes.Contains)
-                .WithMessage("File's content type is invalid.");
+                .Must(fileName =>
+                {
+                    var isContentType = fileName.TryGetContentType(out var contentType);
+                    return isContentType && validContentTypes.Contains(contentType);
+                })
+                .WithMessage("File name is invalid.");
         }
 
         public static IRuleBuilder<T, long> FileSizeValidation<T>(this IRuleBuilder<T, long> ruleBuilder,

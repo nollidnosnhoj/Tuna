@@ -17,5 +17,10 @@ namespace Audiochan.Core.Common.Extensions
                 ? "application/octet-stream"
                 : defaultContentType;
         }
+
+        public static bool TryGetContentType(this string fileName, out string contentType)
+        {
+            return FileExtensionContentTypeProvider.TryGetContentType(fileName, out contentType);
+        }
     }
 }
