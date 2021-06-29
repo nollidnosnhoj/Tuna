@@ -1,4 +1,5 @@
 import { QueryKey, useMutation, useQuery, useQueryClient } from "react-query";
+import { GET_YOUR_FAV_AUDIOS_KEY } from "~/features/auth/hooks/useYourFavoriteAudios";
 import { useUser } from "~/features/user/hooks";
 import {
   favoriteAudioHandler,
@@ -39,6 +40,7 @@ export function useFavoriteAudio(
     {
       onSuccess(data) {
         queryClient.setQueryData(IS_FAVORITE_AUDIO_QUERY_KEY(audioId), data);
+        queryClient.invalidateQueries(GET_YOUR_FAV_AUDIOS_KEY);
       },
     }
   );

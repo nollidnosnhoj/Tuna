@@ -27,7 +27,7 @@ namespace Audiochan.API.Services
 
         public string GetUsername()
         {
-            return _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.Name) ?? string.Empty;
+            return _httpContextAccessor.HttpContext?.User.FindFirstValue("name") ?? string.Empty;
         }
     }
 }

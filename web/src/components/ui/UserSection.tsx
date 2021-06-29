@@ -37,7 +37,7 @@ const UserSection: React.FC = () => {
               <NextLink href={`/users/${user?.username}`}>
                 <MenuItem>Profile</MenuItem>
               </NextLink>
-              <NextLink href="/setting">
+              <NextLink href="/settings">
                 <MenuItem>Settings</MenuItem>
               </NextLink>
             </MenuGroup>

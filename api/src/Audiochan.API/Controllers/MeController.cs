@@ -10,6 +10,8 @@ using Audiochan.Core.Features.FavoriteAudios.CheckIfFavoriting;
 using Audiochan.Core.Features.FavoriteAudios.SetFavorite;
 using Audiochan.Core.Features.Followers.CheckIfFollowing;
 using Audiochan.Core.Features.Followers.SetFollow;
+using Audiochan.Core.Features.Users.GetUserAudios;
+using Audiochan.Core.Features.Users.GetUserFavoriteAudios;
 using Audiochan.Core.Features.Users.UpdateEmail;
 using Audiochan.Core.Features.Users.UpdatePassword;
 using Audiochan.Core.Features.Users.UpdatePicture;
@@ -31,11 +33,13 @@ namespace Audiochan.API.Controllers
     {
         private readonly IMediator _mediator;
         private readonly string _currentUserId;
+        private readonly string _currentUsername;
 
         public MeController(ICurrentUserService currentUserService, IMediator mediator)
         {
             _mediator = mediator;
             _currentUserId = currentUserService.GetUserId();
+            _currentUsername = currentUserService.GetUsername();
         }
 
         [HttpHead(Name = "IsAuthenticated")]
@@ -58,10 +62,10 @@ namespace Audiochan.API.Controllers
         [SwaggerOperation(
             Summary = "Returns information about authenticated user",
             Description = "Requires authentication.",
-            OperationId = "GetAuthenticatedUser",
+            OperationId = "GetYourInfo",
             Tags = new[] {"me"}
         )]
-        public async Task<IActionResult> GetAuthenticatedUser(CancellationToken cancellationToken)
+        public async Task<IActionResult> GetYourInfo(CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new GetCurrentUserQuery(), cancellationToken);
             return result != null
@@ -75,10 +79,11 @@ namespace Audiochan.API.Controllers
         [SwaggerOperation(
             Summary = "Returns a list of tracks uploaded by authenticated user's followings.",
             Description = "Requires authentication.",
-            OperationId = "GetAuthenticatedUserFeed",
+            OperationId = "GetYourFeed",
             Tags = new[] {"me"}
         )]
-        public async Task<IActionResult> GetAuthenticatedUserFeed([FromQuery] PaginationQueryParams queryParams, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetYourFeed([FromQuery] PaginationQueryParams queryParams, 
+            CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new GetAudioFeedQuery
             {
@@ -89,13 +94,34 @@ namespace Audiochan.API.Controllers
             return Ok(result);
         }
 
+        [HttpGet("audios")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(GetAudioListViewModel), StatusCodes.Status200OK)]
+        [SwaggerOperation(
+            Summary = "Get authenticated user's uploaded audios.",
+            Description = "Requires authentication",
+            OperationId = "YourAudios",
+            Tags = new [] {"me"}
+        )]
+        public async Task<IActionResult> GetYourAudios([FromQuery] PaginationQueryParams queryParams, 
+            CancellationToken cancellationToken = default)
+        {
+            var result = await _mediator.Send(new GetUsersAudioQuery
+            {
+                Page = queryParams.Page,
+                Size = queryParams.Size,
+                Username = _currentUsername
+            }, cancellationToken);
+            return Ok(result);
+        }
+
         [HttpHead("followings/{username}", Name = "CheckIfUserFollowedUser")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [SwaggerOperation(
             Summary = "Check if the authenticated user follows a user",
             Description = "Requires authentication.",
-            OperationId = "CheckIfUserFollowedUser",
+            OperationId = "CheckIfYouFollowedUser",
             Tags = new[] {"me"}
         )]
         public async Task<IActionResult> IsFollow(string username, CancellationToken cancellationToken)
@@ -228,8 +254,27 @@ namespace Audiochan.API.Controllers
                 ? Ok(result.Data)
                 : result.ReturnErrorResponse();
         }
+        
+        [HttpGet("favorite/audios")]
+        [SwaggerOperation(
+            Summary = "Get Your favorite audios",
+            Description = "Requires authentication.",
+            OperationId = "YourFavoriteAudios",
+            Tags = new[] {"me"}
+        )]
+        public async Task<IActionResult> GetYourFavoriteAudios([FromQuery] PaginationQueryParams queryParams,
+            CancellationToken cancellationToken = default)
+        {
+            var result = await _mediator.Send(new GetUserFavoriteAudiosQuery
+            {
+                Username = _currentUsername,
+                Page = queryParams.Page,
+                Size = queryParams.Size
+            }, cancellationToken);
+            return Ok(result);
+        }
 
-        [HttpHead("favorites/audio/{audioId:long}", Name="CheckIfUserFavoritedAudio")]
+        [HttpHead("favorites/audios/{audioId:long}", Name="CheckIfUserFavoritedAudio")]
         [SwaggerOperation(
             Summary = "Check if the authenticated user favorited an audio",
             Description = "Requires authentication.",
@@ -244,7 +289,7 @@ namespace Audiochan.API.Controllers
                 : NotFound();
         }
         
-        [HttpPut("favorites/audio/{audioId:long}", Name = "FavoriteAudio")]
+        [HttpPut("favorites/audios/{audioId:long}", Name = "FavoriteAudio")]
         [SwaggerOperation(
             Summary = "Favorite an audio",
             Description = "Requires authentication.",
@@ -260,7 +305,7 @@ namespace Audiochan.API.Controllers
                 : result.ReturnErrorResponse();
         }
 
-        [HttpDelete("favorites/audio/{audioId:long}", Name = "UnfavoriteAudio")]
+        [HttpDelete("favorites/audios/{audioId:long}", Name = "UnfavoriteAudio")]
         [SwaggerOperation(
             Summary = "Unfavorite an audio",
             Description = "Requires authentication.",

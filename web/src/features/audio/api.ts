@@ -119,7 +119,7 @@ export async function isFavoriteHandler(audioId: number): Promise<boolean> {
   try {
     const res = await request({
       method: "head",
-      url: `me/favorites/audio/${audioId}`,
+      url: `me/favorites/audios/${audioId}`,
       validateStatus: (status) => {
         return status === 404 || status < 400;
       },
@@ -134,7 +134,7 @@ export async function isFavoriteHandler(audioId: number): Promise<boolean> {
 export async function favoriteAudioHandler(audioId: number): Promise<boolean> {
   await request({
     method: "PUT",
-    url: `me/favorites/audio/${audioId}`,
+    url: `me/favorites/audios/${audioId}`,
   });
   return true;
 }
@@ -144,7 +144,7 @@ export async function unFavoriteAudioHandler(
 ): Promise<boolean> {
   await request({
     method: "DELETE",
-    url: `me/favorites/audio/${audioId}`,
+    url: `me/favorites/audios/${audioId}`,
   });
   return true;
 }

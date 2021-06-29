@@ -7,6 +7,7 @@ import {
   ButtonGroup,
   IconButton,
   Tooltip,
+  chakra,
 } from "@chakra-ui/react";
 import React, { useCallback, useState } from "react";
 import { FaList } from "react-icons/fa";
@@ -69,7 +70,7 @@ export default function AudioList(props: AudioListProps) {
 
   return (
     <Box>
-      {!hideLayoutToggle && (
+      {!hideLayoutToggle && audios.length > 0 && (
         <Flex my={4} justify="flex-end">
           <ButtonGroup size="sm" isAttached variant="outline">
             <Tooltip label="List View" placement="top">
@@ -120,7 +121,7 @@ export default function AudioList(props: AudioListProps) {
             )}
           </React.Fragment>
         ) : (
-          notFoundContent
+          notFoundContent || <chakra.span>No audios found.</chakra.span>
         )}
       </Box>
     </Box>
