@@ -27,6 +27,7 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
         public string Description { get; init; } = string.Empty;
         public Visibility Visibility { get; init; }
         public List<string> Tags { get; init; } = new();
+        public string BlobName => UploadId + Path.GetExtension(FileName);
     }
 
     public class CreateAudioCommandHandler : IRequestHandler<CreateAudioCommand, Result<AudioDetailViewModel>>
@@ -52,12 +53,6 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
         public async Task<Result<AudioDetailViewModel>> Handle(CreateAudioCommand command,
             CancellationToken cancellationToken)
         {
-            var blobName = command.UploadId + Path.GetExtension(command.FileName);
-            var existsInTempStorage = await ExistsInTempStorageAsync(blobName, cancellationToken);
-
-            if (!existsInTempStorage)
-                return Result<AudioDetailViewModel>.Fail(ResultError.BadRequest, "Cannot find audio in temp storage.");
-            
             var currentUser = await _unitOfWork.Users
                     .FindAsync(x => x.Id == _currentUserService.GetUserId(), 
                         cancellationToken: cancellationToken);
@@ -74,7 +69,7 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
                 Title = command.Title,
                 Description = command.Description,
                 Visibility = command.Visibility,
-                BlobName = blobName,
+                BlobName = command.BlobName,
                 Tags = command.Tags.Count > 0
                     ? await _unitOfWork.Tags.GetAppropriateTags(command.Tags, cancellationToken)
                     : new List<Tag>(),
@@ -111,13 +106,6 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
                 cancellationToken);
         }
 
-        private async Task<bool> ExistsInTempStorageAsync(string blobName, CancellationToken cancellationToken = default)
-        {
-            return await _storageService.ExistsAsync(
-                _storageSettings.Audio.TempBucket,
-                _storageSettings.Audio.Container,
-                blobName,
-                cancellationToken);
-        }
+        
     }
 }
