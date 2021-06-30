@@ -20,21 +20,23 @@ namespace Audiochan.Core.Features.Audios.UploadAudio
         private readonly MediaStorageSettings _storageSettings;
         private readonly ICurrentUserService _currentUserService;
         private readonly IStorageService _storageService;
+        private readonly INanoidGenerator _nanoid;
         
         public UploadAudioCommandHandler(IOptions<MediaStorageSettings> storageSettings, 
             ICurrentUserService currentUserService, 
-            IStorageService storageService)
+            IStorageService storageService, INanoidGenerator nanoid)
         {
             _storageSettings = storageSettings.Value;
             _currentUserService = currentUserService;
             _storageService = storageService;
+            _nanoid = nanoid;
         }
         
         public async Task<UploadAudioResponse> Handle(UploadAudioCommand command, CancellationToken cancellationToken)
         {
             var userId = _currentUserService.GetUserId();
             var fileExt = Path.GetExtension(command.FileName);
-            var objectId = await Nanoid.Nanoid.GenerateAsync();
+            var objectId = await _nanoid.GenerateAsync(size: 21);
             var blobName = objectId + fileExt;
 
             var metadata = new Dictionary<string, string> {{"UserId", userId}};
