@@ -29,7 +29,7 @@ namespace Audiochan.Core.Features.Audios.ResetPrivateKey
         public async Task<Result<string>> Handle(ResetPrivateKeyCommand request, CancellationToken cancellationToken)
         {
             var currentUserId = _currentUserService.GetUserId();
-            var audio = await _unitOfWork.Audios.FindAsync(x => x.Id == request.Id, 
+            var audio = await _unitOfWork.Audios.LoadAsync(x => x.Id == request.Id, 
                 cancellationToken: cancellationToken);
             
             if (audio == null)

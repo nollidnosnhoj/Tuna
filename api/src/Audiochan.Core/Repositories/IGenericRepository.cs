@@ -8,9 +8,9 @@ namespace Audiochan.Core.Repositories
 {
     public interface IGenericRepository<TEntity> where TEntity : class
     {
-        Task<TEntity?> FindAsync<TKey>(TKey id, CancellationToken cancellationToken = default)
+        Task<TEntity?> LoadAsync<TKey>(TKey id, CancellationToken cancellationToken = default)
             where TKey : notnull;
-        Task<TEntity?> FindAsync(Expression<Func<TEntity, bool>> predicate,
+        Task<TEntity?> LoadAsync(Expression<Func<TEntity, bool>> predicate,
             bool shouldSetTracking = true,
             CancellationToken cancellationToken = default);
 

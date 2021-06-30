@@ -49,7 +49,7 @@ namespace Audiochan.Core.Features.Users.UpdatePicture
         {
             var currentUserId = _currentUserService.GetUserId();
             var container = string.Join('/', _storageSettings.Image.Container, "users");
-            var user = await _unitOfWork.Users.FindAsync(new object[]{command.UserId}, cancellationToken);
+            var user = await _unitOfWork.Users.LoadAsync(new object[]{command.UserId}, cancellationToken);
             
             if (user == null) 
                 return Result<ProfileViewModel>.Fail(ResultError.NotFound);
@@ -63,8 +63,12 @@ namespace Audiochan.Core.Features.Users.UpdatePicture
             
             if (!string.IsNullOrEmpty(user.PictureBlobName))
                 await _storageService.RemoveAsync(_storageSettings.Audio.Bucket, container, user.PictureBlobName, cancellationToken);
+
+            if (!string.IsNullOrEmpty(blobName))
+            {
+                user.PictureBlobName = blobName;
+            }
             
-            user.UpdatePicture(blobName);
             _unitOfWork.Users.Update(user);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 

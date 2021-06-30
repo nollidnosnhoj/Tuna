@@ -85,7 +85,7 @@ namespace Audiochan.Core.UnitTests.Features.Audios
                     It.IsAny<CancellationToken>()))
                 .ReturnsAsync(request.Tags.Select(x => new Tag{Name=x}).ToList());
             _unitOfWork
-                .Setup(x => x.Users.FindAsync(
+                .Setup(x => x.Users.LoadAsync(
                     It.IsAny<Expression<Func<User, bool>>>(),
                     It.IsAny<bool>(),
                     It.IsAny<CancellationToken>()))

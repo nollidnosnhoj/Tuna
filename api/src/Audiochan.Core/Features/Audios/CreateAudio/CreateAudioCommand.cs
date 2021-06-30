@@ -54,7 +54,7 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
             CancellationToken cancellationToken)
         {
             var currentUser = await _unitOfWork.Users
-                    .FindAsync(x => x.Id == _currentUserService.GetUserId(), 
+                    .LoadAsync(x => x.Id == _currentUserService.GetUserId(), 
                         cancellationToken: cancellationToken);
 
             if (currentUser is null)

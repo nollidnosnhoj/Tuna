@@ -36,14 +36,18 @@ namespace Audiochan.Core.Features.Users.UpdateProfile
 
         public async Task<Result<bool>> Handle(UpdateProfileCommand command, CancellationToken cancellationToken)
         {
-            var user = await _unitOfWork.Users.FindAsync(new object[]{command.UserId}, cancellationToken);
+            var user = await _unitOfWork.Users.LoadAsync(new object[]{command.UserId}, cancellationToken);
             if (user == null) return Result<bool>.Fail(ResultError.NotFound);
             if (user.Id != _currentUserService.GetUserId())
                 return Result<bool>.Fail(ResultError.Forbidden);
 
             user.UpdateDisplayName(command.DisplayName);
-            user.UpdateAbout(command.About);
-            user.UpdateWebsite(command.Website);
+
+            if (!string.IsNullOrEmpty(command.About))
+                user.About = command.About;
+
+            if (!string.IsNullOrWhiteSpace(command.Website))
+                user.Website = command.Website;
 
             _unitOfWork.Users.Update(user);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
