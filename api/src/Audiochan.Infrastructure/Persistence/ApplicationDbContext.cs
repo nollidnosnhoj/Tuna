@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Entities.Abstractions;
+using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -16,12 +17,15 @@ namespace Audiochan.Infrastructure.Persistence
     public class ApplicationDbContext : IdentityDbContext<User, Role, string>
     {
         private readonly IDateTimeProvider _dateTimeProvider;
+        private readonly INanoidGenerator _nanoid;
         private IDbContextTransaction? _currentTransaction;
 
         public ApplicationDbContext(DbContextOptions options,
-            IDateTimeProvider dateTimeProvider) : base(options)
+            IDateTimeProvider dateTimeProvider, 
+            INanoidGenerator nanoid) : base(options)
         {
             _dateTimeProvider = dateTimeProvider;
+            _nanoid = nanoid;
         }
 
         public DbSet<Audio> Audios { get; set; } = null!;
@@ -33,30 +37,13 @@ namespace Audiochan.Infrastructure.Persistence
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new())
         {
             // Add default created/updated date
-            foreach (var entry in ChangeTracker.Entries<IAudited>())
-            {
-                if (entry is null) continue;
-                var now = _dateTimeProvider.Now;
-                if (entry.State == EntityState.Added && entry.Entity.Created == default)
-                {
-                    entry.Property(nameof(IAudited.Created)).CurrentValue = now;
-                }
+            HandleAuditedEntities();
 
-                if (entry.State == EntityState.Modified && entry.Entity.LastModified == default)
-                {
-                    entry.Property(nameof(IAudited.LastModified)).CurrentValue = now;
-                }
-            }
+            // Add/Remove Private key based on Visibility property.
+            await HandleIVisiblePrivateKey();
 
-            foreach (var entry in ChangeTracker.Entries<ISoftDeletable>())
-            {
-                if (entry is null) continue;
-                if (entry.State == EntityState.Deleted)
-                {
-                    entry.State = EntityState.Modified;
-                    entry.Property(nameof(ISoftDeletable.Deleted)).CurrentValue = _dateTimeProvider.Now;
-                }
-            }
+            // Add soft delete property
+            HandleSoftDeletion();
 
             var result = await base.SaveChangesAsync(cancellationToken);
 
@@ -119,6 +106,67 @@ namespace Audiochan.Infrastructure.Persistence
             builder.Entity<IdentityUserToken<string>>(entity => { entity.ToTable("user_tokens"); });
             builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
             RenameToSnakeCase(builder);
+        }
+
+        private void HandleAuditedEntities()
+        {
+            foreach (var entry in ChangeTracker.Entries<IAudited>())
+            {
+                if (entry is null) continue;
+                var now = _dateTimeProvider.Now;
+                if (entry.State == EntityState.Added && entry.Entity.Created == default)
+                {
+                    entry.Property(nameof(IAudited.Created)).CurrentValue = now;
+                }
+
+                if (entry.State == EntityState.Modified && entry.Entity.LastModified == default)
+                {
+                    entry.Property(nameof(IAudited.LastModified)).CurrentValue = now;
+                }
+            }
+        }
+
+        private async Task HandleIVisiblePrivateKey()
+        {
+            foreach (var entry in ChangeTracker.Entries<IVisible>())
+            {
+                var visibility = (Visibility) entry.Property(nameof(IVisible.Visibility)).CurrentValue;
+                
+                if (entry.State == EntityState.Added)
+                {
+                    if (visibility == Visibility.Private)
+                    {
+                        entry.Property(nameof(IVisible.PrivateKey)).CurrentValue = await _nanoid.GenerateAsync(size: 12);
+                    }
+                }
+                
+                if (entry.State == EntityState.Modified){
+                {
+                    var oldVisibility = (Visibility) entry.Property(nameof(IVisible.Visibility)).OriginalValue;
+
+                    if (oldVisibility == Visibility.Private && visibility != Visibility.Private)
+                    {
+                        entry.Property(nameof(IVisible.PrivateKey)).CurrentValue = null;
+                    }
+                    else if (oldVisibility != Visibility.Private && visibility == Visibility.Private)
+                    {
+                        entry.Property(nameof(IVisible.PrivateKey)).CurrentValue = await _nanoid.GenerateAsync(size: 12);
+                    }
+                }}
+            }
+        }
+
+        private void HandleSoftDeletion()
+        {
+            foreach (var entry in ChangeTracker.Entries<ISoftDeletable>())
+            {
+                if (entry is null) continue;
+                if (entry.State == EntityState.Deleted)
+                {
+                    entry.State = EntityState.Modified;
+                    entry.Property(nameof(ISoftDeletable.Deleted)).CurrentValue = _dateTimeProvider.Now;
+                }
+            }
         }
 
         private static void RenameToSnakeCase(ModelBuilder modelBuilder)

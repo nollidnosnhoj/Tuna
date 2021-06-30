@@ -17,11 +17,13 @@ namespace Audiochan.Core.Features.Audios.ResetPrivateKey
     {
         private readonly ICurrentUserService _currentUserService;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly INanoidGenerator _nanoid;
 
-        public ResetPrivateKeyCommandHandler(ICurrentUserService currentUserService, IUnitOfWork unitOfWork)
+        public ResetPrivateKeyCommandHandler(ICurrentUserService currentUserService, IUnitOfWork unitOfWork, INanoidGenerator nanoid)
         {
             _currentUserService = currentUserService;
             _unitOfWork = unitOfWork;
+            _nanoid = nanoid;
         }
 
         public async Task<Result<string>> Handle(ResetPrivateKeyCommand request, CancellationToken cancellationToken)
@@ -35,8 +37,8 @@ namespace Audiochan.Core.Features.Audios.ResetPrivateKey
             
             if (audio.UserId != currentUserId || audio.Visibility != Visibility.Private)
                 return Result<string>.Fail(ResultError.Forbidden);
-            
-            audio.ResetPrivateKey();
+
+            audio.PrivateKey = await _nanoid.GenerateAsync(size: 12);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             

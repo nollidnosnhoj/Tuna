@@ -74,11 +74,6 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
                     ? await _unitOfWork.Tags.GetAppropriateTags(command.Tags, cancellationToken)
                     : new List<Tag>(),
             };
-
-            if (audio.Visibility == Visibility.Private)
-            {
-                audio.ResetPrivateKey();
-            }
             
             await _unitOfWork.Audios.AddAsync(audio, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);

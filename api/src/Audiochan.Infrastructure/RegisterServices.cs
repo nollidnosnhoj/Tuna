@@ -29,7 +29,8 @@ namespace Audiochan.Infrastructure
                 .AddTransient<IIdentityService, IdentityService>()
                 .AddTransient<IImageProcessingService, ImageProcessingService>()
                 .AddTransient<ITokenProvider, TokenProvider>()
-                .AddTransient<IDateTimeProvider, DateTimeProvider>();
+                .AddTransient<IDateTimeProvider, DateTimeProvider>()
+                .AddTransient<INanoidGenerator, NanoidGenerator>();
         }
 
         private static IServiceCollection ConfigureCaching(this IServiceCollection services, IConfiguration config, IHostEnvironment env)

@@ -22,7 +22,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
         {
             var (ownerId, _) = await _sliceFixture.RunAsDefaultUserAsync();
             var audio = new AudioFaker(ownerId).Generate();
-            audio.UpdateVisibility(Visibility.Private);
+            audio.Visibility = Visibility.Private;
             await _sliceFixture.InsertAsync(audio);
 
             var result = await _sliceFixture.SendAsync(new ResetPrivateKeyCommand(audio.Id));

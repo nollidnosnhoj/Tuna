@@ -75,8 +75,8 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
             
             if (!string.IsNullOrEmpty(audio.PictureBlobName))
                 await _storageService.RemoveAsync(_storageSettings.Image.Bucket, container, audio.PictureBlobName, cancellationToken);
-            
-            audio.UpdatePicture(blobName);
+
+            audio.PictureBlobName = blobName;
             _unitOfWork.Audios.Update(audio);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             await _cacheService.RemoveAsync(new GetAudioCacheOptions(command.AudioId), cancellationToken);

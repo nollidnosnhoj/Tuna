@@ -71,19 +71,19 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
                 }
             }
 
-            if (command.Title is not null)
+            if (command.Title is not null && !string.IsNullOrWhiteSpace(command.Title))
             {
-                audio.UpdateTitle(command.Title);
+                audio.Title = command.Title;
             }
 
             if (command.Description is not null)
             {
-                audio.UpdateDescription(command.Description);
+                audio.Description = command.Description;
             }
 
             if (command.Visibility.HasValue)
             {
-                audio.UpdateVisibility(command.Visibility.Value);
+                audio.Visibility = command.Visibility.Value;
             }
 
             _unitOfWork.Audios.Update(audio);

@@ -23,13 +23,7 @@ namespace Audiochan.Tests.Common.Builders
 
         public AudioBuilder AddTitle(string title)
         {
-            _audio.UpdateTitle(title);
-            return this;
-        }
-
-        public AudioBuilder AddDescription(string description)
-        {
-            _audio.UpdateDescription(description);
+            _audio.Title = title;
             return this;
         }
 
@@ -61,18 +55,6 @@ namespace Audiochan.Tests.Common.Builders
         public AudioBuilder AddUserId(string userId)
         {
             _audio.UserId = userId;
-            return this;
-        }
-
-        public AudioBuilder AddTags(List<Tag> tags)
-        {
-            _audio.Tags = tags;
-            return this;
-        }
-
-        public AudioBuilder SetPublic(Visibility visibility)
-        {
-            _audio.UpdateVisibility(visibility);
             return this;
         }
 

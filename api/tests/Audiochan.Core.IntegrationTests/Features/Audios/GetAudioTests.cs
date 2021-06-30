@@ -40,7 +40,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             // Assign
             var (ownerId, _) = await _fixture.RunAsAdministratorAsync();
             var audio = new AudioFaker(ownerId).Generate();
-            audio.UpdateVisibility(Visibility.Private);
+            audio.Visibility = Visibility.Private;
             await _fixture.InsertAsync(audio);
             await _fixture.RunAsDefaultUserAsync();
 
@@ -58,7 +58,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             var (userId, _) = await _fixture.RunAsAdministratorAsync();
 
             var audio = new AudioFaker(userId).Generate();
-            audio.UpdateVisibility(Visibility.Private);
+            audio.Visibility = Visibility.Private;
             await _fixture.InsertAsync(audio);
 
             await _fixture.RunAsDefaultUserAsync();
@@ -116,7 +116,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             var (userId, _) = await _fixture.RunAsAdministratorAsync();
 
             var audio = new AudioFaker(userId).Generate();
-            audio.UpdateVisibility(Visibility.Public);
+            audio.Visibility = Visibility.Public;
             await _fixture.InsertAsync(audio);
 
             await _fixture.RunAsDefaultUserAsync();

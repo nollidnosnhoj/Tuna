@@ -6,7 +6,7 @@ using Audiochan.Core.Entities.Enums;
 
 namespace Audiochan.Core.Entities
 {
-    public class Audio : IAudited
+    public class Audio : IVisible, IAudited
     {
         public Audio()
         {
@@ -32,43 +32,6 @@ namespace Audiochan.Core.Entities
         public ICollection<FavoriteAudio> Favorited { get; set; }
         public ICollection<Tag> Tags { get; set; }
 
-        public void UpdateTitle(string title)
-        {
-            if (!string.IsNullOrWhiteSpace(title))
-            {
-                this.Title = title;
-            }
-        }
-
-        public void UpdateDescription(string? description)
-        {
-            if (description is not null)
-                this.Description = description;
-        }
-
-        public void UpdateVisibility(Visibility visibility)
-        {
-            var old = this.Visibility;
-            this.Visibility = visibility;
-
-            if (old == Visibility.Private && this.Visibility != Visibility.Private)
-            {
-                this.PrivateKey = null;
-            }
-            else if (old != Visibility.Private && this.Visibility == Visibility.Private)
-            {
-                this.PrivateKey = GeneratePrivateKey();
-            }
-        }
-
-        public void ResetPrivateKey()
-        {
-            if (this.Visibility == Visibility.Private)
-            {
-                this.PrivateKey = GeneratePrivateKey();
-            }
-        }
-        
         public void UpdateTags(List<Tag> tags)
         {
             if (this.Tags.Count > 0)
@@ -96,20 +59,10 @@ namespace Audiochan.Core.Entities
             }
         }
 
-        public void UpdatePicture(string picturePath)
-        {
-            if (!string.IsNullOrWhiteSpace(picturePath))
-                this.PictureBlobName = picturePath;
-        }
-
         public bool CanModify(string userId)
         {
             return this.UserId == userId;
         }
 
-        private string GeneratePrivateKey()
-        {
-            return Nanoid.Nanoid.Generate(size: 8);
-        }
     }
 }
