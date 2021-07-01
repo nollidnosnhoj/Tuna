@@ -42,7 +42,7 @@ namespace Audiochan.Core.Features.Audios.GetAudio
             if (!cacheExists)
                 await _cacheService.SetAsync(audio, cacheOptions, cancellationToken);
 
-            return await _unitOfWork.Audios.GetAudio(query.Id, cancellationToken);
+            return audio;
         }
 
         private bool ShouldNotAccessPrivateAudio(AudioDetailViewModel audio, string? privateKey)
