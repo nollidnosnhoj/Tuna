@@ -7,11 +7,14 @@ using Amazon.Runtime.Internal.Util;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Entities;
+using Audiochan.Core.Features.Audios;
 using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Features.Audios.UpdateAudio;
+using Audiochan.Core.Features.Users;
 using Audiochan.Core.Services;
 using Audiochan.Tests.Common.Fakers.Audios;
 using Audiochan.Tests.Common.Mocks;
+using AutoMapper;
 using FluentAssertions;
 using Moq;
 using Xunit;
@@ -23,6 +26,7 @@ namespace Audiochan.Core.UnitTests.Features.Audios
         private readonly Mock<ICurrentUserService> _currentUserService;
         private readonly Mock<IUnitOfWork> _unitOfWork;
         private readonly Mock<ICacheService> _cacheService;
+        private readonly IMapper _mapper;
         private readonly UpdateAudioCommandHandler _handler;
 
         public UpdateAudioTests()
@@ -31,7 +35,16 @@ namespace Audiochan.Core.UnitTests.Features.Audios
             _unitOfWork = new UnitOfWorkMock().Create();
             _unitOfWork.Setup(x => x.Audios.Update(It.IsAny<Audio>()));
             _cacheService = new CacheServiceMock().Create();
-            _handler = new UpdateAudioCommandHandler(_currentUserService.Object, _unitOfWork.Object, _cacheService.Object);
+            var mapperConfig = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile<AudioMappingProfile>();
+                cfg.AddProfile<UserMappingProfile>();
+            });
+            _mapper = mapperConfig.CreateMapper();
+            _handler = new UpdateAudioCommandHandler(_currentUserService.Object, 
+                _unitOfWork.Object, 
+                _cacheService.Object,
+                _mapper);
         }
 
         [Fact]

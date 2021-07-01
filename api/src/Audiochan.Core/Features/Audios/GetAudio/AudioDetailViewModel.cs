@@ -9,7 +9,7 @@ namespace Audiochan.Core.Features.Audios.GetAudio
     {
         public long Id { get; init; }
         public string Title { get; init; } = null!;
-        public string? Description { get; init; }
+        public string Description { get; init; } = string.Empty;
         public Visibility Visibility { get; init; }
         public string? PrivateKey { get; init; }
         public List<string> Tags { get; init; } = new();
@@ -19,6 +19,6 @@ namespace Audiochan.Core.Features.Audios.GetAudio
         public DateTime Created { get; init; }
         public DateTime? LastModified { get; init; }
         public string AudioUrl { get; init; } = null!;
-        public MetaAuthorDto Author { get; init; } = null!;
+        public MetaAuthorDto User { get; init; } = null!;
     }
 }

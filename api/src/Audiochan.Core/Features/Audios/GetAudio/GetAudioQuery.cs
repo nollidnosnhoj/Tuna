@@ -51,7 +51,7 @@ namespace Audiochan.Core.Features.Audios.GetAudio
 
             return audio.Visibility == Visibility.Private
                    && audio.PrivateKey != privateKey
-                   && currentUserId != audio.Author.Id;
+                   && currentUserId != audio.User.Id;
         }
     }
 }

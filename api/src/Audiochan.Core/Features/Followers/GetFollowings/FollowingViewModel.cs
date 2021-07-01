@@ -4,8 +4,8 @@ namespace Audiochan.Core.Features.Followers.GetFollowings
 {
     public record FollowingViewModel
     {
-        public string Username { get; init; } = null!;
-        public string? Picture { get; init; }
+        public string TargetUserName { get; init; } = null!;
+        public string? TargetPicture { get; init; }
         public DateTime FollowedDate { get; init; }
     }
 }

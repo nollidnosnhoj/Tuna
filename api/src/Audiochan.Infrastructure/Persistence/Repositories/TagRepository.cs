@@ -6,6 +6,7 @@ using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Repositories;
 using Audiochan.Core.Services;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Infrastructure.Persistence.Repositories
@@ -28,8 +29,8 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
             return tagEntities;
         }
 
-        public TagRepository(ApplicationDbContext dbContext, ICurrentUserService currentUserService) 
-            : base(dbContext, currentUserService)
+        public TagRepository(ApplicationDbContext dbContext, ICurrentUserService currentUserService, IMapper mapper) 
+            : base(dbContext, currentUserService, mapper)
         {
         }
     }

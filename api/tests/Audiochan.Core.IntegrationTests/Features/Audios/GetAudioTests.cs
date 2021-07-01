@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Audiochan.Core.Common.Constants;
+using Audiochan.Core.Common.Models;
 using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Tests.Common.Fakers.Audios;
@@ -69,16 +70,6 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             // Assert
             result.Should().NotBeNull();
             result.Should().BeOfType<AudioDetailViewModel>();
-            result!.Title.Should().Be(audio.Title);
-            result.Description.Should().Be(audio.Description);
-            result.Created.Should().BeCloseTo(audio.Created);
-            result.Duration.Should().Be(audio.Duration);
-            result.Picture.Should().BeNullOrEmpty();
-            result.Tags.Count.Should().Be(audio.Tags.Count);
-            result.AudioUrl.Should().Be(string.Format(MediaLinkInvariants.AudioUrl, audio.Id, audio.BlobName));
-            result.FileSize.Should().Be(audio.FileSize);
-            result.Visibility.Should().Be(audio.Visibility);
-            result.LastModified.Should().BeNull();
         }
 
         [Fact]
@@ -97,20 +88,10 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             // Assert
             result.Should().NotBeNull();
             result.Should().BeOfType<AudioDetailViewModel>();
-            result!.Title.Should().Be(audio.Title);
-            result.Description.Should().Be(audio.Description);
-            result.Created.Should().BeCloseTo(audio.Created);
-            result.Duration.Should().Be(audio.Duration);
-            result.Picture.Should().BeNullOrEmpty();
-            result.Tags.Count.Should().Be(audio.Tags.Count);
-            result.AudioUrl.Should().Be(string.Format(MediaLinkInvariants.AudioUrl, audio.Id, audio.BlobName));
-            result.FileSize.Should().Be(audio.FileSize);
-            result.Visibility.Should().Be(audio.Visibility);
-            result.LastModified.Should().BeNull();
         }
         
         [Fact]
-        public async Task ShouldGetAudio_WhenPublic()
+        public async Task ShouldSuccessfullyGetAudio()
         {
             // Assign
             var (userId, _) = await _fixture.RunAsAdministratorAsync();
@@ -137,6 +118,9 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             result.FileSize.Should().Be(audio.FileSize);
             result.Visibility.Should().Be(audio.Visibility);
             result.LastModified.Should().BeNull();
+            result.User.Should().NotBeNull();
+            result.User.Should().BeOfType<MetaAuthorDto>();
+            result.User.Id.Should().Be(userId);
         }
 
         [Fact]
@@ -164,6 +148,10 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             cacheResult.Tags.Count.Should().Be(result!.Tags.Count);
             cacheResult.FileSize.Should().Be(result!.FileSize);
             cacheResult.Visibility.Should().Be(result!.Visibility);
+            result.LastModified.Should().BeNull();
+            result.User.Should().NotBeNull();
+            result.User.Should().BeOfType<MetaAuthorDto>();
+            result.User.Id.Should().Be(userId);
         }
     }
 }

@@ -2,8 +2,6 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Extensions;
-using Audiochan.Core.Common.Mappings;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Entities.Enums;
@@ -17,14 +15,16 @@ using Audiochan.Core.Features.Users.GetUserFavoriteAudios;
 using Audiochan.Core.Repositories;
 using Audiochan.Core.Services;
 using Audiochan.Infrastructure.Persistence.Extensions;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Infrastructure.Persistence.Repositories
 {
     public class UserRepository : EfRepository<User>, IUserRepository
     {
-        public UserRepository(ApplicationDbContext dbContext, ICurrentUserService currentUserService) 
-            : base(dbContext, currentUserService)
+        public UserRepository(ApplicationDbContext dbContext, ICurrentUserService currentUserService, IMapper mapper) 
+            : base(dbContext, currentUserService, mapper)
         {
         }
 
@@ -34,7 +34,7 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
             return await DbSet
                 .AsNoTracking()
                 .Where(u => u.Id == currentUserId)
-                .ProjectToCurrentUser()
+                .ProjectTo<CurrentUserViewModel>(Mapper.ConfigurationProvider)
                 .SingleOrDefaultAsync(cancellationToken);
         }
 
@@ -48,13 +48,12 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
 
         public async Task<ProfileViewModel?> GetProfile(string username, CancellationToken cancellationToken = default)
         {
-            var currentUserId = CurrentUserService.GetUserId();
             return await DbSet.AsNoTracking()
                 .Include(u => u.Followers)
                 .Include(u => u.Followings)
                 .Include(u => u.Audios)
                 .Where(u => u.UserName == username.Trim().ToLower())
-                .ProjectToUser(currentUserId)
+                .ProjectTo<ProfileViewModel>(Mapper.ConfigurationProvider)
                 .SingleOrDefaultAsync(cancellationToken);
         }
 
@@ -80,7 +79,8 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
                 ? queryable.Where(a => a.Visibility == Visibility.Public || a.UserId == currentUserId) 
                 : queryable.Where(a => a.Visibility == Visibility.Public);
 
-            return await queryable.Select(AudioMappings.AudioToListProjection())
+            return await queryable
+                .ProjectTo<AudioViewModel>(Mapper.ConfigurationProvider)
                 .PaginateAsync(query, cancellationToken);
         }
 
@@ -95,7 +95,7 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
                 .SelectMany(u => u.FavoriteAudios)
                 .OrderByDescending(fa => fa.FavoriteDate)
                 .Select(fa => fa.Audio)
-                .Select(AudioMappings.AudioToListProjection())
+                .ProjectTo<AudioViewModel>(Mapper.ConfigurationProvider)
                 .PaginateAsync(query, cancellationToken);
         }
 
@@ -107,7 +107,7 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
                 .Where(u => u.UserName == query.Username)
                 .SelectMany(u => u.Followers)
                 .OrderByDescending(fu => fu.FollowedDate)
-                .ProjectToFollower()
+                .ProjectTo<FollowerViewModel>(Mapper.ConfigurationProvider)
                 .PaginateAsync(query, cancellationToken);
         }
 
@@ -119,7 +119,7 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
                 .Where(u => u.UserName == query.Username)
                 .SelectMany(u => u.Followings)
                 .OrderByDescending(fu => fu.FollowedDate)
-                .ProjectToFollowing()
+                .ProjectTo<FollowingViewModel>(Mapper.ConfigurationProvider)
                 .PaginateAsync(query, cancellationToken);
         }
 

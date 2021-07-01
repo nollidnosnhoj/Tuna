@@ -11,6 +11,7 @@ namespace Audiochan.Core
         public static IServiceCollection AddCore(this IServiceCollection services)
         {
             return services
+                .AddAutoMapper(Assembly.GetExecutingAssembly())
                 .AddValidatorsFromAssembly(Assembly.GetExecutingAssembly())
                 .AddMediatR(Assembly.GetExecutingAssembly())
                 .AddBehaviorPipelines();
@@ -19,8 +20,8 @@ namespace Audiochan.Core
         private static IServiceCollection AddBehaviorPipelines(this IServiceCollection services)
         {
             return services
-                .AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehavior<,>))
-                .AddScoped(typeof(IPipelineBehavior<,>), typeof(DbTransactionPipelineBehavior<,>));
+                .AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehavior<,>))
+                .AddTransient(typeof(IPipelineBehavior<,>), typeof(DbTransactionPipelineBehavior<,>));
         }
     }
 }
