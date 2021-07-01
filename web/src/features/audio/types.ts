@@ -14,7 +14,7 @@ export interface AudioData {
   picture?: string;
   uploaded: string;
   audioUrl: string;
-  author: MetaAuthor;
+  user: MetaAuthor;
   privateKey?: string;
 }
 

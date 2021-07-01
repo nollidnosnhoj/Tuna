@@ -2,26 +2,25 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Extensions;
-using Audiochan.Core.Common.Mappings;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Features.Audios.GetAudio;
-using Audiochan.Core.Features.Audios.GetAudioFeed;
 using Audiochan.Core.Features.Audios.GetAudioList;
 using Audiochan.Core.Features.Audios.SearchAudios;
 using Audiochan.Core.Repositories;
 using Audiochan.Core.Services;
 using Audiochan.Infrastructure.Persistence.Extensions;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Infrastructure.Persistence.Repositories
 {
     public class AudioRepository : EfRepository<Audio>, IAudioRepository
     {
-        public AudioRepository(ApplicationDbContext dbContext, ICurrentUserService currentUserService) 
-            : base(dbContext, currentUserService)
+        public AudioRepository(ApplicationDbContext dbContext, ICurrentUserService currentUserService, IMapper mapper) 
+            : base(dbContext, currentUserService, mapper)
         {
         }
 
@@ -42,7 +41,7 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
                 .Include(x => x.Tags)
                 .Include(x => x.User)
                 .Where(x => x.Id == id)
-                .ProjectToDetail()
+                .ProjectTo<AudioDetailViewModel>(Mapper.ConfigurationProvider)
                 .SingleOrDefaultAsync(cancellationToken);
         }
 
@@ -75,7 +74,7 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
                 queryable = queryable.Where(x => x.Id < query.Cursor);
 
             return await queryable
-                .ProjectToList()
+                .ProjectTo<AudioViewModel>(Mapper.ConfigurationProvider)
                 .Take(query.Size)
                 .ToListAsync(cancellationToken);
         }
@@ -101,7 +100,8 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
             if (parsedTags.Count > 0)
                 queryable = queryable.Where(a => a.Tags.Any(x => parsedTags.Contains(x.Name)));
 
-            return await queryable.Select(AudioMappings.AudioToListProjection())
+            return await queryable
+                .ProjectTo<AudioViewModel>(Mapper.ConfigurationProvider)
                 .PaginateAsync(query, cancellationToken);
         }
 
@@ -112,7 +112,7 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
                 .Include(x => x.User)
                 .Where(a => a.Visibility == Visibility.Public)
                 .Where(a => followingIds.Contains(a.UserId))
-                .ProjectToList()
+                .ProjectTo<AudioViewModel>(Mapper.ConfigurationProvider)
                 .OrderByDescending(a => a.Uploaded)
                 .PaginateAsync(cancellationToken: cancellationToken);
         }

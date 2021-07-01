@@ -7,20 +7,23 @@ using System.Threading.Tasks;
 using Audiochan.Core.Repositories;
 using Audiochan.Core.Services;
 using Audiochan.Infrastructure.Persistence.Extensions;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Infrastructure.Persistence.Repositories
 {
     public abstract class EfRepository<TEntity> : IGenericRepository<TEntity> where TEntity : class
     {
+        protected readonly IMapper Mapper;
         protected readonly ApplicationDbContext DbContext;
         protected readonly DbSet<TEntity> DbSet;
         protected readonly ICurrentUserService CurrentUserService;
 
-        protected EfRepository(ApplicationDbContext dbContext, ICurrentUserService currentUserService)
+        protected EfRepository(ApplicationDbContext dbContext, ICurrentUserService currentUserService, IMapper mapper)
         {
             DbContext = dbContext;
             CurrentUserService = currentUserService;
+            Mapper = mapper;
             DbSet = dbContext.Set<TEntity>();
         }
         

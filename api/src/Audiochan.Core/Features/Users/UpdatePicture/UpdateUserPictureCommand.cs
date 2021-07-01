@@ -1,11 +1,11 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Interfaces;
-using Audiochan.Core.Common.Mappings;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Features.Users.GetProfile;
 using Audiochan.Core.Services;
+using AutoMapper;
 using MediatR;
 using Microsoft.Extensions.Options;
 
@@ -31,11 +31,15 @@ namespace Audiochan.Core.Features.Users.UpdatePicture
         private readonly IDateTimeProvider _dateTimeProvider;
         private readonly ICurrentUserService _currentUserService;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
         public UpdateUserPictureCommandHandler(IOptions<MediaStorageSettings> options,
             IImageProcessingService imageProcessingService,
             IStorageService storageService,
-            IDateTimeProvider dateTimeProvider, ICurrentUserService currentUserService, IUnitOfWork unitOfWork)
+            IDateTimeProvider dateTimeProvider, 
+            ICurrentUserService currentUserService, 
+            IUnitOfWork unitOfWork, 
+            IMapper mapper)
         {
             _storageSettings = options.Value;
             _imageProcessingService = imageProcessingService;
@@ -43,11 +47,11 @@ namespace Audiochan.Core.Features.Users.UpdatePicture
             _dateTimeProvider = dateTimeProvider;
             _currentUserService = currentUserService;
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
         public async Task<Result<ProfileViewModel>> Handle(UpdateUserPictureCommand command, CancellationToken cancellationToken)
         {
-            var currentUserId = _currentUserService.GetUserId();
             var container = string.Join('/', _storageSettings.Image.Container, "users");
             var user = await _unitOfWork.Users.FindAsync(new object[]{command.UserId}, cancellationToken);
             
@@ -67,8 +71,7 @@ namespace Audiochan.Core.Features.Users.UpdatePicture
             user.UpdatePicture(blobName);
             _unitOfWork.Users.Update(user);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-            return Result<ProfileViewModel>.Success(user.MapToProfile(currentUserId));
+            return Result<ProfileViewModel>.Success(_mapper.Map<ProfileViewModel>(user));
         }
     }
 }

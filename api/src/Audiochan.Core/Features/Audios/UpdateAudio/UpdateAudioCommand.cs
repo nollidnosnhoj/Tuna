@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Constants;
 using Audiochan.Core.Common.Interfaces;
-using Audiochan.Core.Common.Mappings;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Services;
+using AutoMapper;
 using MediatR;
 
 namespace Audiochan.Core.Features.Audios.UpdateAudio
@@ -34,13 +33,18 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
     {
         private readonly ICurrentUserService _currentUserService;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
         private readonly ICacheService _cacheService;
 
-        public UpdateAudioCommandHandler(ICurrentUserService currentUserService, IUnitOfWork unitOfWork, ICacheService cacheService)
+        public UpdateAudioCommandHandler(ICurrentUserService currentUserService, 
+            IUnitOfWork unitOfWork,
+            ICacheService cacheService, 
+            IMapper mapper)
         {
             _currentUserService = currentUserService;
             _unitOfWork = unitOfWork;
             _cacheService = cacheService;
+            _mapper = mapper;
         }
 
         public async Task<Result<AudioDetailViewModel>> Handle(UpdateAudioCommand command,
@@ -89,7 +93,7 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
             _unitOfWork.Audios.Update(audio);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             await _cacheService.RemoveAsync(new GetAudioCacheOptions(audio.Id), cancellationToken);
-            return Result<AudioDetailViewModel>.Success(audio.MapToDetail());
+            return Result<AudioDetailViewModel>.Success(_mapper.Map<AudioDetailViewModel>(audio));
         }
     }
 }

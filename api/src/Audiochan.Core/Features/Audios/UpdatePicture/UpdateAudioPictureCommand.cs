@@ -1,12 +1,11 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Constants;
 using Audiochan.Core.Common.Interfaces;
-using Audiochan.Core.Common.Mappings;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Services;
+using AutoMapper;
 using MediatR;
 using Microsoft.Extensions.Options;
 
@@ -36,6 +35,7 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
         private readonly IImageProcessingService _imageProcessingService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICacheService _cacheService;
+        private readonly IMapper _mapper;
 
         public UpdateAudioCommandHandler(IOptions<MediaStorageSettings> options,
             IStorageService storageService,
@@ -43,7 +43,7 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
             IImageProcessingService imageProcessingService,
             IDateTimeProvider dateTimeProvider, 
             IUnitOfWork unitOfWork, 
-            ICacheService cacheService)
+            ICacheService cacheService, IMapper mapper)
         {
             _storageSettings = options.Value;
             _storageService = storageService;
@@ -52,6 +52,7 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
             _dateTimeProvider = dateTimeProvider;
             _unitOfWork = unitOfWork;
             _cacheService = cacheService;
+            _mapper = mapper;
         }
 
         public async Task<Result<AudioDetailViewModel>> Handle(UpdateAudioPictureCommand command,
@@ -80,7 +81,7 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
             _unitOfWork.Audios.Update(audio);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             await _cacheService.RemoveAsync(new GetAudioCacheOptions(command.AudioId), cancellationToken);
-            return Result<AudioDetailViewModel>.Success(audio.MapToDetail());
+            return Result<AudioDetailViewModel>.Success(_mapper.Map<AudioDetailViewModel>(audio));
         }
     }
 }

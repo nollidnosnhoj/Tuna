@@ -61,7 +61,7 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
     useAddAudioPicture(audio.id);
 
   useEffect(() => {
-    Router.prefetch(`/users/${audio.author.username}`);
+    Router.prefetch(`/users/${audio.user.username}`);
   }, []);
 
   return (
@@ -75,15 +75,15 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
               await addPictureAsync(croppedData);
             }}
             isUploading={isAddingPicture}
-            canEdit={currentUser?.id === audio.author.id}
+            canEdit={currentUser?.id === audio.user.id}
           />
         </Box>
         <Box flex="5">
           <Stack direction="row" marginBottom={4}>
             <AudioPlayButton audio={audio} />
             <Stack direction="column" spacing="0" fontSize="sm">
-              <Link href={`/users/${audio.author.username}`}>
-                <Text fontWeight="500">{audio.author.username}</Text>
+              <Link href={`/users/${audio.user.username}`}>
+                <Text fontWeight="500">{audio.user.username}</Text>
               </Link>
               <Text color={secondaryColor}>{relativeDate(audio.uploaded)}</Text>
             </Stack>
@@ -106,7 +106,7 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
                   isRound
                 />
                 <MenuList>
-                  {audio.author.id === currentUser?.id && (
+                  {audio.user.id === currentUser?.id && (
                     <MenuItem icon={<EditIcon />} onClick={onEditOpen}>
                       Edit
                     </MenuItem>
@@ -148,7 +148,7 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
       />
       <AudioShareModal
         audioId={audio.id}
-        userId={audio.author.id}
+        userId={audio.user.id}
         isPrivate={audio.visibility === Visibility.Private}
         privateKey={audio.privateKey}
         isOpen={isShareOpen}

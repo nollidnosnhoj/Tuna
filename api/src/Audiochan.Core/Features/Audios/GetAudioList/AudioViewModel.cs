@@ -13,6 +13,6 @@ namespace Audiochan.Core.Features.Audios.GetAudioList
         public string? Picture { get; init; }
         public DateTime Uploaded { get; init; }
         public string AudioUrl { get; init; } = null!;
-        public MetaAuthorDto Author { get; init; } = null!;
+        public MetaAuthorDto User { get; init; } = null!;
     }
 }
