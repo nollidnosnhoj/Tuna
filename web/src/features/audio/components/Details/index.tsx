@@ -150,7 +150,7 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
         audioId={audio.id}
         userId={audio.user.id}
         isPrivate={audio.visibility === Visibility.Private}
-        privateKey={audio.privateKey}
+        secret={audio.secret}
         isOpen={isShareOpen}
         onClose={onShareClose}
       />

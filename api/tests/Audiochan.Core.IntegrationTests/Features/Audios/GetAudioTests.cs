@@ -36,7 +36,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
         }
         
         [Fact]
-        public async Task ShouldNotGetAudio_WhenPrivateKeyIsInvalid()
+        public async Task ShouldNotGetAudio_WhenSecretIsInvalid()
         {
             // Assign
             var (ownerId, _) = await _fixture.RunAsAdministratorAsync();
@@ -53,7 +53,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
         }
 
         [Fact]
-        public async Task ShouldGetAudio_WhenPrivateKeyIsValid()
+        public async Task ShouldGetAudio_WhenSecretIsValid()
         {
             // Assign
             var (userId, _) = await _fixture.RunAsAdministratorAsync();

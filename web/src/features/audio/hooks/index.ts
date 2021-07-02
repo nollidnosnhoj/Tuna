@@ -8,4 +8,4 @@ export { useGetTagAudioList } from "./useGetTagAudios";
 export { useSearchAudio } from "./useSearchAudio";
 export { useGetAudioFeed } from "./useGetAudioFeed";
 export { useFavoriteAudio } from "./useFavoriteAudio";
-export { useResetPrivateKey } from "./useResetPrivateKey";
+export { useResetAudioSecret } from "./useResetAudioSecret";

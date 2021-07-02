@@ -11,7 +11,7 @@ namespace Audiochan.Core.Features.Audios.GetAudio
         public string Title { get; init; } = null!;
         public string Description { get; init; } = string.Empty;
         public Visibility Visibility { get; init; }
-        public string? PrivateKey { get; init; }
+        public string? Secret { get; init; }
         public List<string> Tags { get; init; } = new();
         public decimal Duration { get; init; }
         public long FileSize { get; init; }

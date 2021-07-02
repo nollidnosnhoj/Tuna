@@ -15,7 +15,7 @@ import { useMemo } from "react";
 import { useUser } from "~/features/user/hooks";
 import SETTINGS from "~/lib/config";
 import { toast } from "~/utils";
-import { useResetPrivateKey } from "../../hooks";
+import { useResetAudioSecret } from "../../hooks";
 import AudioShareItem from "./AudioShareItem";
 
 interface AudioShareModalProps {
@@ -24,21 +24,21 @@ interface AudioShareModalProps {
   audioId: number;
   userId: string;
   isPrivate: boolean;
-  privateKey?: string;
+  secret?: string;
 }
 
 export default function AudioShareModal(props: AudioShareModalProps) {
-  const { audioId, userId, isPrivate, privateKey, isOpen, onClose } = props;
+  const { audioId, userId, isPrivate, secret, isOpen, onClose } = props;
   const router = useRouter();
   const { user } = useUser();
-  const { mutateAsync: resetPrivateKeyAsync } = useResetPrivateKey(audioId);
+  const { mutateAsync: resetAudioSecretAsync } = useResetAudioSecret(audioId);
 
-  const onResetPrivateKey = async () => {
+  const onResetSecretKey = async () => {
     const message =
       "NOTE: Resetting private key will make the current url invalid. Are you sure you want to do this?";
 
     if (confirm(message)) {
-      const newKey = await resetPrivateKeyAsync();
+      const newKey = await resetAudioSecretAsync();
       await router.push(`/audios/${audioId}?key=${newKey}`);
       toast("success", {
         description: "Private key reset.",
@@ -48,11 +48,11 @@ export default function AudioShareModal(props: AudioShareModalProps) {
 
   const audioUrl = useMemo(() => {
     const url = SETTINGS.FRONTEND_URL + `audios/${audioId}`;
-    if (isPrivate && privateKey) {
-      return url + `?key=${privateKey}`;
+    if (isPrivate && secret) {
+      return url + `?key=${secret}`;
     }
     return url + "/";
-  }, [audioId, isPrivate, privateKey]);
+  }, [audioId, isPrivate, secret]);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -67,7 +67,7 @@ export default function AudioShareModal(props: AudioShareModalProps) {
         </ModalBody>
         {user?.id === userId && (
           <ModalFooter>
-            <Button onClick={onResetPrivateKey}>Reset Private Key</Button>
+            <Button onClick={onResetSecretKey}>Reset Secret Key</Button>
           </ModalFooter>
         )}
       </ModalContent>

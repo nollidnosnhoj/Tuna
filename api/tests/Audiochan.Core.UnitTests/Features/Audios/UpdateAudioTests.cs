@@ -73,7 +73,7 @@ namespace Audiochan.Core.UnitTests.Features.Audios
             // Assert
             result.Should().NotBeNull();
             result.IsSuccess.Should().Be(false);
-            result.ErrorCode.Should().Be(ResultError.NotFound);
+            result.ErrorCode.Should().Be(ResultError.Forbidden);
         }
 
         [Fact]

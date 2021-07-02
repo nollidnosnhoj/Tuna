@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Audiochan.Core.Entities.Enums;
-using Audiochan.Core.Features.Audios.ResetPrivateKey;
+using Audiochan.Core.Features.Audios.ResetSecret;
 using Audiochan.Tests.Common.Fakers.Audios;
 using FluentAssertions;
 using Xunit;
@@ -8,24 +8,24 @@ using Xunit;
 namespace Audiochan.Core.IntegrationTests.Features.Audios
 {
     [Collection(nameof(SliceFixture))]
-    public class ResetPrivateKeyTests
+    public class ResetSecretKeyTests
     {
         private readonly SliceFixture _sliceFixture;
 
-        public ResetPrivateKeyTests(SliceFixture sliceFixture)
+        public ResetSecretKeyTests(SliceFixture sliceFixture)
         {
             _sliceFixture = sliceFixture;
         }
 
         [Fact]
-        public async Task ShouldResetPrivateKey()
+        public async Task ShouldReset()
         {
             var (ownerId, _) = await _sliceFixture.RunAsDefaultUserAsync();
             var audio = new AudioFaker(ownerId).Generate();
             audio.Visibility = Visibility.Private;
             await _sliceFixture.InsertAsync(audio);
 
-            var result = await _sliceFixture.SendAsync(new ResetPrivateKeyCommand(audio.Id));
+            var result = await _sliceFixture.SendAsync(new ResetSecretCommand(audio.Id));
 
             audio.Secret.Should().NotBeNullOrEmpty();
             result.IsSuccess.Should().BeTrue();

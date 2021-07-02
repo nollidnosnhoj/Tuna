@@ -6,27 +6,27 @@ using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Services;
 using MediatR;
 
-namespace Audiochan.Core.Features.Audios.ResetPrivateKey
+namespace Audiochan.Core.Features.Audios.ResetSecret
 {
-    public record ResetPrivateKeyCommand(long Id) : IRequest<Result<string>>
+    public record ResetSecretCommand(long Id) : IRequest<Result<string>>
     {
         
     }
     
-    public class ResetPrivateKeyCommandHandler : IRequestHandler<ResetPrivateKeyCommand, Result<string>>
+    public class ResetSecretCommandHandler : IRequestHandler<ResetSecretCommand, Result<string>>
     {
         private readonly ICurrentUserService _currentUserService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly INanoidGenerator _nanoid;
 
-        public ResetPrivateKeyCommandHandler(ICurrentUserService currentUserService, IUnitOfWork unitOfWork, INanoidGenerator nanoid)
+        public ResetSecretCommandHandler(ICurrentUserService currentUserService, IUnitOfWork unitOfWork, INanoidGenerator nanoid)
         {
             _currentUserService = currentUserService;
             _unitOfWork = unitOfWork;
             _nanoid = nanoid;
         }
 
-        public async Task<Result<string>> Handle(ResetPrivateKeyCommand request, CancellationToken cancellationToken)
+        public async Task<Result<string>> Handle(ResetSecretCommand request, CancellationToken cancellationToken)
         {
             var currentUserId = _currentUserService.GetUserId();
             var audio = await _unitOfWork.Audios.LoadAsync(x => x.Id == request.Id, 

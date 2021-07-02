@@ -7,7 +7,7 @@ using Audiochan.Core.Features.Audios.CreateAudio;
 using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Features.Audios.GetAudioList;
 using Audiochan.Core.Features.Audios.RemoveAudio;
-using Audiochan.Core.Features.Audios.ResetPrivateKey;
+using Audiochan.Core.Features.Audios.ResetSecret;
 using Audiochan.Core.Features.Audios.UpdateAudio;
 using Audiochan.Core.Features.Audios.UpdatePicture;
 using MediatR;
@@ -45,10 +45,10 @@ namespace Audiochan.API.Controllers
         [ProducesResponseType(typeof(ErrorApiResponse), StatusCodes.Status404NotFound)]
         [SwaggerOperation(Summary = "Return an audio by ID.", OperationId = "GetAudio", Tags = new[] {"audios"})]
         public async Task<IActionResult> Get(long audioId, 
-            [FromQuery] string? privateKey,
+            [FromQuery] string? secret,
             CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(new GetAudioQuery(audioId, privateKey), cancellationToken);
+            var result = await _mediator.Send(new GetAudioQuery(audioId, secret), cancellationToken);
             return result != null
                 ? Ok(result)
                 : NotFound(ErrorApiResponse.NotFound("Audio was not found."));
@@ -120,17 +120,17 @@ namespace Audiochan.API.Controllers
                 : result.ReturnErrorResponse();
         }
 
-        [HttpPatch("{audioId:long}/reset-private-key")]
+        [HttpPatch("{audioId:long}/reset-secret")]
         [SwaggerOperation(
-            Summary = "Reset Private Key.",
+            Summary = "Reset Secret key.",
             Description = "Requires authentication.",
-            OperationId = "ResetPrivateKey",
+            OperationId = "ResetSecretKey",
             Tags = new[] {"audios"})]
-        public async Task<IActionResult> ResetPrivateKey(long audioId, CancellationToken cancellationToken)
+        public async Task<IActionResult> ResetSecret(long audioId, CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(new ResetPrivateKeyCommand(audioId), cancellationToken);
+            var result = await _mediator.Send(new ResetSecretCommand(audioId), cancellationToken);
             return result.IsSuccess
-                ? Ok(new {PrivateKey = result.Data})
+                ? Ok(new {Secret = result.Data})
                 : result.ReturnErrorResponse();
         }
     }
