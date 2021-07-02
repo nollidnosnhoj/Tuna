@@ -17,7 +17,6 @@ namespace Audiochan.Infrastructure.Persistence
     public class ApplicationDbContext : IdentityDbContext<User, Role, string>
     {
         private readonly IDateTimeProvider _dateTimeProvider;
-        private readonly INanoidGenerator _nanoid;
         private IDbContextTransaction? _currentTransaction;
 
         public ApplicationDbContext(DbContextOptions options,
@@ -25,12 +24,14 @@ namespace Audiochan.Infrastructure.Persistence
             INanoidGenerator nanoid) : base(options)
         {
             _dateTimeProvider = dateTimeProvider;
-            _nanoid = nanoid;
         }
 
         public DbSet<Audio> Audios { get; set; } = null!;
         public DbSet<FavoriteAudio> FavoriteAudios { get; set; } = null!;
+        public DbSet<FavoritePlaylist> FavoritePlaylists { get; set; } = null!;
         public DbSet<FollowedUser> FollowedUsers { get; set; } = null!;
+        public DbSet<Playlist> Playlists { get; set; } = null!;
+        public DbSet<PlaylistAudio> PlaylistAudios { get; set; } = null!;
         public DbSet<Tag> Tags { get; set; } = null!;
         
 

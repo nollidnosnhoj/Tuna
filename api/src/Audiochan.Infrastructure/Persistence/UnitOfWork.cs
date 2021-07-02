@@ -11,6 +11,7 @@ namespace Audiochan.Infrastructure.Persistence
     {
         private readonly ApplicationDbContext _dbContext;
         public IAudioRepository Audios { get; }
+        public IPlaylistRepository Playlists { get; }
         public ITagRepository Tags { get; }
         public IUserRepository Users { get; }
         

@@ -10,8 +10,10 @@ namespace Audiochan.Core.Entities
         {
             Audios = new HashSet<Audio>();
             FavoriteAudios = new HashSet<FavoriteAudio>();
+            FavoritePlaylists = new HashSet<FavoritePlaylist>();
             Followings = new HashSet<FollowedUser>();
             Followers = new HashSet<FollowedUser>();
+            Playlists = new HashSet<Playlist>();
             RefreshTokens = new HashSet<RefreshToken>();
         }
 
@@ -30,8 +32,10 @@ namespace Audiochan.Core.Entities
         public DateTime Joined { get; set; }
         public ICollection<Audio> Audios { get; set; }
         public ICollection<FavoriteAudio> FavoriteAudios { get; set; }
+        public ICollection<FavoritePlaylist> FavoritePlaylists { get; set; }
         public ICollection<FollowedUser> Followings { get; set; }
         public ICollection<FollowedUser> Followers { get; set; }
+        public ICollection<Playlist> Playlists { get; set; }
         public ICollection<RefreshToken> RefreshTokens { get; set; }
 
         public void UpdateDisplayName(string? displayName)
