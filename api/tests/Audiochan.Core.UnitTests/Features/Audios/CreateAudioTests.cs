@@ -7,14 +7,11 @@ using System.Threading.Tasks;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Entities;
-using Audiochan.Core.Features.Audios;
 using Audiochan.Core.Features.Audios.CreateAudio;
-using Audiochan.Core.Features.Users;
 using Audiochan.Core.Services;
 using Audiochan.Tests.Common.Builders;
 using Audiochan.Tests.Common.Fakers.Audios;
 using Audiochan.Tests.Common.Mocks;
-using AutoMapper;
 using FluentAssertions;
 using Microsoft.Extensions.Options;
 using Moq;
@@ -27,8 +24,6 @@ namespace Audiochan.Core.UnitTests.Features.Audios
         private readonly Mock<IStorageService> _storageService;
         private readonly Mock<ICurrentUserService> _currentUserService;
         private readonly Mock<IUnitOfWork> _unitOfWork;
-        private readonly Mock<ICacheService> _cacheService;
-        private readonly IMapper _mapper;
         private readonly CreateAudioCommandHandler _handler;
         
         public CreateAudioTests()
@@ -40,19 +35,10 @@ namespace Audiochan.Core.UnitTests.Features.Audios
             _storageService = new Mock<IStorageService>();
             _currentUserService = new Mock<ICurrentUserService>();
             _unitOfWork = new UnitOfWorkMock().Create();
-            _cacheService = new Mock<ICacheService>();
-            var mapperConfig = new MapperConfiguration(cfg =>
-            {
-                cfg.AddProfile<AudioMappingProfile>();
-                cfg.AddProfile<UserMappingProfile>();
-            });
-            _mapper = mapperConfig.CreateMapper();
             _handler = new CreateAudioCommandHandler(options, 
                 _storageService.Object, 
                 _currentUserService.Object,
-                _unitOfWork.Object, 
-                _cacheService.Object,
-                _mapper);
+                _unitOfWork.Object);
         }
 
         [Fact]
@@ -102,10 +88,6 @@ namespace Audiochan.Core.UnitTests.Features.Audios
                     It.IsAny<bool>(),
                     It.IsAny<CancellationToken>()))
                 .ReturnsAsync(user);
-            _cacheService
-                .Setup(x => x.SetAsync(It.IsAny<string>(), It.IsAny<object>(), It.IsAny<TimeSpan?>(),
-                    It.IsAny<CancellationToken>()))
-                .ReturnsAsync(true);
 
             // Act
             var response = await _handler.Handle(request, CancellationToken.None);
@@ -113,15 +95,6 @@ namespace Audiochan.Core.UnitTests.Features.Audios
             // Assert
             response.Should().NotBeNull();
             response.IsSuccess.Should().BeTrue();
-            response.Data.Should().NotBeNull();
-            response.Data!.Title.Should().Be(request.Title);
-            response.Data.Description.Should().Be(request.Description);
-            response.Data.Visibility.Should().Be(request.Visibility);
-            response.Data.Duration.Should().Be(request.Duration);
-            response.Data.Size.Should().Be(request.FileSize);
-            response.Data.User.Should().NotBeNull();
-            response.Data.User.Id.Should().Be(user.Id);
-            response.Data.User.UserName.Should().Be(user.UserName);
         }
     }
 }

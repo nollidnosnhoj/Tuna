@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,15 +8,13 @@ using Audiochan.Core.Common.Models;
 using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Entities.Enums;
-using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Services;
-using AutoMapper;
 using MediatR;
 using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Audios.CreateAudio
 {
-    public class CreateAudioCommand : IRequest<Result<AudioDetailViewModel>>
+    public class CreateAudioCommand : IRequest<Result<Guid>>
     {
         public string UploadId { get; init; } = null!;
         public string FileName { get; init; } = null!;
@@ -28,31 +27,25 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
         public string BlobName => UploadId + Path.GetExtension(FileName);
     }
 
-    public class CreateAudioCommandHandler : IRequestHandler<CreateAudioCommand, Result<AudioDetailViewModel>>
+    public class CreateAudioCommandHandler : IRequestHandler<CreateAudioCommand, Result<Guid>>
     {
         private readonly IStorageService _storageService;
         private readonly ICurrentUserService _currentUserService;
-        private readonly ICacheService _cacheService;
         private readonly MediaStorageSettings _storageSettings;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
 
         public CreateAudioCommandHandler(IOptions<MediaStorageSettings> mediaStorageOptions,
             IStorageService storageService,
             ICurrentUserService currentUserService,
-            IUnitOfWork unitOfWork,
-            ICacheService cacheService,
-            IMapper mapper)
+            IUnitOfWork unitOfWork)
         {
             _storageSettings = mediaStorageOptions.Value;
             _storageService = storageService;
             _currentUserService = currentUserService;
             _unitOfWork = unitOfWork;
-            _cacheService = cacheService;
-            _mapper = mapper;
         }
 
-        public async Task<Result<AudioDetailViewModel>> Handle(CreateAudioCommand command,
+        public async Task<Result<Guid>> Handle(CreateAudioCommand command,
             CancellationToken cancellationToken)
         {
             var currentUser = await _unitOfWork.Users
@@ -60,33 +53,40 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
                         cancellationToken: cancellationToken);
 
             if (currentUser is null)
-                return Result<AudioDetailViewModel>.Fail(ResultError.Unauthorized);
+                return Result<Guid>.Fail(ResultError.Unauthorized);
 
-            var audio = new Audio
+            Guid audioId;
+            _unitOfWork.BeginTransaction();
+            try
             {
-                User = currentUser,
-                Size = command.FileSize,
-                Duration = command.Duration,
-                Title = command.Title,
-                Description = command.Description,
-                Visibility = command.Visibility,
-                File = command.BlobName,
-                Tags = command.Tags.Count > 0
-                    ? await _unitOfWork.Tags.GetAppropriateTags(command.Tags, cancellationToken)
-                    : new List<Tag>(),
-            };
-            
-            await _unitOfWork.Audios.AddAsync(audio, cancellationToken);
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
-            await MoveTempAudioToPublicAsync(audio, cancellationToken);
-            var result = _mapper.Map<AudioDetailViewModel>(audio);
-            await CreateCache(result, cancellationToken);
-            return Result<AudioDetailViewModel>.Success(result);
-        }
+                var audio = new Audio
+                {
+                    User = currentUser,
+                    Size = command.FileSize,
+                    Duration = command.Duration,
+                    Title = command.Title,
+                    Description = command.Description,
+                    Visibility = command.Visibility,
+                    File = command.BlobName,
+                    Tags = command.Tags.Count > 0
+                        ? await _unitOfWork.Tags.GetAppropriateTags(command.Tags, cancellationToken)
+                        : new List<Tag>(),
+                };
 
-        private async Task CreateCache(AudioDetailViewModel value, CancellationToken cancellationToken = default)
-        {
-            await _cacheService.SetAsync(value, new GetAudioCacheOptions(value.Id), cancellationToken);
+                await _unitOfWork.Audios.AddAsync(audio, cancellationToken);
+                await MoveTempAudioToPublicAsync(audio, cancellationToken);
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
+                audioId = audio.Id;
+            }
+            catch
+            {
+                _unitOfWork.RollbackTransaction();
+                throw;
+            }
+
+            await _unitOfWork.CommitTransactionAsync();
+            
+            return Result<Guid>.Success(audioId);
         }
 
         private async Task MoveTempAudioToPublicAsync(Audio audio, CancellationToken cancellationToken)
