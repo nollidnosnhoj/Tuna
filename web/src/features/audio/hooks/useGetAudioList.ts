@@ -14,7 +14,7 @@ export function useGetAudioList(
 ): UseInfiniteCursorPaginationReturnType<AudioData> {
   return useInfiniteCursorPagination<AudioData>(
     GET_AUDIO_LIST_QUERY_KEY,
-    (cursor) => fetchAudiosHandler(parseInt(cursor, 10), params),
+    (cursor) => fetchAudiosHandler(cursor, params),
     options
   );
 }

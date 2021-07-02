@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
@@ -13,10 +14,10 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
 {
     public class UpdateAudioPictureCommand : IRequest<Result<AudioDetailViewModel>>
     {
-        public long AudioId { get; set; }
+        public Guid AudioId { get; set; }
         public string Data { get; set; } = string.Empty;
 
-        public static UpdateAudioPictureCommand FromRequest(long audioId, UpdateAudioPictureRequest request)
+        public static UpdateAudioPictureCommand FromRequest(Guid audioId, UpdateAudioPictureRequest request)
         {
             return new()
             {
@@ -74,10 +75,10 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
             
             await _imageProcessingService.UploadImage(command.Data, container, blobName, cancellationToken);
             
-            if (!string.IsNullOrEmpty(audio.PictureBlobName))
-                await _storageService.RemoveAsync(_storageSettings.Image.Bucket, container, audio.PictureBlobName, cancellationToken);
+            if (!string.IsNullOrEmpty(audio.Picture))
+                await _storageService.RemoveAsync(_storageSettings.Image.Bucket, container, audio.Picture, cancellationToken);
 
-            audio.PictureBlobName = blobName;
+            audio.Picture = blobName;
             _unitOfWork.Audios.Update(audio);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             await _cacheService.RemoveAsync(new GetAudioCacheOptions(command.AudioId), cancellationToken);

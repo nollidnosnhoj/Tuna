@@ -13,21 +13,21 @@ namespace Audiochan.Core.Features.Audios
         {
             CreateMap<Audio, AudioDetailViewModel>()
                 .ForMember(dest => dest.Picture, opts =>
-                    opts.MapFrom(src => src.PictureBlobName != null
-                        ? string.Format(MediaLinkInvariants.AudioPictureUrl, src.PictureBlobName)
+                    opts.MapFrom(src => src.Picture != null
+                        ? string.Format(MediaLinkInvariants.AudioPictureUrl, src.Picture)
                         : null))
                 .ForMember(dest => dest.Tags, opts =>
                     opts.MapFrom(src => src.Tags.Select(t => t.Name).ToList()))
                 .ForMember(dest => dest.AudioUrl, opts =>
-                    opts.MapFrom(src => string.Format(MediaLinkInvariants.AudioUrl, src.Id, src.BlobName)));
+                    opts.MapFrom(src => string.Format(MediaLinkInvariants.AudioUrl, src.Id, src.File)));
 
             CreateMap<Audio, AudioViewModel>()
                 .ForMember(dest => dest.Picture, opts =>
-                    opts.MapFrom(src => src.PictureBlobName != null
-                        ? string.Format(MediaLinkInvariants.AudioPictureUrl, src.PictureBlobName)
+                    opts.MapFrom(src => src.Picture != null
+                        ? string.Format(MediaLinkInvariants.AudioPictureUrl, src.Picture)
                         : null))
                 .ForMember(dest => dest.AudioUrl, opts =>
-                    opts.MapFrom(src => string.Format(MediaLinkInvariants.AudioUrl, src.Id, src.BlobName)));
+                    opts.MapFrom(src => string.Format(MediaLinkInvariants.AudioUrl, src.Id, src.File)));
         }
     }
 }

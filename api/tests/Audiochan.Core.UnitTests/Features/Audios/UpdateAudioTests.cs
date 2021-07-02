@@ -25,8 +25,6 @@ namespace Audiochan.Core.UnitTests.Features.Audios
     {
         private readonly Mock<ICurrentUserService> _currentUserService;
         private readonly Mock<IUnitOfWork> _unitOfWork;
-        private readonly Mock<ICacheService> _cacheService;
-        private readonly IMapper _mapper;
         private readonly UpdateAudioCommandHandler _handler;
 
         public UpdateAudioTests()
@@ -34,17 +32,17 @@ namespace Audiochan.Core.UnitTests.Features.Audios
             _currentUserService = new Mock<ICurrentUserService>();
             _unitOfWork = new UnitOfWorkMock().Create();
             _unitOfWork.Setup(x => x.Audios.Update(It.IsAny<Audio>()));
-            _cacheService = new CacheServiceMock().Create();
+            var cacheService = new CacheServiceMock().Create();
             var mapperConfig = new MapperConfiguration(cfg =>
             {
                 cfg.AddProfile<AudioMappingProfile>();
                 cfg.AddProfile<UserMappingProfile>();
             });
-            _mapper = mapperConfig.CreateMapper();
+            var mapper = mapperConfig.CreateMapper();
             _handler = new UpdateAudioCommandHandler(_currentUserService.Object, 
                 _unitOfWork.Object, 
-                _cacheService.Object,
-                _mapper);
+                cacheService.Object,
+                mapper);
         }
 
         [Fact]
@@ -58,7 +56,7 @@ namespace Audiochan.Core.UnitTests.Features.Audios
             _currentUserService.Setup(x => x.GetUserId())
                 .Returns("abc");
             _unitOfWork.Setup(x => x.Audios.LoadForUpdate(
-                    It.IsAny<long>(), 
+                    It.IsAny<Guid>(), 
                     It.IsAny<CancellationToken>()))
                 .ReturnsAsync(audio);
             if (command.Tags is not null)
@@ -90,7 +88,7 @@ namespace Audiochan.Core.UnitTests.Features.Audios
             _currentUserService.Setup(x => x.GetUserId())
                 .Returns(user.Id);
             _unitOfWork.Setup(x => x.Audios.LoadForUpdate(
-                    It.IsAny<long>(), 
+                    It.IsAny<Guid>(), 
                     It.IsAny<CancellationToken>()))
                 .ReturnsAsync(audio);
             if (command.Tags is not null)

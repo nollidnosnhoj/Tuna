@@ -65,13 +65,12 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
             var audio = new Audio
             {
                 User = currentUser,
-                FileName = command.FileName,
-                FileSize = command.FileSize,
+                Size = command.FileSize,
                 Duration = command.Duration,
                 Title = command.Title,
                 Description = command.Description,
                 Visibility = command.Visibility,
-                BlobName = command.BlobName,
+                File = command.BlobName,
                 Tags = command.Tags.Count > 0
                     ? await _unitOfWork.Tags.GetAppropriateTags(command.Tags, cancellationToken)
                     : new List<Tag>(),
@@ -96,10 +95,10 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
             await _storageService.MoveBlobAsync(
                 _storageSettings.Audio.TempBucket,
                 _storageSettings.Audio.Container,
-                audio.BlobName,
+                audio.File,
                 _storageSettings.Audio.Bucket,
                 _storageSettings.Audio.Container,
-                $"{audio.Id}/{audio.BlobName}",
+                audio.File,
                 cancellationToken);
         }
 

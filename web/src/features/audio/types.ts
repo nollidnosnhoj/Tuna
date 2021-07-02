@@ -1,5 +1,7 @@
 import { MetaAuthor } from "~/lib/types";
 
+export type AudioId = string;
+
 export enum Visibility {
   Public = "public",
   Unlisted = "unlisted",
@@ -7,22 +9,20 @@ export enum Visibility {
 }
 
 export interface AudioData {
-  id: number;
+  id: string;
   title: string;
   visibility: Visibility;
   duration: number;
   picture?: string;
-  uploaded: string;
+  created: string;
   audioUrl: string;
   user: MetaAuthor;
-  secret?: string;
 }
 
 export interface AudioDetailData extends AudioData {
   description?: string;
   tags: string[];
-  fileSize: number;
-  uploaded: string;
+  size: number;
   lastModified?: string;
 }
 

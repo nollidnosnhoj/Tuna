@@ -9,7 +9,7 @@ using MediatR;
 
 namespace Audiochan.Core.Features.Audios.GetAudio
 {
-    public record GetAudioQuery(long Id, string? Secret = null) : IRequest<AudioDetailViewModel?>
+    public record GetAudioQuery(Guid Id) : IRequest<AudioDetailViewModel?>
     {
     }
 
@@ -33,25 +33,21 @@ namespace Audiochan.Core.Features.Audios.GetAudio
             var (cacheExists, audio) = await _cacheService.GetAsync<AudioDetailViewModel>(cacheOptions, cancellationToken);
 
             if (!cacheExists)
+            {
                 audio = await _unitOfWork.Audios.GetAudio(query.Id, cancellationToken);
-            
-            if (audio == null) return null;
-
-            if (ShouldNotAccessPrivateAudio(audio, query.Secret)) return null;
-
-            if (!cacheExists)
                 await _cacheService.SetAsync(audio, cacheOptions, cancellationToken);
+            }
+            
+            if (audio == null || !CanAccessPrivateAudio(audio)) return null;
 
             return audio;
         }
 
-        private bool ShouldNotAccessPrivateAudio(AudioDetailViewModel audio, string? secret)
+        private bool CanAccessPrivateAudio(AudioDetailViewModel audio)
         {
             var currentUserId = _currentUserService.GetUserId();
 
-            return audio.Visibility == Visibility.Private
-                   && audio.Secret != secret
-                   && currentUserId != audio.User.Id;
+            return currentUserId == audio.User.Id || audio.Visibility != Visibility.Private;
         }
     }
 }

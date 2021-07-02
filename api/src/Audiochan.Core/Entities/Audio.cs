@@ -14,18 +14,16 @@ namespace Audiochan.Core.Entities
             this.Tags = new HashSet<Tag>();
         }
         
-        public long Id { get; set; }
+        public Guid Id { get; set; }
         public DateTime Created { get; set; }
         public DateTime? LastModified { get; set; }
         public string Title { get; set; } = null!;
         public string? Description { get; set; }
         public decimal Duration { get; set; }
-        public string BlobName { get; set; } = null!;
-        public string FileName { get; set; } = null!;
-        public long FileSize { get; set; }
-        public string? PictureBlobName { get; set; }
+        public string File { get; set; } = null!;
+        public long Size { get; set; }
+        public string? Picture { get; set; }
         public Visibility Visibility { get; set; }
-        public string? Secret { get; set; }
         public string UserId { get; set; } = null!;
         public User User { get; set; } = null!;
         public ICollection<FavoriteAudio> Favorited { get; set; }

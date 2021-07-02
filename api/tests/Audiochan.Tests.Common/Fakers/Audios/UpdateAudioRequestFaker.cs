@@ -1,4 +1,5 @@
-﻿using Audiochan.Core.Common.Extensions;
+﻿using System;
+using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Features.Audios.UpdateAudio;
 using Bogus;
@@ -7,7 +8,7 @@ namespace Audiochan.Tests.Common.Fakers.Audios
 {
     public sealed class UpdateAudioRequestFaker : Faker<UpdateAudioCommand>
     {
-        public UpdateAudioRequestFaker(long audioId)
+        public UpdateAudioRequestFaker(Guid audioId)
         {
             RuleFor(x => x.AudioId, audioId);
             RuleFor(x => x.Title, f => f.Random.String2(3, 30));

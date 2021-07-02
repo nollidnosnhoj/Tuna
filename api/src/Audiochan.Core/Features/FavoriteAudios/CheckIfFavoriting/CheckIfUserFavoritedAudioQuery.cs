@@ -1,11 +1,12 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Interfaces;
 using MediatR;
 
 namespace Audiochan.Core.Features.FavoriteAudios.CheckIfFavoriting
 {
-    public record CheckIfUserFavoritedAudioQuery(long AudioId, string UserId) : IRequest<bool>
+    public record CheckIfUserFavoritedAudioQuery(Guid AudioId, string UserId) : IRequest<bool>
     {
     }
     

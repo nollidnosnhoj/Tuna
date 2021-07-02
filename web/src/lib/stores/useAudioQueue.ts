@@ -1,4 +1,5 @@
 import create from "zustand";
+import { AudioId } from "~/features/audio/types";
 import { useAudioPlayer as audioPlayerStore } from "./useAudioPlayer";
 
 export enum REPEAT_MODE {
@@ -9,7 +10,7 @@ export enum REPEAT_MODE {
 
 export type AudioPlayerItem = {
   queueId: string;
-  audioId: number;
+  audioId: AudioId;
   title: string;
   artist: string;
   artistId: string;
@@ -25,7 +26,7 @@ interface UseAudioQueueState {
   playIndex?: number;
   repeat: REPEAT_MODE;
   addToQueue: (audios: AudioPlayerItem[]) => void;
-  clearQueue: (audioId?: number) => void;
+  clearQueue: (audioId?: AudioId) => void;
   playNext: () => void;
   playPrevious: () => void;
   removeFromQueue: (index: number) => void;
@@ -42,7 +43,7 @@ export const useAudioQueue = create<UseAudioQueueState>((set, get) => ({
     set((state) => ({
       queue: [...state.queue, ...audios],
     })),
-  clearQueue: (audioId?: number) => {
+  clearQueue: (audioId?: AudioId) => {
     if (audioId) {
       const { queue, current } = get();
       // Create new queue without the specified audio.

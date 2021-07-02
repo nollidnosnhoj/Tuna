@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Interfaces;
@@ -13,13 +14,13 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
 {
     public class UpdateAudioCommand : IRequest<Result<AudioDetailViewModel>>
     {
-        public long AudioId { get; set; }
+        public Guid AudioId { get; set; }
         public string? Title { get; init; }
         public string? Description { get; init; }
         public Visibility? Visibility { get; init; }
         public List<string>? Tags { get; init; }
 
-        public static UpdateAudioCommand FromRequest(long audioId, UpdateAudioRequest request) => new()
+        public static UpdateAudioCommand FromRequest(Guid audioId, UpdateAudioRequest request) => new()
         {
             AudioId = audioId,
             Tags = request.Tags,

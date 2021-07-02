@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Helpers;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Entities.Enums;
@@ -24,7 +26,7 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
         {
         }
 
-        public async Task<bool> CheckIfFavoriteAudioExists(long audioId, string userId, CancellationToken cancellationToken = default)
+        public async Task<bool> CheckIfFavoriteAudioExists(Guid audioId, string userId, CancellationToken cancellationToken = default)
         {
             return await DbSet
                 .Include(a => a.Favorited)
@@ -33,7 +35,7 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
                 .AnyAsync(u => u.UserId == userId, cancellationToken);
         }
 
-        public async Task<AudioDetailViewModel?> GetAudio(long id, CancellationToken cancellationToken = default)
+        public async Task<AudioDetailViewModel?> GetAudio(Guid id, CancellationToken cancellationToken = default)
         {
             var currentUserId = CurrentUserService.GetUserId();
             return await DbSet
@@ -45,7 +47,7 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
                 .SingleOrDefaultAsync(cancellationToken);
         }
 
-        public async Task<Audio?> LoadForUpdate(long id, CancellationToken cancellationToken = default)
+        public async Task<Audio?> LoadForUpdate(Guid id, CancellationToken cancellationToken = default)
         {
             return await DbSet
                 .Include(a => a.User)
@@ -53,7 +55,7 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
                 .SingleOrDefaultAsync(a => a.Id == id, cancellationToken);
         }
 
-        public async Task<Audio?> LoadForSetFavorite(long id, CancellationToken cancellationToken = default)
+        public async Task<Audio?> LoadForSetFavorite(Guid id, CancellationToken cancellationToken = default)
         {
             return await DbSet
                 .Include(a => a.Favorited)
@@ -69,9 +71,16 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
                 .AsNoTracking()
                 .Include(x => x.User)
                 .Where(x => x.Visibility == Visibility.Public);
-            
+
             if (query.Cursor is not null)
-                queryable = queryable.Where(x => x.Id < query.Cursor);
+            {
+                var (id, since) = CursorHelpers.Decode(query.Cursor);
+                if (id is not null && since is not null)
+                {
+                    queryable = queryable
+                        .Where(a => a.Created < since || a.Created == since && a.Id.CompareTo(id) < 0);
+                }
+            }
 
             return await queryable
                 .ProjectTo<AudioViewModel>(Mapper.ConfigurationProvider)
@@ -113,7 +122,7 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
                 .Where(a => a.Visibility == Visibility.Public)
                 .Where(a => followingIds.Contains(a.UserId))
                 .ProjectTo<AudioViewModel>(Mapper.ConfigurationProvider)
-                .OrderByDescending(a => a.Uploaded)
+                .OrderByDescending(a => a.Created)
                 .PaginateAsync(cancellationToken: cancellationToken);
         }
     }

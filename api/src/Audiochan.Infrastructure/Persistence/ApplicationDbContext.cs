@@ -38,10 +38,7 @@ namespace Audiochan.Infrastructure.Persistence
         {
             // Add default created/updated date
             HandleAuditedEntities();
-
-            // Add/Remove Private key based on Visibility property.
-            await HandleVisibleSecretKey();
-
+            
             // Add soft delete property
             HandleSoftDeletion();
 
@@ -123,36 +120,6 @@ namespace Audiochan.Infrastructure.Persistence
                 {
                     entry.Property(nameof(IAudited.LastModified)).CurrentValue = now;
                 }
-            }
-        }
-
-        private async Task HandleVisibleSecretKey()
-        {
-            foreach (var entry in ChangeTracker.Entries<IHasVisibility>())
-            {
-                var visibility = (Visibility) entry.Property(nameof(IHasVisibility.Visibility)).CurrentValue;
-                
-                if (entry.State == EntityState.Added)
-                {
-                    if (visibility == Visibility.Private)
-                    {
-                        entry.Property(nameof(IHasVisibility.Secret)).CurrentValue = await _nanoid.GenerateAsync(size: 12);
-                    }
-                }
-                
-                if (entry.State == EntityState.Modified){
-                {
-                    var oldVisibility = (Visibility) entry.Property(nameof(IHasVisibility.Visibility)).OriginalValue;
-
-                    if (oldVisibility == Visibility.Private && visibility != Visibility.Private)
-                    {
-                        entry.Property(nameof(IHasVisibility.Secret)).CurrentValue = null;
-                    }
-                    else if (oldVisibility != Visibility.Private && visibility == Visibility.Private)
-                    {
-                        entry.Property(nameof(IHasVisibility.Secret)).CurrentValue = await _nanoid.GenerateAsync(size: 12);
-                    }
-                }}
             }
         }
 

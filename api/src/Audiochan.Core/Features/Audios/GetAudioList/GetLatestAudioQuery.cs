@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Helpers;
 using Audiochan.Core.Common.Interfaces;
 using MediatR;
 
@@ -9,7 +10,7 @@ namespace Audiochan.Core.Features.Audios.GetAudioList
     public record GetLatestAudioQuery : IRequest<GetAudioListViewModel>
     {
         public string? Tag { get; init; }
-        public long? Cursor { get; init; }
+        public string? Cursor { get; init; }
         public int Size { get; init; } = 30;
     }
 
@@ -30,10 +31,10 @@ namespace Audiochan.Core.Features.Audios.GetAudioList
             
             var lastAudio = audios.LastOrDefault();
 
-            long? nextCursor = audios.Count < request.Size
+            var nextCursor = audios.Count < request.Size
                 ? null
                 : lastAudio != null
-                    ? lastAudio.Id
+                    ? CursorHelpers.Encode(lastAudio.Id, lastAudio.Created)
                     : null;
 
             return new GetAudioListViewModel(audios, nextCursor);

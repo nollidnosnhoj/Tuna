@@ -1,14 +1,14 @@
 import { useMutation, UseMutationResult, useQueryClient } from "react-query";
-import { useUser } from "~/features/user/hooks";
-import { ErrorResponse } from "~/lib/types";
-import { AudioDetailData } from "../types";
-import { GET_USER_AUDIOS_QUERY_KEY } from "~/features/user/hooks/useGetUserAudios";
+import { AudioDetailData, AudioId } from "../types";
 import { GET_AUDIO_QUERY_KEY } from "./useGetAudio";
 import { GET_AUDIO_LIST_QUERY_KEY } from "./useGetAudioList";
 import { uploadAudioPictureHandler } from "../api";
+import { useUser } from "~/features/user/hooks";
+import { GET_USER_AUDIOS_QUERY_KEY } from "~/features/user/hooks/useGetUserAudios";
+import { ErrorResponse } from "~/lib/types";
 
 export function useAddAudioPicture(
-  id: number
+  id: AudioId
 ): UseMutationResult<AudioDetailData, ErrorResponse, string> {
   const queryClient = useQueryClient();
   const { user } = useUser();

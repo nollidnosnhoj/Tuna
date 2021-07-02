@@ -14,7 +14,7 @@ import AudioDetails from "~/features/audio/components/Details";
 import AudioFileInfo from "~/features/audio/components/Details/AudioFileInfo";
 import { useGetAudio } from "~/features/audio/hooks";
 import { fetchAudioHandler } from "~/features/audio/api";
-import { AudioDetailData } from "~/features/audio/types";
+import { AudioDetailData, AudioId } from "~/features/audio/types";
 
 interface AudioPageProps {
   audio?: AudioDetailData;
@@ -23,7 +23,7 @@ interface AudioPageProps {
 export const getServerSideProps: GetServerSideProps<AudioPageProps> = async (
   context
 ) => {
-  const id = parseInt(context.params?.id as string, 10);
+  const id = context.params?.id as AudioId;
   const secret = context.query?.secret as string;
 
   try {
@@ -42,7 +42,7 @@ export const getServerSideProps: GetServerSideProps<AudioPageProps> = async (
 
 export default function ViewAudioNextPage(props: AudioPageProps) {
   const { query } = useRouter();
-  const id = parseInt(query?.id as string, 10);
+  const id = query?.id as AudioId;
   const secret = query.key as string;
   const { data: audio } = useGetAudio(id, secret, {
     staleTime: 1000,
@@ -78,10 +78,7 @@ export default function ViewAudioNextPage(props: AudioPageProps) {
             </AccordionButton>
           </h2>
           <AccordionPanel pb={4}>
-            <AudioFileInfo
-              duration={audio.duration}
-              fileSize={audio.fileSize}
-            />
+            <AudioFileInfo duration={audio.duration} fileSize={audio.size} />
           </AccordionPanel>
         </AccordionItem>
       </Accordion>

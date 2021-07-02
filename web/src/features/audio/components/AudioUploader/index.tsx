@@ -14,7 +14,7 @@ import {
   toast,
 } from "~/utils";
 import { useCreateAudio } from "../../hooks";
-import { AudioRequest } from "../../types";
+import { AudioId, AudioRequest } from "../../types";
 import AudioForm from "../AudioForm";
 import AudioDropzone from "./AudioDropzone";
 import UploadProgress from "./UploadProgress";
@@ -22,7 +22,7 @@ import UploadProgress from "./UploadProgress";
 export default function AudioUploader() {
   const router = useRouter();
   const { user } = useUser();
-  const [audioId, setAudioId] = useState(0);
+  const [audioId, setAudioId] = useState<AudioId>("");
   const [uploadId, setUploadId] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [duration, setDuration] = useState(0);
@@ -98,14 +98,14 @@ export default function AudioUploader() {
   );
 
   useEffect(() => {
-    if (audioId > 0 && !unsavedChanges) {
+    if (audioId && !unsavedChanges) {
       router.push(`/audios/${audioId}`).then(() => {
         toast("success", { title: "Audio was successfully created." });
       });
     }
   }, [audioId, unsavedChanges]);
 
-  if (audioId > 0) {
+  if (audioId) {
     return (
       <Flex align="center" justify="center" height="25vh">
         <chakra.span>

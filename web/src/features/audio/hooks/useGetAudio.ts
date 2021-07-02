@@ -6,12 +6,12 @@ import {
 } from "react-query";
 import { ErrorResponse } from "~/lib/types";
 import { fetchAudioHandler } from "../api";
-import { AudioDetailData } from "../types";
+import { AudioDetailData, AudioId } from "../types";
 
-export const GET_AUDIO_QUERY_KEY = (id: number): QueryKey => ["audios", id];
+export const GET_AUDIO_QUERY_KEY = (id: AudioId): QueryKey => ["audios", id];
 
 export function useGetAudio(
-  id: number,
+  id: AudioId,
   secret?: string,
   options: UseQueryOptions<AudioDetailData, ErrorResponse> = {}
 ): UseQueryResult<AudioDetailData, ErrorResponse> {

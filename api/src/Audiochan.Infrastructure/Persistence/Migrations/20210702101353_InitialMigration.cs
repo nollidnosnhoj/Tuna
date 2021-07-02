@@ -93,19 +93,16 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                 name: "audios",
                 columns: table => new
                 {
-                    id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_generate_v4()"),
                     created = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     last_modified = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     title = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     description = table.Column<string>(type: "text", nullable: true),
                     duration = table.Column<decimal>(type: "numeric", nullable: false),
-                    blob_name = table.Column<string>(type: "text", nullable: false),
-                    file_name = table.Column<string>(type: "text", nullable: false),
-                    file_size = table.Column<long>(type: "bigint", nullable: false),
-                    picture_blob_name = table.Column<string>(type: "text", nullable: true),
+                    file = table.Column<string>(type: "text", nullable: false),
+                    size = table.Column<long>(type: "bigint", nullable: false),
+                    picture = table.Column<string>(type: "text", nullable: true),
                     visibility = table.Column<int>(type: "integer", nullable: false),
-                    secret = table.Column<string>(type: "character varying(15)", maxLength: 15, nullable: true),
                     user_id = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
@@ -256,7 +253,7 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                 name: "audio_tags",
                 columns: table => new
                 {
-                    audios_id = table.Column<long>(type: "bigint", nullable: false),
+                    audios_id = table.Column<Guid>(type: "uuid", nullable: false),
                     tags_id = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
@@ -280,7 +277,7 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                 name: "favorite_audios",
                 columns: table => new
                 {
-                    audio_id = table.Column<long>(type: "bigint", nullable: false),
+                    audio_id = table.Column<Guid>(type: "uuid", nullable: false),
                     user_id = table.Column<string>(type: "text", nullable: false),
                     favorite_date = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     unfavorite_date = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)

@@ -6,7 +6,7 @@ namespace Audiochan.Core.Features.Audios.GetAudio
 {
     public record GetAudioCacheOptions : ICacheOptions
     {
-        public GetAudioCacheOptions(long audioId)
+        public GetAudioCacheOptions(Guid audioId)
         {
             Key = CacheKeys.Audio.GetAudio(audioId);
         }

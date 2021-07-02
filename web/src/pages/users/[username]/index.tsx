@@ -85,7 +85,6 @@ export default function UserProfileNextPage(props: ProfilePageProps) {
               <ProfileFollowButton
                 profileId={profile.id}
                 username={profile.username}
-                isFollowing={profile.isFollowing}
               />
               <ProfileEditButton profileId={profile.id} />
             </Flex>

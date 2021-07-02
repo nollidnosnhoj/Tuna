@@ -43,10 +43,9 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             audio.Description.Should().Be(request.Description);
             audio.Visibility.Should().Be(request.Visibility);
             audio.Duration.Should().Be(request.Duration);
-            audio.FileSize.Should().Be(request.FileSize);
-            audio.FileName.Should().Be(request.FileName);
-            audio.BlobName.Should().Contain(request.UploadId + Path.GetExtension(request.FileName));
-            audio.BlobName.Should().EndWith(".mp3");
+            audio.Size.Should().Be(request.FileSize);
+            audio.File.Should().Contain(request.UploadId + Path.GetExtension(request.FileName));
+            audio.File.Should().EndWith(".mp3");
             audio.User.Should().NotBeNull();
             audio.User.Id.Should().Be(adminId);
             audio.User.UserName.Should().Be(adminUsername);

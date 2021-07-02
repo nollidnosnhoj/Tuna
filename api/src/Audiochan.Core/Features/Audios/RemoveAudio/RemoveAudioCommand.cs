@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Constants;
@@ -11,7 +12,7 @@ using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Audios.RemoveAudio
 {
-    public record RemoveAudioCommand(long Id) : IRequest<Result<bool>>
+    public record RemoveAudioCommand(Guid Id) : IRequest<Result<bool>>
     {
     }
 
@@ -54,14 +55,14 @@ namespace Audiochan.Core.Features.Audios.RemoveAudio
                 _storageService.RemoveAsync(
                     _storageSettings.Audio.Bucket,
                     _storageSettings.Audio.Container,
-                    $"{audio.Id}/{audio.BlobName}",
+                    $"{audio.Id}/{audio.File}",
                     cancellationToken)
             };
-            if (!string.IsNullOrEmpty(audio.PictureBlobName))
+            if (!string.IsNullOrEmpty(audio.Picture))
             {
                 tasks.Add(_storageService.RemoveAsync(_storageSettings.Image.Bucket,
                     string.Join('/', _storageSettings.Image.Container, "audios"),
-                    audio.PictureBlobName,
+                    audio.Picture,
                     cancellationToken));
             }
 

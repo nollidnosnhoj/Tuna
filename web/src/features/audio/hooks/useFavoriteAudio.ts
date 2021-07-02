@@ -6,6 +6,7 @@ import {
   isFavoriteHandler,
   unFavoriteAudioHandler,
 } from "../api";
+import { AudioId } from "../types";
 
 type UseFavoriteAudioResult = {
   isFavorite?: boolean;
@@ -13,13 +14,13 @@ type UseFavoriteAudioResult = {
   isLoading: boolean;
 };
 
-export const IS_FAVORITE_AUDIO_QUERY_KEY = (audioId: number): QueryKey => [
+export const IS_FAVORITE_AUDIO_QUERY_KEY = (audioId: AudioId): QueryKey => [
   "isFavoriteAudio",
   audioId,
 ];
 
 export function useFavoriteAudio(
-  audioId: number,
+  audioId: AudioId,
   initialData?: boolean
 ): UseFavoriteAudioResult {
   const { user } = useUser();

@@ -9,15 +9,15 @@ namespace Audiochan.Infrastructure.Persistence.Configurations
         public void Configure(EntityTypeBuilder<Audio> builder)
         {
             builder.HasKey(x => x.Id);
-            
+
             builder.Property(x => x.Id)
-                .ValueGeneratedOnAdd();
+                .HasDefaultValueSql("uuid_generate_v4()");
 
             builder.Property(x => x.Title)
                 .HasMaxLength(100);
+            builder.HasIndex(x => x.Title);
 
-            builder.Property(x => x.Secret)
-                .HasMaxLength(15);
+            builder.HasIndex(x => x.Created);
 
             builder.HasMany(a => a.Tags)
                 .WithMany(t => t.Audios)
@@ -28,9 +28,6 @@ namespace Audiochan.Infrastructure.Persistence.Configurations
                 .IsRequired()
                 .HasForeignKey(x => x.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
-            
-            builder.HasIndex(x => x.Title);
-            builder.HasIndex(x => x.Created);
         }
     }
     

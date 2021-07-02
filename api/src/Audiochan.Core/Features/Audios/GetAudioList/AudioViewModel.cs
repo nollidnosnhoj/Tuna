@@ -6,12 +6,12 @@ namespace Audiochan.Core.Features.Audios.GetAudioList
 {
     public record AudioViewModel
     {
-        public long Id { get; init; }
+        public Guid Id { get; init; }
         public string Title { get; init; } = null!;
         public Visibility Visibility { get; init; }
         public decimal Duration { get; init; }
         public string? Picture { get; init; }
-        public DateTime Uploaded { get; init; }
+        public DateTime Created { get; init; }
         public string AudioUrl { get; init; } = null!;
         public MetaAuthorDto User { get; init; } = null!;
     }

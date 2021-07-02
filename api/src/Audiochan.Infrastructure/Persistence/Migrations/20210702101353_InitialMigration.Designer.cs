@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Audiochan.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210702001618_InitialMigration")]
+    [Migration("20210702101353_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,8 +24,8 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("AudioTag", b =>
                 {
-                    b.Property<long>("AudiosId")
-                        .HasColumnType("bigint")
+                    b.Property<Guid>("AudiosId")
+                        .HasColumnType("uuid")
                         .HasColumnName("audios_id");
 
                     b.Property<long>("TagsId")
@@ -43,16 +43,11 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Audiochan.Core.Entities.Audio", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
+                        .HasColumnType("uuid")
                         .HasColumnName("id")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-                    b.Property<string>("BlobName")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("blob_name");
+                        .HasDefaultValueSql("uuid_generate_v4()");
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("timestamp without time zone")
@@ -66,27 +61,22 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                         .HasColumnType("numeric")
                         .HasColumnName("duration");
 
-                    b.Property<string>("FileName")
+                    b.Property<string>("File")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("file_name");
-
-                    b.Property<long>("FileSize")
-                        .HasColumnType("bigint")
-                        .HasColumnName("file_size");
+                        .HasColumnName("file");
 
                     b.Property<DateTime?>("LastModified")
                         .HasColumnType("timestamp without time zone")
                         .HasColumnName("last_modified");
 
-                    b.Property<string>("PictureBlobName")
+                    b.Property<string>("Picture")
                         .HasColumnType("text")
-                        .HasColumnName("picture_blob_name");
+                        .HasColumnName("picture");
 
-                    b.Property<string>("Secret")
-                        .HasMaxLength(15)
-                        .HasColumnType("character varying(15)")
-                        .HasColumnName("secret");
+                    b.Property<long>("Size")
+                        .HasColumnType("bigint")
+                        .HasColumnName("size");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -120,8 +110,8 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Audiochan.Core.Entities.FavoriteAudio", b =>
                 {
-                    b.Property<long>("AudioId")
-                        .HasColumnType("bigint")
+                    b.Property<Guid>("AudioId")
+                        .HasColumnType("uuid")
                         .HasColumnName("audio_id");
 
                     b.Property<string>("UserId")

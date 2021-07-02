@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Audiochan.Core.Common.Constants;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Entities.Enums;
@@ -29,47 +30,10 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             await _fixture.InsertAsync(audio);
 
             // Act
-            var result = await _fixture.SendAsync(new GetAudioQuery(0));
+            var result = await _fixture.SendAsync(new GetAudioQuery(Guid.Empty));
 
             // Assert
             result.Should().BeNull();
-        }
-        
-        [Fact]
-        public async Task ShouldNotGetAudio_WhenSecretIsInvalid()
-        {
-            // Assign
-            var (ownerId, _) = await _fixture.RunAsAdministratorAsync();
-            var audio = new AudioFaker(ownerId).Generate();
-            audio.Visibility = Visibility.Private;
-            await _fixture.InsertAsync(audio);
-            await _fixture.RunAsDefaultUserAsync();
-
-            // Act
-            var result = await _fixture.SendAsync(new GetAudioQuery(audio.Id));
-
-            // Assert
-            result.Should().BeNull();
-        }
-
-        [Fact]
-        public async Task ShouldGetAudio_WhenSecretIsValid()
-        {
-            // Assign
-            var (userId, _) = await _fixture.RunAsAdministratorAsync();
-
-            var audio = new AudioFaker(userId).Generate();
-            audio.Visibility = Visibility.Private;
-            await _fixture.InsertAsync(audio);
-
-            await _fixture.RunAsDefaultUserAsync();
-
-            // Act
-            var result = await _fixture.SendAsync(new GetAudioQuery(audio.Id, audio.Secret));
-
-            // Assert
-            result.Should().NotBeNull();
-            result.Should().BeOfType<AudioDetailViewModel>();
         }
 
         [Fact]
@@ -114,8 +78,8 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             result.Duration.Should().Be(audio.Duration);
             result.Picture.Should().BeNullOrEmpty();
             result.Tags.Count.Should().Be(audio.Tags.Count);
-            result.AudioUrl.Should().Be(string.Format(MediaLinkInvariants.AudioUrl, audio.Id, audio.BlobName));
-            result.FileSize.Should().Be(audio.FileSize);
+            result.AudioUrl.Should().Be(string.Format(MediaLinkInvariants.AudioUrl, audio.Id, audio.File));
+            result.Size.Should().Be(audio.Size);
             result.Visibility.Should().Be(audio.Visibility);
             result.LastModified.Should().BeNull();
             result.User.Should().NotBeNull();
@@ -146,7 +110,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             cacheResult.Duration.Should().Be(result!.Duration);
             cacheResult.Picture.Should().BeNullOrEmpty();
             cacheResult.Tags.Count.Should().Be(result!.Tags.Count);
-            cacheResult.FileSize.Should().Be(result!.FileSize);
+            cacheResult.Size.Should().Be(result!.Size);
             cacheResult.Visibility.Should().Be(result!.Visibility);
             result.LastModified.Should().BeNull();
             result.User.Should().NotBeNull();

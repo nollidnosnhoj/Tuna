@@ -85,7 +85,7 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
               <Link href={`/users/${audio.user.username}`}>
                 <Text fontWeight="500">{audio.user.username}</Text>
               </Link>
-              <Text color={secondaryColor}>{relativeDate(audio.uploaded)}</Text>
+              <Text color={secondaryColor}>{relativeDate(audio.created)}</Text>
             </Stack>
             <Spacer />
             <HStack>
@@ -96,6 +96,9 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
                 variant="ghost"
                 isRound
                 onClick={onShareOpen}
+                visibility={
+                  audio.visibility == Visibility.Private ? "hidden" : "visible"
+                }
               />
               <AudioFavoriteButton audioId={audio.id} />
               <Menu placement="bottom-end">
@@ -148,9 +151,6 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
       />
       <AudioShareModal
         audioId={audio.id}
-        userId={audio.user.id}
-        isPrivate={audio.visibility === Visibility.Private}
-        secret={audio.secret}
         isOpen={isShareOpen}
         onClose={onShareClose}
       />

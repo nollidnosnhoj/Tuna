@@ -118,7 +118,7 @@ namespace Audiochan.Core.UnitTests.Features.Audios
             response.Data.Description.Should().Be(request.Description);
             response.Data.Visibility.Should().Be(request.Visibility);
             response.Data.Duration.Should().Be(request.Duration);
-            response.Data.FileSize.Should().Be(request.FileSize);
+            response.Data.Size.Should().Be(request.FileSize);
             response.Data.User.Should().NotBeNull();
             response.Data.User.Id.Should().Be(user.Id);
             response.Data.User.UserName.Should().Be(user.UserName);
