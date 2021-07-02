@@ -71,17 +71,29 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
             if (audio.UserId != currentUserId)
                 return Result<AudioDetailViewModel>.Fail(ResultError.Forbidden);
         
-            var blobName = $"{audio.Id}/{_dateTimeProvider.Now:yyyyMMddHHmmss}.jpg";
-            
-            await _imageProcessingService.UploadImage(command.Data, container, blobName, cancellationToken);
-            
-            if (!string.IsNullOrEmpty(audio.Picture))
-                await _storageService.RemoveAsync(_storageSettings.Image.Bucket, container, audio.Picture, cancellationToken);
+            _unitOfWork.BeginTransaction();
+            try
+            {
+                var blobName = $"{audio.Id}/{_dateTimeProvider.Now:yyyyMMddHHmmss}.jpg";
 
-            audio.Picture = blobName;
-            _unitOfWork.Audios.Update(audio);
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
-            await _cacheService.RemoveAsync(new GetAudioCacheOptions(command.AudioId), cancellationToken);
+                await _imageProcessingService.UploadImage(command.Data, container, blobName, cancellationToken);
+
+                if (!string.IsNullOrEmpty(audio.Picture))
+                    await _storageService.RemoveAsync(_storageSettings.Image.Bucket, container, audio.Picture,
+                        cancellationToken);
+
+                audio.Picture = blobName;
+                _unitOfWork.Audios.Update(audio);
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
+                await _cacheService.RemoveAsync(new GetAudioCacheOptions(command.AudioId), cancellationToken);
+            }
+            catch
+            {
+                _unitOfWork.RollbackTransaction();
+                throw;
+            }
+
+            await _unitOfWork.CommitTransactionAsync();
             return Result<AudioDetailViewModel>.Success(_mapper.Map<AudioDetailViewModel>(audio));
         }
     }

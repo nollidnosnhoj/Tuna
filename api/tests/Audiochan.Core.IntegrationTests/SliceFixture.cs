@@ -85,43 +85,6 @@ namespace Audiochan.Core.IntegrationTests
                 base.ConfigureWebHost(builder);
             }
         }
-        
-        public async Task ExecuteScopeWithTransactionAsync(Func<IServiceProvider, Task> action)
-        {
-            using var scope = _scopeFactory.CreateScope();
-            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-
-            try
-            {
-                dbContext.BeginTransaction();
-                await action(scope.ServiceProvider);
-                dbContext.CommitTransaction();
-            }
-            catch (Exception)
-            {
-                dbContext.RollbackTransaction();
-                throw;
-            }
-        }
-
-        public async Task<T> ExecuteScopeWithTransactionAsync<T>(Func<IServiceProvider, Task<T>> action)
-        {
-            using var scope = _scopeFactory.CreateScope();
-            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-
-            try
-            {
-                dbContext.BeginTransaction();
-                var result = await action(scope.ServiceProvider);
-                dbContext.CommitTransaction();
-                return result;
-            }
-            catch (Exception)
-            {
-                dbContext.RollbackTransaction();
-                throw;
-            }
-        }
 
         public async Task ExecuteScopeAsync(Func<IServiceProvider, Task> action)
         {

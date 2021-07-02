@@ -62,9 +62,9 @@ namespace Audiochan.API.Controllers
             CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(command, cancellationToken);
-            return result.IsSuccess
-                ? CreatedAtAction(nameof(Get), new {audioId = result.Data!.Id}, result.Data)
-                : result.ReturnErrorResponse();
+            if (!result.IsSuccess) return result.ReturnErrorResponse();
+            var response = await _mediator.Send(new GetAudioQuery(result.Data), cancellationToken);
+            return CreatedAtAction(nameof(Get), new {audioId = response!.Id}, response);
         }
 
         [HttpPut("{audioId:guid}", Name = "UpdateAudio")]

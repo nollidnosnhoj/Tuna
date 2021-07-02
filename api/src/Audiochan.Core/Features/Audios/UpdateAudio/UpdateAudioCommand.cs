@@ -61,39 +61,50 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
 
             if (audio.UserId != currentUserId)
                 return Result<AudioDetailViewModel>.Fail(ResultError.Forbidden);
-
-            if (command.Tags is not null)
+            
+            _unitOfWork.BeginTransaction();
+            try
             {
-                if (command.Tags.Count == 0)
+                if (command.Tags is not null)
                 {
-                    audio.Tags.Clear();
+                    if (command.Tags.Count == 0)
+                    {
+                        audio.Tags.Clear();
+                    }
+                    else
+                    {
+                        var newTags = await _unitOfWork.Tags.GetAppropriateTags(command.Tags, cancellationToken);
+
+                        audio.UpdateTags(newTags);
+                    }
                 }
-                else
+
+                if (command.Title is not null && !string.IsNullOrWhiteSpace(command.Title))
                 {
-                    var newTags = await _unitOfWork.Tags.GetAppropriateTags(command.Tags, cancellationToken);
-
-                    audio.UpdateTags(newTags);
+                    audio.Title = command.Title;
                 }
-            }
 
-            if (command.Title is not null && !string.IsNullOrWhiteSpace(command.Title))
+                if (command.Description is not null)
+                {
+                    audio.Description = command.Description;
+                }
+
+                if (command.Visibility.HasValue)
+                {
+                    audio.Visibility = command.Visibility.Value;
+                }
+
+                _unitOfWork.Audios.Update(audio);
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
+                await _cacheService.RemoveAsync(new GetAudioCacheOptions(audio.Id), cancellationToken);
+            }
+            catch
             {
-                audio.Title = command.Title;
+                _unitOfWork.RollbackTransaction();
+                throw;
             }
 
-            if (command.Description is not null)
-            {
-                audio.Description = command.Description;
-            }
-
-            if (command.Visibility.HasValue)
-            {
-                audio.Visibility = command.Visibility.Value;
-            }
-
-            _unitOfWork.Audios.Update(audio);
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
-            await _cacheService.RemoveAsync(new GetAudioCacheOptions(audio.Id), cancellationToken);
+            await _unitOfWork.CommitTransactionAsync();
             return Result<AudioDetailViewModel>.Success(_mapper.Map<AudioDetailViewModel>(audio));
         }
     }
