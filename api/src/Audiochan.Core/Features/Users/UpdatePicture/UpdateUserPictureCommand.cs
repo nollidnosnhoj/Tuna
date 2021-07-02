@@ -53,7 +53,7 @@ namespace Audiochan.Core.Features.Users.UpdatePicture
         public async Task<Result<ProfileViewModel>> Handle(UpdateUserPictureCommand command, CancellationToken cancellationToken)
         {
             var container = string.Join('/', _storageSettings.Image.Container, "users");
-            var user = await _unitOfWork.Users.FindAsync(new object[]{command.UserId}, cancellationToken);
+            var user = await _unitOfWork.Users.LoadAsync(new object[]{command.UserId}, cancellationToken);
             
             if (user == null) 
                 return Result<ProfileViewModel>.Fail(ResultError.NotFound);

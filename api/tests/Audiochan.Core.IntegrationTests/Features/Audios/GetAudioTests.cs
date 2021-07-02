@@ -65,7 +65,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             await _fixture.RunAsDefaultUserAsync();
 
             // Act
-            var result = await _fixture.SendAsync(new GetAudioQuery(audio.Id, audio.PrivateKey));
+            var result = await _fixture.SendAsync(new GetAudioQuery(audio.Id, audio.Secret));
 
             // Assert
             result.Should().NotBeNull();

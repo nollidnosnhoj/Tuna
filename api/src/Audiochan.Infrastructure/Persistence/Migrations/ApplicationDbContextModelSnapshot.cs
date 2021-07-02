@@ -81,9 +81,10 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                         .HasColumnType("text")
                         .HasColumnName("picture_blob_name");
 
-                    b.Property<string>("PrivateKey")
-                        .HasColumnType("text")
-                        .HasColumnName("private_key");
+                    b.Property<string>("Secret")
+                        .HasMaxLength(15)
+                        .HasColumnType("character varying(15)")
+                        .HasColumnName("secret");
 
                     b.Property<string>("Title")
                         .IsRequired()

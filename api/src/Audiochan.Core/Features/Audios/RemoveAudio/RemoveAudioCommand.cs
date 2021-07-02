@@ -38,12 +38,12 @@ namespace Audiochan.Core.Features.Audios.RemoveAudio
             var currentUserId = _currentUserService.GetUserId();
         
             var audio = await _unitOfWork.Audios
-                .FindAsync(a => a.Id == command.Id, cancellationToken: cancellationToken);
+                .LoadAsync(a => a.Id == command.Id, cancellationToken: cancellationToken);
             
             if (audio == null)
                 return Result<bool>.Fail(ResultError.NotFound);
 
-            if (!audio.CanModify(currentUserId))
+            if (audio.UserId != currentUserId)
                 return Result<bool>.Fail(ResultError.Forbidden);
 
             _unitOfWork.Audios.Remove(audio);

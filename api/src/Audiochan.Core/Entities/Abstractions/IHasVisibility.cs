@@ -2,9 +2,9 @@
 
 namespace Audiochan.Core.Entities.Abstractions
 {
-    public interface IVisible
+    public interface IHasVisibility
     {
         public Visibility Visibility { get; set; }
-        public string? PrivateKey { get; set; }
+        public string? Secret { get; set; }
     }
 }

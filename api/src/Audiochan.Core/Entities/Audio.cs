@@ -6,7 +6,7 @@ using Audiochan.Core.Entities.Enums;
 
 namespace Audiochan.Core.Entities
 {
-    public class Audio : IVisible, IAudited
+    public class Audio : IHasVisibility, IAudited
     {
         public Audio()
         {
@@ -25,9 +25,8 @@ namespace Audiochan.Core.Entities
         public long FileSize { get; set; }
         public string? PictureBlobName { get; set; }
         public Visibility Visibility { get; set; }
-        public string? PrivateKey { get; set; }
+        public string? Secret { get; set; }
         public string UserId { get; set; } = null!;
-        
         public User User { get; set; } = null!;
         public ICollection<FavoriteAudio> Favorited { get; set; }
         public ICollection<Tag> Tags { get; set; }
@@ -58,11 +57,5 @@ namespace Audiochan.Core.Entities
                 }
             }
         }
-
-        public bool CanModify(string userId)
-        {
-            return this.UserId == userId;
-        }
-
     }
 }

@@ -27,10 +27,10 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
 
             var result = await _sliceFixture.SendAsync(new ResetPrivateKeyCommand(audio.Id));
 
-            audio.PrivateKey.Should().NotBeNullOrEmpty();
+            audio.Secret.Should().NotBeNullOrEmpty();
             result.IsSuccess.Should().BeTrue();
             result.Data.Should().NotBeNullOrEmpty();
-            result.Data.Should().NotBe(audio.PrivateKey);
+            result.Data.Should().NotBe(audio.Secret);
         }
     }
 }

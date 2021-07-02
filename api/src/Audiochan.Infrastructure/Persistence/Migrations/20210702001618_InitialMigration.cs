@@ -105,7 +105,7 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                     file_size = table.Column<long>(type: "bigint", nullable: false),
                     picture_blob_name = table.Column<string>(type: "text", nullable: true),
                     visibility = table.Column<int>(type: "integer", nullable: false),
-                    private_key = table.Column<string>(type: "text", nullable: true),
+                    secret = table.Column<string>(type: "character varying(15)", maxLength: 15, nullable: true),
                     user_id = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>

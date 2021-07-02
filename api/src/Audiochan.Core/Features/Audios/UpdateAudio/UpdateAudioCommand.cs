@@ -58,8 +58,8 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
             if (audio == null)
                 return Result<AudioDetailViewModel>.Fail(ResultError.NotFound);
 
-            if (!audio.CanModify(currentUserId))
-                return Result<AudioDetailViewModel>.Fail(ResultError.NotFound);
+            if (audio.UserId != currentUserId)
+                return Result<AudioDetailViewModel>.Fail(ResultError.Forbidden);
 
             if (command.Tags is not null)
             {

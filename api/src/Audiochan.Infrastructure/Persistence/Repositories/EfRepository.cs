@@ -27,13 +27,13 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
             DbSet = dbContext.Set<TEntity>();
         }
         
-        public async Task<TEntity?> FindAsync<TKey>(TKey id, CancellationToken cancellationToken = default)
+        public async Task<TEntity?> LoadAsync<TKey>(TKey id, CancellationToken cancellationToken = default)
             where TKey : notnull
         {
             return await DbSet.FindAsync(new object[] {id}, cancellationToken);
         }
 
-        public async Task<TEntity?> FindAsync(Expression<Func<TEntity, bool>> predicate,
+        public async Task<TEntity?> LoadAsync(Expression<Func<TEntity, bool>> predicate,
             bool shouldSetTracking = true,
             CancellationToken cancellationToken = default)
         {

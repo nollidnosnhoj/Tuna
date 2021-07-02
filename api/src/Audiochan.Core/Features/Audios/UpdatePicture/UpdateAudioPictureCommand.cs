@@ -67,7 +67,7 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
             if (audio == null) 
                 return Result<AudioDetailViewModel>.Fail(ResultError.NotFound);
         
-            if (!audio.CanModify(currentUserId)) 
+            if (audio.UserId != currentUserId)
                 return Result<AudioDetailViewModel>.Fail(ResultError.Forbidden);
         
             var blobName = $"{audio.Id}/{_dateTimeProvider.Now:yyyyMMddHHmmss}.jpg";

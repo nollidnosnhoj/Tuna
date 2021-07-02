@@ -16,6 +16,9 @@ namespace Audiochan.Infrastructure.Persistence.Configurations
             builder.Property(x => x.Title)
                 .HasMaxLength(100);
 
+            builder.Property(x => x.Secret)
+                .HasMaxLength(15);
+
             builder.HasMany(a => a.Tags)
                 .WithMany(t => t.Audios)
                 .UsingEntity(j => j.ToTable("audio_tags"));

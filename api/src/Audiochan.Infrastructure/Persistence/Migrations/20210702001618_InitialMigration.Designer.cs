@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Audiochan.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210624203409_InitialMigration")]
+    [Migration("20210702001618_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -83,9 +83,10 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                         .HasColumnType("text")
                         .HasColumnName("picture_blob_name");
 
-                    b.Property<string>("PrivateKey")
-                        .HasColumnType("text")
-                        .HasColumnName("private_key");
+                    b.Property<string>("Secret")
+                        .HasMaxLength(15)
+                        .HasColumnType("character varying(15)")
+                        .HasColumnName("secret");
 
                     b.Property<string>("Title")
                         .IsRequired()
