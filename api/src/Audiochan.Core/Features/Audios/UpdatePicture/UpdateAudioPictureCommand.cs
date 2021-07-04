@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Constants;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Common.Settings;
@@ -12,22 +13,13 @@ using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Audios.UpdatePicture
 {
-    public class UpdateAudioPictureCommand : IRequest<Result<AudioDetailViewModel>>
+    public class UpdateAudioPictureCommand : IRequest<Result<ImageUploadResponse>>
     {
         public Guid AudioId { get; set; }
         public string Data { get; set; } = string.Empty;
-
-        public static UpdateAudioPictureCommand FromRequest(Guid audioId, UpdateAudioPictureRequest request)
-        {
-            return new()
-            {
-                AudioId = audioId,
-                Data = request.Data
-            };
-        }
     }
 
-    public class UpdateAudioCommandHandler : IRequestHandler<UpdateAudioPictureCommand, Result<AudioDetailViewModel>>
+    public class UpdateAudioCommandHandler : IRequestHandler<UpdateAudioPictureCommand, Result<ImageUploadResponse>>
     {
         private readonly MediaStorageSettings _storageSettings;
         private readonly IDateTimeProvider _dateTimeProvider;
@@ -56,7 +48,7 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
             _mapper = mapper;
         }
 
-        public async Task<Result<AudioDetailViewModel>> Handle(UpdateAudioPictureCommand command,
+        public async Task<Result<ImageUploadResponse>> Handle(UpdateAudioPictureCommand command,
             CancellationToken cancellationToken)
         {
             var container = string.Join('/', _storageSettings.Image.Container, "audios");
@@ -66,15 +58,16 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
                 .LoadForUpdate(command.AudioId, cancellationToken);
         
             if (audio == null) 
-                return Result<AudioDetailViewModel>.Fail(ResultError.NotFound);
+                return Result<ImageUploadResponse>.Fail(ResultError.NotFound);
         
             if (audio.UserId != currentUserId)
-                return Result<AudioDetailViewModel>.Fail(ResultError.Forbidden);
-        
+                return Result<ImageUploadResponse>.Fail(ResultError.Forbidden);
+            
+            var blobName = $"{audio.Id}/{_dateTimeProvider.Now:yyyyMMddHHmmss}.jpg";
+            
             _unitOfWork.BeginTransaction();
             try
             {
-                var blobName = $"{audio.Id}/{_dateTimeProvider.Now:yyyyMMddHHmmss}.jpg";
 
                 await _imageProcessingService.UploadImage(command.Data, container, blobName, cancellationToken);
 
@@ -94,7 +87,10 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
             }
 
             await _unitOfWork.CommitTransactionAsync();
-            return Result<AudioDetailViewModel>.Success(_mapper.Map<AudioDetailViewModel>(audio));
+            return Result<ImageUploadResponse>.Success(new ImageUploadResponse
+            {
+                Url = string.Format(MediaLinkInvariants.AudioPictureUrl, blobName)
+            });
         }
     }
 }

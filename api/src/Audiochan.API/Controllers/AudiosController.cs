@@ -109,10 +109,14 @@ namespace Audiochan.API.Controllers
             OperationId = "AddAudioPicture",
             Tags = new[] {"audios"})]
         public async Task<IActionResult> AddPicture(Guid audioId,
-            [FromBody] UpdateAudioPictureRequest request,
+            [FromBody] ImageUploadRequest request,
             CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(UpdateAudioPictureCommand.FromRequest(audioId, request), cancellationToken);
+            var result = await _mediator.Send(new UpdateAudioPictureCommand
+            {
+                AudioId = audioId,
+                Data = request.Data
+            }, cancellationToken);
             return result.IsSuccess
                 ? Ok(result.Data)
                 : result.ReturnErrorResponse();

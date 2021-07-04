@@ -7,8 +7,8 @@ using Audiochan.Core.Common.Models;
 using Audiochan.Core.Features.Audios.GetAudioFeed;
 using Audiochan.Core.Features.Audios.GetAudioList;
 using Audiochan.Core.Features.Auth.GetCurrentUser;
-using Audiochan.Core.Features.FavoriteAudios.CheckIfFavoriting;
-using Audiochan.Core.Features.FavoriteAudios.SetFavorite;
+using Audiochan.Core.Features.FavoriteAudios.CheckIfAudioFavorited;
+using Audiochan.Core.Features.FavoriteAudios.SetFavoriteAudio;
 using Audiochan.Core.Features.Followers.CheckIfFollowing;
 using Audiochan.Core.Features.Followers.SetFollow;
 using Audiochan.Core.Features.Users.GetUserAudios;
@@ -247,7 +247,7 @@ namespace Audiochan.API.Controllers
             OperationId = "AddUserPicture",
             Tags = new[] {"me"}
         )]
-        public async Task<IActionResult> AddPicture([FromBody] ImageDataDto request,
+        public async Task<IActionResult> AddPicture([FromBody] ImageUploadRequest request,
             CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(UpdateUserPictureCommand.FromRequest(_currentUserId, request), cancellationToken);
@@ -284,7 +284,7 @@ namespace Audiochan.API.Controllers
         )]
         public async Task<IActionResult> IsFavoriteAudio(Guid audioId, CancellationToken cancellationToken)
         {
-            return await _mediator.Send(new CheckIfUserFavoritedAudioQuery(audioId, _currentUserId),
+            return await _mediator.Send(new CheckIfAudioFavoritedQuery(audioId, _currentUserId),
                 cancellationToken)
                 ? Ok()
                 : NotFound();
