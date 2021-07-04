@@ -11,6 +11,7 @@ namespace Audiochan.Core.Entities
         {
             Audios = new HashSet<PlaylistAudio>();
             Favorited = new HashSet<FavoritePlaylist>();
+            Tags = new HashSet<Tag>();
         }
         
         public Guid Id { get; set; }
@@ -31,5 +32,6 @@ namespace Audiochan.Core.Entities
         
         public ICollection<PlaylistAudio> Audios { get; set; }
         public ICollection<FavoritePlaylist> Favorited { get; set; }
+        public ICollection<Tag> Tags { get; set; }
     }
 }

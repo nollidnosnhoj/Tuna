@@ -14,6 +14,10 @@ namespace Audiochan.Infrastructure.Persistence.Configurations
             
             builder.Property(x => x.Title)
                 .HasMaxLength(100);
+            
+            builder.HasMany(a => a.Tags)
+                .WithMany(t => t.Playlists)
+                .UsingEntity(j => j.ToTable("playlist_tags"));
 
             builder.HasOne(x => x.User)
                 .WithMany(x => x.Playlists)
