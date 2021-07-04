@@ -213,48 +213,11 @@ namespace Audiochan.Core.IntegrationTests
             });
         }
 
-        public Task InsertAsync<TEntity, TEntity2>(TEntity entity, TEntity2 entity2)
-            where TEntity : class
-            where TEntity2 : class
+        public Task InsertRangeAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : class
         {
             return ExecuteDbContextAsync(db =>
             {
-                db.Set<TEntity>().Add(entity);
-                db.Set<TEntity2>().Add(entity2);
-
-                return db.SaveChangesAsync();
-            });
-        }
-
-        public Task InsertAsync<TEntity, TEntity2, TEntity3>(TEntity entity, TEntity2 entity2, TEntity3 entity3)
-            where TEntity : class
-            where TEntity2 : class
-            where TEntity3 : class
-        {
-            return ExecuteDbContextAsync(db =>
-            {
-                db.Set<TEntity>().Add(entity);
-                db.Set<TEntity2>().Add(entity2);
-                db.Set<TEntity3>().Add(entity3);
-
-                return db.SaveChangesAsync();
-            });
-        }
-
-        public Task InsertAsync<TEntity, TEntity2, TEntity3, TEntity4>(TEntity entity, TEntity2 entity2,
-            TEntity3 entity3, TEntity4 entity4)
-            where TEntity : class
-            where TEntity2 : class
-            where TEntity3 : class
-            where TEntity4 : class
-        {
-            return ExecuteDbContextAsync(db =>
-            {
-                db.Set<TEntity>().Add(entity);
-                db.Set<TEntity2>().Add(entity2);
-                db.Set<TEntity3>().Add(entity3);
-                db.Set<TEntity4>().Add(entity4);
-
+                db.Set<TEntity>().AddRange(entities);
                 return db.SaveChangesAsync();
             });
         }
