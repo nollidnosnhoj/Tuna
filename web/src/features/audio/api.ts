@@ -1,6 +1,6 @@
 import { GetServerSidePropsContext } from "next";
 import request from "~/lib/http";
-import { CursorPagedList, PagedList } from "~/lib/types";
+import { CursorPagedList, ImageUploadResponse, PagedList } from "~/lib/types";
 import {
   AudioData,
   AudioDetailData,
@@ -105,8 +105,8 @@ export async function removeAudioHandler(audioId: AudioId): Promise<void> {
 export async function uploadAudioPictureHandler(
   audioId: AudioId,
   imageData: string
-): Promise<AudioDetailData> {
-  const { data } = await request<AudioDetailData>({
+): Promise<ImageUploadResponse> {
+  const { data } = await request<ImageUploadResponse>({
     method: "patch",
     url: `audios/${audioId}/picture`,
     data: {

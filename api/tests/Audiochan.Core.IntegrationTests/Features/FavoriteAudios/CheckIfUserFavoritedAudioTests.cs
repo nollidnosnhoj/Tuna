@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Audiochan.Core.Entities;
-using Audiochan.Core.Features.FavoriteAudios.CheckIfFavoriting;
+using Audiochan.Core.Features.FavoriteAudios.CheckIfAudioFavorited;
 using Audiochan.Tests.Common.Fakers.Audios;
 using Bogus;
 using FluentAssertions;
@@ -41,7 +41,7 @@ namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
             await _sliceFixture.InsertAsync(favoriteAudio);
 
             // Act
-            var isFavorited = await _sliceFixture.SendAsync(new CheckIfUserFavoritedAudioQuery(audio.Id, observerId));
+            var isFavorited = await _sliceFixture.SendAsync(new CheckIfAudioFavoritedQuery(audio.Id, observerId));
 
             // Assert
             isFavorited.Should().BeTrue();
@@ -60,7 +60,7 @@ namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
                 Array.Empty<string>());
 
             // Act
-            var isFavorited = await _sliceFixture.SendAsync(new CheckIfUserFavoritedAudioQuery(audio.Id, observerId));
+            var isFavorited = await _sliceFixture.SendAsync(new CheckIfAudioFavoritedQuery(audio.Id, observerId));
 
             // Assert
             isFavorited.Should().BeFalse();
@@ -88,7 +88,7 @@ namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
             await _sliceFixture.InsertAsync(favoriteAudio);
 
             // Act
-            var isFavorited = await _sliceFixture.SendAsync(new CheckIfUserFavoritedAudioQuery(audio.Id, observerId));
+            var isFavorited = await _sliceFixture.SendAsync(new CheckIfAudioFavoritedQuery(audio.Id, observerId));
 
             // Assert
             isFavorited.Should().BeFalse();

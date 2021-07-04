@@ -1,6 +1,6 @@
 import { GetServerSidePropsContext } from "next";
 import request from "~/lib/http";
-import { PagedList } from "~/lib/types";
+import { ImageUploadResponse, PagedList } from "~/lib/types";
 import { AudioData } from "../audio/types";
 import { CurrentUser, Profile } from "./types";
 
@@ -61,8 +61,8 @@ export async function fetchUserFavoriteAudios(
 
 export async function uploadUserPictureHandler(
   imageData: string
-): Promise<Profile> {
-  const { data } = await request<Profile>({
+): Promise<ImageUploadResponse> {
+  const { data } = await request<ImageUploadResponse>({
     method: "patch",
     url: "me/picture",
     data: {

@@ -8,7 +8,7 @@ using Audiochan.Core.Entities;
 using Audiochan.Core.Services;
 using MediatR;
 
-namespace Audiochan.Core.Features.FavoriteAudios.SetFavorite
+namespace Audiochan.Core.Features.FavoriteAudios.SetFavoriteAudio
 {
     public record SetFavoriteAudioCommand(Guid AudioId, string UserId, bool IsFavoriting) : IRequest<Result<bool>>
     {

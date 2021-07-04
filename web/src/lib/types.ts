@@ -30,3 +30,7 @@ export interface PaginatedOptions {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   params?: Record<string, any>;
 }
+
+export interface ImageUploadResponse {
+  url: string;
+}
