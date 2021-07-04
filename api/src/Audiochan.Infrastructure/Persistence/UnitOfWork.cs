@@ -67,12 +67,13 @@ namespace Audiochan.Infrastructure.Persistence
         public UnitOfWork(ApplicationDbContext dbContext, 
             IAudioRepository audioRepository, 
             ITagRepository tagRepository, 
-            IUserRepository userRepository)
+            IUserRepository userRepository, IPlaylistRepository playlistRepository)
         {
             _dbContext = dbContext;
-            Audios = audioRepository;
-            Tags = tagRepository;
-            Users = userRepository;
+            Audios = audioRepository ?? throw new ArgumentNullException(nameof(audioRepository));
+            Tags = tagRepository ?? throw new ArgumentNullException(nameof(tagRepository));
+            Users = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+            Playlists = playlistRepository ?? throw new ArgumentNullException(nameof(playlistRepository));
         }
 
         public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

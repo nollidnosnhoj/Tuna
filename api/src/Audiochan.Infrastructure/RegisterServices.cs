@@ -69,6 +69,7 @@ namespace Audiochan.Infrastructure
             });
             services.AddScoped<IAudioRepository, AudioRepository>();
             services.AddScoped<ITagRepository, TagRepository>();
+            services.AddScoped<IPlaylistRepository, PlaylistRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             return services;
