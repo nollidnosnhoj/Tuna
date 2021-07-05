@@ -3,11 +3,11 @@ using Audiochan.Core.Common.Settings;
 using FluentValidation;
 using Microsoft.Extensions.Options;
 
-namespace Audiochan.Core.Features.Audios.UploadAudio
+namespace Audiochan.Core.Features.Audios.CreateAudioUploadUrl
 {
-    public class UploadAudioCommandValidator : AbstractValidator<UploadAudioCommand>
+    public class CreateAudioUploadUrlCommandValidator : AbstractValidator<CreateAudioUploadUrlCommand>
     {
-        public UploadAudioCommandValidator(IOptions<MediaStorageSettings> options)
+        public CreateAudioUploadUrlCommandValidator(IOptions<MediaStorageSettings> options)
         {
             var uploadOptions = options.Value.Audio;
             RuleFor(req => req.FileSize)

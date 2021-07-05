@@ -7,22 +7,22 @@ using Audiochan.Core.Services;
 using MediatR;
 using Microsoft.Extensions.Options;
 
-namespace Audiochan.Core.Features.Audios.UploadAudio
+namespace Audiochan.Core.Features.Audios.CreateAudioUploadUrl
 {
-    public record UploadAudioCommand : IRequest<UploadAudioResponse>
+    public record CreateAudioUploadUrlCommand : IRequest<CreateAudioUploadUrlResponse>
     {
         public string FileName { get; init; } = null!;
         public long FileSize { get; init; }
     }
     
-    public class UploadAudioCommandHandler : IRequestHandler<UploadAudioCommand, UploadAudioResponse>
+    public class CreateAudioUploadUrlCommandHandler : IRequestHandler<CreateAudioUploadUrlCommand, CreateAudioUploadUrlResponse>
     {
         private readonly MediaStorageSettings _storageSettings;
         private readonly ICurrentUserService _currentUserService;
         private readonly IStorageService _storageService;
         private readonly INanoidGenerator _nanoid;
         
-        public UploadAudioCommandHandler(IOptions<MediaStorageSettings> storageSettings, 
+        public CreateAudioUploadUrlCommandHandler(IOptions<MediaStorageSettings> storageSettings, 
             ICurrentUserService currentUserService, 
             IStorageService storageService, INanoidGenerator nanoid)
         {
@@ -32,7 +32,7 @@ namespace Audiochan.Core.Features.Audios.UploadAudio
             _nanoid = nanoid;
         }
         
-        public async Task<UploadAudioResponse> Handle(UploadAudioCommand command, CancellationToken cancellationToken)
+        public async Task<CreateAudioUploadUrlResponse> Handle(CreateAudioUploadUrlCommand command, CancellationToken cancellationToken)
         {
             var userId = _currentUserService.GetUserId();
             var fileExt = Path.GetExtension(command.FileName);
@@ -46,7 +46,7 @@ namespace Audiochan.Core.Features.Audios.UploadAudio
                 blobName,
                 5,
                 metadata);
-            return new UploadAudioResponse {UploadUrl = presignedUrl, UploadId = objectId};
+            return new CreateAudioUploadUrlResponse {UploadUrl = presignedUrl, UploadId = objectId};
         }
     }
 }

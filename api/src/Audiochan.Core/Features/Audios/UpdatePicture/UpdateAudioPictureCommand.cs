@@ -28,7 +28,6 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
         private readonly IImageProcessingService _imageProcessingService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICacheService _cacheService;
-        private readonly IMapper _mapper;
 
         public UpdateAudioCommandHandler(IOptions<MediaStorageSettings> options,
             IStorageService storageService,
@@ -36,7 +35,7 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
             IImageProcessingService imageProcessingService,
             IDateTimeProvider dateTimeProvider, 
             IUnitOfWork unitOfWork, 
-            ICacheService cacheService, IMapper mapper)
+            ICacheService cacheService)
         {
             _storageSettings = options.Value;
             _storageService = storageService;
@@ -45,7 +44,6 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
             _dateTimeProvider = dateTimeProvider;
             _unitOfWork = unitOfWork;
             _cacheService = cacheService;
-            _mapper = mapper;
         }
 
         public async Task<Result<ImageUploadResponse>> Handle(UpdateAudioPictureCommand command,
