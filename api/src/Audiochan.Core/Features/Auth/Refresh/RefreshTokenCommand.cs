@@ -32,15 +32,13 @@ namespace Audiochan.Core.Features.Auth.Refresh
                 .LoadForRefreshToken(command.RefreshToken, cancellationToken);
 
             if (user == null)
-                return Result<AuthResult>.Fail(ResultError.BadRequest,
-                    "Refresh token does not belong to a user.");
+                return Result<AuthResult>.BadRequest("Refresh token does not belong to a user.");
 
             var existingRefreshToken = user.RefreshTokens
                 .Single(r => r.Token == command.RefreshToken);
 
             if (!await _tokenProvider.ValidateRefreshToken(existingRefreshToken.Token))
-                return Result<AuthResult>.Fail(ResultError.BadRequest,
-                    "Refresh token is invalid/expired.");
+                return Result<AuthResult>.BadRequest("Refresh token is invalid/expired.");
 
             var (refreshToken, refreshTokenExpiration) =
                 await _tokenProvider.GenerateRefreshToken(user, existingRefreshToken.Token);

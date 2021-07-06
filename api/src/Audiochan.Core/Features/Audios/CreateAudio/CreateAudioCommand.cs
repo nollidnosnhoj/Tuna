@@ -49,7 +49,7 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
             CancellationToken cancellationToken)
         {
             if (!_currentUserService.TryGetUserId(out var currentUserId))
-                return Result<Guid>.Fail(ResultError.Unauthorized);
+                return Result<Guid>.Unauthorized();
 
             Guid audioId;
             _unitOfWork.BeginTransaction();

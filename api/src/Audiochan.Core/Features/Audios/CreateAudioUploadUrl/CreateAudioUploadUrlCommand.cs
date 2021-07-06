@@ -38,7 +38,7 @@ namespace Audiochan.Core.Features.Audios.CreateAudioUploadUrl
             CancellationToken cancellationToken)
         {
             if (!_currentUserService.TryGetUserId(out var userId))
-                return Result<CreateAudioUploadUrlResponse>.Fail(ResultError.Unauthorized);
+                return Result<CreateAudioUploadUrlResponse>.Unauthorized();
             
             var fileExt = Path.GetExtension(command.FileName);
             var uploadId = await CreateRandomBlobNameForUpload();

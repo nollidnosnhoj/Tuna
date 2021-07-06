@@ -5,6 +5,7 @@ using Audiochan.Core.Common.Constants;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Common.Settings;
+using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Services;
 using MediatR;
@@ -51,16 +52,16 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
             var container = string.Join('/', _storageSettings.Image.Container, "audios");
 
             if (!_currentUserService.TryGetUserId(out var currentUserId))
-                return Result<ImageUploadResponse>.Fail(ResultError.Unauthorized);
+                return Result<ImageUploadResponse>.Unauthorized();
 
             var audio = await _unitOfWork.Audios
                 .LoadForUpdate(command.AudioId, cancellationToken);
-        
-            if (audio == null) 
-                return Result<ImageUploadResponse>.Fail(ResultError.NotFound);
-        
+
+            if (audio == null)
+                return Result<ImageUploadResponse>.NotFound<Audio>();
+
             if (audio.UserId != currentUserId)
-                return Result<ImageUploadResponse>.Fail(ResultError.Forbidden);
+                return Result<ImageUploadResponse>.Forbidden();
             
             var blobName = $"{audio.Id}/{_dateTimeProvider.Now:yyyyMMddHHmmss}.jpg";
             

@@ -10,7 +10,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace Audiochan.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("search")]
     public class SearchController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -21,9 +21,10 @@ namespace Audiochan.API.Controllers
         }
 
         [HttpGet("audios")]
-        [ProducesResponseType(typeof(PagedListDto<AudioDetailViewModel>), StatusCodes.Status200OK)]
+        [ProducesResponseType(200)]
         [SwaggerOperation(Summary = "Search for audios", OperationId = "SearchAudio", Tags = new[] {"search"})]
-        public async Task<IActionResult> SearchAudios([FromQuery] SearchAudiosQuery query,
+        public async Task<ActionResult<PagedListDto<AudioDetailViewModel>>> SearchAudios(
+            [FromQuery] SearchAudiosQuery query,
             CancellationToken cancellationToken)
         {
             var results = await _mediator.Send(query, cancellationToken);

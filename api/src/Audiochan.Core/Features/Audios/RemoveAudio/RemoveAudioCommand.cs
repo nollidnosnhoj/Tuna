@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Constants;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Common.Settings;
@@ -38,16 +37,16 @@ namespace Audiochan.Core.Features.Audios.RemoveAudio
         public async Task<Result<bool>> Handle(RemoveAudioCommand command, CancellationToken cancellationToken)
         {
             if (!_currentUserService.TryGetUserId(out var currentUserId))
-                return Result<bool>.Fail(ResultError.Unauthorized);
+                return Result<bool>.Unauthorized();
         
             var audio = await _unitOfWork.Audios
                 .LoadAsync(a => a.Id == command.Id, cancellationToken: cancellationToken);
-            
+
             if (audio == null)
-                return Result<bool>.Fail(ResultError.NotFound);
+                return Result<bool>.NotFound<Audio>();
 
             if (!ShouldCurrentUserModifyAudio(audio, currentUserId))
-                return Result<bool>.Fail(ResultError.Forbidden);
+                return Result<bool>.Forbidden();
             
             _unitOfWork.BeginTransaction();
             

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Audiochan.Core.Common.Models
 {
@@ -13,26 +14,56 @@ namespace Audiochan.Core.Common.Models
     
     public class Result
     {
-        public Dictionary<string, string[]>? Errors { get; set; }
+        public Dictionary<string, List<string>>? Errors { get; set; }
         public string? Message { get; set; }
         public bool IsSuccess { get; set; }
         public ResultError? ErrorCode { get; set; }
         
-        public Result()
+        protected Result()
         {
             IsSuccess = true;
         }
 
-        public Result(ResultError error, string message = "")
+        protected Result(ResultError error, string message = "")
         {
             IsSuccess = false;
             ErrorCode = error;
             Message = GetDefaultMessage(error, message);
         }
 
-        public static Result Fail(ResultError errorCode, string message = "", Dictionary<string, string[]>? errors = null)
+        public static Result BadRequest(string message = "")
         {
-            return new(errorCode, message)
+            return new(ResultError.BadRequest, message);
+        }
+
+        public static Result Unauthorized(string message = "")
+        {
+            return new(ResultError.Unauthorized, message);
+        }
+
+        public static Result Forbidden(string message = "")
+        {
+            return new(ResultError.Forbidden, message);
+        }
+
+        public static Result NotFound(string message = "")
+        {
+            return new(ResultError.NotFound, message);
+        }
+
+        public static Result NotFound(Type type)
+        {
+            return new(ResultError.NotFound, $"{type.Name} is not found.");
+        }
+
+        public static Result NotFound<TEntity>() where TEntity : class
+        {
+            return new(ResultError.NotFound, $"{typeof(TEntity).Name} is not found.");
+        }
+
+        public static Result Invalid(string message = "", Dictionary<string, List<string>>? errors = null)
+        {
+            return new Result(ResultError.UnprocessedEntity, message)
             {
                 Errors = errors
             };
@@ -40,17 +71,13 @@ namespace Audiochan.Core.Common.Models
 
         public static Result Success()
         {
-            return new()
-            {
-                IsSuccess = true,
-                Message = "Success"
-            };
+            return new();
         }
 
         public static implicit operator bool(Result result) => result.IsSuccess;
         public static implicit operator Result(ResultError error) => new(error);
 
-        protected static string GetDefaultMessage(ResultError? errorCode, string message)
+        private static string GetDefaultMessage(ResultError? errorCode, string message)
         {
             if (!string.IsNullOrWhiteSpace(message)) return message;
 
@@ -71,19 +98,50 @@ namespace Audiochan.Core.Common.Models
     {
         public T? Data { get; private set; }
 
-        public Result(T data) : base()
+        private Result(T data)
         {
+            IsSuccess = true;
             Data = data;
         }
 
-        public Result(ResultError error, string message = "") : base(error, message)
+        private Result(ResultError error, string message = "") : base(error, message)
         {
             Data = default(T);
         }
         
-        public new static Result<T> Fail(ResultError errorCode, string message = "", Dictionary<string, string[]>? errors = null)
+        public new static Result<T> BadRequest(string message = "")
         {
-            return new(errorCode, message)
+            return new(ResultError.BadRequest, message);
+        }
+
+        public new static Result<T> Unauthorized(string message = "")
+        {
+            return new(ResultError.Unauthorized, message);
+        }
+
+        public new static Result<T> Forbidden(string message = "")
+        {
+            return new(ResultError.Forbidden, message);
+        }
+
+        public new static Result<T> NotFound(string message = "")
+        {
+            return new(ResultError.NotFound, message);
+        }
+
+        public new static Result<T> NotFound(Type type)
+        {
+            return new(ResultError.NotFound, $"{type.Name} is not found.");
+        }
+
+        public new static Result<T> NotFound<TEntity>() where TEntity : class
+        {
+            return new(ResultError.NotFound, $"{typeof(TEntity).Name} is not found.");
+        }
+
+        public new static Result<T> Invalid(string message = "", Dictionary<string, List<string>>? errors = null)
+        {
+            return new(ResultError.UnprocessedEntity, message)
             {
                 Errors = errors
             };
@@ -91,13 +149,9 @@ namespace Audiochan.Core.Common.Models
 
         public static Result<T> Success(T data)
         {
-            return new(data)
-            {
-                IsSuccess = true,
-                Message = "Success"
-            };
+            return new(data);
         }
-        
+
         public static implicit operator bool(Result<T> result) => result.IsSuccess;
         public static implicit operator Result<T>(ResultError error) => new(error);
     }

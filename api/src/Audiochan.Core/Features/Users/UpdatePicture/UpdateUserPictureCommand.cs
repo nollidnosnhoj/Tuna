@@ -4,6 +4,7 @@ using Audiochan.Core.Common.Constants;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Common.Settings;
+using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Users.GetProfile;
 using Audiochan.Core.Services;
 using AutoMapper;
@@ -52,12 +53,12 @@ namespace Audiochan.Core.Features.Users.UpdatePicture
         {
             var container = string.Join('/', _storageSettings.Image.Container, "users");
             var user = await _unitOfWork.Users.LoadAsync(new object[]{command.UserId}, cancellationToken);
-            
-            if (user == null) 
-                return Result<ImageUploadResponse>.Fail(ResultError.NotFound);
-        
+
+            if (user == null)
+                return Result<ImageUploadResponse>.NotFound<User>();
+
             if (user.Id != _currentUserService.GetUserId())
-                return Result<ImageUploadResponse>.Fail(ResultError.Forbidden);
+                return Result<ImageUploadResponse>.Forbidden();
         
             var blobName = $"{user.Id}/{_dateTimeProvider.Now:yyyyMMddHHmmss}.jpg";
             

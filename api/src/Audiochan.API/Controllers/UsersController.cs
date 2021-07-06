@@ -12,10 +12,11 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+// ReSharper disable RouteTemplates.ActionRoutePrefixCanBeExtractedToControllerRoute
 
 namespace Audiochan.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("users")]
     public class UsersController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -26,10 +27,10 @@ namespace Audiochan.API.Controllers
         }
 
         [HttpGet("{username}", Name = "GetProfile")]
-        [ProducesResponseType(typeof(ProfileViewModel), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
         [SwaggerOperation(Summary = "Return user's profile.", OperationId = "GetProfile", Tags = new[] {"users"})]
-        public async Task<IActionResult> GetUser(string username, CancellationToken cancellationToken)
+        public async Task<ActionResult<ProfileViewModel>> GetUser(string username, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new GetProfileQuery(username), cancellationToken);
 
@@ -39,11 +40,11 @@ namespace Audiochan.API.Controllers
         }
 
         [HttpGet("{username}/audios", Name = "GetUserAudios")]
-        [ProducesResponseType(typeof(PagedListDto<AudioViewModel>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ErrorApiResponse), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(200)]
         [SwaggerOperation(Summary = "Return a list of the user's audios.", OperationId = "GetUserAudios",
             Tags = new[] {"users"})]
-        public async Task<IActionResult> GetUserAudios(string username, [FromQuery] PaginationQueryParams paginationQueryParams,
+        public async Task<ActionResult<PagedListDto<AudioViewModel>>> GetUserAudios(string username, 
+            [FromQuery] PaginationQueryParams paginationQueryParams,
             CancellationToken cancellationToken)
         {
             var list = await _mediator.Send(new GetUsersAudioQuery
@@ -57,6 +58,11 @@ namespace Audiochan.API.Controllers
         }
 
         [HttpGet("{username}/favorite/audios", Name = "GetUserFavoriteAudios")]
+        [ProducesResponseType(200)]
+        [SwaggerOperation(
+            Summary = "Returns a list of user's favorite audios.",
+            OperationId = "GetUsersFavoriteAudios",
+            Tags=new []{"users"})]
         public async Task<IActionResult> GetUserFavoriteAudios(string username,
             [FromQuery] PaginationQueryParams paginationQueryParams, CancellationToken cancellationToken)
         {
@@ -70,10 +76,11 @@ namespace Audiochan.API.Controllers
         }
 
         [HttpGet("{username}/followers", Name = "GetUserFollowers")]
-        [ProducesResponseType(typeof(PagedListDto<MetaAuthorDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(200)]
         [SwaggerOperation(Summary = "Return a list of the user's followers.", OperationId = "GetUserFollowers",
             Tags = new[] {"users"})]
-        public async Task<IActionResult> GetFollowers(string username, [FromQuery] PaginationQueryParams paginationQueryParams, 
+        public async Task<ActionResult<PagedListDto<MetaAuthorDto>>> GetFollowers(string username, 
+            [FromQuery] PaginationQueryParams paginationQueryParams, 
             CancellationToken cancellationToken)
         {
             return Ok(await _mediator.Send(new GetUserFollowersQuery
@@ -85,10 +92,11 @@ namespace Audiochan.API.Controllers
         }
 
         [HttpGet("{username}/followings", Name = "GetUserFollowings")]
-        [ProducesResponseType(typeof(PagedListDto<MetaAuthorDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(200)]
         [SwaggerOperation(Summary = "Return a list of the user's followings.", OperationId = "GetUserFollowings",
             Tags = new[] {"users"})]
-        public async Task<IActionResult> GetFollowings(string username, [FromQuery] PaginationQueryParams paginationQueryParams, 
+        public async Task<ActionResult<PagedListDto<MetaAuthorDto>>> GetFollowings(string username, 
+            [FromQuery] PaginationQueryParams paginationQueryParams, 
             CancellationToken cancellationToken)
         {
             return Ok(await _mediator.Send(new GetUserFollowingsQuery

@@ -53,16 +53,16 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
             CancellationToken cancellationToken)
         {
             if (!_currentUserService.TryGetUserId(out var currentUserId))
-                return Result<AudioDetailViewModel>.Fail(ResultError.Unauthorized);
+                return Result<AudioDetailViewModel>.Unauthorized();
 
             var audio = await _unitOfWork.Audios
                 .LoadForUpdate(command.AudioId, cancellationToken);
 
             if (audio == null)
-                return Result<AudioDetailViewModel>.Fail(ResultError.NotFound);
+                return Result<AudioDetailViewModel>.NotFound<Audio>();
 
             if (audio.UserId != currentUserId)
-                return Result<AudioDetailViewModel>.Fail(ResultError.Forbidden);
+                return Result<AudioDetailViewModel>.Forbidden();
             
             _unitOfWork.BeginTransaction();
             try
