@@ -14,6 +14,6 @@ jobs:
       with:
         dotnet-version: 5.0.x
     - name: Restore dependencies with dotnet
-      run: dotnet restore
+      run: dotnet restore ./api/Audiochan.sln
     - name: Build with dotnet
       run: dotnet build ./api/Audiochan.sln --configuration Release
