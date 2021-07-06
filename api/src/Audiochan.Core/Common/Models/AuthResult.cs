@@ -1,6 +1,6 @@
-﻿namespace Audiochan.Core.Features.Auth.Login
+﻿namespace Audiochan.Core.Common.Models
 {
-    public record LoginSuccessViewModel
+    public record AuthResult
     {
         public string AccessToken { get; init; } = null!;
         public long AccessTokenExpires { get; init; }

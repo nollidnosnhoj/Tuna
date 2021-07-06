@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Audiochan.API.Extensions;
 using Audiochan.API.Models;
+using Audiochan.Core.Common.Models;
 using Audiochan.Core.Features.Auth.CreateUser;
 using Audiochan.Core.Features.Auth.Login;
 using Audiochan.Core.Features.Auth.Refresh;
@@ -24,7 +25,7 @@ namespace Audiochan.API.Controllers
         }
 
         [HttpPost("login", Name = "Login")]
-        [ProducesResponseType(typeof(LoginSuccessViewModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(AuthResult), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [SwaggerOperation(
             Summary = "Obtain access and refresh token using your login credentials.",
@@ -59,7 +60,7 @@ namespace Audiochan.API.Controllers
         }
 
         [HttpPost("refresh", Name = "RefreshAccessToken")]
-        [ProducesResponseType(typeof(LoginSuccessViewModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(AuthResult), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [SwaggerOperation(
             Summary = "Refresh access token using valid refresh token.",

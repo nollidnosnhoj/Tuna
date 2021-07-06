@@ -5,12 +5,10 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Services;
-using Audiochan.Infrastructure.Persistence;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
@@ -20,19 +18,20 @@ namespace Audiochan.Infrastructure.Identity
     {
         private readonly JwtSettings _jwtSettings;
         private readonly IDateTimeProvider _dateTimeProvider;
-        private readonly UserManager<User> _userManager;
-        private readonly ApplicationDbContext _dbContext;
         private readonly TokenValidationParameters _tokenValidationParameters;
+        private readonly IIdentityService _identityService;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public TokenProvider(IOptions<JwtSettings> jwtOptions, UserManager<User> userManager,
-            IDateTimeProvider dateTimeProvider, TokenValidationParameters tokenValidationParameters, 
-            ApplicationDbContext dbContext)
+        public TokenProvider(IOptions<JwtSettings> jwtOptions, 
+            IDateTimeProvider dateTimeProvider, 
+            TokenValidationParameters tokenValidationParameters, 
+            IIdentityService identityService, IUnitOfWork unitOfWork)
         {
             _jwtSettings = jwtOptions.Value;
-            _userManager = userManager;
             _dateTimeProvider = dateTimeProvider;
             _tokenValidationParameters = tokenValidationParameters;
-            _dbContext = dbContext;
+            _identityService = identityService;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<(string, long)> GenerateAccessToken(User user)
@@ -69,7 +68,7 @@ namespace Audiochan.Infrastructure.Identity
             
             // Update using DbContext's SaveChanges because using UserManager.UpdateAsync() would update in a
             // disconnected scenario, meaning it will update field, when it doesn't need to.
-            await _dbContext.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync();
             return (token, expirationDateEpoch);
         }
 
@@ -91,7 +90,7 @@ namespace Audiochan.Infrastructure.Identity
                     out var validatedToken);
                 var jwtSecurityToken = (JwtSecurityToken) validatedToken;
                 var userId = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Sub)?.Value;
-                return await _userManager.Users.AnyAsync(x => x.Id == userId);
+                return await _unitOfWork.Users.ExistsAsync(u => u.Id == userId);
             }
             catch
             {
@@ -127,7 +126,7 @@ namespace Audiochan.Infrastructure.Identity
                 new("name", user.UserName)
             };
 
-            var roles = await _userManager.GetRolesAsync(user);
+            var roles = await _identityService.GetRolesAsync(user);
 
             claims.AddRange(roles.Select(role => new Claim("role", role)));
 
