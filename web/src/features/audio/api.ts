@@ -23,16 +23,12 @@ export async function fetchAudiosHandler(
 
 export async function fetchAudioHandler(
   id: AudioId,
-  secret?: string,
   ctx?: GetServerSidePropsContext
 ): Promise<AudioDetailData> {
   const { res, req } = ctx ?? {};
   const { data } = await request<AudioDetailData>({
     method: "get",
     url: `audios/${id}`,
-    params: {
-      ...(secret && { secret: secret }),
-    },
     req,
     res,
   });

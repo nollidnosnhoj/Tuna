@@ -13,7 +13,8 @@ import React, { useCallback, useState } from "react";
 import { FaList } from "react-icons/fa";
 import { IoMdGrid } from "react-icons/io";
 import AudioGridItem from "./GridItem";
-import AudioStackItem from "./StackItem";
+import AudioStackMiniItem from "./StackItem";
+
 import { mapAudiosForAudioQueue } from "~/utils/audioplayer";
 import { AudioData } from "~/features/audio/types";
 import { useAudioPlayer, useAudioQueue } from "~/lib/stores";
@@ -103,7 +104,7 @@ export default function AudioList(props: AudioListProps) {
                     paddingBottom={4}
                     key={index}
                   >
-                    <AudioStackItem
+                    <AudioStackMiniItem
                       audio={audio}
                       isPlaying={isAudioPlaying(audio) && isPlaying}
                       onPlayClick={() => onPlayClick(audio, index)}

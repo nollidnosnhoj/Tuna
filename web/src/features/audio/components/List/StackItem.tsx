@@ -1,5 +1,4 @@
 import {
-  Badge,
   Box,
   Flex,
   IconButton,
@@ -7,8 +6,8 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
-  Stack,
   Text,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import NextImage from "next/image";
 import React, { useState } from "react";
@@ -17,7 +16,7 @@ import { HiDotsVertical } from "react-icons/hi";
 import { MdQueueMusic } from "react-icons/md";
 import Link from "~/components/ui/Link";
 import { mapAudiosForAudioQueue } from "~/utils/audioplayer";
-import { AudioData, Visibility } from "~/features/audio/types";
+import { AudioData } from "~/features/audio/types";
 import { formatDuration } from "~/utils/format";
 import PictureContainer from "~/components/Picture/PictureContainer";
 import { useAudioQueue } from "~/lib/stores";
@@ -36,19 +35,43 @@ const AudioStackItem: React.FC<AudioListItemProps> = ({
   removeArtistName = false,
 }) => {
   const addToQueue = useAudioQueue((state) => state.addToQueue);
-  const [hoverImage, setHoverImage] = useState(false);
+  const [hoverItem, setHoverItem] = useState(false);
+  const hoverBg = useColorModeValue("inherit", "whiteAlpha.200");
 
   return (
-    <Box as="article" display="flex">
+    <Box
+      as="article"
+      display="flex"
+      alignItems="center"
+      onMouseOver={() => setHoverItem(true)}
+      onMouseLeave={() => setHoverItem(false)}
+      backgroundColor={hoverItem ? hoverBg : undefined}
+      borderRadius="md"
+      padding={1}
+      _notLast={{
+        marginBottom: 1,
+      }}
+    >
+      <Flex marginX={2}>
+        <IconButton
+          visibility={hoverItem || isPlaying ? "visible" : "hidden"}
+          variant="unstyled"
+          justifyContent="center"
+          alignItems="center"
+          display="flex"
+          size="sm"
+          icon={isPlaying ? <FaPause /> : <FaPlay />}
+          aria-label="Play"
+          onClick={onPlayClick}
+        />
+      </Flex>
       <PictureContainer
-        width={125}
+        width={75}
         borderWidth="1px"
         position="relative"
         display="flex"
         justifyContent="center"
         alignItems="center"
-        onMouseOver={() => setHoverImage(true)}
-        onMouseLeave={() => setHoverImage(false)}
       >
         {audio.picture && (
           <NextImage
@@ -58,45 +81,27 @@ const AudioStackItem: React.FC<AudioListItemProps> = ({
             loading="lazy"
           />
         )}
-        <IconButton
-          display={hoverImage ? "flex" : "none"}
-          isRound
-          colorScheme="pink"
-          size="lg"
-          icon={isPlaying ? <FaPause /> : <FaPlay />}
-          aria-label="Play"
-          onClick={onPlayClick}
-        />
       </PictureContainer>
-      <Flex width="100%" mx={4} marginTop={2}>
-        <Flex flex="3">
-          <Box>
-            <Flex align="center">
-              <Link
-                href={`/audios/${audio.id}`}
-                _hover={{ textDecoration: "none" }}
-              >
-                <Text as="b" fontSize="lg">
-                  {audio.title}
-                </Text>
-              </Link>
-              <Text fontSize="sm" marginLeft={2}>
-                {formatDuration(audio.duration)}
+      <Flex width="100%" align="center">
+        <Box marginX={4}>
+          <Flex align="center">
+            <Link
+              href={`/audios/${audio.id}`}
+              _hover={{ textDecoration: "none" }}
+            >
+              <Text as="b" fontSize="md">
+                {audio.title}
               </Text>
-            </Flex>
-            {!removeArtistName && (
-              <Link href={`/users/${audio.user.username}`}>
-                <Text as="i">{audio.user.username}</Text>
-              </Link>
-            )}
-          </Box>
-        </Flex>
-        <Flex flex="1" justify="flex-end">
-          <Stack direction="column" spacing={1} textAlign="right">
-            {audio.visibility === Visibility.Private && <Badge>PRIVATE</Badge>}
-          </Stack>
-        </Flex>
+            </Link>
+          </Flex>
+          {!removeArtistName && (
+            <Link href={`/users/${audio.user.username}`}>
+              <Text as="i">{audio.user.username}</Text>
+            </Link>
+          )}
+        </Box>
       </Flex>
+      <Flex paddingX={4}>{formatDuration(audio.duration)}</Flex>
       <Menu placement="bottom-end">
         <MenuButton
           as={IconButton}
