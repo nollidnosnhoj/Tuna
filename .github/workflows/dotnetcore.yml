@@ -1,0 +1,19 @@
+name: audiochan Backend Build
+
+on: [push, pull_request]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.x
+    - name: Restore dependencies with dotnet
+      run: dotnet restore
+    - name: Build with dotnet
+      run: dotnet build ./api/Audiochan.sln --configuration Release
