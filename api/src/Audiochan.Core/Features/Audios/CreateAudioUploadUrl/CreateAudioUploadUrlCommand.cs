@@ -2,6 +2,7 @@
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Models;
 using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Services;
 using MediatR;
@@ -9,13 +10,14 @@ using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Audios.CreateAudioUploadUrl
 {
-    public record CreateAudioUploadUrlCommand : IRequest<CreateAudioUploadUrlResponse>
+    public record CreateAudioUploadUrlCommand : IRequest<Result<CreateAudioUploadUrlResponse>>
     {
         public string FileName { get; init; } = null!;
         public long FileSize { get; init; }
     }
     
-    public class CreateAudioUploadUrlCommandHandler : IRequestHandler<CreateAudioUploadUrlCommand, CreateAudioUploadUrlResponse>
+    public class CreateAudioUploadUrlCommandHandler 
+        : IRequestHandler<CreateAudioUploadUrlCommand, Result<CreateAudioUploadUrlResponse>>
     {
         private readonly MediaStorageSettings _storageSettings;
         private readonly ICurrentUserService _currentUserService;
@@ -32,21 +34,34 @@ namespace Audiochan.Core.Features.Audios.CreateAudioUploadUrl
             _nanoid = nanoid;
         }
         
-        public async Task<CreateAudioUploadUrlResponse> Handle(CreateAudioUploadUrlCommand command, CancellationToken cancellationToken)
+        public async Task<Result<CreateAudioUploadUrlResponse>> Handle(CreateAudioUploadUrlCommand command, 
+            CancellationToken cancellationToken)
         {
-            var userId = _currentUserService.GetUserId();
+            if (!_currentUserService.TryGetUserId(out var userId))
+                return Result<CreateAudioUploadUrlResponse>.Fail(ResultError.Unauthorized);
+            
             var fileExt = Path.GetExtension(command.FileName);
-            var objectId = await _nanoid.GenerateAsync(size: 21);
-            var blobName = objectId + fileExt;
+            var uploadId = await CreateRandomBlobNameForUpload();
+            var blobName = uploadId + fileExt;
+            var url = GetUploadUrl(blobName, userId);
+            var response = new CreateAudioUploadUrlResponse {UploadUrl = url, UploadId = uploadId};
+            return Result<CreateAudioUploadUrlResponse>.Success(response);
+        }
 
-            var metadata = new Dictionary<string, string> {{"UserId", userId}};
-            var presignedUrl = _storageService.CreatePutPresignedUrl(
+        private async Task<string> CreateRandomBlobNameForUpload()
+        {
+            return await _nanoid.GenerateAsync(size: 21);
+        }
+
+        private string GetUploadUrl(string blobName, string ownerId)
+        {
+            var metadata = new Dictionary<string, string> {{"UserId", ownerId}};
+            return _storageService.CreatePutPresignedUrl(
                 _storageSettings.Audio.TempBucket,
                 _storageSettings.Audio.Container,
                 blobName,
                 5,
                 metadata);
-            return new CreateAudioUploadUrlResponse {UploadUrl = presignedUrl, UploadId = objectId};
         }
     }
 }

@@ -6,6 +6,7 @@ using Audiochan.Core.Common.Constants;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Common.Settings;
+using Audiochan.Core.Entities;
 using Audiochan.Core.Services;
 using MediatR;
 using Microsoft.Extensions.Options;
@@ -36,7 +37,8 @@ namespace Audiochan.Core.Features.Audios.RemoveAudio
 
         public async Task<Result<bool>> Handle(RemoveAudioCommand command, CancellationToken cancellationToken)
         {
-            var currentUserId = _currentUserService.GetUserId();
+            if (!_currentUserService.TryGetUserId(out var currentUserId))
+                return Result<bool>.Fail(ResultError.Unauthorized);
         
             var audio = await _unitOfWork.Audios
                 .LoadAsync(a => a.Id == command.Id, cancellationToken: cancellationToken);
@@ -44,12 +46,35 @@ namespace Audiochan.Core.Features.Audios.RemoveAudio
             if (audio == null)
                 return Result<bool>.Fail(ResultError.NotFound);
 
-            if (audio.UserId != currentUserId)
+            if (!ShouldCurrentUserModifyAudio(audio, currentUserId))
                 return Result<bool>.Fail(ResultError.Forbidden);
+            
+            _unitOfWork.BeginTransaction();
+            
+            try
+            {
+                var afterDeletionTasks = GetTasksForAfterDeletion(audio, cancellationToken);
+                _unitOfWork.Audios.Remove(audio);
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
+                await Task.WhenAll(afterDeletionTasks);
+            }
+            catch
+            {
+                _unitOfWork.RollbackTransaction();
+                throw;
+            }
 
-            _unitOfWork.Audios.Remove(audio);
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.CommitTransactionAsync();
+            return Result<bool>.Success(true);
+        }
 
+        private bool ShouldCurrentUserModifyAudio(Audio audio, string userId)
+        {
+            return audio.UserId == userId;
+        }
+
+        private IEnumerable<Task> GetTasksForAfterDeletion(Audio audio, CancellationToken cancellationToken = default)
+        {
             var tasks = new List<Task>
             {
                 _storageService.RemoveAsync(
@@ -58,6 +83,7 @@ namespace Audiochan.Core.Features.Audios.RemoveAudio
                     $"{audio.Id}/{audio.File}",
                     cancellationToken)
             };
+
             if (!string.IsNullOrEmpty(audio.Picture))
             {
                 tasks.Add(_storageService.RemoveAsync(_storageSettings.Image.Bucket,
@@ -66,8 +92,7 @@ namespace Audiochan.Core.Features.Audios.RemoveAudio
                     cancellationToken));
             }
 
-            await Task.WhenAll(tasks);
-            return Result<bool>.Success(true);
+            return tasks;
         }
     }
 }

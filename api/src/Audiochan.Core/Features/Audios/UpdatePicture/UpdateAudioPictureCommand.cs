@@ -7,7 +7,6 @@ using Audiochan.Core.Common.Models;
 using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Services;
-using AutoMapper;
 using MediatR;
 using Microsoft.Extensions.Options;
 
@@ -50,7 +49,9 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
             CancellationToken cancellationToken)
         {
             var container = string.Join('/', _storageSettings.Image.Container, "audios");
-            var currentUserId = _currentUserService.GetUserId();
+
+            if (!_currentUserService.TryGetUserId(out var currentUserId))
+                return Result<ImageUploadResponse>.Fail(ResultError.Unauthorized);
 
             var audio = await _unitOfWork.Audios
                 .LoadForUpdate(command.AudioId, cancellationToken);
