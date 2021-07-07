@@ -6,6 +6,7 @@ using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Features.Audios.SearchAudios;
+using Audiochan.Tests.Common.Fakers.Audios;
 using Bogus;
 using FluentAssertions;
 using Xunit;
@@ -36,16 +37,11 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             // create posts
             var (ownerId, _) = await _fixture.RunAsAdministratorAsync();
 
-            var audioFaker = new Faker<Audio>()
-                .RuleFor(x => x.Size, f => f.Random.Number(1, 2_000_000))
-                .RuleFor(x => x.Duration, f => f.Random.Number(1, 300))
+            var audioFaker = new AudioFaker(ownerId)
                 .RuleFor(x => x.Visibility, _ => Visibility.Public)
                 .FinishWith((f, a) =>
                 {
                     a.Tags = new List<Tag> {new() {Name = tags[0]}, new() {Name = tags[1]}};
-                    a.Title = Path.GetFileNameWithoutExtension(f.System.FileName(".mp3"));
-                    a.UserId = ownerId;
-                    a.File = "test.mp3";
                 });
 
             var audio = audioFaker.Generate();

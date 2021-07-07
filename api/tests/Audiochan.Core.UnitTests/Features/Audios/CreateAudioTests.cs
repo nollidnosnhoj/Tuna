@@ -45,15 +45,16 @@ namespace Audiochan.Core.UnitTests.Features.Audios
         public async Task CreateAudio()
         {
             // Assign
+            var userId = Guid.NewGuid().ToString();
             var user = new User
             {
-                Id = Guid.NewGuid().ToString(),
+                Id = userId,
                 UserName = "testusername"
             };
             var request = new CreateAudioRequestFaker().Generate();
             _currentUserService
-                .Setup(x => x.GetUserId())
-                .Returns(user.Id);
+                .Setup(x => x.TryGetUserId(out userId))
+                .Returns(true);
             _currentUserService
                 .Setup(x => x.GetUsername())
                 .Returns(user.UserName);
@@ -82,12 +83,6 @@ namespace Audiochan.Core.UnitTests.Features.Audios
                     It.IsAny<List<string>>(), 
                     It.IsAny<CancellationToken>()))
                 .ReturnsAsync(request.Tags.Select(x => new Tag{Name=x}).ToList());
-            _unitOfWork
-                .Setup(x => x.Users.LoadAsync(
-                    It.IsAny<Expression<Func<User, bool>>>(),
-                    It.IsAny<bool>(),
-                    It.IsAny<CancellationToken>()))
-                .ReturnsAsync(user);
 
             // Act
             var response = await _handler.Handle(request, CancellationToken.None);

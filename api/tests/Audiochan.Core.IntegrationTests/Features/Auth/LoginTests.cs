@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Auth.Login;
 using Bogus;
 using FluentAssertions;
@@ -33,19 +36,27 @@ namespace Audiochan.Core.IntegrationTests.Features.Auth
                 Login = username,
                 Password = password
             });
-            var user = await _fixture.ExecuteDbContextAsync(dbContext =>
-            {
-                return dbContext.Users
-                    .Include(u => u.RefreshTokens)
-                    .SingleOrDefaultAsync(u => u.Id == userId);
-            });
 
             // Assert
+            var userRefreshTokens = await GetUserRefreshTokens(userId);
+            
             loginResult.IsSuccess.Should().Be(true);
             loginResult.Data.Should().NotBeNull();
-            user.Should().NotBeNull();
-            user.RefreshTokens.Count.Should().BeGreaterThan(0);
-            user.RefreshTokens.Should().Contain(x => x.Token == loginResult.Data!.RefreshToken);
+            userRefreshTokens.Count.Should().BeGreaterThan(0);
+            userRefreshTokens.Should().Contain(x => x.Token == loginResult.Data!.RefreshToken);
+        }
+
+        private async Task<List<RefreshToken>> GetUserRefreshTokens(string userId)
+        {
+            return await _fixture.ExecuteDbContextAsync(dbContext =>
+            {
+                return dbContext.Users
+                    .AsNoTracking()
+                    .Include(u => u.RefreshTokens)
+                    .Where(u => u.Id == userId)
+                    .SelectMany(u => u.RefreshTokens)
+                    .ToListAsync();
+            });
         }
     }
 }

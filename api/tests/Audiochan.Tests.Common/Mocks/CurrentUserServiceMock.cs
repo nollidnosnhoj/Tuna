@@ -18,6 +18,10 @@ namespace Audiochan.Tests.Common.Mocks
             mock.Setup(x => x.GetUserId()).Returns(userId);
             mock.Setup(x => x.GetUsername()).Returns(username);
             mock.Setup(x => x.IsAuthenticated()).Returns(true);
+            mock.Setup(x => x.TryGetUserId(out userId))
+                .Returns(true);
+            mock.Setup(x => x.TryGetUsername(out username))
+                .Returns(true);
             return mock;
         }
     }
