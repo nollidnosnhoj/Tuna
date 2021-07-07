@@ -1,27 +1,9 @@
 import { Text } from "@chakra-ui/react";
-import { GetServerSideProps } from "next";
 import React from "react";
 import Page from "~/components/Page";
-import InfiniteListControls from "~/components/ui/InfiniteListControls";
+import InfiniteListControls from "~/components/ui/ListControls/InfiniteListControls";
 import AudioList from "~/features/audio/components/List";
 import { useGetAudioList } from "~/features/audio/hooks";
-import { getAccessToken } from "~/lib/http/utils";
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const accessToken = getAccessToken(context?.req);
-  if (accessToken) {
-    return {
-      redirect: {
-        destination: "/feed",
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: {},
-  };
-};
 
 const Index = () => {
   const {

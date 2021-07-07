@@ -5,9 +5,9 @@ using Audiochan.Core.Common.Constants;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Common.Settings;
+using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Services;
-using AutoMapper;
 using MediatR;
 using Microsoft.Extensions.Options;
 
@@ -28,7 +28,6 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
         private readonly IImageProcessingService _imageProcessingService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICacheService _cacheService;
-        private readonly IMapper _mapper;
 
         public UpdateAudioCommandHandler(IOptions<MediaStorageSettings> options,
             IStorageService storageService,
@@ -36,7 +35,7 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
             IImageProcessingService imageProcessingService,
             IDateTimeProvider dateTimeProvider, 
             IUnitOfWork unitOfWork, 
-            ICacheService cacheService, IMapper mapper)
+            ICacheService cacheService)
         {
             _storageSettings = options.Value;
             _storageService = storageService;
@@ -45,23 +44,24 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
             _dateTimeProvider = dateTimeProvider;
             _unitOfWork = unitOfWork;
             _cacheService = cacheService;
-            _mapper = mapper;
         }
 
         public async Task<Result<ImageUploadResponse>> Handle(UpdateAudioPictureCommand command,
             CancellationToken cancellationToken)
         {
             var container = string.Join('/', _storageSettings.Image.Container, "audios");
-            var currentUserId = _currentUserService.GetUserId();
+
+            if (!_currentUserService.TryGetUserId(out var currentUserId))
+                return Result<ImageUploadResponse>.Unauthorized();
 
             var audio = await _unitOfWork.Audios
                 .LoadForUpdate(command.AudioId, cancellationToken);
-        
-            if (audio == null) 
-                return Result<ImageUploadResponse>.Fail(ResultError.NotFound);
-        
+
+            if (audio == null)
+                return Result<ImageUploadResponse>.NotFound<Audio>();
+
             if (audio.UserId != currentUserId)
-                return Result<ImageUploadResponse>.Fail(ResultError.Forbidden);
+                return Result<ImageUploadResponse>.Forbidden();
             
             var blobName = $"{audio.Id}/{_dateTimeProvider.Now:yyyyMMddHHmmss}.jpg";
             

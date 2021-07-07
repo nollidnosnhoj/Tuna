@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Audiochan.API.Extensions;
 using Audiochan.API.Models;
+using Audiochan.Core.Common.Models;
 using Audiochan.Core.Features.Auth.CreateUser;
 using Audiochan.Core.Features.Auth.Login;
 using Audiochan.Core.Features.Auth.Refresh;
@@ -13,7 +14,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace Audiochan.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("auth")]
     public class AuthController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -24,14 +25,14 @@ namespace Audiochan.API.Controllers
         }
 
         [HttpPost("login", Name = "Login")]
-        [ProducesResponseType(typeof(LoginSuccessViewModel), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
         [SwaggerOperation(
             Summary = "Obtain access and refresh token using your login credentials.",
             OperationId = "Login",
             Tags = new[] {"auth"}
         )]
-        public async Task<IActionResult> Login([FromBody] LoginCommand command,
+        public async Task<ActionResult<AuthResult>> Login([FromBody] LoginCommand command,
             CancellationToken cancellationToken)
         {
             var authResult = await _mediator.Send(command, cancellationToken);
@@ -41,8 +42,8 @@ namespace Audiochan.API.Controllers
         }
 
         [HttpPost("register", Name = "CreateAccount")]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(422)]
         [SwaggerOperation(
             Summary = "Create an account.",
             Description = "Once successful, you can use the login endpoint to obtain access and refresh tokens.",
@@ -59,8 +60,8 @@ namespace Audiochan.API.Controllers
         }
 
         [HttpPost("refresh", Name = "RefreshAccessToken")]
-        [ProducesResponseType(typeof(LoginSuccessViewModel), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
         [SwaggerOperation(
             Summary = "Refresh access token using valid refresh token.",
             Description =
@@ -68,7 +69,7 @@ namespace Audiochan.API.Controllers
             OperationId = "RefreshAccessToken",
             Tags = new[] {"auth"}
         )]
-        public async Task<IActionResult> Refresh([FromBody] RefreshTokenCommand command,
+        public async Task<ActionResult<AuthResult>> Refresh([FromBody] RefreshTokenCommand command,
             CancellationToken cancellationToken)
         {
             var authResult = await _mediator.Send(command, cancellationToken);
@@ -78,14 +79,13 @@ namespace Audiochan.API.Controllers
         }
 
         [HttpPost("revoke", Name = "RevokeRefreshToken")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ErrorApiResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(200)]
         [SwaggerOperation(
             Summary = "Revoke a refresh token",
             OperationId = "RevokeRefreshToken",
             Tags = new[] {"auth"}
         )]
-        public async Task<IActionResult> Revoke([FromBody] RevokeTokenCommand command,
+        public async Task<ActionResult> Revoke([FromBody] RevokeTokenCommand command,
             CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(command, cancellationToken);

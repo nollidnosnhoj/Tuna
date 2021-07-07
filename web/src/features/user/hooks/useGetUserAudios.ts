@@ -24,6 +24,9 @@ export function useGetUserAudios(
   return useInfinitePagination(
     GET_USER_AUDIOS_QUERY_KEY(username),
     (page) => fetchUserAudios(username, page, params),
-    options
+    {
+      ...options,
+      enabled: !!username && (options.enabled ?? true),
+    }
   );
 }

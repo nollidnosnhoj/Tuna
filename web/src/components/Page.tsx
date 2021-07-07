@@ -4,8 +4,8 @@ import NextLink from "next/link";
 import { Box, BoxProps, Button, Flex, Heading } from "@chakra-ui/react";
 import Header from "~/components/ui/Header";
 import Container from "~/components/ui/Container";
-import SearchBar from "./ui/SearchBar";
-import UserSection from "./ui/UserSection";
+import SearchBar from "./ui/Header/SearchBar";
+import UserSection from "./ui/Header/UserSection";
 import Logo from "./ui/Logo";
 import { useUser } from "~/features/user/hooks";
 

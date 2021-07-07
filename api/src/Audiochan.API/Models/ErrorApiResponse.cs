@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Audiochan.API.Models
 {
-    public record ErrorApiResponse(int Code, string? Message, IDictionary<string, string[]>? Errors)
+    public record ErrorApiResponse(int Code, string? Message, IDictionary<string, List<string>>? Errors)
     {
         public static ErrorApiResponse NotFound(string message)
         {

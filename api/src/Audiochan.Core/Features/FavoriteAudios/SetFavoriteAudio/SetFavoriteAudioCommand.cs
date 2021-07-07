@@ -29,9 +29,9 @@ namespace Audiochan.Core.Features.FavoriteAudios.SetFavoriteAudio
         {
             var audio = await _unitOfWork.Audios
                 .LoadForSetFavorite(command.AudioId, cancellationToken);
-            
+
             if (audio == null)
-                return Result<bool>.Fail(ResultError.NotFound);
+                return Result<bool>.NotFound<Audio>();
 
             var isFavoriting = command.IsFavoriting
                 ? await Favorite(audio, command.UserId, cancellationToken)

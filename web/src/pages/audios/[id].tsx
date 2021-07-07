@@ -8,7 +8,6 @@ import {
 } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
 import React from "react";
-import { useRouter } from "next/router";
 import Page from "~/components/Page";
 import AudioDetails from "~/features/audio/components/Details";
 import AudioFileInfo from "~/features/audio/components/Details/AudioFileInfo";
@@ -18,19 +17,20 @@ import { AudioDetailData, AudioId } from "~/features/audio/types";
 
 interface AudioPageProps {
   audio?: AudioDetailData;
+  audioId: AudioId;
 }
 
 export const getServerSideProps: GetServerSideProps<AudioPageProps> = async (
   context
 ) => {
   const id = context.params?.id as AudioId;
-  const secret = context.query?.secret as string;
 
   try {
-    const data = await fetchAudioHandler(id, secret, context);
+    const data = await fetchAudioHandler(id, context);
     return {
       props: {
         audio: data,
+        audioId: id,
       },
     };
   } catch (err) {
@@ -40,11 +40,8 @@ export const getServerSideProps: GetServerSideProps<AudioPageProps> = async (
   }
 };
 
-export default function ViewAudioNextPage(props: AudioPageProps) {
-  const { query } = useRouter();
-  const id = query?.id as AudioId;
-  const secret = query.key as string;
-  const { data: audio } = useGetAudio(id, secret, {
+export default function AudioPage(props: AudioPageProps) {
+  const { data: audio } = useGetAudio(props.audioId, {
     staleTime: 1000,
     initialData: props.audio,
   });

@@ -11,12 +11,22 @@ namespace Audiochan.Infrastructure.Identity
         {
             return identityResult.Succeeded
                 ? Result<bool>.Success(true)
-                : Result<bool>.Fail(ResultError.UnprocessedEntity, message, identityResult.ToResultErrors());
+                : Result<bool>.Invalid(message, identityResult.ToResultErrors());
         }
         
-        private static Dictionary<string, string[]> ToResultErrors(this IdentityResult identityResult)
+        private static Dictionary<string, List<string>> ToResultErrors(this IdentityResult identityResult)
         {
-            return identityResult.Errors.ToDictionary(x => x.Code, x => new[] {x.Description});
+            var dict = new Dictionary<string, List<string>>();
+
+            foreach (var identityError in identityResult.Errors)
+            {
+                if (!dict.ContainsKey(identityError.Code))
+                    dict[identityError.Code] = new List<string>();
+                
+                dict[identityError.Code].Add(identityError.Description);
+            }
+
+            return dict;
         }
     }
 }

@@ -19,6 +19,18 @@ namespace Audiochan.API.Services
                    ?? string.Empty;
         }
 
+        public bool TryGetUserId(out string userId)
+        {
+            userId = GetUserId();
+            return !string.IsNullOrEmpty(userId);
+        }
+
+        public bool TryGetUsername(out string username)
+        {
+            username = GetUsername();
+            return !string.IsNullOrEmpty(username);
+        }
+
         public bool IsAuthenticated()
         {
             var id = GetUserId();

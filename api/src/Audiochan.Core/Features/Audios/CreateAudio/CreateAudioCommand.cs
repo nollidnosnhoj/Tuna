@@ -48,31 +48,14 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
         public async Task<Result<Guid>> Handle(CreateAudioCommand command,
             CancellationToken cancellationToken)
         {
-            var currentUser = await _unitOfWork.Users
-                    .LoadAsync(x => x.Id == _currentUserService.GetUserId(), 
-                        cancellationToken: cancellationToken);
-
-            if (currentUser is null)
-                return Result<Guid>.Fail(ResultError.Unauthorized);
+            if (!_currentUserService.TryGetUserId(out var currentUserId))
+                return Result<Guid>.Unauthorized();
 
             Guid audioId;
             _unitOfWork.BeginTransaction();
             try
             {
-                var audio = new Audio
-                {
-                    User = currentUser,
-                    Size = command.FileSize,
-                    Duration = command.Duration,
-                    Title = command.Title,
-                    Description = command.Description,
-                    Visibility = command.Visibility,
-                    File = command.BlobName,
-                    Tags = command.Tags.Count > 0
-                        ? await _unitOfWork.Tags.GetAppropriateTags(command.Tags, cancellationToken)
-                        : new List<Tag>(),
-                };
-
+                var audio = await CreateNewAudioBasedOnCommandAsync(command, currentUserId, cancellationToken);
                 await _unitOfWork.Audios.AddAsync(audio, cancellationToken);
                 await MoveTempAudioToPublicAsync(audio, cancellationToken);
                 await _unitOfWork.SaveChangesAsync(cancellationToken);
@@ -87,6 +70,28 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
             await _unitOfWork.CommitTransactionAsync();
             
             return Result<Guid>.Success(audioId);
+        }
+
+        private async Task<Audio> CreateNewAudioBasedOnCommandAsync(CreateAudioCommand command, string ownerId,
+            CancellationToken cancellationToken = default)
+        {
+            var audio = new Audio
+            {
+                UserId = ownerId,
+                Size = command.FileSize,
+                Duration = command.Duration,
+                Title = command.Title,
+                Description = command.Description,
+                Visibility = command.Visibility,
+                File = command.BlobName,
+            };
+
+            if (command.Tags.Count > 0)
+            {
+                audio.Tags = await _unitOfWork.Tags.GetAppropriateTags(command.Tags, cancellationToken);
+            }
+
+            return audio;
         }
 
         private async Task MoveTempAudioToPublicAsync(Audio audio, CancellationToken cancellationToken)

@@ -48,7 +48,7 @@ namespace Audiochan.Core.Common.Pipelines
                 errors[validationFailure.PropertyName].Add(validationFailure.ErrorMessage);
             }
 
-            return (TResponse) new Result(ResultError.UnprocessedEntity);
+            return (TResponse) Result.Invalid(errors: errors);
         }
     }
 }

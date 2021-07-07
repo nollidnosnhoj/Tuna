@@ -40,7 +40,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             audio.Size.Should().Be(request.FileSize);
             audio.User.Should().NotBeNull();
             audio.User.Id.Should().Be(adminId);
-            audio.User.UserName.Should().Be(adminUsername);
+            audio.User.Username.Should().Be(adminUsername);
         }
         
         [Fact]

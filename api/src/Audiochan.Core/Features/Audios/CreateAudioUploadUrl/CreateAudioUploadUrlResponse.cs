@@ -1,6 +1,6 @@
-﻿namespace Audiochan.Core.Features.Audios.UploadAudio
+﻿namespace Audiochan.Core.Features.Audios.CreateAudioUploadUrl
 {
-    public record UploadAudioResponse
+    public record CreateAudioUploadUrlResponse
     {
         public string UploadId { get; init; } = null!;
         public string UploadUrl { get; init; } = null!;

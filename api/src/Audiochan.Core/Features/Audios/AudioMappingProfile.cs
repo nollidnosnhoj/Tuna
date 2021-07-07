@@ -19,7 +19,7 @@ namespace Audiochan.Core.Features.Audios
                 .ForMember(dest => dest.Tags, opts =>
                     opts.MapFrom(src => src.Tags.Select(t => t.Name).ToList()))
                 .ForMember(dest => dest.AudioUrl, opts =>
-                    opts.MapFrom(src => string.Format(MediaLinkInvariants.AudioUrl, src.Id, src.File)));
+                    opts.MapFrom(src => string.Format(MediaLinkInvariants.AudioUrl, src.File)));
 
             CreateMap<Audio, AudioViewModel>()
                 .ForMember(dest => dest.Picture, opts =>
@@ -27,7 +27,7 @@ namespace Audiochan.Core.Features.Audios
                         ? string.Format(MediaLinkInvariants.AudioPictureUrl, src.Picture)
                         : null))
                 .ForMember(dest => dest.AudioUrl, opts =>
-                    opts.MapFrom(src => string.Format(MediaLinkInvariants.AudioUrl, src.Id, src.File)));
+                    opts.MapFrom(src => string.Format(MediaLinkInvariants.AudioUrl, src.File)));
         }
     }
 }

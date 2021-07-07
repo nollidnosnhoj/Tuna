@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Constants;
 using Audiochan.Core.Common.Interfaces;
+using Audiochan.Core.Entities;
 using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Services;
 using MediatR;
@@ -28,17 +29,24 @@ namespace Audiochan.Core.Features.Audios.GetAudio
 
         public async Task<AudioDetailViewModel?> Handle(GetAudioQuery query, CancellationToken cancellationToken)
         {
-            var cacheOptions = new GetAudioCacheOptions(query.Id);
+            var audio = await FetchAudioFromCacheOrDatabaseAsync(query.Id, cancellationToken);
+            if (audio == null || !CanAccessPrivateAudio(audio)) return null;
+            return audio;
+        }
+
+        private async Task<AudioDetailViewModel?> FetchAudioFromCacheOrDatabaseAsync(Guid audioId, 
+            CancellationToken cancellationToken = default)
+        {
+            var cacheOptions = new GetAudioCacheOptions(audioId);
             
-            var (cacheExists, audio) = await _cacheService.GetAsync<AudioDetailViewModel>(cacheOptions, cancellationToken);
+            var (cacheExists, audio) = await _cacheService
+                .GetAsync<AudioDetailViewModel>(cacheOptions, cancellationToken);
 
             if (!cacheExists)
             {
-                audio = await _unitOfWork.Audios.GetAudio(query.Id, cancellationToken);
+                audio = await _unitOfWork.Audios.GetAudio(audioId, cancellationToken);
                 await _cacheService.SetAsync(audio, cacheOptions, cancellationToken);
             }
-            
-            if (audio == null || !CanAccessPrivateAudio(audio)) return null;
 
             return audio;
         }

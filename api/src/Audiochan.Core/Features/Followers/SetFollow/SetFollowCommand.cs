@@ -30,10 +30,10 @@ namespace Audiochan.Core.Features.Followers.SetFollow
                 .LoadForFollow(command.Username, cancellationToken);
 
             if (target == null)
-                return Result<bool>.Fail(ResultError.NotFound);
+                return Result<bool>.NotFound<User>();
 
             if (target.Id == command.UserId)
-                return Result<bool>.Fail(ResultError.Forbidden);
+                return Result<bool>.Forbidden();
 
             var isFollowed = command.IsFollowing
                 ? await Follow(target, command.UserId, cancellationToken)

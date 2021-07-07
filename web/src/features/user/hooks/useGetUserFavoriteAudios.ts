@@ -23,6 +23,9 @@ export function useGetUserFavoriteAudios(
   return useInfinitePagination(
     GET_USER_FAVORITE_AUDIOS_QUERY_KEY(username),
     (page) => fetchUserFavoriteAudios(username, page, params),
-    options
+    {
+      ...options,
+      enabled: !!username && (options.enabled ?? true),
+    }
   );
 }

@@ -37,9 +37,9 @@ namespace Audiochan.Core.Features.Users.UpdateEmail
         public async Task<Result<bool>> Handle(UpdateEmailCommand command, CancellationToken cancellationToken)
         {
             var user = await _unitOfWork.Users.LoadAsync(new object[]{command.UserId}, cancellationToken);
-            if (user == null) return Result<bool>.Fail(ResultError.Unauthorized);
+            if (user == null) return Result<bool>.Unauthorized();
             if (user.Id != _currentUserService.GetUserId())
-                return Result<bool>.Fail(ResultError.Forbidden);
+                return Result<bool>.Forbidden();
 
             return await _identityService.UpdateEmail(user, command.NewEmail);
         }

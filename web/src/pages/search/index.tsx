@@ -2,7 +2,7 @@ import { Heading } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import React from "react";
 import Page from "~/components/Page";
-import PaginationListControls from "~/components/ui/PaginationListControls";
+import PaginationListControls from "~/components/ui/ListControls/PaginationListControls";
 import AudioList from "~/features/audio/components/List";
 import { useSearchAudio } from "~/features/audio/hooks";
 import { useGetPageParam } from "~/lib/hooks";

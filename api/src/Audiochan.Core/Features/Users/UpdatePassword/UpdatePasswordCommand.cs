@@ -37,10 +37,10 @@ namespace Audiochan.Core.Features.Users.UpdatePassword
 
         public async Task<Result<bool>> Handle(UpdatePasswordCommand command, CancellationToken cancellationToken)
         {
-            var user = await _unitOfWork.Users.LoadAsync(new object[]{command.UserId}, cancellationToken);            
-            if (user == null) return Result<bool>.Fail(ResultError.Unauthorized);
+            var user = await _unitOfWork.Users.LoadAsync(new object[]{command.UserId}, cancellationToken);
+            if (user == null) return Result<bool>.Unauthorized();
             if (user.Id != _currentUserService.GetUserId())
-                return Result<bool>.Fail(ResultError.Forbidden);
+                return Result<bool>.Forbidden();
 
             return await _identityService.UpdatePassword(user, command.CurrentPassword, command.NewPassword);
         }

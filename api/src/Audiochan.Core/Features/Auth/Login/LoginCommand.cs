@@ -11,42 +11,37 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Auth.Login
 {
-    public record LoginCommand : IRequest<Result<LoginSuccessViewModel>>
+    public record LoginCommand : IRequest<Result<AuthResult>>
     {
         public string Login { get; init; } = null!;
         public string Password { get; init; } = null!;
     }
 
 
-    public class LoginCommandHandler : IRequestHandler<LoginCommand, Result<LoginSuccessViewModel>>
+    public class LoginCommandHandler : IRequestHandler<LoginCommand, Result<AuthResult>>
     {
-        private readonly UserManager<User> _userManager;
         private readonly ITokenProvider _tokenProvider;
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IIdentityService _identityService;
 
-        public LoginCommandHandler(UserManager<User> userManager, ITokenProvider tokenProvider, IUnitOfWork unitOfWork)
+        public LoginCommandHandler(ITokenProvider tokenProvider, IIdentityService identityService)
         {
-            _userManager = userManager;
             _tokenProvider = tokenProvider;
-            _unitOfWork = unitOfWork;
+            _identityService = identityService;
         }
 
-        public async Task<Result<LoginSuccessViewModel>> Handle(LoginCommand command,
+        public async Task<Result<AuthResult>> Handle(LoginCommand command,
             CancellationToken cancellationToken)
         {
-            var user = await _userManager.Users
-                .Include(u => u.RefreshTokens)
-                .Where(u => u.UserName == command.Login || u.Email == command.Login)
-                .SingleOrDefaultAsync(cancellationToken);
+            var user = await _identityService.LoginUserAsync(command.Login, command.Password, cancellationToken);
 
-            if (user == null || !await _userManager.CheckPasswordAsync(user, command.Password))
-                return Result<LoginSuccessViewModel>.Fail(ResultError.BadRequest, "Invalid Username/Password");
+            if (user == null)
+                return Result<AuthResult>.BadRequest("Invalid Username/Password");
 
             var (accessToken, accessTokenExpiration) = await _tokenProvider.GenerateAccessToken(user);
 
             var (refreshToken, refreshTokenExpiration) = await _tokenProvider.GenerateRefreshToken(user);
 
-            var result = new LoginSuccessViewModel
+            var result = new AuthResult
             {
                 AccessToken = accessToken,
                 AccessTokenExpires = accessTokenExpiration,
@@ -54,7 +49,7 @@ namespace Audiochan.Core.Features.Auth.Login
                 RefreshTokenExpires = refreshTokenExpiration
             };
 
-            return Result<LoginSuccessViewModel>.Success(result);
+            return Result<AuthResult>.Success(result);
         }
     }
 }

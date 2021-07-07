@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Helpers;
@@ -28,16 +29,21 @@ namespace Audiochan.Core.Features.Audios.GetAudioList
         {
             var audios = await _unitOfWork.Audios
                 .GetLatestAudios(request, cancellationToken);
-            
+
+            var nextCursor = GetNextCursor(audios, request.Size);
+
+            return new GetAudioListViewModel(audios, nextCursor);
+        }
+
+        private string? GetNextCursor(List<AudioViewModel> audios, int size)
+        {
             var lastAudio = audios.LastOrDefault();
 
-            var nextCursor = audios.Count < request.Size
+            return audios.Count < size
                 ? null
                 : lastAudio != null
                     ? CursorHelpers.Encode(lastAudio.Id, lastAudio.Created)
                     : null;
-
-            return new GetAudioListViewModel(audios, nextCursor);
         }
     }
 }

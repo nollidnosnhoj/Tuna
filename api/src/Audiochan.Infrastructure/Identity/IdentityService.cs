@@ -1,8 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Services;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Infrastructure.Identity
 {
@@ -13,6 +17,26 @@ namespace Audiochan.Infrastructure.Identity
         public IdentityService(UserManager<User> userManager)
         {
             _userManager = userManager;
+        }
+
+        public async Task<List<string>> GetRolesAsync(User user)
+        {
+            var roles = await _userManager.GetRolesAsync(user);
+            return roles.ToList();
+        }
+
+        public async Task<User?> LoginUserAsync(string login, string password,
+            CancellationToken cancellationToken = default)
+        {
+            var user = await _userManager.Users
+                .Include(u => u.RefreshTokens)
+                .Where(u => u.UserName == login || u.Email == login)
+                .SingleOrDefaultAsync(cancellationToken);
+
+            if (user == null || !await _userManager.CheckPasswordAsync(user, password))
+                return null;
+
+            return user;
         }
 
         public async Task<Result<bool>> CreateUser(User user, string password)

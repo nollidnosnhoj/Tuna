@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
+using Audiochan.Core.Entities;
 using Audiochan.Core.Services;
 using MediatR;
 
@@ -37,9 +38,9 @@ namespace Audiochan.Core.Features.Users.UpdateProfile
         public async Task<Result<bool>> Handle(UpdateProfileCommand command, CancellationToken cancellationToken)
         {
             var user = await _unitOfWork.Users.LoadAsync(new object[]{command.UserId}, cancellationToken);
-            if (user == null) return Result<bool>.Fail(ResultError.NotFound);
+            if (user == null) return Result<bool>.NotFound<User>();
             if (user.Id != _currentUserService.GetUserId())
-                return Result<bool>.Fail(ResultError.Forbidden);
+                return Result<bool>.Forbidden();
 
             user.UpdateDisplayName(command.DisplayName);
             user.UpdateAbout(command.About);
