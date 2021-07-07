@@ -21,7 +21,8 @@ namespace Audiochan.Core.Features.FavoriteAudios.CheckIfAudioFavorited
         
         public async Task<bool> Handle(CheckIfAudioFavoritedQuery query, CancellationToken cancellationToken)
         {
-            return await _unitOfWork.Audios.CheckIfFavoriteAudioExists(query.AudioId, query.UserId, cancellationToken);
+            return await _unitOfWork.FavoriteAudios
+                .ExistsAsync(fa => fa.AudioId == query.AudioId && fa.UserId == query.UserId, cancellationToken);
         }
     }
 }

@@ -26,15 +26,6 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
         {
         }
 
-        public async Task<bool> CheckIfFavoriteAudioExists(Guid audioId, string userId, CancellationToken cancellationToken = default)
-        {
-            return await DbSet
-                .Include(a => a.Favorited)
-                .Where(a => a.Id == audioId)
-                .SelectMany(a => a.Favorited)
-                .AnyAsync(u => u.UserId == userId, cancellationToken);
-        }
-
         public async Task<AudioDetailViewModel?> GetAudio(Guid id, CancellationToken cancellationToken = default)
         {
             var currentUserId = CurrentUserService.GetUserId();
@@ -55,13 +46,18 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
                 .SingleOrDefaultAsync(a => a.Id == id, cancellationToken);
         }
 
-        public async Task<Audio?> LoadForSetFavorite(Guid id, CancellationToken cancellationToken = default)
+        public async Task<Audio?> LoadForSetFavorite(Guid id, string userId = "", CancellationToken cancellationToken = default)
         {
-            return await DbSet
-                .Include(a => a.Favorited)
+            var queryable = DbSet
                 .IgnoreQueryFilters()
-                .Where(a => a.Id == id)
-                .SingleOrDefaultAsync(cancellationToken);
+                .Where(a => a.Id == id);
+
+            queryable = !string.IsNullOrEmpty(userId) 
+                ? queryable.Include(a => 
+                    a.Favorited.Where(fa => fa.UserId == userId)) 
+                : queryable.Include(a => a.Favorited);
+
+            return await queryable.SingleOrDefaultAsync(cancellationToken);
         }
 
         public async Task<List<AudioViewModel>> GetLatestAudios(GetLatestAudioQuery query, 

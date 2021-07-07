@@ -117,7 +117,7 @@ namespace Audiochan.API.Controllers
             return Ok(result);
         }
 
-        [HttpHead("followings/{username}", Name = "CheckIfUserFollowedUser")]
+        [HttpHead("followings/{userId}", Name = "CheckIfUserFollowedUser")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         [SwaggerOperation(
@@ -126,15 +126,15 @@ namespace Audiochan.API.Controllers
             OperationId = "CheckIfYouFollowedUser",
             Tags = new[] {"me"}
         )]
-        public async Task<IActionResult> IsFollow(string username, CancellationToken cancellationToken)
+        public async Task<IActionResult> IsFollow(string userId, CancellationToken cancellationToken)
         {
-            var request = new CheckIfUserIsFollowingQuery(_currentUserId, username);
+            var request = new CheckIfUserIsFollowingQuery(_currentUserId, userId);
             return await _mediator.Send(request, cancellationToken)
                 ? Ok()
                 : NotFound();
         }
 
-        [HttpPut("followings/{username}", Name = "FollowUser")]
+        [HttpPut("followings/{userId}", Name = "FollowUser")]
         [ProducesResponseType(200)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
@@ -144,16 +144,16 @@ namespace Audiochan.API.Controllers
             OperationId = "FollowUser",
             Tags = new[] {"me"}
         )]
-        public async Task<IActionResult> Follow(string username, CancellationToken cancellationToken)
+        public async Task<IActionResult> Follow(string userId, CancellationToken cancellationToken)
         {
-            var request = new SetFollowCommand(_currentUserId, username, true);
+            var request = new SetFollowCommand(_currentUserId, userId, true);
             var result = await _mediator.Send(request, cancellationToken);
             return result.IsSuccess
                 ? Ok()
                 : result.ReturnErrorResponse();
         }
 
-        [HttpDelete("followings/{username}", Name = "UnfollowUser")]
+        [HttpDelete("followings/{userId}", Name = "UnfollowUser")]
         [ProducesResponseType(204)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
@@ -163,9 +163,9 @@ namespace Audiochan.API.Controllers
             OperationId = "UnfollowUser",
             Tags = new[] {"me"}
         )]
-        public async Task<IActionResult> Unfollow(string username, CancellationToken cancellationToken)
+        public async Task<IActionResult> Unfollow(string userId, CancellationToken cancellationToken)
         {
-            var request = new SetFollowCommand(_currentUserId, username, false);
+            var request = new SetFollowCommand(_currentUserId, userId, false);
             var result = await _mediator.Send(request, cancellationToken);
             return result.IsSuccess
                 ? NoContent()

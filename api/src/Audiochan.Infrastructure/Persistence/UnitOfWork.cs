@@ -13,6 +13,8 @@ namespace Audiochan.Infrastructure.Persistence
         private IDbContextTransaction? _currentTransaction;
         public IAudioRepository Audios { get; }
         public IPlaylistRepository Playlists { get; }
+        public IFavoriteAudioRepository FavoriteAudios { get; }
+        public IFollowedUserRepository FollowedUsers { get; }
         public ITagRepository Tags { get; }
         public IUserRepository Users { get; }
         
@@ -67,13 +69,18 @@ namespace Audiochan.Infrastructure.Persistence
         public UnitOfWork(ApplicationDbContext dbContext, 
             IAudioRepository audioRepository, 
             ITagRepository tagRepository, 
-            IUserRepository userRepository, IPlaylistRepository playlistRepository)
+            IUserRepository userRepository, 
+            IPlaylistRepository playlistRepository,
+            IFavoriteAudioRepository favoriteAudios, 
+            IFollowedUserRepository followedUsers)
         {
             _dbContext = dbContext;
-            Audios = audioRepository ?? throw new ArgumentNullException(nameof(audioRepository));
-            Tags = tagRepository ?? throw new ArgumentNullException(nameof(tagRepository));
-            Users = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-            Playlists = playlistRepository ?? throw new ArgumentNullException(nameof(playlistRepository));
+            Audios = audioRepository;
+            Tags = tagRepository;
+            Playlists = playlistRepository;
+            Users = userRepository;
+            FavoriteAudios = favoriteAudios;
+            FollowedUsers = followedUsers;
         }
 
         public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

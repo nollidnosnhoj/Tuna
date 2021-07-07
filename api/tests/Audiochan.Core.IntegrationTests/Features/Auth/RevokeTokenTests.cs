@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Auth.Login;
 using Audiochan.Core.Features.Auth.Revoke;
 using Bogus;
@@ -29,6 +32,8 @@ namespace Audiochan.Core.IntegrationTests.Features.Auth
             var (userId, _) = await _fixture.RunAsUserAsync(username, password, Array.Empty<string>());
             
             // Act
+            // When the user logins, the user can revoke their refresh token. Meaning they cannot refresh their access
+            // token.
             var loginResult = await _fixture.SendAsync(new LoginCommand
             {
                 Login = username,
@@ -38,17 +43,11 @@ namespace Audiochan.Core.IntegrationTests.Features.Auth
             {
                 RefreshToken = loginResult.Data!.RefreshToken
             });
-            var user = await _fixture.ExecuteDbContextAsync(dbContext =>
-            {
-                return dbContext.Users
-                    .Include(u => u.RefreshTokens)
-                    .SingleOrDefaultAsync(u => u.Id == userId);
-            });
-            
+
             // Assert
+            var userRefreshTokens = await GetUserRefreshTokens(userId);
             revokeResult.IsSuccess.Should().Be(true);
-            user.Should().NotBeNull();
-            user.RefreshTokens.Count.Should().Be(0);
+            userRefreshTokens.Count.Should().Be(0);
         }
 
         [Fact]
@@ -61,6 +60,8 @@ namespace Audiochan.Core.IntegrationTests.Features.Auth
             var (userId, _) = await _fixture.RunAsUserAsync(username, password, Array.Empty<string>());
             
             // Act
+            // When the user logins into multiple session, each session has their own refresh token. This
+            // is to simulate the various sessions.
             var command = new LoginCommand
             {
                 Login = username,
@@ -72,20 +73,26 @@ namespace Audiochan.Core.IntegrationTests.Features.Auth
             {
                 RefreshToken = loginResult2.Data!.RefreshToken
             });
-            
-            var user = await _fixture.ExecuteDbContextAsync(dbContext =>
+
+            // Assert
+            var userRefreshTokens = await GetUserRefreshTokens(userId);
+            revokeResult.IsSuccess.Should().Be(true);
+            userRefreshTokens.Count.Should().Be(1);
+            userRefreshTokens.Should().NotContain(x => x.Token == loginResult2.Data.RefreshToken);
+            userRefreshTokens.Should().Contain(x => x.Token == loginResult1.Data!.RefreshToken);
+        }
+        
+        private async Task<List<RefreshToken>> GetUserRefreshTokens(string userId)
+        {
+            return await _fixture.ExecuteDbContextAsync(dbContext =>
             {
                 return dbContext.Users
+                    .AsNoTracking()
                     .Include(u => u.RefreshTokens)
-                    .SingleOrDefaultAsync(u => u.Id == userId);
+                    .Where(u => u.Id == userId)
+                    .SelectMany(u => u.RefreshTokens)
+                    .ToListAsync();
             });
-            
-            // Assert
-            revokeResult.IsSuccess.Should().Be(true);
-            user.Should().NotBeNull();
-            user.RefreshTokens.Count.Should().Be(1);
-            user.RefreshTokens.Should().NotContain(x => x.Token == loginResult2.Data.RefreshToken);
-            user.RefreshTokens.Should().Contain(x => x.Token == loginResult1.Data!.RefreshToken);
         }
     }
 }

@@ -49,12 +49,12 @@ namespace Audiochan.Core.UnitTests.Features.Audios
         public async Task ShouldNotUpdate_WhenUserCannotModify()
         {
             // Assign
-            var user = new User {Id = Guid.NewGuid().ToString(), UserName = "testUser"};
-            var audio = new AudioFaker(user.Id, true).Generate();
+            var userId = Guid.NewGuid().ToString();
+            var audio = new AudioFaker("randomId", true).Generate();
             audio.Tags.Clear();
             var command = new UpdateAudioRequestFaker(audio.Id).Generate();
-            _currentUserService.Setup(x => x.GetUserId())
-                .Returns("abc");
+            _currentUserService.Setup(x => x.TryGetUserId(out userId))
+                .Returns(true);
             _unitOfWork.Setup(x => x.Audios.LoadForUpdate(
                     It.IsAny<Guid>(), 
                     It.IsAny<CancellationToken>()))
@@ -78,15 +78,16 @@ namespace Audiochan.Core.UnitTests.Features.Audios
         public async Task ShouldUpdateSuccessfully()
         {
             // Assign
-            var user = new User {Id = Guid.NewGuid().ToString(), UserName = "testUser"};
+            var userId = Guid.NewGuid().ToString();
+            var user = new User {Id = userId, UserName = "testUser"};
             
             var audio = new AudioFaker(user.Id, true).Generate();
             audio.User = user;
             
             var command = new UpdateAudioRequestFaker(audio.Id).Generate();
             
-            _currentUserService.Setup(x => x.GetUserId())
-                .Returns(user.Id);
+            _currentUserService.Setup(x => x.TryGetUserId(out userId))
+                .Returns(true);
             _unitOfWork.Setup(x => x.Audios.LoadForUpdate(
                     It.IsAny<Guid>(), 
                     It.IsAny<CancellationToken>()))

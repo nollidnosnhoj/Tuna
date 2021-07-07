@@ -12,32 +12,32 @@ type UseFollowResult = {
   isLoading: boolean;
 };
 
-export const IS_FOLLOWING_QUERY_KEY = (username: string): QueryKey => [
+export const IS_FOLLOWING_QUERY_KEY = (userId: string): QueryKey => [
   "isFollowing",
-  username,
+  userId,
 ];
 
 export function useFollow(
-  username: string,
+  userId: string,
   initialData?: boolean
 ): UseFollowResult {
   const { user } = useUser();
   const queryClient = useQueryClient();
 
   const { data, isLoading } = useQuery(
-    IS_FOLLOWING_QUERY_KEY(username),
-    () => isFollowingHandler(username),
+    IS_FOLLOWING_QUERY_KEY(userId),
+    () => isFollowingHandler(userId),
     {
-      enabled: !!user,
+      enabled: !!user && !!userId,
       initialData: initialData,
     }
   );
 
   const { mutateAsync } = useMutation(
-    () => (data ? followUserHandler(username) : unFollowUserHandler(username)),
+    () => (data ? followUserHandler(userId) : unFollowUserHandler(userId)),
     {
       onSuccess(data) {
-        queryClient.setQueryData(IS_FOLLOWING_QUERY_KEY(username), data);
+        queryClient.setQueryData(IS_FOLLOWING_QUERY_KEY(userId), data);
       },
     }
   );

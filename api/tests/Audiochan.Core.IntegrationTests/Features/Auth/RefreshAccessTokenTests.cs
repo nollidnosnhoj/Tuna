@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Auth.Login;
 using Audiochan.Core.Features.Auth.Refresh;
 using Bogus;
@@ -29,6 +32,9 @@ namespace Audiochan.Core.IntegrationTests.Features.Auth
             var (userId, _) = await _fixture.RunAsUserAsync(username, password, Array.Empty<string>());
             
             // Act
+            // 1. User logins into account. Receives access and refresh token.
+            // 2. In the real world, the access token will expire. Once it expires, then the client needs
+            //      to call the refresh token endpoint to get a new access token.
             var loginResult = await _fixture.SendAsync(new LoginCommand
             {
                 Login = username,
@@ -38,20 +44,27 @@ namespace Audiochan.Core.IntegrationTests.Features.Auth
             {
                 RefreshToken = loginResult.Data!.RefreshToken
             });
-            var user = await _fixture.ExecuteDbContextAsync(dbContext =>
-            {
-                return dbContext.Users
-                    .Include(u => u.RefreshTokens)
-                    .SingleOrDefaultAsync(u => u.Id == userId);
-            });
 
             // Assert
+            var userRefreshTokens = await GetUserRefreshTokens(userId);
             refreshResult.IsSuccess.Should().Be(true);
             refreshResult.Data.Should().NotBeNull();
-            user.Should().NotBeNull();
-            user.RefreshTokens.Count.Should().BeGreaterThan(0);
-            user.RefreshTokens.Should().Contain(x => x.Token == refreshResult.Data!.RefreshToken);
-            user.RefreshTokens.Should().NotContain(x => x.Token == loginResult.Data.RefreshToken);
+            userRefreshTokens.Count.Should().BeGreaterThan(0);
+            userRefreshTokens.Should().Contain(x => x.Token == refreshResult.Data!.RefreshToken);
+            userRefreshTokens.Should().NotContain(x => x.Token == loginResult.Data.RefreshToken);
+        }
+        
+        private async Task<List<RefreshToken>> GetUserRefreshTokens(string userId)
+        {
+            return await _fixture.ExecuteDbContextAsync(dbContext =>
+            {
+                return dbContext.Users
+                    .AsNoTracking()
+                    .Include(u => u.RefreshTokens)
+                    .Where(u => u.Id == userId)
+                    .SelectMany(u => u.RefreshTokens)
+                    .ToListAsync();
+            });
         }
     }
 }
