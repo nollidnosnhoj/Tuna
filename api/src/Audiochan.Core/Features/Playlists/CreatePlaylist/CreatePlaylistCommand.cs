@@ -25,29 +25,23 @@ namespace Audiochan.Core.Features.Playlists.CreatePlaylist
     public class CreatePlaylistCommandHandler : IRequestHandler<CreatePlaylistCommand, Result<Guid>>
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
         private readonly IDateTimeProvider _dateTimeProvider;
         private readonly ICurrentUserService _currentUserService;
-        private readonly ICacheService _cacheService;
 
         public CreatePlaylistCommandHandler(IUnitOfWork unitOfWork, 
-            IMapper mapper, 
             IDateTimeProvider dateTimeProvider, 
-            ICurrentUserService currentUserService, 
-            ICacheService cacheService)
+            ICurrentUserService currentUserService)
         {
             _unitOfWork = unitOfWork;
-            _mapper = mapper;
             _dateTimeProvider = dateTimeProvider;
             _currentUserService = currentUserService;
-            _cacheService = cacheService;
         }
 
         public async Task<Result<Guid>> Handle(CreatePlaylistCommand request, CancellationToken cancellationToken)
         {
             var userId = _currentUserService.GetUserId();
             var user = await _unitOfWork.Users.LoadAsync(userId, cancellationToken);
-            if (user is null) return Result<Guid>.Fail(ResultError.Unauthorized);
+            if (user is null) return Result<Guid>.Unauthorized();
 
             var playlist = new Playlist
             {

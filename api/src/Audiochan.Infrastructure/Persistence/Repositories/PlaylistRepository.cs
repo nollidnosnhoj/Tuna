@@ -36,5 +36,43 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
                 .SingleOrDefaultAsync(cancellationToken);
         }
 
+        public async Task<PagedListDto<AudioViewModel>> GetPlaylistAudios(GetPlaylistAudiosQuery query, 
+            CancellationToken cancellationToken = default)
+        {
+            var currentUserId = CurrentUserService.GetUserId();
+            return await DbSet
+                .Include(p => p.Audios)
+                .Where(p => p.Id == query.Id)
+                .Where(p => p.UserId == currentUserId || p.Visibility != Visibility.Private)
+                .SelectMany(p => p.Audios)
+                .Select(pa => pa.Audio)
+                .Where(a => a.UserId == currentUserId || a.Visibility == Visibility.Public)
+                .ProjectTo<AudioViewModel>(Mapper.ConfigurationProvider)
+                .PaginateAsync(query, cancellationToken);
+        }
+
+        public async Task<Playlist?> LoadPlaylistForAudios(Guid id, List<Guid>? audioIds = null, 
+            CancellationToken cancellationToken = default)
+        {
+            IQueryable<Playlist> queryable = DbSet;
+            if (audioIds is null || audioIds.Count == 0)
+            {
+                queryable = queryable.Include(x => x.Audios);
+            }
+            else
+            {
+                queryable = queryable
+                    .Include(x => x.Audios.Where(a => audioIds.Contains(a.AudioId)));
+            }
+
+            return await queryable.SingleOrDefaultAsync(p => p.Id == id, cancellationToken);
+        }
+
+        public async Task<Playlist?> LoadPlaylistForUpdate(Guid id, CancellationToken cancellationToken = default)
+        {
+            return await DbSet
+                .Include(p => p.User)
+                .SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
+        }
     }
 }

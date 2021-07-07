@@ -14,5 +14,13 @@ namespace Audiochan.Core.Repositories
     {
         Task<PlaylistDetailViewModel?> GetPlaylistDetail(Guid id,
             CancellationToken cancellationToken = default);
+
+        Task<PagedListDto<AudioViewModel>> GetPlaylistAudios(GetPlaylistAudiosQuery query,
+            CancellationToken cancellationToken = default);
+
+        Task<Playlist?> LoadPlaylistForAudios(Guid id, List<Guid>? audioIds,
+            CancellationToken cancellationToken = default);
+
+        Task<Playlist?> LoadPlaylistForUpdate(Guid id, CancellationToken cancellationToken = default);
     }
 }
