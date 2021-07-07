@@ -5,16 +5,14 @@ import { useFollow } from "../../hooks";
 
 interface ProfileFollowButtonProps {
   profileId: string;
-  username: string;
 }
 
 export default function ProfileFollowButton({
   profileId,
-  username,
 }: ProfileFollowButtonProps) {
   const { user } = useUser();
 
-  const { isFollowing, follow } = useFollow(username);
+  const { isFollowing, follow } = useFollow(profileId);
 
   if (!user || user.id === profileId) {
     return null;

@@ -72,11 +72,11 @@ export async function uploadUserPictureHandler(
   return data;
 }
 
-export async function isFollowingHandler(username: string): Promise<boolean> {
+export async function isFollowingHandler(userId: string): Promise<boolean> {
   try {
     const res = await request({
       method: "head",
-      url: `me/following/${username}`,
+      url: `me/following/${userId}`,
       validateStatus: (status) => status === 404 || status < 400,
     });
     return res.status !== 404;
@@ -85,18 +85,18 @@ export async function isFollowingHandler(username: string): Promise<boolean> {
   }
 }
 
-export async function followUserHandler(username: string): Promise<boolean> {
+export async function followUserHandler(userId: string): Promise<boolean> {
   await request({
     method: "PUT",
-    url: `me/followings/${username}`,
+    url: `me/followings/${userId}`,
   });
   return true;
 }
 
-export async function unFollowUserHandler(username: string): Promise<boolean> {
+export async function unFollowUserHandler(userId: string): Promise<boolean> {
   await request({
     method: "DELETE",
-    url: `me/followings/${username}`,
+    url: `me/followings/${userId}`,
   });
   return false;
 }

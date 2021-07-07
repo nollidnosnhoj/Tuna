@@ -57,12 +57,17 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
                 .SingleOrDefaultAsync(cancellationToken);
         }
 
-        public async Task<User?> LoadForFollow(string username, CancellationToken cancellationToken = default)
+        public async Task<User?> LoadForFollow(string targetId, string observerId = "", CancellationToken cancellationToken = default)
         {
-            return await DbSet.Include(u => u.Followers)
+            var queryable = DbSet
                 .IgnoreQueryFilters()
-                .Where(u => u.UserName == username.Trim().ToLower())
-                .SingleOrDefaultAsync(cancellationToken);
+                .Where(u => u.Id == targetId);
+
+            queryable = string.IsNullOrEmpty(observerId)
+                ? queryable.Include(u => u.Followers)
+                : queryable.Include(u => u.Followers.Where(f => f.ObserverId == observerId));
+
+            return await queryable.SingleOrDefaultAsync(cancellationToken);
         }
 
         public async Task<PagedListDto<AudioViewModel>> GetUserAudios(GetUsersAudioQuery query, CancellationToken cancellationToken = default)

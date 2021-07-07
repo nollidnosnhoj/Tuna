@@ -36,10 +36,7 @@ export default function ProfileDetails({ profile }: ProfileDetailsProps) {
           </Box>
           <Spacer />
           <Flex justifyContent="flex-end" flex="1">
-            <ProfileFollowButton
-              profileId={profile.id}
-              username={profile.username}
-            />
+            <ProfileFollowButton profileId={profile.id} />
             <ProfileEditButton profileId={profile.id} />
           </Flex>
         </VStack>

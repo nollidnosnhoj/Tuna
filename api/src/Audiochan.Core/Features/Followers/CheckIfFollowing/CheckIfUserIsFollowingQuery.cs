@@ -6,7 +6,7 @@ using MediatR;
 
 namespace Audiochan.Core.Features.Followers.CheckIfFollowing
 {
-    public record CheckIfUserIsFollowingQuery(string UserId, string Username) : IRequest<bool>
+    public record CheckIfUserIsFollowingQuery(string ObserverId, string TargetId) : IRequest<bool>
     {
     }
 
@@ -21,9 +21,8 @@ namespace Audiochan.Core.Features.Followers.CheckIfFollowing
 
         public async Task<bool> Handle(CheckIfUserIsFollowingQuery query, CancellationToken cancellationToken)
         {
-            return await _unitOfWork.Users
-                .ExistsAsync(u => u.UserName == query.Username 
-                                  && u.Followings.Any(f => f.ObserverId == query.UserId), 
+            return await _unitOfWork.FollowedUsers
+                .ExistsAsync(fu => fu.ObserverId == query.ObserverId && fu.TargetId == query.TargetId,
                     cancellationToken);
         }
     }

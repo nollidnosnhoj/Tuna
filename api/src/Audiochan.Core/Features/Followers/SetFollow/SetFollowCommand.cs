@@ -9,7 +9,7 @@ using MediatR;
 
 namespace Audiochan.Core.Features.Followers.SetFollow
 {
-    public record SetFollowCommand(string UserId, string Username, bool IsFollowing) : IRequest<Result<bool>>
+    public record SetFollowCommand(string ObserverId, string TargetId, bool IsFollowing) : IRequest<Result<bool>>
     {
     }
 
@@ -27,17 +27,17 @@ namespace Audiochan.Core.Features.Followers.SetFollow
         public async Task<Result<bool>> Handle(SetFollowCommand command, CancellationToken cancellationToken)
         {
             var target = await _unitOfWork.Users
-                .LoadForFollow(command.Username, cancellationToken);
+                .LoadForFollow(command.TargetId, command.ObserverId, cancellationToken);
 
             if (target == null)
                 return Result<bool>.NotFound<User>();
 
-            if (target.Id == command.UserId)
+            if (target.Id == command.ObserverId)
                 return Result<bool>.Forbidden();
 
             var isFollowed = command.IsFollowing
-                ? await Follow(target, command.UserId, cancellationToken)
-                : await Unfollow(target, command.UserId, cancellationToken);
+                ? await Follow(target, command.ObserverId, cancellationToken)
+                : await Unfollow(target, command.ObserverId, cancellationToken);
 
             _unitOfWork.Users.Update(target);
             await _unitOfWork.SaveChangesAsync(cancellationToken);

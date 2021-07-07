@@ -12,6 +12,8 @@ namespace Audiochan.Infrastructure.Persistence
         private readonly ApplicationDbContext _dbContext;
         private IDbContextTransaction? _currentTransaction;
         public IAudioRepository Audios { get; }
+        public IFavoriteAudioRepository FavoriteAudios { get; }
+        public IFollowedUserRepository FollowedUsers { get; }
         public ITagRepository Tags { get; }
         public IUserRepository Users { get; }
         
@@ -66,12 +68,16 @@ namespace Audiochan.Infrastructure.Persistence
         public UnitOfWork(ApplicationDbContext dbContext, 
             IAudioRepository audioRepository, 
             ITagRepository tagRepository, 
-            IUserRepository userRepository)
+            IUserRepository userRepository, 
+            IFavoriteAudioRepository favoriteAudios, 
+            IFollowedUserRepository followedUsers)
         {
             _dbContext = dbContext;
             Audios = audioRepository;
             Tags = tagRepository;
             Users = userRepository;
+            FavoriteAudios = favoriteAudios;
+            FollowedUsers = followedUsers;
         }
 
         public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
