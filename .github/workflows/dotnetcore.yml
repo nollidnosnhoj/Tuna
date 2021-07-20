@@ -1,6 +1,12 @@
 name: audiochan Backend Build
 
-on: [push, pull_request]
+on:
+  push:
+    paths:
+      - 'api/**'
+  pull_request:
+    paths:
+      - 'api/**'
 
 jobs:
   build:
@@ -17,3 +23,5 @@ jobs:
       run: dotnet restore ./api/Audiochan.sln
     - name: Build with dotnet
       run: dotnet build ./api/Audiochan.sln --configuration Release
+    - name: Test unit tests
+      run: dotnet test ./api/tests/Audiochan.Core.UnitTests/Audiochan.Core.UnitTests.csproj
