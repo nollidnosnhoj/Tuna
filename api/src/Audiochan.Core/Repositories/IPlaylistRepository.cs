@@ -22,5 +22,8 @@ namespace Audiochan.Core.Repositories
             CancellationToken cancellationToken = default);
 
         Task<Playlist?> LoadPlaylistForUpdate(Guid id, CancellationToken cancellationToken = default);
+
+        Task<Playlist?> LoadPlaylistForFavoriting(Guid id, string userId = "",
+            CancellationToken cancellationToken = default);
     }
 }

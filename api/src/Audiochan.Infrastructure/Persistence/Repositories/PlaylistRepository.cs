@@ -74,5 +74,19 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
                 .Include(p => p.User)
                 .SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
         }
+
+        public async Task<Playlist?> LoadPlaylistForFavoriting(Guid id, string userId = "", CancellationToken cancellationToken = default)
+        {
+            var queryable = DbSet
+                .IgnoreQueryFilters()
+                .Where(a => a.Id == id);
+
+            queryable = !string.IsNullOrEmpty(userId) 
+                ? queryable.Include(a => 
+                    a.Favorited.Where(fa => fa.UserId == userId)) 
+                : queryable.Include(a => a.Favorited);
+
+            return await queryable.SingleOrDefaultAsync(cancellationToken);
+        }
     }
 }

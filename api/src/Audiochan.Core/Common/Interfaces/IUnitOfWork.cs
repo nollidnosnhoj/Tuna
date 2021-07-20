@@ -10,6 +10,7 @@ namespace Audiochan.Core.Common.Interfaces
         IAudioRepository Audios { get; }
         IPlaylistRepository Playlists { get; }
         IFavoriteAudioRepository FavoriteAudios { get; }
+        IFavoritePlaylistRepository FavoritePlaylists { get; }
         IFollowedUserRepository FollowedUsers { get; }
         ITagRepository Tags { get; }
         IUserRepository Users { get; }

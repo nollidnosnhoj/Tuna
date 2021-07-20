@@ -14,6 +14,7 @@ namespace Audiochan.Infrastructure.Persistence
         public IAudioRepository Audios { get; }
         public IPlaylistRepository Playlists { get; }
         public IFavoriteAudioRepository FavoriteAudios { get; }
+        public IFavoritePlaylistRepository FavoritePlaylists { get; }
         public IFollowedUserRepository FollowedUsers { get; }
         public ITagRepository Tags { get; }
         public IUserRepository Users { get; }
@@ -72,6 +73,7 @@ namespace Audiochan.Infrastructure.Persistence
             IUserRepository userRepository, 
             IPlaylistRepository playlistRepository,
             IFavoriteAudioRepository favoriteAudios, 
+            IFavoritePlaylistRepository favoritePlaylists,
             IFollowedUserRepository followedUsers)
         {
             _dbContext = dbContext;
@@ -80,6 +82,7 @@ namespace Audiochan.Infrastructure.Persistence
             Playlists = playlistRepository;
             Users = userRepository;
             FavoriteAudios = favoriteAudios;
+            FavoritePlaylists = favoritePlaylists;
             FollowedUsers = followedUsers;
         }
 
