@@ -1,6 +1,6 @@
 # Audiochan
 
-Audiochan is a platform to listen to music created by independent artists.
+Audiochan is a website that allow users to upload audio(s) and share them. This repository is to showcase a full-stack web application using ASP.NET Core and Next.js, as well as other technologies.
 
 ## Demos
 

@@ -36,7 +36,7 @@ namespace Audiochan.Infrastructure.Caching
                 _cache.Set(key, value, expiration ?? TimeSpan.Zero);
                 return Task.FromResult(true);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return Task.FromResult(false);
             }
@@ -54,7 +54,7 @@ namespace Audiochan.Infrastructure.Caching
                 _cache.Remove(key);
                 return Task.FromResult(true);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return Task.FromResult(false);
             }
