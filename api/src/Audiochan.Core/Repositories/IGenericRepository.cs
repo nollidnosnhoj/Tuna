@@ -16,6 +16,8 @@ namespace Audiochan.Core.Repositories
 
         Task<bool> ExistsAsync(Expression<Func<TEntity, bool>> predicate,
             CancellationToken cancellationToken = default);
+
+        Task<int> CountAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default);
         
         Task AddAsync(TEntity entity, CancellationToken cancellationToken = default);
         Task AddRangeAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default);
