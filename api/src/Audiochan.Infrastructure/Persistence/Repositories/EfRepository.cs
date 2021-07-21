@@ -44,7 +44,18 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
 
         public async Task<bool> ExistsAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default)
         {
-            return await DbSet.Where(predicate).AnyAsync(cancellationToken);
+            return await DbSet
+                .AsNoTracking()
+                .Where(predicate)
+                .AnyAsync(cancellationToken);
+        }
+
+        public async Task<int> CountAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default)
+        {
+            return await DbSet
+                .AsNoTracking()
+                .Where(predicate)
+                .CountAsync(cancellationToken);
         }
 
         public async Task AddAsync(TEntity entity, CancellationToken cancellationToken = default)
