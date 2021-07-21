@@ -16,9 +16,9 @@ namespace Audiochan.Core.Repositories
     public interface IUserRepository : IGenericRepository<User>
     {
         Task<CurrentUserViewModel?> GetAuthenticated(CancellationToken cancellationToken = default);
-        Task<User?> LoadForRefreshToken(string refreshToken, CancellationToken cancellationToken = default);
+        Task<User?> LoadWithRefreshTokens(string refreshToken, CancellationToken cancellationToken = default);
         Task<ProfileViewModel?> GetProfile(string username, CancellationToken cancellationToken = default);
-        Task<User?> LoadForFollow(string targetId, string observerId = "", CancellationToken cancellationToken = default);
+        Task<User?> LoadWithFollowers(string targetId, string observerId = "", CancellationToken cancellationToken = default);
 
         Task<PagedListDto<AudioViewModel>> GetUserAudios(GetUsersAudioQuery query,
             CancellationToken cancellationToken = default);

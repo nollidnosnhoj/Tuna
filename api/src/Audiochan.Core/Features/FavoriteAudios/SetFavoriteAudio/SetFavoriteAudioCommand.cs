@@ -28,7 +28,7 @@ namespace Audiochan.Core.Features.FavoriteAudios.SetFavoriteAudio
         public async Task<Result<bool>> Handle(SetFavoriteAudioCommand command, CancellationToken cancellationToken)
         {
             var audio = await _unitOfWork.Audios
-                .LoadForSetFavorite(command.AudioId, command.UserId, cancellationToken);
+                .LoadWithFavorites(command.AudioId, command.UserId, cancellationToken);
 
             if (audio == null)
                 return Result<bool>.NotFound<Audio>();

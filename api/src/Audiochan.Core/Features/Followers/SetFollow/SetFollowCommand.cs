@@ -27,7 +27,7 @@ namespace Audiochan.Core.Features.Followers.SetFollow
         public async Task<Result<bool>> Handle(SetFollowCommand command, CancellationToken cancellationToken)
         {
             var target = await _unitOfWork.Users
-                .LoadForFollow(command.TargetId, command.ObserverId, cancellationToken);
+                .LoadWithFollowers(command.TargetId, command.ObserverId, cancellationToken);
 
             if (target == null)
                 return Result<bool>.NotFound<User>();
