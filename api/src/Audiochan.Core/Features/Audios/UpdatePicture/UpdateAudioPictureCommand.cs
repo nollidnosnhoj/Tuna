@@ -55,7 +55,7 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
                 return Result<ImageUploadResponse>.Unauthorized();
 
             var audio = await _unitOfWork.Audios
-                .LoadForUpdate(command.AudioId, cancellationToken);
+                .LoadForUpdating(command.AudioId, cancellationToken);
 
             if (audio == null)
                 return Result<ImageUploadResponse>.NotFound<Audio>();

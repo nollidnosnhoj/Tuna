@@ -29,7 +29,7 @@ namespace Audiochan.Core.Features.Auth.Refresh
             CancellationToken cancellationToken)
         {
             var user = await _unitOfWork.Users
-                .LoadForRefreshToken(command.RefreshToken, cancellationToken);
+                .LoadWithRefreshTokens(command.RefreshToken, cancellationToken);
 
             if (user == null)
                 return Result<AuthResult>.BadRequest("Refresh token does not belong to a user.");

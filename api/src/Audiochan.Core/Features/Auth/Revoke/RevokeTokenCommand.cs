@@ -30,7 +30,7 @@ namespace Audiochan.Core.Features.Auth.Revoke
             if (!string.IsNullOrWhiteSpace(command.RefreshToken))
             {
                 var user = await _unitOfWork.Users
-                    .LoadForRefreshToken(command.RefreshToken, cancellationToken);
+                    .LoadWithRefreshTokens(command.RefreshToken, cancellationToken);
 
                 if (user != null)
                 {

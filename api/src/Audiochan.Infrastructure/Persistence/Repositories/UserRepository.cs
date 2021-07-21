@@ -38,7 +38,7 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
                 .SingleOrDefaultAsync(cancellationToken);
         }
 
-        public async Task<User?> LoadForRefreshToken(string refreshToken, CancellationToken cancellationToken = default)
+        public async Task<User?> LoadWithRefreshTokens(string refreshToken, CancellationToken cancellationToken = default)
         {
             return await DbSet
                 .Include(u => u.RefreshTokens)
@@ -57,7 +57,7 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
                 .SingleOrDefaultAsync(cancellationToken);
         }
 
-        public async Task<User?> LoadForFollow(string targetId, string observerId = "", CancellationToken cancellationToken = default)
+        public async Task<User?> LoadWithFollowers(string targetId, string observerId = "", CancellationToken cancellationToken = default)
         {
             var queryable = DbSet
                 .IgnoreQueryFilters()

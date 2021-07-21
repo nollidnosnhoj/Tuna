@@ -38,7 +38,7 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
                 .SingleOrDefaultAsync(cancellationToken);
         }
 
-        public async Task<Audio?> LoadForUpdate(Guid id, CancellationToken cancellationToken = default)
+        public async Task<Audio?> LoadForUpdating(Guid id, CancellationToken cancellationToken = default)
         {
             return await DbSet
                 .Include(a => a.User)
@@ -46,7 +46,7 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
                 .SingleOrDefaultAsync(a => a.Id == id, cancellationToken);
         }
 
-        public async Task<Audio?> LoadForSetFavorite(Guid id, string userId = "", CancellationToken cancellationToken = default)
+        public async Task<Audio?> LoadWithFavorites(Guid id, string userId = "", CancellationToken cancellationToken = default)
         {
             var queryable = DbSet
                 .IgnoreQueryFilters()

@@ -56,7 +56,7 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
                 return Result<AudioDetailViewModel>.Unauthorized();
 
             var audio = await _unitOfWork.Audios
-                .LoadForUpdate(command.AudioId, cancellationToken);
+                .LoadForUpdating(command.AudioId, cancellationToken);
 
             if (audio == null)
                 return Result<AudioDetailViewModel>.NotFound<Audio>();
