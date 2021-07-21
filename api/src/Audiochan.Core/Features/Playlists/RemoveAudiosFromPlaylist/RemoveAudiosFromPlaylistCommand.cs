@@ -27,7 +27,7 @@ namespace Audiochan.Core.Features.Playlists.RemoveAudiosFromPlaylist
         public async Task<Result> Handle(RemoveAudiosFromPlaylistCommand request, CancellationToken cancellationToken)
         {
             var playlist = await _unitOfWork.Playlists
-                .LoadPlaylistForAudios(request.PlaylistId, request.AudioIds, cancellationToken);
+                .LoadWithAudios(request.PlaylistId, request.AudioIds, cancellationToken);
 
             if (playlist is null)
                 return Result.NotFound<Playlist>();

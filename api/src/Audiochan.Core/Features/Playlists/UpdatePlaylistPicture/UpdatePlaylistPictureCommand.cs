@@ -58,7 +58,7 @@ namespace Audiochan.Core.Features.Playlists.UpdatePlaylistPicture
             var container = string.Join('/', _storageSettings.Image.Container, "playlists");
 
             var playlist = await _unitOfWork.Playlists
-                .LoadPlaylistForUpdate(request.Id, cancellationToken);
+                .LoadForUpdating(request.Id, cancellationToken);
 
             if (playlist == null)
                 return Result<ImageUploadResponse>.NotFound<Playlist>();

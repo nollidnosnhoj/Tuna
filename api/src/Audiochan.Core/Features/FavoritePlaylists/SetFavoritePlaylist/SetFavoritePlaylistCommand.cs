@@ -28,7 +28,7 @@ namespace Audiochan.Core.Features.FavoritePlaylists.SetFavoritePlaylist
         public async Task<Result<bool>> Handle(SetFavoritePlaylistCommand command, CancellationToken cancellationToken)
         {
             var playlist = await _unitOfWork.Playlists
-                .LoadPlaylistForFavoriting(command.PlaylistId, command.UserId, cancellationToken);
+                .LoadWithFavorites(command.PlaylistId, command.UserId, cancellationToken);
 
             if (playlist == null)
                 return Result<bool>.NotFound<Playlist>();

@@ -47,7 +47,7 @@ namespace Audiochan.Core.Features.Playlists.UpdatePlaylistDetails
         public async Task<Result<PlaylistDetailViewModel>> Handle(UpdatePlaylistDetailsCommand request, CancellationToken cancellationToken)
         {
             var playlist = await _unitOfWork.Playlists
-                .LoadPlaylistForUpdate(request.Id, cancellationToken);
+                .LoadForUpdating(request.Id, cancellationToken);
 
             if (playlist is null)
                 return Result<PlaylistDetailViewModel>.NotFound<Playlist>();

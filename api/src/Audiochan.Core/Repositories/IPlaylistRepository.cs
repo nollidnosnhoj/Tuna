@@ -18,12 +18,12 @@ namespace Audiochan.Core.Repositories
         Task<PagedListDto<AudioViewModel>> GetPlaylistAudios(GetPlaylistAudiosQuery query,
             CancellationToken cancellationToken = default);
 
-        Task<Playlist?> LoadPlaylistForAudios(Guid id, List<Guid>? audioIds,
+        Task<Playlist?> LoadWithAudios(Guid id, List<Guid>? audioIds,
             CancellationToken cancellationToken = default);
 
-        Task<Playlist?> LoadPlaylistForUpdate(Guid id, CancellationToken cancellationToken = default);
+        Task<Playlist?> LoadForUpdating(Guid id, CancellationToken cancellationToken = default);
 
-        Task<Playlist?> LoadPlaylistForFavoriting(Guid id, string userId = "",
+        Task<Playlist?> LoadWithFavorites(Guid id, string userId = "",
             CancellationToken cancellationToken = default);
     }
 }

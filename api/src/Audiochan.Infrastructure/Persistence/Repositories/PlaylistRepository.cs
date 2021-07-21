@@ -51,7 +51,7 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
                 .PaginateAsync(query, cancellationToken);
         }
 
-        public async Task<Playlist?> LoadPlaylistForAudios(Guid id, List<Guid>? audioIds = null, 
+        public async Task<Playlist?> LoadWithAudios(Guid id, List<Guid>? audioIds = null, 
             CancellationToken cancellationToken = default)
         {
             IQueryable<Playlist> queryable = DbSet;
@@ -68,14 +68,14 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
             return await queryable.SingleOrDefaultAsync(p => p.Id == id, cancellationToken);
         }
 
-        public async Task<Playlist?> LoadPlaylistForUpdate(Guid id, CancellationToken cancellationToken = default)
+        public async Task<Playlist?> LoadForUpdating(Guid id, CancellationToken cancellationToken = default)
         {
             return await DbSet
                 .Include(p => p.User)
                 .SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
         }
 
-        public async Task<Playlist?> LoadPlaylistForFavoriting(Guid id, string userId = "", CancellationToken cancellationToken = default)
+        public async Task<Playlist?> LoadWithFavorites(Guid id, string userId = "", CancellationToken cancellationToken = default)
         {
             var queryable = DbSet
                 .IgnoreQueryFilters()
