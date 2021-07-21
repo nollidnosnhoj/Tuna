@@ -9,9 +9,9 @@ using Audiochan.Core.Features.Users.GetProfile;
 using Audiochan.Core.Features.Users.GetUserAudios;
 using Audiochan.Core.Features.Users.GetUserFavoriteAudios;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+
 // ReSharper disable RouteTemplates.ActionRoutePrefixCanBeExtractedToControllerRoute
 
 namespace Audiochan.API.Controllers

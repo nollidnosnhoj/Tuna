@@ -12,7 +12,6 @@ using Audiochan.Core.Features.Audios.UpdateAudio;
 using Audiochan.Core.Features.Audios.UpdatePicture;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 

@@ -1,14 +1,11 @@
-﻿using System.Threading;
-using Audiochan.Core.Common.Settings;
+﻿using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Features.Audios.CreateAudio;
-using Audiochan.Core.Services;
 using Audiochan.Tests.Common.Builders;
 using Audiochan.Tests.Common.Fakers.Audios;
 using FluentAssertions;
 using FluentValidation;
 using FluentValidation.TestHelper;
 using Microsoft.Extensions.Options;
-using Moq;
 using Xunit;
 
 namespace Audiochan.Core.UnitTests.Validations.Audios
@@ -25,14 +22,7 @@ namespace Audiochan.Core.UnitTests.Validations.Audios
                 Audio = MediaStorageSettingBuilder.BuildAudioDefault()
             });
             _audioStorageSettings = options.Value.Audio;
-            var storageMock = new Mock<IStorageService>();
-            storageMock.Setup(x => x.ExistsAsync(
-                    It.IsAny<string>(),
-                    It.IsAny<string>(),
-                    It.IsAny<string>(),
-                    It.IsAny<CancellationToken>()))
-                .ReturnsAsync(true);
-            _validator = new CreateAudioCommandValidator(options, storageMock.Object);
+            _validator = new CreateAudioCommandValidator(options);
         }
 
         [Fact]

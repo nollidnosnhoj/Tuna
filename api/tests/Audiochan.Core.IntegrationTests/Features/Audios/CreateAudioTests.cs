@@ -1,10 +1,8 @@
-﻿using System.IO;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Audiochan.Core.Common.Constants;
 using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Tests.Common.Fakers.Audios;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
 using Xunit;
 
 namespace Audiochan.Core.IntegrationTests.Features.Audios

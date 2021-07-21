@@ -49,7 +49,14 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
             CancellationToken cancellationToken)
         {
             if (!_currentUserService.TryGetUserId(out var currentUserId))
+            {
                 return Result<Guid>.Unauthorized();
+            }
+
+            if (!await ExistsInTempStorageAsync(command.BlobName, cancellationToken))
+            {
+                return Result<Guid>.BadRequest("Cannot find upload. Please upload and try again.");
+            }
 
             Guid audioId;
             _unitOfWork.BeginTransaction();
@@ -107,6 +114,13 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
                 cancellationToken);
         }
 
-        
+        private async Task<bool> ExistsInTempStorageAsync(string blobName, CancellationToken cancellationToken = default)
+        {
+            return await _storageService.ExistsAsync(
+                _storageSettings.Audio.TempBucket,
+                _storageSettings.Audio.Container,
+                blobName,
+                cancellationToken);
+        }
     }
 }
