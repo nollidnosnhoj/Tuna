@@ -1,7 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.API.Extensions;
-using Audiochan.Core.Common.Models;
 using Audiochan.Core.Features.Audios.CreateAudioUploadUrl;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;

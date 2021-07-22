@@ -1,13 +1,8 @@
-﻿using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
-using Audiochan.Core.Entities;
 using Audiochan.Core.Services;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Auth.Login
 {

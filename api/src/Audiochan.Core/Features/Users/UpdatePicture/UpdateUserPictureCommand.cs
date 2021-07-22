@@ -5,9 +5,7 @@ using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Entities;
-using Audiochan.Core.Features.Users.GetProfile;
 using Audiochan.Core.Services;
-using AutoMapper;
 using MediatR;
 using Microsoft.Extensions.Options;
 

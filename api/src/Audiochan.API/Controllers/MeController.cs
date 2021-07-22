@@ -21,7 +21,6 @@ using Audiochan.Core.Features.Users.UpdateUsername;
 using Audiochan.Core.Services;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 

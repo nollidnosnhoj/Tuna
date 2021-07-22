@@ -1,29 +1,35 @@
-﻿using Audiochan.Core.Common.Constants;
-using Audiochan.Core.Common.Models;
+﻿using System;
+using System.Linq.Expressions;
+using Audiochan.Core.Common.Constants;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Auth.GetCurrentUser;
 using Audiochan.Core.Features.Users.GetProfile;
-using AutoMapper;
 
 namespace Audiochan.Core.Features.Users
 {
-    public class UserMappingProfile : Profile
+    public static class UserMaps
     {
-        public UserMappingProfile()
-        {
-            CreateMap<User, MetaAuthorDto>()
-                .ForMember(dest => dest.Picture, opts =>
-                    opts.MapFrom(src => src.PictureBlobName != null
-                        ? string.Format(MediaLinkInvariants.UserPictureUrl, src.PictureBlobName)
-                        : null));
+        public static Expression<Func<User, CurrentUserViewModel>> UserToCurrentUserFunc = user =>
+            new CurrentUserViewModel
+            {
+                Id = user.Id,
+                Email = user.Email,
+                Username = user.Email
+            };
 
-            CreateMap<User, CurrentUserViewModel>();
-
-            CreateMap<User, ProfileViewModel>()
-                .ForMember(dest => dest.Picture, opts =>
-                    opts.MapFrom(src => src.PictureBlobName != null
-                        ? string.Format(MediaLinkInvariants.UserPictureUrl, src.PictureBlobName)
-                        : null));
-        }
+        public static Expression<Func<User, ProfileViewModel>> UserToProfileFunc = user =>
+            new ProfileViewModel
+            {
+                Id = user.Id,
+                Username = user.UserName,
+                Picture = user.PictureBlobName != null
+                    ? string.Format(MediaLinkInvariants.UserPictureUrl, user.PictureBlobName)
+                    : null,
+                About = user.About ?? "",
+                Website = user.Website ?? "",
+                AudioCount = user.Audios.Count,
+                FollowerCount = user.Followers.Count,
+                FollowingCount = user.Followings.Count
+            };
     }
 }

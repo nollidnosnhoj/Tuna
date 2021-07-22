@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 
 namespace Audiochan.Core.Common.Helpers
 {
@@ -7,7 +8,7 @@ namespace Audiochan.Core.Common.Helpers
         public static string Encode(Guid id, DateTime since)
         {
             var decoded = $"{id:N}:{since.Ticks}";
-            return Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(decoded));
+            return Convert.ToBase64String(Encoding.UTF8.GetBytes(decoded));
         }
 
         public static (Guid?, DateTime?) Decode(string? cursor)
@@ -15,7 +16,7 @@ namespace Audiochan.Core.Common.Helpers
             if (string.IsNullOrEmpty(cursor)) return (null, null);
             
             // decode base64 string
-            var decoded = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(cursor));
+            var decoded = Encoding.UTF8.GetString(Convert.FromBase64String(cursor));
             
             var sections = decoded.Split(":");
             
