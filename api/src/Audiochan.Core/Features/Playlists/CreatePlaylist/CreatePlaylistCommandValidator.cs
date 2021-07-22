@@ -24,16 +24,6 @@ namespace Audiochan.Core.Features.Playlists.CreatePlaylist
                 .WithMessage("Description cannot be null.")
                 .MaximumLength(500)
                 .WithMessage("Description cannot be more than 500 characters long.");
-            RuleFor(x => x.AudioIds)
-                .MustAsync(CheckIfAudioIdsExist)
-                .When(x => x.AudioIds.Count > 0)
-                .WithMessage("One or more audio ids are invalid.");
-        }
-
-        private async Task<bool> CheckIfAudioIdsExist(ICollection<Guid> audioIds,
-            CancellationToken cancellationToken = default)
-        {
-            return await _unitOfWork.Audios.ExistsAsync(x => audioIds.Contains(x.Id), cancellationToken);
         }
     }
 }

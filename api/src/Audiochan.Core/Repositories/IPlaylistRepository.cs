@@ -12,10 +12,10 @@ namespace Audiochan.Core.Repositories
 {
     public interface IPlaylistRepository : IGenericRepository<Playlist>
     {
-        Task<PlaylistDetailViewModel?> GetPlaylistDetail(Guid id,
+        Task<PlaylistDetailViewModel?> Get(Guid id,
             CancellationToken cancellationToken = default);
 
-        Task<PagedListDto<AudioViewModel>> GetPlaylistAudios(GetPlaylistAudiosQuery query,
+        Task<PagedListDto<AudioViewModel>> GetAudios(GetPlaylistAudiosQuery query,
             CancellationToken cancellationToken = default);
 
         Task<Playlist?> LoadWithAudios(Guid id, List<Guid>? audioIds,

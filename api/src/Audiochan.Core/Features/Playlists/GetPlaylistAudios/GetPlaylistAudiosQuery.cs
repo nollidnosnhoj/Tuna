@@ -25,7 +25,7 @@ namespace Audiochan.Core.Features.Playlists.GetPlaylistAudios
 
         public async Task<PagedListDto<AudioViewModel>> Handle(GetPlaylistAudiosQuery request, CancellationToken cancellationToken)
         {
-            return await _unitOfWork.Playlists.GetPlaylistAudios(request, cancellationToken);
+            return await _unitOfWork.Playlists.GetAudios(request, cancellationToken);
         }
     }
 }

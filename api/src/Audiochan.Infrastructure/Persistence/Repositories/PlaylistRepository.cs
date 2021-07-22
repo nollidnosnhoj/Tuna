@@ -6,40 +6,43 @@ using System.Threading.Tasks;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Entities.Enums;
+using Audiochan.Core.Features.Audios;
 using Audiochan.Core.Features.Audios.GetAudioList;
+using Audiochan.Core.Features.Playlists;
 using Audiochan.Core.Features.Playlists.GetPlaylistAudios;
 using Audiochan.Core.Features.Playlists.GetPlaylistDetail;
 using Audiochan.Core.Repositories;
 using Audiochan.Core.Services;
 using Audiochan.Infrastructure.Persistence.Extensions;
-using AutoMapper;
-using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Infrastructure.Persistence.Repositories
 {
     public class PlaylistRepository : EfRepository<Playlist>, IPlaylistRepository
     {
-        public PlaylistRepository(ApplicationDbContext dbContext, ICurrentUserService currentUserService, IMapper mapper) 
-            : base(dbContext, currentUserService, mapper)
+        public PlaylistRepository(ApplicationDbContext dbContext, ICurrentUserService currentUserService) 
+            : base(dbContext, currentUserService)
         {
         }
 
-        public async Task<PlaylistDetailViewModel?> GetPlaylistDetail(Guid id,
+        public async Task<PlaylistDetailViewModel?> Get(Guid id,
             CancellationToken cancellationToken = default)
         {
             return await DbSet
                 .AsNoTracking()
+                .Include(x => x.Audios)
+                .ThenInclude(x => x.Audio)
                 .Include(x => x.User)
                 .Where(x => x.Id == id)
-                .ProjectTo<PlaylistDetailViewModel>(Mapper.ConfigurationProvider)
+                .Select(PlaylistMaps.PlaylistToDetailFunc)
                 .SingleOrDefaultAsync(cancellationToken);
         }
 
-        public async Task<PagedListDto<AudioViewModel>> GetPlaylistAudios(GetPlaylistAudiosQuery query, 
+        public async Task<PagedListDto<AudioViewModel>> GetAudios(GetPlaylistAudiosQuery query, 
             CancellationToken cancellationToken = default)
         {
             var currentUserId = CurrentUserService.GetUserId();
+            
             return await DbSet
                 .Include(p => p.Audios)
                 .Where(p => p.Id == query.Id)
@@ -47,7 +50,7 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
                 .SelectMany(p => p.Audios)
                 .Select(pa => pa.Audio)
                 .Where(a => a.UserId == currentUserId || a.Visibility == Visibility.Public)
-                .ProjectTo<AudioViewModel>(Mapper.ConfigurationProvider)
+                .Select(AudioMaps.AudioToItemFunc)
                 .PaginateAsync(query, cancellationToken);
         }
 

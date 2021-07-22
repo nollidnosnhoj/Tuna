@@ -79,7 +79,6 @@ namespace Audiochan.Core.Features.Playlists.UpdatePlaylistPicture
 
                 playlist.Picture = blobName;
                 await _unitOfWork.SaveChangesAsync(cancellationToken);
-                await _cacheService.RemoveAsync(new GetPlaylistDetailCacheOptions(request.Id), cancellationToken);
             }
             catch
             {

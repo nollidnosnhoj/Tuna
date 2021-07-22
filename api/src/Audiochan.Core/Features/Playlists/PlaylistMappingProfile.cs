@@ -1,21 +1,25 @@
-﻿using Audiochan.Core.Common.Constants;
+﻿using System;
+using System.Linq.Expressions;
+using Audiochan.Core.Common.Constants;
+using Audiochan.Core.Common.Models;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Playlists.GetPlaylistDetail;
-using AutoMapper;
 
 namespace Audiochan.Core.Features.Playlists
 {
-    public class PlaylistMappingProfile : Profile
+    public static class PlaylistMaps
     {
-        public PlaylistMappingProfile()
-        {
-            CreateMap<Playlist, PlaylistDetailViewModel>()
-                .ForMember(dest => dest.Description, opts =>
-                    opts.NullSubstitute(""))
-                .ForMember(dest => dest.Picture, opts =>
-                    opts.MapFrom(src => src.Picture != null
-                        ? string.Format(MediaLinkInvariants.PlaylistPictureUrl, src.Picture)
-                        : null));
-        }
+        public static Expression<Func<Playlist, PlaylistDetailViewModel>> PlaylistToDetailFunc = playlist =>
+            new PlaylistDetailViewModel
+            {
+                Id = playlist.Id,
+                Title = playlist.Title,
+                Description = playlist.Description ?? string.Empty,
+                Visibility = playlist.Visibility,
+                Picture = playlist.Picture != null
+                    ? string.Format(MediaLinkInvariants.PlaylistPictureUrl, playlist.Picture)
+                    : null,
+                User = new MetaAuthorDto(playlist.User),
+            };
     }
 }

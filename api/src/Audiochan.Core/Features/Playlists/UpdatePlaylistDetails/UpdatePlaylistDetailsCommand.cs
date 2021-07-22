@@ -7,7 +7,6 @@ using Audiochan.Core.Entities;
 using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Features.Playlists.GetPlaylistDetail;
 using Audiochan.Core.Services;
-using AutoMapper;
 using MediatR;
 
 namespace Audiochan.Core.Features.Playlists.UpdatePlaylistDetails
@@ -31,17 +30,13 @@ namespace Audiochan.Core.Features.Playlists.UpdatePlaylistDetails
     public class UpdatePlaylistDetailsCommandHandler 
         : IRequestHandler<UpdatePlaylistDetailsCommand,Result<PlaylistDetailViewModel>>
     {
-        private readonly ICacheService _cacheService;
         private readonly string _currentUserId;
-        private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
 
-        public UpdatePlaylistDetailsCommandHandler(ICurrentUserService currentUserService, IUnitOfWork unitOfWork, IMapper mapper, ICacheService cacheService)
+        public UpdatePlaylistDetailsCommandHandler(ICurrentUserService currentUserService, IUnitOfWork unitOfWork)
         {
             _currentUserId = currentUserService.GetUserId();
             _unitOfWork = unitOfWork;
-            _mapper = mapper;
-            _cacheService = cacheService;
         }
 
         public async Task<Result<PlaylistDetailViewModel>> Handle(UpdatePlaylistDetailsCommand request, CancellationToken cancellationToken)
@@ -65,12 +60,8 @@ namespace Audiochan.Core.Features.Playlists.UpdatePlaylistDetails
                 playlist.Visibility = request.Visibility.Value;
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-            var result = _mapper.Map<PlaylistDetailViewModel>(playlist);
-
-            await _cacheService.SetAsync(result, new GetPlaylistDetailCacheOptions(request.Id), cancellationToken);
-
-            return Result<PlaylistDetailViewModel>.Success(result);
+            
+            return Result<PlaylistDetailViewModel>.Success(PlaylistMaps.PlaylistToDetailFunc.Compile().Invoke(playlist));
         }
     }
 }

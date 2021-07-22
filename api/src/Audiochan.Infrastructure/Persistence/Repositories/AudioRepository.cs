@@ -58,6 +58,15 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
             return await queryable.SingleOrDefaultAsync(cancellationToken);
         }
 
+        public async Task<List<AudioViewModel>> GetByIds(List<Guid> ids, CancellationToken cancellationToken = default)
+        {
+            return await DbSet
+                .AsNoTracking()
+                .Where(a => ids.Contains(a.Id))
+                .Select(AudioMaps.AudioToItemFunc)
+                .ToListAsync(cancellationToken);
+        }
+
         public async Task<List<AudioViewModel>> GetLatestAudios(GetLatestAudioQuery query, 
             CancellationToken cancellationToken = default)
         {

@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Entities.Enums;
+using Audiochan.Core.Features.Audios.GetAudioList;
 
 namespace Audiochan.Core.Features.Playlists.GetPlaylistDetail
 {

@@ -7,9 +7,7 @@ using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Entities.Enums;
-using Audiochan.Core.Features.Playlists.GetPlaylistDetail;
 using Audiochan.Core.Services;
-using AutoMapper;
 using MediatR;
 
 namespace Audiochan.Core.Features.Playlists.CreatePlaylist
@@ -43,6 +41,11 @@ namespace Audiochan.Core.Features.Playlists.CreatePlaylist
             var user = await _unitOfWork.Users.LoadAsync(userId, cancellationToken);
             if (user is null) return Result<Guid>.Unauthorized();
 
+            if (!await CheckIfAudioIdsExist(request.AudioIds, cancellationToken))
+            {
+                return Result<Guid>.BadRequest("Audio ids are invalid.");
+            }
+
             var playlist = new Playlist
             {
                 Title = request.Title,
@@ -62,6 +65,13 @@ namespace Audiochan.Core.Features.Playlists.CreatePlaylist
             await _unitOfWork.Playlists.AddAsync(playlist, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             return Result<Guid>.Success(playlist.Id);
+        }
+        
+        private async Task<bool> CheckIfAudioIdsExist(ICollection<Guid> audioIds,
+            CancellationToken cancellationToken = default)
+        {
+            return await _unitOfWork.Audios.ExistsAsync(x => audioIds.Contains(x.Id)
+                && x.Visibility == Visibility.Public, cancellationToken);
         }
     }
 }
