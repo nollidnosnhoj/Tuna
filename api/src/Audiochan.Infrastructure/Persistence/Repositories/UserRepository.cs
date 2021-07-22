@@ -49,11 +49,18 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
 
         public async Task<ProfileViewModel?> GetProfile(string username, CancellationToken cancellationToken = default)
         {
-            return await DbSet.AsNoTracking()
-                .Include(u => u.Followers)
-                .Include(u => u.Followings)
-                .Include(u => u.Audios)
+            var userId = await DbSet.AsNoTracking()
                 .Where(u => u.UserName == username.Trim().ToLower())
+                .Select(u => u.Id)
+                .SingleOrDefaultAsync(cancellationToken);
+
+            if (string.IsNullOrEmpty(userId)) return null;
+            
+            return await DbSet.AsNoTracking()
+                .Include(u => u.Followers.Where(fu => fu.TargetId == userId))
+                .Include(u => u.Followings.Where(fu => fu.ObserverId == userId))
+                .Include(u => u.Audios)
+                .Where(u => u.Id == userId)
                 .Select(UserMaps.UserToProfileFunc)
                 .SingleOrDefaultAsync(cancellationToken);
         }

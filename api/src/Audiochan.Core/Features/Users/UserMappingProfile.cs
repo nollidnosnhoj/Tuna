@@ -26,7 +26,10 @@ namespace Audiochan.Core.Features.Users
                     ? string.Format(MediaLinkInvariants.UserPictureUrl, user.PictureBlobName)
                     : null,
                 About = user.About ?? "",
-                Website = user.Website ?? ""
+                Website = user.Website ?? "",
+                AudioCount = user.Audios.Count,
+                FollowerCount = user.Followers.Count,
+                FollowingCount = user.Followings.Count
             };
     }
 }
