@@ -11,7 +11,6 @@ namespace Audiochan.Core
         public static IServiceCollection AddCore(this IServiceCollection services)
         {
             return services
-                .AddAutoMapper(Assembly.GetExecutingAssembly())
                 .AddValidatorsFromAssembly(Assembly.GetExecutingAssembly())
                 .AddMediatR(Assembly.GetExecutingAssembly())
                 .AddBehaviorPipelines();

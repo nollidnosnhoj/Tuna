@@ -1,26 +1,32 @@
-﻿using Audiochan.Core.Common.Constants;
+﻿using System;
+using System.Linq.Expressions;
+using Audiochan.Core.Common.Constants;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Followers.GetFollowers;
 using Audiochan.Core.Features.Followers.GetFollowings;
-using AutoMapper;
 
 namespace Audiochan.Core.Features.Followers
 {
-    public class FollowedUserMappingProfile : Profile
+    public static class FollowedUserMaps
     {
-        public FollowedUserMappingProfile()
-        {
-            CreateMap<FollowedUser, FollowerViewModel>()
-                .ForMember(dest => dest.ObserverPicture, opts =>
-                    opts.MapFrom(src => src.Observer.PictureBlobName != null
-                        ? string.Format(MediaLinkInvariants.UserPictureUrl, src.Observer.PictureBlobName)
-                        : null));
-            
-            CreateMap<FollowedUser, FollowingViewModel>()
-                .ForMember(dest => dest.TargetPicture, opts =>
-                    opts.MapFrom(src => src.Target.PictureBlobName != null
-                        ? string.Format(MediaLinkInvariants.UserPictureUrl, src.Target.PictureBlobName)
-                        : null));
-        }
+        public static Expression<Func<FollowedUser, FollowerViewModel>> UserToFollowerFunc = user =>
+            new FollowerViewModel
+            {
+                ObserverUserName = user.Observer.UserName,
+                ObserverPicture = user.Observer.PictureBlobName != null
+                    ? string.Format(MediaLinkInvariants.UserPictureUrl, user.Observer.PictureBlobName)
+                    : null,
+                FollowedDate = user.FollowedDate
+            };
+        
+        public static Expression<Func<FollowedUser, FollowingViewModel>> UserToFollowingFunc = user =>
+            new FollowingViewModel
+            {
+                TargetUserName = user.Target.UserName,
+                TargetPicture = user.Target.PictureBlobName != null
+                    ? string.Format(MediaLinkInvariants.UserPictureUrl, user.Target.PictureBlobName)
+                    : null,
+                FollowedDate = user.FollowedDate
+            };
     }
 }

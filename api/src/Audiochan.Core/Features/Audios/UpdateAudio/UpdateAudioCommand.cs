@@ -8,7 +8,7 @@ using Audiochan.Core.Entities;
 using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Services;
-using AutoMapper;
+using FastExpressionCompiler;
 using MediatR;
 
 namespace Audiochan.Core.Features.Audios.UpdateAudio
@@ -35,18 +35,15 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
     {
         private readonly ICurrentUserService _currentUserService;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
         private readonly ICacheService _cacheService;
 
         public UpdateAudioCommandHandler(ICurrentUserService currentUserService, 
             IUnitOfWork unitOfWork,
-            ICacheService cacheService, 
-            IMapper mapper)
+            ICacheService cacheService)
         {
             _currentUserService = currentUserService;
             _unitOfWork = unitOfWork;
             _cacheService = cacheService;
-            _mapper = mapper;
         }
 
         public async Task<Result<AudioDetailViewModel>> Handle(UpdateAudioCommand command,
@@ -79,7 +76,7 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
             }
 
             await _unitOfWork.CommitTransactionAsync();
-            return Result<AudioDetailViewModel>.Success(_mapper.Map<AudioDetailViewModel>(audio));
+            return Result<AudioDetailViewModel>.Success(AudioMaps.AudioToDetailFunc.CompileFast().Invoke(audio));
         }
 
         private async Task UpdateAudioFromCommandAsync(Audio audio, UpdateAudioCommand command,
