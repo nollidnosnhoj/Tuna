@@ -30,9 +30,11 @@ namespace Audiochan.Core.IntegrationTests.Features.Playlists
             await _sliceFixture.InsertAsync(playlist);
 
             var audioFaker = new AudioFaker(userId);
-            var audios = audioFaker.Generate(3);
-            var audioIds = audios.Select(a => a.Id).ToList();
+            var audios = audioFaker
+                .SetFixedVisibility(Visibility.Public)
+                .Generate(3);
             await _sliceFixture.InsertRangeAsync(audios);
+            var audioIds = audios.Select(a => a.Id).ToList();
 
             var request = new AddAudiosToPlaylistCommand(playlist.Id, audioIds);
             var result = await _sliceFixture.SendAsync(request);

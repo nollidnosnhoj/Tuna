@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Linq.Expressions;
 using Audiochan.Core.Common.Constants;
 using Audiochan.Core.Common.Models;
@@ -19,6 +20,7 @@ namespace Audiochan.Core.Features.Playlists
                 Picture = playlist.Picture != null
                     ? string.Format(MediaLinkInvariants.PlaylistPictureUrl, playlist.Picture)
                     : null,
+                Tags = playlist.Tags.Select(t => t.Name).ToList(),
                 User = new MetaAuthorDto(playlist.User),
             };
     }

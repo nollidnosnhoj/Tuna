@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Audios.GetAudioList;
 using Audiochan.Core.Features.Playlists.GetPlaylistAudios;
@@ -33,7 +34,6 @@ namespace Audiochan.Core.IntegrationTests.Features.Playlists
                 playlist.Audios.Add(new PlaylistAudio
                 {
                     AudioId = audio.Id,
-                    Audio = audio
                 });
             }
 
@@ -44,7 +44,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Playlists
             response.Should().NotBeNull();
             response.Count.Should().Be(audios.Count);
             response.Items.Count.Should().Be(audios.Count);
-            response.Items.Should().BeOfType<AudioViewModel>();
+            response.Items.Should().BeOfType<List<AudioViewModel>>();
         }
     }
 }

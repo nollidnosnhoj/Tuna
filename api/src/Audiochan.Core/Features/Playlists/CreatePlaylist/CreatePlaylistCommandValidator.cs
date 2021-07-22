@@ -9,11 +9,8 @@ namespace Audiochan.Core.Features.Playlists.CreatePlaylist
 {
     public class CreatePlaylistCommandValidator : AbstractValidator<CreatePlaylistCommand>
     {
-        private readonly IUnitOfWork _unitOfWork;
-        
-        public CreatePlaylistCommandValidator(IUnitOfWork unitOfWork)
+        public CreatePlaylistCommandValidator()
         {
-            _unitOfWork = unitOfWork;
             RuleFor(req => req.Title)
                 .NotEmpty()
                 .WithMessage("Title is required.")

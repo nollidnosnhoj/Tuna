@@ -34,24 +34,5 @@ namespace Audiochan.Core.IntegrationTests.Features.Playlists
             response.Visibility.Should().Be(playlist.Visibility);
             response.Picture.Should().BeNullOrEmpty();
         }
-
-        [Fact]
-        public async Task ShouldBeCached()
-        {
-            var (userId, _) = await _sliceFixture.RunAsDefaultUserAsync();
-            var playlist = new PlaylistFaker(userId).Generate();
-            await _sliceFixture.InsertAsync(playlist);
-
-            // trigger caching
-            await _sliceFixture
-                .SendAsync(new GetPlaylistDetailQuery(playlist.Id));
-
-            var (isCached, cachedResult) = await _sliceFixture
-                .GetCache<PlaylistDetailViewModel>(CacheKeys.Playlist.GetPlaylist(playlist.Id));
-
-            isCached.Should().BeTrue();
-            cachedResult.Should().NotBeNull();
-            cachedResult.Should().BeOfType<PlaylistDetailViewModel>();
-        }
     }
 }
