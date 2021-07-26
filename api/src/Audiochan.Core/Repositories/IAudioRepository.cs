@@ -18,6 +18,8 @@ namespace Audiochan.Core.Repositories
 
         Task<Audio?> LoadWithFavorites(Guid id, string userId = "", CancellationToken cancellationToken = default);
 
+        Task<List<AudioViewModel>> GetByIds(List<Guid> ids, CancellationToken cancellationToken = default);
+
         Task<List<AudioViewModel>> GetLatestAudios(GetLatestAudioQuery query, 
             CancellationToken cancellationToken = default);
 

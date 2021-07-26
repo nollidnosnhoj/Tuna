@@ -24,7 +24,10 @@ namespace Audiochan.Infrastructure.Persistence
 
         public DbSet<Audio> Audios { get; set; } = null!;
         public DbSet<FavoriteAudio> FavoriteAudios { get; set; } = null!;
+        public DbSet<FavoritePlaylist> FavoritePlaylists { get; set; } = null!;
         public DbSet<FollowedUser> FollowedUsers { get; set; } = null!;
+        public DbSet<Playlist> Playlists { get; set; } = null!;
+        public DbSet<PlaylistAudio> PlaylistAudios { get; set; } = null!;
         public DbSet<Tag> Tags { get; set; } = null!;
         
 

@@ -7,9 +7,11 @@ namespace Audiochan.Core.Entities
         public Tag()
         {
             Audios = new HashSet<Audio>();
+            Playlists = new HashSet<Playlist>();
         }
 
         public string Name { get; set; } = null!;
         public ICollection<Audio> Audios { get; set; }
+        public ICollection<Playlist> Playlists { get; set; }
     }
 }
