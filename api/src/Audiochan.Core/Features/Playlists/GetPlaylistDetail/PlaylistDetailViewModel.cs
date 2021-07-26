@@ -14,6 +14,7 @@ namespace Audiochan.Core.Features.Playlists.GetPlaylistDetail
         public string? Picture { get; init; }
         public Visibility Visibility { get; init; }
         public List<string> Tags { get; init; } = new();
+        public List<AudioViewModel> Audios { get; init; } = new();
         public MetaAuthorDto User { get; init; } = null!;
     }
 }

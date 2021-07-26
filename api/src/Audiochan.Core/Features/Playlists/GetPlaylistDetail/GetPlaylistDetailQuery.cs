@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Entities.Enums;
+using Audiochan.Core.Features.Playlists.GetPlaylistAudios;
 using Audiochan.Core.Services;
 using MediatR;
 
@@ -25,9 +26,17 @@ namespace Audiochan.Core.Features.Playlists.GetPlaylistDetail
         {
             var playlist = await _unitOfWork.Playlists.Get(request.Id, cancellationToken);
             
-            if (playlist == null) return null;
+            if (playlist == null || !CanAccessPrivatePlaylist(playlist)) return null;
 
-            return CanAccessPrivatePlaylist(playlist!) ? playlist : null;
+            var audios = await _unitOfWork.Playlists
+                .GetAudios(new GetPlaylistAudiosQuery(playlist.Id)
+                {
+                    Page = 1,
+                    Size = 100
+                }, cancellationToken);
+
+            playlist = playlist with {Audios = audios.Items};
+            return playlist;
         }
         
         private bool CanAccessPrivatePlaylist(PlaylistDetailViewModel playlist)

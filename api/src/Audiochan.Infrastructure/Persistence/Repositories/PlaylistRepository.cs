@@ -31,8 +31,6 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
             return await DbSet
                 .AsNoTracking()
                 .Include(x => x.Tags)
-                .Include(x => x.Audios)
-                .ThenInclude(x => x.Audio)
                 .Include(x => x.User)
                 .Where(x => x.Id == id)
                 .Select(PlaylistMaps.PlaylistToDetailFunc)
