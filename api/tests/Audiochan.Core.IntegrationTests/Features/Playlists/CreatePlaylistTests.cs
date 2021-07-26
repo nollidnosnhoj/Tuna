@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using Audiochan.Core.Entities.Enums;
 using Audiochan.Tests.Common.Fakers.Audios;
 using Audiochan.Tests.Common.Fakers.Playlists;
 using FluentAssertions;
@@ -21,8 +22,10 @@ namespace Audiochan.Core.IntegrationTests.Features.Playlists
         [Fact]
         public async Task ShouldCreateSuccessfully()
         {
-            var (userId, _) = await _sliceFixture.RunAsUserAsync("omglolxd123");
-            var audios = new AudioFaker(userId).Generate(3);
+            var (userId, _) = await _sliceFixture.RunAsDefaultUserAsync();
+            var audios = new AudioFaker(userId)
+                .SetFixedVisibility(Visibility.Public)
+                .Generate(3);
             await _sliceFixture.InsertRangeAsync(audios);
             var audioIds = audios.Select(x => x.Id).ToList();
 
