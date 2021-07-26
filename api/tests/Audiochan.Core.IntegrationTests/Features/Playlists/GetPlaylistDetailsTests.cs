@@ -42,7 +42,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Playlists
             await _sliceFixture.InsertRangeAsync(playlistAudios);
 
             var response = await _sliceFixture
-                .SendAsync(new GetPlaylistDetailQuery(playlist.Id));
+                .SendAsync(new GetPlaylistDetailQuery(playlist.Id, true));
 
             response.Should().NotBeNull();
             response.Should().BeOfType<PlaylistDetailViewModel>();
