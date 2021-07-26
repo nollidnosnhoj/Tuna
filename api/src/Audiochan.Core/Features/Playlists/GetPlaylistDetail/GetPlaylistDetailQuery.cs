@@ -9,7 +9,7 @@ using MediatR;
 
 namespace Audiochan.Core.Features.Playlists.GetPlaylistDetail
 {
-    public record GetPlaylistDetailQuery(Guid Id) : IRequest<PlaylistDetailViewModel?>;
+    public record GetPlaylistDetailQuery(Guid Id, bool IncludeAudios) : IRequest<PlaylistDetailViewModel?>;
     
     public class GetPlaylistDetailQueryHandler : IRequestHandler<GetPlaylistDetailQuery, PlaylistDetailViewModel?>
     {
@@ -28,6 +28,8 @@ namespace Audiochan.Core.Features.Playlists.GetPlaylistDetail
             
             if (playlist == null || !CanAccessPrivatePlaylist(playlist)) return null;
 
+            if (!request.IncludeAudios) return playlist;
+            
             var audios = await _unitOfWork.Playlists
                 .GetAudios(new GetPlaylistAudiosQuery(playlist.Id)
                 {
@@ -35,8 +37,7 @@ namespace Audiochan.Core.Features.Playlists.GetPlaylistDetail
                     Size = 100
                 }, cancellationToken);
 
-            playlist = playlist with {Audios = audios.Items};
-            return playlist;
+            return playlist with {Audios = audios.Items};
         }
         
         private bool CanAccessPrivatePlaylist(PlaylistDetailViewModel playlist)
