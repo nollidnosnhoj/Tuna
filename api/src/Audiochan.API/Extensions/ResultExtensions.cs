@@ -7,13 +7,13 @@ namespace Audiochan.API.Extensions
 {
     public static class ResultExtensions
     {
-        public static ActionResult ReturnErrorResponse<TResponse>(this Result<TResponse> result)
+        public static ActionResult ReturnErrorResponse(this Result result)
         {
             var response = new ErrorApiResponse(result.ToErrorCode(), result.Message, result.Errors);
             return new ObjectResult(response) {StatusCode = response.Code};
         }
 
-        private static int ToErrorCode<TResponse>(this Result<TResponse> result)
+        private static int ToErrorCode(this Result result)
         {
             return result.ErrorCode switch
             {
