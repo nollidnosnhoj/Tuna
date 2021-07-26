@@ -101,7 +101,7 @@ namespace Audiochan.Core.IntegrationTests
 
         public async Task<(string, string)> RunAsDefaultUserAsync()
         {
-            return await RunAsUserAsync("testuser", "Testing1234!", Array.Empty<string>());
+            return await RunAsUserAsync("defaultuser", "Testing1234!", Array.Empty<string>());
         }
 
         public async Task<(string, string)> RunAsAdministratorAsync()
