@@ -40,7 +40,7 @@ export async function fetchAudioFeedHandler(
 ): Promise<PagedList<AudioData>> {
   const { data } = await request<PagedList<AudioData>>({
     method: "get",
-    url: "me/feed",
+    url: "me/audios/feed",
     params: { page: pageNumber },
   });
   return data;
