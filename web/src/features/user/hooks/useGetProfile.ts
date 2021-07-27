@@ -5,7 +5,7 @@ import {
   UseQueryResult,
 } from "react-query";
 import { ErrorResponse } from "~/lib/types";
-import { fetchProfile } from "../api";
+import { getProfileRequest } from "../api";
 import { Profile } from "../types";
 
 export const GET_PROFILE_QUERY_KEY = (username: string): QueryKey => [
@@ -19,7 +19,7 @@ export function useGetProfile(
 ): UseQueryResult<Profile, ErrorResponse> {
   return useQuery<Profile, ErrorResponse>(
     GET_PROFILE_QUERY_KEY(username),
-    () => fetchProfile(username),
+    () => getProfileRequest(username),
     options
   );
 }

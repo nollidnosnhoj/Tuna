@@ -12,7 +12,7 @@ import Page from "~/components/Page";
 import AudioDetails from "~/features/audio/components/Details";
 import AudioFileInfo from "~/features/audio/components/Details/AudioFileInfo";
 import { useGetAudio } from "~/features/audio/hooks";
-import { fetchAudioHandler } from "~/features/audio/api";
+import { getAudioRequest } from "~/features/audio/api";
 import { AudioDetailData, AudioId } from "~/features/audio/types";
 
 interface AudioPageProps {
@@ -26,7 +26,7 @@ export const getServerSideProps: GetServerSideProps<AudioPageProps> = async (
   const id = context.params?.id as AudioId;
 
   try {
-    const data = await fetchAudioHandler(id, context);
+    const data = await getAudioRequest(id, context);
     return {
       props: {
         audio: data,

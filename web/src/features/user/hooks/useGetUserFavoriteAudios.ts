@@ -5,7 +5,7 @@ import {
   UseInfinitePaginationOptions,
   UseInfinitePaginationReturnType,
 } from "~/lib/hooks";
-import { fetchUserFavoriteAudios } from "../api";
+import { getUserFavoriteAudiosRequest } from "../api";
 
 type UseGetUserFavoriteAudiosParams = {
   size?: number;
@@ -22,7 +22,7 @@ export function useGetUserFavoriteAudios(
 ): UseInfinitePaginationReturnType<AudioData> {
   return useInfinitePagination(
     GET_USER_FAVORITE_AUDIOS_QUERY_KEY(username),
-    (page) => fetchUserFavoriteAudios(username, page, params),
+    (page) => getUserFavoriteAudiosRequest(username, page, params),
     {
       ...options,
       enabled: !!username && (options.enabled ?? true),

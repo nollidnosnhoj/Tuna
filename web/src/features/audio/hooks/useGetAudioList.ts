@@ -3,7 +3,7 @@ import {
   UseInfiniteCursorPaginationOptions,
   UseInfiniteCursorPaginationReturnType,
 } from "~/lib/hooks";
-import { fetchAudiosHandler } from "../api";
+import { getAudiosRequest } from "../api";
 import { AudioData } from "../types";
 
 export const GET_AUDIO_LIST_QUERY_KEY = "audios";
@@ -14,7 +14,7 @@ export function useGetAudioList(
 ): UseInfiniteCursorPaginationReturnType<AudioData> {
   return useInfiniteCursorPagination<AudioData>(
     GET_AUDIO_LIST_QUERY_KEY,
-    (cursor) => fetchAudiosHandler(cursor, params),
+    (cursor) => getAudiosRequest(cursor, params),
     options
   );
 }

@@ -4,7 +4,7 @@ import { ImageUploadResponse, PagedList } from "~/lib/types";
 import { AudioData } from "../audio/types";
 import { CurrentUser, Profile } from "./types";
 
-export async function getCurrentUser(): Promise<CurrentUser> {
+export async function getCurrentUserRequest(): Promise<CurrentUser> {
   const response = await request<CurrentUser>({
     method: "get",
     url: "me",
@@ -12,7 +12,7 @@ export async function getCurrentUser(): Promise<CurrentUser> {
   return response.data;
 }
 
-export async function fetchProfile(
+export async function getProfileRequest(
   username: string,
   ctx?: GetServerSidePropsContext
 ): Promise<Profile> {
@@ -27,7 +27,7 @@ export async function fetchProfile(
   return data;
 }
 
-export async function fetchUserAudios(
+export async function getUserAudiosRequest(
   username: string,
   page: number,
   params?: Record<string, string | number | boolean>
@@ -43,7 +43,7 @@ export async function fetchUserAudios(
   return data;
 }
 
-export async function fetchUserFavoriteAudios(
+export async function getUserFavoriteAudiosRequest(
   username: string,
   page?: number,
   params?: Record<string, string | number | boolean>
@@ -59,7 +59,7 @@ export async function fetchUserFavoriteAudios(
   return data;
 }
 
-export async function uploadUserPictureHandler(
+export async function uploadUserPictureRequest(
   imageData: string
 ): Promise<ImageUploadResponse> {
   const { data } = await request<ImageUploadResponse>({
@@ -72,7 +72,9 @@ export async function uploadUserPictureHandler(
   return data;
 }
 
-export async function isFollowingHandler(userId: string): Promise<boolean> {
+export async function checkIfCurrentUserIsFollowingRequest(
+  userId: string
+): Promise<boolean> {
   try {
     const res = await request({
       method: "head",
@@ -85,7 +87,7 @@ export async function isFollowingHandler(userId: string): Promise<boolean> {
   }
 }
 
-export async function followUserHandler(userId: string): Promise<boolean> {
+export async function followAUserRequest(userId: string): Promise<boolean> {
   await request({
     method: "PUT",
     url: `me/followings/${userId}`,
@@ -93,7 +95,7 @@ export async function followUserHandler(userId: string): Promise<boolean> {
   return true;
 }
 
-export async function unFollowUserHandler(userId: string): Promise<boolean> {
+export async function unfollowAUserRequest(userId: string): Promise<boolean> {
   await request({
     method: "DELETE",
     url: `me/followings/${userId}`,

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { AxiosResponse } from "axios";
 import createAuthRefreshInterceptor from "axios-auth-refresh";
-import { refreshAccessToken } from "~/features/auth/api";
+import { refreshAccessTokenRequest } from "~/features/auth/api";
 import { isAxiosError } from "~/utils";
 import { ApiRequestConfig } from "./types";
 import {
@@ -15,7 +15,7 @@ const httpClient = createApiAxiosInstance();
 createAuthRefreshInterceptor(
   httpClient,
   (err) =>
-    refreshAccessToken()
+    refreshAccessTokenRequest()
       .then(([newToken]) => {
         if (err && isAxiosError(err) && err.response) {
           err.response.config.headers["Authorization"] = `Bearer ${newToken}`;

@@ -1,9 +1,9 @@
 import { QueryKey, useMutation, useQuery, useQueryClient } from "react-query";
 import { useUser } from "~/features/user/hooks";
 import {
-  followUserHandler,
-  isFollowingHandler,
-  unFollowUserHandler,
+  followAUserRequest,
+  checkIfCurrentUserIsFollowingRequest,
+  unfollowAUserRequest,
 } from "../api";
 
 type UseFollowResult = {
@@ -26,7 +26,7 @@ export function useFollow(
 
   const { data, isLoading } = useQuery(
     IS_FOLLOWING_QUERY_KEY(userId),
-    () => isFollowingHandler(userId),
+    () => checkIfCurrentUserIsFollowingRequest(userId),
     {
       enabled: !!user && !!userId,
       initialData: initialData,
@@ -34,7 +34,7 @@ export function useFollow(
   );
 
   const { mutateAsync } = useMutation(
-    () => (data ? followUserHandler(userId) : unFollowUserHandler(userId)),
+    () => (data ? followAUserRequest(userId) : unfollowAUserRequest(userId)),
     {
       onSuccess(data) {
         queryClient.setQueryData(IS_FOLLOWING_QUERY_KEY(userId), data);

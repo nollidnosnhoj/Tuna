@@ -2,9 +2,9 @@ import { QueryKey, useMutation, useQuery, useQueryClient } from "react-query";
 import { GET_YOUR_FAV_AUDIOS_KEY } from "~/features/auth/hooks/useYourFavoriteAudios";
 import { useUser } from "~/features/user/hooks";
 import {
-  favoriteAudioHandler,
-  isFavoriteHandler,
-  unFavoriteAudioHandler,
+  favoriteAnAudioRequest,
+  checkIfUserFavoritedAudioRequest,
+  unfavoriteAnAudioRequest,
 } from "../api";
 import { AudioId } from "../types";
 
@@ -28,7 +28,7 @@ export function useFavoriteAudio(
 
   const { data, isLoading: isQueryLoading } = useQuery(
     IS_FAVORITE_AUDIO_QUERY_KEY(audioId),
-    () => isFavoriteHandler(audioId),
+    () => checkIfUserFavoritedAudioRequest(audioId),
     {
       enabled: !!user,
       initialData: initialData,
@@ -37,7 +37,9 @@ export function useFavoriteAudio(
 
   const { mutateAsync, isLoading: isMutationLoading } = useMutation<boolean>(
     () =>
-      data ? favoriteAudioHandler(audioId) : unFavoriteAudioHandler(audioId),
+      data
+        ? favoriteAnAudioRequest(audioId)
+        : unfavoriteAnAudioRequest(audioId),
     {
       onSuccess(data) {
         queryClient.setQueryData(IS_FAVORITE_AUDIO_QUERY_KEY(audioId), data);

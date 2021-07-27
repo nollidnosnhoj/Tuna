@@ -9,7 +9,7 @@ import {
   CreateAudioRequest,
 } from "./types";
 
-export async function fetchAudiosHandler(
+export async function getAudiosRequest(
   cursor?: string,
   params: Record<string, string | boolean | number> = {}
 ): Promise<CursorPagedList<AudioData>> {
@@ -21,7 +21,7 @@ export async function fetchAudiosHandler(
   return data;
 }
 
-export async function fetchAudioHandler(
+export async function getAudioRequest(
   id: AudioId,
   ctx?: GetServerSidePropsContext
 ): Promise<AudioDetailData> {
@@ -35,7 +35,7 @@ export async function fetchAudioHandler(
   return data;
 }
 
-export async function fetchAudioFeedHandler(
+export async function getAudioFeedRequest(
   pageNumber: number
 ): Promise<PagedList<AudioData>> {
   const { data } = await request<PagedList<AudioData>>({
@@ -51,7 +51,7 @@ export type SearchAudioParams = {
   size?: number;
 };
 
-export async function searchAudiosHandler(
+export async function searchAudiosRequest(
   searchTerm: string,
   pageNumber: number,
   params?: SearchAudioParams
@@ -68,7 +68,7 @@ export async function searchAudiosHandler(
   return data;
 }
 
-export async function createAudioHandler(
+export async function createAudioRequest(
   input: CreateAudioRequest
 ): Promise<AudioDetailData> {
   const { data } = await request<AudioDetailData>({
@@ -79,7 +79,7 @@ export async function createAudioHandler(
   return data;
 }
 
-export async function editAudioHandler(
+export async function updateAudioDetailsRequest(
   audioId: AudioId,
   input: AudioRequest
 ): Promise<AudioDetailData> {
@@ -91,14 +91,14 @@ export async function editAudioHandler(
   return data;
 }
 
-export async function removeAudioHandler(audioId: AudioId): Promise<void> {
+export async function removeAudioRequest(audioId: AudioId): Promise<void> {
   await request({
     method: "delete",
     url: `audios/${audioId}`,
   });
 }
 
-export async function uploadAudioPictureHandler(
+export async function uploadAudioPictureRequest(
   audioId: AudioId,
   imageData: string
 ): Promise<ImageUploadResponse> {
@@ -112,7 +112,9 @@ export async function uploadAudioPictureHandler(
   return data;
 }
 
-export async function isFavoriteHandler(audioId: AudioId): Promise<boolean> {
+export async function checkIfUserFavoritedAudioRequest(
+  audioId: AudioId
+): Promise<boolean> {
   try {
     const res = await request({
       method: "head",
@@ -128,7 +130,9 @@ export async function isFavoriteHandler(audioId: AudioId): Promise<boolean> {
   }
 }
 
-export async function favoriteAudioHandler(audioId: AudioId): Promise<boolean> {
+export async function favoriteAnAudioRequest(
+  audioId: AudioId
+): Promise<boolean> {
   await request({
     method: "PUT",
     url: `me/favorites/audios/${audioId}`,
@@ -136,7 +140,7 @@ export async function favoriteAudioHandler(audioId: AudioId): Promise<boolean> {
   return true;
 }
 
-export async function unFavoriteAudioHandler(
+export async function unfavoriteAnAudioRequest(
   audioId: AudioId
 ): Promise<boolean> {
   await request({
@@ -144,12 +148,4 @@ export async function unFavoriteAudioHandler(
     url: `me/favorites/audios/${audioId}`,
   });
   return true;
-}
-
-export async function resetAudioSecret(audioId: AudioId): Promise<string> {
-  const { data } = await request<{ secret: string }>({
-    method: "PATCH",
-    url: `audios/${audioId}/reset-private-key`,
-  });
-  return data.secret;
 }

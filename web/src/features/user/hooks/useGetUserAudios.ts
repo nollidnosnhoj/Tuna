@@ -5,7 +5,7 @@ import {
   UseInfinitePaginationOptions,
   UseInfinitePaginationReturnType,
 } from "~/lib/hooks";
-import { fetchUserAudios } from "../api";
+import { getUserAudiosRequest } from "../api";
 
 type UseGetUserAudiosParams = {
   size?: number;
@@ -23,7 +23,7 @@ export function useGetUserAudios(
 ): UseInfinitePaginationReturnType<AudioData> {
   return useInfinitePagination(
     GET_USER_AUDIOS_QUERY_KEY(username),
-    (page) => fetchUserAudios(username, page, params),
+    (page) => getUserAudiosRequest(username, page, params),
     {
       ...options,
       enabled: !!username && (options.enabled ?? true),

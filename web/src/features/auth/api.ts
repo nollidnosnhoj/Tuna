@@ -6,7 +6,7 @@ import { PagedList } from "~/lib/types";
 import { AudioData } from "../audio/types";
 import { LoginFormValues } from "./components/LoginForm";
 
-export async function getAuthenticatedUserAudios(
+export async function getCurrentUserAudiosRequest(
   page = 1
 ): Promise<PagedList<AudioData>> {
   const { data } = await request<PagedList<AudioData>>({
@@ -19,7 +19,7 @@ export async function getAuthenticatedUserAudios(
   return data;
 }
 
-export async function getAuthenticatedUserFavoriteAudios(
+export async function getCurrentUserFavoriteAudiosRequest(
   page = 1
 ): Promise<PagedList<AudioData>> {
   const { data } = await request<PagedList<AudioData>>({
@@ -30,7 +30,7 @@ export async function getAuthenticatedUserFavoriteAudios(
   return data;
 }
 
-export async function authenticateUser(
+export async function authenticateRequest(
   request: LoginFormValues
 ): Promise<[string, number]> {
   const { data } = await Axios.request({
@@ -44,7 +44,7 @@ export async function authenticateUser(
   return [data.accessToken, data.accessTokenExpires];
 }
 
-export async function refreshAccessToken(): Promise<[string, number]> {
+export async function refreshAccessTokenRequest(): Promise<[string, number]> {
   try {
     const { data } = await Axios.request({
       method: "post",
@@ -60,7 +60,7 @@ export async function refreshAccessToken(): Promise<[string, number]> {
   }
 }
 
-export async function revokeRefreshToken(): Promise<void> {
+export async function revokeRefreshTokenRequest(): Promise<void> {
   try {
     await Axios.request({
       method: "post",

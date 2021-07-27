@@ -3,13 +3,13 @@ import { useEffect } from "react";
 import Router from "next/router";
 import Page from "~/components/Page";
 import { toast } from "~/utils/toast";
-import { revokeRefreshToken } from "~/features/auth/api";
+import { revokeRefreshTokenRequest } from "~/features/auth/api";
 import { useUser } from "~/features/user/hooks";
 
 const LogoutPage: React.FC = () => {
   const { updateUser } = useUser();
   useEffect(() => {
-    revokeRefreshToken()
+    revokeRefreshTokenRequest()
       .then(() => {
         updateUser(null);
         Router.push("/").then(() => {

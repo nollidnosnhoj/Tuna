@@ -1,7 +1,7 @@
 import { useQueryClient, useMutation, UseMutationResult } from "react-query";
 import { ME_QUERY_KEY } from "~/features/user/hooks/useGetCurrentUser";
 import { ErrorResponse, ImageUploadResponse } from "~/lib/types";
-import { uploadUserPictureHandler } from "../api";
+import { uploadUserPictureRequest } from "../api";
 import { Profile } from "../types";
 import { GET_PROFILE_QUERY_KEY } from "./useGetProfile";
 
@@ -9,7 +9,7 @@ export function useAddUserPicture(
   username: string
 ): UseMutationResult<ImageUploadResponse, ErrorResponse, string> {
   const queryClient = useQueryClient();
-  return useMutation(uploadUserPictureHandler, {
+  return useMutation(uploadUserPictureRequest, {
     onSuccess(data) {
       const profile = queryClient.getQueryData<Profile>(
         GET_PROFILE_QUERY_KEY(username)
