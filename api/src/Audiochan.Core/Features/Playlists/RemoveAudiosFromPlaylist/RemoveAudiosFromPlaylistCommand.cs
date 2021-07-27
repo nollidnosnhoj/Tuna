@@ -11,12 +11,16 @@ using MediatR;
 
 namespace Audiochan.Core.Features.Playlists.RemoveAudiosFromPlaylist
 {
-    public record RemoveAudiosFromPlaylistCommand(Guid PlaylistId, List<Guid> AudioIds) : IRequest<Result>
+    public record RemoveAudiosFromPlaylistCommand : IRequest<Result>
     {
-        public static RemoveAudiosFromPlaylistCommand FromRequest(Guid playlistId,
+        public Guid PlaylistId { get; init; }
+        public List<Guid> AudioIds { get; init; }
+        
+        public RemoveAudiosFromPlaylistCommand(Guid playlistId,
             RemoveAudiosFromPlaylistRequest request)
         {
-            return new RemoveAudiosFromPlaylistCommand(playlistId, request.AudioIds);
+            PlaylistId = playlistId;
+            AudioIds = request.AudioIds;
         }
     }
     

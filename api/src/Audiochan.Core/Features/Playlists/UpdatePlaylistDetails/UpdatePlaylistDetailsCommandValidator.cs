@@ -1,10 +1,10 @@
 ﻿using FluentValidation;
 
-namespace Audiochan.Core.Features.Audios.UpdateAudio
+namespace Audiochan.Core.Features.Playlists.UpdatePlaylistDetails
 {
-    public class UpdateAudioCommandValidator : AbstractValidator<UpdateAudioCommand>
+    public class UpdatePlaylistDetailsCommandValidator : AbstractValidator<UpdatePlaylistDetailsCommand>
     {
-        public UpdateAudioCommandValidator()
+        public UpdatePlaylistDetailsCommandValidator()
         {
             When(req => req.Title is not null, () =>
             {

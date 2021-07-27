@@ -1,4 +1,5 @@
-﻿using Audiochan.Core.Entities.Enums;
+﻿using System.Collections.Generic;
+using Audiochan.Core.Entities.Enums;
 
 namespace Audiochan.Core.Features.Playlists.UpdatePlaylistDetails
 {
@@ -7,5 +8,6 @@ namespace Audiochan.Core.Features.Playlists.UpdatePlaylistDetails
         public string? Title { get; set; }
         public string? Description { get; set; }
         public Visibility? Visibility { get; set; }
+        public List<string>? Tags { get; init; }
     }
 }

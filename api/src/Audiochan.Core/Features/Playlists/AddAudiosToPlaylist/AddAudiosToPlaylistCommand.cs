@@ -12,11 +12,15 @@ using MediatR;
 
 namespace Audiochan.Core.Features.Playlists.AddAudiosToPlaylist
 {
-    public record AddAudiosToPlaylistCommand(Guid PlaylistId, List<Guid> AudioIds) : IRequest<Result>
+    public record AddAudiosToPlaylistCommand : IRequest<Result>
     {
-        public static AddAudiosToPlaylistCommand FromRequest(Guid playlistId, AddAudiosToPlaylistRequest request)
+        public Guid PlaylistId { get; init; }
+        public List<Guid> AudioIds { get; init; }
+
+        public AddAudiosToPlaylistCommand(Guid playlistId, AddAudiosToPlaylistRequest request)
         {
-            return new AddAudiosToPlaylistCommand(playlistId, request.AudioIds);
+            PlaylistId = playlistId;
+            AudioIds = request.AudioIds;
         }
     }
     

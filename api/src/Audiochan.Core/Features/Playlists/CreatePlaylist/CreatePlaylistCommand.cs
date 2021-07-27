@@ -18,6 +18,7 @@ namespace Audiochan.Core.Features.Playlists.CreatePlaylist
         public string Description { get; set; } = string.Empty;
         public Visibility Visibility { get; set; }
         public List<Guid> AudioIds { get; set; } = new();
+        public List<string> Tags { get; init; } = new();
     }
     
     public class CreatePlaylistCommandHandler : IRequestHandler<CreatePlaylistCommand, Result<Guid>>

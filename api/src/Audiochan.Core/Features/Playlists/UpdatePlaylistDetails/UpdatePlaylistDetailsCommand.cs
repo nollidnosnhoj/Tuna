@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Interfaces;
@@ -14,9 +15,10 @@ namespace Audiochan.Core.Features.Playlists.UpdatePlaylistDetails
     public record UpdatePlaylistDetailsCommand : IRequest<Result<PlaylistDetailViewModel>>
     {
         public Guid Id { get; init; }
-        public string? Title { get; set; }
-        public string? Description { get; set; }
-        public Visibility? Visibility { get; set; }
+        public string? Title { get; init; }
+        public string? Description { get; init; }
+        public Visibility? Visibility { get; init; }
+        public List<string>? Tags { get; init; }
 
         public UpdatePlaylistDetailsCommand(Guid id, UpdatePlaylistDetailsRequest request)
         {
@@ -24,6 +26,7 @@ namespace Audiochan.Core.Features.Playlists.UpdatePlaylistDetails
             Title = request.Title;
             Description = request.Description;
             Visibility = request.Visibility;
+            Tags = request.Tags;
         }
     }
     
