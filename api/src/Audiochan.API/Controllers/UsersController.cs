@@ -2,7 +2,8 @@
 using System.Threading.Tasks;
 using Audiochan.API.Models;
 using Audiochan.Core.Common.Models;
-using Audiochan.Core.Features.Audios.GetAudioList;
+using Audiochan.Core.Features.Audios.GetAudio;
+using Audiochan.Core.Features.Audios.GetLatestAudios;
 using Audiochan.Core.Features.Followers.GetFollowers;
 using Audiochan.Core.Features.Followers.GetFollowings;
 using Audiochan.Core.Features.Users.GetProfile;

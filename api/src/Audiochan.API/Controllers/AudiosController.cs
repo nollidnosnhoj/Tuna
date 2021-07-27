@@ -6,7 +6,7 @@ using Audiochan.API.Models;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Features.Audios.CreateAudio;
 using Audiochan.Core.Features.Audios.GetAudio;
-using Audiochan.Core.Features.Audios.GetAudioList;
+using Audiochan.Core.Features.Audios.GetLatestAudios;
 using Audiochan.Core.Features.Audios.RemoveAudio;
 using Audiochan.Core.Features.Audios.UpdateAudio;
 using Audiochan.Core.Features.Audios.UpdatePicture;
@@ -27,23 +27,13 @@ namespace Audiochan.API.Controllers
         {
             _mediator = mediator;
         }
-        
-        [AllowAnonymous]
-        [HttpGet(Name = "GetAudios")]
-        [ProducesResponseType(200)]
-        [SwaggerOperation(Summary = "Returns a list of audios.", OperationId = "GetAudios", Tags = new[] {"audios"})]
-        public async Task<ActionResult<PagedListDto<AudioViewModel>>> GetList([FromQuery] GetLatestAudioQuery query,
-            CancellationToken cancellationToken)
-        {
-            return Ok(await _mediator.Send(query, cancellationToken));
-        }
 
         [AllowAnonymous]
         [HttpGet("{audioId:guid}", Name = "GetAudio")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         [SwaggerOperation(Summary = "Return an audio by ID.", OperationId = "GetAudio", Tags = new[] {"audios"})]
-        public async Task<ActionResult<AudioDetailViewModel>> Get(Guid audioId, CancellationToken cancellationToken)
+        public async Task<ActionResult<AudioViewModel>> Get(Guid audioId, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new GetAudioQuery(audioId), cancellationToken);
             return result != null
@@ -61,7 +51,7 @@ namespace Audiochan.API.Controllers
             OperationId = "CreateAudio",
             Tags = new[] {"audios"}
         )]
-        public async Task<ActionResult<AudioDetailViewModel>> Create([FromBody] CreateAudioCommand command,
+        public async Task<ActionResult<AudioViewModel>> Create([FromBody] CreateAudioCommand command,
             CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(command, cancellationToken);
@@ -81,7 +71,7 @@ namespace Audiochan.API.Controllers
             Description = "Requires authentication.",
             OperationId = "UpdateAudio",
             Tags = new[] {"audios"})]
-        public async Task<ActionResult<AudioDetailViewModel>> Update(Guid audioId,
+        public async Task<ActionResult<AudioViewModel>> Update(Guid audioId,
             [FromBody] UpdateAudioRequest request,
             CancellationToken cancellationToken)
         {

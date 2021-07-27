@@ -7,7 +7,8 @@ using Audiochan.Core.Common.Models;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Features.Audios;
-using Audiochan.Core.Features.Audios.GetAudioList;
+using Audiochan.Core.Features.Audios.GetAudio;
+using Audiochan.Core.Features.Audios.GetLatestAudios;
 using Audiochan.Core.Features.Playlists;
 using Audiochan.Core.Features.Playlists.GetPlaylistAudios;
 using Audiochan.Core.Features.Playlists.GetPlaylistDetail;
@@ -28,10 +29,7 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
         public async Task<PlaylistDetailViewModel?> Get(Guid id,
             CancellationToken cancellationToken = default)
         {
-            return await DbSet
-                .AsNoTracking()
-                .Include(x => x.Tags)
-                .Include(x => x.User)
+            return await GetQueryable
                 .Where(x => x.Id == id)
                 .Select(PlaylistMaps.PlaylistToDetailFunc)
                 .SingleOrDefaultAsync(cancellationToken);
@@ -49,7 +47,7 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
                 .SelectMany(p => p.Audios)
                 .Select(pa => pa.Audio)
                 .Where(a => a.UserId == currentUserId || a.Visibility == Visibility.Public)
-                .Select(AudioMaps.AudioToItemFunc)
+                .Select(AudioMaps.AudioToView)
                 .PaginateAsync(query, cancellationToken);
         }
 
@@ -90,5 +88,10 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
 
             return await queryable.SingleOrDefaultAsync(cancellationToken);
         }
+        
+        private IQueryable<Playlist> GetQueryable => DbSet
+            .AsNoTracking()
+            .Include(x => x.Tags)
+            .Include(x => x.User);
     }
 }

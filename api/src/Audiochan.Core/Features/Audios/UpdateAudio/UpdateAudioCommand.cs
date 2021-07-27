@@ -13,7 +13,7 @@ using MediatR;
 
 namespace Audiochan.Core.Features.Audios.UpdateAudio
 {
-    public class UpdateAudioCommand : IRequest<Result<AudioDetailViewModel>>
+    public class UpdateAudioCommand : IRequest<Result<AudioViewModel>>
     {
         public Guid AudioId { get; set; }
         public string? Title { get; init; }
@@ -31,7 +31,7 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
         };
     }
 
-    public class UpdateAudioCommandHandler : IRequestHandler<UpdateAudioCommand, Result<AudioDetailViewModel>>
+    public class UpdateAudioCommandHandler : IRequestHandler<UpdateAudioCommand, Result<AudioViewModel>>
     {
         private readonly ICurrentUserService _currentUserService;
         private readonly IUnitOfWork _unitOfWork;
@@ -46,20 +46,20 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
             _cacheService = cacheService;
         }
 
-        public async Task<Result<AudioDetailViewModel>> Handle(UpdateAudioCommand command,
+        public async Task<Result<AudioViewModel>> Handle(UpdateAudioCommand command,
             CancellationToken cancellationToken)
         {
             if (!_currentUserService.TryGetUserId(out var currentUserId))
-                return Result<AudioDetailViewModel>.Unauthorized();
+                return Result<AudioViewModel>.Unauthorized();
 
             var audio = await _unitOfWork.Audios
                 .LoadForUpdating(command.AudioId, cancellationToken);
 
             if (audio == null)
-                return Result<AudioDetailViewModel>.NotFound<Audio>();
+                return Result<AudioViewModel>.NotFound<Audio>();
 
             if (audio.UserId != currentUserId)
-                return Result<AudioDetailViewModel>.Forbidden();
+                return Result<AudioViewModel>.Forbidden();
             
             _unitOfWork.BeginTransaction();
             try
@@ -76,7 +76,7 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
             }
 
             await _unitOfWork.CommitTransactionAsync();
-            return Result<AudioDetailViewModel>.Success(AudioMaps.AudioToDetailFunc.CompileFast().Invoke(audio));
+            return Result<AudioViewModel>.Success(AudioMaps.AudioToView.CompileFast().Invoke(audio));
         }
 
         private async Task UpdateAudioFromCommandAsync(Audio audio, UpdateAudioCommand command,

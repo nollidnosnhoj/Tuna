@@ -9,7 +9,7 @@ using Audiochan.Core.Entities;
 using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Features.Audios;
 using Audiochan.Core.Features.Audios.GetAudio;
-using Audiochan.Core.Features.Audios.GetAudioList;
+using Audiochan.Core.Features.Audios.GetLatestAudios;
 using Audiochan.Core.Features.Audios.SearchAudios;
 using Audiochan.Core.Repositories;
 using Audiochan.Core.Services;
@@ -25,14 +25,11 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
         {
         }
 
-        public async Task<AudioDetailViewModel?> GetAudio(Guid id, CancellationToken cancellationToken = default)
+        public async Task<AudioViewModel?> GetAudio(Guid id, CancellationToken cancellationToken = default)
         {
-            return await DbSet
-                .AsNoTracking()
-                .Include(x => x.Tags)
-                .Include(x => x.User)
+            return await GetQueryable
                 .Where(x => x.Id == id)
-                .Select(AudioMaps.AudioToDetailFunc)
+                .Select(AudioMaps.AudioToView)
                 .SingleOrDefaultAsync(cancellationToken);
         }
 
@@ -58,35 +55,27 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
             return await queryable.SingleOrDefaultAsync(cancellationToken);
         }
 
-        public async Task<List<AudioViewModel>> GetByIds(List<Guid> ids, CancellationToken cancellationToken = default)
-        {
-            return await DbSet
-                .AsNoTracking()
-                .Where(a => ids.Contains(a.Id))
-                .Select(AudioMaps.AudioToItemFunc)
-                .ToListAsync(cancellationToken);
-        }
-
         public async Task<List<AudioViewModel>> GetLatestAudios(GetLatestAudioQuery query, 
             CancellationToken cancellationToken = default)
         {
-            var queryable = DbSet
-                .AsNoTracking()
-                .Include(x => x.User)
-                .Where(x => x.Visibility == Visibility.Public);
+            var queryable = GetQueryable.Where(a => a.Visibility == Visibility.Public);
 
-            if (query.Cursor is not null)
+            if (query.Cursor is null)
+                return await queryable
+                    .Select(AudioMaps.AudioToView)
+                    .Take(query.Size)
+                    .ToListAsync(cancellationToken);
+            
+            var (id, since) = CursorHelpers.Decode(query.Cursor);
+            
+            if (id is not null && since is not null)
             {
-                var (id, since) = CursorHelpers.Decode(query.Cursor);
-                if (id is not null && since is not null)
-                {
-                    queryable = queryable
-                        .Where(a => a.Created < since || a.Created == since && a.Id.CompareTo(id) < 0);
-                }
+                queryable = queryable
+                    .Where(a => a.Created < since || a.Created == since && a.Id.CompareTo(id) < 0);
             }
 
             return await queryable
-                .Select(AudioMaps.AudioToItemFunc)
+                .Select(AudioMaps.AudioToView)
                 .Take(query.Size)
                 .ToListAsync(cancellationToken);
         }
@@ -100,10 +89,7 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
                     .ToList()
                 : new List<string>();
             
-            var queryable = DbSet.AsNoTracking()
-                .Include(x => x.Tags)
-                .Include(x => x.User)
-                .Where(x => x.Visibility == Visibility.Public);
+            var queryable = GetQueryable.Where(a => a.Visibility == Visibility.Public);
 
             if (!string.IsNullOrWhiteSpace(query.Q))
                 queryable = queryable.Where(a => 
@@ -113,20 +99,23 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
                 queryable = queryable.Where(a => a.Tags.Any(x => parsedTags.Contains(x.Name)));
 
             return await queryable
-                .Select(AudioMaps.AudioToItemFunc)
+                .Select(AudioMaps.AudioToView)
                 .PaginateAsync(query, cancellationToken);
         }
 
         public async Task<PagedListDto<AudioViewModel>> GetFollowedAudios(List<string> followingIds, CancellationToken cancellationToken = default)
         {
-            return await DbSet
-                .AsNoTracking()
-                .Include(x => x.User)
+            return await GetQueryable
                 .Where(a => a.Visibility == Visibility.Public)
                 .Where(a => followingIds.Contains(a.UserId))
-                .Select(AudioMaps.AudioToItemFunc)
+                .Select(AudioMaps.AudioToView)
                 .OrderByDescending(a => a.Created)
                 .PaginateAsync(cancellationToken: cancellationToken);
         }
+
+        private IQueryable<Audio> GetQueryable => DbSet
+            .AsNoTracking()
+            .Include(x => x.Tags)
+            .Include(x => x.User);
     }
 }

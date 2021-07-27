@@ -87,7 +87,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             await _fixture.SendAsync(command);
             
             // Act
-            var (cacheExists, _) = await _fixture.GetCache<AudioDetailViewModel>(CacheKeys.Audio.GetAudio(audio.Id));
+            var (cacheExists, _) = await _fixture.GetCache<AudioViewModel>(CacheKeys.Audio.GetAudio(audio.Id));
             
             // Assert
             cacheExists.Should().BeFalse();

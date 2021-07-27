@@ -22,7 +22,7 @@ namespace Audiochan.API.Controllers
         [HttpGet("audios")]
         [ProducesResponseType(200)]
         [SwaggerOperation(Summary = "Search for audios", OperationId = "SearchAudio", Tags = new[] {"search"})]
-        public async Task<ActionResult<PagedListDto<AudioDetailViewModel>>> SearchAudios(
+        public async Task<ActionResult<PagedListDto<AudioViewModel>>> SearchAudios(
             [FromQuery] SearchAudiosQuery query,
             CancellationToken cancellationToken)
         {

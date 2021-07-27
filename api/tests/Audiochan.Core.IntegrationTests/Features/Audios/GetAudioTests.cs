@@ -51,7 +51,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
 
             // Assert
             result.Should().NotBeNull();
-            result.Should().BeOfType<AudioDetailViewModel>();
+            result.Should().BeOfType<AudioViewModel>();
         }
         
         [Fact]
@@ -71,7 +71,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
 
             // Assert
             result.Should().NotBeNull();
-            result.Should().BeOfType<AudioDetailViewModel>();
+            result.Should().BeOfType<AudioViewModel>();
             result!.Title.Should().Be(audio.Title);
             result.Description.Should().Be(audio.Description);
             result.Created.Should().BeCloseTo(audio.Created);
@@ -98,12 +98,12 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             var result = await _fixture.SendAsync(new GetAudioQuery(audio.Id));
 
             // Act
-            var (cacheExists, cacheResult) = await _fixture.GetCache<AudioDetailViewModel>(CacheKeys.Audio.GetAudio(audio.Id));
+            var (cacheExists, cacheResult) = await _fixture.GetCache<AudioViewModel>(CacheKeys.Audio.GetAudio(audio.Id));
             
             // Assert
             cacheExists.Should().BeTrue();
             cacheResult.Should().NotBeNull();
-            cacheResult.Should().BeOfType<AudioDetailViewModel>();
+            cacheResult.Should().BeOfType<AudioViewModel>();
             cacheResult!.Title.Should().Be(result!.Title);
             cacheResult.Description.Should().Be(result!.Description);
             cacheResult.Created.Should().BeCloseTo(result!.Created);

@@ -6,7 +6,8 @@ using Audiochan.Core.Common.Models;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Features.Audios;
-using Audiochan.Core.Features.Audios.GetAudioList;
+using Audiochan.Core.Features.Audios.GetAudio;
+using Audiochan.Core.Features.Audios.GetLatestAudios;
 using Audiochan.Core.Features.Auth.GetCurrentUser;
 using Audiochan.Core.Features.Followers;
 using Audiochan.Core.Features.Followers.GetFollowers;
@@ -57,6 +58,7 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
             if (string.IsNullOrEmpty(userId)) return null;
             
             return await DbSet.AsNoTracking()
+                .AsSplitQuery()
                 .Include(u => u.Followers.Where(fu => fu.TargetId == userId))
                 .Include(u => u.Followings.Where(fu => fu.ObserverId == userId))
                 .Include(u => u.Audios)
@@ -82,18 +84,21 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
         {
             var currentUserId = CurrentUserService.GetUserId();
 
-            var queryable = DbSet
+            IQueryable<Audio> queryable = DbSet
                 .AsNoTracking()
+                .AsSplitQuery()
                 .Include(u => u.Audios)
                 .Where(u => query.Username == u.UserName.ToLower())
-                .SelectMany(a => a.Audios);
+                .SelectMany(a => a.Audios)
+                .Include(a => a.Tags)
+                .Include(a => a.User);
 
             queryable = !string.IsNullOrEmpty(currentUserId) 
                 ? queryable.Where(a => a.Visibility == Visibility.Public || a.UserId == currentUserId) 
                 : queryable.Where(a => a.Visibility == Visibility.Public);
 
             return await queryable
-                .Select(AudioMaps.AudioToItemFunc)
+                .Select(AudioMaps.AudioToView)
                 .PaginateAsync(query, cancellationToken);
         }
 
@@ -108,7 +113,7 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
                 .SelectMany(u => u.FavoriteAudios)
                 .OrderByDescending(fa => fa.FavoriteDate)
                 .Select(fa => fa.Audio)
-                .Select(AudioMaps.AudioToItemFunc)
+                .Select(AudioMaps.AudioToView)
                 .PaginateAsync(query, cancellationToken);
         }
 
@@ -116,6 +121,7 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
         {
             return await DbSet
                 .AsNoTracking()
+                .AsSplitQuery()
                 .Include(u => u.Followers)
                 .Where(u => u.UserName == query.Username)
                 .SelectMany(u => u.Followers)
@@ -128,6 +134,7 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
         {
             return await DbSet
                 .AsNoTracking()
+                .AsSplitQuery()
                 .Include(u => u.Followings)
                 .Where(u => u.UserName == query.Username)
                 .SelectMany(u => u.Followings)
@@ -141,6 +148,7 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
             return await DbSet
                 .Include(u => u.Followings)
                 .AsNoTracking()
+                .AsSplitQuery()
                 .Where(user => user.Id == userId)
                 .SelectMany(u => u.Followings.Select(f => f.TargetId))
                 .ToListAsync(cancellationToken);

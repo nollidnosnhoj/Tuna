@@ -8,11 +8,11 @@ using MediatR;
 
 namespace Audiochan.Core.Features.Audios.GetAudio
 {
-    public record GetAudioQuery(Guid Id) : IRequest<AudioDetailViewModel?>
+    public record GetAudioQuery(Guid Id) : IRequest<AudioViewModel?>
     {
     }
 
-    public class GetAudioQueryHandler : IRequestHandler<GetAudioQuery, AudioDetailViewModel?>
+    public class GetAudioQueryHandler : IRequestHandler<GetAudioQuery, AudioViewModel?>
     {
         private readonly ICacheService _cacheService;
         private readonly IUnitOfWork _unitOfWork;
@@ -25,20 +25,20 @@ namespace Audiochan.Core.Features.Audios.GetAudio
             _currentUserService = currentUserService;
         }
 
-        public async Task<AudioDetailViewModel?> Handle(GetAudioQuery query, CancellationToken cancellationToken)
+        public async Task<AudioViewModel?> Handle(GetAudioQuery query, CancellationToken cancellationToken)
         {
             var audio = await FetchAudioFromCacheOrDatabaseAsync(query.Id, cancellationToken);
             if (audio == null || !CanAccessPrivateAudio(audio)) return null;
             return audio;
         }
 
-        private async Task<AudioDetailViewModel?> FetchAudioFromCacheOrDatabaseAsync(Guid audioId, 
+        private async Task<AudioViewModel?> FetchAudioFromCacheOrDatabaseAsync(Guid audioId, 
             CancellationToken cancellationToken = default)
         {
             var cacheOptions = new GetAudioCacheOptions(audioId);
             
             var (cacheExists, audio) = await _cacheService
-                .GetAsync<AudioDetailViewModel>(cacheOptions, cancellationToken);
+                .GetAsync<AudioViewModel>(cacheOptions, cancellationToken);
 
             if (!cacheExists)
             {
@@ -49,7 +49,7 @@ namespace Audiochan.Core.Features.Audios.GetAudio
             return audio;
         }
 
-        private bool CanAccessPrivateAudio(AudioDetailViewModel audio)
+        private bool CanAccessPrivateAudio(AudioViewModel audio)
         {
             var currentUserId = _currentUserService.GetUserId();
 

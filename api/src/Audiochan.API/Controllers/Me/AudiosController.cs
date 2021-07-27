@@ -2,8 +2,9 @@
 using System.Threading.Tasks;
 using Audiochan.API.Models;
 using Audiochan.Core.Common.Models;
+using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Features.Audios.GetAudioFeed;
-using Audiochan.Core.Features.Audios.GetAudioList;
+using Audiochan.Core.Features.Audios.GetLatestAudios;
 using Audiochan.Core.Features.Users.GetUserAudios;
 using Audiochan.Core.Services;
 using MediatR;

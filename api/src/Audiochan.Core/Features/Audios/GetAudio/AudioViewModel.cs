@@ -5,7 +5,7 @@ using Audiochan.Core.Entities.Enums;
 
 namespace Audiochan.Core.Features.Audios.GetAudio
 {
-    public record AudioDetailViewModel
+    public record AudioViewModel
     {
         public Guid Id { get; init; }
         public string Title { get; init; } = null!;

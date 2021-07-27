@@ -23,7 +23,7 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
             CurrentUserService = currentUserService;
             DbSet = dbContext.Set<TEntity>();
         }
-        
+
         public async Task<TEntity?> LoadAsync<TKey>(TKey id, CancellationToken cancellationToken = default)
             where TKey : notnull
         {
