@@ -9,6 +9,8 @@ using Audiochan.Core.Features.Audios.GetAudioList;
 using Audiochan.Core.Features.Auth.GetCurrentUser;
 using Audiochan.Core.Features.FavoriteAudios.CheckIfAudioFavorited;
 using Audiochan.Core.Features.FavoriteAudios.SetFavoriteAudio;
+using Audiochan.Core.Features.FavoritePlaylists.CheckIfPlaylistFavorited;
+using Audiochan.Core.Features.FavoritePlaylists.SetFavoritePlaylist;
 using Audiochan.Core.Features.Followers.CheckIfFollowing;
 using Audiochan.Core.Features.Followers.SetFollow;
 using Audiochan.Core.Features.Users.GetUserAudios;
@@ -338,6 +340,49 @@ namespace Audiochan.API.Controllers
             return result.IsSuccess
                 ? NoContent()
                 : result.ReturnErrorResponse();
+        }
+
+        [HttpHead("favorites/playlists/{playlistId:guid}", Name = "CheckIfUserFavoritedPlaylist")]
+        [SwaggerOperation(
+            Summary = "Check if the authenticated user favorited a playlist",
+            Description = "Requires authentication.",
+            OperationId = "CheckIfUserFavoritedPlaylist",
+            Tags = new[] {"me"}
+        )]
+        public async Task<IActionResult> IsFavoritePlaylist(Guid playlistId, CancellationToken cancellationToken)
+        {
+            var query = new CheckIfPlaylistFavoritedQuery(playlistId, _currentUserId);
+            return await _mediator.Send(query, cancellationToken)
+                ? Ok()
+                : NotFound();
+        }
+
+        [HttpPut("favorites/playlists/{playlistId:guid}", Name = "FavoritePlaylist")]
+        [SwaggerOperation(
+            Summary = "Favorite a playlist",
+            Description = "Requires authentication.",
+            OperationId = "FavoritePlaylist",
+            Tags = new[] {"me"}
+        )]
+        public async Task<IActionResult> FavoritePlaylist(Guid playlistId, CancellationToken cancellationToken)
+        {
+            var command = new SetFavoritePlaylistCommand(playlistId, _currentUserId, true);
+            var result = await _mediator.Send(command, cancellationToken);
+            return result.IsSuccess ? Ok() : result.ReturnErrorResponse();
+        }
+        
+        [HttpDelete("favorites/playlists/{playlistId:guid}", Name = "UnfavoritePlaylist")]
+        [SwaggerOperation(
+            Summary = "Unfavorite a playlist",
+            Description = "Requires authentication.",
+            OperationId = "UnfavoritePlaylist",
+            Tags = new[] {"me"}
+        )]
+        public async Task<IActionResult> UnfavoritePlaylist(Guid playlistId, CancellationToken cancellationToken)
+        {
+            var command = new SetFavoritePlaylistCommand(playlistId, _currentUserId, false);
+            var result = await _mediator.Send(command, cancellationToken);
+            return result.IsSuccess ? Ok() : result.ReturnErrorResponse();
         }
     }
 }
