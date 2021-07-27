@@ -17,6 +17,12 @@ namespace Audiochan.Core.Features.Playlists.AddAudiosToPlaylist
         public Guid PlaylistId { get; init; }
         public List<Guid> AudioIds { get; init; }
 
+        public AddAudiosToPlaylistCommand(Guid playlistId, List<Guid> audioIds)
+        {
+            PlaylistId = playlistId;
+            AudioIds = audioIds;
+        }
+
         public AddAudiosToPlaylistCommand(Guid playlistId, AddAudiosToPlaylistRequest request)
         {
             PlaylistId = playlistId;
