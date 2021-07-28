@@ -8,6 +8,7 @@ using Audiochan.Core.Entities;
 using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Features.Playlists.GetPlaylistDetail;
 using Audiochan.Core.Interfaces;
+using Audiochan.Core.Persistence;
 using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;

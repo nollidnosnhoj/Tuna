@@ -7,6 +7,7 @@ using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Features.Audios.GetAudio;
+using Audiochan.Core.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 

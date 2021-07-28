@@ -5,7 +5,7 @@ using Audiochan.Core.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace Audiochan.Core
+namespace Audiochan.Core.Persistence
 {
     public static class ApplicationDbSeeder
     {

@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Audiochan.Core.Common.Pipelines;
+using Audiochan.Core.Persistence;
 using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;

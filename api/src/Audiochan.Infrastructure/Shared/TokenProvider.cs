@@ -10,6 +10,7 @@ using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Interfaces;
+using Audiochan.Core.Persistence;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;

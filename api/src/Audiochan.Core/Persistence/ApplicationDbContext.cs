@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage;
 
-namespace Audiochan.Core
+namespace Audiochan.Core.Persistence
 {
     public class ApplicationDbContext : IdentityDbContext<User, Role, string>
     {

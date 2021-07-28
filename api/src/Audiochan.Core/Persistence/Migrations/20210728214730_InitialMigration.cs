@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
-namespace Audiochan.Core.Entities.Migrations
+namespace Audiochan.Core.Persistence.Migrations
 {
     public partial class InitialMigration : Migration
     {

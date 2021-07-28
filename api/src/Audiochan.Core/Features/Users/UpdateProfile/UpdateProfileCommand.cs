@@ -4,6 +4,7 @@ using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Interfaces;
+using Audiochan.Core.Persistence;
 using MediatR;
 
 namespace Audiochan.Core.Features.Users.UpdateProfile
