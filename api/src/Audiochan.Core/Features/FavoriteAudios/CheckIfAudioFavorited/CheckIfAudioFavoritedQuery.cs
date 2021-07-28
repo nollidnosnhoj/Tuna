@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Interfaces;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.FavoriteAudios.CheckIfAudioFavorited
 {
@@ -12,9 +13,9 @@ namespace Audiochan.Core.Features.FavoriteAudios.CheckIfAudioFavorited
     
     public class CheckIfUserFavoritedAudioQueryHandler : IRequestHandler<CheckIfAudioFavoritedQuery, bool>
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly ApplicationDbContext _unitOfWork;
 
-        public CheckIfUserFavoritedAudioQueryHandler(IUnitOfWork unitOfWork)
+        public CheckIfUserFavoritedAudioQueryHandler(ApplicationDbContext unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
@@ -22,7 +23,7 @@ namespace Audiochan.Core.Features.FavoriteAudios.CheckIfAudioFavorited
         public async Task<bool> Handle(CheckIfAudioFavoritedQuery query, CancellationToken cancellationToken)
         {
             return await _unitOfWork.FavoriteAudios
-                .ExistsAsync(fa => fa.AudioId == query.AudioId && fa.UserId == query.UserId, cancellationToken);
+                .AnyAsync(fa => fa.AudioId == query.AudioId && fa.UserId == query.UserId, cancellationToken);
         }
     }
 }

@@ -7,8 +7,10 @@ using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Entities.Enums;
-using Audiochan.Core.Services;
+using Audiochan.Core.Interfaces;
+using FluentValidation;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Playlists.CreatePlaylist
 {
@@ -21,13 +23,43 @@ namespace Audiochan.Core.Features.Playlists.CreatePlaylist
         public List<string> Tags { get; init; } = new();
     }
     
+    public class CreatePlaylistCommandValidator : AbstractValidator<CreatePlaylistCommand>
+    {
+        public CreatePlaylistCommandValidator()
+        {
+            RuleFor(req => req.Title)
+                .NotEmpty()
+                .WithMessage("Title is required.")
+                .MaximumLength(30)
+                .WithMessage("Title cannot be no more than 30 characters long.");
+            RuleFor(req => req.Description)
+                .NotNull()
+                .WithMessage("Description cannot be null.")
+                .MaximumLength(500)
+                .WithMessage("Description cannot be more than 500 characters long.");
+            RuleFor(req => req.Tags)
+                .NotNull()
+                .WithMessage("Tags cannot be null.")
+                .Must(u => u!.Count <= 10)
+                .WithMessage("Can only have up to 10 tags per audio upload.")
+                .ForEach(tagsRule =>
+                {
+                    tagsRule
+                        .NotEmpty()
+                        .WithMessage("Each tag cannot be empty.")
+                        .Length(3, 15)
+                        .WithMessage("Each tag must be between 3 and 15 characters long.");
+                });
+        }
+    }
+    
     public class CreatePlaylistCommandHandler : IRequestHandler<CreatePlaylistCommand, Result<Guid>>
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly ApplicationDbContext _unitOfWork;
         private readonly IDateTimeProvider _dateTimeProvider;
         private readonly ICurrentUserService _currentUserService;
 
-        public CreatePlaylistCommandHandler(IUnitOfWork unitOfWork, 
+        public CreatePlaylistCommandHandler(ApplicationDbContext unitOfWork, 
             IDateTimeProvider dateTimeProvider, 
             ICurrentUserService currentUserService)
         {
@@ -39,7 +71,7 @@ namespace Audiochan.Core.Features.Playlists.CreatePlaylist
         public async Task<Result<Guid>> Handle(CreatePlaylistCommand request, CancellationToken cancellationToken)
         {
             var userId = _currentUserService.GetUserId();
-            var user = await _unitOfWork.Users.LoadAsync(userId, cancellationToken);
+            var user = await _unitOfWork.Users.SingleOrDefaultAsync(u => u.Id == userId, cancellationToken);
             if (user is null) return Result<Guid>.Unauthorized();
 
             if (!await CheckIfAudioIdsExist(request.AudioIds, cancellationToken))
@@ -71,7 +103,7 @@ namespace Audiochan.Core.Features.Playlists.CreatePlaylist
         private async Task<bool> CheckIfAudioIdsExist(ICollection<Guid> audioIds,
             CancellationToken cancellationToken = default)
         {
-            return await _unitOfWork.Audios.ExistsAsync(x => audioIds.Contains(x.Id)
+            return await _unitOfWork.Audios.AnyAsync(x => audioIds.Contains(x.Id)
                 && x.Visibility == Visibility.Public, cancellationToken);
         }
     }

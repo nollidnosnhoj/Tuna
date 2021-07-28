@@ -1,10 +1,14 @@
-﻿using System.Threading;
+﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
+using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Features.Audios.GetLatestAudios;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Audios.GetAudioFeed
 {
@@ -17,18 +21,33 @@ namespace Audiochan.Core.Features.Audios.GetAudioFeed
 
     public class GetAudioFeedQueryHandler : IRequestHandler<GetAudioFeedQuery, PagedListDto<AudioViewModel>>
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly ApplicationDbContext _dbContext;
 
-        public GetAudioFeedQueryHandler(IUnitOfWork unitOfWork)
+        public GetAudioFeedQueryHandler(ApplicationDbContext dbContext)
         {
-            _unitOfWork = unitOfWork;
+            _dbContext = dbContext;
         }
 
         public async Task<PagedListDto<AudioViewModel>> Handle(GetAudioFeedQuery query,
             CancellationToken cancellationToken)
         {
-            var ids = await _unitOfWork.Users.GetFollowingIds(query.UserId, cancellationToken);
-            return await _unitOfWork.Audios.GetFollowedAudios(ids, cancellationToken);
+            var followingIds = await _dbContext.Users
+                .Include(u => u.Followings)
+                .AsNoTracking()
+                .AsSplitQuery()
+                .Where(user => user.Id == query.UserId)
+                .SelectMany(u => u.Followings.Select(f => f.TargetId))
+                .ToListAsync(cancellationToken);
+            
+            return await _dbContext.Audios
+                .AsNoTracking()
+                .Include(x => x.Tags)
+                .Include(x => x.User)
+                .Where(a => a.Visibility == Visibility.Public)
+                .Where(a => followingIds.Contains(a.UserId))
+                .Select(AudioMaps.AudioToView)
+                .OrderByDescending(a => a.Created)
+                .PaginateAsync(cancellationToken: cancellationToken);
         }
     }
 }

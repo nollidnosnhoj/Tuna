@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Entities.Enums;
-using Audiochan.Core.Services;
+using Audiochan.Core.Interfaces;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Audios.GetAudio
 {
@@ -14,15 +16,15 @@ namespace Audiochan.Core.Features.Audios.GetAudio
 
     public class GetAudioQueryHandler : IRequestHandler<GetAudioQuery, AudioViewModel?>
     {
+        private readonly ApplicationDbContext _dbContext;
         private readonly ICacheService _cacheService;
-        private readonly IUnitOfWork _unitOfWork;
         private readonly ICurrentUserService _currentUserService;
 
-        public GetAudioQueryHandler(IUnitOfWork unitOfWork, ICacheService cacheService, ICurrentUserService currentUserService)
+        public GetAudioQueryHandler(ICacheService cacheService, ICurrentUserService currentUserService, ApplicationDbContext dbContext)
         {
-            _unitOfWork = unitOfWork;
             _cacheService = cacheService;
             _currentUserService = currentUserService;
+            _dbContext = dbContext;
         }
 
         public async Task<AudioViewModel?> Handle(GetAudioQuery query, CancellationToken cancellationToken)
@@ -42,7 +44,13 @@ namespace Audiochan.Core.Features.Audios.GetAudio
 
             if (!cacheExists)
             {
-                audio = await _unitOfWork.Audios.GetAudio(audioId, cancellationToken);
+                audio = await _dbContext.Audios
+                    .AsNoTracking()
+                    .Include(x => x.Tags)
+                    .Include(x => x.User)
+                    .Where(x => x.Id == audioId)
+                    .Select(AudioMaps.AudioToView)
+                    .SingleOrDefaultAsync(cancellationToken);
                 await _cacheService.SetAsync(audio, cacheOptions, cancellationToken);
             }
 

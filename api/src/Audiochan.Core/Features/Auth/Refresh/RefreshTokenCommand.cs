@@ -3,8 +3,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
-using Audiochan.Core.Services;
+using Audiochan.Core.Interfaces;
+using FluentValidation;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Auth.Refresh
 {
@@ -12,23 +14,35 @@ namespace Audiochan.Core.Features.Auth.Refresh
     {
         public string RefreshToken { get; init; } = null!;
     }
+    
+    public class RefreshTokenCommandValidator : AbstractValidator<RefreshTokenCommand>
+    {
+        public RefreshTokenCommandValidator()
+        {
+            RuleFor(x => x.RefreshToken)
+                .NotEmpty()
+                .WithMessage("Refresh token is required.");
+        }
+    }
 
     public class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommand, Result<AuthResult>>
     {
         private readonly ITokenProvider _tokenProvider;
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly ApplicationDbContext _dbContext;
 
-        public RefreshTokenCommandHandler(ITokenProvider tokenProvider, IUnitOfWork unitOfWork)
+        public RefreshTokenCommandHandler(ITokenProvider tokenProvider, ApplicationDbContext dbContext)
         {
             _tokenProvider = tokenProvider;
-            _unitOfWork = unitOfWork;
+            _dbContext = dbContext;
         }
 
         public async Task<Result<AuthResult>> Handle(RefreshTokenCommand command,
             CancellationToken cancellationToken)
         {
-            var user = await _unitOfWork.Users
-                .LoadWithRefreshTokens(command.RefreshToken, cancellationToken);
+            var user = await _dbContext.Users
+                .Include(u => u.RefreshTokens)
+                .SingleOrDefaultAsync(u => u.RefreshTokens
+                    .Any(t => t.Token == command.RefreshToken && t.UserId == u.Id), cancellationToken);
 
             if (user == null)
                 return Result<AuthResult>.BadRequest("Refresh token does not belong to a user.");

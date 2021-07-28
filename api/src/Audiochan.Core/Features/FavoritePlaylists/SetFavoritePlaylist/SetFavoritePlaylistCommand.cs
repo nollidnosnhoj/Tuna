@@ -5,8 +5,9 @@ using System.Threading.Tasks;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Entities;
-using Audiochan.Core.Services;
+using Audiochan.Core.Interfaces;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.FavoritePlaylists.SetFavoritePlaylist
 {
@@ -16,10 +17,10 @@ namespace Audiochan.Core.Features.FavoritePlaylists.SetFavoritePlaylist
 
     public class SetFavoritePlaylistCommandHandler : IRequestHandler<SetFavoritePlaylistCommand, Result<bool>>
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly ApplicationDbContext _unitOfWork;
         private readonly IDateTimeProvider _dateTimeProvider;
 
-        public SetFavoritePlaylistCommandHandler(IUnitOfWork unitOfWork, IDateTimeProvider dateTimeProvider)
+        public SetFavoritePlaylistCommandHandler(ApplicationDbContext unitOfWork, IDateTimeProvider dateTimeProvider)
         {
             _unitOfWork = unitOfWork;
             _dateTimeProvider = dateTimeProvider;
@@ -27,8 +28,16 @@ namespace Audiochan.Core.Features.FavoritePlaylists.SetFavoritePlaylist
 
         public async Task<Result<bool>> Handle(SetFavoritePlaylistCommand command, CancellationToken cancellationToken)
         {
-            var playlist = await _unitOfWork.Playlists
-                .LoadWithFavorites(command.PlaylistId, command.UserId, cancellationToken);
+            var queryable = _unitOfWork.Playlists
+                .IgnoreQueryFilters()
+                .Where(a => a.Id == command.PlaylistId);
+
+            queryable = !string.IsNullOrEmpty(command.UserId) 
+                ? queryable.Include(a => 
+                    a.Favorited.Where(fa => fa.UserId == command.UserId)) 
+                : queryable.Include(a => a.Favorited);
+
+            var playlist = await queryable.SingleOrDefaultAsync(cancellationToken);
 
             if (playlist == null)
                 return Result<bool>.NotFound<Playlist>();

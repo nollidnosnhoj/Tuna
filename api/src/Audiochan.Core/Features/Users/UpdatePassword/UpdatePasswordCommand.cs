@@ -1,9 +1,15 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
-using Audiochan.Core.Services;
+using Audiochan.Core.Common.Settings;
+using Audiochan.Core.Entities;
+using Audiochan.Core.Interfaces;
+using FluentValidation;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Users.UpdatePassword
 {
@@ -20,29 +26,42 @@ namespace Audiochan.Core.Features.Users.UpdatePassword
             NewPassword = request.NewPassword
         };
     }
+    
+    public class UpdatePasswordCommandValidator : AbstractValidator<UpdatePasswordCommand>
+    {
+        public UpdatePasswordCommandValidator(IOptions<IdentitySettings> options)
+        {
+            RuleFor(req => req.NewPassword)
+                .NotEmpty()
+                .WithMessage("New Password is required.")
+                .NotEqual(req => req.CurrentPassword)
+                .WithMessage("New password cannot be the same as the previous.")
+                .Password(options.Value.PasswordSettings, "New Password");
+        }
+    }
 
     public class UpdatePasswordCommandHandler : IRequestHandler<UpdatePasswordCommand, Result<bool>>
     {
-        private readonly ICurrentUserService _currentUserService;
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IIdentityService _identityService;
+        private readonly string _currentUserId;
+        private readonly ApplicationDbContext _unitOfWork;
+        private readonly UserManager<User> _userManager;
 
-        public UpdatePasswordCommandHandler(ICurrentUserService currentUserService, IUnitOfWork unitOfWork, 
-            IIdentityService identityService)
+        public UpdatePasswordCommandHandler(ICurrentUserService currentUserService, ApplicationDbContext unitOfWork, 
+            UserManager<User> userManager)
         {
-            _currentUserService = currentUserService;
+            _currentUserId = currentUserService.GetUserId();
             _unitOfWork = unitOfWork;
-            _identityService = identityService;
+            _userManager = userManager;
         }
 
         public async Task<Result<bool>> Handle(UpdatePasswordCommand command, CancellationToken cancellationToken)
         {
-            var user = await _unitOfWork.Users.LoadAsync(new object[]{command.UserId}, cancellationToken);
+            var user = await _unitOfWork.Users.FindAsync(new object[]{command.UserId}, cancellationToken);
             if (user == null) return Result<bool>.Unauthorized();
-            if (user.Id != _currentUserService.GetUserId())
+            if (user.Id != _currentUserId)
                 return Result<bool>.Forbidden();
 
-            return await _identityService.UpdatePassword(user, command.CurrentPassword, command.NewPassword);
+            return (await _userManager.ChangePasswordAsync(user, command.CurrentPassword, command.NewPassword)).ToResult();
         }
     }
 }

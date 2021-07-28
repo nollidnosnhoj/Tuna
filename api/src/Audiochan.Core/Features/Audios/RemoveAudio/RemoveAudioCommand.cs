@@ -6,8 +6,9 @@ using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Entities;
-using Audiochan.Core.Services;
+using Audiochan.Core.Interfaces;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Audios.RemoveAudio
@@ -18,29 +19,29 @@ namespace Audiochan.Core.Features.Audios.RemoveAudio
 
     public class RemoveAudioCommandHandler : IRequestHandler<RemoveAudioCommand, Result<bool>>
     {
+        private readonly ApplicationDbContext _dbContext;
         private readonly MediaStorageSettings _storageSettings;
         private readonly IStorageService _storageService;
         private readonly ICurrentUserService _currentUserService;
-        private readonly IUnitOfWork _unitOfWork;
 
         public RemoveAudioCommandHandler(IOptions<MediaStorageSettings> options,
             IStorageService storageService,
             ICurrentUserService currentUserService, 
-            IUnitOfWork unitOfWork)
+            ApplicationDbContext dbContext)
         {
             _storageSettings = options.Value;
             _storageService = storageService;
             _currentUserService = currentUserService;
-            _unitOfWork = unitOfWork;
+            _dbContext = dbContext;
         }
 
         public async Task<Result<bool>> Handle(RemoveAudioCommand command, CancellationToken cancellationToken)
         {
             if (!_currentUserService.TryGetUserId(out var currentUserId))
                 return Result<bool>.Unauthorized();
-        
-            var audio = await _unitOfWork.Audios
-                .LoadAsync(a => a.Id == command.Id, cancellationToken: cancellationToken);
+
+            var audio = await _dbContext.Audios
+                .SingleOrDefaultAsync(a => a.Id == command.Id, cancellationToken);
 
             if (audio == null)
                 return Result<bool>.NotFound<Audio>();
@@ -48,22 +49,10 @@ namespace Audiochan.Core.Features.Audios.RemoveAudio
             if (!ShouldCurrentUserModifyAudio(audio, currentUserId))
                 return Result<bool>.Forbidden();
             
-            _unitOfWork.BeginTransaction();
-            
-            try
-            {
-                var afterDeletionTasks = GetTasksForAfterDeletion(audio, cancellationToken);
-                _unitOfWork.Audios.Remove(audio);
-                await _unitOfWork.SaveChangesAsync(cancellationToken);
-                await Task.WhenAll(afterDeletionTasks);
-            }
-            catch
-            {
-                _unitOfWork.RollbackTransaction();
-                throw;
-            }
-
-            await _unitOfWork.CommitTransactionAsync();
+            var afterDeletionTasks = GetTasksForAfterDeletion(audio, cancellationToken);
+            _dbContext.Audios.Remove(audio);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+            await Task.WhenAll(afterDeletionTasks);
             return Result<bool>.Success(true);
         }
 

@@ -3,8 +3,9 @@ using Audiochan.API.Extensions.ConfigurationExtensions;
 using Audiochan.API.Middlewares;
 using Audiochan.API.Services;
 using Audiochan.Core;
+using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Settings;
-using Audiochan.Core.Services;
+using Audiochan.Core.Interfaces;
 using Audiochan.Infrastructure;
 using Audiochan.Infrastructure.Storage.AmazonS3;
 using Microsoft.AspNetCore.Builder;
@@ -42,7 +43,7 @@ namespace Audiochan.API
 
             services
                 .AddMemoryCache()
-                .AddCore()
+                .AddCore(Configuration, Environment)
                 .AddInfrastructure(Configuration, Environment)
                 .Configure<JsonSerializerOptions>(options =>
                 {

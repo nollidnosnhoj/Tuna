@@ -4,8 +4,10 @@ using System.Threading.Tasks;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Entities;
+using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Auth.Revoke
 {
@@ -13,24 +15,34 @@ namespace Audiochan.Core.Features.Auth.Revoke
     {
         public string RefreshToken { get; init; } = null!;
     }
+    
+    public class RevokeTokenCommandValidator : AbstractValidator<RevokeTokenCommand>
+    {
+        public RevokeTokenCommandValidator()
+        {
+            RuleFor(x => x.RefreshToken)
+                .NotEmpty()
+                .WithMessage("Refresh token is required.");
+        }
+    }
 
     public class RevokeTokenCommandHandler : IRequestHandler<RevokeTokenCommand, Result<bool>>
     {
-        private readonly UserManager<User> _userManager;
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly ApplicationDbContext _dbContext;
 
-        public RevokeTokenCommandHandler(UserManager<User> userManager, IUnitOfWork unitOfWork)
+        public RevokeTokenCommandHandler(ApplicationDbContext dbContext)
         {
-            _userManager = userManager;
-            _unitOfWork = unitOfWork;
+            _dbContext = dbContext;
         }
 
         public async Task<Result<bool>> Handle(RevokeTokenCommand command, CancellationToken cancellationToken)
         {
             if (!string.IsNullOrWhiteSpace(command.RefreshToken))
             {
-                var user = await _unitOfWork.Users
-                    .LoadWithRefreshTokens(command.RefreshToken, cancellationToken);
+                var user = await _dbContext.Users
+                    .Include(u => u.RefreshTokens)
+                    .SingleOrDefaultAsync(u => u.RefreshTokens
+                        .Any(t => t.Token == command.RefreshToken && t.UserId == u.Id), cancellationToken);
 
                 if (user != null)
                 {
@@ -39,8 +51,7 @@ namespace Audiochan.Core.Features.Auth.Revoke
 
                     user.RefreshTokens.Remove(existingRefreshToken);
 
-                    // _unitOfWork.Users.Update(user);
-                    await _unitOfWork.SaveChangesAsync(cancellationToken);
+                    await _dbContext.SaveChangesAsync(cancellationToken);
                 }
             }
 

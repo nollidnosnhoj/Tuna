@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 using Audiochan.Core.Common.Interfaces;
-using Audiochan.Core.Services;
+using Audiochan.Core.Interfaces;
 using Moq;
 
 namespace Audiochan.Tests.Common.Mocks

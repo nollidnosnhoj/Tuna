@@ -8,8 +8,9 @@ using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Features.Playlists.GetPlaylistDetail;
-using Audiochan.Core.Services;
+using Audiochan.Core.Interfaces;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Playlists.UpdatePlaylistPicture
@@ -34,14 +35,14 @@ namespace Audiochan.Core.Features.Playlists.UpdatePlaylistPicture
         private readonly IDateTimeProvider _dateTimeProvider;
         private readonly IStorageService _storageService;
         private readonly IImageProcessingService _imageProcessingService;
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly ApplicationDbContext _unitOfWork;
         private readonly ICacheService _cacheService;
 
         public UpdatePlaylistPictureCommandHandler(IOptions<MediaStorageSettings> options,
             IStorageService storageService,
             IImageProcessingService imageProcessingService,
             IDateTimeProvider dateTimeProvider, 
-            IUnitOfWork unitOfWork, 
+            ApplicationDbContext unitOfWork, 
             ICacheService cacheService, ICurrentUserService currentUserService)
         {
             _storageSettings = options.Value;
@@ -58,7 +59,8 @@ namespace Audiochan.Core.Features.Playlists.UpdatePlaylistPicture
             var container = string.Join('/', _storageSettings.Image.Container, "playlists");
 
             var playlist = await _unitOfWork.Playlists
-                .LoadForUpdating(request.Id, cancellationToken);
+                .Include(p => p.User)
+                .SingleOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
 
             if (playlist == null)
                 return Result<ImageUploadResponse>.NotFound<Playlist>();
@@ -67,26 +69,16 @@ namespace Audiochan.Core.Features.Playlists.UpdatePlaylistPicture
                 return Result<ImageUploadResponse>.Forbidden();
             
             var blobName = $"{playlist.Id}/{_dateTimeProvider.Now:yyyyMMddHHmmss}.jpg";
+            
+            await _imageProcessingService.UploadImage(request.Data, container, blobName, cancellationToken);
 
-            _unitOfWork.BeginTransaction();
-            try
-            {
-                await _imageProcessingService.UploadImage(request.Data, container, blobName, cancellationToken);
+            if (!string.IsNullOrEmpty(playlist.Picture))
+                await _storageService.RemoveAsync(_storageSettings.Image.Bucket, container, playlist.Picture,
+                    cancellationToken);
 
-                if (!string.IsNullOrEmpty(playlist.Picture))
-                    await _storageService.RemoveAsync(_storageSettings.Image.Bucket, container, playlist.Picture,
-                        cancellationToken);
+            playlist.Picture = blobName;
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-                playlist.Picture = blobName;
-                await _unitOfWork.SaveChangesAsync(cancellationToken);
-            }
-            catch
-            {
-                _unitOfWork.RollbackTransaction();
-                throw;
-            }
-
-            await _unitOfWork.CommitTransactionAsync();
             return Result<ImageUploadResponse>.Success(new ImageUploadResponse
             {
                 Url = string.Format(MediaLinkInvariants.PlaylistPictureUrl, blobName)

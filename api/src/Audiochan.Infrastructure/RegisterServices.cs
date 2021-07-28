@@ -1,11 +1,7 @@
 ﻿using Amazon.S3;
-using Audiochan.Core.Common.Interfaces;
-using Audiochan.Core.Repositories;
-using Audiochan.Core.Services;
+using Audiochan.Core;
+using Audiochan.Core.Interfaces;
 using Audiochan.Infrastructure.Caching;
-using Audiochan.Infrastructure.Identity;
-using Audiochan.Infrastructure.Persistence;
-using Audiochan.Infrastructure.Persistence.Repositories;
 using Audiochan.Infrastructure.Shared;
 using Audiochan.Infrastructure.Storage.AmazonS3;
 using Microsoft.EntityFrameworkCore;
@@ -24,9 +20,7 @@ namespace Audiochan.Infrastructure
         {
             return services
                 .ConfigureCaching(configuration, environment)
-                .ConfigurePersistence(configuration, environment)
                 .ConfigureStorageService()
-                .AddTransient<IIdentityService, IdentityService>()
                 .AddTransient<IImageProcessingService, ImageProcessingService>()
                 .AddTransient<ITokenProvider, TokenProvider>()
                 .AddTransient<IDateTimeProvider, DateTimeProvider>()
@@ -52,29 +46,6 @@ namespace Audiochan.Infrastructure
         {
             services.AddAWSService<IAmazonS3>();
             services.AddTransient<IStorageService, AmazonS3Service>();
-            return services;
-        }
-        
-        private static IServiceCollection ConfigurePersistence(this IServiceCollection services, 
-            IConfiguration configuration, IHostEnvironment env)
-        {
-            services.AddDbContext<ApplicationDbContext>(o =>
-            {
-                o.UseNpgsql(configuration.GetConnectionString("Database"));
-                o.UseSnakeCaseNamingConvention();
-                if (env.IsDevelopment())
-                {
-                    o.EnableSensitiveDataLogging();
-                }
-            });
-            services.AddScoped<IAudioRepository, AudioRepository>();
-            services.AddScoped<IFavoriteAudioRepository, FavoriteAudioRepository>();
-            services.AddScoped<IFavoritePlaylistRepository, FavoritePlaylistRepository>();
-            services.AddScoped<IFollowedUserRepository, FollowedUserRepository>();
-            services.AddScoped<ITagRepository, TagRepository>();
-            services.AddScoped<IPlaylistRepository, PlaylistRepository>();
-            services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
             return services;
         }
     }

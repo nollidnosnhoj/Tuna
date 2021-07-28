@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Entities;
-using Audiochan.Core.Services;
+using Audiochan.Core.Interfaces;
 using MediatR;
 
 namespace Audiochan.Core.Features.Users.UpdateProfile
@@ -26,20 +26,20 @@ namespace Audiochan.Core.Features.Users.UpdateProfile
 
     public class UpdateProfileCommandHandler : IRequestHandler<UpdateProfileCommand, Result<bool>>
     {
-        private readonly ICurrentUserService _currentUserService;
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly string _currentUserId;
+        private readonly ApplicationDbContext _unitOfWork;
 
-        public UpdateProfileCommandHandler(ICurrentUserService currentUserService, IUnitOfWork unitOfWork)
+        public UpdateProfileCommandHandler(ICurrentUserService currentUserService, ApplicationDbContext unitOfWork)
         {
-            _currentUserService = currentUserService;
+            _currentUserId = currentUserService.GetUserId();
             _unitOfWork = unitOfWork;
         }
 
         public async Task<Result<bool>> Handle(UpdateProfileCommand command, CancellationToken cancellationToken)
         {
-            var user = await _unitOfWork.Users.LoadAsync(new object[]{command.UserId}, cancellationToken);
+            var user = await _unitOfWork.Users.FindAsync(new object[]{command.UserId}, cancellationToken);
             if (user == null) return Result<bool>.NotFound<User>();
-            if (user.Id != _currentUserService.GetUserId())
+            if (user.Id != _currentUserId)
                 return Result<bool>.Forbidden();
 
             user.UpdateDisplayName(command.DisplayName);

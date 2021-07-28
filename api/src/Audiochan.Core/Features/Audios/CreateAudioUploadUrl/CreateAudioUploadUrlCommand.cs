@@ -2,9 +2,12 @@
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Extensions;
+using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Common.Settings;
-using Audiochan.Core.Services;
+using Audiochan.Core.Interfaces;
+using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.Options;
 
@@ -14,6 +17,18 @@ namespace Audiochan.Core.Features.Audios.CreateAudioUploadUrl
     {
         public string FileName { get; init; } = null!;
         public long FileSize { get; init; }
+    }
+    
+    public class CreateAudioUploadUrlCommandValidator : AbstractValidator<CreateAudioUploadUrlCommand>
+    {
+        public CreateAudioUploadUrlCommandValidator(IOptions<MediaStorageSettings> options)
+        {
+            var uploadOptions = options.Value.Audio;
+            RuleFor(req => req.FileSize)
+                .FileSizeValidation(uploadOptions.MaximumFileSize);
+            RuleFor(req => req.FileName)
+                .FileNameValidation(uploadOptions.ValidContentTypes);
+        }
     }
     
     public class CreateAudioUploadUrlCommandHandler 

@@ -5,24 +5,27 @@ using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Entities;
-using Audiochan.Core.Services;
+using Audiochan.Core.Interfaces;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Playlists.RemovePlaylist
 {
     public record RemovePlaylistCommand(Guid Id) : IRequest<Result>;
+    
+    
 
     public class RemovePlaylistCommandHandler : IRequestHandler<RemovePlaylistCommand, Result>
     {
-        private readonly ICurrentUserService _currentUserService;
+        private readonly string _currentUserId;
         private readonly IStorageService _storageService;
         private readonly MediaStorageSettings _storageSettings;
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly ApplicationDbContext _unitOfWork;
 
-        public RemovePlaylistCommandHandler(ICurrentUserService currentUserService, IUnitOfWork unitOfWork, IStorageService storageService, IOptions<MediaStorageSettings> storageSettings)
+        public RemovePlaylistCommandHandler(ICurrentUserService currentUserService, ApplicationDbContext unitOfWork, IStorageService storageService, IOptions<MediaStorageSettings> storageSettings)
         {
-            _currentUserService = currentUserService;
+            _currentUserId = currentUserService.GetUserId();
             _unitOfWork = unitOfWork;
             _storageService = storageService;
             _storageSettings = storageSettings.Value;
@@ -30,12 +33,14 @@ namespace Audiochan.Core.Features.Playlists.RemovePlaylist
 
         public async Task<Result> Handle(RemovePlaylistCommand request, CancellationToken cancellationToken)
         {
-            var playlist = await _unitOfWork.Playlists.LoadAsync(request.Id, cancellationToken);
+            var playlist = await _unitOfWork.Playlists
+                .Include(a => a.Audios)
+                .SingleOrDefaultAsync(a => a.Id == request.Id, cancellationToken);
 
             if (playlist is null)
                 return Result.NotFound<Playlist>();
 
-            if (playlist.UserId != _currentUserService.GetUserId())
+            if (playlist.UserId != _currentUserId)
                 return Result.Forbidden();
 
             _unitOfWork.Playlists.Remove(playlist);

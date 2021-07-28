@@ -2,14 +2,17 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Features.Audios.GetAudio;
-using Audiochan.Core.Services;
+using Audiochan.Core.Interfaces;
 using FastExpressionCompiler;
+using FluentValidation;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Audios.UpdateAudio
 {
@@ -30,20 +33,57 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
             Description = request.Description,
         };
     }
+    
+    public class UpdateAudioCommandValidator : AbstractValidator<UpdateAudioCommand>
+    {
+        public UpdateAudioCommandValidator()
+        {
+            When(req => req.Title is not null, () =>
+            {
+                RuleFor(req => req.Title)
+                    .NotEmpty()
+                    .WithMessage("Title is required.")
+                    .MaximumLength(30)
+                    .WithMessage("Title cannot be no more than 30 characters long.");
+            });
+
+            When(req => req.Description is not null, () =>
+            {
+                RuleFor(req => req.Description)
+                    .MaximumLength(500)
+                    .WithMessage("Description cannot be more than 500 characters long.");
+            });
+
+            When(req => req.Tags is not null, () =>
+            {
+                RuleFor(req => req.Tags)
+                    .Must(u => u!.Count <= 10)
+                    .WithMessage("Can only have up to 10 tags per audio upload.")
+                    .ForEach(tagsRule =>
+                    {
+                        tagsRule
+                            .NotEmpty()
+                            .WithMessage("Each tag cannot be empty.")
+                            .Length(3, 15)
+                            .WithMessage("Each tag must be between 3 and 15 characters long.");
+                    });
+            });
+        }
+    }
 
     public class UpdateAudioCommandHandler : IRequestHandler<UpdateAudioCommand, Result<AudioViewModel>>
     {
         private readonly ICurrentUserService _currentUserService;
-        private readonly IUnitOfWork _unitOfWork;
         private readonly ICacheService _cacheService;
+        private readonly ApplicationDbContext _dbContext;
 
         public UpdateAudioCommandHandler(ICurrentUserService currentUserService, 
-            IUnitOfWork unitOfWork,
-            ICacheService cacheService)
+            ICacheService cacheService, 
+            ApplicationDbContext dbContext)
         {
             _currentUserService = currentUserService;
-            _unitOfWork = unitOfWork;
             _cacheService = cacheService;
+            _dbContext = dbContext;
         }
 
         public async Task<Result<AudioViewModel>> Handle(UpdateAudioCommand command,
@@ -52,8 +92,10 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
             if (!_currentUserService.TryGetUserId(out var currentUserId))
                 return Result<AudioViewModel>.Unauthorized();
 
-            var audio = await _unitOfWork.Audios
-                .LoadForUpdating(command.AudioId, cancellationToken);
+            var audio = await _dbContext.Audios
+                .Include(a => a.User)
+                .Include(a => a.Tags)
+                .SingleOrDefaultAsync(a => a.Id == command.AudioId, cancellationToken);
 
             if (audio == null)
                 return Result<AudioViewModel>.NotFound<Audio>();
@@ -61,21 +103,11 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
             if (audio.UserId != currentUserId)
                 return Result<AudioViewModel>.Forbidden();
             
-            _unitOfWork.BeginTransaction();
-            try
-            {
-                await UpdateAudioFromCommandAsync(audio, command, cancellationToken);
-                _unitOfWork.Audios.Update(audio);
-                await _unitOfWork.SaveChangesAsync(cancellationToken);
-                await _cacheService.RemoveAsync(new GetAudioCacheOptions(audio.Id), cancellationToken);
-            }
-            catch
-            {
-                _unitOfWork.RollbackTransaction();
-                throw;
-            }
-
-            await _unitOfWork.CommitTransactionAsync();
+            await UpdateAudioFromCommandAsync(audio, command, cancellationToken);
+            _dbContext.Audios.Update(audio);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+            await _cacheService.RemoveAsync(new GetAudioCacheOptions(audio.Id), cancellationToken);
+            
             return Result<AudioViewModel>.Success(AudioMaps.AudioToView.CompileFast().Invoke(audio));
         }
 
@@ -90,7 +122,7 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
                 }
                 else
                 {
-                    var newTags = await _unitOfWork.Tags.GetAppropriateTags(command.Tags, cancellationToken);
+                    var newTags = await _dbContext.Tags.GetAppropriateTags(command.Tags, cancellationToken);
 
                     audio.UpdateTags(newTags);
                 }

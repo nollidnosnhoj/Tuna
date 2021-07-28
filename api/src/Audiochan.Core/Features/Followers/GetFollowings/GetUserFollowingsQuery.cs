@@ -1,8 +1,11 @@
-﻿using System.Threading;
+﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Followers.GetFollowings
 {
@@ -15,9 +18,9 @@ namespace Audiochan.Core.Features.Followers.GetFollowings
 
     public class GetUserFollowingsQueryHandler : IRequestHandler<GetUserFollowingsQuery, PagedListDto<FollowingViewModel>>
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly ApplicationDbContext _unitOfWork;
 
-        public GetUserFollowingsQueryHandler(IUnitOfWork unitOfWork)
+        public GetUserFollowingsQueryHandler(ApplicationDbContext unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
@@ -25,7 +28,14 @@ namespace Audiochan.Core.Features.Followers.GetFollowings
         public async Task<PagedListDto<FollowingViewModel>> Handle(GetUserFollowingsQuery query,
             CancellationToken cancellationToken)
         {
-            return await _unitOfWork.Users.GetFollowings(query, cancellationToken);
+            return await _unitOfWork.Users
+                .AsNoTracking()
+                .Include(u => u.Followings)
+                .Where(u => u.UserName == query.Username)
+                .SelectMany(u => u.Followings)
+                .OrderByDescending(fu => fu.FollowedDate)
+                .Select(FollowedUserMaps.UserToFollowingFunc)
+                .PaginateAsync(query, cancellationToken);
         }
     }
 }

@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Interfaces;
-using Audiochan.Core.Services;
+using Audiochan.Core.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 

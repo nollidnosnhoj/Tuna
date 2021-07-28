@@ -3,7 +3,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Interfaces;
-using Audiochan.Core.Services;
+using Audiochan.Core.Interfaces;
 using StackExchange.Redis;
 
 namespace Audiochan.Infrastructure.Caching

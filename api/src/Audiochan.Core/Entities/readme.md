@@ -1,0 +1,17 @@
+# Audiochan.Data
+
+This project is the data-access layer (DAL). Since this project uses Entity Framework Core, it contains the database context (Unit of Work) for access data from our database. The project also contains migrations, configurations, and extension methods for shaping the data being pulled from the database context.
+
+## Commands
+
+### Updating Migrations
+
+`dotnet ef migrations add InitialMigration -p src/Audiochan.Core -s src/Audiochan.API -o Entities/Migrations`
+
+### Update database
+
+`dotnet ef database update -s src/Audiochan.API`
+
+### Remove migration
+
+`dotnet ef migrations remove -p src/Audiochan.Core -s src/Audiochan.API`

@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Audiochan.API.Extensions;
 using Audiochan.API.Models;
+using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Features.Auth.GetCurrentUser;
 using Audiochan.Core.Features.Users.UpdateEmail;
@@ -9,7 +10,7 @@ using Audiochan.Core.Features.Users.UpdatePassword;
 using Audiochan.Core.Features.Users.UpdatePicture;
 using Audiochan.Core.Features.Users.UpdateProfile;
 using Audiochan.Core.Features.Users.UpdateUsername;
-using Audiochan.Core.Services;
+using Audiochan.Core.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -55,7 +56,7 @@ namespace Audiochan.API.Controllers.Me
         )]
         public async Task<ActionResult<CurrentUserViewModel>> GetYourInfo(CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(new GetCurrentUserQuery(), cancellationToken);
+            var result = await _mediator.Send(new GetCurrentUserQuery(_currentUserId), cancellationToken);
             return result != null
                 ? Ok(result)
                 : Unauthorized(ErrorApiResponse.Unauthorized("You are not authorized access."));

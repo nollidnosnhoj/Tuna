@@ -4,8 +4,9 @@ using System.Threading.Tasks;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Entities;
-using Audiochan.Core.Services;
+using Audiochan.Core.Interfaces;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Followers.SetFollow
 {
@@ -16,9 +17,9 @@ namespace Audiochan.Core.Features.Followers.SetFollow
     public class SetFollowCommandHandler : IRequestHandler<SetFollowCommand, Result<bool>>
     {
         private readonly IDateTimeProvider _dateTimeProvider;
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly ApplicationDbContext _unitOfWork;
 
-        public SetFollowCommandHandler(IDateTimeProvider dateTimeProvider, IUnitOfWork unitOfWork)
+        public SetFollowCommandHandler(IDateTimeProvider dateTimeProvider, ApplicationDbContext unitOfWork)
         {
             _dateTimeProvider = dateTimeProvider;
             _unitOfWork = unitOfWork;
@@ -26,8 +27,15 @@ namespace Audiochan.Core.Features.Followers.SetFollow
 
         public async Task<Result<bool>> Handle(SetFollowCommand command, CancellationToken cancellationToken)
         {
-            var target = await _unitOfWork.Users
-                .LoadWithFollowers(command.TargetId, command.ObserverId, cancellationToken);
+            var queryable = _unitOfWork.Users
+                .IgnoreQueryFilters()
+                .Where(u => u.Id == command.TargetId);
+
+            queryable = string.IsNullOrEmpty(command.ObserverId)
+                ? queryable.Include(u => u.Followers)
+                : queryable.Include(u => u.Followers.Where(f => f.ObserverId == command.ObserverId));
+
+            var target = await queryable.SingleOrDefaultAsync(cancellationToken);
 
             if (target == null)
                 return Result<bool>.NotFound<User>();

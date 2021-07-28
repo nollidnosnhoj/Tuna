@@ -5,10 +5,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Audiochan.API;
 using Audiochan.Core.Common.Constants;
+using Audiochan.Core.Common.Extensions;
+using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Entities;
-using Audiochan.Core.Services;
-using Audiochan.Infrastructure.Identity;
-using Audiochan.Infrastructure.Persistence;
+using Audiochan.Core.Interfaces;
 using Audiochan.Tests.Common.Mocks;
 using MediatR;
 using Microsoft.AspNetCore.Hosting;
@@ -31,7 +31,6 @@ namespace Audiochan.Core.IntegrationTests
 
     public class SliceFixture : IAsyncLifetime
     {
-        private readonly Checkpoint _checkpoint;
         private readonly IConfiguration _configuration;
         private static IServiceScopeFactory _scopeFactory = null!;
         private readonly WebApplicationFactory<Startup> _factory;
@@ -45,20 +44,11 @@ namespace Audiochan.Core.IntegrationTests
             _factory = new AudiochanTestApplicationFactory();
             _configuration = _factory.Services.GetRequiredService<IConfiguration>()!;
             _scopeFactory = _factory.Services.GetRequiredService<IServiceScopeFactory>()!;
-            _checkpoint = new Checkpoint
-            {
-                TablesToIgnore = new[] {"__EFMigrationsHistory"},
-                SchemasToInclude = new[] {"public"},
-                DbAdapter = DbAdapter.Postgres
-            };
             EnsureDatabase();
         }
 
         public class AudiochanTestApplicationFactory : WebApplicationFactory<Startup>
         {
-            private readonly string _connectionString =
-                "Server=localhost;Port=5433;Database=audiochan_test;Username=postgres;Password=pokemon123;";
-
             protected override IHost CreateHost(IHostBuilder builder)
             {
                 builder.UseContentRoot(Directory.GetCurrentDirectory());
@@ -71,7 +61,7 @@ namespace Audiochan.Core.IntegrationTests
                 {
                     configBuilder.AddInMemoryCollection(new Dictionary<string, string>
                     {
-                        {"ConnectionStrings:Database", _connectionString}
+                        {"ConnectionStrings:Database", "Server=localhost;Port=5433;Database=audiochan_test;Username=postgres;Password=pokemon123;"}
                     });
                 });
 
@@ -258,13 +248,27 @@ namespace Audiochan.Core.IntegrationTests
 
         public async Task InitializeAsync()
         {
-            await using (var conn = new NpgsqlConnection(_configuration.GetConnectionString("Database")))
+            var connString = _configuration.GetConnectionString("Database");
+            try
             {
-                await conn.OpenAsync();
-                await _checkpoint.Reset(conn);
+                await using (var conn = new NpgsqlConnection(connString))
+                {
+                    conn.Open();
+                    var cp = new Checkpoint
+                    {
+                        TablesToIgnore = new[] {"__EFMigrationsHistory"},
+                        SchemasToInclude = new[] {"public"},
+                        DbAdapter = DbAdapter.Postgres
+                    };
+                    await cp.Reset(conn);
+                }
+
+                _currentUserId = null;
             }
-            
-            _currentUserId = null;
+            catch
+            {
+                
+            }
         }
 
         public Task DisposeAsync()
@@ -309,9 +313,7 @@ namespace Audiochan.Core.IntegrationTests
         private static void EnsureDatabase()
         {
             using var scope = _scopeFactory.CreateScope();
-
             var context = scope.ServiceProvider.GetService<ApplicationDbContext>();
-
             context?.Database.Migrate();
         }
     }

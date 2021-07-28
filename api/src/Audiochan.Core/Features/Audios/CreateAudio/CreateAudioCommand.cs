@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Entities.Enums;
-using Audiochan.Core.Services;
+using Audiochan.Core.Interfaces;
+using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.Options;
 
@@ -26,23 +28,65 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
         public List<string> Tags { get; init; } = new();
         public string BlobName => UploadId + Path.GetExtension(FileName);
     }
+    
+    public class CreateAudioCommandValidator : AbstractValidator<CreateAudioCommand>
+    {
+        public CreateAudioCommandValidator(IOptions<MediaStorageSettings> options)
+        {
+            var storageSettings = options.Value;
+            RuleFor(req => req.UploadId)
+                .NotEmpty()
+                .WithMessage("UploadId is required.");
+            RuleFor(req => req.Duration)
+                .NotEmpty()
+                .WithMessage("Duration is required.");
+            RuleFor(req => req.FileSize)
+                .FileSizeValidation(storageSettings.Audio.MaximumFileSize);
+            RuleFor(req => req.FileName)
+                .FileNameValidation(storageSettings.Audio.ValidContentTypes);
+            RuleFor(req => req.Title)
+                .NotEmpty()
+                .WithMessage("Title is required.")
+                .MaximumLength(30)
+                .WithMessage("Title cannot be no more than 30 characters long.");
+            RuleFor(req => req.Description)
+                .NotNull()
+                .WithMessage("Description cannot be null.")
+                .MaximumLength(500)
+                .WithMessage("Description cannot be more than 500 characters long.");
+            RuleFor(req => req.Tags)
+                .NotNull()
+                .WithMessage("Tags cannot be null.")
+                .Must(u => u!.Count <= 10)
+                .WithMessage("Can only have up to 10 tags per audio upload.")
+                .ForEach(tagsRule =>
+                {
+                    tagsRule
+                        .NotEmpty()
+                        .WithMessage("Each tag cannot be empty.")
+                        .Length(3, 15)
+                        .WithMessage("Each tag must be between 3 and 15 characters long.");
+                });
+        }
+    }
+
 
     public class CreateAudioCommandHandler : IRequestHandler<CreateAudioCommand, Result<Guid>>
     {
+        private readonly ApplicationDbContext _applicationDbContext;
         private readonly IStorageService _storageService;
         private readonly ICurrentUserService _currentUserService;
         private readonly MediaStorageSettings _storageSettings;
-        private readonly IUnitOfWork _unitOfWork;
 
         public CreateAudioCommandHandler(IOptions<MediaStorageSettings> mediaStorageOptions,
             IStorageService storageService,
-            ICurrentUserService currentUserService,
-            IUnitOfWork unitOfWork)
+            ICurrentUserService currentUserService, 
+            ApplicationDbContext applicationDbContext)
         {
             _storageSettings = mediaStorageOptions.Value;
             _storageService = storageService;
             _currentUserService = currentUserService;
-            _unitOfWork = unitOfWork;
+            _applicationDbContext = applicationDbContext;
         }
 
         public async Task<Result<Guid>> Handle(CreateAudioCommand command,
@@ -57,26 +101,12 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
             {
                 return Result<Guid>.BadRequest("Cannot find upload. Please upload and try again.");
             }
-
-            Guid audioId;
-            _unitOfWork.BeginTransaction();
-            try
-            {
-                var audio = await CreateNewAudioBasedOnCommandAsync(command, currentUserId, cancellationToken);
-                await _unitOfWork.Audios.AddAsync(audio, cancellationToken);
-                await MoveTempAudioToPublicAsync(audio, cancellationToken);
-                await _unitOfWork.SaveChangesAsync(cancellationToken);
-                audioId = audio.Id;
-            }
-            catch
-            {
-                _unitOfWork.RollbackTransaction();
-                throw;
-            }
-
-            await _unitOfWork.CommitTransactionAsync();
             
-            return Result<Guid>.Success(audioId);
+            var audio = await CreateNewAudioBasedOnCommandAsync(command, currentUserId, cancellationToken);
+            await _applicationDbContext.Audios.AddAsync(audio, cancellationToken);
+            await MoveTempAudioToPublicAsync(audio, cancellationToken);
+            await _applicationDbContext.SaveChangesAsync(cancellationToken);
+            return Result<Guid>.Success(audio.Id);
         }
 
         private async Task<Audio> CreateNewAudioBasedOnCommandAsync(CreateAudioCommand command, string ownerId,
@@ -95,7 +125,7 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
 
             if (command.Tags.Count > 0)
             {
-                audio.Tags = await _unitOfWork.Tags.GetAppropriateTags(command.Tags, cancellationToken);
+                audio.Tags = await _applicationDbContext.Tags.GetAppropriateTags(command.Tags, cancellationToken);
             }
 
             return audio;

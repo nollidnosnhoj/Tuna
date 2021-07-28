@@ -7,8 +7,10 @@ using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Entities.Enums;
-using Audiochan.Core.Services;
+using Audiochan.Core.Interfaces;
+using FluentValidation;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Playlists.AddAudiosToPlaylist
 {
@@ -30,12 +32,22 @@ namespace Audiochan.Core.Features.Playlists.AddAudiosToPlaylist
         }
     }
     
+    public class AddAudiosToPlaylistCommandValidator : AbstractValidator<AddAudiosToPlaylistCommand>
+    {
+        public AddAudiosToPlaylistCommandValidator()
+        {
+            RuleFor(x => x.AudioIds)
+                .NotEmpty()
+                .WithMessage("Audio ids cannot be empty.");
+        }
+    }
+    
     public class AddAudiosToPlaylistCommandHandler : IRequestHandler<AddAudiosToPlaylistCommand, Result>
     {
         private readonly ICurrentUserService _currentUserService;
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly ApplicationDbContext _unitOfWork;
 
-        public AddAudiosToPlaylistCommandHandler(IUnitOfWork unitOfWork, ICurrentUserService currentUserService)
+        public AddAudiosToPlaylistCommandHandler(ApplicationDbContext unitOfWork, ICurrentUserService currentUserService)
         {
             _unitOfWork = unitOfWork;
             _currentUserService = currentUserService;
@@ -43,8 +55,18 @@ namespace Audiochan.Core.Features.Playlists.AddAudiosToPlaylist
 
         public async Task<Result> Handle(AddAudiosToPlaylistCommand request, CancellationToken cancellationToken)
         {
-            var playlist = await _unitOfWork.Playlists
-                .LoadWithAudios(request.PlaylistId, request.AudioIds, cancellationToken);
+            IQueryable<Playlist> queryable = _unitOfWork.Playlists;
+            if (request.AudioIds.Count == 0)
+            {
+                queryable = queryable.Include(x => x.Audios);
+            }
+            else
+            {
+                queryable = queryable
+                    .Include(x => x.Audios.Where(a => request.AudioIds.Contains(a.AudioId)));
+            }
+
+            var playlist = await queryable.SingleOrDefaultAsync(p => p.Id == request.PlaylistId, cancellationToken);
 
             if (playlist is null)
             {

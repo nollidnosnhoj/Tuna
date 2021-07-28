@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Entities.Enums;
+using Audiochan.Core.Features.Audios;
 using Audiochan.Core.Features.Playlists.GetPlaylistAudios;
-using Audiochan.Core.Services;
+using Audiochan.Core.Interfaces;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Playlists.GetPlaylistDetail
 {
@@ -13,38 +16,44 @@ namespace Audiochan.Core.Features.Playlists.GetPlaylistDetail
     
     public class GetPlaylistDetailQueryHandler : IRequestHandler<GetPlaylistDetailQuery, PlaylistDetailViewModel?>
     {
-        private readonly ICurrentUserService _currentUserService;
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly string _currentUserId;
+        private readonly ApplicationDbContext _unitOfWork;
 
-        public GetPlaylistDetailQueryHandler(ICurrentUserService currentUserService, IUnitOfWork unitOfWork)
+        public GetPlaylistDetailQueryHandler(ICurrentUserService currentUserService, ApplicationDbContext unitOfWork)
         {
-            _currentUserService = currentUserService;
+            _currentUserId = currentUserService.GetUserId();
             _unitOfWork = unitOfWork;
         }
 
         public async Task<PlaylistDetailViewModel?> Handle(GetPlaylistDetailQuery request, CancellationToken cancellationToken)
         {
-            var playlist = await _unitOfWork.Playlists.Get(request.Id, cancellationToken);
+            var playlist = await _unitOfWork.Playlists
+                .AsNoTracking()
+                .Include(x => x.Tags)
+                .Include(x => x.User)
+                .Where(x => x.Id == request.Id)
+                .Select(PlaylistMaps.PlaylistToDetailFunc)
+                .SingleOrDefaultAsync(cancellationToken);
             
             if (playlist == null || !CanAccessPrivatePlaylist(playlist)) return null;
 
             if (!request.IncludeAudios) return playlist;
-            
-            var audios = await _unitOfWork.Playlists
-                .GetAudios(new GetPlaylistAudiosQuery(playlist.Id)
-                {
-                    Page = 1,
-                    Size = 100
-                }, cancellationToken);
 
-            return playlist with {Audios = audios.Items};
+            var audios = await _unitOfWork.PlaylistAudios
+                .Include(pa => pa.Audio)
+                .Where(pa => pa.PlaylistId == request.Id)
+                .OrderByDescending(pa => pa.Added)
+                .Select(pa => pa.Audio)
+                .Select(AudioMaps.AudioToView)
+                .Take(100)
+                .ToListAsync(cancellationToken);
+
+            return playlist with {Audios = audios};
         }
         
         private bool CanAccessPrivatePlaylist(PlaylistDetailViewModel playlist)
         {
-            var currentUserId = _currentUserService.GetUserId();
-
-            return currentUserId == playlist.User.Id || playlist.Visibility != Visibility.Private;
+            return _currentUserId == playlist.User.Id || playlist.Visibility != Visibility.Private;
         }
     }
 }
