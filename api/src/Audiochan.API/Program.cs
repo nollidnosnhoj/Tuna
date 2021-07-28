@@ -1,6 +1,5 @@
 using System;
 using System.Threading.Tasks;
-using Audiochan.Core;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Persistence;
 using Microsoft.AspNetCore.Hosting;

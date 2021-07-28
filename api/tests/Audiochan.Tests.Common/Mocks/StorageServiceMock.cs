@@ -2,7 +2,6 @@
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Interfaces;
 using Moq;
 

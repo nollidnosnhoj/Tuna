@@ -3,7 +3,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.API.Extensions;
 using Audiochan.API.Models;
-using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Features.FavoriteAudios.CheckIfAudioFavorited;
 using Audiochan.Core.Features.FavoriteAudios.SetFavoriteAudio;
 using Audiochan.Core.Features.Users.GetUserFavoriteAudios;

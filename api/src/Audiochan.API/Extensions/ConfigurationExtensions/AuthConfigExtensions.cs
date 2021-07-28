@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Text;
-using Audiochan.Core;
 using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Persistence;

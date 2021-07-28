@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Constants;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Playlists.GetPlaylistDetail;
 using Audiochan.Tests.Common.Fakers.Audios;

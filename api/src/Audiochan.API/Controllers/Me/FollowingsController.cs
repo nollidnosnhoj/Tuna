@@ -1,7 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.API.Extensions;
-using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Features.Followers.CheckIfFollowing;
 using Audiochan.Core.Features.Followers.SetFollow;
 using Audiochan.Core.Interfaces;

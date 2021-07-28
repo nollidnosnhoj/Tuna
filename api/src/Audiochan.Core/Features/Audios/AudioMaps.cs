@@ -5,7 +5,6 @@ using Audiochan.Core.Common.Constants;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Audios.GetAudio;
-using Audiochan.Core.Features.Audios.GetLatestAudios;
 
 namespace Audiochan.Core.Features.Audios
 {

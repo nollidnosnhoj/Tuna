@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Audiochan.API.Extensions;
 using Audiochan.API.Models;
-using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Features.Auth.GetCurrentUser;
 using Audiochan.Core.Features.Users.UpdateEmail;

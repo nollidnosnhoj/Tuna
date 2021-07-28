@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Audios.GetAudio;
-using Audiochan.Core.Features.Audios.GetLatestAudios;
 using Audiochan.Core.Features.Playlists.GetPlaylistAudios;
 using Audiochan.Tests.Common.Fakers.Audios;
 using Audiochan.Tests.Common.Fakers.Playlists;

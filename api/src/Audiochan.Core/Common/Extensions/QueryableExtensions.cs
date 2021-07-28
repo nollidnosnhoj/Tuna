@@ -4,7 +4,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Helpers;
 using Audiochan.Core.Entities;
-using Audiochan.Core.Features.Audios;
 using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Common.Extensions

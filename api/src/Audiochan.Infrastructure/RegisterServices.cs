@@ -1,10 +1,8 @@
 ﻿using Amazon.S3;
-using Audiochan.Core;
 using Audiochan.Core.Interfaces;
 using Audiochan.Infrastructure.Caching;
 using Audiochan.Infrastructure.Shared;
 using Audiochan.Infrastructure.Storage.AmazonS3;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;

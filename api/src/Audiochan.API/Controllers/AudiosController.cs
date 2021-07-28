@@ -6,7 +6,6 @@ using Audiochan.API.Models;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Features.Audios.CreateAudio;
 using Audiochan.Core.Features.Audios.GetAudio;
-using Audiochan.Core.Features.Audios.GetLatestAudios;
 using Audiochan.Core.Features.Audios.RemoveAudio;
 using Audiochan.Core.Features.Audios.UpdateAudio;
 using Audiochan.Core.Features.Audios.UpdatePicture;

@@ -2,7 +2,6 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.API.Extensions;
-using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Features.FavoritePlaylists.CheckIfPlaylistFavorited;
 using Audiochan.Core.Features.FavoritePlaylists.SetFavoritePlaylist;
 using Audiochan.Core.Interfaces;

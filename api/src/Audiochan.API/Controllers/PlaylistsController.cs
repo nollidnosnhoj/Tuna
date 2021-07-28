@@ -3,7 +3,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.API.Extensions;
 using Audiochan.API.Models;
-using Audiochan.Core.Features.Audios.RemoveAudio;
 using Audiochan.Core.Features.Playlists.AddAudiosToPlaylist;
 using Audiochan.Core.Features.Playlists.CreatePlaylist;
 using Audiochan.Core.Features.Playlists.GetPlaylistDetail;

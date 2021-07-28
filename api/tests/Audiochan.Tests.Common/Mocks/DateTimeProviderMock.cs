@@ -1,5 +1,4 @@
 ﻿using System;
-using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Interfaces;
 using Moq;
 
