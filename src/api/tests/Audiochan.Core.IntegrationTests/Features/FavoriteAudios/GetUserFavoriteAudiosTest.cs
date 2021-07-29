@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Audiochan.Core.Entities;
+using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Features.Users.GetUserFavoriteAudios;
 using Audiochan.Tests.Common.Fakers.Audios;
 using Bogus;
@@ -28,7 +29,9 @@ namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
             // Assign
             var (targetId, _) = await _sliceFixture.RunAsAdministratorAsync();
             var audioFaker = new AudioFaker(targetId);
-            var audios = audioFaker.Generate(3);
+            var audios = audioFaker
+                .SetFixedVisibility(Visibility.Public)
+                .Generate(3);
             await _sliceFixture.InsertAsync(audios.ToArray());
             var (observerId, observerUsername) = await _sliceFixture.RunAsUserAsync(
                 _faker.Random.String2(15), 

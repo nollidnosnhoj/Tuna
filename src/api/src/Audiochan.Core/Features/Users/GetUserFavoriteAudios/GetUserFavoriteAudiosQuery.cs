@@ -1,11 +1,13 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Features.Audios;
 using Audiochan.Core.Features.Audios.GetAudio;
+using Audiochan.Core.Interfaces;
 using Audiochan.Core.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -22,10 +24,12 @@ namespace Audiochan.Core.Features.Users.GetUserFavoriteAudios
     public class GetUserFavoriteAudiosQueryHandler : IRequestHandler<GetUserFavoriteAudiosQuery, PagedListDto<AudioViewModel>>
     {
         private readonly ApplicationDbContext _unitOfWork;
+        private readonly string _currentUserId;
 
-        public GetUserFavoriteAudiosQueryHandler(ApplicationDbContext unitOfWork)
+        public GetUserFavoriteAudiosQueryHandler(ApplicationDbContext unitOfWork, ICurrentUserService currentUserService)
         {
             _unitOfWork = unitOfWork;
+            _currentUserId = currentUserService.GetUserId();
         }
 
         public async Task<PagedListDto<AudioViewModel>> Handle(GetUserFavoriteAudiosQuery query, CancellationToken cancellationToken)
@@ -38,6 +42,7 @@ namespace Audiochan.Core.Features.Users.GetUserFavoriteAudios
                 .SelectMany(u => u.FavoriteAudios)
                 .OrderByDescending(fa => fa.FavoriteDate)
                 .Select(fa => fa.Audio)
+                .FilterVisibility(_currentUserId, FilterVisibilityMode.OnlyPublic)
                 .Select(AudioMaps.AudioToView)
                 .PaginateAsync(query, cancellationToken);
         }

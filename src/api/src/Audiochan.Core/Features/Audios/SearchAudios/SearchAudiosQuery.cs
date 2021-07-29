@@ -2,11 +2,13 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Features.Audios.GetAudio;
+using Audiochan.Core.Interfaces;
 using Audiochan.Core.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -24,10 +26,12 @@ namespace Audiochan.Core.Features.Audios.SearchAudios
     public class SearchAudiosQueryHandler : IRequestHandler<SearchAudiosQuery, PagedListDto<AudioViewModel>>
     {
         private readonly ApplicationDbContext _dbContext;
+        private readonly string _currentUserId;
 
-        public SearchAudiosQueryHandler(ApplicationDbContext dbContext)
+        public SearchAudiosQueryHandler(ApplicationDbContext dbContext, ICurrentUserService currentUserService)
         {
             _dbContext = dbContext;
+            _currentUserId = currentUserService.GetUserId();
         }
 
         public async Task<PagedListDto<AudioViewModel>> Handle(SearchAudiosQuery query,
@@ -39,12 +43,12 @@ namespace Audiochan.Core.Features.Audios.SearchAudios
                     .Where(t => !string.IsNullOrWhiteSpace(t))
                     .ToList()
                 : new List<string>();
-            
+
             var queryable = _dbContext.Audios
                 .AsNoTracking()
                 .Include(x => x.Tags)
                 .Include(x => x.User)
-                .Where(a => a.Visibility == Visibility.Public);
+                .FilterVisibility(_currentUserId, FilterVisibilityMode.OnlyPublic);
 
             if (!string.IsNullOrWhiteSpace(query.Q))
                 queryable = queryable.Where(a => 

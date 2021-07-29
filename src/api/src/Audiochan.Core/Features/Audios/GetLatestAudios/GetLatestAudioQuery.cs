@@ -2,10 +2,12 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Helpers;
 using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Features.Audios.GetAudio;
+using Audiochan.Core.Interfaces;
 using Audiochan.Core.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -22,10 +24,12 @@ namespace Audiochan.Core.Features.Audios.GetLatestAudios
     public class GetLatestAudioQueryHandler : IRequestHandler<GetLatestAudioQuery, GetAudioListViewModel>
     {
         private readonly ApplicationDbContext _dbContext;
+        private readonly string _currentUserId;
 
-        public GetLatestAudioQueryHandler(ApplicationDbContext dbContext)
+        public GetLatestAudioQueryHandler(ApplicationDbContext dbContext, ICurrentUserService currentUserService)
         {
             _dbContext = dbContext;
+            _currentUserId = currentUserService.GetUserId();
         }
 
         public async Task<GetAudioListViewModel> Handle(GetLatestAudioQuery query,
@@ -35,7 +39,7 @@ namespace Audiochan.Core.Features.Audios.GetLatestAudios
                 .AsNoTracking()
                 .Include(x => x.Tags)
                 .Include(x => x.User)
-                .Where(a => a.Visibility == Visibility.Public)
+                .FilterVisibility(_currentUserId, FilterVisibilityMode.OnlyPublic)
                 .FilterCursor(query.Cursor)
                 .Select(AudioMaps.AudioToView)
                 .Take(query.Size)

@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
@@ -37,10 +38,11 @@ namespace Audiochan.Core.Features.Playlists.GetPlaylistAudios
             return await _unitOfWork.Playlists
                 .Include(p => p.Audios)
                 .Where(p => p.Id == request.Id)
+                .FilterVisibility(_currentUserId, FilterVisibilityMode.Unlisted)
                 .Where(p => p.UserId == _currentUserId || p.Visibility != Visibility.Private)
                 .SelectMany(p => p.Audios)
                 .Select(pa => pa.Audio)
-                .Where(a => a.UserId == _currentUserId || a.Visibility == Visibility.Public)
+                .FilterVisibility(_currentUserId, FilterVisibilityMode.OnlyPublic)
                 .Select(AudioMaps.AudioToView)
                 .PaginateAsync(request, cancellationToken);
         }

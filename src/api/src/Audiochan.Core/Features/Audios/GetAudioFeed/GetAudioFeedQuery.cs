@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
@@ -34,7 +35,6 @@ namespace Audiochan.Core.Features.Audios.GetAudioFeed
             var followingIds = await _dbContext.Users
                 .Include(u => u.Followings)
                 .AsNoTracking()
-                .AsSplitQuery()
                 .Where(user => user.Id == query.UserId)
                 .SelectMany(u => u.Followings.Select(f => f.TargetId))
                 .ToListAsync(cancellationToken);
@@ -43,7 +43,7 @@ namespace Audiochan.Core.Features.Audios.GetAudioFeed
                 .AsNoTracking()
                 .Include(x => x.Tags)
                 .Include(x => x.User)
-                .Where(a => a.Visibility == Visibility.Public)
+                .FilterVisibility(query.UserId, FilterVisibilityMode.OnlyPublic)
                 .Where(a => followingIds.Contains(a.UserId))
                 .Select(AudioMaps.AudioToView)
                 .OrderByDescending(a => a.Created)

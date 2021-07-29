@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
@@ -46,7 +47,7 @@ namespace Audiochan.Core.Features.Users.GetUserAudios
                 .Include(a => a.User);
 
             queryable = !string.IsNullOrEmpty(_currentUserId) 
-                ? queryable.Where(a => a.Visibility == Visibility.Public || a.UserId == _currentUserId) 
+                ? queryable.FilterVisibility(_currentUserId, FilterVisibilityMode.OnlyPublic)
                 : queryable.Where(a => a.Visibility == Visibility.Public);
 
             return await queryable

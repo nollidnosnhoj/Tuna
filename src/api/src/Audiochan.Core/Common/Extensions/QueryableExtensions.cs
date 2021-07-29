@@ -2,8 +2,11 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Common.Helpers;
 using Audiochan.Core.Entities;
+using Audiochan.Core.Entities.Abstractions;
+using Audiochan.Core.Entities.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Common.Extensions
@@ -41,6 +44,17 @@ namespace Audiochan.Core.Common.Extensions
             }
 
             return queryable;
+        }
+
+        public static IQueryable<TEntity> FilterVisibility<TEntity>(this IQueryable<TEntity> queryable, 
+            string currentUserId, FilterVisibilityMode mode) where TEntity : class, IHasVisibility
+        {
+            return mode switch
+            {
+                FilterVisibilityMode.Unlisted => queryable.Where(x =>
+                    x.UserId == currentUserId || x.Visibility != Visibility.Private),
+                _ => queryable.Where(x => x.UserId == currentUserId || x.Visibility == Visibility.Public)
+            };
         }
     }
 }
