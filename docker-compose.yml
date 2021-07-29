@@ -1,22 +1,25 @@
 services:
   database:
+    image: "postgres:latest"
+    ports:
+      - "5432:5432"
     restart: on-failure:1
-    container_name: backend-db
-    build:
-      context: db
-    env_file:
-      - db/.env
     volumes:
-      - postgres-db:/var/lib/psql/data
+      - postgres-db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_DB: "audiochan_db"
     networks:
       - audiochan
   backend:
     restart: on-failure:1
     container_name: backend
     build:
-      context: api/src/Audiochan
+      context: src/api
+      dockerfile: Dockerfile
     env_file:
-      - api/.env
+      - src/api/.env
     depends_on:
       - database
     networks:
@@ -26,7 +29,7 @@ services:
     restart: on-failure:1
     container_name: frontend
     build:
-      context: web
+      context: src/web
     env_file:
       - web/.env
     depends_on:
