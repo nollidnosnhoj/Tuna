@@ -2,6 +2,8 @@
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Extensions;
+using Audiochan.Core.Common.Helpers;
 using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Interfaces;
 using Microsoft.Extensions.Options;
@@ -11,12 +13,12 @@ using SixLabors.ImageSharp.Processing;
 
 namespace Audiochan.Infrastructure.Shared
 {
-    internal class ImageProcessingService : IImageProcessingService
+    internal class ImageUploadService : IImageUploadService
     {
         private readonly IStorageService _storageService;
         private readonly MediaStorageSettings _storageSettings;
 
-        public ImageProcessingService(IStorageService storageService, IOptions<MediaStorageSettings> storageSettings)
+        public ImageUploadService(IStorageService storageService, IOptions<MediaStorageSettings> storageSettings)
         {
             _storageService = storageService;
             _storageSettings = storageSettings.Value;
@@ -25,7 +27,7 @@ namespace Audiochan.Infrastructure.Shared
         public async Task UploadImage(string data, string container, string blobName,
             CancellationToken cancellationToken = default)
         {
-            var bytes = FromBase64StringToBytes(data);
+            var bytes = EncodingHelpers.ConvertBase64ToBytes(data);
 
             using var imageContext = Image.Load(bytes);
             var resizedImage = ModifyImage(imageContext);
@@ -38,6 +40,23 @@ namespace Audiochan.Infrastructure.Shared
                 blobName: blobName,
                 metadata: null,
                 cancellationToken: cancellationToken);
+        }
+
+        public bool ValidateImageSize(string base64, int min, int max, int? minHeight = null, int? maxHeight = null)
+        {
+            var info = GetImageInfoFromBase64(base64);
+            return info.Width >= min
+                   && info.Width <= max
+                   && info.Height >= (minHeight ?? min)
+                   && info.Height <= (maxHeight ?? max);
+        }
+
+        private static IImageInfo GetImageInfoFromBase64(string base64)
+        {
+            var bytes = EncodingHelpers.ConvertBase64ToBytes(base64);
+            var imageInfo = Image.Identify(bytes);
+            if (imageInfo is null) throw new Exception("Image Info detector not suitable for image.");
+            return imageInfo;
         }
 
         private static async Task<MemoryStream> SaveImageAsJpeg(Image imageContext,
@@ -55,16 +74,6 @@ namespace Audiochan.Infrastructure.Shared
             // Resize to 500x500
             var resizedImage = imageContext.Clone(x => x.Resize(500, 500));
             return resizedImage;
-        }
-
-        private static byte[] FromBase64StringToBytes(string data)
-        {
-            // Parse the base64 data
-            if (data.Contains("base64"))
-                data = data.Split("base64")[1].Trim(',');
-
-            var bytes = Convert.FromBase64String(data);
-            return bytes;
         }
     }
 }

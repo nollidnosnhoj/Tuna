@@ -19,7 +19,7 @@ namespace Audiochan.Infrastructure
             return services
                 .ConfigureCaching(configuration, environment)
                 .ConfigureStorageService()
-                .AddTransient<IImageProcessingService, ImageProcessingService>()
+                .AddTransient<IImageUploadService, ImageUploadService>()
                 .AddTransient<ITokenProvider, TokenProvider>()
                 .AddTransient<IDateTimeProvider, DateTimeProvider>()
                 .AddTransient<INanoidGenerator, NanoidGenerator>();

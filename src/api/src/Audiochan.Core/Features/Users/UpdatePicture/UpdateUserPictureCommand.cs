@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Constants;
+using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Entities;
@@ -11,9 +12,9 @@ using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Users.UpdatePicture
 {
-    public record UpdateUserPictureCommand : IRequest<Result<ImageUploadResponse>>
+    public record UpdateUserPictureCommand : IImageData, IRequest<Result<ImageUploadResponse>>
     {
-        public string UserId { get; set; } = string.Empty;
+        public string UserId { get; init; } = string.Empty;
         public string Data { get; init; } = null!;
 
         public static UpdateUserPictureCommand FromRequest(string userId, ImageUploadRequest request) => new()
@@ -26,21 +27,21 @@ namespace Audiochan.Core.Features.Users.UpdatePicture
     public class UpdateUserPictureCommandHandler : IRequestHandler<UpdateUserPictureCommand, Result<ImageUploadResponse>>
     {
         private readonly MediaStorageSettings _storageSettings;
-        private readonly IImageProcessingService _imageProcessingService;
+        private readonly IImageUploadService _imageUploadService;
         private readonly IStorageService _storageService;
         private readonly IDateTimeProvider _dateTimeProvider;
         private readonly string _currentUserId;
         private readonly ApplicationDbContext _unitOfWork;
 
         public UpdateUserPictureCommandHandler(IOptions<MediaStorageSettings> options,
-            IImageProcessingService imageProcessingService,
+            IImageUploadService imageUploadService,
             IStorageService storageService,
             IDateTimeProvider dateTimeProvider, 
             ICurrentUserService currentUserService, 
             ApplicationDbContext unitOfWork)
         {
             _storageSettings = options.Value;
-            _imageProcessingService = imageProcessingService;
+            _imageUploadService = imageUploadService;
             _storageService = storageService;
             _dateTimeProvider = dateTimeProvider;
             _currentUserId = currentUserService.GetUserId();
@@ -60,7 +61,7 @@ namespace Audiochan.Core.Features.Users.UpdatePicture
         
             var blobName = $"{user.Id}/{_dateTimeProvider.Now:yyyyMMddHHmmss}.jpg";
             
-            await _imageProcessingService.UploadImage(command.Data, container, blobName, cancellationToken);
+            await _imageUploadService.UploadImage(command.Data, container, blobName, cancellationToken);
 
             if (!string.IsNullOrEmpty(user.PictureBlobName))
                 await _storageService.RemoveAsync(_storageSettings.Audio.Bucket, container, user.PictureBlobName,

@@ -2,22 +2,24 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Constants;
+using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Interfaces;
 using Audiochan.Core.Persistence;
+using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Audios.UpdatePicture
 {
-    public class UpdateAudioPictureCommand : IRequest<Result<ImageUploadResponse>>
+    public record UpdateAudioPictureCommand : IImageData, IRequest<Result<ImageUploadResponse>>
     {
-        public Guid AudioId { get; set; }
-        public string Data { get; set; } = string.Empty;
+        public Guid AudioId { get; init; }
+        public string Data { get; init; } = string.Empty;
     }
 
     public class UpdateAudioCommandHandler : IRequestHandler<UpdateAudioPictureCommand, Result<ImageUploadResponse>>
@@ -26,14 +28,14 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
         private readonly IDateTimeProvider _dateTimeProvider;
         private readonly IStorageService _storageService;
         private readonly ICurrentUserService _currentUserService;
-        private readonly IImageProcessingService _imageProcessingService;
+        private readonly IImageUploadService _imageUploadService;
         private readonly ICacheService _cacheService;
         private readonly ApplicationDbContext _dbContext;
 
         public UpdateAudioCommandHandler(IOptions<MediaStorageSettings> options,
             IStorageService storageService,
             ICurrentUserService currentUserService,
-            IImageProcessingService imageProcessingService,
+            IImageUploadService imageUploadService,
             IDateTimeProvider dateTimeProvider, 
             ICacheService cacheService, 
             ApplicationDbContext dbContext)
@@ -41,7 +43,7 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
             _storageSettings = options.Value;
             _storageService = storageService;
             _currentUserService = currentUserService;
-            _imageProcessingService = imageProcessingService;
+            _imageUploadService = imageUploadService;
             _dateTimeProvider = dateTimeProvider;
             _cacheService = cacheService;
             _dbContext = dbContext;
@@ -68,7 +70,7 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
             
             var blobName = $"{audio.Id}/{_dateTimeProvider.Now:yyyyMMddHHmmss}.jpg";
 
-            await _imageProcessingService.UploadImage(command.Data, container, blobName, cancellationToken);
+            await _imageUploadService.UploadImage(command.Data, container, blobName, cancellationToken);
 
             if (!string.IsNullOrEmpty(audio.Picture))
                 await _storageService.RemoveAsync(_storageSettings.Image.Bucket, container, audio.Picture,

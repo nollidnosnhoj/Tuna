@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Constants;
+using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Entities;
@@ -13,7 +14,7 @@ using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Playlists.UpdatePlaylistPicture
 {
-    public record UpdatePlaylistPictureCommand : IRequest<Result<ImageUploadResponse>>
+    public record UpdatePlaylistPictureCommand : IImageData, IRequest<Result<ImageUploadResponse>>
     {
         public Guid Id { get; init; }
         public string Data { get; init; } = null!;
@@ -32,20 +33,20 @@ namespace Audiochan.Core.Features.Playlists.UpdatePlaylistPicture
         private readonly MediaStorageSettings _storageSettings;
         private readonly IDateTimeProvider _dateTimeProvider;
         private readonly IStorageService _storageService;
-        private readonly IImageProcessingService _imageProcessingService;
+        private readonly IImageUploadService _imageUploadService;
         private readonly ApplicationDbContext _unitOfWork;
         private readonly ICacheService _cacheService;
 
         public UpdatePlaylistPictureCommandHandler(IOptions<MediaStorageSettings> options,
             IStorageService storageService,
-            IImageProcessingService imageProcessingService,
+            IImageUploadService imageUploadService,
             IDateTimeProvider dateTimeProvider, 
             ApplicationDbContext unitOfWork, 
             ICacheService cacheService, ICurrentUserService currentUserService)
         {
             _storageSettings = options.Value;
             _storageService = storageService;
-            _imageProcessingService = imageProcessingService;
+            _imageUploadService = imageUploadService;
             _dateTimeProvider = dateTimeProvider;
             _unitOfWork = unitOfWork;
             _cacheService = cacheService;
@@ -68,7 +69,7 @@ namespace Audiochan.Core.Features.Playlists.UpdatePlaylistPicture
             
             var blobName = $"{playlist.Id}/{_dateTimeProvider.Now:yyyyMMddHHmmss}.jpg";
             
-            await _imageProcessingService.UploadImage(request.Data, container, blobName, cancellationToken);
+            await _imageUploadService.UploadImage(request.Data, container, blobName, cancellationToken);
 
             if (!string.IsNullOrEmpty(playlist.Picture))
                 await _storageService.RemoveAsync(_storageSettings.Image.Bucket, container, playlist.Picture,
