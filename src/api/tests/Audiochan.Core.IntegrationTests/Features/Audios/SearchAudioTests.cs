@@ -12,14 +12,10 @@ using Xunit;
 
 namespace Audiochan.Core.IntegrationTests.Features.Audios
 {
-    [Collection(nameof(SliceFixture))]
-    public class SearchAudioTests
+    public class SearchAudioTests : TestBase
     {
-        private readonly SliceFixture _fixture;
-
-        public SearchAudioTests(SliceFixture fixture)
+        public SearchAudioTests(TestFixture fixture) : base(fixture)
         {
-            _fixture = fixture;
         }
 
         [Fact]
@@ -34,7 +30,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
 
 
             // create posts
-            var (ownerId, _) = await _fixture.RunAsAdministratorAsync();
+            var (ownerId, _) = await RunAsAdministratorAsync();
 
             var audioFaker = new AudioFaker(ownerId)
                 .RuleFor(x => x.Visibility, _ => Visibility.Public)
@@ -45,7 +41,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
 
             var audio = audioFaker.Generate();
 
-            await _fixture.InsertAsync(audio);
+            Insert(audio);
 
             // Act
             var request = new SearchAudiosQuery
@@ -54,7 +50,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
                 Tags = $"{tags[0]},{tags[1]}"
             };
 
-            var results = await _fixture.SendAsync(request);
+            var results = await SendAsync(request);
 
             //Assert 
             results.Should().NotBeNull();

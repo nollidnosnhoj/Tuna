@@ -10,14 +10,10 @@ using Xunit;
 
 namespace Audiochan.Core.IntegrationTests.Features.Auth
 {
-    [Collection(nameof(SliceFixture))]
-    public class LoginTests
+    public class LoginTests : TestBase
     {
-        private readonly SliceFixture _fixture;
-
-        public LoginTests(SliceFixture fixture)
+        public LoginTests(TestFixture fixture) : base(fixture)
         {
-            _fixture = fixture;
         }
 
         [Fact]
@@ -27,17 +23,17 @@ namespace Audiochan.Core.IntegrationTests.Features.Auth
             var faker = new Faker();
             var username = faker.Random.String2(15);
             var password = faker.Internet.Password();
-            var (userId, _) = await _fixture.RunAsUserAsync(username, password);
+            var (userId, _) = await RunAsUserAsync(username, password);
             
             // Act
-            var loginResult = await _fixture.SendAsync(new LoginCommand
+            var loginResult = await SendAsync(new LoginCommand
             {
                 Login = username,
                 Password = password
             });
 
             // Assert
-            var userRefreshTokens = await GetUserRefreshTokens(userId);
+            var userRefreshTokens = GetUserRefreshTokens(userId);
             
             loginResult.IsSuccess.Should().Be(true);
             loginResult.Data.Should().NotBeNull();
@@ -45,16 +41,16 @@ namespace Audiochan.Core.IntegrationTests.Features.Auth
             userRefreshTokens.Should().Contain(x => x.Token == loginResult.Data!.RefreshToken);
         }
 
-        private async Task<List<RefreshToken>> GetUserRefreshTokens(string userId)
+        private List<RefreshToken> GetUserRefreshTokens(string userId)
         {
-            return await _fixture.ExecuteDbContextAsync(dbContext =>
+            return ExecuteDbContext(dbContext =>
             {
                 return dbContext.Users
                     .AsNoTracking()
                     .Include(u => u.RefreshTokens)
                     .Where(u => u.Id == userId)
                     .SelectMany(u => u.RefreshTokens)
-                    .ToListAsync();
+                    .ToList();
             });
         }
     }

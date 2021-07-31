@@ -10,24 +10,20 @@ using Xunit;
 
 namespace Audiochan.Core.IntegrationTests.Features.Playlists
 {
-    [Collection(nameof(SliceFixture))]
-    public class GetPlaylistAudiosTests
+    public class GetPlaylistAudiosTests : TestBase
     {
-        private readonly SliceFixture _sliceFixture;
-
-        public GetPlaylistAudiosTests(SliceFixture sliceFixture)
+        public GetPlaylistAudiosTests(TestFixture testFixture) : base(testFixture)
         {
-            _sliceFixture = sliceFixture;
         }
 
         [Fact]
         public async Task ShouldSuccessfullyFetchPlaylistAudios()
         {
-            var (userId, _) = await _sliceFixture.RunAsDefaultUserAsync();
+            var (userId, _) = await RunAsDefaultUserAsync();
             var audioFaker = new AudioFaker(userId);
             var playlistFaker = new PlaylistFaker(userId);
             var audios = audioFaker.Generate(5);
-            await _sliceFixture.InsertRangeAsync(audios);
+            InsertRange(audios);
             var playlist = playlistFaker.Generate();
             foreach (var audio in audios)
             {
@@ -37,9 +33,9 @@ namespace Audiochan.Core.IntegrationTests.Features.Playlists
                 });
             }
 
-            await _sliceFixture.InsertAsync(playlist);
+            Insert(playlist);
 
-            var response = await _sliceFixture.SendAsync(new GetPlaylistAudiosQuery(playlist.Id));
+            var response = await SendAsync(new GetPlaylistAudiosQuery(playlist.Id));
 
             response.Should().NotBeNull();
             response.Count.Should().Be(audios.Count);

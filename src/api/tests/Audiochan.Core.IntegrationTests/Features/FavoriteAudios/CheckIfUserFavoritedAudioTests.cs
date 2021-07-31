@@ -9,15 +9,12 @@ using Xunit;
 
 namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
 {
-    [Collection(nameof(SliceFixture))]
-    public class CheckIfUserFavoritedAudioTests
+    public class CheckIfUserFavoritedAudioTests : TestBase
     {
-        private readonly SliceFixture _sliceFixture;
         private readonly Faker _faker;
 
-        public CheckIfUserFavoritedAudioTests(SliceFixture sliceFixture)
+        public CheckIfUserFavoritedAudioTests(TestFixture testFixture) : base(testFixture)
         {
-            _sliceFixture = sliceFixture;
             _faker = new Faker();
         }
 
@@ -25,10 +22,10 @@ namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
         public async Task ShouldReturnTrue_WhenUserFavoritedAudio()
         {
             // Assign
-            var (targetId, _) = await _sliceFixture.RunAsAdministratorAsync();
+            var (targetId, _) = await RunAsAdministratorAsync();
             var audio = new AudioFaker(targetId).Generate();
-            await _sliceFixture.InsertAsync(audio);
-            var (observerId, _) = await _sliceFixture.RunAsUserAsync(
+            Insert(audio);
+            var (observerId, _) = await RunAsUserAsync(
                 _faker.Random.String2(15), 
                 _faker.Internet.Password(), 
                 Array.Empty<string>());
@@ -38,10 +35,10 @@ namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
                 UserId = observerId,
                 FavoriteDate = DateTime.Now
             };
-            await _sliceFixture.InsertAsync(favoriteAudio);
+            Insert(favoriteAudio);
 
             // Act
-            var isFavorited = await _sliceFixture.SendAsync(new CheckIfAudioFavoritedQuery(audio.Id, observerId));
+            var isFavorited = await SendAsync(new CheckIfAudioFavoritedQuery(audio.Id, observerId));
 
             // Assert
             isFavorited.Should().BeTrue();
@@ -51,16 +48,16 @@ namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
         public async Task ShouldReturnFalse_WhenUserDidNotFavorite()
         {
             // Assign
-            var (targetId, _) = await _sliceFixture.RunAsAdministratorAsync();
+            var (targetId, _) = await RunAsAdministratorAsync();
             var audio = new AudioFaker(targetId).Generate();
-            await _sliceFixture.InsertAsync(audio);
-            var (observerId, _) = await _sliceFixture.RunAsUserAsync(
+            Insert(audio);
+            var (observerId, _) = await RunAsUserAsync(
                 _faker.Random.String2(15), 
                 _faker.Internet.Password(), 
                 Array.Empty<string>());
 
             // Act
-            var isFavorited = await _sliceFixture.SendAsync(new CheckIfAudioFavoritedQuery(audio.Id, observerId));
+            var isFavorited = await SendAsync(new CheckIfAudioFavoritedQuery(audio.Id, observerId));
 
             // Assert
             isFavorited.Should().BeFalse();
@@ -70,10 +67,10 @@ namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
         public async Task ShouldReturnFalse_WhenUserUnfavorited()
         {
             // Assign
-            var (targetId, _) = await _sliceFixture.RunAsAdministratorAsync();
+            var (targetId, _) = await RunAsAdministratorAsync();
             var audio = new AudioFaker(targetId).Generate();
-            await _sliceFixture.InsertAsync(audio);
-            var (observerId, _) = await _sliceFixture.RunAsUserAsync(
+            Insert(audio);
+            var (observerId, _) = await RunAsUserAsync(
                 _faker.Random.String2(15), 
                 _faker.Internet.Password(), 
                 Array.Empty<string>());
@@ -85,10 +82,10 @@ namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
                 FavoriteDate = now.AddDays(-1),
                 UnfavoriteDate = now
             };
-            await _sliceFixture.InsertAsync(favoriteAudio);
+            Insert(favoriteAudio);
 
             // Act
-            var isFavorited = await _sliceFixture.SendAsync(new CheckIfAudioFavoritedQuery(audio.Id, observerId));
+            var isFavorited = await SendAsync(new CheckIfAudioFavoritedQuery(audio.Id, observerId));
 
             // Assert
             isFavorited.Should().BeFalse();

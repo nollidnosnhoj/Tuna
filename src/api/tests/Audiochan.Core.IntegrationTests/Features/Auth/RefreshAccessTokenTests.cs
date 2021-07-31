@@ -12,14 +12,10 @@ using Xunit;
 
 namespace Audiochan.Core.IntegrationTests.Features.Auth
 {
-    [Collection(nameof(SliceFixture))]
-    public class RefreshAccessTokenTests
+    public class RefreshAccessTokenTests : TestBase
     {
-        private readonly SliceFixture _fixture;
-
-        public RefreshAccessTokenTests(SliceFixture fixture)
+        public RefreshAccessTokenTests(TestFixture fixture) : base(fixture)
         {
-            _fixture = fixture;
         }
 
         [Fact]
@@ -29,24 +25,24 @@ namespace Audiochan.Core.IntegrationTests.Features.Auth
             var faker = new Faker();
             var username = faker.Random.String2(15);
             var password = faker.Internet.Password();
-            var (userId, _) = await _fixture.RunAsUserAsync(username, password, Array.Empty<string>());
+            var (userId, _) = await RunAsUserAsync(username, password, Array.Empty<string>());
             
             // Act
             // 1. User logins into account. Receives access and refresh token.
             // 2. In the real world, the access token will expire. Once it expires, then the client needs
             //      to call the refresh token endpoint to get a new access token.
-            var loginResult = await _fixture.SendAsync(new LoginCommand
+            var loginResult = await SendAsync(new LoginCommand
             {
                 Login = username,
                 Password = password
             });
-            var refreshResult = await _fixture.SendAsync(new RefreshTokenCommand
+            var refreshResult = await SendAsync(new RefreshTokenCommand
             {
                 RefreshToken = loginResult.Data!.RefreshToken
             });
 
             // Assert
-            var userRefreshTokens = await GetUserRefreshTokens(userId);
+            var userRefreshTokens = GetUserRefreshTokens(userId);
             refreshResult.IsSuccess.Should().Be(true);
             refreshResult.Data.Should().NotBeNull();
             userRefreshTokens.Count.Should().BeGreaterThan(0);
@@ -54,16 +50,16 @@ namespace Audiochan.Core.IntegrationTests.Features.Auth
             userRefreshTokens.Should().NotContain(x => x.Token == loginResult.Data.RefreshToken);
         }
         
-        private async Task<List<RefreshToken>> GetUserRefreshTokens(string userId)
+        private List<RefreshToken> GetUserRefreshTokens(string userId)
         {
-            return await _fixture.ExecuteDbContextAsync(dbContext =>
+            return ExecuteDbContext(dbContext =>
             {
                 return dbContext.Users
                     .AsNoTracking()
                     .Include(u => u.RefreshTokens)
                     .Where(u => u.Id == userId)
                     .SelectMany(u => u.RefreshTokens)
-                    .ToListAsync();
+                    .ToList();
             });
         }
     }

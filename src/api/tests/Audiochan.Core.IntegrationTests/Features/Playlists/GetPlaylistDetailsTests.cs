@@ -10,25 +10,21 @@ using Xunit;
 
 namespace Audiochan.Core.IntegrationTests.Features.Playlists
 {
-    [Collection(nameof(SliceFixture))]
-    public class GetPlaylistDetailsTests
+    public class GetPlaylistDetailsTests : TestBase
     {
-        private readonly SliceFixture _sliceFixture;
-
-        public GetPlaylistDetailsTests(SliceFixture sliceFixture)
+        public GetPlaylistDetailsTests(TestFixture testFixture) : base(testFixture)
         {
-            _sliceFixture = sliceFixture;
         }
 
         [Fact]
         public async Task ShouldSuccessfullyFetchPlaylist()
         {
-            var (userId, _) = await _sliceFixture.RunAsDefaultUserAsync();
+            var (userId, _) = await RunAsDefaultUserAsync();
             var audioFaker = new AudioFaker(userId);
             var audios = audioFaker.Generate(5);
             var playlist = new PlaylistFaker(userId).Generate();
-            await _sliceFixture.InsertRangeAsync(audios);
-            await _sliceFixture.InsertAsync(playlist);
+            InsertRange(audios);
+            Insert(playlist);
             var now = DateTime.UtcNow;
             var playlistAudios = audios
                 .Select((t, i) => new PlaylistAudio
@@ -37,10 +33,9 @@ namespace Audiochan.Core.IntegrationTests.Features.Playlists
                     AudioId = t.Id,
                     Added = now.AddMinutes((audios.Count - i) * -1)
                 }).ToList();
-            await _sliceFixture.InsertRangeAsync(playlistAudios);
+            InsertRange(playlistAudios);
 
-            var response = await _sliceFixture
-                .SendAsync(new GetPlaylistDetailQuery(playlist.Id, true));
+            var response = await SendAsync(new GetPlaylistDetailQuery(playlist.Id, true));
 
             response.Should().NotBeNull();
             response.Should().BeOfType<PlaylistDetailViewModel>();

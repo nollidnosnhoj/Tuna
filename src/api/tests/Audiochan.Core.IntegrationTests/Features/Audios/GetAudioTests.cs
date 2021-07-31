@@ -10,27 +10,23 @@ using Xunit;
 
 namespace Audiochan.Core.IntegrationTests.Features.Audios
 {
-    [Collection(nameof(SliceFixture))]
-    public class GetAudioTests
+    public class GetAudioTests : TestBase
     {
-        private readonly SliceFixture _fixture;
-
-        public GetAudioTests(SliceFixture fixture)
+        public GetAudioTests(TestFixture fixture) : base(fixture)
         {
-            _fixture = fixture;
         }
         
         [Fact]
         public async Task ShouldNotGetAudio_WhenAudioIdIsInvalid()
         {
             // Assign
-            var (ownerId, _) = await _fixture.RunAsDefaultUserAsync();
+            var (ownerId, _) = await RunAsDefaultUserAsync();
             var audio = new AudioFaker(ownerId).Generate();
             
-            await _fixture.InsertAsync(audio);
+            Insert(audio);
 
             // Act
-            var result = await _fixture.SendAsync(new GetAudioQuery(Guid.Empty));
+            var result = await SendAsync(new GetAudioQuery(Guid.Empty));
 
             // Assert
             result.Should().BeNull();
@@ -40,14 +36,14 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
         public async Task ShouldGetAudio_WhenCreatorViews()
         {
             // Assign
-            var (userId, _) = await _fixture.RunAsDefaultUserAsync();
+            var (userId, _) = await RunAsDefaultUserAsync();
 
             var audio = new AudioFaker(userId).Generate();
             
-            await _fixture.InsertAsync(audio);
+            Insert(audio);
 
             // Act
-            var result = await _fixture.SendAsync(new GetAudioQuery(audio.Id));
+            var result = await SendAsync(new GetAudioQuery(audio.Id));
 
             // Assert
             result.Should().NotBeNull();
@@ -58,16 +54,16 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
         public async Task ShouldSuccessfullyGetAudio()
         {
             // Assign
-            var (userId, _) = await _fixture.RunAsAdministratorAsync();
+            var (userId, _) = await RunAsAdministratorAsync();
 
             var audio = new AudioFaker(userId).Generate();
             audio.Visibility = Visibility.Public;
-            await _fixture.InsertAsync(audio);
+            Insert(audio);
 
-            await _fixture.RunAsDefaultUserAsync();
+            await RunAsDefaultUserAsync();
 
             // Act
-            var result = await _fixture.SendAsync(new GetAudioQuery(audio.Id));
+            var result = await SendAsync(new GetAudioQuery(audio.Id));
 
             // Assert
             result.Should().NotBeNull();
@@ -91,14 +87,14 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
         public async Task ShouldCacheSuccessfully()
         {
             // Assign
-            var (userId, _) = await _fixture.RunAsAdministratorAsync();
+            var (userId, _) = await RunAsAdministratorAsync();
 
             var audio = new AudioFaker(userId).Generate();
-            await _fixture.InsertAsync(audio);
-            var result = await _fixture.SendAsync(new GetAudioQuery(audio.Id));
+            Insert(audio);
+            var result = await SendAsync(new GetAudioQuery(audio.Id));
 
             // Act
-            var (cacheExists, cacheResult) = await _fixture.GetCache<AudioViewModel>(CacheKeys.Audio.GetAudio(audio.Id));
+            var (cacheExists, cacheResult) = await GetCache<AudioViewModel>(CacheKeys.Audio.GetAudio(audio.Id));
             
             // Assert
             cacheExists.Should().BeTrue();

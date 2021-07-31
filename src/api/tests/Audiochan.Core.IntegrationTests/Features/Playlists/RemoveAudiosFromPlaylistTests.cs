@@ -8,31 +8,26 @@ using Audiochan.Core.Features.Playlists.RemoveAudiosFromPlaylist;
 using Audiochan.Tests.Common.Fakers.Audios;
 using Audiochan.Tests.Common.Fakers.Playlists;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
 using Xunit;
 
 namespace Audiochan.Core.IntegrationTests.Features.Playlists
 {
-    [Collection(nameof(SliceFixture))]
-    public class RemoveAudiosFromPlaylistTests
+    public class RemoveAudiosFromPlaylistTests : TestBase
     {
-        private readonly SliceFixture _sliceFixture;
-
-        public RemoveAudiosFromPlaylistTests(SliceFixture sliceFixture)
+        public RemoveAudiosFromPlaylistTests(TestFixture testFixture) : base(testFixture)
         {
-            _sliceFixture = sliceFixture;
         }
 
         [Fact]
         public async Task ShouldSuccessfullyRemoveAudiosFromPlaylist()
         {
-            var (userId, _) = await _sliceFixture.RunAsDefaultUserAsync();
+            var (userId, _) = await RunAsDefaultUserAsync();
             var playlist = new PlaylistFaker(userId).Generate();
-            await _sliceFixture.InsertAsync(playlist);
+            Insert(playlist);
             var audios = new AudioFaker(userId)
                 .SetFixedVisibility(Visibility.Public)
                 .Generate(5);
-            await _sliceFixture.InsertRangeAsync(audios);
+            InsertRange(audios);
             var playlistAudios = audios
                 .Select(a => new PlaylistAudio
                 {
@@ -40,15 +35,17 @@ namespace Audiochan.Core.IntegrationTests.Features.Playlists
                     PlaylistId = playlist.Id,
                     Added = DateTime.UtcNow
                 }).ToList();
-            await _sliceFixture.InsertRangeAsync(playlistAudios);
+            InsertRange(playlistAudios);
 
-            var result = await _sliceFixture.SendAsync(new RemoveAudiosFromPlaylistCommand(
+            var result = await SendAsync(new RemoveAudiosFromPlaylistCommand(
                 playlist.Id, 
                 audios.Select(a => a.Id).ToList()));
 
-            var newAudios = await _sliceFixture.ExecuteDbContextAsync(db =>
+            var newAudios = ExecuteDbContext(db =>
             {
-                return db.PlaylistAudios.Where(pa => pa.PlaylistId == playlist.Id).ToListAsync();
+                return db.PlaylistAudios
+                    .Where(pa => pa.PlaylistId == playlist.Id)
+                    .ToList();
             });
 
             result.IsSuccess.Should().BeTrue();
@@ -58,13 +55,13 @@ namespace Audiochan.Core.IntegrationTests.Features.Playlists
         [Fact]
         public async Task ShouldFail_WhenPlaylistDoesNotBelongToUser()
         {
-            var (userId, _) = await _sliceFixture.RunAsDefaultUserAsync();
+            var (userId, _) = await RunAsDefaultUserAsync();
             var playlist = new PlaylistFaker(userId).Generate();
-            await _sliceFixture.InsertAsync(playlist);
+            Insert(playlist);
             var audios = new AudioFaker(userId)
                 .SetFixedVisibility(Visibility.Public)
                 .Generate(5);
-            await _sliceFixture.InsertRangeAsync(audios);
+            InsertRange(audios);
             var audioIds = audios.Select(a => a.Id).ToList();
             var playlistAudios = audioIds
                 .Select(a => new PlaylistAudio
@@ -73,10 +70,10 @@ namespace Audiochan.Core.IntegrationTests.Features.Playlists
                     PlaylistId = playlist.Id,
                     Added = DateTime.UtcNow
                 }).ToList();
-            await _sliceFixture.InsertRangeAsync(playlistAudios);
+            InsertRange(playlistAudios);
 
-            await _sliceFixture.RunAsUserAsync("testuser");
-            var result = await _sliceFixture.SendAsync(new RemoveAudiosFromPlaylistCommand(playlist.Id, audioIds));
+            await RunAsUserAsync("testuser");
+            var result = await SendAsync(new RemoveAudiosFromPlaylistCommand(playlist.Id, audioIds));
 
             result.IsSuccess.Should().BeFalse();
             result.ErrorCode.Should().Be(ResultError.Forbidden);

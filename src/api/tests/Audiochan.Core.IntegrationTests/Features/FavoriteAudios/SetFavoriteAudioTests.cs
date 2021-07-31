@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Features.FavoriteAudios.SetFavoriteAudio;
@@ -10,15 +11,12 @@ using Xunit;
 
 namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
 {
-    [Collection(nameof(SliceFixture))]
-    public class SetFavoriteAudioTests
+    public class SetFavoriteAudioTests : TestBase
     {
-        private readonly SliceFixture _sliceFixture;
         private readonly Faker _faker;
 
-        public SetFavoriteAudioTests(SliceFixture sliceFixture)
+        public SetFavoriteAudioTests(TestFixture testFixture) : base(testFixture)
         {
-            _sliceFixture = sliceFixture;
             _faker = new Faker();
         }
         
@@ -26,28 +24,29 @@ namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
         public async Task AddFavoriteTest()
         {
             // Assign
-            var (targetId, _) = await _sliceFixture.RunAsDefaultUserAsync();
-            var (observerId, _) = await _sliceFixture.RunAsUserAsync(
+            var (targetId, _) = await RunAsDefaultUserAsync();
+            var (observerId, _) = await RunAsUserAsync(
                     _faker.Random.String2(15), 
                     _faker.Internet.Password(), 
                     Array.Empty<string>());
 
             var audio = new AudioFaker(targetId).Generate();
-            await _sliceFixture.InsertAsync(audio);
+            Insert(audio);
 
             // Act
-            await _sliceFixture.SendAsync(new SetFavoriteAudioCommand(audio.Id, observerId, true));
+            await SendAsync(new SetFavoriteAudioCommand(audio.Id, observerId, true));
 
-            var refetchAudio = await _sliceFixture.ExecuteDbContextAsync(database =>
+            var refetchAudio = ExecuteDbContext(database =>
             {
                 return database.Audios
                     .AsNoTracking()
                     .Include(u => u.Favorited)
-                    .SingleOrDefaultAsync(a => a.Id == audio.Id);
+                    .SingleOrDefault(a => a.Id == audio.Id);
             });
 
             // Assert
-            refetchAudio.Favorited.Should().NotBeEmpty();
+            refetchAudio.Should().NotBeNull();
+            refetchAudio!.Favorited.Should().NotBeEmpty();
             refetchAudio.Favorited.Should().Contain(x => x.UserId == observerId && x.AudioId == audio.Id);
         }
 
@@ -55,14 +54,14 @@ namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
         public async Task ShouldSuccessfullyUnfavoriteAudio()
         {
             // Assign
-            var (targetId, _) = await _sliceFixture.RunAsDefaultUserAsync();
-            var (observerId, _) = await _sliceFixture.RunAsUserAsync(
+            var (targetId, _) = await RunAsDefaultUserAsync();
+            var (observerId, _) = await RunAsUserAsync(
                 _faker.Random.String2(15), 
                 _faker.Internet.Password(), 
                 Array.Empty<string>());
             
             var audio = new AudioFaker(targetId).Generate();
-            await _sliceFixture.InsertAsync(audio);
+            Insert(audio);
 
             var favoriteAudio = new FavoriteAudio
             {
@@ -70,21 +69,22 @@ namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
                 UserId = observerId,
                 FavoriteDate = DateTime.UtcNow
             };
-            await _sliceFixture.InsertAsync(favoriteAudio);
+            Insert(favoriteAudio);
 
             // Act
-            await _sliceFixture.SendAsync(new SetFavoriteAudioCommand(audio.Id, observerId, false));
+            await SendAsync(new SetFavoriteAudioCommand(audio.Id, observerId, false));
 
-            var refetchAudio = await _sliceFixture.ExecuteDbContextAsync(database =>
+            var refetchAudio = ExecuteDbContext(database =>
             {
                 return database.Audios
                     .AsNoTracking()
                     .Include(u => u.Favorited)
-                    .SingleOrDefaultAsync(a => a.Id == audio.Id);
+                    .SingleOrDefault(a => a.Id == audio.Id);
             });
 
             // Assert
-            refetchAudio.Favorited.Should().BeEmpty();
+            refetchAudio.Should().NotBeNull();
+            refetchAudio!.Favorited.Should().BeEmpty();
         }
     }
 }

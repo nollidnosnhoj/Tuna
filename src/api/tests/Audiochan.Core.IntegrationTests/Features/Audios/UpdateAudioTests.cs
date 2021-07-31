@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Constants;
 using Audiochan.Core.Common.Models;
@@ -10,33 +11,30 @@ using Xunit;
 
 namespace Audiochan.Core.IntegrationTests.Features.Audios
 {
-    [Collection(nameof(SliceFixture))]
-    public class UpdateAudioTests
+    public class UpdateAudioTests : TestBase
     {
-        private readonly SliceFixture _fixture;
-
-        public UpdateAudioTests(SliceFixture fixture)
+        public UpdateAudioTests(TestFixture fixture) : base(fixture)
         {
-            _fixture = fixture;
         }
 
         [Fact]
         public async Task ShouldNotUpdate_WhenUserCannotModify()
         {
             // Assign
-            var (ownerId, _) = await _fixture
-                .RunAsUserAsync("kopacetic", Guid.NewGuid().ToString(), Array.Empty<string>());
+            var (ownerId, _) = await RunAsUserAsync("kopacetic", 
+                Guid.NewGuid().ToString(), 
+                Array.Empty<string>());
 
             var audio = new AudioFaker(ownerId).Generate();
 
-            await _fixture.InsertAsync(audio);
+            Insert(audio);
 
             // Act
-            await _fixture.RunAsDefaultUserAsync();
+            await RunAsDefaultUserAsync();
 
             var command = new UpdateAudioRequestFaker(audio.Id).Generate();
 
-            var result = await _fixture.SendAsync(command);
+            var result = await SendAsync(command);
 
             // Assert
             result.Should().NotBeNull();
@@ -48,29 +46,30 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
         public async Task ShouldUpdateSuccessfully()
         {
             // Assign
-            var (ownerId, _) = await _fixture
-                .RunAsUserAsync("kopacetic", Guid.NewGuid().ToString(), Array.Empty<string>());
+            var (ownerId, _) = await RunAsUserAsync("kopacetic", 
+                Guid.NewGuid().ToString(),
+                Array.Empty<string>());
 
             var audio = new AudioFaker(ownerId).Generate();
 
-            await _fixture.InsertAsync(audio);
+            Insert(audio);
             
             // Act
             var command = new UpdateAudioRequestFaker(audio.Id).Generate();
 
-            await _fixture.SendAsync(command);
+            await SendAsync(command);
 
-            var created = await _fixture.ExecuteDbContextAsync(database =>
+            var created = ExecuteDbContext(database =>
             {
                 return database.Audios
                     .Include(a => a.Tags)
                     .Include(a => a.User)
-                    .SingleOrDefaultAsync(a => a.Id == audio.Id);
+                    .SingleOrDefault(a => a.Id == audio.Id);
             });
 
             // Assert
             created.Should().NotBeNull();
-            created.Title.Should().Be(command.Title);
+            created!.Title.Should().Be(command.Title);
             created.Description.Should().Be(command.Description);
             created.Tags.Count.Should().Be(command.Tags!.Count);
         }
@@ -79,15 +78,15 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
         public async Task ShouldInvalidateCacheSuccessfully()
         {
             // Assign
-            var (userId, _) = await _fixture.RunAsDefaultUserAsync();
+            var (userId, _) = await RunAsDefaultUserAsync();
             var audio = new AudioFaker(userId).Generate();
-            await _fixture.InsertAsync(audio);
-            await _fixture.SendAsync(new GetAudioQuery(audio.Id));
+            Insert(audio);
+            await SendAsync(new GetAudioQuery(audio.Id));
             var command = new UpdateAudioRequestFaker(audio.Id).Generate();
-            await _fixture.SendAsync(command);
+            await SendAsync(command);
             
             // Act
-            var (cacheExists, _) = await _fixture.GetCache<AudioViewModel>(CacheKeys.Audio.GetAudio(audio.Id));
+            var (cacheExists, _) = await GetCache<AudioViewModel>(CacheKeys.Audio.GetAudio(audio.Id));
             
             // Assert
             cacheExists.Should().BeFalse();

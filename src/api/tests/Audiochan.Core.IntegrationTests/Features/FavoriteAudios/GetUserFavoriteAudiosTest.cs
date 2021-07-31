@@ -11,15 +11,12 @@ using Xunit;
 
 namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
 {
-    [Collection(nameof(SliceFixture))]
-    public class GetUserFavoriteAudiosTest
+    public class GetUserFavoriteAudiosTest : TestBase
     {
-        private readonly SliceFixture _sliceFixture;
         private readonly Faker _faker;
 
-        public GetUserFavoriteAudiosTest(SliceFixture sliceFixture)
+        public GetUserFavoriteAudiosTest(TestFixture testFixture) : base(testFixture)
         {
-            _sliceFixture = sliceFixture;
             _faker = new Faker();
         }
 
@@ -27,13 +24,13 @@ namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
         public async Task ShouldReturnFavoriteAudioSuccessfully()
         {
             // Assign
-            var (targetId, _) = await _sliceFixture.RunAsAdministratorAsync();
+            var (targetId, _) = await RunAsAdministratorAsync();
             var audioFaker = new AudioFaker(targetId);
             var audios = audioFaker
                 .SetFixedVisibility(Visibility.Public)
                 .Generate(3);
-            await _sliceFixture.InsertAsync(audios.ToArray());
-            var (observerId, observerUsername) = await _sliceFixture.RunAsUserAsync(
+            Insert(audios.ToArray());
+            var (observerId, observerUsername) = await RunAsUserAsync(
                 _faker.Random.String2(15), 
                 _faker.Internet.Password(), 
                 Array.Empty<string>());
@@ -49,10 +46,10 @@ namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
                 
                 favoriteAudios.Add(favoriteAudio);
             }
-            await _sliceFixture.InsertAsync(favoriteAudios.ToArray());
+            Insert(favoriteAudios.ToArray());
 
             // Act
-            var response = await _sliceFixture.SendAsync(new GetUserFavoriteAudiosQuery
+            var response = await SendAsync(new GetUserFavoriteAudiosQuery
             {
                 Username = observerUsername
             });
