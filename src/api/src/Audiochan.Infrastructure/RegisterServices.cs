@@ -16,34 +16,23 @@ namespace Audiochan.Infrastructure
             IConfiguration configuration,
             IHostEnvironment environment)
         {
-            return services
-                .ConfigureCaching(configuration, environment)
-                .ConfigureStorageService()
-                .AddTransient<IImageUploadService, ImageUploadService>()
-                .AddTransient<ITokenProvider, TokenProvider>()
-                .AddTransient<IDateTimeProvider, DateTimeProvider>()
-                .AddTransient<INanoidGenerator, NanoidGenerator>();
-        }
-
-        private static IServiceCollection ConfigureCaching(this IServiceCollection services, IConfiguration config, IHostEnvironment env)
-        {
-            if (env.IsDevelopment())
+            if (environment.IsDevelopment())
             {
                 services.AddSingleton<ICacheService, MemoryCacheService>();
             }
             else
             {
-                services.AddSingleton<IConnectionMultiplexer>(_ =>
-                    ConnectionMultiplexer.Connect("localhost"));
+                services.AddSingleton<IConnectionMultiplexer>(_ => ConnectionMultiplexer.Connect("localhost"));
                 services.AddSingleton<ICacheService, RedisCacheService>();
             }
-            return services;
-        }
-
-        private static IServiceCollection ConfigureStorageService(this IServiceCollection services)
-        {
+            
             services.AddAWSService<IAmazonS3>();
             services.AddTransient<IStorageService, AmazonS3Service>();
+            
+            services.AddTransient<IImageUploadService, ImageUploadService>();
+            services.AddTransient<ITokenProvider, TokenProvider>();
+            services.AddTransient<IDateTimeProvider, DateTimeProvider>();
+            services.AddTransient<INanoidGenerator, NanoidGenerator>();
             return services;
         }
     }
