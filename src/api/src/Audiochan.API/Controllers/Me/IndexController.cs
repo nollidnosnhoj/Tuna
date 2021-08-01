@@ -18,6 +18,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace Audiochan.API.Controllers.Me
 {
     [Area("me")]
+    [Route("[area]")]
     [Authorize]
     [ProducesResponseType(401)]
     public class MeController : ControllerBase
