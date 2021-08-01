@@ -1,12 +1,13 @@
 import React from "react";
 import { Button } from "@chakra-ui/react";
 import * as yup from "yup";
-import { useFormik } from "formik";
 import TextInput from "~/components/form-inputs/TextInput";
 import { validationMessages, errorToast } from "~/utils";
 import { passwordRule } from "../schemas";
 import request from "~/lib/http";
 import { useRouter } from "next/router";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 type UpdatePasswordValues = {
   currentPassword: string;
@@ -16,73 +17,66 @@ type UpdatePasswordValues = {
 
 export default function UpdatePassword() {
   const router = useRouter();
-  const formik = useFormik<UpdatePasswordValues>({
-    initialValues: {
-      currentPassword: "",
-      newPassword: "",
-      confirmPassword: "",
-    },
-    validationSchema: yup.object().shape({
-      currentPassword: yup
-        .string()
-        .required(validationMessages.required("Current Password")),
-      newPassword: passwordRule("New Password"),
-      confirmPassword: yup
-        .string()
-        .required()
-        .oneOf([yup.ref("newPassword")], "Password does not match."),
-    }),
-    onSubmit: async (values, { resetForm, setSubmitting }) => {
-      const { currentPassword, newPassword } = values;
-      try {
-        await request({
-          method: "patch",
-          url: "me/password",
-          data: {
-            currentPassword: currentPassword,
-            newPassword: newPassword,
-          },
-        });
-        resetForm();
-        router.push("/logout");
-      } catch (err) {
-        errorToast(err);
-      } finally {
-        setSubmitting(false);
-      }
-    },
+  const {
+    register,
+    reset,
+    formState: { isSubmitting, errors },
+    handleSubmit,
+  } = useForm<UpdatePasswordValues>({
+    resolver: yupResolver(
+      yup.object().shape({
+        currentPassword: yup
+          .string()
+          .required(validationMessages.required("Current Password")),
+        newPassword: passwordRule("New Password"),
+        confirmPassword: yup
+          .string()
+          .required()
+          .oneOf([yup.ref("newPassword")], "Password does not match."),
+      })
+    ),
   });
 
-  const { errors, values, handleSubmit, handleChange, isSubmitting } = formik;
+  const handlePasswordChange = async (values: UpdatePasswordValues) => {
+    const { currentPassword, newPassword } = values;
+    try {
+      await request({
+        method: "patch",
+        url: "me/password",
+        data: {
+          currentPassword: currentPassword,
+          newPassword: newPassword,
+        },
+      });
+      reset();
+      router.push("/logout");
+    } catch (err) {
+      errorToast(err);
+    }
+  };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit(handlePasswordChange)}>
       <TextInput
-        name="currentPassword"
-        value={values.currentPassword}
-        onChange={handleChange}
-        error={errors.currentPassword}
+        {...register("currentPassword")}
+        error={errors.currentPassword?.message}
         type="password"
         label="Current Password"
-        required
+        isRequired
       />
       <TextInput
-        name="newPassword"
+        {...register("newPassword")}
         type="password"
-        value={values.newPassword}
-        onChange={handleChange}
-        error={errors.newPassword}
+        error={errors.newPassword?.message}
         label="New Password"
-        required
+        isRequired
       />
       <TextInput
-        name="confirmPassword"
+        {...register("confirmPassword")}
         type="password"
-        value={values.confirmPassword}
-        onChange={handleChange}
-        error={errors.confirmPassword}
+        error={errors.confirmPassword?.message}
         label="Confirm Password"
-        required
+        isRequired
       />
       <Button
         type="submit"

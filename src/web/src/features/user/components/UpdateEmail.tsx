@@ -1,59 +1,60 @@
 import { Button } from "@chakra-ui/react";
 import React from "react";
 import * as yup from "yup";
-import { useFormik } from "formik";
 import TextInput from "~/components/form-inputs/TextInput";
 import { useUser } from "~/features/user/hooks";
 import { validationMessages, errorToast, toast } from "~/utils";
 import request from "~/lib/http";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 export default function UpdateEmail() {
   const { user, updateUser } = useUser();
 
-  const formik = useFormik<{ email: string }>({
-    initialValues: { email: user?.email ?? "" },
-    validationSchema: yup.object().shape({
-      email: yup
-        .string()
-        .required(validationMessages.required("Email"))
-        .email("Email is invalid"),
-    }),
-    onSubmit: async (values, { setSubmitting }) => {
-      const { email: newEmail } = values;
-      if (newEmail.trim() === user?.email) return;
-
-      try {
-        await request({
-          method: "patch",
-          url: "me/email",
-          data: { newEmail },
-        });
-        toast("success", {
-          title: "Email updated.",
-          description: "You have successfully updated your email.",
-        });
-        if (user) {
-          updateUser({ ...user, email: newEmail.trim() });
-        }
-      } catch (err) {
-        errorToast(err);
-      } finally {
-        setSubmitting(false);
-      }
-    },
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<{ email: string }>({
+    resolver: yupResolver(
+      yup.object().shape({
+        email: yup
+          .string()
+          .required(validationMessages.required("Email"))
+          .email("Email is invalid"),
+      })
+    ),
   });
 
-  const { errors, values, handleSubmit, handleChange, isSubmitting } = formik;
+  const handleEmailSubmit = async (values: { email: string }) => {
+    const { email: newEmail } = values;
+    if (newEmail.trim() === user?.email) return;
+
+    try {
+      await request({
+        method: "patch",
+        url: "me/email",
+        data: { newEmail },
+      });
+      toast("success", {
+        title: "Email updated.",
+        description: "You have successfully updated your email.",
+      });
+      if (user) {
+        updateUser({ ...user, email: newEmail.trim() });
+      }
+    } catch (err) {
+      errorToast(err);
+    }
+  };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit(handleEmailSubmit)}>
       <TextInput
-        name="email"
-        value={values.email}
-        onChange={handleChange}
-        error={errors.email}
+        {...register("email")}
+        error={errors.email?.message}
         label="Change Email"
-        required
+        isRequired
       />
       <Button
         type="submit"

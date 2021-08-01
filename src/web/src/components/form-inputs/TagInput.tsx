@@ -106,16 +106,18 @@ const TagInput: React.FC<TagInputProps> = ({
         disabled={disabled}
       />
       <FormErrorMessage>{inputError}</FormErrorMessage>
-      <Wrap marginTop={4}>
-        {tags.map((tag, idx) => (
-          <WrapItem key={idx}>
-            <Tag size="md" borderRadius="full" colorScheme="primary">
-              <TagLabel>{tag}</TagLabel>
-              <TagCloseButton onClick={() => removeTag(idx)} />
-            </Tag>
-          </WrapItem>
-        ))}
-      </Wrap>
+      {!!tags.length && (
+        <Wrap marginTop={4}>
+          {tags.map((tag, idx) => (
+            <WrapItem key={idx}>
+              <Tag size="md" borderRadius="full" colorScheme="primary">
+                <TagLabel>{tag}</TagLabel>
+                <TagCloseButton onClick={() => removeTag(idx)} />
+              </Tag>
+            </WrapItem>
+          ))}
+        </Wrap>
+      )}
     </FormControl>
   );
 };

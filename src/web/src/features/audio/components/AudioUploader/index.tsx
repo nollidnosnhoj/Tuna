@@ -1,101 +1,83 @@
-import { Box, chakra, Flex, Spinner } from "@chakra-ui/react";
-import axios from "axios";
-import { useRouter } from "next/router";
-import React, { useMemo, useState } from "react";
-import { useEffect } from "react";
-import { useCallback } from "react";
-import { useUser } from "~/features/user/hooks";
-import { useNavigationLock } from "~/lib/hooks";
-import request from "~/lib/http";
 import {
-  getDurationFromAudioFile,
-  errorToast,
-  getFilenameWithoutExtension,
-  toast,
-} from "~/utils";
+  Box,
+  Button,
+  chakra,
+  Flex,
+  Spacer,
+  Spinner,
+  Stack,
+} from "@chakra-ui/react";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useRouter } from "next/router";
+import React, { useState } from "react";
+import { useEffect } from "react";
+import { FormProvider, useForm } from "react-hook-form";
+import * as yup from "yup";
+import { useNavigationLock } from "~/lib/hooks";
+import { errorToast, toast, validationMessages } from "~/utils";
 import { useCreateAudio } from "../../hooks";
-import { AudioId, AudioRequest } from "../../types";
+import { AudioId, CreateAudioRequest, Visibility } from "../../types";
 import AudioForm from "../AudioForm";
 import AudioDropzone from "./AudioDropzone";
-import UploadProgress from "./UploadProgress";
+
+const validationSchema: yup.SchemaOf<CreateAudioRequest> = yup
+  .object({
+    title: yup
+      .string()
+      .defined()
+      .required(validationMessages.required("Title"))
+      .min(5, validationMessages.min("Title", 5))
+      .max(30, validationMessages.max("Title", 30))
+      .ensure(),
+    description: yup
+      .string()
+      .defined()
+      .max(500, validationMessages.max("Description", 500))
+      .ensure(),
+    tags: yup
+      .array()
+      .required()
+      .max(10, validationMessages.max("Tags", 10))
+      .ensure()
+      .defined(),
+    visibility: yup
+      .mixed<Visibility>()
+      .required(validationMessages.required("Visibility"))
+      .oneOf([...Object.values(Visibility)], "Visibility choice is invalid."),
+    uploadId: yup.string().required("Audio file has not been uploaded."),
+    fileName: yup.string().required(),
+    fileSize: yup.number().required().min(0),
+    duration: yup.number().required().min(0),
+  })
+  .defined();
 
 export default function AudioUploader() {
   const router = useRouter();
-  const { user } = useUser();
   const [audioId, setAudioId] = useState<AudioId>("");
-  const [uploadId, setUploadId] = useState("");
-  const [file, setFile] = useState<File | null>(null);
-  const [duration, setDuration] = useState(0);
-  const [uploadProgress, setUploadProgress] = useState(0);
   const { mutateAsync: createAudio, isLoading: isCreatingAudio } =
     useCreateAudio();
+  const formMethods = useForm<CreateAudioRequest>({
+    defaultValues: {
+      tags: [],
+    },
+    resolver: yupResolver(validationSchema),
+  });
+  const { handleSubmit } = formMethods;
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [unsavedChanges, setUnsavedChanges] = useNavigationLock(
     "Are you sure you want to leave page? You will lose progress."
   );
 
-  const initialFormValues = useMemo(
-    () => ({
-      title: getFilenameWithoutExtension(file?.name || "").slice(0, 30),
-    }),
-    [file?.name]
-  );
-
-  const onFileDrop = async (droppedFile: File) => {
+  const handleFormSubmit = async (values: CreateAudioRequest) => {
     try {
-      const duration = await getDurationFromAudioFile(droppedFile);
-      setDuration(duration);
-      setFile(droppedFile);
-      setUnsavedChanges(true);
-      const { data: response } = await request<{
-        uploadId: string;
-        uploadUrl: string;
-      }>({
-        method: "post",
-        url: "upload",
-        data: {
-          fileName: droppedFile.name,
-          fileSize: droppedFile.size,
-        },
-      });
-      await axios.put(response.uploadUrl, droppedFile, {
-        headers: {
-          "Content-Type": droppedFile.type,
-          "x-amz-meta-userId": `${user?.id}`,
-        },
-        onUploadProgress: (evt) => {
-          const currentProgress = (evt.loaded / evt.total) * 100;
-          setUploadProgress(currentProgress);
-        },
-      });
-      setUploadId(response.uploadId);
+      const { id } = await createAudio(values);
+      setAudioId(id);
+      setUnsavedChanges(false);
     } catch (err) {
-      setFile(null);
       errorToast(err);
     }
   };
-
-  const handleFormSubmit = useCallback(
-    async (values: AudioRequest) => {
-      if (!!file && !!uploadId) {
-        try {
-          const { id } = await createAudio({
-            ...values,
-            fileName: file.name,
-            fileSize: file.size,
-            duration: duration,
-            uploadId: uploadId,
-          });
-          setAudioId(id);
-          setUnsavedChanges(false);
-        } catch (err) {
-          errorToast(err);
-        }
-      }
-    },
-    [file, uploadId, duration]
-  );
 
   useEffect(() => {
     if (audioId && !unsavedChanges) {
@@ -125,30 +107,18 @@ export default function AudioUploader() {
 
   return (
     <Box>
-      <AudioDropzone
-        isHidden={!!file}
-        onFileDrop={(file) => onFileDrop(file)}
-      />
-      <UploadProgress
-        isUploaded={Boolean(uploadId)}
-        isUploading={(!!file || uploadProgress > 0) && !uploadId}
-        progress={uploadProgress}
-      />
-      {!!file && (
-        <AudioForm
-          initialValues={initialFormValues}
-          onSubmit={handleFormSubmit}
-          id="create-audio"
-          leftFooter={
-            <chakra.span>
-              By publishing this audio, you have agreed to Audiochan's terms of
-              service and license agreement.
-            </chakra.span>
-          }
-          submitText="Upload"
-          isDisabledButton={!uploadId}
-        />
-      )}
+      <FormProvider {...formMethods}>
+        <form onSubmit={handleSubmit(handleFormSubmit)}>
+          <AudioDropzone
+            onFileDrop={(isFileUpload) => setUnsavedChanges(isFileUpload)}
+          />
+          <AudioForm />
+          <Stack direction="row">
+            <Spacer />
+            <Button type="submit">Submit</Button>
+          </Stack>
+        </form>
+      </FormProvider>
     </Box>
   );
 }

@@ -1,72 +1,94 @@
 import {
   FormControl,
-  FormLabel,
-  Input,
   FormErrorMessage,
-  Textarea,
-} from "@chakra-ui/react";
-import React from "react";
+  FormLabel,
+} from "@chakra-ui/form-control";
+import { Input } from "@chakra-ui/input";
+import { Textarea } from "@chakra-ui/textarea";
+import React, { ChangeEvent } from "react";
 
-interface InputFieldProps {
+interface TextInputProps {
   name: string;
-  value: string;
-  onChange: (e: React.ChangeEvent) => void;
-  size?: (string & Record<string, unknown>) | "lg" | "md" | "sm" | "xs";
   type?: string;
+  onChange: (evt: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  onBlur: (evt: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  isTextArea?: boolean;
   error?: string;
   label?: string;
-  required?: boolean;
-  placeholder?: string;
-  textArea?: boolean;
-  disabled?: boolean;
-  focusRef?: React.RefObject<HTMLInputElement>;
+  size?: (string & Record<string, unknown>) | "lg" | "md" | "sm" | "xs";
+  variant?:
+    | (string & Record<string, unknown>)
+    | "outline"
+    | "filled"
+    | "flushed"
+    | "unstyled";
+  focusBorderColor?: string;
+  errorBorderColor?: string;
+  isDisabled?: boolean;
+  isRequired?: boolean;
 }
 
-const TextInput: React.FC<InputFieldProps> = ({
-  name,
-  value,
-  onChange,
-  label,
-  placeholder,
-  error,
-  size,
-  focusRef,
-  type = "text",
-  required = false,
-  textArea = false,
-  disabled = false,
-}) => {
+// eslint-disable-next-line react/display-name
+const TextInput = React.forwardRef<any, TextInputProps>((props, ref) => {
+  const {
+    error,
+    label,
+    focusBorderColor,
+    errorBorderColor,
+    type = "text",
+    isTextArea = false,
+    size = "md",
+    variant = "outline",
+    isDisabled = false,
+    isRequired = false,
+    ...inputProps
+  } = props;
+
+  if (isTextArea) {
+    return (
+      <FormControl
+        id={inputProps.name}
+        isInvalid={!!error}
+        isRequired={isRequired}
+        paddingY={2}
+      >
+        {label && <FormLabel>{label}</FormLabel>}
+        <Textarea
+          {...inputProps}
+          ref={ref}
+          size={size}
+          variant={variant}
+          focusBorderColor={focusBorderColor}
+          errorBorderColor={errorBorderColor}
+          isDisabled={isDisabled}
+          type={type}
+        />
+        <FormErrorMessage>{error}</FormErrorMessage>
+      </FormControl>
+    );
+  }
+
   return (
     <FormControl
-      id={name}
+      id={inputProps.name}
       isInvalid={!!error}
-      isRequired={required}
+      isRequired={isRequired}
       paddingY={2}
     >
-      {label && <FormLabel htmlFor={name}>{label}</FormLabel>}
-      {textArea ? (
-        <Textarea
-          name={name}
-          value={value}
-          onChange={onChange}
-          placeholder={placeholder}
-          disabled={disabled}
-        />
-      ) : (
-        <Input
-          type={type}
-          name={name}
-          value={value}
-          onChange={onChange}
-          placeholder={placeholder}
-          disabled={disabled}
-          size={size}
-          ref={focusRef}
-        />
-      )}
+      {label && <FormLabel>{label}</FormLabel>}
+      <Input
+        {...inputProps}
+        ref={ref}
+        size={size}
+        variant={variant}
+        focusBorderColor={focusBorderColor}
+        errorBorderColor={errorBorderColor}
+        isDisabled={isDisabled}
+        type={type}
+      />
       <FormErrorMessage>{error}</FormErrorMessage>
     </FormControl>
   );
-};
+});
 
 export default TextInput;

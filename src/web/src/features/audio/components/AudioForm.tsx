@@ -1,144 +1,80 @@
 import {
   Box,
-  Button,
   FormControl,
   FormErrorMessage,
+  FormLabel,
   Radio,
   RadioGroup,
-  Spacer,
   Stack,
 } from "@chakra-ui/react";
-import { useFormik } from "formik";
 import React from "react";
-import * as yup from "yup";
 import TagInput from "~/components/form-inputs/TagInput";
 import TextInput from "~/components/form-inputs/TextInput";
-import { AudioRequest, Visibility } from "../types";
-import { validationMessages } from "~/utils";
+import { AudioRequest } from "../types";
+import { Controller, useFormContext } from "react-hook-form";
 
 interface AudioFormProps {
-  id: string;
-  initialValues: Partial<AudioRequest>;
-  onSubmit: (values: AudioRequest) => Promise<void>;
-  leftFooter?: React.ReactNode;
-  submitText?: string;
-  isDisabledButton?: boolean;
+  disableFields?: boolean;
 }
 
-export default function AudioForm({
-  id,
-  initialValues,
-  onSubmit,
-  leftFooter,
-  submitText = "Submit",
-  isDisabledButton = false,
-}: AudioFormProps) {
+export default function AudioForm({ disableFields = false }: AudioFormProps) {
   const {
-    values,
-    errors,
-    handleSubmit,
-    handleChange,
-    isSubmitting,
-    setFieldValue,
-  } = useFormik<AudioRequest>({
-    initialValues: {
-      title: "",
-      description: "",
-      tags: [],
-      visibility: Visibility.Unlisted,
-      ...initialValues,
-    },
-    onSubmit: async (values) => {
-      await onSubmit(values);
-    },
-    validationSchema: yup
-      .object()
-      .shape({
-        title: yup
-          .string()
-          .required(validationMessages.required("Title"))
-          .max(30, validationMessages.max("Title", 30))
-          .ensure()
-          .defined(),
-        description: yup
-          .string()
-          .max(500, validationMessages.max("Description", 500))
-          .ensure()
-          .defined(),
-        tags: yup
-          .array(yup.string())
-          .max(10, validationMessages.max("Tags", 10))
-          .ensure()
-          .defined(),
-        visibility: yup
-          .string()
-          .required(validationMessages.required("Visibility"))
-          .oneOf(Object.values(Visibility)),
-      })
-      .defined(),
-  });
+    control,
+    register,
+    formState: { errors },
+  } = useFormContext<AudioRequest>();
 
   return (
     <Box marginBottom={8}>
-      <form id={id} onSubmit={handleSubmit}>
-        <TextInput
-          name="title"
-          type="text"
-          label="Title"
-          value={values.title}
-          onChange={handleChange}
-          error={errors.title}
-          disabled={isSubmitting}
-        />
-        <TextInput
-          name="description"
-          label="Description"
-          value={values.description ?? ""}
-          onChange={handleChange}
-          error={errors.description}
-          disabled={isSubmitting}
-          textArea
-        />
-        <TagInput
-          name="tags"
-          value={values.tags}
-          placeholder="Add Tag..."
-          onChange={(tags) => {
-            setFieldValue("tags", tags, true);
-          }}
-          error={Array.isArray(errors.tags) ? errors.tags[0] : errors.tags}
-          disabled={isSubmitting}
-        />
-        <FormControl
-          id="visibility"
-          isInvalid={!!errors.visibility}
-          marginBottom={4}
-        >
-          <RadioGroup
-            name="visibility"
-            value={values.visibility}
-            onChange={(val) => setFieldValue("visibility", val)}
-          >
-            <Stack spacing={2} direction="column">
-              <Radio value="public">Public</Radio>
-              <Radio value="unlisted">Unlisted</Radio>
-            </Stack>
-          </RadioGroup>
-          <FormErrorMessage>{errors.visibility}</FormErrorMessage>
-        </FormControl>
-        <Stack direction="row">
-          {leftFooter}
-          <Spacer />
-          <Button
-            type="submit"
-            colorScheme="primary"
-            isLoading={isSubmitting}
-            disabled={isDisabledButton}
-          >
-            {submitText}
-          </Button>
-        </Stack>
-      </form>
+      <TextInput
+        {...register("title")}
+        label="Title"
+        error={errors.title?.message}
+        isDisabled={disableFields}
+      />
+      <TextInput
+        {...register("description")}
+        isTextArea
+        label="Description"
+        error={errors.description?.message}
+        isDisabled={disableFields}
+      />
+      <Controller
+        name="tags"
+        control={control}
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        render={({ field: { ref, ...restField }, fieldState: { error } }) => (
+          <TagInput
+            placeholder="Add Tag..."
+            error={error?.message}
+            {...restField}
+            disabled={disableFields}
+          />
+        )}
+      />
+      <Controller
+        name="visibility"
+        control={control}
+        render={({
+          field: { value, onChange, name },
+          fieldState: { error },
+        }) => (
+          <FormControl id="visibility" isInvalid={!!error} marginBottom={4}>
+            <FormLabel>Privacy</FormLabel>
+            <RadioGroup name={name} value={value} onChange={onChange}>
+              <Stack spacing={2} direction="column">
+                <Radio value="public" isDisabled={disableFields}>
+                  Public
+                </Radio>
+                <Radio value="unlisted" isDisabled={disableFields}>
+                  Unlisted
+                </Radio>
+              </Stack>
+            </RadioGroup>
+            <FormErrorMessage>{error?.message}</FormErrorMessage>
+          </FormControl>
+        )}
+      />
     </Box>
   );
 }

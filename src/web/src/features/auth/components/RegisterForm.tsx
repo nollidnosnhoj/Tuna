@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import { Alert, Box, Button, CloseButton, Flex, Text } from "@chakra-ui/react";
 import * as yup from "yup";
-import { useFormik } from "formik";
 import TextInput from "~/components/form-inputs/TextInput";
 import { validationMessages } from "~/utils";
 import { toast, isAxiosError } from "~/utils";
 import { ErrorResponse } from "~/lib/types";
 import { usernameRule, passwordRule } from "~/features/user/schemas";
 import request from "~/lib/http";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 type RegisterFormInputs = {
   username: string;
@@ -40,45 +41,42 @@ interface RegisterFormProps {
 
 export default function RegisterForm(props: RegisterFormProps) {
   const [error, setError] = useState("");
-  const formik = useFormik<RegisterFormInputs>({
-    initialValues: {
-      username: "",
-      password: "",
-      email: "",
-      confirmPassword: "",
-    },
-    validationSchema: schema,
-    onSubmit: async (values, { setSubmitting }) => {
-      const registrationRequest = {
-        username: values.username,
-        password: values.password,
-        email: values.email,
-      };
-
-      try {
-        await request({
-          method: "post",
-          url: "auth/register",
-          data: registrationRequest,
-        });
-        toast("success", {
-          title: "Thank you for registering.",
-          description: "You can now login to your account.",
-        });
-        if (props.onSuccess) props.onSuccess();
-      } catch (err) {
-        let errorMessage = "An error has occurred.";
-        if (isAxiosError<ErrorResponse>(err)) {
-          errorMessage = err.response?.data.message ?? errorMessage;
-        }
-        setError(errorMessage);
-      } finally {
-        setSubmitting(false);
-      }
-    },
+  const formik = useForm<RegisterFormInputs>({
+    resolver: yupResolver(schema),
   });
 
-  const { values, errors, handleChange, handleSubmit, isSubmitting } = formik;
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = formik;
+
+  const handleRegisterSubmit = async (values: RegisterFormInputs) => {
+    const registrationRequest = {
+      username: values.username,
+      password: values.password,
+      email: values.email,
+    };
+
+    try {
+      await request({
+        method: "post",
+        url: "auth/register",
+        data: registrationRequest,
+      });
+      toast("success", {
+        title: "Thank you for registering.",
+        description: "You can now login to your account.",
+      });
+      if (props.onSuccess) props.onSuccess();
+    } catch (err) {
+      let errorMessage = "An error has occurred.";
+      if (isAxiosError<ErrorResponse>(err)) {
+        errorMessage = err.response?.data.message ?? errorMessage;
+      }
+      setError(errorMessage);
+    }
+  };
 
   return (
     <Box>
@@ -93,41 +91,33 @@ export default function RegisterForm(props: RegisterFormProps) {
           />
         </Alert>
       )}
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit(handleRegisterSubmit)}>
         <TextInput
-          name="username"
-          value={values.username}
-          onChange={handleChange}
-          error={errors.username}
+          {...register("username")}
+          ref={props.initialRef}
+          error={errors.username?.message}
           label="Username"
-          focusRef={props.initialRef}
-          required
+          isRequired
         />
         <TextInput
-          name="email"
-          value={values.email}
-          onChange={handleChange}
-          error={errors.email}
+          {...register("email")}
+          error={errors.email?.message}
           label="Email"
-          required
+          isRequired
         />
         <TextInput
-          name="password"
           type="password"
-          value={values.password}
-          onChange={handleChange}
-          error={errors.password}
+          error={errors.password?.message}
           label="Password"
-          required
+          isRequired
+          {...register("password")}
         />
         <TextInput
-          name="confirmPassword"
           type="password"
-          value={values.confirmPassword}
-          onChange={handleChange}
-          error={errors.confirmPassword}
+          error={errors.confirmPassword?.message}
           label="Confirm Password"
-          required
+          isRequired
+          {...register("confirmPassword")}
         />
         <Text fontSize="sm">
           By registering, you agree to our terms and service.

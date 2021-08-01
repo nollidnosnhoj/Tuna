@@ -6,14 +6,19 @@ import {
   DrawerHeader,
   DrawerBody,
   Button,
+  Stack,
+  Spacer,
 } from "@chakra-ui/react";
-import { FormikHelpers } from "formik";
 import React, { useState } from "react";
+import * as yup from "yup";
 import { errorToast, toast } from "~/utils/toast";
 import { useEditAudio, useRemoveAudio } from "../../hooks";
-import { AudioDetailData, AudioRequest } from "../../types";
+import { AudioDetailData, AudioRequest, Visibility } from "../../types";
 import AudioForm from "../AudioForm";
 import { useRouter } from "next/router";
+import { FormProvider, useForm } from "react-hook-form";
+import { validationMessages } from "~/utils";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 interface AudioEditDrawerProps {
   audio: AudioDetailData;
@@ -21,6 +26,33 @@ interface AudioEditDrawerProps {
   onClose: () => void;
   buttonRef?: React.RefObject<HTMLButtonElement>;
 }
+
+const validationSchema: yup.SchemaOf<AudioRequest> = yup
+  .object({
+    title: yup
+      .string()
+      .defined()
+      .required(validationMessages.required("Title"))
+      .min(5, validationMessages.min("Title", 5))
+      .max(30, validationMessages.max("Title", 30))
+      .ensure(),
+    description: yup
+      .string()
+      .defined()
+      .max(500, validationMessages.max("Description", 500))
+      .ensure(),
+    tags: yup
+      .array()
+      .required()
+      .max(10, validationMessages.max("Tags", 10))
+      .ensure()
+      .defined(),
+    visibility: yup
+      .mixed<Visibility>()
+      .required(validationMessages.required("Visibility"))
+      .oneOf([...Object.values(Visibility)], "Visibility choice is invalid."),
+  })
+  .defined();
 
 const AudioEditDrawer: React.FC<AudioEditDrawerProps> = (props) => {
   const { audio, isOpen, onClose, buttonRef } = props;
@@ -30,10 +62,17 @@ const AudioEditDrawer: React.FC<AudioEditDrawerProps> = (props) => {
   const { mutateAsync: deleteAudio } = useRemoveAudio(audioId);
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const onEditSubmit = async (
-    values: AudioRequest,
-    helpers?: FormikHelpers<AudioRequest>
-  ) => {
+  const formMethods = useForm<AudioRequest>({
+    defaultValues: {
+      title: audio.title,
+      description: audio.description,
+      tags: audio.tags,
+      visibility: audio.visibility,
+    },
+    resolver: yupResolver(validationSchema),
+  });
+
+  const onEditSubmit = async (values: AudioRequest) => {
     setIsProcessing(true);
     updateAudio(values)
       .then(() => {
@@ -45,7 +84,6 @@ const AudioEditDrawer: React.FC<AudioEditDrawerProps> = (props) => {
       })
       .finally(() => {
         setIsProcessing(false);
-        helpers?.setSubmitting(false);
       });
   };
 
@@ -84,26 +122,22 @@ const AudioEditDrawer: React.FC<AudioEditDrawerProps> = (props) => {
         <DrawerCloseButton />
         <DrawerHeader>Edit</DrawerHeader>
         <DrawerBody>
-          <AudioForm
-            initialValues={{
-              title: audio.title,
-              description: audio.description,
-              tags: audio.tags,
-              visibility: audio.visibility,
-            }}
-            onSubmit={onEditSubmit}
-            id="create-audio"
-            leftFooter={
-              <Button
-                colorScheme="red"
-                onClick={onDeleteSubmit}
-                disabled={isProcessing}
-              >
-                Remove
-              </Button>
-            }
-            submitText="Modify"
-          />
+          <form onSubmit={formMethods.handleSubmit(onEditSubmit)}>
+            <FormProvider {...formMethods}>
+              <AudioForm />
+              <Stack direction="row">
+                <Button
+                  colorScheme="red"
+                  onClick={onDeleteSubmit}
+                  disabled={isProcessing}
+                >
+                  Remove
+                </Button>
+                <Spacer />
+                <Button type="submit">Submit</Button>
+              </Stack>
+            </FormProvider>
+          </form>
         </DrawerBody>
       </DrawerContent>
     </Drawer>

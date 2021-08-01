@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Alert, Box, Button, CloseButton } from "@chakra-ui/react";
-import { useFormik } from "formik";
-import * as yup from "yup";
+import { useForm } from "react-hook-form";
 import TextInput from "~/components/form-inputs/TextInput";
 import { toast, isAxiosError } from "~/utils";
 import { ErrorResponse } from "~/lib/types";
@@ -22,32 +21,30 @@ export default function LoginForm(props: LoginFormProps) {
   const { refreshUser } = useUser();
   const [error, setError] = useState("");
 
-  const formik = useFormik<LoginFormValues>({
-    onSubmit: async (values) => {
-      try {
-        await authenticateRequest(values);
-        await refreshUser();
-        toast("success", { title: "You have logged in successfully. " });
-        if (props.onSuccess) props.onSuccess();
-      } catch (err) {
-        let errorMessage = "An error has occurred.";
-        if (isAxiosError<ErrorResponse>(err)) {
-          errorMessage = err.response?.data.message ?? errorMessage;
-        }
-        setError(errorMessage);
-      }
-    },
-    initialValues: {
-      login: "",
-      password: "",
-    },
-    validationSchema: yup.object().shape({
-      login: yup.string().required(),
-      password: yup.string().required(),
-    }),
-  });
+  const formik = useForm<LoginFormValues>();
 
-  const { handleSubmit, handleChange, values, errors, isSubmitting } = formik;
+  const {
+    handleSubmit,
+    register,
+    reset,
+    formState: { isSubmitting, errors },
+  } = formik;
+
+  const handleLoginSubmit = async (values: LoginFormValues) => {
+    try {
+      await authenticateRequest(values);
+      await refreshUser();
+      toast("success", { title: "You have logged in successfully. " });
+      if (props.onSuccess) props.onSuccess();
+    } catch (err) {
+      let errorMessage = "An error has occurred.";
+      if (isAxiosError<ErrorResponse>(err)) {
+        errorMessage = err.response?.data.message ?? errorMessage;
+      }
+      setError(errorMessage);
+      reset(values);
+    }
+  };
 
   return (
     <Box>
@@ -62,24 +59,24 @@ export default function LoginForm(props: LoginFormProps) {
           />
         </Alert>
       )}
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit(handleLoginSubmit)}>
         <TextInput
-          name="login"
-          value={values.login}
-          onChange={handleChange}
-          error={errors.login}
+          {...register("login", {
+            required: true,
+          })}
+          ref={props.initialRef}
           label="Username/Email"
-          focusRef={props.initialRef}
-          required
+          error={errors.login?.message}
+          isRequired
         />
         <TextInput
-          name="password"
           type="password"
-          value={values.password}
-          onChange={handleChange}
-          error={errors.login}
           label="Password"
-          required
+          error={errors.password?.message}
+          {...register("password", {
+            required: true,
+          })}
+          isRequired
         />
         <Button
           marginTop={4}
