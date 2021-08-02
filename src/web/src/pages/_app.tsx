@@ -4,7 +4,7 @@ import { AppProps as NextAppProps } from "next/app";
 import dynamic from "next/dynamic";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
-import PageLoader from "~/components/PageLoader";
+import PageLoader from "~/components/Page/PageLoader";
 import { UserProvider } from "~/features/user/components/providers";
 import { CurrentUser } from "~/features/user/types";
 import theme from "~/lib/theme";

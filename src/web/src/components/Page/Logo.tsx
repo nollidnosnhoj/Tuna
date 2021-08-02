@@ -1,10 +1,10 @@
 import { Heading } from "@chakra-ui/react";
 import React from "react";
-import ChakraLink from "./Link";
+import ChakraLink from "../ui/Link";
 
 export default function Logo() {
   return (
-    <Heading size="lg" display={{ base: "none", md: "flex" }}>
+    <Heading size="lg">
       <ChakraLink
         href="/"
         _hover={{

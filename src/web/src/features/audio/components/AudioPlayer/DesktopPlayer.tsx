@@ -32,7 +32,7 @@ export default function DesktopAudioPlayer(props: DesktopAudioPlayerProps) {
     onToggle: onQueuePanelToggle,
   } = useDisclosure();
 
-  const playerBackgroundColor = useColorModeValue("gray.100", "gray.800");
+  const playerBackgroundColor = useColorModeValue("white", "gray.800");
 
   if (isHidden) return null;
 
@@ -56,6 +56,7 @@ export default function DesktopAudioPlayer(props: DesktopAudioPlayerProps) {
         borderTopWidth={1}
         fontSize="26px"
         bgColor={playerBackgroundColor}
+        zIndex="sticky"
       >
         <HStack justifyContent="space-between" width="100%" marginX={4}>
           <Box width="30%">

@@ -1,28 +1,23 @@
 import {
-  Badge,
   Box,
   Flex,
   Heading,
   IconButton,
-  Spacer,
   Stack,
-  Text,
   useColorModeValue,
   useDisclosure,
-  VStack,
   Menu,
   MenuButton,
   MenuItem,
   MenuList,
-  HStack,
+  chakra,
 } from "@chakra-ui/react";
 import Router from "next/router";
 import React, { useEffect } from "react";
 import { EditIcon } from "@chakra-ui/icons";
 import { MdQueueMusic } from "react-icons/md";
-import { HiDotsVertical } from "react-icons/hi";
+import { HiDotsHorizontal } from "react-icons/hi";
 import AudioEditDrawer from "./AudioEditDrawer";
-import AudioTags from "./AudioTags";
 import Link from "~/components/ui/Link";
 import { AudioDetailData, Visibility } from "~/features/audio/types";
 import { useUser } from "~/features/user/hooks";
@@ -66,8 +61,16 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
 
   return (
     <>
-      <Flex marginBottom={4} justifyContent="center">
-        <Box flex="1" marginRight={4}>
+      <Flex
+        marginBottom={4}
+        justifyContent="center"
+        direction={{ base: "column", md: "row" }}
+      >
+        <Flex
+          flex="1"
+          marginRight={4}
+          justify={{ base: "center", md: "normal" }}
+        >
           <PictureController
             title={audio.title}
             src={audio.picture || ""}
@@ -77,70 +80,62 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
             isUploading={isAddingPicture}
             canEdit={currentUser?.id === audio.user.id}
           />
-        </Box>
-        <Box flex="5">
+        </Flex>
+        <Box flex="6">
           <Stack direction="row" marginBottom={4}>
-            <AudioPlayButton audio={audio} />
-            <Stack direction="column" spacing="0" fontSize="sm">
-              <Link href={`/users/${audio.user.username}`}>
-                <Text fontWeight="500">{audio.user.username}</Text>
-              </Link>
-              <Text color={secondaryColor}>{relativeDate(audio.created)}</Text>
-            </Stack>
-            <Spacer />
-            <HStack>
-              <IconButton
-                aria-label="Share audio"
-                icon={<FaShare />}
-                colorScheme="primary"
-                variant="ghost"
-                isRound
-                onClick={onShareOpen}
-                visibility={
-                  audio.visibility == Visibility.Private ? "hidden" : "visible"
-                }
-              />
-              <AudioFavoriteButton audioId={audio.id} />
-              <Menu placement="bottom-end">
-                <MenuButton
-                  as={IconButton}
-                  icon={<HiDotsVertical />}
-                  variant="ghost"
-                  isRound
-                />
-                <MenuList>
-                  {audio.user.id === currentUser?.id && (
-                    <MenuItem icon={<EditIcon />} onClick={onEditOpen}>
-                      Edit
-                    </MenuItem>
-                  )}
-                  <MenuItem
-                    icon={<MdQueueMusic />}
-                    onClick={() => addToQueue(mapAudioForAudioQueue(audio))}
-                  >
-                    Add to queue
-                  </MenuItem>
-                </MenuList>
-              </Menu>
-            </HStack>
+            <chakra.div marginTop={{ base: 4, md: 0 }}>
+              <Heading as="h1" fontSize={{ base: "3xl", md: "5xl" }}>
+                {audio.title}
+              </Heading>
+              <chakra.div display="flex">
+                <Link href={`/users/${audio.user.username}`} fontWeight="500">
+                  {audio.user.username}
+                </Link>
+                <chakra.span
+                  color={secondaryColor}
+                  _before={{ content: `"•"`, marginX: 2 }}
+                >
+                  {relativeDate(audio.created)}
+                </chakra.span>
+              </chakra.div>
+            </chakra.div>
           </Stack>
           <Stack direction="column" spacing={2} width="100%">
             <Flex as="header">
               <Box>
-                <Flex alignItems="center">
-                  <Heading as="h1" fontSize="2xl">
-                    {audio.title}
-                  </Heading>
-                </Flex>
+                <Stack direction="row" alignItems="center">
+                  <AudioPlayButton audio={audio} />
+                  <AudioFavoriteButton audioId={audio.id} />
+                  <Menu placement="bottom-start">
+                    <MenuButton
+                      as={IconButton}
+                      icon={<HiDotsHorizontal />}
+                      variant="ghost"
+                      size="lg"
+                      isRound
+                    />
+                    <MenuList>
+                      {audio.user.id === currentUser?.id && (
+                        <MenuItem icon={<EditIcon />} onClick={onEditOpen}>
+                          Edit
+                        </MenuItem>
+                      )}
+                      <MenuItem
+                        icon={<MdQueueMusic />}
+                        onClick={() => addToQueue(mapAudioForAudioQueue(audio))}
+                      >
+                        Add to queue
+                      </MenuItem>
+                      {audio.visibility != Visibility.Private && (
+                        <MenuItem icon={<FaShare />} onClick={onShareOpen}>
+                          Share
+                        </MenuItem>
+                      )}
+                    </MenuList>
+                  </Menu>
+                </Stack>
               </Box>
-              <Spacer />
-              <VStack spacing={2} alignItems="normal" textAlign="right">
-                {audio.visibility === Visibility.Private && (
-                  <Badge>PRIVATE</Badge>
-                )}
-              </VStack>
             </Flex>
-            <AudioTags tags={audio.tags} />
           </Stack>
         </Box>
       </Flex>

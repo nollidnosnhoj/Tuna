@@ -1,5 +1,4 @@
 import {
-  Box,
   Menu,
   MenuButton,
   IconButton,
@@ -8,6 +7,7 @@ import {
   MenuItem,
   MenuDivider,
   Button,
+  Stack,
 } from "@chakra-ui/react";
 import router from "next/router";
 import React from "react";
@@ -22,7 +22,7 @@ const UserSection: React.FC = () => {
 
   if (isLoggedIn) {
     return (
-      <Box zIndex={4}>
+      <Stack direction="row" spacing={2} align="center" zIndex={4}>
         <Menu placement="bottom-end">
           <MenuButton
             as={IconButton}
@@ -47,12 +47,12 @@ const UserSection: React.FC = () => {
             </MenuItem>
           </MenuList>
         </Menu>
-      </Box>
+      </Stack>
     );
   }
 
   return (
-    <>
+    <Stack direction="row" spacing={2} align="center">
       <Button
         size="md"
         colorScheme="gray"
@@ -71,7 +71,7 @@ const UserSection: React.FC = () => {
       >
         Register
       </Button>
-    </>
+    </Stack>
   );
 };
 

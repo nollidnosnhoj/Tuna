@@ -91,7 +91,6 @@ export default function PictureController(props: PictureProps) {
         onClick={onPictureModalOpen}
         cursor="pointer"
         display="flex"
-        justifyContent="center"
         position="relative"
       >
         <PictureContainer width={200}>

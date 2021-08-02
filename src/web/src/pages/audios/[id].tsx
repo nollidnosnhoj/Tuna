@@ -14,6 +14,7 @@ import AudioFileInfo from "~/features/audio/components/Details/AudioFileInfo";
 import { useGetAudio } from "~/features/audio/hooks";
 import { getAudioRequest } from "~/features/audio/api";
 import { AudioDetailData, AudioId } from "~/features/audio/types";
+import AudioTags from "~/features/audio/components/Details/AudioTags";
 
 interface AudioPageProps {
   audio?: AudioDetailData;
@@ -52,6 +53,20 @@ export default function AudioPage(props: AudioPageProps) {
     <Page title={audio.title}>
       <AudioDetails audio={audio} />
       <Accordion defaultIndex={[0]} allowMultiple>
+        {audio.tags && audio.tags.length > 0 && (
+          <AccordionItem>
+            <h2>
+              <AccordionButton>
+                <Box flex="1" textAlign="left">
+                  Tags
+                </Box>
+              </AccordionButton>
+            </h2>
+            <AccordionPanel pb={4}>
+              <AudioTags tags={audio.tags} />
+            </AccordionPanel>
+          </AccordionItem>
+        )}
         <AccordionItem>
           <h2>
             <AccordionButton>

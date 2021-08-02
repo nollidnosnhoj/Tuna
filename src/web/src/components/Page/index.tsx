@@ -1,26 +1,41 @@
 import React from "react";
 import Head from "next/head";
 import NextLink from "next/link";
-import { Box, BoxProps, Button, Flex, Heading } from "@chakra-ui/react";
-import Header from "~/components/ui/Header";
-import Container from "~/components/ui/Container";
-import SearchBar from "./ui/Header/SearchBar";
-import UserSection from "./ui/Header/UserSection";
-import Logo from "./ui/Logo";
+import {
+  Box,
+  BoxProps,
+  Button,
+  Drawer,
+  DrawerContent,
+  DrawerOverlay,
+  Flex,
+  Heading,
+  useDisclosure,
+} from "@chakra-ui/react";
+import Header from "./Header";
+import Container from "./Container";
 import { useUser } from "~/features/user/hooks";
+import Sidebar from "./Sidebar";
 
-const PageContainer: React.FC<BoxProps> = ({ children, ...props }) => (
-  <Box>
-    <Header
-      logo={<Logo />}
-      searchBar={<SearchBar />}
-      userMenu={<UserSection />}
-    />
-    <Container mt="120px" mb="100px" {...props}>
-      {children}
-    </Container>
-  </Box>
-);
+const PageContainer: React.FC<BoxProps> = ({ children, ...props }) => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
+  return (
+    <Box as="section" minHeight="100vh">
+      <Sidebar display={{ base: "none", md: "unset" }} />
+      <Drawer isOpen={isOpen} onClose={onClose} placement="left">
+        <DrawerOverlay />
+        <DrawerContent>
+          <Sidebar width="full" borderRight="none" />
+        </DrawerContent>
+      </Drawer>
+      <Box marginLeft={{ base: 0, md: 60 }}>
+        <Header onOpenMenu={onOpen} />
+        <Container {...props}>{children}</Container>
+      </Box>
+    </Box>
+  );
+};
 
 interface PageProps {
   title?: string;
@@ -35,7 +50,7 @@ const Page: React.FC<PageProps> = ({
 }) => {
   const { isLoggedIn } = useUser();
 
-  if (!isLoggedIn && requiresAuth) {
+  if (requiresAuth && !isLoggedIn) {
     return (
       <>
         <Head>

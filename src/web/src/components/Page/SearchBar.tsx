@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import {
+  BoxProps,
   IconButton,
   Input,
   InputGroup,
@@ -9,7 +10,7 @@ import { useRouter } from "next/router";
 import { SearchIcon } from "@chakra-ui/icons";
 import { stringifyUrl } from "~/utils";
 
-export default function SearchBar() {
+export default function SearchBar(props: BoxProps) {
   const { query, push: routerPush } = useRouter();
   const [term, setTerm] = useState<string | string[]>("");
 
@@ -30,9 +31,9 @@ export default function SearchBar() {
   }, [term, query]);
 
   return (
-    <InputGroup size="md" alignItems="center">
+    <InputGroup {...props}>
       <Input
-        size="lg"
+        size="md"
         variant="filled"
         placeholder="Search..."
         value={term}
