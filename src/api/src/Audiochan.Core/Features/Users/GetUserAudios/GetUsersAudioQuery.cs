@@ -39,7 +39,6 @@ namespace Audiochan.Core.Features.Users.GetUserAudios
         {
             IQueryable<Audio> queryable = _unitOfWork.Users
                 .AsNoTracking()
-                .AsSplitQuery()
                 .Include(u => u.Audios)
                 .Where(u => request.Username == u.UserName.ToLower())
                 .SelectMany(a => a.Audios)

@@ -29,7 +29,6 @@ namespace Audiochan.Core.Features.Users.GetProfile
             if (string.IsNullOrEmpty(userId)) return null;
             
             return await _unitOfWork.Users.AsNoTracking()
-                .AsSplitQuery()
                 .Include(u => u.Followers.Where(fu => fu.TargetId == userId))
                 .Include(u => u.Followings.Where(fu => fu.ObserverId == userId))
                 .Include(u => u.Audios)
