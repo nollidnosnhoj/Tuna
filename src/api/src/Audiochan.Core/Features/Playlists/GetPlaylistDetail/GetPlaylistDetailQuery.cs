@@ -13,9 +13,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Playlists.GetPlaylistDetail
 {
-    public record GetPlaylistDetailQuery(Guid Id, bool IncludeAudios) : IRequest<PlaylistDetailViewModel?>;
+    public record GetPlaylistDetailQuery(Guid Id) : IRequest<PlaylistViewModel?>;
     
-    public class GetPlaylistDetailQueryHandler : IRequestHandler<GetPlaylistDetailQuery, PlaylistDetailViewModel?>
+    public class GetPlaylistDetailQueryHandler : IRequestHandler<GetPlaylistDetailQuery, PlaylistViewModel?>
     {
         private readonly string _currentUserId;
         private readonly ApplicationDbContext _unitOfWork;
@@ -26,7 +26,7 @@ namespace Audiochan.Core.Features.Playlists.GetPlaylistDetail
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<PlaylistDetailViewModel?> Handle(GetPlaylistDetailQuery request, CancellationToken cancellationToken)
+        public async Task<PlaylistViewModel?> Handle(GetPlaylistDetailQuery request, CancellationToken cancellationToken)
         {
             var playlist = await _unitOfWork.Playlists
                 .AsNoTracking()
@@ -39,21 +39,10 @@ namespace Audiochan.Core.Features.Playlists.GetPlaylistDetail
             
             if (playlist == null || !CanAccessPrivatePlaylist(playlist)) return null;
 
-            if (!request.IncludeAudios) return playlist;
-
-            var audios = await _unitOfWork.PlaylistAudios
-                .Include(pa => pa.Audio)
-                .Where(pa => pa.PlaylistId == request.Id)
-                .OrderByDescending(pa => pa.Added)
-                .Select(pa => pa.Audio)
-                .Select(AudioMaps.AudioToView)
-                .Take(100)
-                .ToListAsync(cancellationToken);
-
-            return playlist with {Audios = audios};
+            return playlist;
         }
         
-        private bool CanAccessPrivatePlaylist(PlaylistDetailViewModel playlist)
+        private bool CanAccessPrivatePlaylist(PlaylistViewModel playlist)
         {
             return _currentUserId == playlist.User.Id || playlist.Visibility != Visibility.Private;
         }

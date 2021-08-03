@@ -14,7 +14,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Users.GetUserFavoritePlaylists
 {
-    public record GetUserFavoritePlaylistsQuery : IHasPage, IRequest<PagedListDto<PlaylistDetailViewModel>>
+    public record GetUserFavoritePlaylistsQuery : IHasPage, IRequest<PagedListDto<PlaylistViewModel>>
     {
         public string Username { get; }
         public int Page { get; init; } = 1;
@@ -28,7 +28,7 @@ namespace Audiochan.Core.Features.Users.GetUserFavoritePlaylists
         }
     }
     
-    public class GetUserFavoritePlaylistsQueryHandler : IRequestHandler<GetUserFavoritePlaylistsQuery, PagedListDto<PlaylistDetailViewModel>>
+    public class GetUserFavoritePlaylistsQueryHandler : IRequestHandler<GetUserFavoritePlaylistsQuery, PagedListDto<PlaylistViewModel>>
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly string _currentUserId;
@@ -39,7 +39,7 @@ namespace Audiochan.Core.Features.Users.GetUserFavoritePlaylists
             _currentUserId = currentUserService.GetUserId();
         }
 
-        public async Task<PagedListDto<PlaylistDetailViewModel>> Handle(GetUserFavoritePlaylistsQuery request, 
+        public async Task<PagedListDto<PlaylistViewModel>> Handle(GetUserFavoritePlaylistsQuery request, 
             CancellationToken cancellationToken)
         {
             return await _dbContext.Users

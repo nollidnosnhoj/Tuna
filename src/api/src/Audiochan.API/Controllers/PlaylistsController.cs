@@ -3,8 +3,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.API.Extensions;
 using Audiochan.API.Models;
+using Audiochan.Core.Common.Models;
+using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Features.Playlists.AddAudiosToPlaylist;
 using Audiochan.Core.Features.Playlists.CreatePlaylist;
+using Audiochan.Core.Features.Playlists.GetPlaylistAudios;
 using Audiochan.Core.Features.Playlists.GetPlaylistDetail;
 using Audiochan.Core.Features.Playlists.RemoveAudiosFromPlaylist;
 using Audiochan.Core.Features.Playlists.RemovePlaylist;
@@ -30,14 +33,14 @@ namespace Audiochan.API.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         [SwaggerOperation(Summary = "Return an playlist by ID.", OperationId = "GetPlaylist", Tags = new[] {"playlists"})]
-        public async Task<ActionResult<PlaylistDetailViewModel>> GetPlaylist(Guid playlistId, [FromQuery] bool includeAudios,
-            CancellationToken cancellationToken)
+        public async Task<ActionResult<PlaylistViewModel>> GetPlaylist(Guid playlistId, CancellationToken cancellationToken)
         {
-            var playlist = await _mediator.Send(new GetPlaylistDetailQuery(playlistId, includeAudios), cancellationToken);
+            var playlist = await _mediator.Send(new GetPlaylistDetailQuery(playlistId), cancellationToken);
             return playlist is null
                 ? NotFound(ErrorApiResponse.NotFound("Playlist was not found."))
                 : Ok(playlist);
         }
+
 
         [Authorize]
         [HttpPost(Name = "CreatePlaylist")]
@@ -50,12 +53,12 @@ namespace Audiochan.API.Controllers
             OperationId = "CreatePlaylist",
             Tags = new[] {"playlists"}
         )]
-        public async Task<ActionResult<PlaylistDetailViewModel>> CreatePlaylist(
+        public async Task<ActionResult<PlaylistViewModel>> CreatePlaylist(
             [FromBody] CreatePlaylistCommand command, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(command, cancellationToken);
             if (!result.IsSuccess) return result.ReturnErrorResponse();
-            var response = await _mediator.Send(new GetPlaylistDetailQuery(result.Data, false), cancellationToken);
+            var response = await _mediator.Send(new GetPlaylistDetailQuery(result.Data), cancellationToken);
             return CreatedAtAction(nameof(GetPlaylist), new
             {
                 playlistId = response!.Id
@@ -105,6 +108,21 @@ namespace Audiochan.API.Controllers
             return result.IsSuccess
                 ? NoContent()
                 : result.ReturnErrorResponse();
+        }
+
+        [HttpGet("{playlistId:guid}/audios", Name = "GetPlaylistAudios")]
+        [ProducesResponseType(200)]
+        [SwaggerOperation(
+            Summary = "Return list of audios from a playlist",
+            OperationId = "GetPlaylistAudios",
+            Tags = new[] { "playlists" })]
+        public async Task<ActionResult<PagedListDto<AudioViewModel>>> GetPlaylistAudios(Guid playlistId,
+            CancellationToken cancellationToken)
+        {
+            var audios = await _mediator.Send(
+                new GetPlaylistAudiosQuery(playlistId), cancellationToken);
+
+            return new JsonResult(audios);
         }
 
         [Authorize]
