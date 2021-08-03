@@ -38,11 +38,11 @@ export function useFavoriteAudio(
   const { mutateAsync, isLoading: isMutationLoading } = useMutation<boolean>(
     () =>
       data
-        ? favoriteAnAudioRequest(audioId)
-        : unfavoriteAnAudioRequest(audioId),
+        ? unfavoriteAnAudioRequest(audioId)
+        : favoriteAnAudioRequest(audioId),
     {
-      onSuccess(data) {
-        queryClient.setQueryData(IS_FAVORITE_AUDIO_QUERY_KEY(audioId), data);
+      onSuccess() {
+        queryClient.setQueryData(IS_FAVORITE_AUDIO_QUERY_KEY(audioId), !data);
         queryClient.invalidateQueries(GET_YOUR_FAV_AUDIOS_KEY);
       },
     }

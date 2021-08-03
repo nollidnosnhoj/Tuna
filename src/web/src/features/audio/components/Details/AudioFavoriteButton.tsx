@@ -29,6 +29,7 @@ export default function AudioFavoriteButton({
       isRound
       onClick={favorite}
       isLoading={isLoading}
+      size="lg"
     />
   );
 }

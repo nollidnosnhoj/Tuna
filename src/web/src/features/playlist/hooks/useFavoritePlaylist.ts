@@ -35,13 +35,14 @@ export function useFavoritePlaylist(
   const { mutateAsync, isLoading: isMutationLoading } = useMutation<boolean>(
     () =>
       data
-        ? favoriteAPlaylistRequest(playlistId)
-        : unfavoriteAPlaylistRequest(playlistId),
+        ? unfavoriteAPlaylistRequest(playlistId)
+        : favoriteAPlaylistRequest(playlistId),
+
     {
-      onSuccess(data) {
+      onSuccess() {
         queryClient.setQueryData(
           IS_FAVORITE_PLAYLIST_QUERY_KEY(playlistId),
-          data
+          !data
         );
       },
     }

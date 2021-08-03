@@ -1,7 +1,6 @@
 import React from "react";
 import { ChakraProvider } from "@chakra-ui/react";
 import { AppProps as NextAppProps } from "next/app";
-import dynamic from "next/dynamic";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 import PageLoader from "~/components/Page/PageLoader";
@@ -14,13 +13,6 @@ import LoginModal from "~/features/auth/components/AuthModal";
 interface AppProps extends NextAppProps {
   user?: CurrentUser;
 }
-
-const AudioPlayer = dynamic(
-  () => import("~/features/audio/components/AudioPlayer"),
-  {
-    ssr: false,
-  }
-);
 
 function App({ Component, user, pageProps }: AppProps) {
   const queryClientRef = React.useRef<QueryClient>();
@@ -36,7 +28,6 @@ function App({ Component, user, pageProps }: AppProps) {
             <ReactQueryDevtools initialIsOpen={false} />
             <PageLoader color={theme.colors.primary[500]} />
             <Component {...pageProps} />
-            <AudioPlayer />
             <LoginModal />
           </UserProvider>
         </ChakraProvider>

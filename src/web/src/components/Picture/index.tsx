@@ -110,6 +110,8 @@ export default function PictureController(props: PictureProps) {
             size="sm"
             position="absolute"
             bottom="5%"
+            left="50%"
+            transform="translate(-50%, -5%)"
             paddingX={4}
             onClick={(e) => {
               e.stopPropagation();

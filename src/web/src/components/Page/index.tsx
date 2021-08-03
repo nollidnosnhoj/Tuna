@@ -1,4 +1,5 @@
 import React from "react";
+import dynamic from "next/dynamic";
 import Head from "next/head";
 import NextLink from "next/link";
 import {
@@ -13,9 +14,15 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import Header from "./Header";
-import Container from "./Container";
 import { useUser } from "~/features/user/hooks";
 import Sidebar from "./Sidebar";
+
+const AudioPlayer = dynamic(
+  () => import("~/features/audio/components/AudioPlayer"),
+  {
+    ssr: false,
+  }
+);
 
 const PageContainer: React.FC<BoxProps> = ({ children, ...props }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -31,8 +38,11 @@ const PageContainer: React.FC<BoxProps> = ({ children, ...props }) => {
       </Drawer>
       <Box marginLeft={{ base: 0, md: 60 }}>
         <Header onOpenMenu={onOpen} />
-        <Container {...props}>{children}</Container>
+        <Box {...props} p={4} as="main">
+          {children}
+        </Box>
       </Box>
+      <AudioPlayer />
     </Box>
   );
 };
