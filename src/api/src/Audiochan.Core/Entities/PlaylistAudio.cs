@@ -4,6 +4,7 @@ namespace Audiochan.Core.Entities
 {
     public class PlaylistAudio
     {
+        public Guid Id { get; set; }
         public Guid PlaylistId { get; set; }
         public Playlist Playlist { get; set; } = null!;
         public Guid AudioId { get; set; }

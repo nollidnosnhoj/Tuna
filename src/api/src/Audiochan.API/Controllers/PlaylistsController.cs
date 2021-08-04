@@ -6,6 +6,7 @@ using Audiochan.API.Models;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Features.Playlists.AddAudiosToPlaylist;
+using Audiochan.Core.Features.Playlists.CheckDuplicatedAudios;
 using Audiochan.Core.Features.Playlists.CreatePlaylist;
 using Audiochan.Core.Features.Playlists.GetPlaylistAudios;
 using Audiochan.Core.Features.Playlists.GetPlaylistDetail;
@@ -169,6 +170,23 @@ namespace Audiochan.API.Controllers
             return result.IsSuccess
                 ? NoContent()
                 : result.ReturnErrorResponse();
+        }
+        
+        [Authorize]
+        [HttpGet("{playlistId:guid}/audios/duplicate", Name = "CheckDuplicatedAudios")]
+        [ProducesResponseType(200)]
+        [SwaggerOperation(
+            Summary = "Check to see if the input audio ids already exist in playlist.",
+            Description = "Requires authentication.",
+            OperationId = "CheckDuplicatedAudios",
+            Tags = new[] {"playlists"}
+        )]
+        public async Task<IActionResult> CheckDuplicatedAudios(Guid playlistId,
+            [FromBody] RemoveAudiosFromPlaylistRequest request, CancellationToken cancellationToken)
+        {
+            var command = new CheckDuplicatedAudiosQuery(playlistId, request.PlaylistAudioIds);
+            var result = await _mediator.Send(command, cancellationToken);
+            return new JsonResult(result);
         }
     }
 }

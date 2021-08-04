@@ -16,19 +16,19 @@ namespace Audiochan.Core.Features.Playlists.RemoveAudiosFromPlaylist
     public record RemoveAudiosFromPlaylistCommand : IRequest<Result>
     {
         public Guid PlaylistId { get; init; }
-        public List<Guid> AudioIds { get; init; }
+        public List<Guid> PlaylistAudioIds { get; init; }
 
-        public RemoveAudiosFromPlaylistCommand(Guid playlistId, List<Guid> audioIds)
+        public RemoveAudiosFromPlaylistCommand(Guid playlistId, List<Guid> playlistAudioIds)
         {
             PlaylistId = playlistId;
-            AudioIds = audioIds;
+            PlaylistAudioIds = playlistAudioIds;
         }
         
         public RemoveAudiosFromPlaylistCommand(Guid playlistId,
             RemoveAudiosFromPlaylistRequest request)
         {
             PlaylistId = playlistId;
-            AudioIds = request.AudioIds;
+            PlaylistAudioIds = request.PlaylistAudioIds;
         }
     }
     
@@ -36,7 +36,7 @@ namespace Audiochan.Core.Features.Playlists.RemoveAudiosFromPlaylist
     {
         public RemoveAudiosFromPlaylistCommandValidator()
         {
-            RuleFor(x => x.AudioIds)
+            RuleFor(x => x.PlaylistAudioIds)
                 .NotEmpty()
                 .WithMessage("Audio ids cannot be empty.");
         }
@@ -55,36 +55,28 @@ namespace Audiochan.Core.Features.Playlists.RemoveAudiosFromPlaylist
 
         public async Task<Result> Handle(RemoveAudiosFromPlaylistCommand request, CancellationToken cancellationToken)
         {
-            IQueryable<Playlist> queryable = _unitOfWork.Playlists;
-            if (request.AudioIds.Count == 0)
-            {
-                queryable = queryable.Include(x => x.Audios);
-            }
-            else
-            {
-                queryable = queryable
-                    .Include(x => x.Audios.Where(a => request.AudioIds.Contains(a.AudioId)));
-            }
-
-            var playlist = await queryable.SingleOrDefaultAsync(p => p.Id == request.PlaylistId, cancellationToken);
+            var playlist = await _unitOfWork.Playlists
+                .Include(p =>
+                    p.Audios.Where(pa => request.PlaylistAudioIds.Contains(pa.Id)))
+                .Where(p => p.Id == request.PlaylistId)
+                .SingleOrDefaultAsync(cancellationToken);
 
             if (playlist is null)
-                return Result.NotFound<Playlist>();
-
+                return Result.NotFound("Playlist was not found.");
             if (playlist.UserId != _currentUserId)
                 return Result.Forbidden();
+            if (playlist.Audios.Count == 0)
+                return Result.NotFound("Audios was not found in playlist.");
 
-            foreach (var audioId in request.AudioIds)
+            // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
+            foreach (var id in request.PlaylistAudioIds)
             {
-                var playlistAudio = playlist.Audios.FirstOrDefault(x => x.AudioId == audioId);
-                if (playlistAudio != null)
-                {
+                var playlistAudio = playlist.Audios.FirstOrDefault(x => x.Id == id);
+                if (playlistAudio is not null)
                     playlist.Audios.Remove(playlistAudio);
-                }
             }
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
-
             return Result.Success();
         }
     }

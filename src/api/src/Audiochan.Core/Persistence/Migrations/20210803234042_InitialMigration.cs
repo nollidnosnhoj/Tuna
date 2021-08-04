@@ -353,13 +353,14 @@ namespace Audiochan.Core.Persistence.Migrations
                 name: "playlist_audios",
                 columns: table => new
                 {
+                    id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_generate_v4()"),
                     playlist_id = table.Column<Guid>(type: "uuid", nullable: false),
                     audio_id = table.Column<Guid>(type: "uuid", nullable: false),
                     added = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_playlist_audios", x => new { x.playlist_id, x.audio_id });
+                    table.PrimaryKey("pk_playlist_audios", x => x.id);
                     table.ForeignKey(
                         name: "fk_playlist_audios_audios_audio_id",
                         column: x => x.audio_id,
@@ -447,6 +448,11 @@ namespace Audiochan.Core.Persistence.Migrations
                 name: "ix_playlist_audios_audio_id",
                 table: "playlist_audios",
                 column: "audio_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_playlist_audios_playlist_id_audio_id",
+                table: "playlist_audios",
+                columns: new[] { "playlist_id", "audio_id" });
 
             migrationBuilder.CreateIndex(
                 name: "ix_playlist_tags_tags_id",

@@ -5,6 +5,6 @@ namespace Audiochan.Core.Features.Playlists.RemoveAudiosFromPlaylist
 {
     public class RemoveAudiosFromPlaylistRequest
     {
-        public List<Guid> AudioIds { get; set; } = new();
+        public List<Guid> PlaylistAudioIds { get; set; } = new();
     }
 }

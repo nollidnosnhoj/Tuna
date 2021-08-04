@@ -33,7 +33,10 @@ namespace Audiochan.Core.Persistence.Configurations
     {
         public void Configure(EntityTypeBuilder<PlaylistAudio> builder)
         {
-            builder.HasKey(x => new {x.PlaylistId, x.AudioId});
+            builder.HasKey(x => x.Id);
+            builder.Property(x => x.Id).HasDefaultValueSql("uuid_generate_v4()");
+
+            builder.HasIndex(x => new { x.PlaylistId, x.AudioId });
 
             builder.HasOne(x => x.Playlist)
                 .WithMany(x => x.Audios)
