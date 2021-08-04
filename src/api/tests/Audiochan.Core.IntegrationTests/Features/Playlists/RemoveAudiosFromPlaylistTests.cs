@@ -39,7 +39,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Playlists
 
             var result = await SendAsync(new RemoveAudiosFromPlaylistCommand(
                 playlist.Id, 
-                audios.Select(a => a.Id).ToList()));
+                playlistAudios.Select(a => a.Id).ToList()));
 
             var newAudios = ExecuteDbContext(db =>
             {
@@ -62,18 +62,19 @@ namespace Audiochan.Core.IntegrationTests.Features.Playlists
                 .SetFixedVisibility(Visibility.Public)
                 .Generate(5);
             InsertRange(audios);
-            var audioIds = audios.Select(a => a.Id).ToList();
-            var playlistAudios = audioIds
+            var playlistAudios = audios
                 .Select(a => new PlaylistAudio
                 {
-                    AudioId = a,
+                    AudioId = a.Id,
                     PlaylistId = playlist.Id,
                     Added = DateTime.UtcNow
                 }).ToList();
             InsertRange(playlistAudios);
 
             await RunAsUserAsync("testuser");
-            var result = await SendAsync(new RemoveAudiosFromPlaylistCommand(playlist.Id, audioIds));
+            var result = await SendAsync(new RemoveAudiosFromPlaylistCommand(
+                playlist.Id, 
+                playlistAudios.Select(pa => pa.Id).ToList()));
 
             result.IsSuccess.Should().BeFalse();
             result.ErrorCode.Should().Be(ResultError.Forbidden);
