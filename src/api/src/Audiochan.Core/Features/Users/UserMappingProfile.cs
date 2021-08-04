@@ -14,7 +14,7 @@ namespace Audiochan.Core.Features.Users
             {
                 Id = user.Id,
                 Email = user.Email,
-                Username = user.Email
+                Username = user.UserName
             };
 
         public static Expression<Func<User, ProfileViewModel>> UserToProfileFunc = user =>
