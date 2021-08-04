@@ -1,5 +1,7 @@
 import { GetServerSidePropsContext } from "next";
 import request from "~/lib/http";
+import { PagedList } from "~/lib/types";
+import { AudioData } from "../audio/types";
 import { CreatePlaylistRequest, Playlist, PlaylistRequest } from "./types";
 
 export async function getPlaylistRequest(
@@ -12,6 +14,20 @@ export async function getPlaylistRequest(
     url: `playlists/${id}`,
     req,
     res,
+  });
+  return data;
+}
+
+export async function getPlaylistAudiosRequest(
+  id: string,
+  page = 1
+): Promise<PagedList<AudioData>> {
+  const { data } = await request<PagedList<AudioData>>({
+    method: "GET",
+    url: `playlists/${id}/audios`,
+    params: {
+      page,
+    },
   });
   return data;
 }
@@ -61,15 +77,29 @@ export async function addAudiosToPlaylistRequest(
 
 export async function removeAudiosFromPlaylistRequests(
   id: string,
-  audioIds: string[]
+  playlistAudioIds: string[]
 ): Promise<void> {
   await request({
     method: "delete",
     url: `playlists/${id}/audios`,
     data: {
+      playlistAudioIds,
+    },
+  });
+}
+
+export async function checkDuplicatedAudiosRequest(
+  id: string,
+  audioIds: string[]
+): Promise<string[]> {
+  const { data } = await request<string[]>({
+    method: "get",
+    url: `playlists/${id}/audios/duplicate`,
+    data: {
       audioIds,
     },
   });
+  return data;
 }
 
 export async function checkIfPlaylistFavoritedRequest(
