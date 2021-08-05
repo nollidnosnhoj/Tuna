@@ -25,7 +25,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
 
             // create tags
             var tags = Enumerable.Range(1, 5)
-                .Select(_ => faker.Random.Word().GenerateSlug())
+                .Select(_ => faker.Random.String2(5, 10))
                 .ToList();
 
 

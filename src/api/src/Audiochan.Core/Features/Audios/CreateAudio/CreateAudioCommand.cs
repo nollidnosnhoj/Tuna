@@ -77,16 +77,19 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
         private readonly IStorageService _storageService;
         private readonly ICurrentUserService _currentUserService;
         private readonly MediaStorageSettings _storageSettings;
+        private readonly ISlugGenerator _slugGenerator;
 
         public CreateAudioCommandHandler(IOptions<MediaStorageSettings> mediaStorageOptions,
             IStorageService storageService,
             ICurrentUserService currentUserService, 
-            ApplicationDbContext applicationDbContext)
+            ApplicationDbContext applicationDbContext, 
+            ISlugGenerator slugGenerator)
         {
             _storageSettings = mediaStorageOptions.Value;
             _storageService = storageService;
             _currentUserService = currentUserService;
             _applicationDbContext = applicationDbContext;
+            _slugGenerator = slugGenerator;
         }
 
         public async Task<Result<Guid>> Handle(CreateAudioCommand command,
@@ -125,7 +128,8 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
 
             if (command.Tags.Count > 0)
             {
-                audio.Tags = await _applicationDbContext.Tags.GetAppropriateTags(command.Tags, cancellationToken);
+                var tags = _slugGenerator.GenerateSlugs(command.Tags);
+                audio.Tags = await _applicationDbContext.Tags.GetAppropriateTags(tags, cancellationToken);
             }
 
             return audio;

@@ -6,6 +6,7 @@ using Audiochan.Infrastructure.Storage.AmazonS3;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Slugify;
 using StackExchange.Redis;
 
 namespace Audiochan.Infrastructure
@@ -28,6 +29,8 @@ namespace Audiochan.Infrastructure
             
             services.AddAWSService<IAmazonS3>();
             services.AddTransient<IStorageService, AmazonS3Service>();
+
+            services.AddTransient<ISlugGenerator, SlugGenerator>();
             
             services.AddTransient<IImageUploadService, ImageUploadService>();
             services.AddTransient<ITokenProvider, TokenProvider>();

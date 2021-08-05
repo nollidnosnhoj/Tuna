@@ -76,14 +76,16 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
         private readonly ICurrentUserService _currentUserService;
         private readonly ICacheService _cacheService;
         private readonly ApplicationDbContext _dbContext;
+        private readonly ISlugGenerator _slugGenerator;
 
         public UpdateAudioCommandHandler(ICurrentUserService currentUserService, 
             ICacheService cacheService, 
-            ApplicationDbContext dbContext)
+            ApplicationDbContext dbContext, ISlugGenerator slugGenerator)
         {
             _currentUserService = currentUserService;
             _cacheService = cacheService;
             _dbContext = dbContext;
+            _slugGenerator = slugGenerator;
         }
 
         public async Task<Result<AudioViewModel>> Handle(UpdateAudioCommand command,
@@ -122,8 +124,8 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
                 }
                 else
                 {
-                    var newTags = await _dbContext.Tags.GetAppropriateTags(command.Tags, cancellationToken);
-
+                    var tagStrings = _slugGenerator.GenerateSlugs(command.Tags);
+                    var newTags = await _dbContext.Tags.GetAppropriateTags(tagStrings, cancellationToken);
                     audio.UpdateTags(newTags);
                 }
             }

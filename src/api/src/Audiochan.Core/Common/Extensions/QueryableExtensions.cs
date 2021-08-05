@@ -16,13 +16,11 @@ namespace Audiochan.Core.Common.Extensions
         public static async Task<List<Tag>> GetAppropriateTags(this DbSet<Tag> dbSet, IEnumerable<string> tags, 
             CancellationToken cancellationToken)
         {
-            var taggifyTags = tags.FormatTags();
-
             var tagEntities = await dbSet
-                .Where(tag => taggifyTags.Contains(tag.Name))
+                .Where(tag => tags.Contains(tag.Name))
                 .ToListAsync(cancellationToken);
 
-            foreach (var tag in taggifyTags.Where(tag => tagEntities.All(t => t.Name != tag)))
+            foreach (var tag in tags.Where(tag => tagEntities.All(t => t.Name != tag)))
             {
                 tagEntities.Add(new Tag {Name = tag});
             }
