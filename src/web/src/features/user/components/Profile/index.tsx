@@ -3,8 +3,8 @@ import React from "react";
 import PictureController from "~/components/Picture";
 import { useAddUserPicture, useUser } from "../../hooks";
 import { Profile } from "../../api/types";
-import ProfileEditButton from "./ProfileEditButton";
-import ProfileFollowButton from "./ProfileFollowButton";
+import ProfileEditButton from "./Buttons/Edit";
+import ProfileFollowButton from "./Buttons/Follow";
 
 interface ProfileDetailsProps {
   profile: Profile;

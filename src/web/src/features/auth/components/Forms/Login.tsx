@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import TextInput from "~/components/form-inputs/TextInput";
 import { toast, isAxiosError } from "~/utils";
 import { ErrorResponse } from "~/lib/types";
-import { authenticateRequest } from "../api";
+import { authenticateRequest } from "../../api";
 import { useUser } from "~/features/user/hooks";
 
 export type LoginFormValues = {

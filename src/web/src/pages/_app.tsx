@@ -9,7 +9,7 @@ import { CurrentUser } from "~/features/user/api/types";
 import theme from "~/lib/theme";
 import queryClient from "~/lib/queryClient";
 import LoginModal from "~/features/auth/components/AuthModal";
-import AddAudiosToPlaylistDialog from "~/features/playlist/components/AddAudiosToPlaylistDialog";
+import AddToPlaylistModal from "~/features/playlist/components/AddToPlaylistModal";
 
 interface AppProps extends NextAppProps {
   user?: CurrentUser;
@@ -30,7 +30,7 @@ function App({ Component, user, pageProps }: AppProps) {
             <PageLoader color={theme.colors.primary[500]} />
             <Component {...pageProps} />
             <LoginModal />
-            <AddAudiosToPlaylistDialog />
+            <AddToPlaylistModal />
           </UserProvider>
         </ChakraProvider>
       </QueryClientProvider>

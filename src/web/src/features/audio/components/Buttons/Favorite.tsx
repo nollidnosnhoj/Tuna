@@ -4,13 +4,15 @@ import { FaHeart } from "react-icons/fa";
 import { useUser } from "~/features/user/hooks";
 import { useFavoriteAudio } from "../../hooks";
 import { AudioId } from "../../api/types";
+import { ButtonProps } from "@chakra-ui/react";
 
-interface AudioFavoriteButtonProps {
+interface AudioFavoriteButtonProps extends ButtonProps {
   audioId: AudioId;
 }
 
 export default function AudioFavoriteButton({
   audioId,
+  ...buttonProps
 }: AudioFavoriteButtonProps) {
   const { user } = useUser();
   const { isFavorite, favorite, isLoading } = useFavoriteAudio(audioId);
@@ -29,7 +31,7 @@ export default function AudioFavoriteButton({
       isRound
       onClick={favorite}
       isLoading={isLoading}
-      size="lg"
+      {...buttonProps}
     />
   );
 }

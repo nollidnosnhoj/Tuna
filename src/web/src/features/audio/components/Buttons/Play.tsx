@@ -1,15 +1,18 @@
-import { IconButton } from "@chakra-ui/react";
+import { ButtonProps, IconButton } from "@chakra-ui/react";
 import React, { useCallback, useMemo } from "react";
 import { FaPause, FaPlay } from "react-icons/fa";
 import { useAudioPlayer, useAudioQueue } from "~/lib/stores";
 import { mapAudioForAudioQueue } from "~/utils";
-import { AudioView } from "../api/types";
+import { AudioView } from "../../api/types";
 
-interface AudioPlayButtonProps {
+interface AudioPlayButtonProps extends ButtonProps {
   audio: AudioView;
 }
 
-export default function AudioPlayButton({ audio }: AudioPlayButtonProps) {
+export default function AudioPlayButton({
+  audio,
+  ...buttonProps
+}: AudioPlayButtonProps) {
   const [isPlaying, setIsPlaying] = useAudioPlayer((state) => [
     state.isPlaying,
     state.setIsPlaying,
@@ -33,11 +36,11 @@ export default function AudioPlayButton({ audio }: AudioPlayButtonProps) {
     <IconButton
       isRound
       colorScheme="pink"
-      size="lg"
       icon={isAudioPlaying ? <FaPause /> : <FaPlay />}
       aria-label="Play"
       alt="Play"
       onClick={clickPlayButton}
+      {...buttonProps}
     />
   );
 }

@@ -10,7 +10,7 @@ import {
 import React from "react";
 import SETTINGS from "~/lib/config";
 import { AudioId } from "../../api/types";
-import AudioShareItem from "./AudioShareItem";
+import AudioShareItem from "./Item";
 
 interface AudioShareModalProps {
   isOpen: boolean;

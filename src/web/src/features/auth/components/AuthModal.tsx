@@ -13,8 +13,8 @@ import {
 } from "@chakra-ui/react";
 import React, { useEffect, useRef, useState } from "react";
 import { useLoginModal } from "~/lib/stores";
-import LoginForm from "./LoginForm";
-import RegisterForm from "./RegisterForm";
+import LoginForm from "./Forms/Login";
+import RegisterForm from "./Forms/Register";
 
 export default function LoginModal() {
   const { modalState, open, onClose } = useLoginModal();

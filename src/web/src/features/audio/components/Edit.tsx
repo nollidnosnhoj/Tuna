@@ -12,9 +12,9 @@ import {
 import React, { useState } from "react";
 import * as yup from "yup";
 import { errorToast, toast } from "~/utils/toast";
-import { useEditAudio, useRemoveAudio } from "../../hooks";
-import { AudioView, AudioRequest, Visibility } from "../../api/types";
-import AudioForm from "../AudioForm";
+import { useEditAudio, useRemoveAudio } from "../hooks";
+import { AudioView, AudioRequest, Visibility } from "../api/types";
+import AudioForm from "./Form";
 import { useRouter } from "next/router";
 import { FormProvider, useForm } from "react-hook-form";
 import { validationMessages } from "~/utils";

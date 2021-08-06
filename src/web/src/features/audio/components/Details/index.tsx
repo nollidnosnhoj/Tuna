@@ -12,11 +12,11 @@ import Link from "~/components/ui/Link";
 import { AudioView } from "~/features/audio/api/types";
 import { useUser } from "~/features/user/hooks";
 import { relativeDate } from "~/utils/time";
-import AudioPlayButton from "../AudioPlayButton";
-import AudioFavoriteButton from "./AudioFavoriteButton";
+import AudioPlayButton from "../Buttons/Play";
+import AudioFavoriteButton from "../Buttons/Favorite";
 import PictureController from "~/components/Picture";
 import { useAddAudioPicture } from "../../hooks";
-import AudioMiscMenu from "../AudioMenu";
+import AudioMiscMenu from "../ContextMenu";
 
 interface AudioDetailProps {
   audio: AudioView;
@@ -68,9 +68,9 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
           </chakra.div>
         </chakra.div>
         <Stack direction="row" alignItems="center">
-          <AudioPlayButton audio={audio} />
-          <AudioFavoriteButton audioId={audio.id} />
-          <AudioMiscMenu audio={audio} />
+          <AudioPlayButton audio={audio} size="lg" />
+          <AudioFavoriteButton audioId={audio.id} size="lg" />
+          <AudioMiscMenu audio={audio} size="lg" />
         </Stack>
       </Box>
     </Flex>

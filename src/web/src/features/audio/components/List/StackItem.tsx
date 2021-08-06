@@ -2,24 +2,17 @@ import {
   Box,
   Flex,
   IconButton,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
 import NextImage from "next/image";
 import React, { useState } from "react";
 import { FaPause, FaPlay } from "react-icons/fa";
-import { HiDotsVertical } from "react-icons/hi";
-import { MdQueueMusic } from "react-icons/md";
 import Link from "~/components/ui/Link";
-import { mapAudiosForAudioQueue } from "~/utils/audioplayer";
 import { AudioView } from "~/features/audio/api/types";
 import { formatDuration } from "~/utils/format";
 import PictureContainer from "~/components/Picture/PictureContainer";
-import { useAudioQueue } from "~/lib/stores";
+import AudioMiscMenu from "../ContextMenu";
 
 export interface AudioListItemProps {
   audio: AudioView;
@@ -34,7 +27,6 @@ const AudioStackItem: React.FC<AudioListItemProps> = ({
   isPlaying,
   removeArtistName = false,
 }) => {
-  const addToQueue = useAudioQueue((state) => state.addToQueue);
   const [hoverItem, setHoverItem] = useState(false);
   const hoverBg = useColorModeValue("inherit", "whiteAlpha.200");
 
@@ -102,24 +94,7 @@ const AudioStackItem: React.FC<AudioListItemProps> = ({
         </Box>
       </Flex>
       <Flex paddingX={4}>{formatDuration(audio.duration)}</Flex>
-      <Menu placement="bottom-end">
-        <MenuButton
-          as={IconButton}
-          aria-label="Show actions"
-          icon={<HiDotsVertical />}
-          variant="ghost"
-        >
-          Actions
-        </MenuButton>
-        <MenuList>
-          <MenuItem
-            icon={<MdQueueMusic />}
-            onClick={() => addToQueue(mapAudiosForAudioQueue([audio]))}
-          >
-            Add To Queue
-          </MenuItem>
-        </MenuList>
-      </Menu>
+      <AudioMiscMenu audio={audio} size="sm" />
     </Box>
   );
 };

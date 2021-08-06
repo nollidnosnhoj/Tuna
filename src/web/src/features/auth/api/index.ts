@@ -5,7 +5,7 @@ import { setAccessTokenExpiration } from "~/lib/http/utils";
 import { PagedList } from "~/lib/types";
 import { AudioView } from "../../audio/api/types";
 import { Playlist } from "../../playlist/api/types";
-import { LoginFormValues } from "../components/LoginForm";
+import { LoginFormValues } from "../components/Forms/Login";
 
 export async function getCurrentUserAudiosRequest(
   page = 1

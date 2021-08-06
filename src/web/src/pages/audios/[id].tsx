@@ -10,11 +10,11 @@ import { GetServerSideProps } from "next";
 import React from "react";
 import Page from "~/components/Page";
 import AudioDetails from "~/features/audio/components/Details";
-import AudioFileInfo from "~/features/audio/components/Details/AudioFileInfo";
+import AudioFileInfo from "~/features/audio/components/Details/FileInfo";
 import { useGetAudio } from "~/features/audio/hooks";
 import { getAudioRequest } from "~/features/audio/api";
 import { AudioView, AudioId } from "~/features/audio/api/types";
-import AudioTags from "~/features/audio/components/Details/AudioTags";
+import AudioTags from "~/features/audio/components/Details/Tags";
 
 interface AudioPageProps {
   audio?: AudioView;

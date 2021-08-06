@@ -18,7 +18,7 @@ import { useUser } from "~/features/user/hooks";
 import Sidebar from "./Sidebar";
 
 const AudioPlayer = dynamic(
-  () => import("~/features/audio/components/AudioPlayer"),
+  () => import("~/features/audio/components/Player"),
   {
     ssr: false,
   }

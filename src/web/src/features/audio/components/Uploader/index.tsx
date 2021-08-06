@@ -17,8 +17,8 @@ import { useNavigationLock } from "~/lib/hooks";
 import { errorToast, toast, validationMessages } from "~/utils";
 import { useCreateAudio } from "../../hooks";
 import { AudioId, CreateAudioRequest, Visibility } from "../../api/types";
-import AudioForm from "../AudioForm";
-import AudioDropzone from "./AudioDropzone";
+import AudioForm from "../Form";
+import AudioDropzone from "./Dropzone";
 
 const validationSchema: yup.SchemaOf<CreateAudioRequest> = yup
   .object({

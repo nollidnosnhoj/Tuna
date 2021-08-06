@@ -6,6 +6,8 @@ import {
   MenuList,
   MenuItem,
   useDisclosure,
+  ButtonProps,
+  MenuProps,
 } from "@chakra-ui/react";
 import React from "react";
 import { FaShare } from "react-icons/fa";
@@ -15,14 +17,18 @@ import { useUser } from "~/features/user/hooks";
 import { useAddToPlaylist, useAudioQueue } from "~/lib/stores";
 import { mapAudioForAudioQueue } from "~/utils";
 import { AudioView, Visibility } from "../api/types";
-import AudioEditDrawer from "./Details/AudioEditDrawer";
-import AudioShareModal from "./Details/AudioShareModal";
+import AudioEditDrawer from "./Edit";
+import AudioShareModal from "./Share";
 
-interface AudioMiscMenuProps {
+type ButtonSizeType = Pick<ButtonProps, "size">;
+type MenuPlacementType = Pick<MenuProps, "placement">;
+
+interface AudioMiscMenuProps extends ButtonSizeType, MenuPlacementType {
   audio: AudioView;
 }
 
-export default function AudioMiscMenu({ audio }: AudioMiscMenuProps) {
+export default function AudioMiscMenu({ audio, ...props }: AudioMiscMenuProps) {
+  const { placement = "bottom-start", size = "md" } = props;
   const { user } = useUser();
   const addToQueue = useAudioQueue((state) => state.addToQueue);
   const addToPlaylist = useAddToPlaylist((state) => state.openDialog);
@@ -40,12 +46,12 @@ export default function AudioMiscMenu({ audio }: AudioMiscMenuProps) {
   } = useDisclosure();
   return (
     <>
-      <Menu placement="bottom-start">
+      <Menu placement={placement}>
         <MenuButton
           as={IconButton}
           icon={<HiDotsHorizontal />}
           variant="ghost"
-          size="lg"
+          size={size}
           isRound
         />
         <MenuList>

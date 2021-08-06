@@ -26,7 +26,7 @@ import { useAddToPlaylist } from "~/lib/stores";
 import { checkDuplicatedAudiosRequest } from "../api";
 import { useAddAudiosToPlaylist, useCreatePlaylist } from "../hooks";
 
-export default function AddAudiosToPlaylistDialog() {
+export default function AddToPlaylistModal() {
   const {
     open,
     duplicateOpen,
@@ -49,12 +49,12 @@ export default function AddAudiosToPlaylistDialog() {
   const { mutateAsync: addToPlaylistAsync, isLoading: isAddingAudios } =
     useAddAudiosToPlaylist();
 
-  const handleClosingDialog = () => {
+  const handleClosingModal = () => {
     setPlaylistId("");
     closeDialog();
   };
 
-  const handleClosingDuplicateDialog = () => {
+  const handleClosingDuplicateModal = () => {
     addDups([]);
   };
 
@@ -73,13 +73,13 @@ export default function AddAudiosToPlaylistDialog() {
     } catch (err) {
       console.log(err);
     } finally {
-      handleClosingDialog();
+      handleClosingModal();
     }
   };
 
   const handleSubmitAfterDuplicateCheck = async () => {
     try {
-      handleClosingDuplicateDialog();
+      handleClosingDuplicateModal();
       await addToPlaylistAsync({
         id: playlistId,
         audioIds: selectedIds,
@@ -87,7 +87,7 @@ export default function AddAudiosToPlaylistDialog() {
     } catch (err) {
       console.log(err);
     } finally {
-      handleClosingDialog();
+      handleClosingModal();
     }
   };
 
@@ -104,16 +104,16 @@ export default function AddAudiosToPlaylistDialog() {
         audioIds: selectedIds,
       });
 
-      handleClosingDialog();
+      handleClosingModal();
     } catch (err) {
       console.log(err);
-      handleClosingDialog();
+      handleClosingModal();
     }
   };
 
   return (
     <>
-      <Modal isOpen={open} onClose={handleClosingDialog}>
+      <Modal isOpen={open} onClose={handleClosingModal}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Add To Playlist</ModalHeader>
@@ -159,7 +159,7 @@ export default function AddAudiosToPlaylistDialog() {
           </ModalFooter>
         </ModalContent>
       </Modal>
-      <Modal isOpen={duplicateOpen} onClose={handleClosingDuplicateDialog}>
+      <Modal isOpen={duplicateOpen} onClose={handleClosingDuplicateModal}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Duplicate Audios</ModalHeader>
@@ -172,7 +172,7 @@ export default function AddAudiosToPlaylistDialog() {
           </ModalBody>
 
           <ModalFooter>
-            <Button onClick={handleClosingDuplicateDialog}>Close</Button>
+            <Button onClick={handleClosingDuplicateModal}>Close</Button>
             <Button onClick={handleSubmitAfterDuplicateCheck} variant="ghost">
               Add Anyways
             </Button>
