@@ -1,13 +1,7 @@
 import { GetServerSidePropsContext } from "next";
 import request from "~/lib/http";
 import { CursorPagedList, ImageUploadResponse, PagedList } from "~/lib/types";
-import {
-  AudioData,
-  AudioDetailData,
-  AudioId,
-  AudioRequest,
-  CreateAudioRequest,
-} from "./types";
+import { AudioData, AudioId, AudioRequest, CreateAudioRequest } from "./types";
 
 export async function getAudiosRequest(
   cursor?: string,
@@ -24,9 +18,9 @@ export async function getAudiosRequest(
 export async function getAudioRequest(
   id: AudioId,
   ctx?: GetServerSidePropsContext
-): Promise<AudioDetailData> {
+): Promise<AudioData> {
   const { res, req } = ctx ?? {};
-  const { data } = await request<AudioDetailData>({
+  const { data } = await request<AudioData>({
     method: "get",
     url: `audios/${id}`,
     req,
@@ -70,8 +64,8 @@ export async function searchAudiosRequest(
 
 export async function createAudioRequest(
   input: CreateAudioRequest
-): Promise<AudioDetailData> {
-  const { data } = await request<AudioDetailData>({
+): Promise<AudioData> {
+  const { data } = await request<AudioData>({
     url: "audios",
     method: "post",
     data: input,
@@ -82,8 +76,8 @@ export async function createAudioRequest(
 export async function updateAudioDetailsRequest(
   audioId: AudioId,
   input: AudioRequest
-): Promise<AudioDetailData> {
-  const { data } = await request<AudioDetailData>({
+): Promise<AudioData> {
+  const { data } = await request<AudioData>({
     url: `audios/${audioId}`,
     method: "put",
     data: input,

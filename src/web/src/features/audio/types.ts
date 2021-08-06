@@ -11,19 +11,16 @@ export enum Visibility {
 export interface AudioData {
   id: string;
   title: string;
+  description: string;
   visibility: Visibility;
+  tags: string[];
   duration: number;
+  size: number;
   picture?: string;
   created: string;
+  lastModified?: string;
   audioUrl: string;
   user: MetaAuthor;
-}
-
-export interface AudioDetailData extends AudioData {
-  description?: string;
-  tags: string[];
-  size: number;
-  lastModified?: string;
 }
 
 export interface AudioRequest {

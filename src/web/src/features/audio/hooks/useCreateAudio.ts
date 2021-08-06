@@ -1,9 +1,9 @@
 import { useMutation, UseMutationResult } from "react-query";
 import { createAudioRequest } from "../api";
-import { AudioDetailData, CreateAudioRequest } from "../types";
+import { AudioData, CreateAudioRequest } from "../types";
 
 export function useCreateAudio(): UseMutationResult<
-  AudioDetailData,
+  AudioData,
   unknown,
   CreateAudioRequest,
   unknown

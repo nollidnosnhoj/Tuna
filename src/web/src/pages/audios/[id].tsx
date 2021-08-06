@@ -13,11 +13,11 @@ import AudioDetails from "~/features/audio/components/Details";
 import AudioFileInfo from "~/features/audio/components/Details/AudioFileInfo";
 import { useGetAudio } from "~/features/audio/hooks";
 import { getAudioRequest } from "~/features/audio/api";
-import { AudioDetailData, AudioId } from "~/features/audio/types";
+import { AudioData, AudioId } from "~/features/audio/types";
 import AudioTags from "~/features/audio/components/Details/AudioTags";
 
 interface AudioPageProps {
-  audio?: AudioDetailData;
+  audio?: AudioData;
   audioId: AudioId;
 }
 

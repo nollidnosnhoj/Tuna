@@ -9,7 +9,7 @@ import {
 import Router from "next/router";
 import React, { useEffect } from "react";
 import Link from "~/components/ui/Link";
-import { AudioDetailData } from "~/features/audio/types";
+import { AudioData } from "~/features/audio/types";
 import { useUser } from "~/features/user/hooks";
 import { relativeDate } from "~/utils/time";
 import AudioPlayButton from "../AudioPlayButton";
@@ -19,7 +19,7 @@ import { useAddAudioPicture } from "../../hooks";
 import AudioMiscMenu from "../AudioMenu";
 
 interface AudioDetailProps {
-  audio: AudioDetailData;
+  audio: AudioData;
 }
 
 const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {

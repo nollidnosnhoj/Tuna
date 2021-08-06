@@ -14,12 +14,12 @@ import { MdQueueMusic } from "react-icons/md";
 import { useUser } from "~/features/user/hooks";
 import { useAddToPlaylist, useAudioQueue } from "~/lib/stores";
 import { mapAudioForAudioQueue } from "~/utils";
-import { AudioDetailData, Visibility } from "../types";
+import { AudioData, Visibility } from "../types";
 import AudioEditDrawer from "./Details/AudioEditDrawer";
 import AudioShareModal from "./Details/AudioShareModal";
 
 interface AudioMiscMenuProps {
-  audio: AudioDetailData;
+  audio: AudioData;
 }
 
 export default function AudioMiscMenu({ audio }: AudioMiscMenuProps) {
