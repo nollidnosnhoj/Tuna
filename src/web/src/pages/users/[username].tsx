@@ -17,7 +17,7 @@ import {
   useGetUserFavoriteAudios,
 } from "~/features/user/hooks";
 import { getProfileRequest } from "~/features/user/api";
-import { Profile } from "~/features/user/types";
+import { Profile } from "~/features/user/api/types";
 import ProfileDetails from "~/features/user/components/Profile";
 import AudioList from "~/features/audio/components/List";
 

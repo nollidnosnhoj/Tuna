@@ -4,17 +4,17 @@ import {
   UseInfinitePaginationOptions,
   UseInfinitePaginationReturnType,
 } from "~/lib/hooks";
-import { AudioData } from "../types";
+import { AudioView } from "../api/types";
 import { getAudioFeedRequest } from "../api";
 import { useUser } from "~/features/user/hooks";
 
 export const GET_AUDIO_FEED_QUERY_KEY: QueryKey = "feed";
 
 export function useGetAudioFeed(
-  options: UseInfinitePaginationOptions<AudioData> = {}
-): UseInfinitePaginationReturnType<AudioData> {
+  options: UseInfinitePaginationOptions<AudioView> = {}
+): UseInfinitePaginationReturnType<AudioView> {
   const { isLoggedIn } = useUser();
-  return useInfinitePagination<AudioData>(
+  return useInfinitePagination<AudioView>(
     GET_AUDIO_FEED_QUERY_KEY,
     (page) => getAudioFeedRequest(page),
     {

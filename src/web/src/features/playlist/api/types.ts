@@ -1,5 +1,5 @@
 import { MetaAuthor } from "~/lib/types";
-import { AudioData, Visibility } from "../audio/types";
+import { AudioView, Visibility } from "../../audio/api/types";
 
 export interface Playlist {
   id: string;
@@ -8,7 +8,7 @@ export interface Playlist {
   picture?: string;
   visibility: Visibility;
   tags: string[];
-  audios: AudioData[];
+  audios: AudioView[];
   user: MetaAuthor;
 }
 

@@ -3,7 +3,7 @@ import React from "react";
 import { FaHeart } from "react-icons/fa";
 import { useUser } from "~/features/user/hooks";
 import { useFavoriteAudio } from "../../hooks";
-import { AudioId } from "../../types";
+import { AudioId } from "../../api/types";
 
 interface AudioFavoriteButtonProps {
   audioId: AudioId;

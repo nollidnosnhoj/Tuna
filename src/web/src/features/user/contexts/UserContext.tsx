@@ -1,5 +1,5 @@
 import { createContext } from "react";
-import { CurrentUser } from "../types";
+import { CurrentUser } from "../api/types";
 
 export type UserContextType = {
   isLoadingUser: boolean;

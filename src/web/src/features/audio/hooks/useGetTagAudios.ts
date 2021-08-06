@@ -4,16 +4,16 @@ import {
   UseInfiniteCursorPaginationReturnType,
 } from "~/lib/hooks";
 import { getAudiosRequest } from "../api";
-import { AudioData } from "../types";
+import { AudioView } from "../api/types";
 
 export const GET_TAG_AUDIO_LIST_QUERY_KEY = "audios";
 
 export function useGetTagAudioList(
   tag: string,
   params: Record<string, any> = {},
-  options: UseInfiniteCursorPaginationOptions<AudioData> = {}
-): UseInfiniteCursorPaginationReturnType<AudioData> {
-  return useInfiniteCursorPagination<AudioData>(
+  options: UseInfiniteCursorPaginationOptions<AudioView> = {}
+): UseInfiniteCursorPaginationReturnType<AudioView> {
+  return useInfiniteCursorPagination<AudioView>(
     GET_TAG_AUDIO_LIST_QUERY_KEY,
     (cursor) => getAudiosRequest(cursor, { ...params, tag: tag }),
     options

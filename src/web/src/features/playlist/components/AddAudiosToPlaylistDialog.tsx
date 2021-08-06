@@ -20,7 +20,7 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 import { useState } from "react";
-import { Visibility } from "~/features/audio/types";
+import { Visibility } from "~/features/audio/api/types";
 import { useYourPlaylists } from "~/features/auth/hooks";
 import { useAddToPlaylist } from "~/lib/stores";
 import { checkDuplicatedAudiosRequest } from "../api";

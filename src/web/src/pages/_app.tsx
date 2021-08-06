@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 import PageLoader from "~/components/Page/PageLoader";
 import { UserProvider } from "~/features/user/components/providers";
-import { CurrentUser } from "~/features/user/types";
+import { CurrentUser } from "~/features/user/api/types";
 import theme from "~/lib/theme";
 import queryClient from "~/lib/queryClient";
 import LoginModal from "~/features/auth/components/AuthModal";

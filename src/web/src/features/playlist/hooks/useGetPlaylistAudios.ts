@@ -1,5 +1,5 @@
 import { QueryKey } from "react-query";
-import { AudioData } from "~/features/audio/types";
+import { AudioView } from "~/features/audio/api/types";
 import {
   useInfinitePagination,
   UseInfinitePaginationOptions,
@@ -14,9 +14,9 @@ export const GET_PLAYLIST_AUDIOS_KEY = (id: string): QueryKey => [
 
 export function useGetPlaylistAudios(
   id: string,
-  options: UseInfinitePaginationOptions<AudioData> = {}
-): UseInfinitePaginationReturnType<AudioData> {
-  return useInfinitePagination<AudioData>(
+  options: UseInfinitePaginationOptions<AudioView> = {}
+): UseInfinitePaginationReturnType<AudioView> {
+  return useInfinitePagination<AudioView>(
     GET_PLAYLIST_AUDIOS_KEY(id),
     (page) => getPlaylistAudiosRequest(id, page),
     options

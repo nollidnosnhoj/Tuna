@@ -1,4 +1,4 @@
-import { Playlist } from "~/features/playlist/types";
+import { Playlist } from "~/features/playlist/api/types";
 import {
   useInfinitePagination,
   UseInfinitePaginationOptions,

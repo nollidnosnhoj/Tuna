@@ -1,5 +1,5 @@
 import { useMutation, UseMutationResult, useQueryClient } from "react-query";
-import { AudioData, AudioId } from "../types";
+import { AudioView, AudioId } from "../api/types";
 import { GET_AUDIO_QUERY_KEY } from "./useGetAudio";
 import { GET_AUDIO_LIST_QUERY_KEY } from "./useGetAudioList";
 import { uploadAudioPictureRequest } from "../api";
@@ -20,11 +20,11 @@ export function useAddAudioPicture(
 
   return useMutation(uploadArtwork, {
     onSuccess(data) {
-      const audio = queryClient.getQueryData<AudioData>(
+      const audio = queryClient.getQueryData<AudioView>(
         GET_AUDIO_QUERY_KEY(id)
       );
       if (audio) {
-        queryClient.setQueryData<AudioData>(GET_AUDIO_QUERY_KEY(id), {
+        queryClient.setQueryData<AudioView>(GET_AUDIO_QUERY_KEY(id), {
           ...audio,
           picture: data.url,
         });

@@ -16,13 +16,13 @@ import { HiDotsVertical } from "react-icons/hi";
 import { MdQueueMusic } from "react-icons/md";
 import Link from "~/components/ui/Link";
 import { mapAudiosForAudioQueue } from "~/utils/audioplayer";
-import { AudioData } from "~/features/audio/types";
+import { AudioView } from "~/features/audio/api/types";
 import { formatDuration } from "~/utils/format";
 import PictureContainer from "~/components/Picture/PictureContainer";
 import { useAudioQueue } from "~/lib/stores";
 
 export interface AudioListItemProps {
-  audio: AudioData;
+  audio: AudioView;
   isPlaying?: boolean;
   onPlayClick?: () => void;
   removeArtistName?: boolean;

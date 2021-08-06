@@ -4,7 +4,7 @@ import { useUser } from "~/features/user/hooks";
 import { GET_USER_AUDIOS_QUERY_KEY } from "~/features/user/hooks/useGetUserAudios";
 import { useAudioQueue } from "~/lib/stores";
 import { removeAudioRequest } from "../api";
-import { AudioId } from "../types";
+import { AudioId } from "../api/types";
 import { GET_AUDIO_QUERY_KEY } from "./useGetAudio";
 import { GET_AUDIO_LIST_QUERY_KEY } from "./useGetAudioList";
 

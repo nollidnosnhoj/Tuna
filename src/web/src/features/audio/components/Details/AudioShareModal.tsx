@@ -9,7 +9,7 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 import SETTINGS from "~/lib/config";
-import { AudioId } from "../../types";
+import { AudioId } from "../../api/types";
 import AudioShareItem from "./AudioShareItem";
 
 interface AudioShareModalProps {

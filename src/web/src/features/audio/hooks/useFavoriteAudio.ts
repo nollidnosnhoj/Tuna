@@ -6,7 +6,7 @@ import {
   checkIfUserFavoritedAudioRequest,
   unfavoriteAnAudioRequest,
 } from "../api";
-import { AudioId } from "../types";
+import { AudioId } from "../api/types";
 
 type UseFavoriteAudioResult = {
   isFavorite?: boolean;

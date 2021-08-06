@@ -20,7 +20,7 @@ import request from "~/lib/http";
 import { getDurationFromAudioFile } from "~/utils";
 import { formatFileSize } from "~/utils/format";
 import { errorToast } from "~/utils/toast";
-import { CreateAudioRequest } from "../../types";
+import { CreateAudioRequest } from "../../api/types";
 
 interface AudioDropzoneProps {
   onFileDrop: (isFileUpload: boolean) => void;

@@ -1,6 +1,6 @@
 import { useMutation, UseMutationResult, useQueryClient } from "react-query";
 import { createPlaylistRequest } from "../api";
-import { CreatePlaylistRequest, Playlist } from "../types";
+import { CreatePlaylistRequest, Playlist } from "../api/types";
 import { GET_PLAYLIST_KEY } from "./useGetPlaylist";
 
 export function useCreatePlaylist(): UseMutationResult<

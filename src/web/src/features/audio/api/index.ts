@@ -1,13 +1,13 @@
 import { GetServerSidePropsContext } from "next";
 import request from "~/lib/http";
 import { CursorPagedList, ImageUploadResponse, PagedList } from "~/lib/types";
-import { AudioData, AudioId, AudioRequest, CreateAudioRequest } from "./types";
+import { AudioView, AudioId, AudioRequest, CreateAudioRequest } from "./types";
 
 export async function getAudiosRequest(
   cursor?: string,
   params: Record<string, string | boolean | number> = {}
-): Promise<CursorPagedList<AudioData>> {
-  const { data } = await request<CursorPagedList<AudioData>>({
+): Promise<CursorPagedList<AudioView>> {
+  const { data } = await request<CursorPagedList<AudioView>>({
     method: "get",
     url: "audios",
     params: { ...params, cursor: cursor },
@@ -18,9 +18,9 @@ export async function getAudiosRequest(
 export async function getAudioRequest(
   id: AudioId,
   ctx?: GetServerSidePropsContext
-): Promise<AudioData> {
+): Promise<AudioView> {
   const { res, req } = ctx ?? {};
-  const { data } = await request<AudioData>({
+  const { data } = await request<AudioView>({
     method: "get",
     url: `audios/${id}`,
     req,
@@ -31,8 +31,8 @@ export async function getAudioRequest(
 
 export async function getAudioFeedRequest(
   pageNumber: number
-): Promise<PagedList<AudioData>> {
-  const { data } = await request<PagedList<AudioData>>({
+): Promise<PagedList<AudioView>> {
+  const { data } = await request<PagedList<AudioView>>({
     method: "get",
     url: "me/audios/feed",
     params: { page: pageNumber },
@@ -49,8 +49,8 @@ export async function searchAudiosRequest(
   searchTerm: string,
   pageNumber: number,
   params?: SearchAudioParams
-): Promise<PagedList<AudioData>> {
-  const { data } = await request<PagedList<AudioData>>({
+): Promise<PagedList<AudioView>> {
+  const { data } = await request<PagedList<AudioView>>({
     method: "get",
     url: "search/audios",
     params: {
@@ -64,8 +64,8 @@ export async function searchAudiosRequest(
 
 export async function createAudioRequest(
   input: CreateAudioRequest
-): Promise<AudioData> {
-  const { data } = await request<AudioData>({
+): Promise<AudioView> {
+  const { data } = await request<AudioView>({
     url: "audios",
     method: "post",
     data: input,
@@ -76,8 +76,8 @@ export async function createAudioRequest(
 export async function updateAudioDetailsRequest(
   audioId: AudioId,
   input: AudioRequest
-): Promise<AudioData> {
-  const { data } = await request<AudioData>({
+): Promise<AudioView> {
+  const { data } = await request<AudioView>({
     url: `audios/${audioId}`,
     method: "put",
     data: input,

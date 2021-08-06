@@ -4,7 +4,7 @@ import {
   UsePaginationOptions,
   UsePaginationResultType,
 } from "~/lib/hooks";
-import { AudioData } from "../types";
+import { AudioView } from "../api/types";
 import { SearchAudioParams, searchAudiosRequest } from "../api";
 
 export const SEARCH_AUDIO_QUERY_KEY = (
@@ -16,10 +16,10 @@ export function useSearchAudio(
   searchTerm: string,
   page: number,
   params: SearchAudioParams = {},
-  options: UsePaginationOptions<AudioData> = {}
-): UsePaginationResultType<AudioData> {
+  options: UsePaginationOptions<AudioView> = {}
+): UsePaginationResultType<AudioView> {
   const { tags } = params;
-  return usePagination<AudioData>(
+  return usePagination<AudioView>(
     SEARCH_AUDIO_QUERY_KEY(searchTerm, tags),
     (page) => searchAudiosRequest(searchTerm, page, params),
     page,

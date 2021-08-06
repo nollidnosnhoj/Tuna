@@ -13,7 +13,7 @@ import React, { useState } from "react";
 import * as yup from "yup";
 import { errorToast, toast } from "~/utils/toast";
 import { useEditAudio, useRemoveAudio } from "../../hooks";
-import { AudioData, AudioRequest, Visibility } from "../../types";
+import { AudioView, AudioRequest, Visibility } from "../../api/types";
 import AudioForm from "../AudioForm";
 import { useRouter } from "next/router";
 import { FormProvider, useForm } from "react-hook-form";
@@ -21,7 +21,7 @@ import { validationMessages } from "~/utils";
 import { yupResolver } from "@hookform/resolvers/yup";
 
 interface AudioEditDrawerProps {
-  audio: AudioData;
+  audio: AudioView;
   isOpen: boolean;
   onClose: () => void;
   buttonRef?: React.RefObject<HTMLButtonElement>;

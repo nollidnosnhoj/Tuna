@@ -3,10 +3,10 @@ import React, { useCallback, useMemo } from "react";
 import { FaPause, FaPlay } from "react-icons/fa";
 import { useAudioPlayer, useAudioQueue } from "~/lib/stores";
 import { mapAudioForAudioQueue } from "~/utils";
-import { AudioData } from "../types";
+import { AudioView } from "../api/types";
 
 interface AudioPlayButtonProps {
-  audio: AudioData;
+  audio: AudioView;
 }
 
 export default function AudioPlayButton({ audio }: AudioPlayButtonProps) {

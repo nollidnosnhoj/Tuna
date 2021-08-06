@@ -16,13 +16,13 @@ import AudioGridItem from "./GridItem";
 import AudioStackMiniItem from "./StackItem";
 
 import { mapAudiosForAudioQueue } from "~/utils/audioplayer";
-import { AudioData } from "~/features/audio/types";
+import { AudioView } from "~/features/audio/api/types";
 import { useAudioPlayer, useAudioQueue } from "~/lib/stores";
 
 type AudioListLayout = "list" | "grid";
 
 type AudioListProps = {
-  audios: AudioData[];
+  audios: AudioView[];
   defaultLayout?: AudioListLayout;
   hideLayoutToggle?: boolean;
   notFoundContent?: string | React.ReactNode;
@@ -45,13 +45,13 @@ export default function AudioList(props: AudioListProps) {
   const [layout, setLayout] = useState<AudioListLayout>(defaultLayout);
 
   const isAudioPlaying = useCallback(
-    (audio: AudioData) =>
+    (audio: AudioView) =>
       currentAudio !== undefined && currentAudio?.audioId === audio.id,
     [currentAudio?.queueId]
   );
 
   const onPlayClick = useCallback(
-    (audio: AudioData, index: number) => {
+    (audio: AudioView, index: number) => {
       if (isAudioPlaying(audio)) {
         setIsPlaying(!isPlaying);
       } else {

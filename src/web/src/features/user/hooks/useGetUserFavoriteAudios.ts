@@ -1,5 +1,5 @@
 import { QueryKey } from "react-query";
-import { AudioData } from "~/features/audio/types";
+import { AudioView } from "~/features/audio/api/types";
 import {
   useInfinitePagination,
   UseInfinitePaginationOptions,
@@ -18,8 +18,8 @@ export const GET_USER_FAVORITE_AUDIOS_QUERY_KEY = (
 export function useGetUserFavoriteAudios(
   username: string,
   params: UseGetUserFavoriteAudiosParams = {},
-  options: UseInfinitePaginationOptions<AudioData> = {}
-): UseInfinitePaginationReturnType<AudioData> {
+  options: UseInfinitePaginationOptions<AudioView> = {}
+): UseInfinitePaginationReturnType<AudioView> {
   return useInfinitePagination(
     GET_USER_FAVORITE_AUDIOS_QUERY_KEY(username),
     (page) => getUserFavoriteAudiosRequest(username, page, params),

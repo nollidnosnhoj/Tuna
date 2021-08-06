@@ -10,7 +10,7 @@ import {
 import React from "react";
 import TagInput from "~/components/form-inputs/TagInput";
 import TextInput from "~/components/form-inputs/TextInput";
-import { AudioRequest } from "../types";
+import { AudioRequest } from "../api/types";
 import { Controller, useFormContext } from "react-hook-form";
 
 interface AudioFormProps {

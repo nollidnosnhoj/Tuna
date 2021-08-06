@@ -1,7 +1,7 @@
 import { GetServerSidePropsContext } from "next";
 import request from "~/lib/http";
 import { ImageUploadResponse, PagedList } from "~/lib/types";
-import { AudioData } from "../audio/types";
+import { AudioView } from "../../audio/api/types";
 import { CurrentUser, Profile } from "./types";
 
 export async function getCurrentUserRequest(): Promise<CurrentUser> {
@@ -31,8 +31,8 @@ export async function getUserAudiosRequest(
   username: string,
   page: number,
   params?: Record<string, string | number | boolean>
-): Promise<PagedList<AudioData>> {
-  const { data } = await request<PagedList<AudioData>>({
+): Promise<PagedList<AudioView>> {
+  const { data } = await request<PagedList<AudioView>>({
     method: "get",
     url: `users/${username}/audios`,
     params: {
@@ -47,8 +47,8 @@ export async function getUserFavoriteAudiosRequest(
   username: string,
   page?: number,
   params?: Record<string, string | number | boolean>
-): Promise<PagedList<AudioData>> {
-  const { data } = await request<PagedList<AudioData>>({
+): Promise<PagedList<AudioView>> {
+  const { data } = await request<PagedList<AudioView>>({
     method: "get",
     url: `users/${username}/favorite/audios`,
     params: {

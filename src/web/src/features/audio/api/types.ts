@@ -8,7 +8,7 @@ export enum Visibility {
   Private = "private",
 }
 
-export interface AudioData {
+export interface AudioView {
   id: string;
   title: string;
   description: string;

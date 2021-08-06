@@ -16,7 +16,7 @@ import * as yup from "yup";
 import { useNavigationLock } from "~/lib/hooks";
 import { errorToast, toast, validationMessages } from "~/utils";
 import { useCreateAudio } from "../../hooks";
-import { AudioId, CreateAudioRequest, Visibility } from "../../types";
+import { AudioId, CreateAudioRequest, Visibility } from "../../api/types";
 import AudioForm from "../AudioForm";
 import AudioDropzone from "./AudioDropzone";
 

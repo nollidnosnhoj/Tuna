@@ -2,7 +2,7 @@ import { Flex, Box, VStack, Heading, Spacer } from "@chakra-ui/react";
 import React from "react";
 import PictureController from "~/components/Picture";
 import { useAddUserPicture, useUser } from "../../hooks";
-import { Profile } from "../../types";
+import { Profile } from "../../api/types";
 import ProfileEditButton from "./ProfileEditButton";
 import ProfileFollowButton from "./ProfileFollowButton";
 

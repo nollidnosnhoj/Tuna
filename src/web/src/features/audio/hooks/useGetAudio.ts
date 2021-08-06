@@ -6,15 +6,15 @@ import {
 } from "react-query";
 import { ErrorResponse } from "~/lib/types";
 import { getAudioRequest } from "../api";
-import { AudioData, AudioId } from "../types";
+import { AudioView, AudioId } from "../api/types";
 
 export const GET_AUDIO_QUERY_KEY = (id: AudioId): QueryKey => ["audios", id];
 
 export function useGetAudio(
   id: AudioId,
-  options: UseQueryOptions<AudioData, ErrorResponse> = {}
-): UseQueryResult<AudioData, ErrorResponse> {
-  return useQuery<AudioData, ErrorResponse>(
+  options: UseQueryOptions<AudioView, ErrorResponse> = {}
+): UseQueryResult<AudioView, ErrorResponse> {
+  return useQuery<AudioView, ErrorResponse>(
     GET_AUDIO_QUERY_KEY(id),
     () => getAudioRequest(id),
     options

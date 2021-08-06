@@ -5,7 +5,7 @@ import {
   UseQueryResult,
 } from "react-query";
 import { getPlaylistRequest } from "../api";
-import { Playlist } from "../types";
+import { Playlist } from "../api/types";
 
 export const GET_PLAYLIST_KEY = (id: string): QueryKey => ["playlist", id];
 

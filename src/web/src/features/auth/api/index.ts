@@ -3,14 +3,14 @@ import SETTINGS from "~/lib/config";
 import request from "~/lib/http";
 import { setAccessTokenExpiration } from "~/lib/http/utils";
 import { PagedList } from "~/lib/types";
-import { AudioData } from "../audio/types";
-import { Playlist } from "../playlist/types";
-import { LoginFormValues } from "./components/LoginForm";
+import { AudioView } from "../../audio/api/types";
+import { Playlist } from "../../playlist/api/types";
+import { LoginFormValues } from "../components/LoginForm";
 
 export async function getCurrentUserAudiosRequest(
   page = 1
-): Promise<PagedList<AudioData>> {
-  const { data } = await request<PagedList<AudioData>>({
+): Promise<PagedList<AudioView>> {
+  const { data } = await request<PagedList<AudioView>>({
     method: "get",
     url: "me/audios",
     params: {
@@ -35,8 +35,8 @@ export async function getCurrentUserPlaylistsRequest(
 
 export async function getCurrentUserFavoriteAudiosRequest(
   page = 1
-): Promise<PagedList<AudioData>> {
-  const { data } = await request<PagedList<AudioData>>({
+): Promise<PagedList<AudioView>> {
+  const { data } = await request<PagedList<AudioView>>({
     method: "get",
     url: "me/favorite/audios",
     params: { page },

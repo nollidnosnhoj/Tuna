@@ -1,5 +1,5 @@
 import create from "zustand";
-import { AudioId } from "~/features/audio/types";
+import { AudioId } from "~/features/audio/api/types";
 import { useAudioPlayer as audioPlayerStore } from "./useAudioPlayer";
 
 export enum REPEAT_MODE {
