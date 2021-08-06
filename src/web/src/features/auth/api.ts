@@ -4,6 +4,7 @@ import request from "~/lib/http";
 import { setAccessTokenExpiration } from "~/lib/http/utils";
 import { PagedList } from "~/lib/types";
 import { AudioData } from "../audio/types";
+import { Playlist } from "../playlist/types";
 import { LoginFormValues } from "./components/LoginForm";
 
 export async function getCurrentUserAudiosRequest(
@@ -12,6 +13,19 @@ export async function getCurrentUserAudiosRequest(
   const { data } = await request<PagedList<AudioData>>({
     method: "get",
     url: "me/audios",
+    params: {
+      page,
+    },
+  });
+  return data;
+}
+
+export async function getCurrentUserPlaylistsRequest(
+  page = 1
+): Promise<PagedList<Playlist>> {
+  const { data } = await request<PagedList<Playlist>>({
+    method: "get",
+    url: "me/playlists",
     params: {
       page,
     },

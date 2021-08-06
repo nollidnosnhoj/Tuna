@@ -93,7 +93,7 @@ export async function checkDuplicatedAudiosRequest(
   audioIds: string[]
 ): Promise<string[]> {
   const { data } = await request<string[]>({
-    method: "get",
+    method: "post",
     url: `playlists/${id}/audios/duplicate`,
     data: {
       audioIds,

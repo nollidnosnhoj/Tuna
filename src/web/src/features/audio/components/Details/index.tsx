@@ -16,7 +16,7 @@ import AudioPlayButton from "../AudioPlayButton";
 import AudioFavoriteButton from "./AudioFavoriteButton";
 import PictureController from "~/components/Picture";
 import { useAddAudioPicture } from "../../hooks";
-import AudioMiscMenu from "./AudioMiscMenu";
+import AudioMiscMenu from "../AudioMenu";
 
 interface AudioDetailProps {
   audio: AudioDetailData;

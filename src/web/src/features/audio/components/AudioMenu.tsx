@@ -12,11 +12,11 @@ import { FaShare } from "react-icons/fa";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { MdQueueMusic } from "react-icons/md";
 import { useUser } from "~/features/user/hooks";
-import { useAudioQueue } from "~/lib/stores";
+import { useAddToPlaylist, useAudioQueue } from "~/lib/stores";
 import { mapAudioForAudioQueue } from "~/utils";
-import { AudioDetailData, Visibility } from "../../types";
-import AudioEditDrawer from "./AudioEditDrawer";
-import AudioShareModal from "./AudioShareModal";
+import { AudioDetailData, Visibility } from "../types";
+import AudioEditDrawer from "./Details/AudioEditDrawer";
+import AudioShareModal from "./Details/AudioShareModal";
 
 interface AudioMiscMenuProps {
   audio: AudioDetailData;
@@ -25,6 +25,7 @@ interface AudioMiscMenuProps {
 export default function AudioMiscMenu({ audio }: AudioMiscMenuProps) {
   const { user } = useUser();
   const addToQueue = useAudioQueue((state) => state.addToQueue);
+  const addToPlaylist = useAddToPlaylist((state) => state.openDialog);
 
   const {
     isOpen: isEditOpen,
@@ -59,6 +60,14 @@ export default function AudioMiscMenu({ audio }: AudioMiscMenuProps) {
           >
             Add to queue
           </MenuItem>
+          {audio.user.id === user?.id && (
+            <MenuItem
+              icon={<MdQueueMusic />}
+              onClick={() => addToPlaylist([audio])}
+            >
+              Add To Playlist
+            </MenuItem>
+          )}
           {audio.visibility != Visibility.Private && (
             <MenuItem icon={<FaShare />} onClick={onShareOpen}>
               Share
