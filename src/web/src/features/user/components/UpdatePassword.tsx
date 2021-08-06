@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "@chakra-ui/react";
 import * as yup from "yup";
-import TextInput from "~/components/form-inputs/TextInput";
+import TextInput from "~/components/Forms/Inputs/Text";
 import { validationMessages, errorToast } from "~/utils";
 import { passwordRule } from "../schemas";
 import request from "~/lib/http";

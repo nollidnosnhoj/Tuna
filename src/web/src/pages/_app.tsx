@@ -3,7 +3,7 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { AppProps as NextAppProps } from "next/app";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
-import PageLoader from "~/components/Page/PageLoader";
+import PageLoader from "~/components/Page/Loader";
 import { UserProvider } from "~/features/user/components/providers";
 import { CurrentUser } from "~/features/user/api/types";
 import theme from "~/lib/theme";

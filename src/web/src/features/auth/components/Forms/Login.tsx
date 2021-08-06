@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Alert, Box, Button, CloseButton } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
-import TextInput from "~/components/form-inputs/TextInput";
+import TextInput from "~/components/Forms/Inputs/Text";
 import { toast, isAxiosError } from "~/utils";
 import { ErrorResponse } from "~/lib/types";
 import { authenticateRequest } from "../../api";

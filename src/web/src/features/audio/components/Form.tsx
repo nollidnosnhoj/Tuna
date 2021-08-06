@@ -8,8 +8,8 @@ import {
   Stack,
 } from "@chakra-ui/react";
 import React from "react";
-import TagInput from "~/components/form-inputs/TagInput";
-import TextInput from "~/components/form-inputs/TextInput";
+import TagInput from "~/components/Forms/Inputs/Tags";
+import TextInput from "~/components/Forms/Inputs/Text";
 import { AudioRequest } from "../api/types";
 import { Controller, useFormContext } from "react-hook-form";
 
