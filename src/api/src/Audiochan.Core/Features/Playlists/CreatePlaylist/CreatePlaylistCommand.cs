@@ -90,7 +90,6 @@ namespace Audiochan.Core.Features.Playlists.CreatePlaylist
                     .Select(x => new PlaylistAudio
                     {
                         AudioId = x,
-                        Added = _dateTimeProvider.Now
                     })
                     .ToList()
             };

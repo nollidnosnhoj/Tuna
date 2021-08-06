@@ -67,7 +67,6 @@ namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
             {
                 AudioId = audio.Id,
                 UserId = observerId,
-                FavoriteDate = DateTime.UtcNow
             };
             Insert(favoriteAudio);
 

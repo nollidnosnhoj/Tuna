@@ -46,9 +46,6 @@ namespace Audiochan.Core.Persistence.Configurations
                 .WithMany(f => f.Favorited)
                 .HasForeignKey(o => o.AudioId)
                 .OnDelete(DeleteBehavior.Cascade);
-
-            builder.HasIndex(f => f.FavoriteDate);
-            builder.HasQueryFilter(f => f.UnfavoriteDate == null);
         }
     }
 }

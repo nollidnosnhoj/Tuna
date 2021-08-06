@@ -116,19 +116,8 @@ namespace Audiochan.Core.Persistence.Migrations
                         .HasColumnType("text")
                         .HasColumnName("user_id");
 
-                    b.Property<DateTime>("FavoriteDate")
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("favorite_date");
-
-                    b.Property<DateTime?>("UnfavoriteDate")
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("unfavorite_date");
-
                     b.HasKey("AudioId", "UserId")
                         .HasName("pk_favorite_audios");
-
-                    b.HasIndex("FavoriteDate")
-                        .HasDatabaseName("ix_favorite_audios_favorite_date");
 
                     b.HasIndex("UserId")
                         .HasDatabaseName("ix_favorite_audios_user_id");
@@ -145,14 +134,6 @@ namespace Audiochan.Core.Persistence.Migrations
                     b.Property<string>("UserId")
                         .HasColumnType("text")
                         .HasColumnName("user_id");
-
-                    b.Property<DateTime>("FavoriteDate")
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("favorite_date");
-
-                    b.Property<DateTime?>("UnfavoriteDate")
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("unfavorite_date");
 
                     b.HasKey("PlaylistId", "UserId")
                         .HasName("pk_favorite_playlists");
@@ -254,10 +235,6 @@ namespace Audiochan.Core.Persistence.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id")
                         .HasDefaultValueSql("uuid_generate_v4()");
-
-                    b.Property<DateTime>("Added")
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("added");
 
                     b.Property<Guid>("AudioId")
                         .HasColumnType("uuid")

@@ -33,7 +33,6 @@ namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
             {
                 AudioId = audio.Id,
                 UserId = observerId,
-                FavoriteDate = DateTime.Now
             };
             Insert(favoriteAudio);
 
@@ -74,13 +73,10 @@ namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
                 _faker.Random.String2(15), 
                 _faker.Internet.Password(), 
                 Array.Empty<string>());
-            var now = DateTime.UtcNow;
             var favoriteAudio = new FavoriteAudio
             {
                 AudioId = audio.Id,
                 UserId = observerId,
-                FavoriteDate = now.AddDays(-1),
-                UnfavoriteDate = now
             };
             Insert(favoriteAudio);
 

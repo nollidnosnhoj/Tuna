@@ -173,7 +173,7 @@ namespace Audiochan.API.Controllers
         }
         
         [Authorize]
-        [HttpGet("{playlistId:guid}/audios/duplicate", Name = "CheckDuplicatedAudios")]
+        [HttpPost("{playlistId:guid}/audios/duplicate", Name = "CheckDuplicatedAudios")]
         [ProducesResponseType(200)]
         [SwaggerOperation(
             Summary = "Check to see if the input audio ids already exist in playlist.",
@@ -182,9 +182,9 @@ namespace Audiochan.API.Controllers
             Tags = new[] {"playlists"}
         )]
         public async Task<IActionResult> CheckDuplicatedAudios(Guid playlistId,
-            [FromBody] RemoveAudiosFromPlaylistRequest request, CancellationToken cancellationToken)
+            [FromBody] CheckDuplicatedAudiosRequest request, CancellationToken cancellationToken)
         {
-            var command = new CheckDuplicatedAudiosQuery(playlistId, request.PlaylistAudioIds);
+            var command = new CheckDuplicatedAudiosQuery(playlistId, request.AudioIds);
             var result = await _mediator.Send(command, cancellationToken);
             return new JsonResult(result);
         }

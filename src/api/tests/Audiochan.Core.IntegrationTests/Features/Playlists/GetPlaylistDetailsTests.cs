@@ -31,7 +31,6 @@ namespace Audiochan.Core.IntegrationTests.Features.Playlists
                 {
                     PlaylistId = playlist.Id,
                     AudioId = t.Id,
-                    Added = now.AddMinutes((audios.Count - i) * -1)
                 }).ToList();
             InsertRange(playlistAudios);
 

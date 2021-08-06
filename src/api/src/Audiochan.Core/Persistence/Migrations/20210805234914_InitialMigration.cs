@@ -302,9 +302,7 @@ namespace Audiochan.Core.Persistence.Migrations
                 columns: table => new
                 {
                     audio_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    user_id = table.Column<string>(type: "text", nullable: false),
-                    favorite_date = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    unfavorite_date = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                    user_id = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -328,9 +326,7 @@ namespace Audiochan.Core.Persistence.Migrations
                 columns: table => new
                 {
                     playlist_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    user_id = table.Column<string>(type: "text", nullable: false),
-                    favorite_date = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    unfavorite_date = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                    user_id = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -355,8 +351,7 @@ namespace Audiochan.Core.Persistence.Migrations
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_generate_v4()"),
                     playlist_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    audio_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    added = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                    audio_id = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -418,11 +413,6 @@ namespace Audiochan.Core.Persistence.Migrations
                 name: "ix_audios_user_id",
                 table: "audios",
                 column: "user_id");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_favorite_audios_favorite_date",
-                table: "favorite_audios",
-                column: "favorite_date");
 
             migrationBuilder.CreateIndex(
                 name: "ix_favorite_audios_user_id",

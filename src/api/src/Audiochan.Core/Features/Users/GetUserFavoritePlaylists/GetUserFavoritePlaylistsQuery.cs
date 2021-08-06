@@ -48,7 +48,6 @@ namespace Audiochan.Core.Features.Users.GetUserFavoritePlaylists
                 .ThenInclude(fa => fa.Playlist)
                 .Where(u => u.UserName == request.Username)
                 .SelectMany(u => u.FavoritePlaylists)
-                .OrderByDescending(fa => fa.FavoriteDate)
                 .Select(fa => fa.Playlist)
                 .FilterVisibility(_currentUserId, FilterVisibilityMode.OnlyPublic)
                 .Select(PlaylistMaps.PlaylistToDetailFunc)

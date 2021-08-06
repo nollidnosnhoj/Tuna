@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Entities;
@@ -33,7 +32,6 @@ namespace Audiochan.Core.IntegrationTests.Features.Playlists
                 {
                     AudioId = a.Id,
                     PlaylistId = playlist.Id,
-                    Added = DateTime.UtcNow
                 }).ToList();
             InsertRange(playlistAudios);
 
@@ -67,7 +65,6 @@ namespace Audiochan.Core.IntegrationTests.Features.Playlists
                 {
                     AudioId = a.Id,
                     PlaylistId = playlist.Id,
-                    Added = DateTime.UtcNow
                 }).ToList();
             InsertRange(playlistAudios);
 

@@ -40,7 +40,6 @@ namespace Audiochan.Core.Features.Users.GetUserFavoriteAudios
                 .ThenInclude(fa => fa.Audio)
                 .Where(u => u.UserName == query.Username)
                 .SelectMany(u => u.FavoriteAudios)
-                .OrderByDescending(fa => fa.FavoriteDate)
                 .Select(fa => fa.Audio)
                 .FilterVisibility(_currentUserId, FilterVisibilityMode.OnlyPublic)
                 .Select(AudioMaps.AudioToView)

@@ -9,7 +9,7 @@ namespace Audiochan.Core.Entities
     {
         public Playlist()
         {
-            Audios = new HashSet<PlaylistAudio>();
+            Audios = new List<PlaylistAudio>();
             Favorited = new HashSet<FavoritePlaylist>();
             Tags = new HashSet<Tag>();
         }

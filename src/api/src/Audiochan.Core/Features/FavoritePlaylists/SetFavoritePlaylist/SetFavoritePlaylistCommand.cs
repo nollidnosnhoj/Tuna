@@ -62,17 +62,11 @@ namespace Audiochan.Core.Features.FavoritePlaylists.SetFavoritePlaylist
                 {
                     PlaylistId = target.Id,
                     UserId = userId,
-                    FavoriteDate = _dateTimeProvider.Now
                 };
                 
                 target.Favorited.Add(favoriter);
             }
-            else if (favoriter.UnfavoriteDate is not null)
-            {
-                favoriter.FavoriteDate = _dateTimeProvider.Now;
-                favoriter.UnfavoriteDate = null;
-            }
-            
+
             return Task.FromResult(true);
         }
         
@@ -82,7 +76,7 @@ namespace Audiochan.Core.Features.FavoritePlaylists.SetFavoritePlaylist
 
             if (favoriter is not null)
             {
-                favoriter.UnfavoriteDate = _dateTimeProvider.Now;
+                target.Favorited.Remove(favoriter);
             }
 
             return Task.FromResult(false);

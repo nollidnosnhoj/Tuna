@@ -85,14 +85,11 @@ namespace Audiochan.Core.Features.Playlists.AddAudiosToPlaylist
 
             foreach (var audioId in request.AudioIds)
             {
-                if (playlist.Audios.All(x => x.AudioId != audioId))
+                playlist.Audios.Add(new PlaylistAudio
                 {
-                    playlist.Audios.Add(new PlaylistAudio
-                    {
-                        PlaylistId = playlist.Id,
-                        AudioId = audioId
-                    });
-                }
+                    PlaylistId = playlist.Id,
+                    AudioId = audioId
+                });
             }
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
