@@ -25,10 +25,7 @@ namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
         {
             // Assign
             var (targetId, _) = await RunAsDefaultUserAsync();
-            var (observerId, _) = await RunAsUserAsync(
-                    _faker.Random.String2(15), 
-                    _faker.Internet.Password(), 
-                    Array.Empty<string>());
+            var (observerId, _) = await RunAsUserAsync(_faker.Random.String2(15));
 
             var audio = new AudioFaker(targetId).Generate();
             Insert(audio);
@@ -55,10 +52,7 @@ namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
         {
             // Assign
             var (targetId, _) = await RunAsDefaultUserAsync();
-            var (observerId, _) = await RunAsUserAsync(
-                _faker.Random.String2(15), 
-                _faker.Internet.Password(), 
-                Array.Empty<string>());
+            var (observerId, _) = await RunAsUserAsync(_faker.Random.String2(15));
             
             var audio = new AudioFaker(targetId).Generate();
             Insert(audio);

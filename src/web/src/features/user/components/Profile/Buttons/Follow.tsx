@@ -4,7 +4,7 @@ import { useUser } from "~/features/user/hooks";
 import { useFollow } from "../../../hooks";
 
 interface ProfileFollowButtonProps {
-  profileId: string;
+  profileId: number;
 }
 
 export default function ProfileFollowButton({

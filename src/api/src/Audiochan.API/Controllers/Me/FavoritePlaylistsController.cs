@@ -19,7 +19,7 @@ namespace Audiochan.API.Controllers.Me
     public class FavoritePlaylistsController : ControllerBase
     {
         private readonly IMediator _mediator;
-        private readonly string _currentUserId;
+        private readonly long _currentUserId;
 
         public FavoritePlaylistsController(ICurrentUserService currentUserService, IMediator mediator)
         {

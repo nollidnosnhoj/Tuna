@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -24,7 +25,7 @@ namespace Audiochan.Core.Features.Audios.GetLatestAudios
     public class GetLatestAudioQueryHandler : IRequestHandler<GetLatestAudioQuery, GetAudioListViewModel>
     {
         private readonly ApplicationDbContext _dbContext;
-        private readonly string _currentUserId;
+        private readonly long _currentUserId;
 
         public GetLatestAudioQueryHandler(ApplicationDbContext dbContext, ICurrentUserService currentUserService)
         {

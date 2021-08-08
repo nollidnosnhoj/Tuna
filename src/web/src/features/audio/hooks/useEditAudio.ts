@@ -19,7 +19,7 @@ export function useEditAudio(id: AudioId): UseMutationResult<AudioView> {
       queryClient.setQueryData<AudioView>(GET_AUDIO_QUERY_KEY(id), data);
       queryClient.invalidateQueries(GET_AUDIO_LIST_QUERY_KEY);
       if (user) {
-        queryClient.invalidateQueries(GET_USER_AUDIOS_QUERY_KEY(user.id));
+        queryClient.invalidateQueries(GET_USER_AUDIOS_QUERY_KEY(user.username));
         queryClient.invalidateQueries(GET_YOUR_AUDIOS_KEY);
       }
     },

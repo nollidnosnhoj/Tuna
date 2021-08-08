@@ -6,7 +6,7 @@ namespace Audiochan.Tests.Common.Fakers.Audios
 {
     public sealed class AudioFaker : Faker<Audio>
     {
-        public AudioFaker(string userId, bool generateFakeAudioId = false)
+        public AudioFaker(long userId, bool generateFakeAudioId = false)
         {
             if (generateFakeAudioId)
             {

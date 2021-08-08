@@ -72,7 +72,7 @@ namespace Audiochan.Core.Features.Playlists.UpdatePlaylistDetails
     public class UpdatePlaylistDetailsCommandHandler 
         : IRequestHandler<UpdatePlaylistDetailsCommand,Result<PlaylistViewModel>>
     {
-        private readonly string _currentUserId;
+        private readonly long _currentUserId;
         private readonly ApplicationDbContext _unitOfWork;
 
         public UpdatePlaylistDetailsCommandHandler(ICurrentUserService currentUserService, ApplicationDbContext unitOfWork)

@@ -13,7 +13,7 @@ namespace Audiochan.Core.IntegrationTests
 {
     public class TestWebApplicationFactory : WebApplicationFactory<Startup>
     {
-        public string? CurrentUserId { get; set; }
+        public long CurrentUserId { get; set; }
         public string? CurrentUserName { get; set; }
         public DateTime CurrentTime { get; set; }
 

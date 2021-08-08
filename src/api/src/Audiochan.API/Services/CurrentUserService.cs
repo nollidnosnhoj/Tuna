@@ -1,4 +1,6 @@
-﻿using System.Security.Claims;
+﻿using System;
+using System.Security.Claims;
+using Audiochan.Core.Common.Helpers;
 using Audiochan.Core.Interfaces;
 using Microsoft.AspNetCore.Http;
 
@@ -13,16 +15,19 @@ namespace Audiochan.API.Services
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public string GetUserId()
+        public long GetUserId()
         {
-            return _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier)
-                   ?? string.Empty;
+            var value = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
+#pragma warning disable CA1806
+            long.TryParse(value, out long id);
+#pragma warning restore CA1806
+            return id;
         }
 
-        public bool TryGetUserId(out string userId)
+        public bool TryGetUserId(out long userId)
         {
             userId = GetUserId();
-            return !string.IsNullOrEmpty(userId);
+            return UserHelpers.IsValidId(userId);
         }
 
         public bool TryGetUsername(out string username)
@@ -33,8 +38,7 @@ namespace Audiochan.API.Services
 
         public bool IsAuthenticated()
         {
-            var id = GetUserId();
-            return !string.IsNullOrEmpty(id);
+            return TryGetUserId(out _);
         }
 
         public string GetUsername()

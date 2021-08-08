@@ -25,10 +25,7 @@ namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
             var (targetId, _) = await RunAsAdministratorAsync();
             var audio = new AudioFaker(targetId).Generate();
             Insert(audio);
-            var (observerId, _) = await RunAsUserAsync(
-                _faker.Random.String2(15), 
-                _faker.Internet.Password(), 
-                Array.Empty<string>());
+            var (observerId, _) = await RunAsUserAsync(_faker.Random.String2(15));
             var favoriteAudio = new FavoriteAudio
             {
                 AudioId = audio.Id,
@@ -50,10 +47,7 @@ namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
             var (targetId, _) = await RunAsAdministratorAsync();
             var audio = new AudioFaker(targetId).Generate();
             Insert(audio);
-            var (observerId, _) = await RunAsUserAsync(
-                _faker.Random.String2(15), 
-                _faker.Internet.Password(), 
-                Array.Empty<string>());
+            var (observerId, _) = await RunAsUserAsync(_faker.Random.String2(15));
 
             // Act
             var isFavorited = await SendAsync(new CheckIfAudioFavoritedQuery(audio.Id, observerId));
@@ -69,10 +63,7 @@ namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
             var (targetId, _) = await RunAsAdministratorAsync();
             var audio = new AudioFaker(targetId).Generate();
             Insert(audio);
-            var (observerId, _) = await RunAsUserAsync(
-                _faker.Random.String2(15), 
-                _faker.Internet.Password(), 
-                Array.Empty<string>());
+            var (observerId, _) = await RunAsUserAsync(_faker.Random.String2(15));
             var favoriteAudio = new FavoriteAudio
             {
                 AudioId = audio.Id,

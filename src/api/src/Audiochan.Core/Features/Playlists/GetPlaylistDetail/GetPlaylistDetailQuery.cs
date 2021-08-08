@@ -17,7 +17,7 @@ namespace Audiochan.Core.Features.Playlists.GetPlaylistDetail
     
     public class GetPlaylistDetailQueryHandler : IRequestHandler<GetPlaylistDetailQuery, PlaylistViewModel?>
     {
-        private readonly string _currentUserId;
+        private readonly long _currentUserId;
         private readonly ApplicationDbContext _unitOfWork;
 
         public GetPlaylistDetailQueryHandler(ICurrentUserService currentUserService, ApplicationDbContext unitOfWork)

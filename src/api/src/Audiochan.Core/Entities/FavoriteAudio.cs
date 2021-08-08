@@ -7,7 +7,7 @@ namespace Audiochan.Core.Entities
     {
         public Guid AudioId { get; set; }
         public Audio Audio { get; set; } = null!;
-        public string UserId { get; set; } = null!;
+        public long UserId { get; set; }
         public User User { get; set; } = null!;
     }
 }

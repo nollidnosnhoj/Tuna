@@ -25,7 +25,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Auth
             var faker = new Faker();
             var username = faker.Random.String2(15);
             var password = faker.Internet.Password();
-            var (userId, _) = await RunAsUserAsync(username, password, Array.Empty<string>());
+            var (userId, _) = await RunAsUserAsync(username, password);
             
             // Act
             // 1. User logins into account. Receives access and refresh token.
@@ -50,7 +50,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Auth
             userRefreshTokens.Should().NotContain(x => x.Token == loginResult.Data.RefreshToken);
         }
         
-        private List<RefreshToken> GetUserRefreshTokens(string userId)
+        private List<RefreshToken> GetUserRefreshTokens(long userId)
         {
             return ExecuteDbContext(dbContext =>
             {

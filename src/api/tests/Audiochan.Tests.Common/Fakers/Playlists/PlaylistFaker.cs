@@ -6,7 +6,7 @@ namespace Audiochan.Tests.Common.Fakers.Playlists
 {
     public sealed class PlaylistFaker : Faker<Playlist>
     {
-        public PlaylistFaker(string userId, bool shouldGenerateId = false)
+        public PlaylistFaker(long userId, bool shouldGenerateId = false)
         {
             if (shouldGenerateId)
                 RuleFor(x => x.Id, f => f.Random.Guid());

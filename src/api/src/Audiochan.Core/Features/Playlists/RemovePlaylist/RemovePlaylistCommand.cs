@@ -18,7 +18,7 @@ namespace Audiochan.Core.Features.Playlists.RemovePlaylist
 
     public class RemovePlaylistCommandHandler : IRequestHandler<RemovePlaylistCommand, Result>
     {
-        private readonly string _currentUserId;
+        private readonly long _currentUserId;
         private readonly IStorageService _storageService;
         private readonly MediaStorageSettings _storageSettings;
         private readonly ApplicationDbContext _unitOfWork;

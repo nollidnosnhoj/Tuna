@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Helpers;
 using Audiochan.Core.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -23,10 +24,11 @@ namespace Audiochan.Core.Features.Users.GetProfile
         public async Task<ProfileViewModel?> Handle(GetProfileQuery query, CancellationToken cancellationToken)
         {
             var userId = await _unitOfWork.Users.AsNoTracking()
+                .Where(u => u.UserName == query.Username)
                 .Select(u => u.Id)
                 .SingleOrDefaultAsync(cancellationToken);
             
-            if (string.IsNullOrEmpty(userId)) return null;
+            if (!UserHelpers.IsValidId(userId)) return null;
             
             return await _unitOfWork.Users.AsNoTracking()
                 .Include(u => u.Followers.Where(fu => fu.TargetId == userId))

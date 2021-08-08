@@ -1,9 +1,8 @@
 using System;
 using System.Threading.Tasks;
-using Audiochan.Core.Entities;
+using Audiochan.Core.Interfaces;
 using Audiochan.Core.Persistence;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -40,9 +39,8 @@ namespace Audiochan.API
                     if (env.IsDevelopment())
                     {
                         Log.Information("Seeding users and default audios.");
-                        var userManager = services.GetRequiredService<UserManager<User>>();
-                        var roleManager = services.GetRequiredService<RoleManager<Role>>();
-                        await ApplicationDbSeeder.UserSeedAsync(userManager, roleManager);
+                        var pwHasher = services.GetRequiredService<IPasswordHasher>();
+                        await ApplicationDbSeeder.UserSeedAsync(context, pwHasher);
                     }
                 }
 

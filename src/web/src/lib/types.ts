@@ -1,5 +1,5 @@
 export type MetaAuthor = {
-  id: string;
+  id: number;
   username: string;
   displayName: string;
 };

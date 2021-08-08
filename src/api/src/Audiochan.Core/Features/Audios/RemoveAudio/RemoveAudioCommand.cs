@@ -56,7 +56,7 @@ namespace Audiochan.Core.Features.Audios.RemoveAudio
             return Result<bool>.Success(true);
         }
 
-        private bool ShouldCurrentUserModifyAudio(Audio audio, string userId)
+        private bool ShouldCurrentUserModifyAudio(Audio audio, long userId)
         {
             return audio.UserId == userId;
         }

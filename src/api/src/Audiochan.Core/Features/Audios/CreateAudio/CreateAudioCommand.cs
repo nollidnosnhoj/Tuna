@@ -105,19 +105,9 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
                 return Result<Guid>.BadRequest("Cannot find upload. Please upload and try again.");
             }
             
-            var audio = await CreateNewAudioBasedOnCommandAsync(command, currentUserId, cancellationToken);
-            await _applicationDbContext.Audios.AddAsync(audio, cancellationToken);
-            await MoveTempAudioToPublicAsync(audio, cancellationToken);
-            await _applicationDbContext.SaveChangesAsync(cancellationToken);
-            return Result<Guid>.Success(audio.Id);
-        }
-
-        private async Task<Audio> CreateNewAudioBasedOnCommandAsync(CreateAudioCommand command, string ownerId,
-            CancellationToken cancellationToken = default)
-        {
             var audio = new Audio
             {
-                UserId = ownerId,
+                UserId = currentUserId,
                 Size = command.FileSize,
                 Duration = command.Duration,
                 Title = command.Title,
@@ -131,8 +121,11 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
                 var tags = _slugGenerator.GenerateSlugs(command.Tags);
                 audio.Tags = await _applicationDbContext.Tags.GetAppropriateTags(tags, cancellationToken);
             }
-
-            return audio;
+            
+            await _applicationDbContext.Audios.AddAsync(audio, cancellationToken);
+            await MoveTempAudioToPublicAsync(audio, cancellationToken);
+            await _applicationDbContext.SaveChangesAsync(cancellationToken);
+            return Result<Guid>.Success(audio.Id);
         }
 
         private async Task MoveTempAudioToPublicAsync(Audio audio, CancellationToken cancellationToken)

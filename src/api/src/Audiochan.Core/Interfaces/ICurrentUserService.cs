@@ -1,9 +1,11 @@
-﻿namespace Audiochan.Core.Interfaces
+﻿using System;
+
+namespace Audiochan.Core.Interfaces
 {
     public interface ICurrentUserService
     {
-        string GetUserId();
-        bool TryGetUserId(out string userId);
+        long GetUserId();
+        bool TryGetUserId(out long userId);
         string GetUsername();
         bool TryGetUsername(out string username);
         bool IsAuthenticated();

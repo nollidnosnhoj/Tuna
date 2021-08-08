@@ -29,7 +29,7 @@ namespace Audiochan.Core.Features.Playlists.UpdatePlaylistPicture
     
     public class UpdatePlaylistPictureCommandHandler : IRequestHandler<UpdatePlaylistPictureCommand, Result<ImageUploadResponse>>
     {
-        private readonly string _currentUserId;
+        private readonly long _currentUserId;
         private readonly MediaStorageSettings _storageSettings;
         private readonly IDateTimeProvider _dateTimeProvider;
         private readonly IStorageService _storageService;

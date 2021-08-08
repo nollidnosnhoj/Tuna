@@ -31,7 +31,7 @@ namespace Audiochan.Core.Features.Users.GetUserPlaylists
     public class GetUserPlaylistsQueryHandler : IRequestHandler<GetUserPlaylistsQuery, PagedListDto<PlaylistViewModel>>
     {
         private readonly ApplicationDbContext _dbContext;
-        private readonly string _currentUserId;
+        private readonly long _currentUserId;
 
         public GetUserPlaylistsQueryHandler(ApplicationDbContext dbContext, ICurrentUserService currentUserService)
         {

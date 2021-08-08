@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Auth.GetCurrentUser
 {
-    public record GetCurrentUserQuery(string UserId) : IRequest<CurrentUserViewModel?>
+    public record GetCurrentUserQuery(long UserId) : IRequest<CurrentUserViewModel?>
     {
     }
 

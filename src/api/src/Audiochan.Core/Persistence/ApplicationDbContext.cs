@@ -6,15 +6,13 @@ using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Entities.Abstractions;
 using Audiochan.Core.Interfaces;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Audiochan.Core.Persistence
 {
-    public class ApplicationDbContext : IdentityDbContext<User, Role, string>
+    public class ApplicationDbContext : DbContext
     {
         private readonly IDateTimeProvider _dateTimeProvider;
         private IDbContextTransaction? _currentTransaction;
@@ -32,7 +30,8 @@ namespace Audiochan.Core.Persistence
         public DbSet<Playlist> Playlists { get; set; } = null!;
         public DbSet<PlaylistAudio> PlaylistAudios { get; set; } = null!;
         public DbSet<Tag> Tags { get; set; } = null!;
-        
+        public DbSet<User> Users { get; set; } = null!;
+
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new())
         {
@@ -51,13 +50,6 @@ namespace Audiochan.Core.Persistence
         {
             base.OnModelCreating(builder);
             builder.HasPostgresExtension("uuid-ossp");
-            builder.Entity<User>(entity => { entity.ToTable("users"); });
-            builder.Entity<Role>(entity => { entity.ToTable("roles"); });
-            builder.Entity<IdentityUserRole<string>>(entity => { entity.ToTable("user_roles"); });
-            builder.Entity<IdentityUserClaim<string>>(entity => { entity.ToTable("user_claims"); });
-            builder.Entity<IdentityUserLogin<string>>(entity => { entity.ToTable("user_logins"); });
-            builder.Entity<IdentityRoleClaim<string>>(entity => { entity.ToTable("role_claims"); });
-            builder.Entity<IdentityUserToken<string>>(entity => { entity.ToTable("user_tokens"); });
             builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
             RenameToSnakeCase(builder);
         }

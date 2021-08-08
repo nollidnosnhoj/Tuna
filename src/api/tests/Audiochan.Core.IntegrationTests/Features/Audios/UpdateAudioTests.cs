@@ -21,9 +21,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
         public async Task ShouldNotUpdate_WhenUserCannotModify()
         {
             // Assign
-            var (ownerId, _) = await RunAsUserAsync("kopacetic", 
-                Guid.NewGuid().ToString(), 
-                Array.Empty<string>());
+            var (ownerId, _) = await RunAsUserAsync("kopacetic");
 
             var audio = new AudioFaker(ownerId).Generate();
 
@@ -46,9 +44,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
         public async Task ShouldUpdateSuccessfully()
         {
             // Assign
-            var (ownerId, _) = await RunAsUserAsync("kopacetic", 
-                Guid.NewGuid().ToString(),
-                Array.Empty<string>());
+            var (ownerId, _) = await RunAsUserAsync("kopacetic");
 
             var audio = new AudioFaker(ownerId).Generate();
 

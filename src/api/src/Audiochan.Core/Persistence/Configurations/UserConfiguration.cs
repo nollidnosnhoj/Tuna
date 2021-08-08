@@ -8,12 +8,14 @@ namespace Audiochan.Core.Persistence.Configurations
     {
         public void Configure(EntityTypeBuilder<User> builder)
         {
-            builder.Property(u => u.DisplayName)
-                .IsRequired()
-                .HasMaxLength(256);
+            builder.HasKey(x => x.Id);
+            builder.Property(x => x.Id).ValueGeneratedOnAdd();
             
-            builder.Property(x => x.Joined)
-                .IsRequired();
+            builder.Property(x => x.UserName).HasMaxLength(256).IsRequired();
+            builder.Property(x => x.Email).HasMaxLength(256).IsRequired();
+
+            builder.HasIndex(x => x.UserName).IsUnique();
+            builder.HasIndex(x => x.Email).IsUnique();
 
             builder.OwnsMany(u => u.RefreshTokens, refreshToken =>
             {

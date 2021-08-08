@@ -25,7 +25,7 @@ namespace Audiochan.Core.Features.Playlists.GetPlaylistAudios
     public class GetPlaylistAudiosQueryHandler : IRequestHandler<GetPlaylistAudiosQuery, PagedListDto<AudioViewModel>>
     {
         private readonly ApplicationDbContext _unitOfWork;
-        private readonly string _currentUserId;
+        private readonly long _currentUserId;
 
         public GetPlaylistAudiosQueryHandler(ApplicationDbContext unitOfWork, ICurrentUserService currentUserService)
         {

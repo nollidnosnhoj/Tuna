@@ -44,7 +44,7 @@ namespace Audiochan.Core.Features.Playlists.RemoveAudiosFromPlaylist
     
     public class RemoveAudiosFromPlaylistCommandHandler : IRequestHandler<RemoveAudiosFromPlaylistCommand, Result>
     {
-        private readonly string _currentUserId;
+        private readonly long _currentUserId;
         private readonly ApplicationDbContext _unitOfWork;
 
         public RemoveAudiosFromPlaylistCommandHandler(ICurrentUserService currentUserService, ApplicationDbContext unitOfWork)

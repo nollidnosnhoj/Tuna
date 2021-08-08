@@ -1,22 +1,19 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Models;
-using Audiochan.Core.Entities;
 using Audiochan.Core.Interfaces;
 using Audiochan.Core.Persistence;
 using FluentValidation;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
 
 namespace Audiochan.Core.Features.Users.UpdateEmail
 {
-    public record UpdateEmailCommand : IRequest<Result<bool>>
+    public record UpdateEmailCommand : IRequest<Result>
     {
-        public string UserId { get; init; } = null!;
+        public long UserId { get; init; }
         public string NewEmail { get; init; } = null!;
 
-        public static UpdateEmailCommand FromRequest(string userId, UpdateEmailRequest request) => new()
+        public static UpdateEmailCommand FromRequest(long userId, UpdateEmailRequest request) => new()
         {
             UserId = userId,
             NewEmail = request.NewEmail
@@ -33,35 +30,27 @@ namespace Audiochan.Core.Features.Users.UpdateEmail
         }
     }
 
-    public class UpdateEmailCommandHandler : IRequestHandler<UpdateEmailCommand, Result<bool>>
+    public class UpdateEmailCommandHandler : IRequestHandler<UpdateEmailCommand, Result>
     {
-        private readonly string _currentUserId;
+        private readonly long _currentUserId;
         private readonly ApplicationDbContext _unitOfWork;
-        private readonly UserManager<User> _userManager;
 
-        public UpdateEmailCommandHandler(ICurrentUserService currentUserService, ApplicationDbContext unitOfWork, 
-            UserManager<User> userManager)
+        public UpdateEmailCommandHandler(ICurrentUserService currentUserService, ApplicationDbContext unitOfWork)
         {
             _currentUserId = currentUserService.GetUserId();
             _unitOfWork = unitOfWork;
-            _userManager = userManager;
         }
 
-        public async Task<Result<bool>> Handle(UpdateEmailCommand command, CancellationToken cancellationToken)
+        public async Task<Result> Handle(UpdateEmailCommand command, CancellationToken cancellationToken)
         {
             var user = await _unitOfWork.Users.FindAsync(new object[]{command.UserId}, cancellationToken);
-            if (user == null) return Result<bool>.Unauthorized();
-            if (user.Id != _currentUserId)
-                return Result<bool>.Forbidden();
+            if (user == null) return Result.Unauthorized();
+            if (user.Id != _currentUserId) return Result.Forbidden();
 
-            var result = await _userManager.SetEmailAsync(user, command.NewEmail);
-            
-            if (result.Succeeded)
-            {
-                await _userManager.UpdateNormalizedEmailAsync(user);
-            }
+            user.Email = command.NewEmail;
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return result.ToResult();
+            return Result.Success();
         }
     }
 }

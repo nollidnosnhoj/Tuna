@@ -12,13 +12,13 @@ type UseFollowResult = {
   isLoading: boolean;
 };
 
-export const IS_FOLLOWING_QUERY_KEY = (userId: string): QueryKey => [
+export const IS_FOLLOWING_QUERY_KEY = (userId: number): QueryKey => [
   "isFollowing",
   userId,
 ];
 
 export function useFollow(
-  userId: string,
+  userId: number,
   initialData?: boolean
 ): UseFollowResult {
   const { user } = useUser();

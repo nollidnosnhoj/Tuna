@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -26,7 +27,7 @@ namespace Audiochan.Core.Features.Audios.SearchAudios
     public class SearchAudiosQueryHandler : IRequestHandler<SearchAudiosQuery, PagedListDto<AudioViewModel>>
     {
         private readonly ApplicationDbContext _dbContext;
-        private readonly string _currentUserId;
+        private readonly long _currentUserId;
 
         public SearchAudiosQueryHandler(ApplicationDbContext dbContext, ICurrentUserService currentUserService)
         {

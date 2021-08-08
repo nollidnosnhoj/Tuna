@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -45,7 +46,7 @@ namespace Audiochan.Core.Common.Extensions
         }
 
         public static IQueryable<TEntity> FilterVisibility<TEntity>(this IQueryable<TEntity> queryable, 
-            string currentUserId, FilterVisibilityMode mode) where TEntity : class, IHasVisibility
+            long currentUserId, FilterVisibilityMode mode) where TEntity : class, IHasVisibility
         {
             return mode switch
             {

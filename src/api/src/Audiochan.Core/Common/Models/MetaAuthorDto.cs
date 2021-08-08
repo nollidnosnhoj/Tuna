@@ -14,7 +14,7 @@ namespace Audiochan.Core.Common.Models
                 : null;
         }
         
-        public string Id { get; init; } = null!;
+        public long Id { get; init; }
         public string Username { get; init; } = null!;
         public string? Picture { get; init; }
     }

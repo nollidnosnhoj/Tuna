@@ -25,7 +25,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Auth
             var faker = new Faker();
             var username = faker.Random.String2(15);
             var password = faker.Internet.Password();
-            var (userId, _) = await RunAsUserAsync(username, password, Array.Empty<string>());
+            var (userId, _) = await RunAsUserAsync(username, password);
             
             // Act
             // When the user logins, the user can revoke their refresh token. Meaning they cannot refresh their access
@@ -53,7 +53,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Auth
             var faker = new Faker();
             var username = faker.Random.String2(15);
             var password = faker.Internet.Password();
-            var (userId, _) = await RunAsUserAsync(username, password, Array.Empty<string>());
+            var (userId, _) = await RunAsUserAsync(username, password);
             
             // Act
             // When the user logins into multiple session, each session has their own refresh token. This
@@ -78,7 +78,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Auth
             userRefreshTokens.Should().Contain(x => x.Token == loginResult1.Data!.RefreshToken);
         }
         
-        private List<RefreshToken> GetUserRefreshTokens(string userId)
+        private List<RefreshToken> GetUserRefreshTokens(long userId)
         {
             return ExecuteDbContext(dbContext =>
             {

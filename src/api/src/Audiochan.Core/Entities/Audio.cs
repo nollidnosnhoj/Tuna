@@ -24,7 +24,7 @@ namespace Audiochan.Core.Entities
         public long Size { get; set; }
         public string? Picture { get; set; }
         public Visibility Visibility { get; set; }
-        public string UserId { get; set; } = null!;
+        public long UserId { get; set; }
         public User User { get; set; } = null!;
         public ICollection<FavoriteAudio> Favorited { get; set; }
         public ICollection<Tag> Tags { get; set; }

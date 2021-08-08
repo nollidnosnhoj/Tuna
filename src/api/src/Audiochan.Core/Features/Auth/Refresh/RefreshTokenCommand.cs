@@ -55,7 +55,7 @@ namespace Audiochan.Core.Features.Auth.Refresh
 
             var (refreshToken, refreshTokenExpiration) =
                 await _tokenProvider.GenerateRefreshToken(user, existingRefreshToken.Token);
-            var (token, tokenExpiration) = await _tokenProvider.GenerateAccessToken(user);
+            var (token, tokenExpiration) = _tokenProvider.GenerateAccessToken(user);
 
             return Result<AuthResult>.Success(new AuthResult
             {

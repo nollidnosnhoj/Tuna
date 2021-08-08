@@ -22,7 +22,7 @@ export function useRemoveAudio(id: AudioId): UseMutationResult<void> {
       queryClient.invalidateQueries(GET_AUDIO_LIST_QUERY_KEY);
       queryClient.invalidateQueries(GET_AUDIO_QUERY_KEY(id), { exact: true });
       if (user) {
-        queryClient.invalidateQueries(GET_USER_AUDIOS_QUERY_KEY(user.id));
+        queryClient.invalidateQueries(GET_USER_AUDIOS_QUERY_KEY(user.username));
         queryClient.invalidateQueries(GET_YOUR_AUDIOS_KEY);
       }
     },

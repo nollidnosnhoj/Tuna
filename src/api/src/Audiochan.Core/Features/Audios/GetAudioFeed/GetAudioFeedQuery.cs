@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Enums;
@@ -15,7 +16,7 @@ namespace Audiochan.Core.Features.Audios.GetAudioFeed
 {
     public record GetAudioFeedQuery : IHasPage, IRequest<PagedListDto<AudioViewModel>>
     {
-        public string UserId { get; init; } = string.Empty;
+        public long UserId { get; init; }
         public int Page { get; init; }
         public int Size { get; init; }
     }

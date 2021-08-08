@@ -14,10 +14,10 @@ namespace Audiochan.Core.Features.Users.UpdatePicture
 {
     public record UpdateUserPictureCommand : IImageData, IRequest<Result<ImageUploadResponse>>
     {
-        public string UserId { get; init; } = string.Empty;
+        public long UserId { get; init; }
         public string Data { get; init; } = null!;
 
-        public static UpdateUserPictureCommand FromRequest(string userId, ImageUploadRequest request) => new()
+        public static UpdateUserPictureCommand FromRequest(long userId, ImageUploadRequest request) => new()
         {
             UserId = userId,
             Data = request.Data
@@ -30,7 +30,7 @@ namespace Audiochan.Core.Features.Users.UpdatePicture
         private readonly IImageUploadService _imageUploadService;
         private readonly IStorageService _storageService;
         private readonly IDateTimeProvider _dateTimeProvider;
-        private readonly string _currentUserId;
+        private readonly long _currentUserId;
         private readonly ApplicationDbContext _unitOfWork;
 
         public UpdateUserPictureCommandHandler(IOptions<MediaStorageSettings> options,
@@ -67,7 +67,7 @@ namespace Audiochan.Core.Features.Users.UpdatePicture
                 await _storageService.RemoveAsync(_storageSettings.Audio.Bucket, container, user.PictureBlobName,
                     cancellationToken);
 
-            user.UpdatePicture(blobName);
+            user.PictureBlobName = blobName;
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 

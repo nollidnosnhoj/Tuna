@@ -2,11 +2,10 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Models;
-using Audiochan.Core.Entities;
 using Audiochan.Core.Interfaces;
+using Audiochan.Core.Persistence;
 using FluentValidation;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Auth.Login
@@ -29,27 +28,29 @@ namespace Audiochan.Core.Features.Auth.Login
     public class LoginCommandHandler : IRequestHandler<LoginCommand, Result<AuthResult>>
     {
         private readonly ITokenProvider _tokenProvider;
-        private readonly UserManager<User> _userManager;
+        private readonly ApplicationDbContext _dbContext;
+        private readonly IPasswordHasher _passwordHasher;
 
-        public LoginCommandHandler(ITokenProvider tokenProvider, UserManager<User> userManager)
+        public LoginCommandHandler(ITokenProvider tokenProvider, ApplicationDbContext dbContext, IPasswordHasher passwordHasher)
         {
             _tokenProvider = tokenProvider;
-            _userManager = userManager;
+            _dbContext = dbContext;
+            _passwordHasher = passwordHasher;
         }
 
         public async Task<Result<AuthResult>> Handle(LoginCommand command,
             CancellationToken cancellationToken)
         {
-            var user = await _userManager.Users
+            var user = await _dbContext.Users
                 .Include(u => u.RefreshTokens)
                 .Where(u => u.UserName == command.Login || u.Email == command.Login)
                 .SingleOrDefaultAsync(cancellationToken);
 
-            if (user == null || !await _userManager.CheckPasswordAsync(user, command.Password))
+            if (user == null || !_passwordHasher.Verify(command.Password, user.PasswordHash))
                 return Result<AuthResult>.BadRequest("Invalid Username/Password");
 
 
-            var (accessToken, accessTokenExpiration) = await _tokenProvider.GenerateAccessToken(user);
+            var (accessToken, accessTokenExpiration) = _tokenProvider.GenerateAccessToken(user);
 
             var (refreshToken, refreshTokenExpiration) = await _tokenProvider.GenerateRefreshToken(user);
 

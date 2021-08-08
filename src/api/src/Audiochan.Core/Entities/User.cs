@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Identity;
+using Audiochan.Core.Entities.Abstractions;
+using Audiochan.Core.Entities.Enums;
 
 namespace Audiochan.Core.Entities
 {
-    public sealed class User : IdentityUser
+    public class User : IAudited
     {
         public User()
         {
@@ -17,19 +18,28 @@ namespace Audiochan.Core.Entities
             RefreshTokens = new HashSet<RefreshToken>();
         }
 
-        public User(string username, string email, DateTime joined) : this()
+        public User(string username, string email, string passwordHash) : this()
         {
             this.UserName = username;
             this.Email = email;
-            this.Joined = joined;
-            this.DisplayName = username;
+            this.PasswordHash = passwordHash;
+            this.Role = UserRole.Regular;
         }
 
-        public string DisplayName { get; set; } = null!;
+        public User(string username, string email, string passwordHash, UserRole role)
+            : this(username, email, passwordHash)
+        {
+            this.Role = role;
+        }
+
+        public long Id { get; set; }
+        public string UserName { get; set; } = null!;
+        public string Email { get; set; } = null!;
+        public string PasswordHash { get; set; } = null!;
+        public UserRole Role { get; set; }
         public string? PictureBlobName { get; set; }
-        public string? About { get; set; }
-        public string? Website { get; set; }
-        public DateTime Joined { get; set; }
+        public DateTime Created { get; set; }
+        public DateTime? LastModified { get; set; }
         public ICollection<Audio> Audios { get; set; }
         public ICollection<FavoriteAudio> FavoriteAudios { get; set; }
         public ICollection<FavoritePlaylist> FavoritePlaylists { get; set; }
@@ -37,35 +47,5 @@ namespace Audiochan.Core.Entities
         public ICollection<FollowedUser> Followers { get; set; }
         public ICollection<Playlist> Playlists { get; set; }
         public ICollection<RefreshToken> RefreshTokens { get; set; }
-
-        public void UpdateDisplayName(string? displayName)
-        {
-            if (!string.IsNullOrWhiteSpace(displayName))
-            {
-                if (string.Equals(this.UserName.Trim(), displayName.Trim(),
-                    StringComparison.CurrentCultureIgnoreCase))
-                {
-                    this.DisplayName = displayName;
-                }
-            }
-        }
-
-        public void UpdateAbout(string? about)
-        {
-            if (about is not null)
-                this.About = about;
-        }
-
-        public void UpdateWebsite(string? website)
-        {
-            if (website is not null)
-                this.Website = website;
-        }
-
-        public void UpdatePicture(string picturePath)
-        {
-            if (!string.IsNullOrWhiteSpace(picturePath))
-                this.PictureBlobName = picturePath;
-        }
     }
 }

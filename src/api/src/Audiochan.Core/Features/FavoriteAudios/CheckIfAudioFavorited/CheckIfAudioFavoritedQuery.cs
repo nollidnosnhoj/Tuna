@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.FavoriteAudios.CheckIfAudioFavorited
 {
-    public record CheckIfAudioFavoritedQuery(Guid AudioId, string UserId) : IRequest<bool>
+    public record CheckIfAudioFavoritedQuery(Guid AudioId, long UserId) : IRequest<bool>
     {
     }
     
