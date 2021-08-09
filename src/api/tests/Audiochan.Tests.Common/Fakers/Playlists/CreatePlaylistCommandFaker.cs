@@ -14,7 +14,13 @@ namespace Audiochan.Tests.Common.Fakers.Playlists
             RuleFor(x => x.Visibility, f => f.PickRandom<Visibility>());
         }
         
-        public CreatePlaylistCommandFaker(ICollection<Guid> audioIds)
+        public CreatePlaylistCommandFaker SetFixedVisibility(Visibility visibility)
+        {
+            RuleFor(x => x.Visibility, () => visibility);
+            return this;
+        }
+        
+        public CreatePlaylistCommandFaker(ICollection<long> audioIds)
         {
             RuleFor(x => x.AudioIds, () => audioIds);
         }

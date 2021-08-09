@@ -16,13 +16,13 @@ namespace Audiochan.Core.Features.Playlists.UpdatePlaylistDetails
 {
     public record UpdatePlaylistDetailsCommand : IRequest<Result<PlaylistViewModel>>
     {
-        public Guid Id { get; init; }
+        public long Id { get; init; }
         public string? Title { get; init; }
         public string? Description { get; init; }
         public Visibility? Visibility { get; init; }
         public List<string>? Tags { get; init; }
 
-        public UpdatePlaylistDetailsCommand(Guid id, UpdatePlaylistDetailsRequest request)
+        public UpdatePlaylistDetailsCommand(long id, UpdatePlaylistDetailsRequest request)
         {
             Id = id;
             Title = request.Title;

@@ -14,12 +14,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Playlists.CreatePlaylist
 {
-    public record CreatePlaylistCommand : IRequest<Result<Guid>>
+    public record CreatePlaylistCommand : IRequest<Result<long>>
     {
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public Visibility Visibility { get; set; }
-        public List<Guid> AudioIds { get; set; } = new();
+        public List<long> AudioIds { get; set; } = new();
         public List<string> Tags { get; init; } = new();
     }
     
@@ -53,30 +53,29 @@ namespace Audiochan.Core.Features.Playlists.CreatePlaylist
         }
     }
     
-    public class CreatePlaylistCommandHandler : IRequestHandler<CreatePlaylistCommand, Result<Guid>>
+    public class CreatePlaylistCommandHandler : IRequestHandler<CreatePlaylistCommand, Result<long>>
     {
         private readonly ApplicationDbContext _unitOfWork;
-        private readonly IDateTimeProvider _dateTimeProvider;
         private readonly ICurrentUserService _currentUserService;
+        private readonly ISlugGenerator _slugGenerator;
 
         public CreatePlaylistCommandHandler(ApplicationDbContext unitOfWork, 
-            IDateTimeProvider dateTimeProvider, 
-            ICurrentUserService currentUserService)
+            ICurrentUserService currentUserService, ISlugGenerator slugGenerator)
         {
             _unitOfWork = unitOfWork;
-            _dateTimeProvider = dateTimeProvider;
             _currentUserService = currentUserService;
+            _slugGenerator = slugGenerator;
         }
 
-        public async Task<Result<Guid>> Handle(CreatePlaylistCommand request, CancellationToken cancellationToken)
+        public async Task<Result<long>> Handle(CreatePlaylistCommand request, CancellationToken cancellationToken)
         {
             var userId = _currentUserService.GetUserId();
             var user = await _unitOfWork.Users.SingleOrDefaultAsync(u => u.Id == userId, cancellationToken);
-            if (user is null) return Result<Guid>.Unauthorized();
+            if (user is null) return Result<long>.Unauthorized();
 
             if (!await CheckIfAudioIdsExist(request.AudioIds, cancellationToken))
             {
-                return Result<Guid>.BadRequest("Audio ids are invalid.");
+                return Result<long>.BadRequest("Audio ids are invalid.");
             }
 
             var playlist = new Playlist
@@ -94,12 +93,14 @@ namespace Audiochan.Core.Features.Playlists.CreatePlaylist
                     .ToList()
             };
 
+            playlist.Slug = _slugGenerator.GenerateSlug(request.Title);
+
             await _unitOfWork.Playlists.AddAsync(playlist, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
-            return Result<Guid>.Success(playlist.Id);
+            return Result<long>.Success(playlist.Id);
         }
         
-        private async Task<bool> CheckIfAudioIdsExist(ICollection<Guid> audioIds,
+        private async Task<bool> CheckIfAudioIdsExist(ICollection<long> audioIds,
             CancellationToken cancellationToken = default)
         {
             return await _unitOfWork.Audios.AnyAsync(x => audioIds.Contains(x.Id)

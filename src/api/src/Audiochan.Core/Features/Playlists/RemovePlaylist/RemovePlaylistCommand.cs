@@ -12,7 +12,7 @@ using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Playlists.RemovePlaylist
 {
-    public record RemovePlaylistCommand(Guid Id) : IRequest<Result>;
+    public record RemovePlaylistCommand(long Id) : IRequest<Result>;
     
     
 

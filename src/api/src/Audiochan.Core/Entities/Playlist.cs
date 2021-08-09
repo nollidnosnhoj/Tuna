@@ -14,21 +14,19 @@ namespace Audiochan.Core.Entities
             Tags = new HashSet<Tag>();
         }
         
-        public Guid Id { get; set; }
-        
+        public long Id { get; set; }
         public string Title { get; set; } = null!;
-        
+        public string Slug { get; set; } = null!;
         public string? Description { get; set; }
-        
         public Visibility Visibility { get; set; }
-        
+        public string? Secret { get; set; }
         public string? Picture { get; set; }
         public DateTime Created { get; set; }
         public DateTime? LastModified { get; set; }
-
         public long UserId { get; set; }
-        
         public User User { get; set; } = null!;
+
+        public string FullSlug => $"{Id}-{Slug}";
         
         public ICollection<PlaylistAudio> Audios { get; set; }
         public ICollection<FavoritePlaylist> Favorited { get; set; }

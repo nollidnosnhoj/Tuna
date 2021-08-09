@@ -16,7 +16,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Playlists.GetPlaylistAudios
 {
-    public record GetPlaylistAudiosQuery(Guid Id) : IHasPage, IRequest<PagedListDto<AudioViewModel>>
+    public record GetPlaylistAudiosQuery(long Id) : IHasPage, IRequest<PagedListDto<AudioViewModel>>
     {
         public int Page { get; init; }
         public int Size { get; init; }

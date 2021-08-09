@@ -88,7 +88,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Playlists
             var (otherUserId, _) = await RunAsDefaultUserAsync();
             var audioFaker = new AudioFaker(otherUserId);
             var audios = audioFaker.Generate(2);
-            audios[0].Visibility = Visibility.Unlisted;
+            audios[0].Visibility = Visibility.Private;
             audios[1].Visibility = Visibility.Private;
             InsertRange(audios);
             var audioIds = audios.Select(x => x.Id).ToList();

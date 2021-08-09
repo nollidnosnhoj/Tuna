@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.FavoritePlaylists.SetFavoritePlaylist
 {
-    public record SetFavoritePlaylistCommand(Guid PlaylistId, long UserId, bool IsFavoriting) : IRequest<Result<bool>>
+    public record SetFavoritePlaylistCommand(long PlaylistId, long UserId, bool IsFavoriting) : IRequest<Result<bool>>
     {
     }
 

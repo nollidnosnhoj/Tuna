@@ -16,19 +16,13 @@ namespace Audiochan.Core.Features.Playlists.AddAudiosToPlaylist
 {
     public record AddAudiosToPlaylistCommand : IRequest<Result>
     {
-        public Guid PlaylistId { get; init; }
-        public List<Guid> AudioIds { get; init; }
+        public long PlaylistId { get; init; }
+        public List<long> AudioIds { get; init; }
 
-        public AddAudiosToPlaylistCommand(Guid playlistId, List<Guid> audioIds)
+        public AddAudiosToPlaylistCommand(long playlistId, List<long> audioIds)
         {
             PlaylistId = playlistId;
             AudioIds = audioIds;
-        }
-
-        public AddAudiosToPlaylistCommand(Guid playlistId, AddAudiosToPlaylistRequest request)
-        {
-            PlaylistId = playlistId;
-            AudioIds = request.AudioIds;
         }
     }
     
@@ -97,7 +91,7 @@ namespace Audiochan.Core.Features.Playlists.AddAudiosToPlaylist
             return Result.Success();
         }
 
-        private async Task<bool> CheckIfAudioIdsAreValid(List<Guid> audioIds, CancellationToken cancellationToken)
+        private async Task<bool> CheckIfAudioIdsAreValid(ICollection<long> audioIds, CancellationToken cancellationToken)
         {
             var audioCount = await _unitOfWork.Audios
                 .CountAsync(x => audioIds.Contains(x.Id)

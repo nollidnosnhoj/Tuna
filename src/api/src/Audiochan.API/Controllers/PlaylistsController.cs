@@ -30,13 +30,14 @@ namespace Audiochan.API.Controllers
             _mediator = mediator;
         }
 
-        [HttpGet("{playlistId:guid}", Name="GetPlaylist")]
+        [HttpGet("{idSlug:idSlug}", Name="GetPlaylist")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         [SwaggerOperation(Summary = "Return an playlist by ID.", OperationId = "GetPlaylist", Tags = new[] {"playlists"})]
-        public async Task<ActionResult<PlaylistViewModel>> GetPlaylist(Guid playlistId, CancellationToken cancellationToken)
+        public async Task<ActionResult<PlaylistViewModel>> GetPlaylist(IdSlug idSlug, CancellationToken cancellationToken)
         {
-            var playlist = await _mediator.Send(new GetPlaylistDetailQuery(playlistId), cancellationToken);
+            var (id, _) = idSlug;
+            var playlist = await _mediator.Send(new GetPlaylistDetailQuery(id), cancellationToken);
             return playlist is null
                 ? NotFound(ErrorApiResponse.NotFound("Playlist was not found."))
                 : Ok(playlist);
@@ -67,7 +68,7 @@ namespace Audiochan.API.Controllers
         }
         
         [Authorize]
-        [HttpPut("{playlistId:guid}", Name = "UpdatePlaylistDetails")]
+        [HttpPut("{playlistId:long}", Name = "UpdatePlaylistDetails")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
@@ -79,7 +80,7 @@ namespace Audiochan.API.Controllers
             OperationId = "UpdatePlaylistDetails",
             Tags = new[] {"playlists"}
         )]
-        public async Task<IActionResult> UpdatePlaylistDetails(Guid playlistId,
+        public async Task<IActionResult> UpdatePlaylistDetails(long playlistId,
             [FromBody] UpdatePlaylistDetailsRequest request,
             CancellationToken cancellationToken)
         {
@@ -91,7 +92,7 @@ namespace Audiochan.API.Controllers
         }
 
         [Authorize]
-        [HttpDelete("{playlistId:guid}", Name = "RemovePlaylist")]
+        [HttpDelete("{playlistId:long}", Name = "RemovePlaylist")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
@@ -102,7 +103,7 @@ namespace Audiochan.API.Controllers
             OperationId = "RemovePlaylist",
             Tags = new[] {"playlists"}
         )]
-        public async Task<IActionResult> RemovePlaylist(Guid playlistId, CancellationToken cancellationToken)
+        public async Task<IActionResult> RemovePlaylist(long playlistId, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new RemovePlaylistCommand(playlistId), cancellationToken);
 
@@ -111,13 +112,13 @@ namespace Audiochan.API.Controllers
                 : result.ReturnErrorResponse();
         }
 
-        [HttpGet("{playlistId:guid}/audios", Name = "GetPlaylistAudios")]
+        [HttpGet("{playlistId:long}/audios", Name = "GetPlaylistAudios")]
         [ProducesResponseType(200)]
         [SwaggerOperation(
             Summary = "Return list of audios from a playlist",
             OperationId = "GetPlaylistAudios",
             Tags = new[] { "playlists" })]
-        public async Task<ActionResult<PagedListDto<AudioViewModel>>> GetPlaylistAudios(Guid playlistId,
+        public async Task<ActionResult<PagedListDto<AudioViewModel>>> GetPlaylistAudios(long playlistId,
             CancellationToken cancellationToken)
         {
             var audios = await _mediator.Send(
@@ -127,7 +128,7 @@ namespace Audiochan.API.Controllers
         }
 
         [Authorize]
-        [HttpPut("{playlistId:guid}/audios", Name = "AddAudiosToPlaylist")]
+        [HttpPut("{playlistId:long}/audios", Name = "AddAudiosToPlaylist")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
@@ -138,10 +139,10 @@ namespace Audiochan.API.Controllers
             OperationId = "AddAudiosToPlaylist",
             Tags = new[] {"playlists"}
         )]
-        public async Task<IActionResult> AddAudiosToPlaylist(Guid playlistId,
+        public async Task<IActionResult> AddAudiosToPlaylist(long playlistId,
             [FromBody] AddAudiosToPlaylistRequest request, CancellationToken cancellationToken)
         {
-            var command = new AddAudiosToPlaylistCommand(playlistId, request);
+            var command = new AddAudiosToPlaylistCommand(playlistId, request.AudioIds);
             var result = await _mediator.Send(command, cancellationToken);
 
             return result.IsSuccess
@@ -150,7 +151,7 @@ namespace Audiochan.API.Controllers
         }
         
         [Authorize]
-        [HttpDelete("{playlistId:guid}/audios", Name = "RemoveAudiosToPlaylist")]
+        [HttpDelete("{playlistId:long}/audios", Name = "RemoveAudiosToPlaylist")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
@@ -161,10 +162,10 @@ namespace Audiochan.API.Controllers
             OperationId = "RemoveAudiosToPlaylist",
             Tags = new[] {"playlists"}
         )]
-        public async Task<IActionResult> RemoveAudiosToPlaylist(Guid playlistId,
+        public async Task<IActionResult> RemoveAudiosToPlaylist(long playlistId,
             [FromBody] RemoveAudiosFromPlaylistRequest request, CancellationToken cancellationToken)
         {
-            var command = new RemoveAudiosFromPlaylistCommand(playlistId, request);
+            var command = new RemoveAudiosFromPlaylistCommand(playlistId, request.PlaylistAudioIds);
             var result = await _mediator.Send(command, cancellationToken);
 
             return result.IsSuccess
@@ -173,7 +174,7 @@ namespace Audiochan.API.Controllers
         }
         
         [Authorize]
-        [HttpPost("{playlistId:guid}/audios/duplicate", Name = "CheckDuplicatedAudios")]
+        [HttpPost("{playlistId:long}/audios/duplicate", Name = "CheckDuplicatedAudios")]
         [ProducesResponseType(200)]
         [SwaggerOperation(
             Summary = "Check to see if the input audio ids already exist in playlist.",
@@ -181,7 +182,7 @@ namespace Audiochan.API.Controllers
             OperationId = "CheckDuplicatedAudios",
             Tags = new[] {"playlists"}
         )]
-        public async Task<IActionResult> CheckDuplicatedAudios(Guid playlistId,
+        public async Task<IActionResult> CheckDuplicatedAudios(long playlistId,
             [FromBody] CheckDuplicatedAudiosRequest request, CancellationToken cancellationToken)
         {
             var command = new CheckDuplicatedAudiosQuery(playlistId, request.AudioIds);

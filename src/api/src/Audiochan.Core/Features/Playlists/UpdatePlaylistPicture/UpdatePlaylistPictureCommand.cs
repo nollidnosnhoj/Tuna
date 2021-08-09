@@ -16,10 +16,10 @@ namespace Audiochan.Core.Features.Playlists.UpdatePlaylistPicture
 {
     public record UpdatePlaylistPictureCommand : IImageData, IRequest<Result<ImageUploadResponse>>
     {
-        public Guid Id { get; init; }
+        public long Id { get; init; }
         public string Data { get; init; } = null!;
 
-        public UpdatePlaylistPictureCommand(Guid id, ImageUploadRequest request)
+        public UpdatePlaylistPictureCommand(long id, ImageUploadRequest request)
         {
             Id = id;
             Data = request.Data;

@@ -5,7 +5,7 @@ namespace Audiochan.Core.Entities
 {
     public class FavoritePlaylist
     {
-        public Guid PlaylistId { get; set; }
+        public long PlaylistId { get; set; }
         public Playlist Playlist { get; set; } = null!;
         public long UserId { get; set; }
         public User User { get; set; } = null!;
