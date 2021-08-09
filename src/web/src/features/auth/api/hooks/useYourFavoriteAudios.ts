@@ -3,7 +3,7 @@ import {
   useInfinitePagination,
   UseInfinitePaginationReturnType,
 } from "~/lib/hooks";
-import { getCurrentUserFavoriteAudiosRequest } from "../api";
+import { getCurrentUserFavoriteAudiosRequest } from "..";
 
 export const GET_YOUR_FAV_AUDIOS_KEY = "your_fav_audios";
 

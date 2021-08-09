@@ -1,8 +1,8 @@
 import { useQueryClient, useMutation, UseMutationResult } from "react-query";
-import { ME_QUERY_KEY } from "~/features/user/hooks/useGetCurrentUser";
+import { ME_QUERY_KEY } from "~/features/user/api/hooks/useGetCurrentUser";
 import { ErrorResponse, ImageUploadResponse } from "~/lib/types";
-import { uploadUserPictureRequest } from "../api";
-import { Profile } from "../api/types";
+import { uploadUserPictureRequest } from "..";
+import { Profile } from "../types";
 import { GET_PROFILE_QUERY_KEY } from "./useGetProfile";
 
 export function useAddUserPicture(

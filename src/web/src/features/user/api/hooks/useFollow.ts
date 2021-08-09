@@ -4,7 +4,7 @@ import {
   followAUserRequest,
   checkIfCurrentUserIsFollowingRequest,
   unfollowAUserRequest,
-} from "../api";
+} from "..";
 
 type UseFollowResult = {
   isFollowing?: boolean;

@@ -2,7 +2,7 @@ import { IconButton } from "@chakra-ui/button";
 import React from "react";
 import { FaHeart } from "react-icons/fa";
 import { useUser } from "~/features/user/hooks";
-import { useFavoriteAudio } from "../../hooks";
+import { useFavoriteAudio } from "../../api/hooks";
 import { AudioId } from "../../api/types";
 import { ButtonProps } from "@chakra-ui/react";
 

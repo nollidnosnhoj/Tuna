@@ -4,8 +4,8 @@ import {
   UsePaginationOptions,
   UsePaginationResultType,
 } from "~/lib/hooks";
-import { AudioView } from "../api/types";
-import { SearchAudioParams, searchAudiosRequest } from "../api";
+import { AudioView } from "../types";
+import { SearchAudioParams, searchAudiosRequest } from "..";
 
 export const SEARCH_AUDIO_QUERY_KEY = (
   term: string,

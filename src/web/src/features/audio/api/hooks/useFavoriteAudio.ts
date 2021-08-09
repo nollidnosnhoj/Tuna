@@ -1,12 +1,12 @@
 import { QueryKey, useMutation, useQuery, useQueryClient } from "react-query";
-import { GET_YOUR_FAV_AUDIOS_KEY } from "~/features/auth/hooks/useYourFavoriteAudios";
+import { GET_YOUR_FAV_AUDIOS_KEY } from "~/features/auth/api/hooks/useYourFavoriteAudios";
 import { useUser } from "~/features/user/hooks";
 import {
   favoriteAnAudioRequest,
   checkIfUserFavoritedAudioRequest,
   unfavoriteAnAudioRequest,
-} from "../api";
-import { AudioId } from "../api/types";
+} from "..";
+import { AudioId } from "../types";
 
 type UseFavoriteAudioResult = {
   isFavorite?: boolean;

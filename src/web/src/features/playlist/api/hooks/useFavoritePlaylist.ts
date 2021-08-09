@@ -4,7 +4,7 @@ import {
   checkIfPlaylistFavoritedRequest,
   favoriteAPlaylistRequest,
   unfavoriteAPlaylistRequest,
-} from "../api";
+} from "..";
 
 type UseFavoriteAudioResult = {
   isFavorite?: boolean;

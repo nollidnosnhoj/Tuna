@@ -3,7 +3,7 @@ import React from "react";
 import Page from "~/components/Page";
 import InfiniteListControls from "~/components/ui/ListControls/Infinite";
 import AudioList from "~/features/audio/components/List";
-import { useYourFavoriteAudios } from "~/features/auth/hooks";
+import { useYourFavoriteAudios } from "~/features/auth/api/hooks";
 
 export default function YourAudiosPage() {
   const { items, hasNextPage, isFetching, fetchNextPage } =

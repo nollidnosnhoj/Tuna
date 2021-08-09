@@ -4,8 +4,8 @@ import {
   UseInfinitePaginationOptions,
   UseInfinitePaginationReturnType,
 } from "~/lib/hooks";
-import { AudioView } from "../api/types";
-import { getAudioFeedRequest } from "../api";
+import { AudioView } from "../types";
+import { getAudioFeedRequest } from "..";
 import { useUser } from "~/features/user/hooks";
 
 export const GET_AUDIO_FEED_QUERY_KEY: QueryKey = "feed";

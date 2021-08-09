@@ -2,8 +2,8 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { useMutation } from "react-query";
 import { AudioId } from "~/features/audio/api/types";
-import { addAudiosToPlaylistRequest } from "../api";
-import { PlaylistId } from "../api/types";
+import { addAudiosToPlaylistRequest } from "..";
+import { PlaylistId } from "../types";
 
 export function useAddAudiosToPlaylist() {
   const handler = async (request: {

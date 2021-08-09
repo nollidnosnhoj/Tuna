@@ -21,10 +21,10 @@ import {
 import React from "react";
 import { useState } from "react";
 import { Visibility } from "~/features/audio/api/types";
-import { useYourPlaylists } from "~/features/auth/hooks";
+import { useYourPlaylists } from "~/features/auth/api/hooks";
 import { useAddToPlaylist } from "~/lib/stores";
 import { checkDuplicatedAudiosRequest } from "../api";
-import { useAddAudiosToPlaylist, useCreatePlaylist } from "../hooks";
+import { useAddAudiosToPlaylist, useCreatePlaylist } from "../api/hooks";
 
 export default function AddToPlaylistModal() {
   const {

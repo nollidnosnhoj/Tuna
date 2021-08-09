@@ -5,8 +5,8 @@ import {
   UseQueryResult,
 } from "react-query";
 import { ErrorResponse } from "~/lib/types";
-import { getProfileRequest } from "../api";
-import { Profile } from "../api/types";
+import { getProfileRequest } from "..";
+import { Profile } from "../types";
 
 export const GET_PROFILE_QUERY_KEY = (username: string): QueryKey => [
   "profile",

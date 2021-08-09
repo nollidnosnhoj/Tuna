@@ -15,7 +15,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { useNavigationLock } from "~/lib/hooks";
 import { errorToast, toast, validationMessages } from "~/utils";
-import { useCreateAudio } from "../../hooks";
+import { useCreateAudio } from "../../api/hooks";
 import { AudioId, CreateAudioRequest, Visibility } from "../../api/types";
 import AudioForm from "../Form";
 import AudioDropzone from "./Dropzone";

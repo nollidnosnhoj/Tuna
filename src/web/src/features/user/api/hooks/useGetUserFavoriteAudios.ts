@@ -5,25 +5,24 @@ import {
   UseInfinitePaginationOptions,
   UseInfinitePaginationReturnType,
 } from "~/lib/hooks";
-import { getUserAudiosRequest } from "../api";
+import { getUserFavoriteAudiosRequest } from "..";
 
-type UseGetUserAudiosParams = {
+type UseGetUserFavoriteAudiosParams = {
   size?: number;
 };
 
-export const GET_USER_AUDIOS_QUERY_KEY = (username: string): QueryKey => [
-  "userAudios",
-  username,
-];
+export const GET_USER_FAVORITE_AUDIOS_QUERY_KEY = (
+  username: string
+): QueryKey => ["userFavoriteAudios", username];
 
-export function useGetUserAudios(
+export function useGetUserFavoriteAudios(
   username: string,
-  params: UseGetUserAudiosParams = {},
+  params: UseGetUserFavoriteAudiosParams = {},
   options: UseInfinitePaginationOptions<AudioView> = {}
 ): UseInfinitePaginationReturnType<AudioView> {
   return useInfinitePagination(
-    GET_USER_AUDIOS_QUERY_KEY(username),
-    (page) => getUserAudiosRequest(username, page, params),
+    GET_USER_FAVORITE_AUDIOS_QUERY_KEY(username),
+    (page) => getUserFavoriteAudiosRequest(username, page, params),
     {
       ...options,
       enabled: !!username && (options.enabled ?? true),

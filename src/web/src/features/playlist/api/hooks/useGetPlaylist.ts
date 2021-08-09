@@ -4,8 +4,8 @@ import {
   UseQueryOptions,
   UseQueryResult,
 } from "react-query";
-import { getPlaylistRequest } from "../api";
-import { Playlist, PlaylistId } from "../api/types";
+import { getPlaylistRequest } from "..";
+import { Playlist, PlaylistId } from "../types";
 
 export const GET_PLAYLIST_KEY = (id: PlaylistId): QueryKey => ["playlist", id];
 

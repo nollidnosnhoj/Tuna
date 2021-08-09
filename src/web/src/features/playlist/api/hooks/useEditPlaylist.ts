@@ -1,7 +1,7 @@
 import { useMutation, UseMutationResult, useQueryClient } from "react-query";
 // import { useUser } from "~/features/user/hooks";
-import { updatePlaylistDetailsRequest } from "../api";
-import { Playlist, PlaylistId, PlaylistRequest } from "../api/types";
+import { updatePlaylistDetailsRequest } from "..";
+import { Playlist, PlaylistId, PlaylistRequest } from "../types";
 import { GET_PLAYLIST_KEY } from "./useGetPlaylist";
 
 export function useEditPlaylist(id: PlaylistId): UseMutationResult<Playlist> {

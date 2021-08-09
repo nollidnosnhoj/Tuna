@@ -3,8 +3,8 @@ import {
   UseInfiniteCursorPaginationOptions,
   UseInfiniteCursorPaginationReturnType,
 } from "~/lib/hooks";
-import { getAudiosRequest } from "../api";
-import { AudioView } from "../api/types";
+import { getAudiosRequest } from "..";
+import { AudioView } from "../types";
 
 export const GET_AUDIO_LIST_QUERY_KEY = "audios";
 

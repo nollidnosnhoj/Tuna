@@ -17,12 +17,16 @@ export async function getAudiosRequest(
 
 export async function getAudioRequest(
   idSlug: string,
+  secret?: string,
   ctx?: GetServerSidePropsContext
 ): Promise<AudioView> {
   const { res, req } = ctx ?? {};
   const { data } = await request<AudioView>({
     method: "get",
     url: `audios/${idSlug}`,
+    params: {
+      secret,
+    },
     req,
     res,
   });
@@ -142,4 +146,14 @@ export async function unfavoriteAnAudioRequest(
     url: `me/favorites/audios/${audioId}`,
   });
   return true;
+}
+
+export async function resetAudioSecret(
+  audioId: AudioId
+): Promise<{ secret: string }> {
+  const { data } = await request<{ secret: string }>({
+    method: "PATCH",
+    url: `audios/${audioId}/reset`,
+  });
+  return data;
 }

@@ -5,8 +5,8 @@ import {
   UseInfinitePaginationOptions,
   UseInfinitePaginationReturnType,
 } from "~/lib/hooks";
-import { getPlaylistAudiosRequest } from "../api";
-import { PlaylistId } from "../api/types";
+import { getPlaylistAudiosRequest } from "..";
+import { PlaylistId } from "../types";
 
 export const GET_PLAYLIST_AUDIOS_KEY = (id: PlaylistId): QueryKey => [
   "playlist_audios",

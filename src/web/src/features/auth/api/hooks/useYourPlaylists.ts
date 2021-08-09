@@ -4,7 +4,7 @@ import {
   UseInfinitePaginationOptions,
   UseInfinitePaginationReturnType,
 } from "~/lib/hooks";
-import { getCurrentUserPlaylistsRequest } from "../api";
+import { getCurrentUserPlaylistsRequest } from "..";
 
 export const GET_YOUR_PLAYLISTS_KEY = "your_playlists";
 
