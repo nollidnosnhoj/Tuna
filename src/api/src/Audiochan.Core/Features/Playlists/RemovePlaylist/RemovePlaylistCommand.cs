@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Constants;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Entities;
@@ -49,7 +50,7 @@ namespace Audiochan.Core.Features.Playlists.RemovePlaylist
             if (!string.IsNullOrEmpty(playlist.Picture))
             {
                 await _storageService.RemoveAsync(_storageSettings.Image.Bucket,
-                    string.Join('/', _storageSettings.Image.Container, "playlists"),
+                    AssetContainerConstants.PlaylistPictures,
                     playlist.Picture,
                     cancellationToken);
             }

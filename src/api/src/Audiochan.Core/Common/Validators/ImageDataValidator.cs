@@ -12,9 +12,8 @@ namespace Audiochan.Core.Common.Validators
         {
             _imageUploadService = imageUploadService;
             RuleFor(x => x.Data)
-                .NotEmpty()
-                .WithMessage("Image data is required.")
                 .Must(ValidateImage)
+                .When(x => !string.IsNullOrEmpty(x.Data))
                 .WithMessage("Image must be between 500 and 2000 pixels in both width and height.");
         }
 

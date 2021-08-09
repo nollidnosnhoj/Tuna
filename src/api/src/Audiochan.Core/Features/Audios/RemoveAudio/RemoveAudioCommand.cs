@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Constants;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Entities;
@@ -67,15 +68,14 @@ namespace Audiochan.Core.Features.Audios.RemoveAudio
             {
                 _storageService.RemoveAsync(
                     _storageSettings.Audio.Bucket,
-                    _storageSettings.Audio.Container,
-                    $"{audio.Id}/{audio.File}",
+                    audio.File,
                     cancellationToken)
             };
 
             if (!string.IsNullOrEmpty(audio.Picture))
             {
                 tasks.Add(_storageService.RemoveAsync(_storageSettings.Image.Bucket,
-                    string.Join('/', _storageSettings.Image.Container, "audios"),
+                    AssetContainerConstants.AudioPictures,
                     audio.Picture,
                     cancellationToken));
             }

@@ -16,7 +16,7 @@ namespace Audiochan.Infrastructure.Shared
     internal class ImageUploadService : IImageUploadService
     {
         private readonly IStorageService _storageService;
-        private readonly MediaStorageSettings.StorageSettings _storageSettings;
+        private readonly PictureStorageSettings _storageSettings;
 
         public ImageUploadService(IStorageService storageService, IOptions<MediaStorageSettings> mediaStorageOptions)
         {

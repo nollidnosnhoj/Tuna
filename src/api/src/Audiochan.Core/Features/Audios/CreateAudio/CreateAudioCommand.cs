@@ -76,7 +76,7 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
         private readonly ApplicationDbContext _applicationDbContext;
         private readonly IStorageService _storageService;
         private readonly ICurrentUserService _currentUserService;
-        private readonly MediaStorageSettings _storageSettings;
+        private readonly AudioStorageSettings _storageSettings;
         private readonly ISlugGenerator _slugGenerator;
 
         public CreateAudioCommandHandler(IOptions<MediaStorageSettings> mediaStorageOptions,
@@ -85,7 +85,8 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
             ApplicationDbContext applicationDbContext, 
             ISlugGenerator slugGenerator)
         {
-            _storageSettings = mediaStorageOptions.Value;
+            var mediaStorageSettings = mediaStorageOptions.Value;
+            _storageSettings = mediaStorageSettings.Audio;
             _storageService = storageService;
             _currentUserService = currentUserService;
             _applicationDbContext = applicationDbContext;
@@ -136,11 +137,9 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
         {
             // Copy temp audio to public bucket
             await _storageService.MoveBlobAsync(
-                _storageSettings.Audio.TempBucket,
-                _storageSettings.Audio.Container,
+                _storageSettings.TempBucket,
                 audio.File,
-                _storageSettings.Audio.Bucket,
-                _storageSettings.Audio.Container,
+                _storageSettings.Bucket,
                 audio.File,
                 cancellationToken);
         }
@@ -148,8 +147,7 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
         private async Task<bool> ExistsInTempStorageAsync(string blobName, CancellationToken cancellationToken = default)
         {
             return await _storageService.ExistsAsync(
-                _storageSettings.Audio.TempBucket,
-                _storageSettings.Audio.Container,
+                _storageSettings.TempBucket,
                 blobName,
                 cancellationToken);
         }

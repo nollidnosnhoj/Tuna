@@ -73,7 +73,6 @@ namespace Audiochan.Core.Features.Audios.CreateAudioUploadUrl
             var metadata = new Dictionary<string, string> {{"UserId", ownerId.ToString()}};
             return _storageService.CreatePutPresignedUrl(
                 _storageSettings.Audio.TempBucket,
-                _storageSettings.Audio.Container,
                 blobName,
                 5,
                 metadata);

@@ -26,19 +26,16 @@ namespace Audiochan.Core.Features.Users.UpdatePicture
 
     public class UpdateUserPictureCommandHandler : IRequestHandler<UpdateUserPictureCommand, Result<ImageUploadResponse>>
     {
-        private readonly MediaStorageSettings.StorageSettings _storageSettings;
         private readonly IImageUploadService _imageUploadService;
         private readonly long _currentUserId;
         private readonly ApplicationDbContext _unitOfWork;
         private readonly INanoidGenerator _nanoidGenerator;
 
-        public UpdateUserPictureCommandHandler(IOptions<MediaStorageSettings> mediaStorageOptions,
-            IImageUploadService imageUploadService,
+        public UpdateUserPictureCommandHandler(IImageUploadService imageUploadService,
             ICurrentUserService currentUserService, 
-            ApplicationDbContext unitOfWork, INanoidGenerator nanoidGenerator)
+            ApplicationDbContext unitOfWork, 
+            INanoidGenerator nanoidGenerator)
         {
-            var mediaStorageSettings = mediaStorageOptions.Value;
-            _storageSettings = mediaStorageSettings.Image;
             _imageUploadService = imageUploadService;
             _currentUserId = currentUserService.GetUserId();
             _unitOfWork = unitOfWork;
@@ -47,7 +44,6 @@ namespace Audiochan.Core.Features.Users.UpdatePicture
 
         public async Task<Result<ImageUploadResponse>> Handle(UpdateUserPictureCommand command, CancellationToken cancellationToken)
         {
-            var container = string.Join('/', _storageSettings.Container, "users");
             var user = await _unitOfWork.Users.FindAsync(new object[]{command.UserId}, cancellationToken);
 
             if (user == null)
@@ -56,14 +52,19 @@ namespace Audiochan.Core.Features.Users.UpdatePicture
             if (user.Id != _currentUserId)
                 return Result<ImageUploadResponse>.Forbidden();
         
-            var blobName = $"{await _nanoidGenerator.GenerateAsync(size: 15)}.jpg";
-            
-            await _imageUploadService.UploadImage(command.Data, container, blobName, cancellationToken);
-
-            if (!string.IsNullOrEmpty(user.PictureBlobName))
-                await _imageUploadService.RemoveImage(container, user.PictureBlobName, cancellationToken);
-
-            user.PictureBlobName = blobName;
+            var blobName = string.Empty;
+            if (string.IsNullOrEmpty(command.Data))
+            {
+                await RemoveOriginalPicture(user.PictureBlobName, cancellationToken);
+                user.PictureBlobName = null;
+            }
+            else
+            {
+                blobName = $"{await _nanoidGenerator.GenerateAsync(size: 15)}.jpg";
+                await _imageUploadService.UploadImage(command.Data, AssetContainerConstants.UserPictures, blobName, cancellationToken);
+                await RemoveOriginalPicture(user.PictureBlobName, cancellationToken);
+                user.PictureBlobName = blobName;
+            }
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
@@ -71,6 +72,14 @@ namespace Audiochan.Core.Features.Users.UpdatePicture
             {
                 Url = string.Format(MediaLinkInvariants.UserPictureUrl, blobName)
             });
+        }
+        
+        private async Task RemoveOriginalPicture(string? picture, CancellationToken cancellationToken = default)
+        {
+            if (!string.IsNullOrEmpty(picture))
+            {
+                await _imageUploadService.RemoveImage(AssetContainerConstants.UserPictures, picture, cancellationToken);
+            }
         }
     }
 }

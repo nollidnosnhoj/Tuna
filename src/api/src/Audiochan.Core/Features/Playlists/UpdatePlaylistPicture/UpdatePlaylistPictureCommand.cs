@@ -30,19 +30,15 @@ namespace Audiochan.Core.Features.Playlists.UpdatePlaylistPicture
     public class UpdatePlaylistPictureCommandHandler : IRequestHandler<UpdatePlaylistPictureCommand, Result<ImageUploadResponse>>
     {
         private readonly long _currentUserId;
-        private readonly MediaStorageSettings.StorageSettings _storageSettings;
         private readonly INanoidGenerator _nanoidGenerator;
         private readonly IImageUploadService _imageUploadService;
         private readonly ApplicationDbContext _unitOfWork;
 
-        public UpdatePlaylistPictureCommandHandler(IOptions<MediaStorageSettings> mediaStorageOptions,
-            IImageUploadService imageUploadService,
+        public UpdatePlaylistPictureCommandHandler(IImageUploadService imageUploadService,
             ApplicationDbContext unitOfWork, 
             ICurrentUserService currentUserService, 
             INanoidGenerator nanoidGenerator)
         {
-            var mediaStorageSettings = mediaStorageOptions.Value;
-            _storageSettings = mediaStorageSettings.Image;
             _imageUploadService = imageUploadService;
             _unitOfWork = unitOfWork;
             _nanoidGenerator = nanoidGenerator;
@@ -51,8 +47,6 @@ namespace Audiochan.Core.Features.Playlists.UpdatePlaylistPicture
         
         public async Task<Result<ImageUploadResponse>> Handle(UpdatePlaylistPictureCommand request, CancellationToken cancellationToken)
         {
-            var container = string.Join('/', _storageSettings.Container, "playlists");
-
             var playlist = await _unitOfWork.Playlists
                 .Include(p => p.User)
                 .SingleOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
@@ -63,22 +57,34 @@ namespace Audiochan.Core.Features.Playlists.UpdatePlaylistPicture
             if (playlist.UserId != _currentUserId)
                 return Result<ImageUploadResponse>.Forbidden();
             
-            var blobName = $"{await _nanoidGenerator.GenerateAsync(size: 15)}.jpg";
-            
-            await _imageUploadService.UploadImage(request.Data, container, blobName, cancellationToken);
-
-            if (!string.IsNullOrEmpty(playlist.Picture))
+            var blobName = string.Empty;
+            if (string.IsNullOrEmpty(request.Data))
             {
-                await _imageUploadService.RemoveImage(container, playlist.Picture, cancellationToken);
+                await RemoveOriginalPicture(playlist.Picture, cancellationToken);
+                playlist.Picture = null;
             }
-
-            playlist.Picture = blobName;
+            else
+            {
+                blobName = $"{await _nanoidGenerator.GenerateAsync(size: 15)}.jpg";
+                await _imageUploadService.UploadImage(request.Data, AssetContainerConstants.PlaylistPictures, blobName, cancellationToken);
+                await RemoveOriginalPicture(playlist.Picture, cancellationToken);
+                playlist.Picture = blobName;
+            }
+            
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result<ImageUploadResponse>.Success(new ImageUploadResponse
             {
                 Url = string.Format(MediaLinkInvariants.PlaylistPictureUrl, blobName)
             });
+        }
+        
+        private async Task RemoveOriginalPicture(string? picture, CancellationToken cancellationToken = default)
+        {
+            if (!string.IsNullOrEmpty(picture))
+            {
+                await _imageUploadService.RemoveImage(AssetContainerConstants.PlaylistPictures, picture, cancellationToken);
+            }
         }
     }
 }
