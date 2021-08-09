@@ -167,6 +167,7 @@ namespace Audiochan.Core.IntegrationTests
             user = new User(userName, userName + "@localhost", password, role);
 
             await dbContext.Users.AddAsync(user);
+            await dbContext.SaveChangesAsync();
             
             Factory.CurrentUserId = user.Id;
             Factory.CurrentUserName = user.UserName;
