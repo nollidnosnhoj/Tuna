@@ -24,35 +24,32 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
 
     public class UpdateAudioCommandHandler : IRequestHandler<UpdateAudioPictureCommand, Result<ImageUploadResponse>>
     {
-        private readonly MediaStorageSettings _storageSettings;
-        private readonly IDateTimeProvider _dateTimeProvider;
-        private readonly IStorageService _storageService;
+        private readonly MediaStorageSettings.StorageSettings _storageSettings;
         private readonly ICurrentUserService _currentUserService;
         private readonly IImageUploadService _imageUploadService;
         private readonly ICacheService _cacheService;
         private readonly ApplicationDbContext _dbContext;
+        private readonly INanoidGenerator _nanoidGenerator;
 
-        public UpdateAudioCommandHandler(IOptions<MediaStorageSettings> options,
-            IStorageService storageService,
+        public UpdateAudioCommandHandler(IOptions<MediaStorageSettings> mediaStorageOptions,
             ICurrentUserService currentUserService,
             IImageUploadService imageUploadService,
-            IDateTimeProvider dateTimeProvider, 
             ICacheService cacheService, 
-            ApplicationDbContext dbContext)
+            ApplicationDbContext dbContext, INanoidGenerator nanoidGenerator)
         {
-            _storageSettings = options.Value;
-            _storageService = storageService;
+            var mediaStorageSettings = mediaStorageOptions.Value;
+            _storageSettings = mediaStorageSettings.Image;
             _currentUserService = currentUserService;
             _imageUploadService = imageUploadService;
-            _dateTimeProvider = dateTimeProvider;
             _cacheService = cacheService;
             _dbContext = dbContext;
+            _nanoidGenerator = nanoidGenerator;
         }
 
         public async Task<Result<ImageUploadResponse>> Handle(UpdateAudioPictureCommand command,
             CancellationToken cancellationToken)
         {
-            var container = string.Join('/', _storageSettings.Image.Container, "audios");
+            var container = string.Join('/', _storageSettings.Container, "audios");
 
             if (!_currentUserService.TryGetUserId(out var currentUserId))
                 return Result<ImageUploadResponse>.Unauthorized();
@@ -68,16 +65,16 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
             if (audio.UserId != currentUserId)
                 return Result<ImageUploadResponse>.Forbidden();
             
-            var blobName = $"{audio.Id}/{_dateTimeProvider.Now:yyyyMMddHHmmss}.jpg";
+            var blobName = $"{await _nanoidGenerator.GenerateAsync(size: 15)}.jpg";
 
             await _imageUploadService.UploadImage(command.Data, container, blobName, cancellationToken);
 
             if (!string.IsNullOrEmpty(audio.Picture))
-                await _storageService.RemoveAsync(_storageSettings.Image.Bucket, container, audio.Picture,
-                    cancellationToken);
+            {
+                await _imageUploadService.RemoveImage(container, audio.Picture, cancellationToken);
+            }
 
             audio.Picture = blobName;
-            _dbContext.Audios.Update(audio);
             await _dbContext.SaveChangesAsync(cancellationToken);
             await _cacheService.RemoveAsync(new GetAudioCacheOptions(command.AudioId), cancellationToken);
                 

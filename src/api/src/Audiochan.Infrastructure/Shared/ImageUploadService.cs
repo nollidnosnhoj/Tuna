@@ -16,12 +16,13 @@ namespace Audiochan.Infrastructure.Shared
     internal class ImageUploadService : IImageUploadService
     {
         private readonly IStorageService _storageService;
-        private readonly MediaStorageSettings _storageSettings;
+        private readonly MediaStorageSettings.StorageSettings _storageSettings;
 
-        public ImageUploadService(IStorageService storageService, IOptions<MediaStorageSettings> storageSettings)
+        public ImageUploadService(IStorageService storageService, IOptions<MediaStorageSettings> mediaStorageOptions)
         {
             _storageService = storageService;
-            _storageSettings = storageSettings.Value;
+            var mediaStorageSettings = mediaStorageOptions.Value;
+            _storageSettings = mediaStorageSettings.Image;
         }
 
         public async Task UploadImage(string data, string container, string blobName,
@@ -35,11 +36,16 @@ namespace Audiochan.Infrastructure.Shared
 
             await _storageService.SaveAsync(
                 stream: imageStream,
-                bucket: _storageSettings.Audio.Bucket,
+                bucket: _storageSettings.Bucket,
                 container: container,
                 blobName: blobName,
                 metadata: null,
                 cancellationToken: cancellationToken);
+        }
+
+        public async Task RemoveImage(string container, string blobName, CancellationToken cancellationToken = default)
+        {
+            await _storageService.RemoveAsync(_storageSettings.Bucket, container, blobName, cancellationToken);
         }
 
         public bool ValidateImageSize(string base64, int min, int max, int? minHeight = null, int? maxHeight = null)

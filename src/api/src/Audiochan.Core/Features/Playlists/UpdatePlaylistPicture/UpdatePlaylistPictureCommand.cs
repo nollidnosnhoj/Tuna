@@ -30,32 +30,28 @@ namespace Audiochan.Core.Features.Playlists.UpdatePlaylistPicture
     public class UpdatePlaylistPictureCommandHandler : IRequestHandler<UpdatePlaylistPictureCommand, Result<ImageUploadResponse>>
     {
         private readonly long _currentUserId;
-        private readonly MediaStorageSettings _storageSettings;
-        private readonly IDateTimeProvider _dateTimeProvider;
-        private readonly IStorageService _storageService;
+        private readonly MediaStorageSettings.StorageSettings _storageSettings;
+        private readonly INanoidGenerator _nanoidGenerator;
         private readonly IImageUploadService _imageUploadService;
         private readonly ApplicationDbContext _unitOfWork;
-        private readonly ICacheService _cacheService;
 
-        public UpdatePlaylistPictureCommandHandler(IOptions<MediaStorageSettings> options,
-            IStorageService storageService,
+        public UpdatePlaylistPictureCommandHandler(IOptions<MediaStorageSettings> mediaStorageOptions,
             IImageUploadService imageUploadService,
-            IDateTimeProvider dateTimeProvider, 
             ApplicationDbContext unitOfWork, 
-            ICacheService cacheService, ICurrentUserService currentUserService)
+            ICurrentUserService currentUserService, 
+            INanoidGenerator nanoidGenerator)
         {
-            _storageSettings = options.Value;
-            _storageService = storageService;
+            var mediaStorageSettings = mediaStorageOptions.Value;
+            _storageSettings = mediaStorageSettings.Image;
             _imageUploadService = imageUploadService;
-            _dateTimeProvider = dateTimeProvider;
             _unitOfWork = unitOfWork;
-            _cacheService = cacheService;
+            _nanoidGenerator = nanoidGenerator;
             _currentUserId = currentUserService.GetUserId();
         }
         
         public async Task<Result<ImageUploadResponse>> Handle(UpdatePlaylistPictureCommand request, CancellationToken cancellationToken)
         {
-            var container = string.Join('/', _storageSettings.Image.Container, "playlists");
+            var container = string.Join('/', _storageSettings.Container, "playlists");
 
             var playlist = await _unitOfWork.Playlists
                 .Include(p => p.User)
@@ -67,13 +63,14 @@ namespace Audiochan.Core.Features.Playlists.UpdatePlaylistPicture
             if (playlist.UserId != _currentUserId)
                 return Result<ImageUploadResponse>.Forbidden();
             
-            var blobName = $"{playlist.Id}/{_dateTimeProvider.Now:yyyyMMddHHmmss}.jpg";
+            var blobName = $"{await _nanoidGenerator.GenerateAsync(size: 15)}.jpg";
             
             await _imageUploadService.UploadImage(request.Data, container, blobName, cancellationToken);
 
             if (!string.IsNullOrEmpty(playlist.Picture))
-                await _storageService.RemoveAsync(_storageSettings.Image.Bucket, container, playlist.Picture,
-                    cancellationToken);
+            {
+                await _imageUploadService.RemoveImage(container, playlist.Picture, cancellationToken);
+            }
 
             playlist.Picture = blobName;
             await _unitOfWork.SaveChangesAsync(cancellationToken);

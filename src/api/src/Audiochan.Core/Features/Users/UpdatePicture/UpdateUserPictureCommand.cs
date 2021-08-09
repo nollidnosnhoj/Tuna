@@ -26,31 +26,28 @@ namespace Audiochan.Core.Features.Users.UpdatePicture
 
     public class UpdateUserPictureCommandHandler : IRequestHandler<UpdateUserPictureCommand, Result<ImageUploadResponse>>
     {
-        private readonly MediaStorageSettings _storageSettings;
+        private readonly MediaStorageSettings.StorageSettings _storageSettings;
         private readonly IImageUploadService _imageUploadService;
-        private readonly IStorageService _storageService;
-        private readonly IDateTimeProvider _dateTimeProvider;
         private readonly long _currentUserId;
         private readonly ApplicationDbContext _unitOfWork;
+        private readonly INanoidGenerator _nanoidGenerator;
 
-        public UpdateUserPictureCommandHandler(IOptions<MediaStorageSettings> options,
+        public UpdateUserPictureCommandHandler(IOptions<MediaStorageSettings> mediaStorageOptions,
             IImageUploadService imageUploadService,
-            IStorageService storageService,
-            IDateTimeProvider dateTimeProvider, 
             ICurrentUserService currentUserService, 
-            ApplicationDbContext unitOfWork)
+            ApplicationDbContext unitOfWork, INanoidGenerator nanoidGenerator)
         {
-            _storageSettings = options.Value;
+            var mediaStorageSettings = mediaStorageOptions.Value;
+            _storageSettings = mediaStorageSettings.Image;
             _imageUploadService = imageUploadService;
-            _storageService = storageService;
-            _dateTimeProvider = dateTimeProvider;
             _currentUserId = currentUserService.GetUserId();
             _unitOfWork = unitOfWork;
+            _nanoidGenerator = nanoidGenerator;
         }
 
         public async Task<Result<ImageUploadResponse>> Handle(UpdateUserPictureCommand command, CancellationToken cancellationToken)
         {
-            var container = string.Join('/', _storageSettings.Image.Container, "users");
+            var container = string.Join('/', _storageSettings.Container, "users");
             var user = await _unitOfWork.Users.FindAsync(new object[]{command.UserId}, cancellationToken);
 
             if (user == null)
@@ -59,13 +56,12 @@ namespace Audiochan.Core.Features.Users.UpdatePicture
             if (user.Id != _currentUserId)
                 return Result<ImageUploadResponse>.Forbidden();
         
-            var blobName = $"{user.Id}/{_dateTimeProvider.Now:yyyyMMddHHmmss}.jpg";
+            var blobName = $"{await _nanoidGenerator.GenerateAsync(size: 15)}.jpg";
             
             await _imageUploadService.UploadImage(command.Data, container, blobName, cancellationToken);
 
             if (!string.IsNullOrEmpty(user.PictureBlobName))
-                await _storageService.RemoveAsync(_storageSettings.Audio.Bucket, container, user.PictureBlobName,
-                    cancellationToken);
+                await _imageUploadService.RemoveImage(container, user.PictureBlobName, cancellationToken);
 
             user.PictureBlobName = blobName;
 
