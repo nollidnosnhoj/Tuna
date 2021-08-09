@@ -1,5 +1,5 @@
 module.exports = {
   images: {
-    domains: ["localhost", "audiochan.s3.amazonaws.com"],
+    domains: ["localhost", "audiochan-assets.s3.amazonaws.com"],
   },
 };

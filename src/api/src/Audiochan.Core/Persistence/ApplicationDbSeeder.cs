@@ -18,6 +18,7 @@ namespace Audiochan.Core.Persistence
                 var superuser = new User("superuser", "superuser@localhost", passwordHash);
 
                 await dbContext.Users.AddAsync(superuser);
+                await dbContext.SaveChangesAsync();
             }
         }
     }
