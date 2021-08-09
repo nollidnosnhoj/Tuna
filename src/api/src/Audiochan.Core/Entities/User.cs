@@ -18,18 +18,12 @@ namespace Audiochan.Core.Entities
             RefreshTokens = new HashSet<RefreshToken>();
         }
 
-        public User(string username, string email, string passwordHash) : this()
+        public User(string username, string email, string passwordHash, UserRole userRole = UserRole.Regular) : this()
         {
             this.UserName = username;
             this.Email = email;
             this.PasswordHash = passwordHash;
-            this.Role = UserRole.Regular;
-        }
-
-        public User(string username, string email, string passwordHash, UserRole role)
-            : this(username, email, passwordHash)
-        {
-            this.Role = role;
+            this.Role = userRole;
         }
 
         public long Id { get; set; }
