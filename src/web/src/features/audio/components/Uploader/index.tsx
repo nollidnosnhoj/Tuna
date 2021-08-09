@@ -53,7 +53,7 @@ const validationSchema: yup.SchemaOf<CreateAudioRequest> = yup
 
 export default function AudioUploader() {
   const router = useRouter();
-  const [audioId, setAudioId] = useState<AudioId>("");
+  const [audioId, setAudioId] = useState<AudioId>(0);
   const { mutateAsync: createAudio, isLoading: isCreatingAudio } =
     useCreateAudio();
   const formMethods = useForm<CreateAudioRequest>({

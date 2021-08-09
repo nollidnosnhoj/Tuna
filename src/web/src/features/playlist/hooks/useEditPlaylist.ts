@@ -1,12 +1,12 @@
 import { useMutation, UseMutationResult, useQueryClient } from "react-query";
-import { useUser } from "~/features/user/hooks";
+// import { useUser } from "~/features/user/hooks";
 import { updatePlaylistDetailsRequest } from "../api";
-import { Playlist, PlaylistRequest } from "../api/types";
+import { Playlist, PlaylistId, PlaylistRequest } from "../api/types";
 import { GET_PLAYLIST_KEY } from "./useGetPlaylist";
 
-export function useEditPlaylist(id: string): UseMutationResult<Playlist> {
+export function useEditPlaylist(id: PlaylistId): UseMutationResult<Playlist> {
   const qc = useQueryClient();
-  const { user } = useUser();
+  // const { user } = useUser();
 
   const updatePlaylist = async (input: PlaylistRequest): Promise<Playlist> => {
     return await updatePlaylistDetailsRequest(id, input);

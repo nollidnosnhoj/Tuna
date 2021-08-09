@@ -35,7 +35,7 @@ export default function AddToPlaylistModal() {
     selectedIds,
     defaultPlaylistTitle,
   } = useAddToPlaylist();
-  const [playlistId, setPlaylistId] = useState("");
+  const [playlistId, setPlaylistId] = useState(0);
 
   const {
     items: playlists,
@@ -50,7 +50,7 @@ export default function AddToPlaylistModal() {
     useAddAudiosToPlaylist();
 
   const handleClosingModal = () => {
-    setPlaylistId("");
+    setPlaylistId(0);
     closeDialog();
   };
 
@@ -91,7 +91,7 @@ export default function AddToPlaylistModal() {
     }
   };
 
-  const handleSubmit = async (id: string) => {
+  const handleSubmit = async (id: number) => {
     try {
       setPlaylistId(id);
       const dupIds = await checkDuplicatedAudiosRequest(id, selectedIds);

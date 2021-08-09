@@ -1,14 +1,14 @@
 import create from "zustand";
-import { AudioView } from "~/features/audio/api/types";
+import { AudioId, AudioView } from "~/features/audio/api/types";
 
 type UseAddToPlaylistState = {
   open: boolean;
   duplicateOpen: boolean;
-  selectedIds: string[];
-  duplicateIds: string[];
+  selectedIds: AudioId[];
+  duplicateIds: AudioId[];
   defaultPlaylistTitle: string;
   openDialog: (audios: AudioView[]) => void;
-  addDups: (ids: string[]) => void;
+  addDups: (ids: AudioId[]) => void;
   closeDialog: () => void;
 };
 

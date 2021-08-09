@@ -1,6 +1,6 @@
 import { MetaAuthor } from "~/lib/types";
 
-export type AudioId = string;
+export type AudioId = number;
 
 export enum Visibility {
   Public = "public",
@@ -9,10 +9,12 @@ export enum Visibility {
 }
 
 export interface AudioView {
-  id: string;
+  id: AudioId;
   title: string;
+  slug: string;
   description: string;
   visibility: Visibility;
+  secret?: string;
   tags: string[];
   duration: number;
   size: number;

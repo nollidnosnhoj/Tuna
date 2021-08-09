@@ -16,13 +16,13 @@ export async function getAudiosRequest(
 }
 
 export async function getAudioRequest(
-  id: AudioId,
+  idSlug: string,
   ctx?: GetServerSidePropsContext
 ): Promise<AudioView> {
   const { res, req } = ctx ?? {};
   const { data } = await request<AudioView>({
     method: "get",
-    url: `audios/${id}`,
+    url: `audios/${idSlug}`,
     req,
     res,
   });

@@ -1,11 +1,17 @@
 import { GetServerSidePropsContext } from "next";
 import request from "~/lib/http";
 import { PagedList } from "~/lib/types";
-import { AudioView } from "../../audio/api/types";
-import { CreatePlaylistRequest, Playlist, PlaylistRequest } from "./types";
+import { AudioId, AudioView } from "../../audio/api/types";
+import {
+  CreatePlaylistRequest,
+  Playlist,
+  PlaylistAudioId,
+  PlaylistId,
+  PlaylistRequest,
+} from "./types";
 
 export async function getPlaylistRequest(
-  id: string,
+  id: PlaylistId,
   ctx?: GetServerSidePropsContext
 ): Promise<Playlist> {
   const { res, req } = ctx ?? {};
@@ -19,7 +25,7 @@ export async function getPlaylistRequest(
 }
 
 export async function getPlaylistAudiosRequest(
-  id: string,
+  id: PlaylistId,
   page = 1
 ): Promise<PagedList<AudioView>> {
   const { data } = await request<PagedList<AudioView>>({
@@ -44,7 +50,7 @@ export async function createPlaylistRequest(
 }
 
 export async function updatePlaylistDetailsRequest(
-  id: string,
+  id: PlaylistId,
   inputs: PlaylistRequest
 ): Promise<Playlist> {
   const { data } = await request({
@@ -63,8 +69,8 @@ export async function removePlaylistRequest(id: string): Promise<void> {
 }
 
 export async function addAudiosToPlaylistRequest(
-  id: string,
-  audioIds: string[]
+  id: number,
+  audioIds: AudioId[]
 ): Promise<void> {
   await request({
     method: "put",
@@ -76,8 +82,8 @@ export async function addAudiosToPlaylistRequest(
 }
 
 export async function removeAudiosFromPlaylistRequests(
-  id: string,
-  playlistAudioIds: string[]
+  id: PlaylistId,
+  playlistAudioIds: PlaylistAudioId[]
 ): Promise<void> {
   await request({
     method: "delete",
@@ -89,10 +95,10 @@ export async function removeAudiosFromPlaylistRequests(
 }
 
 export async function checkDuplicatedAudiosRequest(
-  id: string,
-  audioIds: string[]
-): Promise<string[]> {
-  const { data } = await request<string[]>({
+  id: number,
+  audioIds: AudioId[]
+): Promise<AudioId[]> {
+  const { data } = await request<AudioId[]>({
     method: "post",
     url: `playlists/${id}/audios/duplicate`,
     data: {

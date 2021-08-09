@@ -13,25 +13,25 @@ import AudioDetails from "~/features/audio/components/Details";
 import AudioFileInfo from "~/features/audio/components/Details/FileInfo";
 import { useGetAudio } from "~/features/audio/hooks";
 import { getAudioRequest } from "~/features/audio/api";
-import { AudioView, AudioId } from "~/features/audio/api/types";
+import { AudioView } from "~/features/audio/api/types";
 import AudioTags from "~/features/audio/components/Details/Tags";
 
 interface AudioPageProps {
   audio?: AudioView;
-  audioId: AudioId;
+  audioIdSlug: string;
 }
 
 export const getServerSideProps: GetServerSideProps<AudioPageProps> = async (
   context
 ) => {
-  const id = context.params?.id as AudioId;
+  const id = context.params?.id as string;
 
   try {
     const data = await getAudioRequest(id, context);
     return {
       props: {
         audio: data,
-        audioId: id,
+        audioIdSlug: id,
       },
     };
   } catch (err) {
@@ -42,7 +42,7 @@ export const getServerSideProps: GetServerSideProps<AudioPageProps> = async (
 };
 
 export default function AudioPage(props: AudioPageProps) {
-  const { data: audio } = useGetAudio(props.audioId, {
+  const { data: audio } = useGetAudio(props.audioIdSlug, {
     staleTime: 1000,
     initialData: props.audio,
   });
