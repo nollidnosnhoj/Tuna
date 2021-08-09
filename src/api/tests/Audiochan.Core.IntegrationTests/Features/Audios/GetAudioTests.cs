@@ -26,7 +26,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             Insert(audio);
 
             // Act
-            var result = await SendAsync(new GetAudioQuery(Guid.Empty));
+            var result = await SendAsync(new GetAudioQuery(0));
 
             // Assert
             result.Should().BeNull();
@@ -81,6 +81,49 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             result.User.Should().NotBeNull();
             result.User.Should().BeOfType<MetaAuthorDto>();
             result.User.Id.Should().Be(userId);
+        }
+
+        [Fact]
+        public async Task ShouldSuccessfullyGetPrivateAudio_WhenSecretIsValid()
+        {
+            // Assign
+            var (userId, _) = await RunAsAdministratorAsync();
+
+            var audio = new AudioFaker(userId)
+                .SetFixedVisibility(Visibility.Private)
+                .Generate();
+            
+            Insert(audio);
+
+            await RunAsDefaultUserAsync();
+
+            // Act
+            var result = await SendAsync(new GetAudioQuery(audio.Id, audio.Secret));
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().BeOfType<AudioViewModel>();
+        }
+
+        [Fact]
+        public async Task ShouldNotGetPrivateAudio()
+        {
+            // Assign
+            var (userId, _) = await RunAsAdministratorAsync();
+
+            var audio = new AudioFaker(userId)
+                .SetFixedVisibility(Visibility.Private)
+                .Generate();
+            
+            Insert(audio);
+
+            await RunAsDefaultUserAsync();
+
+            // Act
+            var result = await SendAsync(new GetAudioQuery(audio.Id));
+
+            // Assert
+            result.Should().BeNull();
         }
 
         [Fact]

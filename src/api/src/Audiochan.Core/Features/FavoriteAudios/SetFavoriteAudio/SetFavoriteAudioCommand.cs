@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.FavoriteAudios.SetFavoriteAudio
 {
-    public record SetFavoriteAudioCommand(Guid AudioId, long UserId, bool IsFavoriting) : IRequest<Result<bool>>
+    public record SetFavoriteAudioCommand(long AudioId, long UserId, bool IsFavoriting) : IRequest<Result<bool>>
     {
     }
     

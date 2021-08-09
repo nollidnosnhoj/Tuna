@@ -7,5 +7,6 @@ namespace Audiochan.Core.Entities.Abstractions
     {
         public long UserId { get; set; }
         public Visibility Visibility { get; set; }
+        public string? Secret { get; set; }
     }
 }

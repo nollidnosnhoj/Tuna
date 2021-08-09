@@ -10,8 +10,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Audios.GetAudio
 {
-    public record GetAudioQuery(Guid Id) : IRequest<AudioViewModel?>
+    public record GetAudioQuery : IRequest<AudioViewModel?>
     {
+        public long Id { get; init; }
+        public string? Secret { get; init; }
+
+        public GetAudioQuery(long id, string? secret = null)
+        {
+            Id = id;
+            Secret = secret;
+        }
     }
 
     public class GetAudioQueryHandler : IRequestHandler<GetAudioQuery, AudioViewModel?>
@@ -30,11 +38,11 @@ namespace Audiochan.Core.Features.Audios.GetAudio
         public async Task<AudioViewModel?> Handle(GetAudioQuery query, CancellationToken cancellationToken)
         {
             var audio = await FetchAudioFromCacheOrDatabaseAsync(query.Id, cancellationToken);
-            if (audio == null || !CanAccessPrivateAudio(audio)) return null;
+            if (audio == null || !CanAccessPrivateAudio(audio, query.Secret)) return null;
             return audio;
         }
 
-        private async Task<AudioViewModel?> FetchAudioFromCacheOrDatabaseAsync(Guid audioId, 
+        private async Task<AudioViewModel?> FetchAudioFromCacheOrDatabaseAsync(long audioId, 
             CancellationToken cancellationToken = default)
         {
             var cacheOptions = new GetAudioCacheOptions(audioId);
@@ -57,11 +65,11 @@ namespace Audiochan.Core.Features.Audios.GetAudio
             return audio;
         }
 
-        private bool CanAccessPrivateAudio(AudioViewModel audio)
+        private bool CanAccessPrivateAudio(AudioViewModel audio, string? secret)
         {
             var currentUserId = _currentUserService.GetUserId();
 
-            return currentUserId == audio.User.Id || audio.Visibility != Visibility.Private;
+            return currentUserId == audio.User.Id || audio.Visibility != Visibility.Private || audio.Secret == secret;
         }
     }
 }

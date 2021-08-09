@@ -13,7 +13,7 @@ using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Audios.RemoveAudio
 {
-    public record RemoveAudioCommand(Guid Id) : IRequest<Result<bool>>
+    public record RemoveAudioCommand(long Id) : IRequest<Result<bool>>
     {
     }
 

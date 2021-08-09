@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Entities.Abstractions;
+using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -15,12 +16,15 @@ namespace Audiochan.Core.Persistence
     public class ApplicationDbContext : DbContext
     {
         private readonly IDateTimeProvider _dateTimeProvider;
+        private readonly INanoidGenerator _nanoidGenerator;
         private IDbContextTransaction? _currentTransaction;
 
         public ApplicationDbContext(DbContextOptions options,
-            IDateTimeProvider dateTimeProvider) : base(options)
+            IDateTimeProvider dateTimeProvider, 
+            INanoidGenerator nanoidGenerator) : base(options)
         {
             _dateTimeProvider = dateTimeProvider;
+            _nanoidGenerator = nanoidGenerator;
         }
 
         public DbSet<Audio> Audios { get; set; } = null!;
@@ -37,6 +41,9 @@ namespace Audiochan.Core.Persistence
         {
             // Add default created/updated date
             HandleAuditedEntities();
+            
+            // Handle creating secret key for private resources
+            HandleVisibilityEntities();
             
             // Add soft delete property
             HandleSoftDeletion();
@@ -122,10 +129,42 @@ namespace Audiochan.Core.Persistence
             foreach (var entry in ChangeTracker.Entries<ISoftDeletable>())
             {
                 if (entry is null) continue;
-                if (entry.State == EntityState.Deleted)
+                
+                if (entry.State != EntityState.Deleted) continue;
+                
+                entry.State = EntityState.Modified;
+                entry.Property(nameof(ISoftDeletable.Deleted)).CurrentValue = _dateTimeProvider.Now;
+            }
+        }
+
+        private void HandleVisibilityEntities()
+        {
+            foreach (var entry in ChangeTracker.Entries<IHasVisibility>())
+            {
+                if (entry is null) continue;
+
+
+                switch (entry.State)
                 {
-                    entry.State = EntityState.Modified;
-                    entry.Property(nameof(ISoftDeletable.Deleted)).CurrentValue = _dateTimeProvider.Now;
+                    case EntityState.Added:
+                        entry.Property(nameof(IHasVisibility.Secret)).CurrentValue = _nanoidGenerator.Generate(size: 10);
+                        break;
+                    case EntityState.Modified:
+                    {
+                        var og = (Visibility)entry.Property(nameof(IHasVisibility.Visibility)).OriginalValue;
+                        var current = (Visibility)entry.Property(nameof(IHasVisibility.Visibility)).CurrentValue;
+
+                        if (og == Visibility.Private && current != Visibility.Private)
+                        {
+                            entry.Property(nameof(IHasVisibility.Secret)).CurrentValue = null;
+                        }
+                        else if (og != Visibility.Private && current == Visibility.Private)
+                        {
+                            entry.Property(nameof(IHasVisibility.Secret)).CurrentValue =
+                                _nanoidGenerator.Generate(size: 10);
+                        }
+                        break;
+                    }
                 }
             }
         }

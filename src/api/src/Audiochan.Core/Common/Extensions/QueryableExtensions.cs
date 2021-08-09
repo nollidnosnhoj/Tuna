@@ -29,18 +29,12 @@ namespace Audiochan.Core.Common.Extensions
             return tagEntities;
         }
 
-        public static IQueryable<Audio> FilterCursor(this IQueryable<Audio> queryable, string? cursor)
+        public static IQueryable<Audio> FilterCursor(this IQueryable<Audio> queryable, long? cursor)
         {
             if (cursor is null)
                 return queryable;
-
-            var (id, since) = CursorHelpers.Decode(cursor);
             
-            if (id is not null && since is not null)
-            {
-                queryable = queryable
-                    .Where(a => a.Created < since || a.Created == since && a.Id.CompareTo(id) < 0);
-            }
+            queryable = queryable.Where(a => a.Id < cursor);
 
             return queryable;
         }

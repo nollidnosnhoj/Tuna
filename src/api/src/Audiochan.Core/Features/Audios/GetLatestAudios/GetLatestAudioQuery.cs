@@ -18,7 +18,7 @@ namespace Audiochan.Core.Features.Audios.GetLatestAudios
     public record GetLatestAudioQuery : IRequest<GetAudioListViewModel>
     {
         public string? Tag { get; init; }
-        public string? Cursor { get; init; }
+        public long? Cursor { get; init; }
         public int Size { get; init; } = 30;
     }
 
@@ -51,15 +51,13 @@ namespace Audiochan.Core.Features.Audios.GetLatestAudios
             return new GetAudioListViewModel(audios, nextCursor);
         }
 
-        private string? GetNextCursor(List<AudioViewModel> audios, int size)
+        private long? GetNextCursor(List<AudioViewModel> audios, int size)
         {
             var lastAudio = audios.LastOrDefault();
 
             return audios.Count < size
                 ? null
-                : lastAudio != null
-                    ? CursorHelpers.Encode(lastAudio.Id, lastAudio.Created)
-                    : null;
+                : lastAudio?.Id;
         }
     }
 }

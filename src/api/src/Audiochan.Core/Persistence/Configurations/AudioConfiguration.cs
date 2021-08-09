@@ -10,13 +10,14 @@ namespace Audiochan.Core.Persistence.Configurations
         {
             builder.HasKey(x => x.Id);
 
-            builder.Property(x => x.Id)
-                .HasDefaultValueSql("uuid_generate_v4()");
+            builder.Property(x => x.Id).ValueGeneratedOnAdd();
 
-            builder.Property(x => x.Title)
-                .HasMaxLength(100);
-            builder.HasIndex(x => x.Title);
-
+            builder.Property(x => x.Title).HasMaxLength(100);
+            builder.Property(x => x.Slug).HasMaxLength(256);
+            builder.Property(x => x.Secret).HasMaxLength(100);
+            builder.Property(x => x.File).HasMaxLength(256);
+            builder.Property(x => x.Picture).HasMaxLength(256);
+            
             builder.HasIndex(x => x.Created);
 
             builder.HasMany(a => a.Tags)
@@ -25,7 +26,6 @@ namespace Audiochan.Core.Persistence.Configurations
             
             builder.HasOne(x => x.User)
                 .WithMany(x => x.Audios)
-                .IsRequired()
                 .HasForeignKey(x => x.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
         }

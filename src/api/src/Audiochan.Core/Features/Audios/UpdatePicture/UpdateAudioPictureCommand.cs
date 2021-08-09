@@ -18,7 +18,7 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
 {
     public record UpdateAudioPictureCommand : IImageData, IRequest<Result<ImageUploadResponse>>
     {
-        public Guid AudioId { get; init; }
+        public long AudioId { get; init; }
         public string Data { get; init; } = string.Empty;
     }
 

@@ -10,13 +10,15 @@ namespace Audiochan.Core.Features.Audios
 {
     public static class AudioMaps
     {
-        public static Expression<Func<Audio, AudioViewModel>> AudioToView = audio =>
+        public static readonly Expression<Func<Audio, AudioViewModel>> AudioToView = audio =>
             new AudioViewModel
             {
                 Id = audio.Id,
                 Title = audio.Title,
+                Slug = audio.FullSlug,
                 Description = audio.Description ?? string.Empty,
                 Visibility = audio.Visibility,
+                Secret = audio.Secret,
                 Created = audio.Created,
                 LastModified = audio.LastModified,
                 Duration = audio.Duration,

@@ -16,7 +16,7 @@ using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Audios.CreateAudio
 {
-    public class CreateAudioCommand : IRequest<Result<Guid>>
+    public class CreateAudioCommand : IRequest<Result<long>>
     {
         public string UploadId { get; init; } = null!;
         public string FileName { get; init; } = null!;
@@ -71,7 +71,7 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
     }
 
 
-    public class CreateAudioCommandHandler : IRequestHandler<CreateAudioCommand, Result<Guid>>
+    public class CreateAudioCommandHandler : IRequestHandler<CreateAudioCommand, Result<long>>
     {
         private readonly ApplicationDbContext _applicationDbContext;
         private readonly IStorageService _storageService;
@@ -92,17 +92,17 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
             _slugGenerator = slugGenerator;
         }
 
-        public async Task<Result<Guid>> Handle(CreateAudioCommand command,
+        public async Task<Result<long>> Handle(CreateAudioCommand command,
             CancellationToken cancellationToken)
         {
             if (!_currentUserService.TryGetUserId(out var currentUserId))
             {
-                return Result<Guid>.Unauthorized();
+                return Result<long>.Unauthorized();
             }
 
             if (!await ExistsInTempStorageAsync(command.BlobName, cancellationToken))
             {
-                return Result<Guid>.BadRequest("Cannot find upload. Please upload and try again.");
+                return Result<long>.BadRequest("Cannot find upload. Please upload and try again.");
             }
             
             var audio = new Audio
@@ -116,16 +116,20 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
                 File = command.BlobName,
             };
 
+            // Create tags
             if (command.Tags.Count > 0)
             {
                 var tags = _slugGenerator.GenerateSlugs(command.Tags);
                 audio.Tags = await _applicationDbContext.Tags.GetAppropriateTags(tags, cancellationToken);
             }
+
+            // Slugify
+            audio.Slug = _slugGenerator.GenerateSlug(audio.Title);
             
             await _applicationDbContext.Audios.AddAsync(audio, cancellationToken);
-            await MoveTempAudioToPublicAsync(audio, cancellationToken);
             await _applicationDbContext.SaveChangesAsync(cancellationToken);
-            return Result<Guid>.Success(audio.Id);
+            await MoveTempAudioToPublicAsync(audio, cancellationToken);
+            return Result<long>.Success(audio.Id);
         }
 
         private async Task MoveTempAudioToPublicAsync(Audio audio, CancellationToken cancellationToken)

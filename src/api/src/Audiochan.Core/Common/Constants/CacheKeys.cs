@@ -6,7 +6,7 @@ namespace Audiochan.Core.Common.Constants
     {
         public static class Audio
         {
-            public static string GetAudio(Guid audioId) => $"audio_id_{audioId}";
+            public static string GetAudio(long audioId) => $"audio_id_{audioId}";
         }
 
         public static class Playlist
