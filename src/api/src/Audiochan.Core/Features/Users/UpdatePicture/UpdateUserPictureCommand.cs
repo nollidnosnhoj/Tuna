@@ -55,15 +55,15 @@ namespace Audiochan.Core.Features.Users.UpdatePicture
             var blobName = string.Empty;
             if (string.IsNullOrEmpty(command.Data))
             {
-                await RemoveOriginalPicture(user.PictureBlobName, cancellationToken);
-                user.PictureBlobName = null;
+                await RemoveOriginalPicture(user.Picture, cancellationToken);
+                user.Picture = null;
             }
             else
             {
                 blobName = $"{await _nanoidGenerator.GenerateAsync(size: 15)}.jpg";
                 await _imageUploadService.UploadImage(command.Data, AssetContainerConstants.UserPictures, blobName, cancellationToken);
-                await RemoveOriginalPicture(user.PictureBlobName, cancellationToken);
-                user.PictureBlobName = blobName;
+                await RemoveOriginalPicture(user.Picture, cancellationToken);
+                user.Picture = blobName;
             }
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);

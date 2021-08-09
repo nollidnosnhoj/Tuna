@@ -324,9 +324,9 @@ namespace Audiochan.Core.Persistence.Migrations
                         .HasColumnType("text")
                         .HasColumnName("password_hash");
 
-                    b.Property<string>("PictureBlobName")
+                    b.Property<string>("Picture")
                         .HasColumnType("text")
-                        .HasColumnName("picture_blob_name");
+                        .HasColumnName("picture");
 
                     b.Property<int>("Role")
                         .HasColumnType("integer")

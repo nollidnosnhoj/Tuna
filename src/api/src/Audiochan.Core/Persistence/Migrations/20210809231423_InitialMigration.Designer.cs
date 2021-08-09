@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Audiochan.Core.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210809090514_InitialMigration")]
+    [Migration("20210809231423_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -326,9 +326,9 @@ namespace Audiochan.Core.Persistence.Migrations
                         .HasColumnType("text")
                         .HasColumnName("password_hash");
 
-                    b.Property<string>("PictureBlobName")
+                    b.Property<string>("Picture")
                         .HasColumnType("text")
-                        .HasColumnName("picture_blob_name");
+                        .HasColumnName("picture");
 
                     b.Property<int>("Role")
                         .HasColumnType("integer")

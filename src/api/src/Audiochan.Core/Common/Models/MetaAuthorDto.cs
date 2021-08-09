@@ -9,8 +9,8 @@ namespace Audiochan.Core.Common.Models
         {
             Id = user.Id;
             Username = user.UserName;
-            Picture = user.PictureBlobName != null
-                ? string.Format(MediaLinkInvariants.UserPictureUrl, user.PictureBlobName)
+            Picture = user.Picture != null
+                ? string.Format(MediaLinkInvariants.UserPictureUrl, user.Picture)
                 : null;
         }
         

@@ -34,7 +34,7 @@ namespace Audiochan.Core.Persistence.Migrations
                     email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
                     password_hash = table.Column<string>(type: "text", nullable: false),
                     role = table.Column<int>(type: "integer", nullable: false),
-                    picture_blob_name = table.Column<string>(type: "text", nullable: true),
+                    picture = table.Column<string>(type: "text", nullable: true),
                     created = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     last_modified = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
                 },

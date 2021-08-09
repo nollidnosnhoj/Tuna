@@ -31,7 +31,7 @@ namespace Audiochan.Core.Entities
         public string Email { get; set; } = null!;
         public string PasswordHash { get; set; } = null!;
         public UserRole Role { get; set; }
-        public string? PictureBlobName { get; set; }
+        public string? Picture { get; set; }
         public DateTime Created { get; set; }
         public DateTime? LastModified { get; set; }
         public ICollection<Audio> Audios { get; set; }
