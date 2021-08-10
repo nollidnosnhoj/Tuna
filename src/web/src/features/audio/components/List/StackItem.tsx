@@ -78,7 +78,7 @@ const AudioStackItem: React.FC<AudioListItemProps> = ({
         <Box marginX={4}>
           <Flex align="center">
             <Link
-              href={`/audios/${audio.id}`}
+              href={`/audios/${audio.slug}`}
               _hover={{ textDecoration: "none" }}
             >
               <Text as="b" fontSize="md">

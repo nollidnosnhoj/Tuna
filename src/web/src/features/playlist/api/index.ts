@@ -1,6 +1,6 @@
 import { GetServerSidePropsContext } from "next";
 import request from "~/lib/http";
-import { PagedList } from "~/lib/types";
+import { IdSlug, PagedList } from "~/lib/types";
 import { AudioId, AudioView } from "../../audio/api/types";
 import {
   CreatePlaylistRequest,
@@ -11,7 +11,7 @@ import {
 } from "./types";
 
 export async function getPlaylistRequest(
-  id: PlaylistId,
+  id: IdSlug,
   ctx?: GetServerSidePropsContext
 ): Promise<Playlist> {
   const { res, req } = ctx ?? {};

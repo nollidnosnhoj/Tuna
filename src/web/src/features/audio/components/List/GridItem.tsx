@@ -23,7 +23,7 @@ export default function AudioGridItem(props: AudioListItemProps) {
       <Box marginTop={2}>
         <Box>
           <Link
-            href={`/audios/${audio.id}`}
+            href={`/audios/${audio.slug}`}
             _hover={{ textDecoration: "none" }}
           >
             <Text as="b">{audio.title}</Text>

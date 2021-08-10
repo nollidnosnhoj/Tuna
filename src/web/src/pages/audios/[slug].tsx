@@ -15,25 +15,28 @@ import { useGetAudio } from "~/features/audio/api/hooks";
 import { getAudioRequest } from "~/features/audio/api";
 import { AudioView } from "~/features/audio/api/types";
 import AudioTags from "~/features/audio/components/Details/Tags";
+import { IdSlug } from "~/lib/types";
+import { useEffect } from "react";
+import { useRouter } from "next/router";
 
 interface AudioPageProps {
-  audio?: AudioView;
-  audioIdSlug: string;
+  audio: AudioView;
+  slug: IdSlug;
   secret?: string;
 }
 
 export const getServerSideProps: GetServerSideProps<AudioPageProps> = async (
   context
 ) => {
-  const id = context.params?.id as string;
-  const secret = context.query?.secret as string;
+  const slug = context.params?.slug as IdSlug;
+  const secret = (context.query?.secret as string) ?? null;
 
   try {
-    const data = await getAudioRequest(id, secret, context);
+    const data = await getAudioRequest(slug, secret, context);
     return {
       props: {
         audio: data,
-        audioIdSlug: id,
+        slug,
         secret,
       },
     };
@@ -45,15 +48,24 @@ export const getServerSideProps: GetServerSideProps<AudioPageProps> = async (
 };
 
 export default function AudioPage({
-  audioIdSlug,
   audio: initAudio,
+  slug,
   secret,
 }: AudioPageProps) {
-  const { data: audio } = useGetAudio(audioIdSlug, {
+  const router = useRouter();
+  const { data: audio } = useGetAudio(slug, {
     secret,
     staleTime: 1000,
     initialData: initAudio,
   });
+
+  useEffect(() => {
+    if (audio && audio.slug !== slug) {
+      router.replace(`/audios/${audio.slug}`, undefined, {
+        shallow: true,
+      });
+    }
+  }, []);
 
   if (!audio) return null;
 

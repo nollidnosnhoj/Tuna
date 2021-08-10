@@ -4,7 +4,7 @@ import {
   UseQueryOptions,
   UseQueryResult,
 } from "react-query";
-import { ErrorResponse } from "~/lib/types";
+import { ErrorResponse, IdSlug } from "~/lib/types";
 import { getIdAndSlugFromSlug } from "~/utils";
 import { getAudioRequest } from "..";
 import { AudioId, AudioView } from "../types";
@@ -16,7 +16,7 @@ type UseGetAudioQueryOptions = UseQueryOptions<AudioView, ErrorResponse> & {
 };
 
 export function useGetAudio(
-  idSlug: string,
+  idSlug: IdSlug,
   options: UseGetAudioQueryOptions = {}
 ): UseQueryResult<AudioView, ErrorResponse> {
   const [id] = getIdAndSlugFromSlug(idSlug);

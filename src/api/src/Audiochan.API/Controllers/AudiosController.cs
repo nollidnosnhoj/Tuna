@@ -32,9 +32,9 @@ namespace Audiochan.API.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         [SwaggerOperation(Summary = "Return an audio by ID.", OperationId = "GetAudio", Tags = new[] {"audios"})]
-        public async Task<ActionResult<AudioViewModel>> Get(IdSlug idSlug, [FromQuery] string? secret, CancellationToken cancellationToken)
+        public async Task<ActionResult<AudioViewModel>> Get([FromRoute] string idSlug, [FromQuery] string? secret, CancellationToken cancellationToken)
         {
-            var (id, _) = idSlug;
+            var (id, _) = idSlug.ExtractIdAndSlugFromSlug();
             var result = await _mediator.Send(new GetAudioQuery(id, secret), cancellationToken);
             return result != null
                 ? Ok(result)
@@ -57,7 +57,7 @@ namespace Audiochan.API.Controllers
             var result = await _mediator.Send(command, cancellationToken);
             if (!result.IsSuccess) return result.ReturnErrorResponse();
             var response = await _mediator.Send(new GetAudioQuery(result.Data, ""), cancellationToken);
-            return CreatedAtAction(nameof(Get), new {audioId = response!.Id}, response);
+            return CreatedAtAction(nameof(Get), new {idSlug = response!.Slug}, response);
         }
 
         [HttpPut("{audioId:long}", Name = "UpdateAudio")]

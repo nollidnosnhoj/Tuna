@@ -1,6 +1,11 @@
 import { GetServerSidePropsContext } from "next";
 import request from "~/lib/http";
-import { CursorPagedList, ImageUploadResponse, PagedList } from "~/lib/types";
+import {
+  CursorPagedList,
+  IdSlug,
+  ImageUploadResponse,
+  PagedList,
+} from "~/lib/types";
 import { AudioView, AudioId, AudioRequest, CreateAudioRequest } from "./types";
 
 export async function getAudiosRequest(
@@ -16,7 +21,7 @@ export async function getAudiosRequest(
 }
 
 export async function getAudioRequest(
-  idSlug: string,
+  idSlug: IdSlug,
   secret?: string,
   ctx?: GetServerSidePropsContext
 ): Promise<AudioView> {
@@ -25,7 +30,7 @@ export async function getAudioRequest(
     method: "get",
     url: `audios/${idSlug}`,
     params: {
-      secret,
+      secret: secret || undefined,
     },
     req,
     res,

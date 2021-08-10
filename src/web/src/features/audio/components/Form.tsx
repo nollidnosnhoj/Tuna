@@ -2,6 +2,7 @@ import {
   Box,
   FormControl,
   FormErrorMessage,
+  FormHelperText,
   FormLabel,
   Radio,
   RadioGroup,
@@ -31,6 +32,7 @@ export default function AudioForm({ disableFields = false }: AudioFormProps) {
         label="Title"
         error={errors.title?.message}
         isDisabled={disableFields}
+        helperText="Note: When you change the audio's title, the url (slug) will also change to correspond with the title."
       />
       <TextInput
         {...register("description")}
@@ -66,12 +68,16 @@ export default function AudioForm({ disableFields = false }: AudioFormProps) {
                 <Radio value="public" isDisabled={disableFields}>
                   Public
                 </Radio>
-                <Radio value="unlisted" isDisabled={disableFields}>
-                  Unlisted
+                <Radio value="private" isDisabled={disableFields}>
+                  Private
                 </Radio>
               </Stack>
             </RadioGroup>
             <FormErrorMessage>{error?.message}</FormErrorMessage>
+            <FormHelperText>
+              Private audio will generate a secret key that should be used to
+              access private audios.
+            </FormHelperText>
           </FormControl>
         )}
       />
