@@ -28,7 +28,7 @@ export function objectToFormData(values: Record<string, any>): FormData {
 export function stringifyQueryObject(queryObj: Record<string, any>): string {
   for (const key in queryObj) {
     // remove entries that has a value of undefined.
-    if (typeof queryObj[key] === "undefined") {
+    if (typeof queryObj[key] === "undefined" || queryObj[key] === null) {
       delete queryObj[key];
       // turn any value that is not a string into a string
     } else if (typeof queryObj[key] !== "string") {
@@ -38,7 +38,7 @@ export function stringifyQueryObject(queryObj: Record<string, any>): string {
 
   if (!Object.keys(queryObj)) return "";
 
-  return `?${new URLSearchParams(queryObj).toString()}`;
+  return `${new URLSearchParams(queryObj).toString()}`;
 }
 
 export function stringifyUrl(

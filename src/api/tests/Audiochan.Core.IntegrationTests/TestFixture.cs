@@ -46,7 +46,7 @@ namespace Audiochan.Core.IntegrationTests
             await using var conn = new NpgsqlConnection(connString);
             conn.Open();
             await Checkpoint.Reset(conn);
-            Factory.CurrentUserId = null;
+            Factory.CurrentUserId = 0;
             Factory.CurrentUserName = null;
         }
 

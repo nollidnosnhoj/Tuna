@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Constants;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Entities;
@@ -12,13 +13,13 @@ using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Playlists.RemovePlaylist
 {
-    public record RemovePlaylistCommand(Guid Id) : IRequest<Result>;
+    public record RemovePlaylistCommand(long Id) : IRequest<Result>;
     
     
 
     public class RemovePlaylistCommandHandler : IRequestHandler<RemovePlaylistCommand, Result>
     {
-        private readonly string _currentUserId;
+        private readonly long _currentUserId;
         private readonly IStorageService _storageService;
         private readonly MediaStorageSettings _storageSettings;
         private readonly ApplicationDbContext _unitOfWork;
@@ -49,7 +50,7 @@ namespace Audiochan.Core.Features.Playlists.RemovePlaylist
             if (!string.IsNullOrEmpty(playlist.Picture))
             {
                 await _storageService.RemoveAsync(_storageSettings.Image.Bucket,
-                    string.Join('/', _storageSettings.Image.Container, "playlists"),
+                    AssetContainerConstants.PlaylistPictures,
                     playlist.Picture,
                     cancellationToken);
             }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,14 +18,14 @@ namespace Audiochan.Core.Features.Audios.GetLatestAudios
     public record GetLatestAudioQuery : IRequest<GetAudioListViewModel>
     {
         public string? Tag { get; init; }
-        public string? Cursor { get; init; }
+        public long? Cursor { get; init; }
         public int Size { get; init; } = 30;
     }
 
     public class GetLatestAudioQueryHandler : IRequestHandler<GetLatestAudioQuery, GetAudioListViewModel>
     {
         private readonly ApplicationDbContext _dbContext;
-        private readonly string _currentUserId;
+        private readonly long _currentUserId;
 
         public GetLatestAudioQueryHandler(ApplicationDbContext dbContext, ICurrentUserService currentUserService)
         {
@@ -50,15 +51,13 @@ namespace Audiochan.Core.Features.Audios.GetLatestAudios
             return new GetAudioListViewModel(audios, nextCursor);
         }
 
-        private string? GetNextCursor(List<AudioViewModel> audios, int size)
+        private long? GetNextCursor(List<AudioViewModel> audios, int size)
         {
             var lastAudio = audios.LastOrDefault();
 
             return audios.Count < size
                 ? null
-                : lastAudio != null
-                    ? CursorHelpers.Encode(lastAudio.Id, lastAudio.Created)
-                    : null;
+                : lastAudio?.Id;
         }
     }
 }

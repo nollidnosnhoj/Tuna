@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Helpers;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Interfaces;
@@ -10,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Followers.SetFollow
 {
-    public record SetFollowCommand(string ObserverId, string TargetId, bool IsFollowing) : IRequest<Result<bool>>
+    public record SetFollowCommand(long ObserverId, long TargetId, bool IsFollowing) : IRequest<Result<bool>>
     {
     }
 
@@ -31,7 +32,7 @@ namespace Audiochan.Core.Features.Followers.SetFollow
                 .IgnoreQueryFilters()
                 .Where(u => u.Id == command.TargetId);
 
-            queryable = string.IsNullOrEmpty(command.ObserverId)
+            queryable = UserHelpers.IsValidId(command.ObserverId)
                 ? queryable.Include(u => u.Followers)
                 : queryable.Include(u => u.Followers.Where(f => f.ObserverId == command.ObserverId));
 
@@ -53,7 +54,7 @@ namespace Audiochan.Core.Features.Followers.SetFollow
             return Result<bool>.Success(isFollowed);
         }
 
-        private Task<bool> Follow(User target, string observerId, CancellationToken cancellationToken = default)
+        private Task<bool> Follow(User target, long observerId, CancellationToken cancellationToken = default)
         {
             var follower = target.Followers.FirstOrDefault(f => f.ObserverId == observerId);
 
@@ -77,7 +78,7 @@ namespace Audiochan.Core.Features.Followers.SetFollow
             return Task.FromResult(true);
         }
 
-        private Task<bool> Unfollow(User target, string observerId, CancellationToken cancellationToken = default)
+        private Task<bool> Unfollow(User target, long observerId, CancellationToken cancellationToken = default)
         {
             var follower = target.Followers.FirstOrDefault(f => f.ObserverId == observerId);
 

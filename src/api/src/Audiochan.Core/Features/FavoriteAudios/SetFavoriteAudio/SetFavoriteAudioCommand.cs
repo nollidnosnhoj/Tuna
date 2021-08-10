@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Helpers;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Interfaces;
@@ -11,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.FavoriteAudios.SetFavoriteAudio
 {
-    public record SetFavoriteAudioCommand(Guid AudioId, string UserId, bool IsFavoriting) : IRequest<Result<bool>>
+    public record SetFavoriteAudioCommand(long AudioId, long UserId, bool IsFavoriting) : IRequest<Result<bool>>
     {
     }
     
@@ -32,7 +33,7 @@ namespace Audiochan.Core.Features.FavoriteAudios.SetFavoriteAudio
                 .IgnoreQueryFilters()
                 .Where(a => a.Id == command.AudioId);
 
-            queryable = !string.IsNullOrEmpty(command.UserId) 
+            queryable = UserHelpers.IsValidId(command.UserId)
                 ? queryable.Include(a => 
                     a.Favorited.Where(fa => fa.UserId == command.UserId)) 
                 : queryable.Include(a => a.Favorited);
@@ -52,7 +53,7 @@ namespace Audiochan.Core.Features.FavoriteAudios.SetFavoriteAudio
             return Result<bool>.Success(isFavoriting);
         }
         
-        private Task<bool> Favorite(Audio target, string userId, CancellationToken cancellationToken = default)
+        private Task<bool> Favorite(Audio target, long userId, CancellationToken cancellationToken = default)
         {
             var favoriter = target.Favorited.FirstOrDefault(f => f.UserId == userId);
 
@@ -70,7 +71,7 @@ namespace Audiochan.Core.Features.FavoriteAudios.SetFavoriteAudio
             return Task.FromResult(true);
         }
 
-        private Task<bool> Unfavorite(Audio target, string userId, CancellationToken cancellationToken = default)
+        private Task<bool> Unfavorite(Audio target, long userId, CancellationToken cancellationToken = default)
         {
             var favoriter = target.Favorited.FirstOrDefault(f => f.UserId == userId);
 

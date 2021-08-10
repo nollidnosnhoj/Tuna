@@ -12,7 +12,7 @@ namespace Audiochan.Core.UnitTests.Validations.Audios
 {
     public class CreateAudioRequestValidationTests
     {
-        private readonly MediaStorageSettings.StorageSettings _audioStorageSettings;
+        private readonly AudioStorageSettings _audioStorageSettings;
         private readonly IValidator<CreateAudioCommand> _validator;
 
         public CreateAudioRequestValidationTests()

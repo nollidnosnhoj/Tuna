@@ -4,10 +4,10 @@ namespace Audiochan.Core.Entities
 {
     public class PlaylistAudio
     {
-        public Guid Id { get; set; }
-        public Guid PlaylistId { get; set; }
+        public long Id { get; set; }
+        public long PlaylistId { get; set; }
         public Playlist Playlist { get; set; } = null!;
-        public Guid AudioId { get; set; }
+        public long AudioId { get; set; }
         public Audio Audio { get; set; } = null!;
     }
 }

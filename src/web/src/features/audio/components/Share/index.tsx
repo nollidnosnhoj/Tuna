@@ -9,17 +9,16 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 import SETTINGS from "~/lib/config";
-import { AudioId } from "../../api/types";
 import AudioShareItem from "./Item";
 
 interface AudioShareModalProps {
   isOpen: boolean;
   onClose: () => void;
-  audioId: AudioId;
+  slug: string;
 }
 
 export default function AudioShareModal(props: AudioShareModalProps) {
-  const { audioId, isOpen, onClose } = props;
+  const { slug, isOpen, onClose } = props;
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -31,7 +30,7 @@ export default function AudioShareModal(props: AudioShareModalProps) {
           <Stack spacing={4} direction="column">
             <AudioShareItem
               label="URL"
-              value={SETTINGS.FRONTEND_URL + `audios/${audioId}`}
+              value={SETTINGS.FRONTEND_URL + `audios/${slug}`}
             />
           </Stack>
         </ModalBody>

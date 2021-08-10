@@ -1,7 +1,7 @@
 import React, { PropsWithChildren, useMemo, useState } from "react";
 import { CurrentUser } from "../../api/types";
 import { UserContextType, UserContext } from "../../contexts";
-import { useGetCurrentUser } from "../../hooks/useGetCurrentUser";
+import { useGetCurrentUser } from "../../api/hooks/useGetCurrentUser";
 import { getAccessToken } from "~/lib/http/utils";
 
 interface UserProviderProps {

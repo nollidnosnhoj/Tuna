@@ -1,31 +1,24 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Audiochan.Core.Common.Constants;
 using Audiochan.Core.Entities;
-using Microsoft.AspNetCore.Identity;
+using Audiochan.Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Persistence
 {
     public static class ApplicationDbSeeder
     {
-        public static async Task UserSeedAsync(UserManager<User> userManager, RoleManager<Role> roleManager)
+        public static async Task UserSeedAsync(ApplicationDbContext dbContext, IPasswordHasher passwordHasher)
         {
-            if (!await userManager.Users.AnyAsync())
+            if (!await dbContext.Users.AnyAsync())
             {
-                var superuser = new User("superuser", "superuser@localhost", DateTime.UtcNow);
-
                 // TODO: Do not hardcode superuser password when deploying into production haha
-                await userManager.CreateAsync(superuser, "Password1");
+                var passwordHash = passwordHasher.Hash("Password1");
+                
+                var superuser = new User("superuser", "superuser@localhost", passwordHash);
 
-                var superUserRole = await roleManager.FindByNameAsync(UserRoleConstants.Admin);
-
-                if (superUserRole == null)
-                {
-                    await roleManager.CreateAsync(new Role {Name = UserRoleConstants.Admin});
-                }
-
-                await userManager.AddToRoleAsync(superuser, UserRoleConstants.Admin);
+                await dbContext.Users.AddAsync(superuser);
+                await dbContext.SaveChangesAsync();
             }
         }
     }

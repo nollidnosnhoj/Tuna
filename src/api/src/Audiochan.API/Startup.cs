@@ -40,26 +40,25 @@ namespace Audiochan.API
                 PropertyNameCaseInsensitive = false
             };
 
-            services
-                .AddMemoryCache()
-                .AddCore(Configuration, Environment)
-                .AddInfrastructure(Configuration, Environment)
-                .Configure<JsonSerializerOptions>(options =>
-                {
-                    options.IgnoreNullValues = jsonSerializerOptions.IgnoreNullValues;
-                    options.PropertyNamingPolicy = jsonSerializerOptions.PropertyNamingPolicy;
-                    options.PropertyNameCaseInsensitive = jsonSerializerOptions.PropertyNameCaseInsensitive;
-                })
-                .ConfigureIdentity(Configuration)
-                .ConfigureAuthentication(Configuration)
-                .ConfigureAuthorization()
-                .AddHttpContextAccessor()
-                .AddScoped<ICurrentUserService, CurrentUserService>()
-                .ConfigureControllers(jsonSerializerOptions)
-                .ConfigureRouting()
-                .ConfigureRateLimiting(Configuration)
-                .ConfigureCors()
-                .ConfigureSwagger();
+            services.AddMemoryCache();
+            services.AddCore(Configuration, Environment);
+            services.AddInfrastructure(Configuration, Environment);
+            services.Configure<JsonSerializerOptions>(options =>
+            {
+                options.IgnoreNullValues = jsonSerializerOptions.IgnoreNullValues;
+                options.PropertyNamingPolicy = jsonSerializerOptions.PropertyNamingPolicy;
+                options.PropertyNameCaseInsensitive = jsonSerializerOptions.PropertyNameCaseInsensitive;
+            });
+            services.ConfigureIdentity(Configuration);
+            services.ConfigureAuthentication(Configuration);
+            services.ConfigureAuthorization();
+            services.AddHttpContextAccessor();
+            services.AddScoped<ICurrentUserService, CurrentUserService>();
+            services.ConfigureControllers(jsonSerializerOptions);
+            services.ConfigureRouting();
+            services.ConfigureRateLimiting(Configuration);
+            services.ConfigureCors();
+            services.ConfigureSwagger();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

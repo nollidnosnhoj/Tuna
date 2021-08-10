@@ -13,12 +13,12 @@ namespace Audiochan.API.Controllers.Me
 {
     [Area("me")]
     [Authorize]
-    [Route("[area]/followings/{userId}")]
+    [Route("[area]/followings/{userId:long}")]
     [ProducesResponseType(401)]
     public class FollowingsController : ControllerBase
     {
         private readonly IMediator _mediator;
-        private readonly string _currentUserId;
+        private readonly long _currentUserId;
 
         public FollowingsController(ICurrentUserService currentUserService, IMediator mediator)
         {
@@ -35,7 +35,7 @@ namespace Audiochan.API.Controllers.Me
             OperationId = "CheckIfYouFollowedUser",
             Tags = new[] {"me"}
         )]
-        public async Task<IActionResult> IsFollow(string userId, CancellationToken cancellationToken)
+        public async Task<IActionResult> IsFollow(long userId, CancellationToken cancellationToken)
         {
             var request = new CheckIfUserIsFollowingQuery(_currentUserId, userId);
             return await _mediator.Send(request, cancellationToken)
@@ -53,7 +53,7 @@ namespace Audiochan.API.Controllers.Me
             OperationId = "FollowUser",
             Tags = new[] {"me"}
         )]
-        public async Task<IActionResult> Follow(string userId, CancellationToken cancellationToken)
+        public async Task<IActionResult> Follow(long userId, CancellationToken cancellationToken)
         {
             var request = new SetFollowCommand(_currentUserId, userId, true);
             var result = await _mediator.Send(request, cancellationToken);
@@ -72,7 +72,7 @@ namespace Audiochan.API.Controllers.Me
             OperationId = "UnfollowUser",
             Tags = new[] {"me"}
         )]
-        public async Task<IActionResult> Unfollow(string userId, CancellationToken cancellationToken)
+        public async Task<IActionResult> Unfollow(long userId, CancellationToken cancellationToken)
         {
             var request = new SetFollowCommand(_currentUserId, userId, false);
             var result = await _mediator.Send(request, cancellationToken);

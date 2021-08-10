@@ -87,7 +87,7 @@ export default function AudioMiscMenu({ audio, ...props }: AudioMiscMenuProps) {
         onClose={onEditClose}
       />
       <AudioShareModal
-        audioId={audio.id}
+        slug={audio.slug}
         isOpen={isShareOpen}
         onClose={onShareClose}
       />

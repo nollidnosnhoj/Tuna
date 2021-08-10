@@ -20,8 +20,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Followers
         {
             // Assign
             var (targetId, _) = await RunAsDefaultUserAsync();
-            var (observerId, _) =
-                await RunAsUserAsync("kopacetic", "kopacetic123!", Array.Empty<string>());
+            var (observerId, _) = await RunAsUserAsync("kopacetic");
 
             // Act
             await SendAsync(new SetFollowCommand(observerId, targetId, true));
@@ -39,8 +38,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Followers
         {
             // Assign
             var (targetId, _) = await RunAsDefaultUserAsync();
-            var (observerId, _) =
-                await RunAsUserAsync("kopacetic", "kopacetic123!", Array.Empty<string>());
+            var (observerId, _) = await RunAsUserAsync("kopacetic");
 
             var user = GetUsersWithFollowers(targetId);
 
@@ -58,7 +56,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Followers
             user!.Followers.Should().BeEmpty();
         }
 
-        private User? GetUsersWithFollowers(string userId)
+        private User? GetUsersWithFollowers(long userId)
         {
             return ExecuteDbContext(db =>
             {
@@ -67,7 +65,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Followers
             });
         }
 
-        private void UpdateUserWithNewFollower(User user, string observerId)
+        private void UpdateUserWithNewFollower(User user, long observerId)
         {
             user.Followers.Add(new FollowedUser
             {

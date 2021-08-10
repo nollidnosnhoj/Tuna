@@ -29,13 +29,12 @@ namespace Audiochan.Infrastructure
             
             services.AddAWSService<IAmazonS3>();
             services.AddTransient<IStorageService, AmazonS3Service>();
-
             services.AddTransient<ISlugGenerator, SlugGenerator>();
-            
             services.AddTransient<IImageUploadService, ImageUploadService>();
             services.AddTransient<ITokenProvider, TokenProvider>();
             services.AddTransient<IDateTimeProvider, DateTimeProvider>();
             services.AddTransient<INanoidGenerator, NanoidGenerator>();
+            services.AddTransient<IPasswordHasher, BCryptHasher>();
             return services;
         }
     }

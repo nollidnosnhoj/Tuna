@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Followers.CheckIfFollowing
 {
-    public record CheckIfUserIsFollowingQuery(string ObserverId, string TargetId) : IRequest<bool>
+    public record CheckIfUserIsFollowingQuery(long ObserverId, long TargetId) : IRequest<bool>
     {
     }
 

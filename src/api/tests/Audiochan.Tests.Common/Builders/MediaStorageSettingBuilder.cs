@@ -20,11 +20,10 @@ namespace Audiochan.Tests.Common.Builders
         public static long MaxAudioSize = 262_144_000;
         public static long MaxImageSize = 5_000_000;
         
-        public static MediaStorageSettings.StorageSettings BuildAudioDefault()
+        public static AudioStorageSettings BuildAudioDefault()
         {
             return new()
             {
-                Container = "audios",
                 Bucket = "audiochan",
                 TempBucket = "audiochan-temp",
                 ValidContentTypes = ValidAudioTypes,
@@ -32,11 +31,10 @@ namespace Audiochan.Tests.Common.Builders
             };
         }
         
-        public static MediaStorageSettings.StorageSettings BuildImageDefault()
+        public static PictureStorageSettings BuildImageDefault()
         {
             return new()
             {
-                Container = "images",
                 Bucket = "audiochan",
                 ValidContentTypes = ValidImageTypes,
                 MaximumFileSize = MaxImageSize

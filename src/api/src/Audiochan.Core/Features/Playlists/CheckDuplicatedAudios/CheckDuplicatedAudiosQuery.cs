@@ -9,10 +9,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Playlists.CheckDuplicatedAudios
 {
-    public record CheckDuplicatedAudiosQuery(Guid PlaylistId, List<Guid> AudioIds) : IRequest<List<Guid>>;
+    public record CheckDuplicatedAudiosQuery(long PlaylistId, List<long> AudioIds) : IRequest<List<long>>;
     
     public class CheckDuplicatedAudiosQueryHandler 
-        : IRequestHandler<CheckDuplicatedAudiosQuery, List<Guid>>
+        : IRequestHandler<CheckDuplicatedAudiosQuery, List<long>>
     {
         private readonly ApplicationDbContext _dbContext;
 
@@ -21,7 +21,7 @@ namespace Audiochan.Core.Features.Playlists.CheckDuplicatedAudios
             _dbContext = dbContext;
         }
 
-        public async Task<List<Guid>> Handle(CheckDuplicatedAudiosQuery request, 
+        public async Task<List<long>> Handle(CheckDuplicatedAudiosQuery request, 
             CancellationToken cancellationToken)
         {
             return await _dbContext.PlaylistAudios

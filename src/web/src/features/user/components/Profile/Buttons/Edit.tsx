@@ -3,7 +3,7 @@ import React from "react";
 import { useUser } from "~/features/user/hooks";
 
 interface ProfileEditButtonProps {
-  profileId: string;
+  profileId: number;
 }
 
 export default function ProfileEditButton({

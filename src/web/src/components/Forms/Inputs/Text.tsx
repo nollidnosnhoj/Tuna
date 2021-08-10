@@ -4,6 +4,7 @@ import {
   FormLabel,
 } from "@chakra-ui/form-control";
 import { Input } from "@chakra-ui/input";
+import { FormHelperText } from "@chakra-ui/react";
 import { Textarea } from "@chakra-ui/textarea";
 import React, { ChangeEvent } from "react";
 
@@ -26,6 +27,7 @@ interface TextInputProps {
   errorBorderColor?: string;
   isDisabled?: boolean;
   isRequired?: boolean;
+  helperText?: string;
 }
 
 // eslint-disable-next-line react/display-name
@@ -41,6 +43,7 @@ const TextInput = React.forwardRef<any, TextInputProps>((props, ref) => {
     variant = "outline",
     isDisabled = false,
     isRequired = false,
+    helperText,
     ...inputProps
   } = props;
 
@@ -64,6 +67,7 @@ const TextInput = React.forwardRef<any, TextInputProps>((props, ref) => {
           type={type}
         />
         <FormErrorMessage>{error}</FormErrorMessage>
+        {helperText && <FormHelperText>{helperText}</FormHelperText>}
       </FormControl>
     );
   }
@@ -87,6 +91,7 @@ const TextInput = React.forwardRef<any, TextInputProps>((props, ref) => {
         type={type}
       />
       <FormErrorMessage>{error}</FormErrorMessage>
+      {helperText && <FormHelperText>{helperText}</FormHelperText>}
     </FormControl>
   );
 });

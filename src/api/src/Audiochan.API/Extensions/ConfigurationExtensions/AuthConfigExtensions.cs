@@ -18,22 +18,6 @@ namespace Audiochan.API.Extensions.ConfigurationExtensions
         {
             var settings = new IdentitySettings();
             configuration.GetSection(nameof(IdentitySettings)).Bind(settings);
-
-            services
-                .AddIdentity<User, Role>(options =>
-                {
-                    options.User.AllowedUserNameCharacters = settings.UsernameSettings.AllowedCharacters;
-                    options.Password.RequiredLength = settings.PasswordSettings.MinimumLength;
-                    options.Password.RequireDigit = settings.PasswordSettings.RequiresDigit;
-                    options.Password.RequireLowercase = settings.PasswordSettings.RequiresLowercase;
-                    options.Password.RequireUppercase = settings.PasswordSettings.RequiresUppercase;
-                    options.Password.RequireNonAlphanumeric = settings.PasswordSettings.RequiresNonAlphanumeric;
-                })
-                .AddRoleManager<RoleManager<Role>>()
-                .AddSignInManager<SignInManager<User>>()
-                .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddDefaultTokenProviders();
-
             return services;
         }
 

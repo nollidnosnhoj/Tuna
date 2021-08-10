@@ -73,7 +73,7 @@ export async function uploadUserPictureRequest(
 }
 
 export async function checkIfCurrentUserIsFollowingRequest(
-  userId: string
+  userId: number
 ): Promise<boolean> {
   try {
     const res = await request({
@@ -87,7 +87,7 @@ export async function checkIfCurrentUserIsFollowingRequest(
   }
 }
 
-export async function followAUserRequest(userId: string): Promise<boolean> {
+export async function followAUserRequest(userId: number): Promise<boolean> {
   await request({
     method: "PUT",
     url: `me/followings/${userId}`,
@@ -95,7 +95,7 @@ export async function followAUserRequest(userId: string): Promise<boolean> {
   return true;
 }
 
-export async function unfollowAUserRequest(userId: string): Promise<boolean> {
+export async function unfollowAUserRequest(userId: number): Promise<boolean> {
   await request({
     method: "DELETE",
     url: `me/followings/${userId}`,

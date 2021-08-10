@@ -4,7 +4,7 @@ import React from "react";
 import Page from "~/components/Page";
 import PaginationListControls from "~/components/ui/ListControls/Pagination";
 import AudioList from "~/features/audio/components/List";
-import { useSearchAudio } from "~/features/audio/hooks";
+import { useSearchAudio } from "~/features/audio/api/hooks";
 import { useGetPageParam } from "~/lib/hooks";
 
 export default function AudioSearchNextPage() {

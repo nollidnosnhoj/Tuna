@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -28,24 +29,18 @@ namespace Audiochan.Core.Common.Extensions
             return tagEntities;
         }
 
-        public static IQueryable<Audio> FilterCursor(this IQueryable<Audio> queryable, string? cursor)
+        public static IQueryable<Audio> FilterCursor(this IQueryable<Audio> queryable, long? cursor)
         {
             if (cursor is null)
                 return queryable;
-
-            var (id, since) = CursorHelpers.Decode(cursor);
             
-            if (id is not null && since is not null)
-            {
-                queryable = queryable
-                    .Where(a => a.Created < since || a.Created == since && a.Id.CompareTo(id) < 0);
-            }
+            queryable = queryable.Where(a => a.Id < cursor);
 
             return queryable;
         }
 
         public static IQueryable<TEntity> FilterVisibility<TEntity>(this IQueryable<TEntity> queryable, 
-            string currentUserId, FilterVisibilityMode mode) where TEntity : class, IHasVisibility
+            long currentUserId, FilterVisibilityMode mode) where TEntity : class, IHasVisibility
         {
             return mode switch
             {

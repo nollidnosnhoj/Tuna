@@ -15,7 +15,7 @@ import { relativeDate } from "~/utils/time";
 import AudioPlayButton from "../Buttons/Play";
 import AudioFavoriteButton from "../Buttons/Favorite";
 import PictureController from "~/components/Picture";
-import { useAddAudioPicture } from "../../hooks";
+import { useAddAudioPicture } from "../../api/hooks";
 import AudioMiscMenu from "../ContextMenu";
 
 interface AudioDetailProps {

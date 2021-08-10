@@ -41,7 +41,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Auth
             userRefreshTokens.Should().Contain(x => x.Token == loginResult.Data!.RefreshToken);
         }
 
-        private List<RefreshToken> GetUserRefreshTokens(string userId)
+        private List<RefreshToken> GetUserRefreshTokens(long userId)
         {
             return ExecuteDbContext(dbContext =>
             {

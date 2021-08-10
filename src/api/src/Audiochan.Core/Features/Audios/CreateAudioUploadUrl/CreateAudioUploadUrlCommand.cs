@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -67,12 +68,11 @@ namespace Audiochan.Core.Features.Audios.CreateAudioUploadUrl
             return await _nanoid.GenerateAsync(size: 21);
         }
 
-        private string GetUploadUrl(string blobName, string ownerId)
+        private string GetUploadUrl(string blobName, long ownerId)
         {
-            var metadata = new Dictionary<string, string> {{"UserId", ownerId}};
+            var metadata = new Dictionary<string, string> {{"UserId", ownerId.ToString()}};
             return _storageService.CreatePutPresignedUrl(
                 _storageSettings.Audio.TempBucket,
-                _storageSettings.Audio.Container,
                 blobName,
                 5,
                 metadata);

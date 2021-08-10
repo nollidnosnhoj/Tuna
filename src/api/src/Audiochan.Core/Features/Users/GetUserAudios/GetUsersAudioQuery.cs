@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Common.Extensions;
+using Audiochan.Core.Common.Helpers;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Entities;
@@ -26,7 +27,7 @@ namespace Audiochan.Core.Features.Users.GetUserAudios
     public class GetUsersAudioQueryHandler : IRequestHandler<GetUsersAudioQuery, PagedListDto<AudioViewModel>>
     {
         private readonly ApplicationDbContext _unitOfWork;
-        private readonly string _currentUserId;
+        private readonly long _currentUserId;
 
         public GetUsersAudioQueryHandler(ApplicationDbContext unitOfWork, ICurrentUserService currentUserService)
         {
@@ -45,7 +46,7 @@ namespace Audiochan.Core.Features.Users.GetUserAudios
                 .Include(a => a.Tags)
                 .Include(a => a.User);
 
-            queryable = !string.IsNullOrEmpty(_currentUserId) 
+            queryable = UserHelpers.IsValidId(_currentUserId)
                 ? queryable.FilterVisibility(_currentUserId, FilterVisibilityMode.OnlyPublic)
                 : queryable.Where(a => a.Visibility == Visibility.Public);
 

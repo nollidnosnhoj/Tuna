@@ -18,42 +18,34 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
 {
     public record UpdateAudioPictureCommand : IImageData, IRequest<Result<ImageUploadResponse>>
     {
-        public Guid AudioId { get; init; }
+        public long AudioId { get; init; }
         public string Data { get; init; } = string.Empty;
     }
 
     public class UpdateAudioCommandHandler : IRequestHandler<UpdateAudioPictureCommand, Result<ImageUploadResponse>>
     {
-        private readonly MediaStorageSettings _storageSettings;
-        private readonly IDateTimeProvider _dateTimeProvider;
-        private readonly IStorageService _storageService;
         private readonly ICurrentUserService _currentUserService;
         private readonly IImageUploadService _imageUploadService;
         private readonly ICacheService _cacheService;
         private readonly ApplicationDbContext _dbContext;
+        private readonly INanoidGenerator _nanoidGenerator;
 
-        public UpdateAudioCommandHandler(IOptions<MediaStorageSettings> options,
-            IStorageService storageService,
-            ICurrentUserService currentUserService,
+        public UpdateAudioCommandHandler(ICurrentUserService currentUserService,
             IImageUploadService imageUploadService,
-            IDateTimeProvider dateTimeProvider, 
             ICacheService cacheService, 
-            ApplicationDbContext dbContext)
+            ApplicationDbContext dbContext, 
+            INanoidGenerator nanoidGenerator)
         {
-            _storageSettings = options.Value;
-            _storageService = storageService;
             _currentUserService = currentUserService;
             _imageUploadService = imageUploadService;
-            _dateTimeProvider = dateTimeProvider;
             _cacheService = cacheService;
             _dbContext = dbContext;
+            _nanoidGenerator = nanoidGenerator;
         }
 
         public async Task<Result<ImageUploadResponse>> Handle(UpdateAudioPictureCommand command,
             CancellationToken cancellationToken)
         {
-            var container = string.Join('/', _storageSettings.Image.Container, "audios");
-
             if (!_currentUserService.TryGetUserId(out var currentUserId))
                 return Result<ImageUploadResponse>.Unauthorized();
 
@@ -67,17 +59,21 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
 
             if (audio.UserId != currentUserId)
                 return Result<ImageUploadResponse>.Forbidden();
-            
-            var blobName = $"{audio.Id}/{_dateTimeProvider.Now:yyyyMMddHHmmss}.jpg";
 
-            await _imageUploadService.UploadImage(command.Data, container, blobName, cancellationToken);
+            var blobName = string.Empty;
+            if (string.IsNullOrEmpty(command.Data))
+            {
+                await RemoveOriginalPicture(audio.Picture, cancellationToken);
+                audio.Picture = null;
+            }
+            else
+            {
+                blobName = $"{await _nanoidGenerator.GenerateAsync(size: 15)}.jpg";
+                await _imageUploadService.UploadImage(command.Data, AssetContainerConstants.AudioPictures, blobName, cancellationToken);
+                await RemoveOriginalPicture(audio.Picture, cancellationToken);
+                audio.Picture = blobName;
+            }
 
-            if (!string.IsNullOrEmpty(audio.Picture))
-                await _storageService.RemoveAsync(_storageSettings.Image.Bucket, container, audio.Picture,
-                    cancellationToken);
-
-            audio.Picture = blobName;
-            _dbContext.Audios.Update(audio);
             await _dbContext.SaveChangesAsync(cancellationToken);
             await _cacheService.RemoveAsync(new GetAudioCacheOptions(command.AudioId), cancellationToken);
                 
@@ -85,6 +81,14 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
             {
                 Url = string.Format(MediaLinkInvariants.AudioPictureUrl, blobName)
             });
+        }
+
+        private async Task RemoveOriginalPicture(string? picture, CancellationToken cancellationToken = default)
+        {
+            if (!string.IsNullOrEmpty(picture))
+            {
+                await _imageUploadService.RemoveImage(AssetContainerConstants.AudioPictures, picture, cancellationToken);
+            }
         }
     }
 }

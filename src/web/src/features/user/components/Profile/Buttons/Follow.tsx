@@ -1,10 +1,10 @@
 import { Button } from "@chakra-ui/react";
 import React from "react";
 import { useUser } from "~/features/user/hooks";
-import { useFollow } from "../../../hooks";
+import { useFollow } from "../../../api/hooks";
 
 interface ProfileFollowButtonProps {
-  profileId: string;
+  profileId: number;
 }
 
 export default function ProfileFollowButton({

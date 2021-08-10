@@ -3,7 +3,7 @@ import { Heading, Text } from "@chakra-ui/react";
 import InfiniteListControls from "~/components/ui/ListControls/Infinite";
 import Page from "~/components/Page";
 import AudioList from "~/features/audio/components/List";
-import { useGetTagAudioList } from "~/features/audio/hooks";
+import { useGetTagAudioList } from "~/features/audio/api/hooks";
 import { useRouter } from "next/router";
 
 export default function TagAudioPage() {

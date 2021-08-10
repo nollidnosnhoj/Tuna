@@ -3,7 +3,6 @@
     public enum Visibility
     {
         Public,
-        Unlisted,
         Private
     }
 }

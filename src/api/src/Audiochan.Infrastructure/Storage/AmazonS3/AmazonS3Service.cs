@@ -35,11 +35,51 @@ namespace Audiochan.Infrastructure.Storage.AmazonS3
 
             _client = new AmazonS3Client(credentials, s3Config);
         }
+        
+        public string CreatePutPresignedUrl(
+            string bucket,
+            string container,
+            string blobName,
+            int expirationInMinutes,
+            Dictionary<string, string>? metadata = null)
+        {
+            return CreatePutPresignedUrl(bucket, GetKeyName(container, blobName), expirationInMinutes, metadata);
+        }
+
+        public string CreatePutPresignedUrl(string bucket, string blobName, int expirationInMinutes, 
+            Dictionary<string, string>? metadata = null)
+        {
+            try
+            {
+                var contentType = blobName.GetContentType();
+                var presignedUrlRequest = new GetPreSignedUrlRequest
+                {
+                    BucketName = bucket,
+                    Key = blobName,
+                    Expires = _dateTimeProvider.Now.AddMinutes(expirationInMinutes),
+                    ContentType = contentType,
+                    Verb = HttpVerb.PUT,
+                };
+
+                presignedUrlRequest.Metadata.AddMetadata(metadata);
+
+                return _client.GetPreSignedURL(presignedUrlRequest);
+            }
+            catch (AmazonS3Exception ex)
+            {
+                throw new StorageException(ex.Message, ex);
+            }
+        }
 
         public async Task RemoveAsync(string bucket, string container, string blobName,
             CancellationToken cancellationToken = default)
         {
-            var deleteRequest = new DeleteObjectRequest {BucketName = bucket, Key = GetKeyName(container, blobName)};
+            await RemoveAsync(bucket, GetKeyName(container, blobName), cancellationToken);
+        }
+        
+        public async Task RemoveAsync(string bucket, string blobName, CancellationToken cancellationToken = default)
+        {
+            var deleteRequest = new DeleteObjectRequest {BucketName = bucket, Key = blobName};
 
             try
             {
@@ -58,6 +98,12 @@ namespace Audiochan.Infrastructure.Storage.AmazonS3
             Dictionary<string, string>? metadata = null,
             CancellationToken cancellationToken = default)
         {
+            await SaveAsync(stream, bucket, GetKeyName(container, blobName), metadata, cancellationToken);
+        }
+
+        public async Task SaveAsync(Stream stream, string bucket, string blobName, Dictionary<string, string>? metadata = null,
+            CancellationToken cancellationToken = default)
+        {
             long? length = stream.CanSeek
                 ? stream.Length
                 : null;
@@ -72,7 +118,7 @@ namespace Audiochan.Infrastructure.Storage.AmazonS3
                     BucketName = bucket,
                     InputStream = stream,
                     PartSize = 6291456,
-                    Key = GetKeyName(container, blobName),
+                    Key = blobName,
                     ContentType = contentType,
                     AutoCloseStream = true,
                     Headers = {ContentLength = length.Value},
@@ -95,7 +141,7 @@ namespace Audiochan.Infrastructure.Storage.AmazonS3
                 var putRequest = new PutObjectRequest
                 {
                     BucketName = bucket,
-                    Key = GetKeyName(container, blobName),
+                    Key = blobName,
                     InputStream = stream,
                     ContentType = contentType,
                     CannedACL = S3CannedACL.PublicRead,
@@ -118,11 +164,16 @@ namespace Audiochan.Infrastructure.Storage.AmazonS3
         public async Task<bool> ExistsAsync(string bucket, string container, string blobName,
             CancellationToken cancellationToken = default)
         {
+            return await ExistsAsync(bucket, GetKeyName(container, blobName), cancellationToken);
+        }
+
+        public async Task<bool> ExistsAsync(string bucket, string blobName, CancellationToken cancellationToken = default)
+        {
             try
             {
                 var request = new GetObjectMetadataRequest
                 {
-                    Key = GetKeyName(container, blobName),
+                    Key = blobName,
                     BucketName = bucket,
                 };
                 await _client.GetObjectMetadataAsync(request, cancellationToken);
@@ -136,52 +187,17 @@ namespace Audiochan.Infrastructure.Storage.AmazonS3
             }
         }
 
-        public string CreatePutPresignedUrl(
-            string bucket,
-            string container,
-            string blobName,
-            int expirationInMinutes,
-            Dictionary<string, string>? metadata = null)
-        {
-            try
-            {
-                var contentType = blobName.GetContentType();
-                var presignedUrlRequest = new GetPreSignedUrlRequest
-                {
-                    BucketName = bucket,
-                    Key = GetKeyName(container, blobName),
-                    Expires = _dateTimeProvider.Now.AddMinutes(expirationInMinutes),
-                    ContentType = contentType,
-                    Verb = HttpVerb.PUT,
-                };
-
-                presignedUrlRequest.Metadata.AddMetadata(metadata);
-
-                return _client.GetPreSignedURL(presignedUrlRequest);
-            }
-            catch (AmazonS3Exception ex)
-            {
-                throw new StorageException(ex.Message, ex);
-            }
-        }
-
-        public async Task CopyBlobAsync(string sourceBucket, 
-            string sourceContainer, 
-            string sourceBlobName, 
-            string targetBucket,
-            string targetContainer,
-            string? targetKey = null,
+        public async Task CopyBlobAsync(string sourceBucket, string sourceBlobName, string targetBucket, string? targetBlobName = null,
             CancellationToken cancellationToken = default)
         {
-            var sourceKey = GetKeyName(sourceContainer, sourceBlobName);
-            var newTargetKey = GetKeyName(targetContainer, targetKey ?? sourceBlobName);
+            var newTargetKey = targetBlobName ?? sourceBlobName;
 
             try
             {
                 var request = new CopyObjectRequest
                 {
                     SourceBucket = sourceBucket,
-                    SourceKey = sourceKey,
+                    SourceKey = sourceBlobName,
                     DestinationBucket = targetBucket,
                     DestinationKey = newTargetKey,
                 };
@@ -198,22 +214,18 @@ namespace Audiochan.Infrastructure.Storage.AmazonS3
         }
 
         public async Task MoveBlobAsync(string sourceBucket,
-            string sourceContainer,
             string sourceBlobName,
             string targetBucket,
-            string targetContainer,
             string? targetKey = null,
             CancellationToken cancellationToken = default)
         {
-            await CopyBlobAsync(sourceBucket, 
-                sourceContainer, 
+            await CopyBlobAsync(sourceBucket,
                 sourceBlobName, 
-                targetBucket, 
-                targetContainer,
+                targetBucket,
                 targetKey,
                 cancellationToken);
 
-            await RemoveAsync(sourceBucket, sourceContainer, sourceBlobName, cancellationToken);
+            await RemoveAsync(sourceBucket, sourceBlobName, cancellationToken);
         }
 
         private string GetKeyName(string container, string blobName)

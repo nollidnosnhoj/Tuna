@@ -5,10 +5,12 @@ using System.Threading.Tasks;
 using Audiochan.Core.Common.Constants;
 using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Entities;
+using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Interfaces;
 using Audiochan.Core.Persistence;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
@@ -123,24 +125,29 @@ namespace Audiochan.Core.IntegrationTests
             });
         }
 
-        protected async Task<(string, string)> RunAsDefaultUserAsync()
+        protected async Task<(long, string)> RunAsDefaultUserAsync()
         {
-            return await RunAsUserAsync("defaultuser", "Testing1234!", Array.Empty<string>());
+            return await RunAsUserAsync("defaultuser", "Testing1234!");
+        }
+        
+        protected async Task<(long, string)> RunAsModeratorAsync()
+        {
+            return await RunAsUserAsync("admin", "Administrator1234!", UserRole.Moderator);
         }
 
-        protected async Task<(string, string)> RunAsAdministratorAsync()
+        protected async Task<(long, string)> RunAsAdministratorAsync()
         {
-            return await RunAsUserAsync("admin", "Administrator1234!", new[] {UserRoleConstants.Admin});
+            return await RunAsUserAsync("admin", "Administrator1234!", UserRole.Admin);
         }
 
-        protected async Task<(string, string)> RunAsUserAsync(string userName, string password = "", string[]? roles = null)
+        protected async Task<(long, string)> RunAsUserAsync(string userName, string password = "", UserRole role = UserRole.Regular)
         {
             using var scope =  Factory.Services.CreateScope();
 
-            var userManager = scope.ServiceProvider.GetService<UserManager<User>>()
+            var dbContext = scope.ServiceProvider.GetService<ApplicationDbContext>()
                               ?? throw new Exception("No user manager");
 
-            var user = await userManager.FindByNameAsync(userName);
+            var user = await dbContext.Users.SingleOrDefaultAsync(u => u.UserName == userName);
 
             if (user != null)
             {
@@ -148,46 +155,24 @@ namespace Audiochan.Core.IntegrationTests
                 Factory.CurrentUserName = user.UserName;
                 return (Factory.CurrentUserId, Factory.CurrentUserName);
             }
-            
-            user = new User
-            {
-                UserName = userName,
-                Email = userName + "@localhost",
-                DisplayName = userName,
-                Joined = Factory.CurrentTime
-            };
-            
+
             if (string.IsNullOrEmpty(password))
+            {
                 password = Guid.NewGuid().ToString("N");
-
-
-            var result = await userManager.CreateAsync(user, password);
-
-            roles ??= Array.Empty<string>();
+            }
             
-            if (roles.Any())
-            {
-                var roleManager = scope.ServiceProvider.GetService<RoleManager<Role>>()
-                                  ?? throw new Exception("No role manager");
+            var pwHasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
+            password = pwHasher.Hash(password);
+            
+            user = new User(userName, userName + "@localhost", password, role);
 
-                foreach (var role in roles)
-                {
-                    await roleManager.CreateAsync(new Role(role));
-                }
-
-                await userManager.AddToRolesAsync(user, roles);
-            }
-
-            if (result.Succeeded)
-            {
-                Factory.CurrentUserId = user.Id;
-                Factory.CurrentUserName = user.UserName;
-                return (Factory.CurrentUserId, Factory.CurrentUserName);
-            }
-
-            var errors = string.Join(Environment.NewLine, result.ToResult().Errors!);
-
-            throw new Exception($"Unable to create {userName}.{Environment.NewLine}{errors}");
+            await dbContext.Users.AddAsync(user);
+            await dbContext.SaveChangesAsync();
+            
+            Factory.CurrentUserId = user.Id;
+            Factory.CurrentUserName = user.UserName;
+            
+            return (Factory.CurrentUserId, Factory.CurrentUserName);
         }
     }
 }

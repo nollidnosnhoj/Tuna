@@ -20,5 +20,11 @@ namespace Audiochan.Tests.Common.Fakers.Audios
             RuleFor(x => x.Tags, f => 
                 f.Make<string>(5, _ => f.Random.String2(5, 10)));
         }
+        
+        public CreateAudioRequestFaker SetFixedVisibility(Visibility visibility)
+        {
+            RuleFor(x => x.Visibility, () => visibility);
+            return this;
+        }
     }
 }

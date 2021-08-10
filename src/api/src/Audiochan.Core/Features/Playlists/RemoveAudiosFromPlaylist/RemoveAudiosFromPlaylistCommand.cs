@@ -15,20 +15,13 @@ namespace Audiochan.Core.Features.Playlists.RemoveAudiosFromPlaylist
 {
     public record RemoveAudiosFromPlaylistCommand : IRequest<Result>
     {
-        public Guid PlaylistId { get; init; }
-        public List<Guid> PlaylistAudioIds { get; init; }
+        public long PlaylistId { get; init; }
+        public List<long> PlaylistAudioIds { get; init; }
 
-        public RemoveAudiosFromPlaylistCommand(Guid playlistId, List<Guid> playlistAudioIds)
+        public RemoveAudiosFromPlaylistCommand(long playlistId, List<long> playlistAudioIds)
         {
             PlaylistId = playlistId;
             PlaylistAudioIds = playlistAudioIds;
-        }
-        
-        public RemoveAudiosFromPlaylistCommand(Guid playlistId,
-            RemoveAudiosFromPlaylistRequest request)
-        {
-            PlaylistId = playlistId;
-            PlaylistAudioIds = request.PlaylistAudioIds;
         }
     }
     
@@ -44,7 +37,7 @@ namespace Audiochan.Core.Features.Playlists.RemoveAudiosFromPlaylist
     
     public class RemoveAudiosFromPlaylistCommandHandler : IRequestHandler<RemoveAudiosFromPlaylistCommand, Result>
     {
-        private readonly string _currentUserId;
+        private readonly long _currentUserId;
         private readonly ApplicationDbContext _unitOfWork;
 
         public RemoveAudiosFromPlaylistCommandHandler(ICurrentUserService currentUserService, ApplicationDbContext unitOfWork)

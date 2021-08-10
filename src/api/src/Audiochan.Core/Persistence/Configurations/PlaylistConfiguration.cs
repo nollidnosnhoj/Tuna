@@ -9,10 +9,14 @@ namespace Audiochan.Core.Persistence.Configurations
         public void Configure(EntityTypeBuilder<Playlist> builder)
         {
             builder.HasKey(x => x.Id);
-            builder.Property(x => x.Id).HasDefaultValueSql("uuid_generate_v4()");
+            builder.Property(x => x.Id).ValueGeneratedOnAdd();
             
-            builder.Property(x => x.Title)
-                .HasMaxLength(100);
+            builder.Property(x => x.Title).HasMaxLength(100);
+            builder.Property(x => x.Slug).HasMaxLength(256);
+            builder.Property(x => x.Secret).HasMaxLength(100);
+            builder.Property(x => x.Picture).HasMaxLength(256);
+
+            builder.HasIndex(x => x.Created);
             
             builder.HasMany(a => a.Tags)
                 .WithMany(t => t.Playlists)
@@ -23,9 +27,6 @@ namespace Audiochan.Core.Persistence.Configurations
                 .IsRequired()
                 .HasForeignKey(x => x.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
-            
-            builder.HasIndex(x => x.Title);
-            builder.HasIndex(x => x.Created);
         }
     }
     
@@ -34,7 +35,7 @@ namespace Audiochan.Core.Persistence.Configurations
         public void Configure(EntityTypeBuilder<PlaylistAudio> builder)
         {
             builder.HasKey(x => x.Id);
-            builder.Property(x => x.Id).HasDefaultValueSql("uuid_generate_v4()");
+            builder.Property(x => x.Id).ValueGeneratedOnAdd();
 
             builder.HasIndex(x => new { x.PlaylistId, x.AudioId });
 

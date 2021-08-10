@@ -24,7 +24,7 @@ namespace Audiochan.Core.Features.Users.GetUserFavoriteAudios
     public class GetUserFavoriteAudiosQueryHandler : IRequestHandler<GetUserFavoriteAudiosQuery, PagedListDto<AudioViewModel>>
     {
         private readonly ApplicationDbContext _unitOfWork;
-        private readonly string _currentUserId;
+        private readonly long _currentUserId;
 
         public GetUserFavoriteAudiosQueryHandler(ApplicationDbContext unitOfWork, ICurrentUserService currentUserService)
         {

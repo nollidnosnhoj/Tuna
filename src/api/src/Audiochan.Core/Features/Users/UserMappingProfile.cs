@@ -22,11 +22,9 @@ namespace Audiochan.Core.Features.Users
             {
                 Id = user.Id,
                 Username = user.UserName,
-                Picture = user.PictureBlobName != null
-                    ? string.Format(MediaLinkInvariants.UserPictureUrl, user.PictureBlobName)
+                Picture = user.Picture != null
+                    ? string.Format(MediaLinkInvariants.UserPictureUrl, user.Picture)
                     : null,
-                About = user.About ?? "",
-                Website = user.Website ?? "",
                 AudioCount = user.Audios.Count,
                 FollowerCount = user.Followers.Count,
                 FollowingCount = user.Followings.Count

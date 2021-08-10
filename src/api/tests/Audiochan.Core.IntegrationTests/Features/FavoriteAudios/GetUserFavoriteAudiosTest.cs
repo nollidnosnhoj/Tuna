@@ -30,10 +30,7 @@ namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
                 .SetFixedVisibility(Visibility.Public)
                 .Generate(3);
             Insert(audios.ToArray());
-            var (observerId, observerUsername) = await RunAsUserAsync(
-                _faker.Random.String2(15), 
-                _faker.Internet.Password(), 
-                Array.Empty<string>());
+            var (observerId, observerUsername) = await RunAsUserAsync(_faker.Random.String2(15));
             var favoriteAudios = new List<FavoriteAudio>();
             foreach (var audio in audios)
             {

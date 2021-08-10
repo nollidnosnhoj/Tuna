@@ -13,11 +13,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Playlists.GetPlaylistDetail
 {
-    public record GetPlaylistDetailQuery(Guid Id) : IRequest<PlaylistViewModel?>;
+    public record GetPlaylistDetailQuery(long Id) : IRequest<PlaylistViewModel?>;
     
     public class GetPlaylistDetailQueryHandler : IRequestHandler<GetPlaylistDetailQuery, PlaylistViewModel?>
     {
-        private readonly string _currentUserId;
+        private readonly long _currentUserId;
         private readonly ApplicationDbContext _unitOfWork;
 
         public GetPlaylistDetailQueryHandler(ICurrentUserService currentUserService, ApplicationDbContext unitOfWork)

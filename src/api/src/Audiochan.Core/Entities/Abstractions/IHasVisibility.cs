@@ -1,10 +1,12 @@
-﻿using Audiochan.Core.Entities.Enums;
+﻿using System;
+using Audiochan.Core.Entities.Enums;
 
 namespace Audiochan.Core.Entities.Abstractions
 {
     public interface IHasVisibility
     {
-        public string UserId { get; set; }
+        public long UserId { get; set; }
         public Visibility Visibility { get; set; }
+        public string? Secret { get; set; }
     }
 }

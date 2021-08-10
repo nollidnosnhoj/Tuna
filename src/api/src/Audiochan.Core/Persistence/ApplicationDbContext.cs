@@ -5,24 +5,26 @@ using System.Threading.Tasks;
 using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Entities.Abstractions;
+using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Interfaces;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Audiochan.Core.Persistence
 {
-    public class ApplicationDbContext : IdentityDbContext<User, Role, string>
+    public class ApplicationDbContext : DbContext
     {
         private readonly IDateTimeProvider _dateTimeProvider;
+        private readonly INanoidGenerator _nanoidGenerator;
         private IDbContextTransaction? _currentTransaction;
 
         public ApplicationDbContext(DbContextOptions options,
-            IDateTimeProvider dateTimeProvider) : base(options)
+            IDateTimeProvider dateTimeProvider, 
+            INanoidGenerator nanoidGenerator) : base(options)
         {
             _dateTimeProvider = dateTimeProvider;
+            _nanoidGenerator = nanoidGenerator;
         }
 
         public DbSet<Audio> Audios { get; set; } = null!;
@@ -32,12 +34,16 @@ namespace Audiochan.Core.Persistence
         public DbSet<Playlist> Playlists { get; set; } = null!;
         public DbSet<PlaylistAudio> PlaylistAudios { get; set; } = null!;
         public DbSet<Tag> Tags { get; set; } = null!;
-        
+        public DbSet<User> Users { get; set; } = null!;
+
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new())
         {
             // Add default created/updated date
             HandleAuditedEntities();
+            
+            // Handle creating secret key for private resources
+            HandleVisibilityEntities();
             
             // Add soft delete property
             HandleSoftDeletion();
@@ -51,13 +57,6 @@ namespace Audiochan.Core.Persistence
         {
             base.OnModelCreating(builder);
             builder.HasPostgresExtension("uuid-ossp");
-            builder.Entity<User>(entity => { entity.ToTable("users"); });
-            builder.Entity<Role>(entity => { entity.ToTable("roles"); });
-            builder.Entity<IdentityUserRole<string>>(entity => { entity.ToTable("user_roles"); });
-            builder.Entity<IdentityUserClaim<string>>(entity => { entity.ToTable("user_claims"); });
-            builder.Entity<IdentityUserLogin<string>>(entity => { entity.ToTable("user_logins"); });
-            builder.Entity<IdentityRoleClaim<string>>(entity => { entity.ToTable("role_claims"); });
-            builder.Entity<IdentityUserToken<string>>(entity => { entity.ToTable("user_tokens"); });
             builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
             RenameToSnakeCase(builder);
         }
@@ -130,10 +129,42 @@ namespace Audiochan.Core.Persistence
             foreach (var entry in ChangeTracker.Entries<ISoftDeletable>())
             {
                 if (entry is null) continue;
-                if (entry.State == EntityState.Deleted)
+                
+                if (entry.State != EntityState.Deleted) continue;
+                
+                entry.State = EntityState.Modified;
+                entry.Property(nameof(ISoftDeletable.Deleted)).CurrentValue = _dateTimeProvider.Now;
+            }
+        }
+
+        private void HandleVisibilityEntities()
+        {
+            foreach (var entry in ChangeTracker.Entries<IHasVisibility>())
+            {
+                if (entry is null) continue;
+
+
+                switch (entry.State)
                 {
-                    entry.State = EntityState.Modified;
-                    entry.Property(nameof(ISoftDeletable.Deleted)).CurrentValue = _dateTimeProvider.Now;
+                    case EntityState.Added:
+                        entry.Property(nameof(IHasVisibility.Secret)).CurrentValue = _nanoidGenerator.Generate(size: 10);
+                        break;
+                    case EntityState.Modified:
+                    {
+                        var og = (Visibility)entry.Property(nameof(IHasVisibility.Visibility)).OriginalValue;
+                        var current = (Visibility)entry.Property(nameof(IHasVisibility.Visibility)).CurrentValue;
+
+                        if (og == Visibility.Private && current != Visibility.Private)
+                        {
+                            entry.Property(nameof(IHasVisibility.Secret)).CurrentValue = null;
+                        }
+                        else if (og != Visibility.Private && current == Visibility.Private)
+                        {
+                            entry.Property(nameof(IHasVisibility.Secret)).CurrentValue =
+                                _nanoidGenerator.Generate(size: 10);
+                        }
+                        break;
+                    }
                 }
             }
         }

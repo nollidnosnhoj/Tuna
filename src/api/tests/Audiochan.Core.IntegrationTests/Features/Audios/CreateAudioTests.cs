@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Audiochan.Core.Common.Constants;
+using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Tests.Common.Fakers.Audios;
 using FluentAssertions;
@@ -25,7 +26,8 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             var audio = await SendAsync(new GetAudioQuery(response.Data));
 
             // Assert
-            response.Data.Should().NotBeEmpty();
+            response.IsSuccess.Should().BeTrue();
+            response.Data.Should().BeGreaterThan(0);
             audio.Should().NotBeNull();
             audio!.Title.Should().Be(request.Title);
             audio.Description.Should().Be(request.Description);
@@ -38,11 +40,33 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
         }
         
         [Fact]
+        public async Task SuccessfullyCreatePrivateAudio()
+        {
+            // Assign
+            await RunAsAdministratorAsync();
+            var request = new CreateAudioRequestFaker()
+                .SetFixedVisibility(Visibility.Private)
+                .Generate();
+
+            // Act
+            var response = await SendAsync(request);
+            var audio = await SendAsync(new GetAudioQuery(response.Data));
+
+            // Assert
+            response.IsSuccess.Should().BeTrue();
+            response.Data.Should().BeGreaterThan(0);
+            audio.Should().NotBeNull();
+            audio!.Visibility.Should().Be(Visibility.Private);
+            audio!.Secret.Should().NotBeNullOrEmpty();
+        }
+        
+        [Fact]
         public async Task ShouldCreateCacheSuccessfully()
         {
             // Assign
             await RunAsAdministratorAsync();
-            var request = new CreateAudioRequestFaker().Generate();
+            var request = new CreateAudioRequestFaker()
+                .Generate();
             var response = await SendAsync(request);
             await SendAsync(new GetAudioQuery(response.Data)); // trigger the caching
             

@@ -24,7 +24,7 @@ namespace Audiochan.API.Controllers.Me
     public class MeController : ControllerBase
     {
         private readonly IMediator _mediator;
-        private readonly string _currentUserId;
+        private readonly long _currentUserId;
 
         public MeController(ICurrentUserService currentUserService, IMediator mediator)
         {

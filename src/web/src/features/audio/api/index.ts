@@ -1,6 +1,11 @@
 import { GetServerSidePropsContext } from "next";
 import request from "~/lib/http";
-import { CursorPagedList, ImageUploadResponse, PagedList } from "~/lib/types";
+import {
+  CursorPagedList,
+  IdSlug,
+  ImageUploadResponse,
+  PagedList,
+} from "~/lib/types";
 import { AudioView, AudioId, AudioRequest, CreateAudioRequest } from "./types";
 
 export async function getAudiosRequest(
@@ -16,13 +21,17 @@ export async function getAudiosRequest(
 }
 
 export async function getAudioRequest(
-  id: AudioId,
+  idSlug: IdSlug,
+  secret?: string,
   ctx?: GetServerSidePropsContext
 ): Promise<AudioView> {
   const { res, req } = ctx ?? {};
   const { data } = await request<AudioView>({
     method: "get",
-    url: `audios/${id}`,
+    url: `audios/${idSlug}`,
+    params: {
+      secret: secret || undefined,
+    },
     req,
     res,
   });
@@ -142,4 +151,14 @@ export async function unfavoriteAnAudioRequest(
     url: `me/favorites/audios/${audioId}`,
   });
   return true;
+}
+
+export async function resetAudioSecret(
+  audioId: AudioId
+): Promise<{ secret: string }> {
+  const { data } = await request<{ secret: string }>({
+    method: "PATCH",
+    url: `audios/${audioId}/reset`,
+  });
+  return data;
 }

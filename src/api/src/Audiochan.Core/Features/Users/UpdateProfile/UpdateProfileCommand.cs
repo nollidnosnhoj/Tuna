@@ -10,12 +10,12 @@ namespace Audiochan.Core.Features.Users.UpdateProfile
 {
     public record UpdateProfileCommand : IRequest<Result<bool>>
     {
-        public string UserId { get; init; } = string.Empty;
+        public long UserId { get; init; }
         public string? DisplayName { get; init; }
         public string? About { get; init; }
         public string? Website { get; init; }
 
-        public static UpdateProfileCommand FromRequest(string userId, UpdateProfileRequest request) => new()
+        public static UpdateProfileCommand FromRequest(long userId, UpdateProfileRequest request) => new()
         {
             UserId = userId,
             About = request.About,
@@ -26,7 +26,7 @@ namespace Audiochan.Core.Features.Users.UpdateProfile
 
     public class UpdateProfileCommandHandler : IRequestHandler<UpdateProfileCommand, Result<bool>>
     {
-        private readonly string _currentUserId;
+        private readonly long _currentUserId;
         private readonly ApplicationDbContext _unitOfWork;
 
         public UpdateProfileCommandHandler(ICurrentUserService currentUserService, ApplicationDbContext unitOfWork)
@@ -41,13 +41,8 @@ namespace Audiochan.Core.Features.Users.UpdateProfile
             if (user == null) return Result<bool>.NotFound<User>();
             if (user.Id != _currentUserId)
                 return Result<bool>.Forbidden();
-
-            user.UpdateDisplayName(command.DisplayName);
-            user.UpdateAbout(command.About);
-            user.UpdateWebsite(command.Website);
-
-            _unitOfWork.Users.Update(user);
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            
+            // TODO: Update user stuff
 
             return Result<bool>.Success(true);
         }

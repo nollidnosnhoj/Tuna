@@ -5,6 +5,6 @@ namespace Audiochan.Core.Features.Playlists.CheckDuplicatedAudios
 {
     public record CheckDuplicatedAudiosRequest
     {
-        public List<Guid> AudioIds { get; set; } = new();
+        public List<long> AudioIds { get; set; } = new();
     }
 }

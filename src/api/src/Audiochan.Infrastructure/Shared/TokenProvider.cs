@@ -5,11 +5,11 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Helpers;
 using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Interfaces;
 using Audiochan.Core.Persistence;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -22,24 +22,21 @@ namespace Audiochan.Infrastructure.Shared
         private readonly IDateTimeProvider _dateTimeProvider;
         private readonly TokenValidationParameters _tokenValidationParameters;
         private readonly ApplicationDbContext _unitOfWork;
-        private readonly UserManager<User> _userManager;
 
         public TokenProvider(IOptions<JwtSettings> jwtOptions, 
             IDateTimeProvider dateTimeProvider, 
             TokenValidationParameters tokenValidationParameters, 
-            ApplicationDbContext unitOfWork, 
-            UserManager<User> userManager)
+            ApplicationDbContext unitOfWork)
         {
             _jwtSettings = jwtOptions.Value;
             _dateTimeProvider = dateTimeProvider;
             _tokenValidationParameters = tokenValidationParameters;
             _unitOfWork = unitOfWork;
-            _userManager = userManager;
         }
 
-        public async Task<(string, long)> GenerateAccessToken(User user)
+        public (string, long) GenerateAccessToken(User user)
         {
-            var claims = await GetClaims(user);
+            var claims = GetClaims(user);
             var expirationDate = _dateTimeProvider.Now.Add(_jwtSettings.AccessTokenExpiration);
             return GenerateToken(_jwtSettings.AccessTokenSecret, new ClaimsIdentity(claims), expirationDate);
         }
@@ -47,7 +44,7 @@ namespace Audiochan.Infrastructure.Shared
         public async Task<(string, long)> GenerateRefreshToken(User user, string tokenToBeRemoved = "")
         {
             var now = _dateTimeProvider.Now;
-            var claims = await GetClaims(user);
+            var claims = GetClaims(user);
             var expirationDate = now.Add(_jwtSettings.RefreshTokenExpiration);
             var (token, expirationDateEpoch) = GenerateToken(_jwtSettings.RefreshTokenSecret,
                 new ClaimsIdentity(claims), expirationDate);
@@ -92,7 +89,9 @@ namespace Audiochan.Infrastructure.Shared
                     tokenValidationParams,
                     out var validatedToken);
                 var jwtSecurityToken = (JwtSecurityToken) validatedToken;
-                var userId = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Sub)?.Value;
+                var userIdString = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Sub)?.Value;
+                if (long.TryParse(userIdString, out var userId) && !UserHelpers.IsValidId(userId))
+                    return false;
                 return await _unitOfWork.Users.AnyAsync(u => u.Id == userId);
             }
             catch
@@ -120,19 +119,16 @@ namespace Audiochan.Infrastructure.Shared
             return (tokenHandler.WriteToken(token), EpochTime.GetIntDate(expirationDate.ToUniversalTime()));
         }
 
-        private async Task<List<Claim>> GetClaims(User user)
+        private List<Claim> GetClaims(User user)
         {
             var claims = new List<Claim>
             {
                 new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new(JwtRegisteredClaimNames.Sub, user.Id),
-                new("name", user.UserName)
+                new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+                new("name", user.UserName),
+                new("role", user.Role.ToString())
             };
-
-            var roles = await _userManager.GetRolesAsync(user);
-
-            claims.AddRange(roles.Select(role => new Claim("role", role)));
-
+            
             return claims;
         }
     }

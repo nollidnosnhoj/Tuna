@@ -13,7 +13,7 @@ export type AudioPlayerItem = {
   audioId: AudioId;
   title: string;
   artist: string;
-  artistId: string;
+  artistId: number;
   duration: number;
   cover: string;
   source: string;
