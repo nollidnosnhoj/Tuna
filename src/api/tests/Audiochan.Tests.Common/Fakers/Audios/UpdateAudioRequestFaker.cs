@@ -1,6 +1,4 @@
-﻿using System;
-using Audiochan.Core.Common.Extensions;
-using Audiochan.Core.Entities.Enums;
+﻿using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Features.Audios.UpdateAudio;
 using Bogus;
 

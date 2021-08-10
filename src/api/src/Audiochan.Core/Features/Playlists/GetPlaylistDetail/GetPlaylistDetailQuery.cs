@@ -1,11 +1,9 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Entities.Enums;
-using Audiochan.Core.Features.Audios;
 using Audiochan.Core.Interfaces;
 using Audiochan.Core.Persistence;
 using MediatR;

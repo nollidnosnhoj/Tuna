@@ -1,5 +1,4 @@
-﻿using System;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using Audiochan.Core.Common.Helpers;
 using Audiochan.Core.Interfaces;
 using Microsoft.AspNetCore.Http;

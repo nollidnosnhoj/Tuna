@@ -1,6 +1,4 @@
-﻿using Audiochan.Core.Common.Models;
-
-namespace Audiochan.API.Extensions
+﻿namespace Audiochan.API.Extensions
 {
     public static class IdSlugExtractExtensions
     {

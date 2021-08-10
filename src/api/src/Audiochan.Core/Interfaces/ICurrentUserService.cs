@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Audiochan.Core.Interfaces
+﻿namespace Audiochan.Core.Interfaces
 {
     public interface ICurrentUserService
     {

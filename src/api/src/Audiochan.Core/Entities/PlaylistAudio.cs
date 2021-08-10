@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Audiochan.Core.Entities
+﻿namespace Audiochan.Core.Entities
 {
     public class PlaylistAudio
     {

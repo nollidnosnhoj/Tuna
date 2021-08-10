@@ -6,7 +6,6 @@ using Audiochan.Infrastructure.Storage.AmazonS3;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Slugify;
 using StackExchange.Redis;
 
 namespace Audiochan.Infrastructure

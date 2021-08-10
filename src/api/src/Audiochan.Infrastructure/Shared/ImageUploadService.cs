@@ -2,7 +2,6 @@
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Helpers;
 using Audiochan.Core.Common.Settings;
 using Audiochan.Core.Interfaces;

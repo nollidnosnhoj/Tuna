@@ -1,7 +1,4 @@
-﻿using System;
-using Audiochan.Core.Entities.Abstractions;
-
-namespace Audiochan.Core.Entities
+﻿namespace Audiochan.Core.Entities
 {
     public class FavoritePlaylist
     {

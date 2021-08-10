@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Features.Playlists.CreatePlaylist;
 using Bogus;

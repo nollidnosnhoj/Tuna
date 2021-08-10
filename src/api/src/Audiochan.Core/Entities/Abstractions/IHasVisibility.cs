@@ -1,5 +1,4 @@
-﻿using System;
-using Audiochan.Core.Entities.Enums;
+﻿using Audiochan.Core.Entities.Enums;
 
 namespace Audiochan.Core.Entities.Abstractions
 {
