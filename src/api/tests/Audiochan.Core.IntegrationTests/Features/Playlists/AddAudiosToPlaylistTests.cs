@@ -27,7 +27,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Playlists
 
             var audioFaker = new AudioFaker(userId);
             var audios = audioFaker
-                .SetFixedVisibility(Visibility.Public)
+                .WithVisibility(Visibility.Public)
                 .Generate(3);
             InsertRange(audios);
             var audioIds = audios.Select(a => a.Id).ToList();

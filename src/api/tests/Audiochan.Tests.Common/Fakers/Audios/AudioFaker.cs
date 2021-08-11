@@ -23,7 +23,7 @@ namespace Audiochan.Tests.Common.Fakers.Audios
                 (faker, audio) => audio.Visibility == Visibility.Private ? faker.Random.String2(10) : null);
         }
 
-        public AudioFaker SetFixedVisibility(Visibility visibility)
+        public AudioFaker WithVisibility(Visibility visibility)
         {
             RuleFor(x => x.Visibility, () => visibility);
             return this;

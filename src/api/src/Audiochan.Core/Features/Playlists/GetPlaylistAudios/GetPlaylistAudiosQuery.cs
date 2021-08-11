@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
@@ -15,13 +14,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Playlists.GetPlaylistAudios
 {
-    public record GetPlaylistAudiosQuery(long Id) : IHasPage, IRequest<PagedListDto<AudioViewModel>>
+    public record GetPlaylistAudiosQuery(long Id) : IHasOffsetPage, IRequest<OffsetPagedListDto<AudioViewModel>>
     {
-        public int Page { get; init; }
+        public int Offset { get; init; }
         public int Size { get; init; }
     }
     
-    public class GetPlaylistAudiosQueryHandler : IRequestHandler<GetPlaylistAudiosQuery, PagedListDto<AudioViewModel>>
+    public class GetPlaylistAudiosQueryHandler : IRequestHandler<GetPlaylistAudiosQuery, OffsetPagedListDto<AudioViewModel>>
     {
         private readonly ApplicationDbContext _unitOfWork;
         private readonly long _currentUserId;
@@ -32,18 +31,17 @@ namespace Audiochan.Core.Features.Playlists.GetPlaylistAudios
             _currentUserId = currentUserService.GetUserId();
         }
 
-        public async Task<PagedListDto<AudioViewModel>> Handle(GetPlaylistAudiosQuery request, CancellationToken cancellationToken)
+        public async Task<OffsetPagedListDto<AudioViewModel>> Handle(GetPlaylistAudiosQuery request, CancellationToken cancellationToken)
         {
             return await _unitOfWork.Playlists
                 .Include(p => p.Audios)
                 .Where(p => p.Id == request.Id)
-                .FilterVisibility(_currentUserId, FilterVisibilityMode.Unlisted)
-                .Where(p => p.UserId == _currentUserId || p.Visibility != Visibility.Private)
+                .Where(p => p.UserId == _currentUserId || p.Visibility == Visibility.Public)
                 .SelectMany(p => p.Audios)
                 .Select(pa => pa.Audio)
-                .FilterVisibility(_currentUserId, FilterVisibilityMode.OnlyPublic)
+                .Where(a => a.UserId == _currentUserId || a.Visibility == Visibility.Public)
                 .Select(AudioMaps.AudioToView)
-                .PaginateAsync(request, cancellationToken);
+                .OffsetPaginateAsync(request, cancellationToken);
         }
     }
 }

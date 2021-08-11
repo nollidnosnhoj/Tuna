@@ -1,10 +1,10 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
+using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Features.Playlists;
 using Audiochan.Core.Features.Playlists.GetPlaylistDetail;
 using Audiochan.Core.Interfaces;
@@ -14,21 +14,21 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Users.GetUserFavoritePlaylists
 {
-    public record GetUserFavoritePlaylistsQuery : IHasPage, IRequest<PagedListDto<PlaylistViewModel>>
+    public record GetUserFavoritePlaylistsQuery : IHasOffsetPage, IRequest<OffsetPagedListDto<PlaylistViewModel>>
     {
         public string Username { get; }
-        public int Page { get; init; } = 1;
+        public int Offset { get; init; } = 1;
         public int Size { get; init; } = 30;
 
-        public GetUserFavoritePlaylistsQuery(string username, IHasPage pageParams)
+        public GetUserFavoritePlaylistsQuery(string username, IHasOffsetPage pageParams)
         {
             Username = username;
-            Page = pageParams.Page;
+            Offset = pageParams.Offset;
             Size = pageParams.Size;
         }
     }
     
-    public class GetUserFavoritePlaylistsQueryHandler : IRequestHandler<GetUserFavoritePlaylistsQuery, PagedListDto<PlaylistViewModel>>
+    public class GetUserFavoritePlaylistsQueryHandler : IRequestHandler<GetUserFavoritePlaylistsQuery, OffsetPagedListDto<PlaylistViewModel>>
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly long _currentUserId;
@@ -39,7 +39,7 @@ namespace Audiochan.Core.Features.Users.GetUserFavoritePlaylists
             _currentUserId = currentUserService.GetUserId();
         }
 
-        public async Task<PagedListDto<PlaylistViewModel>> Handle(GetUserFavoritePlaylistsQuery request, 
+        public async Task<OffsetPagedListDto<PlaylistViewModel>> Handle(GetUserFavoritePlaylistsQuery request, 
             CancellationToken cancellationToken)
         {
             return await _dbContext.Users
@@ -49,9 +49,9 @@ namespace Audiochan.Core.Features.Users.GetUserFavoritePlaylists
                 .Where(u => u.UserName == request.Username)
                 .SelectMany(u => u.FavoritePlaylists)
                 .Select(fa => fa.Playlist)
-                .FilterVisibility(_currentUserId, FilterVisibilityMode.OnlyPublic)
+                .Where(p => p.Visibility == Visibility.Public)
                 .Select(PlaylistMaps.PlaylistToDetailFunc)
-                .PaginateAsync(request, cancellationToken);
+                .OffsetPaginateAsync(request, cancellationToken);
         }
     }
 }

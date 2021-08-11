@@ -21,6 +21,12 @@ namespace Audiochan.Tests.Common.Mocks
                 .ReturnsAsync(true);
             mock
                 .Setup(x =>
+                    x.ExistsAsync(It.IsAny<string>(),
+                        It.IsAny<string>(),
+                        It.IsAny<CancellationToken>()))
+                .ReturnsAsync(true);
+            mock
+                .Setup(x =>
                     x.RemoveAsync(It.IsAny<string>(), 
                         It.IsAny<string>(),
                         It.IsAny<string>(),
@@ -28,8 +34,22 @@ namespace Audiochan.Tests.Common.Mocks
                 .Returns(Task.CompletedTask);
             mock
                 .Setup(x =>
+                    x.RemoveAsync(It.IsAny<string>(),
+                        It.IsAny<string>(),
+                        It.IsAny<CancellationToken>()))
+                .Returns(Task.CompletedTask);
+            mock
+                .Setup(x =>
                     x.SaveAsync(It.IsAny<Stream>(),
                         It.IsAny<string>(),
+                        It.IsAny<string>(),
+                        It.IsAny<string>(),
+                        It.IsAny<Dictionary<string, string>>(),
+                        It.IsAny<CancellationToken>()))
+                .Returns(Task.CompletedTask);
+            mock
+                .Setup(x =>
+                    x.SaveAsync(It.IsAny<Stream>(),
                         It.IsAny<string>(),
                         It.IsAny<string>(),
                         It.IsAny<Dictionary<string, string>>(),

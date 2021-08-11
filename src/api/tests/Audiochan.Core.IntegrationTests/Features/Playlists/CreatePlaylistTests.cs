@@ -20,7 +20,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Playlists
         {
             var (userId, _) = await RunAsDefaultUserAsync();
             var audios = new AudioFaker(userId)
-                .SetFixedVisibility(Visibility.Public)
+                .WithVisibility(Visibility.Public)
                 .Generate(3);
             InsertRange(audios);
             var audioIds = audios.Select(x => x.Id).ToList();
@@ -50,7 +50,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Playlists
         {
             var (userId, _) = await RunAsDefaultUserAsync();
             var audios = new AudioFaker(userId)
-                .SetFixedVisibility(Visibility.Public)
+                .WithVisibility(Visibility.Public)
                 .Generate(3);
             InsertRange(audios);
             var audioIds = audios.Select(x => x.Id).ToList();

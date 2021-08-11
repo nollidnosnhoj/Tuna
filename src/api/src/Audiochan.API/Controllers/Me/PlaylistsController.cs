@@ -32,7 +32,7 @@ namespace Audiochan.API.Controllers.Me
         [ProducesResponseType(200)]
         [SwaggerOperation(Summary = "Get user's playlists", OperationId = "GetYourPlaylists", Tags = new []{"me"})]
         public async Task<ActionResult<PagedListDto<PlaylistViewModel>>> GetYourPlaylists(
-            [FromQuery] PaginationQueryParams paginationQueryParams,
+            [FromQuery] OffsetPaginationQueryParams paginationQueryParams,
             CancellationToken cancellationToken)
         {
             var audios = await _mediator.Send(

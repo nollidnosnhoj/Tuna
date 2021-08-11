@@ -1,10 +1,10 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
+using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Persistence;
 using MediatR;
@@ -12,14 +12,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Audios.GetAudioFeed
 {
-    public record GetAudioFeedQuery : IHasPage, IRequest<PagedListDto<AudioViewModel>>
+    public record GetAudioFeedQuery : IHasOffsetPage, IRequest<OffsetPagedListDto<AudioViewModel>>
     {
         public long UserId { get; init; }
-        public int Page { get; init; }
+        public int Offset { get; init; }
         public int Size { get; init; }
     }
 
-    public class GetAudioFeedQueryHandler : IRequestHandler<GetAudioFeedQuery, PagedListDto<AudioViewModel>>
+    public class GetAudioFeedQueryHandler : IRequestHandler<GetAudioFeedQuery, OffsetPagedListDto<AudioViewModel>>
     {
         private readonly ApplicationDbContext _dbContext;
 
@@ -28,7 +28,7 @@ namespace Audiochan.Core.Features.Audios.GetAudioFeed
             _dbContext = dbContext;
         }
 
-        public async Task<PagedListDto<AudioViewModel>> Handle(GetAudioFeedQuery query,
+        public async Task<OffsetPagedListDto<AudioViewModel>> Handle(GetAudioFeedQuery query,
             CancellationToken cancellationToken)
         {
             var followingIds = await _dbContext.Users
@@ -42,11 +42,11 @@ namespace Audiochan.Core.Features.Audios.GetAudioFeed
                 .AsNoTracking()
                 .Include(x => x.Tags)
                 .Include(x => x.User)
-                .FilterVisibility(query.UserId, FilterVisibilityMode.OnlyPublic)
+                .Where(a => a.Visibility == Visibility.Public)
                 .Where(a => followingIds.Contains(a.UserId))
                 .Select(AudioMaps.AudioToView)
                 .OrderByDescending(a => a.Created)
-                .PaginateAsync(cancellationToken: cancellationToken);
+                .OffsetPaginateAsync(cancellationToken: cancellationToken);
         }
     }
 }

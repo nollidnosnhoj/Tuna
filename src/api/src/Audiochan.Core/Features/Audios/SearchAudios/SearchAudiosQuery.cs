@@ -2,10 +2,10 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
+using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Interfaces;
 using Audiochan.Core.Persistence;
@@ -47,7 +47,7 @@ namespace Audiochan.Core.Features.Audios.SearchAudios
                 .AsNoTracking()
                 .Include(x => x.Tags)
                 .Include(x => x.User)
-                .FilterVisibility(_currentUserId, FilterVisibilityMode.OnlyPublic);
+                .Where(a => a.UserId == _currentUserId || a.Visibility == Visibility.Public);
 
             if (!string.IsNullOrWhiteSpace(query.Q))
                 queryable = queryable.Where(a => 

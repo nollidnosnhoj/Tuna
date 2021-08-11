@@ -1,8 +1,6 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Enums;
-using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Interfaces;
 using Audiochan.Core.Persistence;
@@ -31,7 +29,7 @@ namespace Audiochan.Core.Features.Playlists.GetPlaylistDetail
                 .Include(x => x.Tags)
                 .Include(x => x.User)
                 .Where(x => x.Id == request.Id)
-                .FilterVisibility(_currentUserId, FilterVisibilityMode.Unlisted)
+                .Where(p => p.UserId == _currentUserId || p.Visibility == Visibility.Public)
                 .Select(PlaylistMaps.PlaylistToDetailFunc)
                 .SingleOrDefaultAsync(cancellationToken);
             

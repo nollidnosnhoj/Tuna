@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.API.Models;
+using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Features.Followers.GetFollowers;
@@ -44,13 +45,13 @@ namespace Audiochan.API.Controllers
         [SwaggerOperation(Summary = "Return a list of the user's audios.", OperationId = "GetUserAudios",
             Tags = new[] {"users"})]
         public async Task<ActionResult<PagedListDto<AudioViewModel>>> GetUserAudios(string username, 
-            [FromQuery] PaginationQueryParams paginationQueryParams,
+            [FromQuery] OffsetPaginationQueryParams paginationQueryParams,
             CancellationToken cancellationToken)
         {
             var list = await _mediator.Send(new GetUsersAudioQuery
             {
                 Username = username,
-                Page = paginationQueryParams.Page,
+                Offset = paginationQueryParams.Offset,
                 Size = paginationQueryParams.Size
             }, cancellationToken);
 
@@ -64,12 +65,12 @@ namespace Audiochan.API.Controllers
             OperationId = "GetUsersFavoriteAudios",
             Tags=new []{"users"})]
         public async Task<IActionResult> GetUserFavoriteAudios(string username,
-            [FromQuery] PaginationQueryParams paginationQueryParams, CancellationToken cancellationToken)
+            [FromQuery] OffsetPaginationQueryParams paginationQueryParams, CancellationToken cancellationToken)
         {
             var list = await _mediator.Send(new GetUserFavoriteAudiosQuery
             {
                 Username = username,
-                Page = paginationQueryParams.Page,
+                Offset = paginationQueryParams.Offset,
                 Size = paginationQueryParams.Size
             }, cancellationToken);
             return Ok(list);
@@ -80,13 +81,13 @@ namespace Audiochan.API.Controllers
         [SwaggerOperation(Summary = "Return a list of the user's followers.", OperationId = "GetUserFollowers",
             Tags = new[] {"users"})]
         public async Task<ActionResult<PagedListDto<MetaAuthorDto>>> GetFollowers(string username, 
-            [FromQuery] PaginationQueryParams paginationQueryParams, 
+            [FromQuery] OffsetPaginationQueryParams paginationQueryParams, 
             CancellationToken cancellationToken)
         {
             return Ok(await _mediator.Send(new GetUserFollowersQuery
             {
                 Username = username,
-                Page = paginationQueryParams.Page,
+                Offset = paginationQueryParams.Offset,
                 Size = paginationQueryParams.Size
             }, cancellationToken));
         }
@@ -96,13 +97,13 @@ namespace Audiochan.API.Controllers
         [SwaggerOperation(Summary = "Return a list of the user's followings.", OperationId = "GetUserFollowings",
             Tags = new[] {"users"})]
         public async Task<ActionResult<PagedListDto<MetaAuthorDto>>> GetFollowings(string username, 
-            [FromQuery] PaginationQueryParams paginationQueryParams, 
+            [FromQuery] OffsetPaginationQueryParams paginationQueryParams, 
             CancellationToken cancellationToken)
         {
             return Ok(await _mediator.Send(new GetUserFollowingsQuery
             {
                 Username = username,
-                Page = paginationQueryParams.Page,
+                Offset = paginationQueryParams.Offset,
                 Size = paginationQueryParams.Size
             }, cancellationToken));
         }

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Audiochan.API;
+using Audiochan.Core.Interfaces;
 using Audiochan.Tests.Common.Mocks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -15,12 +17,7 @@ namespace Audiochan.Core.IntegrationTests
     {
         public long CurrentUserId { get; set; }
         public string? CurrentUserName { get; set; }
-        public DateTime CurrentTime { get; set; }
-
-        public TestWebApplicationFactory()
-        {
-            CurrentTime = DateTime.UtcNow;
-        }
+        public DateTime CurrentTime => DateTime.UtcNow;
         
         protected override IHost CreateHost(IHostBuilder builder)
         {
@@ -40,8 +37,16 @@ namespace Audiochan.Core.IntegrationTests
 
             builder.ConfigureServices(services =>
             {
+                var descriptorCurrentUserService = services.FirstOrDefault(d => d.ServiceType == typeof(ICurrentUserService));
+                services.Remove(descriptorCurrentUserService!);
                 services.AddTransient(_ => CurrentUserServiceMock.Create(CurrentUserId, CurrentUserName).Object);
+                
+                var descriptorDateTimeProvider = services.FirstOrDefault(d => d.ServiceType == typeof(IDateTimeProvider));
+                services.Remove(descriptorDateTimeProvider!);
                 services.AddTransient(_ => DateTimeProviderMock.Create(CurrentTime).Object);
+
+                var descriptorStorageService = services.FirstOrDefault(d => d.ServiceType == typeof(IStorageService));
+                services.Remove(descriptorStorageService!);
                 services.AddTransient(_ => StorageServiceMock.Create().Object);
             });
 

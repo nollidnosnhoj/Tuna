@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Audiochan.Core.Entities;
+using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Features.Playlists.GetPlaylistAudios;
 using Audiochan.Tests.Common.Fakers.Audios;
@@ -20,7 +21,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Playlists
         public async Task ShouldSuccessfullyFetchPlaylistAudios()
         {
             var (userId, _) = await RunAsDefaultUserAsync();
-            var audioFaker = new AudioFaker(userId);
+            var audioFaker = new AudioFaker(userId).WithVisibility(Visibility.Public);
             var playlistFaker = new PlaylistFaker(userId);
             var audios = audioFaker.Generate(5);
             InsertRange(audios);
@@ -38,7 +39,6 @@ namespace Audiochan.Core.IntegrationTests.Features.Playlists
             var response = await SendAsync(new GetPlaylistAudiosQuery(playlist.Id));
 
             response.Should().NotBeNull();
-            response.Count.Should().Be(audios.Count);
             response.Items.Count.Should().Be(audios.Count);
             response.Items.Should().BeOfType<List<AudioViewModel>>();
         }

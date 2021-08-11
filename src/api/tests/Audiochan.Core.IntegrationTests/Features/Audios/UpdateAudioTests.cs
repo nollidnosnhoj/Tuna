@@ -77,7 +77,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             var (ownerId, _) = await RunAsUserAsync("kopacetic");
 
             var audio = new AudioFaker(ownerId)
-                .SetFixedVisibility(Visibility.Public)
+                .WithVisibility(Visibility.Public)
                 .Generate();
 
             Insert(audio);
@@ -107,7 +107,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             var (ownerId, _) = await RunAsUserAsync("kopacetic");
 
             var audio = new AudioFaker(ownerId)
-                .SetFixedVisibility(Visibility.Private)
+                .WithVisibility(Visibility.Private)
                 .Generate();
 
             Insert(audio);

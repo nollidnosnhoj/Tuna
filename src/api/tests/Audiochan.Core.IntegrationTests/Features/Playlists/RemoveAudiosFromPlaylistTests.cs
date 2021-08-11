@@ -24,7 +24,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Playlists
             var playlist = new PlaylistFaker(userId).Generate();
             Insert(playlist);
             var audios = new AudioFaker(userId)
-                .SetFixedVisibility(Visibility.Public)
+                .WithVisibility(Visibility.Public)
                 .Generate(5);
             InsertRange(audios);
             var playlistAudios = audios
@@ -57,7 +57,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Playlists
             var playlist = new PlaylistFaker(userId).Generate();
             Insert(playlist);
             var audios = new AudioFaker(userId)
-                .SetFixedVisibility(Visibility.Public)
+                .WithVisibility(Visibility.Public)
                 .Generate(5);
             InsertRange(audios);
             var playlistAudios = audios

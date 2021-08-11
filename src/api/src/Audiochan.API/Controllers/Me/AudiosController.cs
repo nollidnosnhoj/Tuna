@@ -41,12 +41,12 @@ namespace Audiochan.API.Controllers.Me
             Tags = new [] {"me"}
         )]
         public async Task<ActionResult<GetAudioListViewModel>> GetYourAudios(
-            [FromQuery] PaginationQueryParams queryParams, 
+            [FromQuery] OffsetPaginationQueryParams queryParams, 
             CancellationToken cancellationToken = default)
         {
             var result = await _mediator.Send(new GetUsersAudioQuery
             {
-                Page = queryParams.Page,
+                Offset = queryParams.Offset,
                 Size = queryParams.Size,
                 Username = _currentUsername
             }, cancellationToken);
@@ -63,13 +63,13 @@ namespace Audiochan.API.Controllers.Me
             Tags = new[] {"me"}
         )]
         public async Task<ActionResult<PagedListDto<AudioViewModel>>> GetYourFeed(
-            [FromQuery] PaginationQueryParams queryParams, 
+            [FromQuery] OffsetPaginationQueryParams queryParams, 
             CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new GetAudioFeedQuery
             {
                 UserId = _currentUserId,
-                Page = queryParams.Page,
+                Offset = queryParams.Offset,
                 Size = queryParams.Size
             }, cancellationToken);
             return Ok(result);

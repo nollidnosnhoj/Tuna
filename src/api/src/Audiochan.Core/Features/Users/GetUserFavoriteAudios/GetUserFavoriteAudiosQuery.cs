@@ -1,10 +1,10 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
+using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Features.Audios;
 using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Interfaces;
@@ -14,14 +14,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Users.GetUserFavoriteAudios
 {
-    public record GetUserFavoriteAudiosQuery : IHasPage, IRequest<PagedListDto<AudioViewModel>>
+    public record GetUserFavoriteAudiosQuery : IHasOffsetPage, IRequest<OffsetPagedListDto<AudioViewModel>>
     {
         public string? Username { get; set; }
-        public int Page { get; init; } = 1;
-        public int Size { get; init; } = 30;
+        public int Offset { get; init; }
+        public int Size { get; init; }
     }
     
-    public class GetUserFavoriteAudiosQueryHandler : IRequestHandler<GetUserFavoriteAudiosQuery, PagedListDto<AudioViewModel>>
+    public class GetUserFavoriteAudiosQueryHandler : IRequestHandler<GetUserFavoriteAudiosQuery, OffsetPagedListDto<AudioViewModel>>
     {
         private readonly ApplicationDbContext _unitOfWork;
         private readonly long _currentUserId;
@@ -32,7 +32,7 @@ namespace Audiochan.Core.Features.Users.GetUserFavoriteAudios
             _currentUserId = currentUserService.GetUserId();
         }
 
-        public async Task<PagedListDto<AudioViewModel>> Handle(GetUserFavoriteAudiosQuery query, CancellationToken cancellationToken)
+        public async Task<OffsetPagedListDto<AudioViewModel>> Handle(GetUserFavoriteAudiosQuery query, CancellationToken cancellationToken)
         {
             return await _unitOfWork.Users
                 .AsNoTracking()
@@ -41,9 +41,9 @@ namespace Audiochan.Core.Features.Users.GetUserFavoriteAudios
                 .Where(u => u.UserName == query.Username)
                 .SelectMany(u => u.FavoriteAudios)
                 .Select(fa => fa.Audio)
-                .FilterVisibility(_currentUserId, FilterVisibilityMode.OnlyPublic)
+                .Where(p => p.Visibility == Visibility.Public)
                 .Select(AudioMaps.AudioToView)
-                .PaginateAsync(query, cancellationToken);
+                .OffsetPaginateAsync(query, cancellationToken);
         }
     }
 }

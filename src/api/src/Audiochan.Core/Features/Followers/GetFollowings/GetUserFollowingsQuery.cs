@@ -10,14 +10,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Followers.GetFollowings
 {
-    public record GetUserFollowingsQuery : IHasPage, IRequest<PagedListDto<FollowingViewModel>>
+    public record GetUserFollowingsQuery : IHasOffsetPage, IRequest<OffsetPagedListDto<FollowingViewModel>>
     {
         public string Username { get; init; } = string.Empty;
-        public int Page { get; init; }
+        public int Offset { get; init; }
         public int Size { get; init; }
     }
 
-    public class GetUserFollowingsQueryHandler : IRequestHandler<GetUserFollowingsQuery, PagedListDto<FollowingViewModel>>
+    public class GetUserFollowingsQueryHandler : IRequestHandler<GetUserFollowingsQuery, OffsetPagedListDto<FollowingViewModel>>
     {
         private readonly ApplicationDbContext _unitOfWork;
 
@@ -26,7 +26,7 @@ namespace Audiochan.Core.Features.Followers.GetFollowings
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<PagedListDto<FollowingViewModel>> Handle(GetUserFollowingsQuery query,
+        public async Task<OffsetPagedListDto<FollowingViewModel>> Handle(GetUserFollowingsQuery query,
             CancellationToken cancellationToken)
         {
             return await _unitOfWork.Users
@@ -36,7 +36,7 @@ namespace Audiochan.Core.Features.Followers.GetFollowings
                 .SelectMany(u => u.Followings)
                 .OrderByDescending(fu => fu.FollowedDate)
                 .Select(FollowedUserMaps.UserToFollowingFunc)
-                .PaginateAsync(query, cancellationToken);
+                .OffsetPaginateAsync(query, cancellationToken);
         }
     }
 }

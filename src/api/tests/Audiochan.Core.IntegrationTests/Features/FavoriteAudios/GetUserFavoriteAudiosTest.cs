@@ -26,7 +26,7 @@ namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
             var (targetId, _) = await RunAsAdministratorAsync();
             var audioFaker = new AudioFaker(targetId);
             var audios = audioFaker
-                .SetFixedVisibility(Visibility.Public)
+                .WithVisibility(Visibility.Public)
                 .Generate(3);
             Insert(audios.ToArray());
             var (observerId, observerUsername) = await RunAsUserAsync(_faker.Random.String2(15));
@@ -51,7 +51,7 @@ namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
 
             // Assert
             response.Should().NotBeNull();
-            response.Count.Should().Be(3);
+            response.Items.Count.Should().Be(3);
         }
     }
 }

@@ -89,7 +89,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             var (userId, _) = await RunAsAdministratorAsync();
 
             var audio = new AudioFaker(userId)
-                .SetFixedVisibility(Visibility.Private)
+                .WithVisibility(Visibility.Private)
                 .Generate();
             
             Insert(audio);
@@ -111,7 +111,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             var (userId, _) = await RunAsAdministratorAsync();
 
             var audio = new AudioFaker(userId)
-                .SetFixedVisibility(Visibility.Private)
+                .WithVisibility(Visibility.Private)
                 .Generate();
             
             Insert(audio);

@@ -1,9 +1,7 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Enums;
 using Audiochan.Core.Common.Extensions;
-using Audiochan.Core.Common.Helpers;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Entities;
@@ -17,14 +15,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Users.GetUserAudios
 {
-    public class GetUsersAudioQuery : IHasPage, IRequest<PagedListDto<AudioViewModel>>
+    public class GetUsersAudioQuery : IHasOffsetPage, IRequest<OffsetPagedListDto<AudioViewModel>>
     {
         public string? Username { get; set; }
-        public int Page { get; init; } = 1;
+        public int Offset { get; init; } = 1;
         public int Size { get; init; } = 30;
     }
 
-    public class GetUsersAudioQueryHandler : IRequestHandler<GetUsersAudioQuery, PagedListDto<AudioViewModel>>
+    public class GetUsersAudioQueryHandler : IRequestHandler<GetUsersAudioQuery, OffsetPagedListDto<AudioViewModel>>
     {
         private readonly ApplicationDbContext _unitOfWork;
         private readonly long _currentUserId;
@@ -35,7 +33,7 @@ namespace Audiochan.Core.Features.Users.GetUserAudios
             _currentUserId = currentUserService.GetUserId();
         }
 
-        public async Task<PagedListDto<AudioViewModel>> Handle(GetUsersAudioQuery request,
+        public async Task<OffsetPagedListDto<AudioViewModel>> Handle(GetUsersAudioQuery request,
             CancellationToken cancellationToken)
         {
             IQueryable<Audio> queryable = _unitOfWork.Users
@@ -46,13 +44,11 @@ namespace Audiochan.Core.Features.Users.GetUserAudios
                 .Include(a => a.Tags)
                 .Include(a => a.User);
 
-            queryable = UserHelpers.IsValidId(_currentUserId)
-                ? queryable.FilterVisibility(_currentUserId, FilterVisibilityMode.OnlyPublic)
-                : queryable.Where(a => a.Visibility == Visibility.Public);
+            queryable = queryable.Where(a => a.UserId == _currentUserId || a.Visibility == Visibility.Public);
 
             return await queryable
                 .Select(AudioMaps.AudioToView)
-                .PaginateAsync(request, cancellationToken);
+                .OffsetPaginateAsync(request, cancellationToken);
         }
     }
 }

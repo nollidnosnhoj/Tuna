@@ -37,13 +37,13 @@ namespace Audiochan.API.Controllers.Me
             OperationId = "YourFavoriteAudios",
             Tags = new[] {"me"}
         )]
-        public async Task<IActionResult> GetYourFavoriteAudios([FromQuery] PaginationQueryParams queryParams,
+        public async Task<IActionResult> GetYourFavoriteAudios([FromQuery] OffsetPaginationQueryParams queryParams,
             CancellationToken cancellationToken = default)
         {
             var query = new GetUserFavoriteAudiosQuery
             {
                 Username = _currentUsername,
-                Page = queryParams.Page,
+                Offset = queryParams.Offset,
                 Size = queryParams.Size
             };
             var result = await _mediator.Send(query, cancellationToken);
