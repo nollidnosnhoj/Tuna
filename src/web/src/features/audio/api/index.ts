@@ -4,6 +4,7 @@ import {
   CursorPagedList,
   IdSlug,
   ImageUploadResponse,
+  OffsetPagedList,
   PagedList,
 } from "~/lib/types";
 import { AudioView, AudioId, AudioRequest, CreateAudioRequest } from "./types";
@@ -39,12 +40,12 @@ export async function getAudioRequest(
 }
 
 export async function getAudioFeedRequest(
-  pageNumber: number
-): Promise<PagedList<AudioView>> {
-  const { data } = await request<PagedList<AudioView>>({
+  offset = 0
+): Promise<OffsetPagedList<AudioView>> {
+  const { data } = await request<OffsetPagedList<AudioView>>({
     method: "get",
     url: "me/audios/feed",
-    params: { page: pageNumber },
+    params: { offset },
   });
   return data;
 }

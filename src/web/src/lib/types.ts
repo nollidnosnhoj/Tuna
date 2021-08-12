@@ -22,6 +22,12 @@ export type PagedList<T> = {
   hasNext: boolean;
 };
 
+export type OffsetPagedList<T> = {
+  items: T[];
+  next?: number;
+  size: number;
+};
+
 export type CursorPagedList<T> = {
   items: T[];
   next?: string;

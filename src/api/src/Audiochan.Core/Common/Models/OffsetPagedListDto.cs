@@ -2,7 +2,7 @@
 
 namespace Audiochan.Core.Common.Models
 {
-    public record OffsetPagedListDto<TItem>(IList<TItem> Items, int? NextOffset, int Size)
+    public record OffsetPagedListDto<TItem>(IList<TItem> Items, int? Next, int Size)
     {
         
     }

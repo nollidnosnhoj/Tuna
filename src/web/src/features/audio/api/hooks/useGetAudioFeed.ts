@@ -16,7 +16,7 @@ export function useGetAudioFeed(
   const { isLoggedIn } = useUser();
   return useInfinitePagination<AudioView>(
     GET_AUDIO_FEED_QUERY_KEY,
-    (page) => getAudioFeedRequest(page),
+    (offset) => getAudioFeedRequest(offset),
     {
       enabled: isLoggedIn,
       ...options,

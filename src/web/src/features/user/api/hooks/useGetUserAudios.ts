@@ -23,7 +23,7 @@ export function useGetUserAudios(
 ): UseInfinitePaginationReturnType<AudioView> {
   return useInfinitePagination(
     GET_USER_AUDIOS_QUERY_KEY(username),
-    (page) => getUserAudiosRequest(username, page, params),
+    (offset) => getUserAudiosRequest(username, offset, params),
     {
       ...options,
       enabled: !!username && (options.enabled ?? true),

@@ -22,7 +22,7 @@ export function useGetUserFavoriteAudios(
 ): UseInfinitePaginationReturnType<AudioView> {
   return useInfinitePagination(
     GET_USER_FAVORITE_AUDIOS_QUERY_KEY(username),
-    (page) => getUserFavoriteAudiosRequest(username, page, params),
+    (offset) => getUserFavoriteAudiosRequest(username, offset, params),
     {
       ...options,
       enabled: !!username && (options.enabled ?? true),

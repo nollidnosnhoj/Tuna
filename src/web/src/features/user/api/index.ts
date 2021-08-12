@@ -1,6 +1,6 @@
 import { GetServerSidePropsContext } from "next";
 import request from "~/lib/http";
-import { ImageUploadResponse, PagedList } from "~/lib/types";
+import { ImageUploadResponse, OffsetPagedList } from "~/lib/types";
 import { AudioView } from "../../audio/api/types";
 import { CurrentUser, Profile } from "./types";
 
@@ -29,15 +29,15 @@ export async function getProfileRequest(
 
 export async function getUserAudiosRequest(
   username: string,
-  page: number,
+  offset = 0,
   params?: Record<string, string | number | boolean>
-): Promise<PagedList<AudioView>> {
-  const { data } = await request<PagedList<AudioView>>({
+): Promise<OffsetPagedList<AudioView>> {
+  const { data } = await request<OffsetPagedList<AudioView>>({
     method: "get",
     url: `users/${username}/audios`,
     params: {
       ...params,
-      page,
+      offset,
     },
   });
   return data;
@@ -45,15 +45,15 @@ export async function getUserAudiosRequest(
 
 export async function getUserFavoriteAudiosRequest(
   username: string,
-  page?: number,
+  offset?: number,
   params?: Record<string, string | number | boolean>
-): Promise<PagedList<AudioView>> {
-  const { data } = await request<PagedList<AudioView>>({
+): Promise<OffsetPagedList<AudioView>> {
+  const { data } = await request<OffsetPagedList<AudioView>>({
     method: "get",
     url: `users/${username}/favorite/audios`,
     params: {
       ...params,
-      page,
+      offset,
     },
   });
   return data;

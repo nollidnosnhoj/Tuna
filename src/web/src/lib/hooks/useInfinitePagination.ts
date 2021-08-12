@@ -5,34 +5,31 @@ import {
   UseInfiniteQueryOptions,
   UseInfiniteQueryResult,
 } from "react-query";
-import { PagedList } from "../types";
+import { OffsetPagedList } from "../types";
 
 type InfinitePaginationQueryFunction<TItem> = (
-  page: number
-) => Promise<PagedList<TItem>>;
+  offset: number
+) => Promise<OffsetPagedList<TItem>>;
 
 export interface UseInfinitePaginationReturnType<TItem>
-  extends Omit<UseInfiniteQueryResult<PagedList<TItem>>, "data"> {
+  extends Omit<UseInfiniteQueryResult<OffsetPagedList<TItem>>, "data"> {
   items: TItem[];
 }
 
 export type UseInfinitePaginationOptions<TItem> = UseInfiniteQueryOptions<
-  PagedList<TItem>
+  OffsetPagedList<TItem>
 >;
 
 export function useInfinitePagination<TItem>(
   key: QueryKey,
   func: InfinitePaginationQueryFunction<TItem>,
-  options?: UseInfiniteQueryOptions<PagedList<TItem>>
+  options?: UseInfiniteQueryOptions<OffsetPagedList<TItem>>
 ): UseInfinitePaginationReturnType<TItem> {
-  const { data, ...result } = useInfiniteQuery<PagedList<TItem>>(
+  const { data, ...result } = useInfiniteQuery<OffsetPagedList<TItem>>(
     key,
-    ({ pageParam = 1 }) => func(pageParam),
+    ({ pageParam = 0 }) => func(pageParam),
     {
-      getNextPageParam: (lastPage) =>
-        lastPage.hasNext ? lastPage.page + 1 : undefined,
-      getPreviousPageParam: (firstPage) =>
-        firstPage.hasPrevious ? firstPage.page - 1 : undefined,
+      getNextPageParam: (lastPage) => lastPage.next,
       ...options,
     }
   );

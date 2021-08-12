@@ -19,7 +19,7 @@ export function useGetPlaylistAudios(
 ): UseInfinitePaginationReturnType<AudioView> {
   return useInfinitePagination<AudioView>(
     GET_PLAYLIST_AUDIOS_KEY(id),
-    (page) => getPlaylistAudiosRequest(id, page),
+    (offset) => getPlaylistAudiosRequest(id, offset),
     options
   );
 }

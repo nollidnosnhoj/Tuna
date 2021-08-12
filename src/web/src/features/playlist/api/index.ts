@@ -1,6 +1,6 @@
 import { GetServerSidePropsContext } from "next";
 import request from "~/lib/http";
-import { IdSlug, PagedList } from "~/lib/types";
+import { IdSlug, OffsetPagedList } from "~/lib/types";
 import { AudioId, AudioView } from "../../audio/api/types";
 import {
   CreatePlaylistRequest,
@@ -26,13 +26,13 @@ export async function getPlaylistRequest(
 
 export async function getPlaylistAudiosRequest(
   id: PlaylistId,
-  page = 1
-): Promise<PagedList<AudioView>> {
-  const { data } = await request<PagedList<AudioView>>({
+  offset = 0
+): Promise<OffsetPagedList<AudioView>> {
+  const { data } = await request<OffsetPagedList<AudioView>>({
     method: "GET",
     url: `playlists/${id}/audios`,
     params: {
-      page,
+      offset,
     },
   });
   return data;
