@@ -27,7 +27,7 @@
     "react-hook-form": "^7.12.2",
     "react-icons": "^4.1.0",
     "react-query": "^3.16.0",
-    "slugify": "^1.5.3",
+    "slugify": "^1.6.0",
     "uuid": "^8.3.2",
     "yup": "^0.32.8",
     "zustand": "^3.5.1"
