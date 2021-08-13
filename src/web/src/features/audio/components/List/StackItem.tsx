@@ -1,8 +1,8 @@
 import {
   Box,
+  chakra,
   Flex,
   IconButton,
-  Text,
   useColorModeValue,
 } from "@chakra-ui/react";
 import NextImage from "next/image";
@@ -13,10 +13,11 @@ import { AudioView } from "~/features/audio/api/types";
 import { formatDuration } from "~/utils/format";
 import PictureContainer from "~/components/Picture/PictureContainer";
 import AudioMiscMenu from "../ContextMenu";
+import { useAudioPlayer } from "~/lib/stores";
 
 export interface AudioListItemProps {
   audio: AudioView;
-  isPlaying?: boolean;
+  isActive?: boolean;
   onPlayClick?: () => void;
   removeArtistName?: boolean;
 }
@@ -24,9 +25,10 @@ export interface AudioListItemProps {
 const AudioStackItem: React.FC<AudioListItemProps> = ({
   audio,
   onPlayClick,
-  isPlaying,
+  isActive,
   removeArtistName = false,
 }) => {
+  const isPlaying = useAudioPlayer((state) => state.isPlaying);
   const [hoverItem, setHoverItem] = useState(false);
   const hoverBg = useColorModeValue("inherit", "whiteAlpha.200");
 
@@ -44,15 +46,15 @@ const AudioStackItem: React.FC<AudioListItemProps> = ({
         marginBottom: 1,
       }}
     >
-      <Flex marginX={2}>
+      <Flex paddingX={{ base: 2, md: 4 }}>
         <IconButton
-          visibility={hoverItem || isPlaying ? "visible" : "hidden"}
+          opacity={hoverItem || isActive ? 1 : 0}
           variant="unstyled"
           justifyContent="center"
           alignItems="center"
           display="flex"
           size="sm"
-          icon={isPlaying ? <FaPause /> : <FaPlay />}
+          icon={isPlaying && isActive ? <FaPause /> : <FaPlay />}
           aria-label="Play"
           onClick={onPlayClick}
         />
@@ -81,20 +83,22 @@ const AudioStackItem: React.FC<AudioListItemProps> = ({
               href={`/audios/${audio.slug}`}
               _hover={{ textDecoration: "none" }}
             >
-              <Text as="b" fontSize="md">
-                {audio.title}
-              </Text>
+              <chakra.b fontSize="md">{audio.title}</chakra.b>
             </Link>
           </Flex>
           {!removeArtistName && (
             <Link href={`/users/${audio.user.username}`}>
-              <Text as="i">{audio.user.username}</Text>
+              <chakra.span>{audio.user.username}</chakra.span>
             </Link>
           )}
         </Box>
       </Flex>
-      <Flex paddingX={4}>{formatDuration(audio.duration)}</Flex>
-      <AudioMiscMenu audio={audio} size="sm" />
+      <Flex paddingX={{ base: 2, md: 4 }}>
+        {formatDuration(audio.duration)}
+      </Flex>
+      <Box paddingX={{ base: 2, md: 4 }}>
+        <AudioMiscMenu audio={audio} size="sm" />
+      </Box>
     </Box>
   );
 };

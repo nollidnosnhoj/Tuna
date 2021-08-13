@@ -38,7 +38,7 @@ const PageContainer: React.FC<BoxProps> = ({ children, ...props }) => {
       </Drawer>
       <Box marginLeft={{ base: 0, md: 60 }}>
         <Header onOpenMenu={onOpen} />
-        <Box {...props} p={4} marginBottom="120px" as="main">
+        <Box {...props} p={4} paddingBottom="120px" as="main">
           {children}
         </Box>
       </Box>

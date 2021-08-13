@@ -1,8 +1,8 @@
 import { v4 as uuidv4 } from "uuid";
 import { AudioView } from "~/features/audio/api/types";
-import { AudioPlayerItem } from "~/lib/stores/useAudioQueue";
+import { AudioQueueItem } from "~/lib/stores/useAudioQueue";
 
-export function mapAudioForAudioQueue(audio: AudioView): AudioPlayerItem[] {
+export function mapAudioForAudioQueue(audio: AudioView): AudioQueueItem[] {
   return [
     {
       queueId: uuidv4(),
@@ -21,7 +21,7 @@ export function mapAudioForAudioQueue(audio: AudioView): AudioPlayerItem[] {
 export function mapAudiosForAudioQueue(
   audios: AudioView[],
   isRelatedAudio = false
-): AudioPlayerItem[] {
+): AudioQueueItem[] {
   return audios.map((audio) => ({
     queueId: uuidv4(),
     audioId: audio.id,

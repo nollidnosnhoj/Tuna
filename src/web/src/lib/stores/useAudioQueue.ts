@@ -1,5 +1,6 @@
 import create from "zustand";
-import { AudioId } from "~/features/audio/api/types";
+import { AudioId, AudioView } from "~/features/audio/api/types";
+import { mapAudiosForAudioQueue } from "~/utils";
 import { useAudioPlayer as audioPlayerStore } from "./useAudioPlayer";
 
 export enum REPEAT_MODE {
@@ -8,7 +9,7 @@ export enum REPEAT_MODE {
   REPEAT_ONE = "repeat_one",
 }
 
-export type AudioPlayerItem = {
+export type AudioQueueItem = {
   queueId: string;
   audioId: AudioId;
   title: string;
@@ -21,63 +22,51 @@ export type AudioPlayerItem = {
 };
 
 interface UseAudioQueueState {
-  queue: AudioPlayerItem[];
-  current?: AudioPlayerItem;
-  playIndex?: number;
+  context: string;
+  queue: AudioQueueItem[];
+  current?: AudioQueueItem;
+  playIndex: number;
   repeat: REPEAT_MODE;
-  addToQueue: (audios: AudioPlayerItem[]) => void;
-  clearQueue: (audioId?: AudioId) => void;
+  addToQueue: (context: string, audios: AudioView[]) => Promise<void>;
+  clearQueue: (context: string) => void;
   playNext: () => void;
   playPrevious: () => void;
-  removeFromQueue: (index: number) => void;
-  setNewQueue: (queue: AudioPlayerItem[], defaultIndex?: number) => void;
+  removeFromQueue: (context: string, index: number) => Promise<void>;
+  removeAudioFromQueue: (audioId: AudioId) => Promise<void>;
+  setNewQueue: (
+    context: string,
+    queue: AudioView[],
+    defaultIndex?: number
+  ) => Promise<void>;
   setPlayIndex: (index: number) => void;
   setRepeatMode: (mode: REPEAT_MODE) => void;
 }
 
 export const useAudioQueue = create<UseAudioQueueState>((set, get) => ({
+  context: "",
   queue: [],
-  playIndex: undefined,
+  playIndex: -1,
   repeat: REPEAT_MODE.DISABLE,
-  addToQueue: (audios) =>
-    set((state) => ({
-      queue: [...state.queue, ...audios],
-    })),
-  clearQueue: (audioId?: AudioId) => {
-    if (audioId) {
-      const { queue, current } = get();
-      // Create new queue without the specified audio.
-      const newQueue = queue.filter((x) => x.audioId !== audioId);
-
-      // If the current audio is the one removed from queue, then just end the audio player.
-      if (current?.audioId === audioId) {
+  addToQueue: (context, audios) => {
+    return new Promise<void>((resolve) => {
+      const { context: currentContext, queue } = get();
+      if (context === currentContext) {
         set({
-          queue: newQueue,
-          playIndex: undefined,
-          current: undefined,
+          queue: [...queue, ...mapAudiosForAudioQueue(audios)],
         });
-        return audioPlayerStore.setState({ isPlaying: false });
       }
-
-      // Find the new index of the current playing audio
-      const newPlayIndex = newQueue.findIndex(
-        (x) => x.queueId === current?.queueId
-      );
-
-      return set({
-        queue: newQueue,
-        playIndex: newPlayIndex,
-        current: newQueue[newPlayIndex],
-      });
-    }
-
-    set({
-      queue: [],
-      playIndex: undefined,
-      current: undefined,
+      resolve();
+      return;
     });
-
-    return audioPlayerStore.setState({ isPlaying: false });
+  },
+  clearQueue: (context?: string) => {
+    const { context: currentContext, queue, current } = get();
+    if (context && context !== currentContext) return;
+    if (queue.length <= 1) return;
+    return set({
+      queue: current ? [current] : [],
+      playIndex: 0,
+    });
   },
   playNext: () => {
     const { playIndex, queue, repeat } = get();
@@ -93,55 +82,82 @@ export const useAudioQueue = create<UseAudioQueueState>((set, get) => ({
   },
   playPrevious: () => {
     const { playIndex, queue } = get();
-    const newIndex = Math.max(
-      0,
-      Math.min(queue.length - 1, (playIndex ?? queue.length - 1) - 1)
-    );
+    const newIndex = Math.max(0, Math.min(queue.length - 1, playIndex - 1));
     set((state) => ({
       playIndex: newIndex,
       current: state.queue[newIndex],
     }));
     return audioPlayerStore.setState({ isPlaying: true });
   },
-  removeFromQueue: (index) => {
-    const { queue, playIndex } = get();
+  removeFromQueue: (context, index) => {
+    return new Promise<void>((resolve) => {
+      const { queue, playIndex, context: currentContext } = get();
 
-    const newQueue = [...queue];
-    newQueue.splice(index, 1);
+      // Ignore removal if the context does not match
+      if (currentContext !== context) {
+        resolve();
+        return;
+      }
 
-    let newIdx: number | undefined = playIndex;
+      // There should always be one item [except initially]
+      if (queue.length <= 1) {
+        resolve();
+        return;
+      }
 
-    if (newQueue.length === 0 || playIndex === undefined) {
-      newIdx = undefined;
-    } else if (playIndex === index) {
-      newIdx = Math.max(
-        0,
-        Math.min(playIndex ?? newQueue.length - 1, newQueue.length - 1)
-      );
-    } else if (playIndex > index) {
-      newIdx = playIndex - 1;
-    }
+      // Remove from queue
+      const newQueue = [...queue];
+      newQueue.splice(index, 1);
 
-    set({
-      queue: newQueue,
-      playIndex: newIdx,
-      current: newIdx === undefined ? undefined : newQueue[newIdx],
-    });
+      // Find the new play index after removal
+      let newIdx = playIndex;
+      if (playIndex === index) {
+        newIdx = Math.max(0, Math.min(playIndex, newQueue.length - 1));
+      } else if (playIndex > index) {
+        newIdx = playIndex - 1;
+      }
 
-    return audioPlayerStore.setState({ isPlaying: newQueue.length > 0 });
-  },
-  setNewQueue: (queue, defaultIndex = 0) => {
-    if (queue.length > 0) {
       set({
-        queue: queue,
-        current: queue[defaultIndex],
-        playIndex: defaultIndex,
+        queue: newQueue,
+        playIndex: newIdx,
+        current: newQueue[newIdx],
       });
-      return audioPlayerStore.setState({ isPlaying: true });
-    }
+
+      resolve();
+      return;
+    });
+  },
+  removeAudioFromQueue: (audioId) => {
+    return new Promise<void>((resolve) => {
+      const { queue, current } = get();
+      const filteredQueue = queue.filter((x) => x.audioId !== audioId);
+      const newIndex =
+        current?.audioId === audioId
+          ? 0
+          : queue.findIndex((x) => x.queueId === current?.queueId);
+      set({ queue: filteredQueue, playIndex: newIndex });
+      return resolve();
+    });
+  },
+  setNewQueue: (context, queue, defaultIndex = 0) => {
+    return new Promise<void>((resolve) => {
+      if (queue.length > 0) {
+        const items = mapAudiosForAudioQueue(queue);
+        set({
+          context,
+          queue: items,
+          current: items[defaultIndex],
+          playIndex: defaultIndex,
+        });
+        audioPlayerStore.setState({ isPlaying: true });
+      }
+      resolve();
+      return;
+    });
   },
   setPlayIndex: (index) => {
-    const { queue } = get();
+    const { queue, playIndex } = get();
+    if (playIndex === index) return;
     const newPlayIndex = Math.max(0, Math.min(index, queue.length - 1));
     set({
       playIndex: newPlayIndex,

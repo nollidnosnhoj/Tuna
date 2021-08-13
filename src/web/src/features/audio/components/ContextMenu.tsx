@@ -15,7 +15,6 @@ import { HiDotsHorizontal } from "react-icons/hi";
 import { MdQueueMusic } from "react-icons/md";
 import { useUser } from "~/features/user/hooks";
 import { useAddToPlaylist, useAudioQueue } from "~/lib/stores";
-import { mapAudioForAudioQueue } from "~/utils";
 import { AudioView, Visibility } from "../api/types";
 import AudioEditDrawer from "./Edit";
 import AudioShareModal from "./Share";
@@ -25,10 +24,11 @@ type MenuPlacementType = Pick<MenuProps, "placement">;
 
 interface AudioMiscMenuProps extends ButtonSizeType, MenuPlacementType {
   audio: AudioView;
+  context?: string;
 }
 
 export default function AudioMiscMenu({ audio, ...props }: AudioMiscMenuProps) {
-  const { placement = "bottom-start", size = "md" } = props;
+  const { placement = "bottom-start", size = "md", context = "custom" } = props;
   const { user } = useUser();
   const addToQueue = useAudioQueue((state) => state.addToQueue);
   const addToPlaylist = useAddToPlaylist((state) => state.openDialog);
@@ -62,7 +62,7 @@ export default function AudioMiscMenu({ audio, ...props }: AudioMiscMenuProps) {
           )}
           <MenuItem
             icon={<MdQueueMusic />}
-            onClick={() => addToQueue(mapAudioForAudioQueue(audio))}
+            onClick={async () => await addToQueue(context, [audio])}
           >
             Add to queue
           </MenuItem>

@@ -78,9 +78,7 @@ export default function UserProfileNextPage(props: ProfilePageProps) {
             <Box>
               <AudioList
                 audios={latestAudios}
-                notFoundContent={<p>No uploads.</p>}
-                defaultLayout="list"
-                hideLayoutToggle
+                context={`users:${profile.username}`}
               />
               {latestAudios.length > 0 && (
                 <NextLink href={`/users/${profile.username}/audios`}>
@@ -93,9 +91,7 @@ export default function UserProfileNextPage(props: ProfilePageProps) {
             <Box>
               <AudioList
                 audios={latestFavoriteAudios}
-                notFoundContent={<p>No favorite audios.</p>}
-                defaultLayout="list"
-                hideLayoutToggle
+                context={`user_favorites:${profile.username}`}
               />
               {latestFavoriteAudios.length > 0 && (
                 <NextLink href={`/users/${profile.username}/favorite/audios`}>

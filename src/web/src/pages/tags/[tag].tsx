@@ -1,5 +1,5 @@
 import React from "react";
-import { Heading, Text } from "@chakra-ui/react";
+import { Heading } from "@chakra-ui/react";
 import InfiniteListControls from "~/components/ui/ListControls/Infinite";
 import Page from "~/components/Page";
 import AudioList from "~/features/audio/components/List";
@@ -26,11 +26,7 @@ export default function TagAudioPage() {
           Showing '{tag}' audios
         </Heading>
       )}
-      <AudioList
-        audios={audios}
-        notFoundContent={<Text>No audio found. Be the first to upload!</Text>}
-        hideLayoutToggle
-      />
+      <AudioList audios={audios} context={`tags:${tag}`} />
       <InfiniteListControls
         fetchNext={fetchNextPage}
         hasNext={hasNextPage}

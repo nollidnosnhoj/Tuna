@@ -21,7 +21,7 @@ export default function AudioSearchNextPage() {
   return (
     <Page title="Search audios | Audiochan">
       <Heading>Search {q ? `results for ${q}` : ""}</Heading>
-      <AudioList audios={audios} />
+      <AudioList audios={audios} context={`search:${q}`} />
       {audios.length && (
         <PaginationListControls
           currentPage={page}
