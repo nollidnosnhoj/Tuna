@@ -3,6 +3,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Extensions;
+using Audiochan.Core.Common.Interfaces;
+using Audiochan.Core.Common.Models;
 using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Interfaces;
@@ -12,14 +14,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Audios.GetLatestAudios
 {
-    public record GetLatestAudioQuery : IRequest<GetAudioListViewModel>
+    public record GetLatestAudioQuery : IHasCursorPage<long>, IRequest<CursorPagedListDto<AudioViewModel>>
     {
-        public string? Tag { get; init; }
         public long? Cursor { get; init; }
         public int Size { get; init; } = 30;
     }
 
-    public class GetLatestAudioQueryHandler : IRequestHandler<GetLatestAudioQuery, GetAudioListViewModel>
+    public class GetLatestAudioQueryHandler : IRequestHandler<GetLatestAudioQuery, CursorPagedListDto<AudioViewModel>>
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly long _currentUserId;
@@ -30,31 +31,16 @@ namespace Audiochan.Core.Features.Audios.GetLatestAudios
             _currentUserId = currentUserService.GetUserId();
         }
 
-        public async Task<GetAudioListViewModel> Handle(GetLatestAudioQuery query,
+        public async Task<CursorPagedListDto<AudioViewModel>> Handle(GetLatestAudioQuery query,
             CancellationToken cancellationToken)
         {
-            var audios = await _dbContext.Audios
+            return await _dbContext.Audios
                 .AsNoTracking()
                 .Include(x => x.Tags)
                 .Include(x => x.User)
                 .Where(a => a.UserId == _currentUserId || a.Visibility == Visibility.Public)
-                .FilterCursor(query.Cursor)
                 .Select(AudioMaps.AudioToView)
-                .Take(query.Size)
-                .ToListAsync(cancellationToken);
-
-            var nextCursor = GetNextCursor(audios, query.Size);
-
-            return new GetAudioListViewModel(audios, nextCursor);
-        }
-
-        private long? GetNextCursor(List<AudioViewModel> audios, int size)
-        {
-            var lastAudio = audios.LastOrDefault();
-
-            return audios.Count < size
-                ? null
-                : lastAudio?.Id;
+                .CursorPaginateAsync(query, cancellationToken);
         }
     }
 }

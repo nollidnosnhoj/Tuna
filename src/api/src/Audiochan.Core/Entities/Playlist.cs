@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Entities.Abstractions;
 using Audiochan.Core.Entities.Enums;
 
 namespace Audiochan.Core.Entities
 {
-    public class Playlist : IHasVisibility, IAudited
+    public class Playlist : IHasVisibility, IAudited, IResourceEntity<long>
     {
         public Playlist()
         {

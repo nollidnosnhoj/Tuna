@@ -2,7 +2,7 @@
 
 namespace Audiochan.Core.Common.Models
 {
-    public record CursorPagedListDto<TItem>(IList<TItem> Items, int? NextCursor, int Size)
+    public record CursorPagedListDto<TItem>(IList<TItem> Items, long? Next, int Size)
     {
         
     }

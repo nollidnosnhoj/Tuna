@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Entities.Abstractions;
 using Audiochan.Core.Entities.Enums;
 
 namespace Audiochan.Core.Entities
 {
-    public class Audio : IHasVisibility, IAudited
+    public class Audio : IHasVisibility, IAudited, IResourceEntity<long>
     {
         public Audio()
         {

@@ -118,10 +118,15 @@ namespace Audiochan.API.Controllers
             OperationId = "GetPlaylistAudios",
             Tags = new[] { "playlists" })]
         public async Task<ActionResult<PagedListDto<AudioViewModel>>> GetPlaylistAudios(long playlistId,
+            [FromQuery] CursorPaginationQueryParams<long> queryParams,
             CancellationToken cancellationToken)
         {
-            var audios = await _mediator.Send(
-                new GetPlaylistAudiosQuery(playlistId), cancellationToken);
+            var (cursor, size) = queryParams;
+            var audios = await _mediator.Send(new GetPlaylistAudiosQuery(playlistId)
+            {
+                Cursor = cursor,
+                Size = size
+            }, cancellationToken);
 
             return new JsonResult(audios);
         }

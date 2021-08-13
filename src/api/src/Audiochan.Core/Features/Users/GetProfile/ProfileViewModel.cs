@@ -1,6 +1,8 @@
-﻿namespace Audiochan.Core.Features.Users.GetProfile
+﻿using Audiochan.Core.Common.Interfaces;
+
+namespace Audiochan.Core.Features.Users.GetProfile
 {
-    public record ProfileViewModel
+    public record ProfileViewModel : IResourceModel<long>
     {
         public long Id { get; init; }
         public string Username { get; init; } = null!;

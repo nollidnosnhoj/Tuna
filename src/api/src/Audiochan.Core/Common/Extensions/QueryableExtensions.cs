@@ -2,7 +2,9 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Models;
 using Audiochan.Core.Entities;
+using Audiochan.Core.Features.Audios.GetAudio;
 using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Common.Extensions
@@ -22,16 +24,6 @@ namespace Audiochan.Core.Common.Extensions
             }
 
             return tagEntities;
-        }
-
-        public static IQueryable<Audio> FilterCursor(this IQueryable<Audio> queryable, long? cursor)
-        {
-            if (cursor is null)
-                return queryable;
-            
-            queryable = queryable.Where(a => a.Id < cursor);
-
-            return queryable;
         }
     }
 }

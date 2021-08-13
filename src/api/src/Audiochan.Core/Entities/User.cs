@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Entities.Abstractions;
 using Audiochan.Core.Entities.Enums;
 
 namespace Audiochan.Core.Entities
 {
-    public class User : IAudited
+    public class User : IAudited, IResourceEntity<long>
     {
         public User()
         {

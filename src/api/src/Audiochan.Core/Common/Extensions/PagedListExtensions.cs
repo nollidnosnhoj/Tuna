@@ -12,6 +12,39 @@ namespace Audiochan.Core.Common.Extensions
     {
         private const int DefaultPageSize = 30;
 
+        public static async Task<CursorPagedListDto<TResponse>> CursorPaginateAsync<TResponse>(
+            this IQueryable<TResponse> queryable,
+            long? cursor,
+            int size = DefaultPageSize,
+            CancellationToken cancellationToken = default) where TResponse : IResourceModel<long>
+        {
+            cursor ??= null;
+            if (size == default) size = DefaultPageSize;
+            if (cursor > 0)
+            {
+                queryable = queryable.Where(x => x.Id < cursor);
+            }
+
+            var list = await queryable
+                .Take(size)
+                .ToListAsync(cancellationToken);
+
+            var next = list.Count < size
+                ? null
+                : list.LastOrDefault()?.Id;
+
+            return new CursorPagedListDto<TResponse>(list, next, size);
+        }
+        
+        public static async Task<CursorPagedListDto<TResponse>> CursorPaginateAsync<TResponse>(
+            this IQueryable<TResponse> queryable,
+            IHasCursorPage<long> query,
+            CancellationToken cancellationToken = default) 
+                where TResponse : IResourceModel<long>
+        {
+            return await queryable.CursorPaginateAsync(query.Cursor, query.Size, cancellationToken);
+        }
+
         public static async Task<OffsetPagedListDto<TResponse>> OffsetPaginateAsync<TResponse>(
             this IQueryable<TResponse> queryable,
             int offset = 0,
