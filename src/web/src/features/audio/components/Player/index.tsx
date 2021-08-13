@@ -33,7 +33,8 @@ export default function AudioPlayer(props: AudioPlayerProps) {
   // Register any audio event listeners here
   useEffect(() => {
     const handleOnEnded = () => {
-      if (repeat === REPEAT_MODE.REPEAT) {
+      // Repeat one means to keep repeating the single song
+      if (repeat !== REPEAT_MODE.REPEAT_ONE) {
         playNext();
       }
     };

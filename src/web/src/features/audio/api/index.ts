@@ -10,7 +10,7 @@ import {
 import { AudioView, AudioId, AudioRequest, CreateAudioRequest } from "./types";
 
 export async function getAudiosRequest(
-  cursor?: string,
+  cursor?: number,
   params: Record<string, string | boolean | number> = {}
 ): Promise<CursorPagedList<AudioView>> {
   const { data } = await request<CursorPagedList<AudioView>>({

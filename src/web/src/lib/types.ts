@@ -30,7 +30,8 @@ export type OffsetPagedList<T> = {
 
 export type CursorPagedList<T> = {
   items: T[];
-  next?: string;
+  next?: number;
+  size: number;
 };
 
 export interface PaginatedOptions {

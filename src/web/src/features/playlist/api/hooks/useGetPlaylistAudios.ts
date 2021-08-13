@@ -1,25 +1,28 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { QueryKey } from "react-query";
 import { AudioView } from "~/features/audio/api/types";
 import {
-  useInfinitePagination,
-  UseInfinitePaginationOptions,
-  UseInfinitePaginationReturnType,
+  useInfiniteCursorPagination,
+  UseInfiniteCursorPaginationOptions,
+  UseInfiniteCursorPaginationReturnType,
 } from "~/lib/hooks";
 import { getPlaylistAudiosRequest } from "..";
 import { PlaylistId } from "../types";
 
-export const GET_PLAYLIST_AUDIOS_KEY = (id: PlaylistId): QueryKey => [
-  "playlist_audios",
-  id,
-];
+export const GET_PLAYLIST_AUDIOS_KEY = (
+  id: PlaylistId | undefined
+): QueryKey => ["playlist_audios", id];
 
 export function useGetPlaylistAudios(
-  id: PlaylistId,
-  options: UseInfinitePaginationOptions<AudioView> = {}
-): UseInfinitePaginationReturnType<AudioView> {
-  return useInfinitePagination<AudioView>(
+  id: PlaylistId | undefined,
+  options: UseInfiniteCursorPaginationOptions<AudioView> = {}
+): UseInfiniteCursorPaginationReturnType<AudioView> {
+  return useInfiniteCursorPagination<AudioView>(
     GET_PLAYLIST_AUDIOS_KEY(id),
-    (offset) => getPlaylistAudiosRequest(id, offset),
-    options
+    (cursor) => getPlaylistAudiosRequest(id!, cursor),
+    {
+      enabled: !!id,
+      ...options,
+    }
   );
 }

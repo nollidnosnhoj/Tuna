@@ -8,7 +8,7 @@ import {
 import { CursorPagedList } from "../types";
 
 type InfiniteCursorPaginationQueryFunction<TItem> = (
-  cursor: string
+  cursor: number
 ) => Promise<CursorPagedList<TItem>>;
 
 export interface UseInfiniteCursorPaginationReturnType<TItem>
