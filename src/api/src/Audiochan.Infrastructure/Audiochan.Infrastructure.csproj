@@ -7,7 +7,7 @@
 
   <ItemGroup>
     <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="3.7.1" />
-    <PackageReference Include="AWSSDK.S3" Version="3.7.1.22" />
+    <PackageReference Include="AWSSDK.S3" Version="3.7.1.23" />
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.2" />
     <PackageReference Include="Nanoid" Version="2.1.0" />
     <PackageReference Include="SixLabors.ImageSharp" Version="1.0.3" />
