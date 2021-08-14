@@ -69,7 +69,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             result.Should().BeOfType<AudioViewModel>();
             result!.Title.Should().Be(audio.Title);
             result.Description.Should().Be(audio.Description);
-            result.Created.Should().BeCloseTo(audio.Created);
+            result.Created.Should().Be(audio.Created);
             result.Duration.Should().Be(audio.Duration);
             result.Picture.Should().BeNullOrEmpty();
             result.Tags.Count.Should().Be(audio.Tags.Count);
@@ -144,7 +144,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             cacheResult.Should().BeOfType<AudioViewModel>();
             cacheResult!.Title.Should().Be(result!.Title);
             cacheResult.Description.Should().Be(result!.Description);
-            cacheResult.Created.Should().BeCloseTo(result!.Created);
+            cacheResult.Created.Should().Be(result!.Created);
             cacheResult.Duration.Should().Be(result!.Duration);
             cacheResult.Picture.Should().BeNullOrEmpty();
             cacheResult.Tags.Count.Should().Be(result!.Tags.Count);
