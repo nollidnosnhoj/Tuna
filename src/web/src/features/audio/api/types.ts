@@ -19,6 +19,7 @@ export interface AudioView {
   duration: number;
   size: number;
   picture?: string;
+  isFavorited?: boolean;
   created: string;
   lastModified?: string;
   audioUrl: string;

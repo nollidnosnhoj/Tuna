@@ -6,6 +6,7 @@ using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Features.Audios.GetAudio;
+using Audiochan.Core.Interfaces;
 using Audiochan.Core.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -22,10 +23,12 @@ namespace Audiochan.Core.Features.Audios.GetAudioFeed
     public class GetAudioFeedQueryHandler : IRequestHandler<GetAudioFeedQuery, OffsetPagedListDto<AudioViewModel>>
     {
         private readonly ApplicationDbContext _dbContext;
+        private readonly long _currentUserId;
 
-        public GetAudioFeedQueryHandler(ApplicationDbContext dbContext)
+        public GetAudioFeedQueryHandler(ApplicationDbContext dbContext, ICurrentUserService currentUserService)
         {
             _dbContext = dbContext;
+            _currentUserId = currentUserService.GetUserId();
         }
 
         public async Task<OffsetPagedListDto<AudioViewModel>> Handle(GetAudioFeedQuery query,
@@ -42,9 +45,10 @@ namespace Audiochan.Core.Features.Audios.GetAudioFeed
                 .AsNoTracking()
                 .Include(x => x.Tags)
                 .Include(x => x.User)
+                .Include(x => x.Favorited)
                 .Where(a => a.Visibility == Visibility.Public)
                 .Where(a => followingIds.Contains(a.UserId))
-                .Select(AudioMaps.AudioToView)
+                .Select(AudioMaps.AudioToView(_currentUserId))
                 .OrderByDescending(a => a.Created)
                 .OffsetPaginateAsync(cancellationToken: cancellationToken);
         }

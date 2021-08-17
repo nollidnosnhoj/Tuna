@@ -47,7 +47,7 @@ namespace Audiochan.Core.Features.Users.GetUserAudios
             queryable = queryable.Where(a => a.UserId == _currentUserId || a.Visibility == Visibility.Public);
 
             return await queryable
-                .Select(AudioMaps.AudioToView)
+                .Select(AudioMaps.AudioToView(_currentUserId))
                 .OffsetPaginateAsync(request, cancellationToken);
         }
     }

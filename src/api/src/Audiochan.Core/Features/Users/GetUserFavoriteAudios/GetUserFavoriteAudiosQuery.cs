@@ -42,7 +42,7 @@ namespace Audiochan.Core.Features.Users.GetUserFavoriteAudios
                 .SelectMany(u => u.FavoriteAudios)
                 .Select(fa => fa.Audio)
                 .Where(p => p.Visibility == Visibility.Public)
-                .Select(AudioMaps.AudioToView)
+                .Select(AudioMaps.AudioToView(_currentUserId))
                 .OffsetPaginateAsync(query, cancellationToken);
         }
     }

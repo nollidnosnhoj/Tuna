@@ -49,7 +49,7 @@ namespace Audiochan.Core.Features.Playlists.GetPlaylistAudios
                 .Where(pa => pa.PlaylistId == request.Id)
                 .Select(pa => pa.Audio)
                 .Where(a => a.UserId == _currentUserId || a.Visibility == Visibility.Public)
-                .Select(AudioMaps.AudioToView)
+                .Select(AudioMaps.AudioToView(_currentUserId))
                 .CursorPaginateAsync(request, cancellationToken);
         }
     }
