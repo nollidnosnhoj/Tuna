@@ -53,8 +53,6 @@ namespace Audiochan.Core.Features.Audios.GetAudio
             {
                 audio = await _dbContext.Audios
                     .AsNoTracking()
-                    .Include(x => x.Tags)
-                    .Include(x => x.User)
                     .Where(x => x.Id == audioId)
                     .Select(AudioMaps.AudioToView())
                     .SingleOrDefaultAsync(cancellationToken);

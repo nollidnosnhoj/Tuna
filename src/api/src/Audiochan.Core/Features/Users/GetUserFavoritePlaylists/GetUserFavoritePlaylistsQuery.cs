@@ -44,7 +44,6 @@ namespace Audiochan.Core.Features.Users.GetUserFavoritePlaylists
         {
             return await _dbContext.Users
                 .AsNoTracking()
-                .Include(u => u.FavoritePlaylists)
                 .Where(u => u.UserName == request.Username)
                 .SelectMany(u => u.FavoritePlaylists)
                 .Where(p => p.Visibility == Visibility.Public)

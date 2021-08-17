@@ -38,9 +38,6 @@ namespace Audiochan.Core.Features.Users.GetUserAudios
         {
             return await _unitOfWork.Audios
                 .AsNoTracking()
-                .Include(a => a.Tags)
-                .Include(a => a.User)
-                .Include(a => a.Favorited)
                 .Where(a => a.User.UserName == request.Username)
                 .Where(a => a.UserId == _currentUserId || a.Visibility == Visibility.Public)
                 .Select(AudioMaps.AudioToView(_currentUserId))

@@ -27,7 +27,7 @@ namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
             var (observerId, _) = await RunAsUserAsync(_faker.Random.String2(15));
 
             var audio = new AudioFaker(targetId).Generate();
-            Insert(audio);
+            InsertIntoDatabase(audio);
 
             // Act
             await SendAsync(new SetFavoriteAudioCommand(audio.Id, observerId, true));
@@ -54,14 +54,14 @@ namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
             var (observerId, _) = await RunAsUserAsync(_faker.Random.String2(15));
             
             var audio = new AudioFaker(targetId).Generate();
-            Insert(audio);
+            InsertIntoDatabase(audio);
 
             var favoriteAudio = new FavoriteAudio
             {
                 AudioId = audio.Id,
                 UserId = observerId,
             };
-            Insert(favoriteAudio);
+            InsertIntoDatabase(favoriteAudio);
 
             // Act
             await SendAsync(new SetFavoriteAudioCommand(audio.Id, observerId, false));

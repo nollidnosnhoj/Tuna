@@ -18,7 +18,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
         {
             var (ownerId, _) = await RunAsDefaultUserAsync();
             var audio = new AudioFaker(ownerId).Generate();
-            Insert(audio);
+            InsertIntoDatabase(audio);
 
             var command = new RemoveAudioCommand(audio.Id);
             var result = await SendAsync(command);

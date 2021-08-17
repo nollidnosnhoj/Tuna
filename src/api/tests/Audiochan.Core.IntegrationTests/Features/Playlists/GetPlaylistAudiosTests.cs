@@ -25,15 +25,15 @@ namespace Audiochan.Core.IntegrationTests.Features.Playlists
             var audioFaker = new AudioFaker(userId).WithVisibility(Visibility.Public);
             var playlistFaker = new PlaylistFaker(userId);
             var audios = audioFaker.Generate(5);
-            InsertRange(audios);
+            InsertRangeIntoDatabase(audios);
             var playlist = playlistFaker.Generate();
-            Insert(playlist);
+            InsertIntoDatabase(playlist);
             var playlistAudios = audios.Select(a => new PlaylistAudio
             {
                 PlaylistId = playlist.Id,
                 AudioId = a.Id
             });
-            InsertRange(playlistAudios);
+            InsertRangeIntoDatabase(playlistAudios);
 
             var response = await SendAsync(new GetPlaylistAudiosQuery(playlist.Id));
 

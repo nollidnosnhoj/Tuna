@@ -21,23 +21,26 @@ namespace Audiochan.Core.IntegrationTests.Features.Playlists
         public async Task ShouldSuccessfullyRemoveAudiosFromPlaylist()
         {
             var (userId, _) = await RunAsDefaultUserAsync();
+            
             var playlist = new PlaylistFaker(userId).Generate();
-            Insert(playlist);
+            InsertIntoDatabase(playlist);
+            
             var audios = new AudioFaker(userId)
                 .WithVisibility(Visibility.Public)
                 .Generate(5);
-            InsertRange(audios);
+            InsertRangeIntoDatabase(audios);
+            
             var playlistAudios = audios
                 .Select(a => new PlaylistAudio
                 {
                     AudioId = a.Id,
                     PlaylistId = playlist.Id,
                 }).ToList();
-            InsertRange(playlistAudios);
+            InsertRangeIntoDatabase(playlistAudios);
 
-            var result = await SendAsync(new RemoveAudiosFromPlaylistCommand(
-                playlist.Id, 
-                playlistAudios.Select(a => a.Id).ToList()));
+            var playlistAudioIds = playlistAudios.Select(pa => pa.Id).ToList();
+            var request = new RemoveAudiosFromPlaylistCommand(playlist.Id, playlistAudioIds);
+            var result = await SendAsync(request);
 
             var newAudios = ExecuteDbContext(db =>
             {
@@ -55,18 +58,18 @@ namespace Audiochan.Core.IntegrationTests.Features.Playlists
         {
             var (userId, _) = await RunAsDefaultUserAsync();
             var playlist = new PlaylistFaker(userId).Generate();
-            Insert(playlist);
+            InsertIntoDatabase(playlist);
             var audios = new AudioFaker(userId)
                 .WithVisibility(Visibility.Public)
                 .Generate(5);
-            InsertRange(audios);
+            InsertRangeIntoDatabase(audios);
             var playlistAudios = audios
                 .Select(a => new PlaylistAudio
                 {
                     AudioId = a.Id,
                     PlaylistId = playlist.Id,
                 }).ToList();
-            InsertRange(playlistAudios);
+            InsertRangeIntoDatabase(playlistAudios);
 
             await RunAsUserAsync("testuser");
             var result = await SendAsync(new RemoveAudiosFromPlaylistCommand(

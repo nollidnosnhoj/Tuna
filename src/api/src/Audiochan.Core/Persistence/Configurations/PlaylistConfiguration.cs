@@ -46,7 +46,7 @@ namespace Audiochan.Core.Persistence.Configurations
                         .HasForeignKey(o => o.AudioId)
                         .OnDelete(DeleteBehavior.Cascade),
                     j => j.HasOne(pa => pa.Playlist)
-                        .WithMany()
+                        .WithMany(p => p.PlaylistAudios)
                         .HasForeignKey(o => o.PlaylistId)
                         .OnDelete(DeleteBehavior.Cascade),
                     j =>

@@ -43,9 +43,6 @@ namespace Audiochan.Core.Features.Audios.GetAudioFeed
             
             return await _dbContext.Audios
                 .AsNoTracking()
-                .Include(x => x.Tags)
-                .Include(x => x.User)
-                .Include(x => x.Favorited)
                 .Where(a => a.Visibility == Visibility.Public)
                 .Where(a => followingIds.Contains(a.UserId))
                 .Select(AudioMaps.AudioToView(_currentUserId))

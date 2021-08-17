@@ -45,9 +45,6 @@ namespace Audiochan.Core.Features.Audios.SearchAudios
 
             var queryable = _dbContext.Audios
                 .AsNoTracking()
-                .Include(x => x.Tags)
-                .Include(x => x.User)
-                .Include(x => x.Favorited)
                 .Where(a => a.UserId == _currentUserId || a.Visibility == Visibility.Public);
 
             if (!string.IsNullOrWhiteSpace(query.Q))

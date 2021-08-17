@@ -47,8 +47,8 @@ namespace Audiochan.Core.Features.Playlists.RemoveAudiosFromPlaylist
         public async Task<Result> Handle(RemoveAudiosFromPlaylistCommand request, CancellationToken cancellationToken)
         {
             var playlist = await _unitOfWork.Playlists
-                .Include(p =>
-                    p.Audios.Where(pa => request.PlaylistAudioIds.Contains(pa.Id)))
+                .Include(p => p.PlaylistAudios
+                    .Where(pa => request.PlaylistAudioIds.Contains(pa.Id)))
                 .Where(p => p.Id == request.PlaylistId)
                 .SingleOrDefaultAsync(cancellationToken);
 
@@ -56,15 +56,15 @@ namespace Audiochan.Core.Features.Playlists.RemoveAudiosFromPlaylist
                 return Result.NotFound("Playlist was not found.");
             if (playlist.UserId != _currentUserId)
                 return Result.Forbidden();
-            if (playlist.Audios.Count == 0)
+            if (playlist.PlaylistAudios.Count == 0)
                 return Result.NotFound("Audios was not found in playlist.");
 
             // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
             foreach (var id in request.PlaylistAudioIds)
             {
-                var playlistAudio = playlist.Audios.FirstOrDefault(x => x.Id == id);
+                var playlistAudio = playlist.PlaylistAudios.FirstOrDefault(x => x.Id == id);
                 if (playlistAudio is not null)
-                    playlist.Audios.Remove(playlistAudio);
+                    playlist.PlaylistAudios.Remove(playlistAudio);
             }
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
