@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Text;
-using Audiochan.Core.Common.Settings;
+using Audiochan.Core.Common;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

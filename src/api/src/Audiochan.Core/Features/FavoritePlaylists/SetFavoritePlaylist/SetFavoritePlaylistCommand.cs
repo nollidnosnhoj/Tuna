@@ -18,12 +18,10 @@ namespace Audiochan.Core.Features.FavoritePlaylists.SetFavoritePlaylist
     public class SetFavoritePlaylistCommandHandler : IRequestHandler<SetFavoritePlaylistCommand, Result<bool>>
     {
         private readonly ApplicationDbContext _unitOfWork;
-        private readonly IDateTimeProvider _dateTimeProvider;
 
-        public SetFavoritePlaylistCommandHandler(ApplicationDbContext unitOfWork, IDateTimeProvider dateTimeProvider)
+        public SetFavoritePlaylistCommandHandler(ApplicationDbContext unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            _dateTimeProvider = dateTimeProvider;
         }
 
         public async Task<Result<bool>> Handle(SetFavoritePlaylistCommand command, CancellationToken cancellationToken)

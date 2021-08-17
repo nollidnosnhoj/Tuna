@@ -1,28 +1,30 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Entities.Enums;
+using Audiochan.Core.Features.Audios;
 using Audiochan.Core.Interfaces;
 using Audiochan.Core.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace Audiochan.Core.Features.Playlists.GetPlaylistDetail
+namespace Audiochan.Core.Features.Playlists.GetPlaylist
 {
-    public record GetPlaylistDetailQuery(long Id) : IRequest<PlaylistViewModel?>;
+    public record GetPlaylistQuery(long Id) : IRequest<PlaylistViewModel?>;
     
-    public class GetPlaylistDetailQueryHandler : IRequestHandler<GetPlaylistDetailQuery, PlaylistViewModel?>
+    public class GetPlaylistQueryHandler : IRequestHandler<GetPlaylistQuery, PlaylistViewModel?>
     {
         private readonly long _currentUserId;
         private readonly ApplicationDbContext _unitOfWork;
 
-        public GetPlaylistDetailQueryHandler(ICurrentUserService currentUserService, ApplicationDbContext unitOfWork)
+        public GetPlaylistQueryHandler(ICurrentUserService currentUserService, ApplicationDbContext unitOfWork)
         {
             _currentUserId = currentUserService.GetUserId();
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<PlaylistViewModel?> Handle(GetPlaylistDetailQuery request, CancellationToken cancellationToken)
+        public async Task<PlaylistViewModel?> Handle(GetPlaylistQuery request, CancellationToken cancellationToken)
         {
             var playlist = await _unitOfWork.Playlists
                 .AsNoTracking()

@@ -1,7 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using Audiochan.Core.Common.Constants;
-using Audiochan.Core.Common.Settings;
 using FluentValidation;
 
 namespace Audiochan.Core.Common.Extensions

@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Auth.Refresh
 {
-    public record RefreshTokenCommand : IRequest<Result<AuthResult>>
+    public record RefreshTokenCommand : IRequest<Result<AuthResultViewModel>>
     {
         public string RefreshToken { get; init; } = null!;
     }
@@ -25,7 +25,7 @@ namespace Audiochan.Core.Features.Auth.Refresh
         }
     }
 
-    public class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommand, Result<AuthResult>>
+    public class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommand, Result<AuthResultViewModel>>
     {
         private readonly ITokenProvider _tokenProvider;
         private readonly ApplicationDbContext _dbContext;
@@ -36,7 +36,7 @@ namespace Audiochan.Core.Features.Auth.Refresh
             _dbContext = dbContext;
         }
 
-        public async Task<Result<AuthResult>> Handle(RefreshTokenCommand command,
+        public async Task<Result<AuthResultViewModel>> Handle(RefreshTokenCommand command,
             CancellationToken cancellationToken)
         {
             var user = await _dbContext.Users
@@ -45,19 +45,19 @@ namespace Audiochan.Core.Features.Auth.Refresh
                     .Any(t => t.Token == command.RefreshToken && t.UserId == u.Id), cancellationToken);
 
             if (user == null)
-                return Result<AuthResult>.BadRequest("Refresh token does not belong to a user.");
+                return Result<AuthResultViewModel>.BadRequest("Refresh token does not belong to a user.");
 
             var existingRefreshToken = user.RefreshTokens
                 .Single(r => r.Token == command.RefreshToken);
 
             if (!await _tokenProvider.ValidateRefreshToken(existingRefreshToken.Token))
-                return Result<AuthResult>.BadRequest("Refresh token is invalid/expired.");
+                return Result<AuthResultViewModel>.BadRequest("Refresh token is invalid/expired.");
 
             var (refreshToken, refreshTokenExpiration) =
                 await _tokenProvider.GenerateRefreshToken(user, existingRefreshToken.Token);
             var (token, tokenExpiration) = _tokenProvider.GenerateAccessToken(user);
 
-            return Result<AuthResult>.Success(new AuthResult
+            return Result<AuthResultViewModel>.Success(new AuthResultViewModel
             {
                 AccessToken = token,
                 AccessTokenExpires = tokenExpiration,

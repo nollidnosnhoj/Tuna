@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Audiochan.Core.Common.Interfaces
+﻿namespace Audiochan.Core.Common.Interfaces.Pagination
 {
     public interface IHasCursorPage<TKey> where TKey : struct
     {

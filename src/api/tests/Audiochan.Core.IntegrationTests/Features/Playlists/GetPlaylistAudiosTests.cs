@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Entities.Enums;
+using Audiochan.Core.Features.Audios;
 using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Features.Playlists.GetPlaylistAudios;
 using Audiochan.Tests.Common.Fakers.Audios;

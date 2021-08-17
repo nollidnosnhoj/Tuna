@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
-using Audiochan.Core.Common.Constants;
+using Audiochan.Core.Common;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Auth.GetCurrentUser;
 using Audiochan.Core.Features.Users.GetProfile;
