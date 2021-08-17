@@ -40,7 +40,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
 
             var audio = audioFaker.Generate();
 
-            Insert(audio);
+            InsertIntoDatabase(audio);
 
             // Act
             var request = new SearchAudiosQuery

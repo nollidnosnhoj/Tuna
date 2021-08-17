@@ -36,10 +36,8 @@ namespace Audiochan.Core.Features.Audios.GetLatestAudios
         {
             return await _dbContext.Audios
                 .AsNoTracking()
-                .Include(x => x.Tags)
-                .Include(x => x.User)
                 .Where(a => a.UserId == _currentUserId || a.Visibility == Visibility.Public)
-                .Select(AudioMaps.AudioToView)
+                .Select(AudioMaps.AudioToView(_currentUserId))
                 .CursorPaginateAsync(query, cancellationToken);
         }
     }

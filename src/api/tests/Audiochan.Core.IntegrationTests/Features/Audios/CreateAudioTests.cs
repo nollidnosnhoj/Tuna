@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Audiochan.Core.Common.Constants;
 using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Features.Audios.GetAudio;
@@ -37,6 +38,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             audio.User.Should().NotBeNull();
             audio.User.Id.Should().Be(adminId);
             audio.User.Username.Should().Be(adminUsername);
+            audio.Created.Should().BeCloseTo(GetCurrentTime(), TimeSpan.FromSeconds(5));
         }
         
         [Fact]

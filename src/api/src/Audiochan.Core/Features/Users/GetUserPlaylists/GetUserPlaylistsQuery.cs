@@ -43,8 +43,7 @@ namespace Audiochan.Core.Features.Users.GetUserPlaylists
             CancellationToken cancellationToken)
         {
             var playlists = await _dbContext.Playlists
-                .Include(p => p.Tags)
-                .Include(p => p.User)
+                .AsNoTracking()
                 .Where(p => p.User.UserName == request.Username)
                 .Where(p => p.UserId == _currentUserId || p.Visibility == Visibility.Public)
                 .Select(PlaylistMaps.PlaylistToDetailFunc)

@@ -35,6 +35,34 @@ namespace Audiochan.Core.IntegrationTests
             using var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
             return action(db);
         }
+        
+        protected async Task ExecuteDbContextAsync(Func<ApplicationDbContext, Task> action)
+        {
+            using var scope = Factory.Services.CreateScope();
+            await using var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            await action(db);
+        }
+
+        protected async Task<T> ExecuteDbContextAsync<T>(Func<ApplicationDbContext, Task<T>> action)
+        {
+            using var scope = Factory.Services.CreateScope();
+            await using var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            return await action(db);
+        }
+        
+        protected async ValueTask ExecuteDbContextAsync(Func<ApplicationDbContext, ValueTask> action)
+        {
+            using var scope = Factory.Services.CreateScope();
+            await using var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            await action(db);
+        }
+
+        protected async ValueTask<T> ExecuteDbContextAsync<T>(Func<ApplicationDbContext, ValueTask<T>> action)
+        {
+            using var scope = Factory.Services.CreateScope();
+            await using var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            return await action(db);
+        }
 
         protected void ExecuteScope(Action<IServiceProvider> action)
         {
@@ -61,7 +89,20 @@ namespace Audiochan.Core.IntegrationTests
             return result;
         }
         
-        protected void Insert<T>(params T[] entities) where T : class
+        protected async ValueTask ExecuteScopeAsync(Func<IServiceProvider, ValueTask> action)
+        {
+            using var scope = Factory.Services.CreateScope();
+            await action(scope.ServiceProvider);
+        }
+
+        protected async ValueTask<T> ExecuteScopeAsync<T>(Func<IServiceProvider, ValueTask<T>> action)
+        {
+            using var scope =  Factory.Services.CreateScope();
+            var result = await action(scope.ServiceProvider);
+            return result;
+        }
+        
+        protected void InsertIntoDatabase<T>(params T[] entities) where T : class
         {
             ExecuteDbContext(db =>
             {
@@ -74,16 +115,7 @@ namespace Audiochan.Core.IntegrationTests
             });
         }
 
-        protected void InsertAsync<T>(T entity) where T : class
-        {
-            ExecuteDbContext(db =>
-            {
-                db.Set<T>().Add(entity);
-                db.SaveChanges();
-            });
-        }
-
-        protected void InsertRange<T>(IEnumerable<T> entities) where T : class
+        protected void InsertRangeIntoDatabase<T>(IEnumerable<T> entities) where T : class
         {
             ExecuteDbContext(db =>
             {
@@ -169,6 +201,12 @@ namespace Audiochan.Core.IntegrationTests
             Factory.CurrentUserName = user.UserName;
             
             return (Factory.CurrentUserId, Factory.CurrentUserName);
+        }
+
+        protected DateTime GetCurrentTime()
+        {
+            var dtProvider = ExecuteScope(services => services.GetRequiredService<IDateTimeProvider>());
+            return dtProvider.Now;
         }
     }
 }

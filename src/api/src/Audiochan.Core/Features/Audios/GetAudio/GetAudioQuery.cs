@@ -25,13 +25,13 @@ namespace Audiochan.Core.Features.Audios.GetAudio
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly ICacheService _cacheService;
-        private readonly ICurrentUserService _currentUserService;
+        private readonly long _currentUserId;
 
         public GetAudioQueryHandler(ICacheService cacheService, ICurrentUserService currentUserService, ApplicationDbContext dbContext)
         {
             _cacheService = cacheService;
-            _currentUserService = currentUserService;
             _dbContext = dbContext;
+            _currentUserId = currentUserService.GetUserId();
         }
 
         public async Task<AudioViewModel?> Handle(GetAudioQuery query, CancellationToken cancellationToken)
@@ -53,10 +53,8 @@ namespace Audiochan.Core.Features.Audios.GetAudio
             {
                 audio = await _dbContext.Audios
                     .AsNoTracking()
-                    .Include(x => x.Tags)
-                    .Include(x => x.User)
                     .Where(x => x.Id == audioId)
-                    .Select(AudioMaps.AudioToView)
+                    .Select(AudioMaps.AudioToView())
                     .SingleOrDefaultAsync(cancellationToken);
                 await _cacheService.SetAsync(audio, cacheOptions, cancellationToken);
             }
@@ -66,9 +64,7 @@ namespace Audiochan.Core.Features.Audios.GetAudio
 
         private bool CanAccessPrivateAudio(AudioViewModel audio, string? secret)
         {
-            var currentUserId = _currentUserService.GetUserId();
-
-            return currentUserId == audio.User.Id || audio.Visibility != Visibility.Private || audio.Secret == secret;
+            return _currentUserId == audio.User.Id || audio.Visibility != Visibility.Private || audio.Secret == secret;
         }
     }
 }

@@ -26,8 +26,6 @@ namespace Audiochan.Core.Features.Playlists.GetPlaylistDetail
         {
             var playlist = await _unitOfWork.Playlists
                 .AsNoTracking()
-                .Include(x => x.Tags)
-                .Include(x => x.User)
                 .Where(x => x.Id == request.Id)
                 .Where(p => p.UserId == _currentUserId || p.Visibility == Visibility.Public)
                 .Select(PlaylistMaps.PlaylistToDetailFunc)

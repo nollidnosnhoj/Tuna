@@ -109,7 +109,7 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
             await _dbContext.SaveChangesAsync(cancellationToken);
             await _cacheService.RemoveAsync(new GetAudioCacheOptions(audio.Id), cancellationToken);
             
-            return Result<AudioViewModel>.Success(AudioMaps.AudioToView.CompileFast().Invoke(audio));
+            return Result<AudioViewModel>.Success(AudioMaps.AudioToView().CompileFast().Invoke(audio));
         }
 
         private async Task UpdateAudioFromCommandAsync(Audio audio, UpdateAudioCommand command,

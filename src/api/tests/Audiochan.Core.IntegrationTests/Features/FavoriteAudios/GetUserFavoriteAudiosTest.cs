@@ -28,7 +28,7 @@ namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
             var audios = audioFaker
                 .WithVisibility(Visibility.Public)
                 .Generate(3);
-            Insert(audios.ToArray());
+            InsertIntoDatabase(audios.ToArray());
             var (observerId, observerUsername) = await RunAsUserAsync(_faker.Random.String2(15));
             var favoriteAudios = new List<FavoriteAudio>();
             foreach (var audio in audios)
@@ -41,7 +41,7 @@ namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
                 
                 favoriteAudios.Add(favoriteAudio);
             }
-            Insert(favoriteAudios.ToArray());
+            InsertIntoDatabase(favoriteAudios.ToArray());
 
             // Act
             var response = await SendAsync(new GetUserFavoriteAudiosQuery

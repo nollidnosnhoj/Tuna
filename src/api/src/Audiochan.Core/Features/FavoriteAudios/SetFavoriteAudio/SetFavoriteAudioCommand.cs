@@ -34,7 +34,7 @@ namespace Audiochan.Core.Features.FavoriteAudios.SetFavoriteAudio
 
             queryable = UserHelpers.IsValidId(command.UserId)
                 ? queryable.Include(a => 
-                    a.Favorited.Where(fa => fa.UserId == command.UserId)) 
+                    a.Favorited.Where(fa => fa.Id == command.UserId)) 
                 : queryable.Include(a => a.Favorited);
 
             var audio = await queryable.SingleOrDefaultAsync(cancellationToken);
@@ -45,34 +45,31 @@ namespace Audiochan.Core.Features.FavoriteAudios.SetFavoriteAudio
             var isFavoriting = command.IsFavoriting
                 ? await Favorite(audio, command.UserId, cancellationToken)
                 : await Unfavorite(audio, command.UserId, cancellationToken);
-
-            _unitOfWork.Audios.Update(audio);
+            
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result<bool>.Success(isFavoriting);
         }
         
-        private Task<bool> Favorite(Audio target, long userId, CancellationToken cancellationToken = default)
+        private async Task<bool> Favorite(Audio target, long userId, CancellationToken cancellationToken = default)
         {
-            var favoriter = target.Favorited.FirstOrDefault(f => f.UserId == userId);
+            var favoriter = target.Favorited.FirstOrDefault(f => f.Id == userId);
 
             if (favoriter is null)
             {
-                favoriter = new FavoriteAudio
+                await _unitOfWork.FavoriteAudios.AddAsync(new FavoriteAudio
                 {
-                    AudioId = target.Id,
                     UserId = userId,
-                };
-                
-                target.Favorited.Add(favoriter);
+                    AudioId = target.Id
+                }, cancellationToken);
             }
             
-            return Task.FromResult(true);
+            return true;
         }
 
         private Task<bool> Unfavorite(Audio target, long userId, CancellationToken cancellationToken = default)
         {
-            var favoriter = target.Favorited.FirstOrDefault(f => f.UserId == userId);
+            var favoriter = target.Favorited.FirstOrDefault(f => f.Id == userId);
 
             if (favoriter is not null)
             {

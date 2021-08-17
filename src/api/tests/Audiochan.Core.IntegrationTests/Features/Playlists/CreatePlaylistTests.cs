@@ -22,7 +22,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Playlists
             var audios = new AudioFaker(userId)
                 .WithVisibility(Visibility.Public)
                 .Generate(3);
-            InsertRange(audios);
+            InsertRangeIntoDatabase(audios);
             var audioIds = audios.Select(x => x.Id).ToList();
 
             var request = new CreatePlaylistCommandFaker(audioIds).Generate();
@@ -42,7 +42,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Playlists
             playlist.Description.Should().BeNullOrEmpty();
             playlist.Visibility.Should().Be(request.Visibility);
             playlist.Audios.Should().NotBeEmpty();
-            playlist.Audios.Select(p => p.AudioId).Should().Contain(audioIds);
+            playlist.Audios.Select(p => p.Id).Should().Contain(audioIds);
         }
         
         [Fact]
@@ -52,7 +52,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Playlists
             var audios = new AudioFaker(userId)
                 .WithVisibility(Visibility.Public)
                 .Generate(3);
-            InsertRange(audios);
+            InsertRangeIntoDatabase(audios);
             var audioIds = audios.Select(x => x.Id).ToList();
             var request = new CreatePlaylistCommandFaker(audioIds)
                 .SetFixedVisibility(Visibility.Private)

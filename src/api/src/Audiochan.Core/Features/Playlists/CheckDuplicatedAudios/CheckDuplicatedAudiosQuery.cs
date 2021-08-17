@@ -24,6 +24,7 @@ namespace Audiochan.Core.Features.Playlists.CheckDuplicatedAudios
             CancellationToken cancellationToken)
         {
             return await _dbContext.PlaylistAudios
+                .AsNoTracking()
                 .Where(pa => pa.PlaylistId == request.PlaylistId)
                 .Where(pa => request.AudioIds.Contains(pa.AudioId))
                 .Select(pa => pa.AudioId)

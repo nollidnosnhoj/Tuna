@@ -69,10 +69,12 @@ namespace Audiochan.Core.Features.Playlists.CreatePlaylist
         public async Task<Result<long>> Handle(CreatePlaylistCommand request, CancellationToken cancellationToken)
         {
             var userId = _currentUserService.GetUserId();
+            
             var user = await _unitOfWork.Users.SingleOrDefaultAsync(u => u.Id == userId, cancellationToken);
             if (user is null) return Result<long>.Unauthorized();
-
-            if (!await CheckIfAudioIdsExist(request.AudioIds, cancellationToken))
+            
+            var audios = await GetExistingAudios(request.AudioIds, cancellationToken);
+            if (audios.Count == 0)
             {
                 return Result<long>.BadRequest("Audio ids are invalid.");
             }
@@ -84,26 +86,21 @@ namespace Audiochan.Core.Features.Playlists.CreatePlaylist
                 Visibility = request.Visibility,
                 UserId = userId,
                 User = user,
-                Audios = request.AudioIds
-                    .Select(x => new PlaylistAudio
-                    {
-                        AudioId = x,
-                    })
-                    .ToList()
+                Slug = _slugGenerator.GenerateSlug(request.Title),
+                Audios = audios
             };
-
-            playlist.Slug = _slugGenerator.GenerateSlug(request.Title);
 
             await _unitOfWork.Playlists.AddAsync(playlist, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             return Result<long>.Success(playlist.Id);
         }
         
-        private async Task<bool> CheckIfAudioIdsExist(ICollection<long> audioIds,
+        private async Task<List<Audio>> GetExistingAudios(ICollection<long> audioIds,
             CancellationToken cancellationToken = default)
         {
-            return await _unitOfWork.Audios.AnyAsync(x => audioIds.Contains(x.Id)
-                && x.Visibility == Visibility.Public, cancellationToken);
+            return await _unitOfWork.Audios
+                .Where(x => audioIds.Contains(x.Id) && x.Visibility == Visibility.Public)
+                .ToListAsync(cancellationToken);
         }
     }
 }

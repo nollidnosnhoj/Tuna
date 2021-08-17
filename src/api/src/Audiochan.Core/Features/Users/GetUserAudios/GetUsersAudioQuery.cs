@@ -36,18 +36,11 @@ namespace Audiochan.Core.Features.Users.GetUserAudios
         public async Task<OffsetPagedListDto<AudioViewModel>> Handle(GetUsersAudioQuery request,
             CancellationToken cancellationToken)
         {
-            IQueryable<Audio> queryable = _unitOfWork.Users
+            return await _unitOfWork.Audios
                 .AsNoTracking()
-                .Include(u => u.Audios)
-                .Where(u => request.Username == u.UserName.ToLower())
-                .SelectMany(a => a.Audios)
-                .Include(a => a.Tags)
-                .Include(a => a.User);
-
-            queryable = queryable.Where(a => a.UserId == _currentUserId || a.Visibility == Visibility.Public);
-
-            return await queryable
-                .Select(AudioMaps.AudioToView)
+                .Where(a => a.User.UserName == request.Username)
+                .Where(a => a.UserId == _currentUserId || a.Visibility == Visibility.Public)
+                .Select(AudioMaps.AudioToView(_currentUserId))
                 .OffsetPaginateAsync(request, cancellationToken);
         }
     }

@@ -23,13 +23,13 @@ namespace Audiochan.Core.IntegrationTests.Features.Playlists
             var (userId, _) = await RunAsUserAsync("kopacetic");
             var playlistFaker = new PlaylistFaker(userId);
             var playlist = playlistFaker.Generate();
-            Insert(playlist);
+            InsertIntoDatabase(playlist);
 
             var audioFaker = new AudioFaker(userId);
             var audios = audioFaker
                 .WithVisibility(Visibility.Public)
                 .Generate(3);
-            InsertRange(audios);
+            InsertRangeIntoDatabase(audios);
             var audioIds = audios.Select(a => a.Id).ToList();
 
             var request = new AddAudiosToPlaylistCommand(playlist.Id, audioIds);
@@ -44,7 +44,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Playlists
             result.IsSuccess.Should().BeTrue();
             loadedPlaylist.Should().NotBeNull();
             loadedPlaylist!.Audios.Count.Should().Be(audioIds.Count);
-            loadedPlaylist.Audios.Should().Contain(a => audioIds.Contains(a.AudioId));
+            loadedPlaylist.Audios.Should().Contain(a => audioIds.Contains(a.Id));
         }
         
         [Fact]
@@ -53,13 +53,13 @@ namespace Audiochan.Core.IntegrationTests.Features.Playlists
             var (userId, _) = await RunAsUserAsync("kopacetic");
             var playlistFaker = new PlaylistFaker(userId);
             var playlist = playlistFaker.Generate();
-            Insert(playlist);
+            InsertIntoDatabase(playlist);
 
             var (otherUserId, _) = await RunAsDefaultUserAsync();
             var audioFaker = new AudioFaker(otherUserId);
             var audios = audioFaker.Generate(3);
             var audioIds = audios.Select(a => a.Id).ToList();
-            InsertRange(audios);
+            InsertRangeIntoDatabase(audios);
 
             var request = new AddAudiosToPlaylistCommand(playlist.Id, audioIds);
             var result = await SendAsync(request);
@@ -74,7 +74,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Playlists
             result.ErrorCode.Should().Be(ResultError.Forbidden);
             loadedPlaylist.Should().NotBeNull();
             loadedPlaylist!.Audios.Count.Should().Be(0);
-            loadedPlaylist.Audios.Should().NotContain(a => audioIds.Contains(a.AudioId));
+            loadedPlaylist.Audios.Should().NotContain(a => audioIds.Contains(a.Id));
         }
 
         [Fact]
@@ -83,14 +83,14 @@ namespace Audiochan.Core.IntegrationTests.Features.Playlists
             var (userId, _) = await RunAsUserAsync("kopacetic");
             var playlistFaker = new PlaylistFaker(userId);
             var playlist = playlistFaker.Generate();
-            Insert(playlist);
+            InsertIntoDatabase(playlist);
             
             var (otherUserId, _) = await RunAsDefaultUserAsync();
             var audioFaker = new AudioFaker(otherUserId);
             var audios = audioFaker.Generate(2);
             audios[0].Visibility = Visibility.Private;
             audios[1].Visibility = Visibility.Private;
-            InsertRange(audios);
+            InsertRangeIntoDatabase(audios);
             var audioIds = audios.Select(x => x.Id).ToList();
 
             var request = new AddAudiosToPlaylistCommand(playlist.Id, audioIds);

@@ -142,23 +142,26 @@ namespace Audiochan.Core.Persistence
             foreach (var entry in ChangeTracker.Entries<IHasVisibility>())
             {
                 if (entry is null) continue;
-
+                
+                var visibility = (Visibility)entry.Property(nameof(IHasVisibility.Visibility)).CurrentValue;
 
                 switch (entry.State)
                 {
                     case EntityState.Added:
-                        entry.Property(nameof(IHasVisibility.Secret)).CurrentValue = _nanoidGenerator.Generate(size: 10);
+                        if (visibility == Visibility.Private)
+                        {
+                            entry.Property(nameof(IHasVisibility.Secret)).CurrentValue = _nanoidGenerator.Generate(size: 10);
+                        }
                         break;
                     case EntityState.Modified:
                     {
                         var og = (Visibility)entry.Property(nameof(IHasVisibility.Visibility)).OriginalValue;
-                        var current = (Visibility)entry.Property(nameof(IHasVisibility.Visibility)).CurrentValue;
 
-                        if (og == Visibility.Private && current != Visibility.Private)
+                        if (og == Visibility.Private && visibility != Visibility.Private)
                         {
                             entry.Property(nameof(IHasVisibility.Secret)).CurrentValue = null;
                         }
-                        else if (og != Visibility.Private && current == Visibility.Private)
+                        else if (og != Visibility.Private && visibility == Visibility.Private)
                         {
                             entry.Property(nameof(IHasVisibility.Secret)).CurrentValue =
                                 _nanoidGenerator.Generate(size: 10);

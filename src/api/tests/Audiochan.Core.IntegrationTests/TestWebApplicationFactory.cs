@@ -17,7 +17,6 @@ namespace Audiochan.Core.IntegrationTests
     {
         public long CurrentUserId { get; set; }
         public string? CurrentUserName { get; set; }
-        public DateTime CurrentTime => DateTime.UtcNow;
         
         protected override IHost CreateHost(IHostBuilder builder)
         {
@@ -43,7 +42,7 @@ namespace Audiochan.Core.IntegrationTests
                 
                 var descriptorDateTimeProvider = services.FirstOrDefault(d => d.ServiceType == typeof(IDateTimeProvider));
                 services.Remove(descriptorDateTimeProvider!);
-                services.AddTransient(_ => DateTimeProviderMock.Create(CurrentTime).Object);
+                services.AddTransient(_ => DateTimeProviderMock.Create(DateTime.UtcNow).Object);
 
                 var descriptorStorageService = services.FirstOrDefault(d => d.ServiceType == typeof(IStorageService));
                 services.Remove(descriptorStorageService!);

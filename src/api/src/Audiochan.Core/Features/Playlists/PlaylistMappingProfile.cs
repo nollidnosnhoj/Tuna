@@ -21,7 +21,14 @@ namespace Audiochan.Core.Features.Playlists
                     ? string.Format(MediaLinkInvariants.PlaylistPictureUrl, playlist.Picture)
                     : null,
                 Tags = playlist.Tags.Select(t => t.Name).ToList(),
-                User = new MetaAuthorDto(playlist.User),
+                User = new MetaAuthorDto
+                {
+                    Id = playlist.User.Id,
+                    Username = playlist.User.UserName,
+                    Picture = playlist.User.Picture != null
+                        ? string.Format(MediaLinkInvariants.UserPictureUrl, playlist.User.Picture)
+                        : null
+                },
             };
     }
 }

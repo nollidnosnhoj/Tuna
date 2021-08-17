@@ -18,6 +18,7 @@ namespace Audiochan.Core.Features.Audios.GetAudio
         public decimal Duration { get; init; }
         public long Size { get; init; }
         public string? Picture { get; init; }
+        public bool? IsFavorited { get; init; }
         public DateTime Created { get; init; }
         public DateTime? LastModified { get; init; }
         public string AudioUrl { get; init; } = null!;

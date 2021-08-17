@@ -35,6 +35,7 @@ namespace Audiochan.Core.Features.Playlists.GetPlaylistAudios
         public async Task<CursorPagedListDto<AudioViewModel>> Handle(GetPlaylistAudiosQuery request, CancellationToken cancellationToken)
         {
             var playlistExists = await _unitOfWork.Playlists
+                .AsNoTracking()
                 .Where(p => p.Id == request.Id)
                 .Where(p => p.UserId == _currentUserId || p.Visibility == Visibility.Public)
                 .AnyAsync(cancellationToken);
@@ -45,11 +46,11 @@ namespace Audiochan.Core.Features.Playlists.GetPlaylistAudios
             }
             
             return await _unitOfWork.PlaylistAudios
-                .Include(pa => pa.Audio)
+                .AsNoTracking()
                 .Where(pa => pa.PlaylistId == request.Id)
                 .Select(pa => pa.Audio)
                 .Where(a => a.UserId == _currentUserId || a.Visibility == Visibility.Public)
-                .Select(AudioMaps.AudioToView)
+                .Select(AudioMaps.AudioToView(_currentUserId))
                 .CursorPaginateAsync(request, cancellationToken);
         }
     }

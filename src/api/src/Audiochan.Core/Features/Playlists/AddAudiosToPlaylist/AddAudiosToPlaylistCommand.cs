@@ -56,7 +56,8 @@ namespace Audiochan.Core.Features.Playlists.AddAudiosToPlaylist
             else
             {
                 queryable = queryable
-                    .Include(x => x.Audios.Where(a => request.AudioIds.Contains(a.AudioId)));
+                    .Include(x => x.Audios
+                        .Where(a => request.AudioIds.Contains(a.Id)));
             }
 
             var playlist = await queryable.SingleOrDefaultAsync(p => p.Id == request.PlaylistId, cancellationToken);
@@ -76,15 +77,15 @@ namespace Audiochan.Core.Features.Playlists.AddAudiosToPlaylist
                 return Result.BadRequest("AudioIds are invalid.");
             }
 
-            foreach (var audioId in request.AudioIds)
-            {
-                playlist.Audios.Add(new PlaylistAudio
+            var playlistAudios = request.AudioIds
+                .Select(audioId => new PlaylistAudio
                 {
                     PlaylistId = playlist.Id,
                     AudioId = audioId
-                });
-            }
+                })
+                .ToList();
 
+            await _unitOfWork.PlaylistAudios.AddRangeAsync(playlistAudios, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result.Success();

@@ -34,7 +34,7 @@ namespace Audiochan.Core.Features.FavoritePlaylists.SetFavoritePlaylist
 
             queryable = UserHelpers.IsValidId(command.UserId)
                 ? queryable.Include(a => 
-                    a.Favorited.Where(fa => fa.UserId == command.UserId)) 
+                    a.Favorited.Where(fa => fa.Id == command.UserId)) 
                 : queryable.Include(a => a.Favorited);
 
             var playlist = await queryable.SingleOrDefaultAsync(cancellationToken);
@@ -43,40 +43,38 @@ namespace Audiochan.Core.Features.FavoritePlaylists.SetFavoritePlaylist
                 return Result<bool>.NotFound<Playlist>();
 
             var isFavoriting = command.IsFavoriting
-                ? await Favorite(playlist, command.UserId)
-                : await Unfavorite(playlist, command.UserId);
+                ? await Favorite(playlist, command.UserId, cancellationToken)
+                : await Unfavorite(playlist, command.UserId, cancellationToken);
 
-            _unitOfWork.Playlists.Update(playlist);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result<bool>.Success(isFavoriting);
         }
         
-        private Task<bool> Favorite(Playlist target, long userId)
+        private async Task<bool> Favorite(Playlist target, long userId, CancellationToken cancellationToken = default)
         {
-            var favoriter = target.Favorited.FirstOrDefault(f => f.UserId == userId);
+            var favoriter = target.Favorited.FirstOrDefault(f => f.Id == userId);
 
             if (favoriter is null)
             {
-                favoriter = new FavoritePlaylist
+                await _unitOfWork.FavoritePlaylists.AddAsync(new FavoritePlaylist
                 {
-                    PlaylistId = target.Id,
                     UserId = userId,
-                };
-                
-                target.Favorited.Add(favoriter);
+                    PlaylistId = target.Id
+                }, cancellationToken);
             }
 
-            return Task.FromResult(true);
+            return true;
         }
         
-        private Task<bool> Unfavorite(Playlist target, long userId)
+        private Task<bool> Unfavorite(Playlist target, long userId, CancellationToken cancellationToken = default)
         {
-            var favoriter = target.Favorited.FirstOrDefault(f => f.UserId == userId);
+            var favoriter = target.Favorited.FirstOrDefault(f => f.Id == userId);
 
             if (favoriter is not null)
             {
                 target.Favorited.Remove(favoriter);
+                _unitOfWork.Playlists.Update(target);
             }
 
             return Task.FromResult(false);

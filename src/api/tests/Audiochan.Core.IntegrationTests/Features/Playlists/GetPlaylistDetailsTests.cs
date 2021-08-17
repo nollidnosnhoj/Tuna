@@ -23,8 +23,8 @@ namespace Audiochan.Core.IntegrationTests.Features.Playlists
             var audioFaker = new AudioFaker(userId);
             var audios = audioFaker.Generate(5);
             var playlist = new PlaylistFaker(userId).Generate();
-            InsertRange(audios);
-            Insert(playlist);
+            InsertRangeIntoDatabase(audios);
+            InsertIntoDatabase(playlist);
             var now = DateTime.UtcNow;
             var playlistAudios = audios
                 .Select((t, i) => new PlaylistAudio
@@ -32,7 +32,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Playlists
                     PlaylistId = playlist.Id,
                     AudioId = t.Id,
                 }).ToList();
-            InsertRange(playlistAudios);
+            InsertRangeIntoDatabase(playlistAudios);
 
             var response = await SendAsync(new GetPlaylistDetailQuery(playlist.Id));
 

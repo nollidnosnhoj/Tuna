@@ -45,8 +45,6 @@ namespace Audiochan.Core.Features.Audios.SearchAudios
 
             var queryable = _dbContext.Audios
                 .AsNoTracking()
-                .Include(x => x.Tags)
-                .Include(x => x.User)
                 .Where(a => a.UserId == _currentUserId || a.Visibility == Visibility.Public);
 
             if (!string.IsNullOrWhiteSpace(query.Q))
@@ -57,7 +55,7 @@ namespace Audiochan.Core.Features.Audios.SearchAudios
                 queryable = queryable.Where(a => a.Tags.Any(x => parsedTags.Contains(x.Name)));
 
             return await queryable
-                .Select(AudioMaps.AudioToView)
+                .Select(AudioMaps.AudioToView(_currentUserId))
                 .PaginateAsync(query, cancellationToken);
         }
     }

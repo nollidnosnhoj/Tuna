@@ -25,7 +25,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
 
             var audio = new AudioFaker(ownerId).Generate();
 
-            Insert(audio);
+            InsertIntoDatabase(audio);
 
             // Act
             await RunAsDefaultUserAsync();
@@ -48,7 +48,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
 
             var audio = new AudioFaker(ownerId).Generate();
 
-            Insert(audio);
+            InsertIntoDatabase(audio);
             
             // Act
             var command = new UpdateAudioRequestFaker(audio.Id).Generate();
@@ -80,7 +80,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
                 .WithVisibility(Visibility.Public)
                 .Generate();
 
-            Insert(audio);
+            InsertIntoDatabase(audio);
             
             // Act
             var command = new UpdateAudioRequestFaker(audio.Id)
@@ -110,7 +110,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
                 .WithVisibility(Visibility.Private)
                 .Generate();
 
-            Insert(audio);
+            InsertIntoDatabase(audio);
             
             // Act
             var command = new UpdateAudioRequestFaker(audio.Id)
@@ -136,7 +136,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             // Assign
             var (userId, _) = await RunAsDefaultUserAsync();
             var audio = new AudioFaker(userId).Generate();
-            Insert(audio);
+            InsertIntoDatabase(audio);
             await SendAsync(new GetAudioQuery(audio.Id));
             var command = new UpdateAudioRequestFaker(audio.Id).Generate();
             await SendAsync(command);

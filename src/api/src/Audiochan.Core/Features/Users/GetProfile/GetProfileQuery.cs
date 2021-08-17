@@ -30,10 +30,8 @@ namespace Audiochan.Core.Features.Users.GetProfile
             
             if (!UserHelpers.IsValidId(userId)) return null;
             
-            return await _unitOfWork.Users.AsNoTracking()
-                .Include(u => u.Followers.Where(fu => fu.TargetId == userId))
-                .Include(u => u.Followings.Where(fu => fu.ObserverId == userId))
-                .Include(u => u.Audios)
+            return await _unitOfWork.Users
+                .AsNoTracking()
                 .Where(u => u.Id == userId)
                 .Select(UserMaps.UserToProfileFunc)
                 .SingleOrDefaultAsync(cancellationToken);

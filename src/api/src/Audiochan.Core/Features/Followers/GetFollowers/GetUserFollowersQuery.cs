@@ -31,7 +31,6 @@ namespace Audiochan.Core.Features.Followers.GetFollowers
         {
             return await _unitOfWork.Users
                 .AsNoTracking()
-                .Include(u => u.Followers)
                 .Where(u => u.UserName == query.Username)
                 .SelectMany(u => u.Followers)
                 .OrderByDescending(fu => fu.FollowedDate)
