@@ -43,7 +43,7 @@ namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
             // Assert
             refetchAudio.Should().NotBeNull();
             refetchAudio!.Favorited.Should().NotBeEmpty();
-            refetchAudio.Favorited.Should().Contain(x => x.UserId == observerId && x.AudioId == audio.Id);
+            refetchAudio.Favorited.Should().Contain(x => x.Id == observerId);
         }
 
         [Fact]

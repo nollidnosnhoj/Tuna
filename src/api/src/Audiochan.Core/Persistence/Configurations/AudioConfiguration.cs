@@ -19,6 +19,22 @@ namespace Audiochan.Core.Persistence.Configurations
             builder.Property(x => x.Picture).HasMaxLength(256);
             
             builder.HasIndex(x => x.Created);
+            
+            builder.HasMany(a => a.Favorited)
+                .WithMany(u => u.FavoriteAudios)
+                .UsingEntity<FavoriteAudio>(
+                    j => j.HasOne(o => o.User)
+                        .WithMany()
+                        .HasForeignKey(o => o.UserId)
+                        .OnDelete(DeleteBehavior.Cascade),
+                    j => j.HasOne(o => o.Audio)
+                        .WithMany()
+                        .HasForeignKey(o => o.AudioId)
+                        .OnDelete(DeleteBehavior.Cascade),
+                    j =>
+                    {
+                        j.HasKey(fa => new { fa.AudioId, fa.UserId });
+                    });
 
             builder.HasMany(a => a.Tags)
                 .WithMany(t => t.Audios)
@@ -27,24 +43,6 @@ namespace Audiochan.Core.Persistence.Configurations
             builder.HasOne(x => x.User)
                 .WithMany(x => x.Audios)
                 .HasForeignKey(x => x.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
-        }
-    }
-    
-    public class FavoriteAudioConfiguration : IEntityTypeConfiguration<FavoriteAudio>
-    {
-        public void Configure(EntityTypeBuilder<FavoriteAudio> builder)
-        {
-            builder.HasKey(fa => new {AudioId = fa.AudioId, UserId = fa.UserId});
-
-            builder.HasOne(o => o.User)
-                .WithMany(f => f.FavoriteAudios)
-                .HasForeignKey(o => o.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            builder.HasOne(o => o.Audio)
-                .WithMany(f => f.Favorited)
-                .HasForeignKey(o => o.AudioId)
                 .OnDelete(DeleteBehavior.Cascade);
         }
     }

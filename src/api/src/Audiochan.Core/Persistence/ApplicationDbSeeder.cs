@@ -71,11 +71,7 @@ namespace Audiochan.Core.Persistence
                     Slug = "test-playlist",
                     UserId = userId,
                     Visibility = Visibility.Public,
-                    Audios = audios.Select(a => new PlaylistAudio
-                    {
-                        Audio = a,
-                        AudioId = a.Id
-                    }).ToList()
+                    Audios = audios
                 };
 
                 await context.Playlists.AddAsync(playlist);

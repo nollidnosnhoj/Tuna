@@ -42,7 +42,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Playlists
             playlist.Description.Should().BeNullOrEmpty();
             playlist.Visibility.Should().Be(request.Visibility);
             playlist.Audios.Should().NotBeEmpty();
-            playlist.Audios.Select(p => p.AudioId).Should().Contain(audioIds);
+            playlist.Audios.Select(p => p.Id).Should().Contain(audioIds);
         }
         
         [Fact]

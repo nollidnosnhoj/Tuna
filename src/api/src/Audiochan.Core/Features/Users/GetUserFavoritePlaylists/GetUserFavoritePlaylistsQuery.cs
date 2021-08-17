@@ -45,10 +45,8 @@ namespace Audiochan.Core.Features.Users.GetUserFavoritePlaylists
             return await _dbContext.Users
                 .AsNoTracking()
                 .Include(u => u.FavoritePlaylists)
-                .ThenInclude(fa => fa.Playlist)
                 .Where(u => u.UserName == request.Username)
                 .SelectMany(u => u.FavoritePlaylists)
-                .Select(fa => fa.Playlist)
                 .Where(p => p.Visibility == Visibility.Public)
                 .Select(PlaylistMaps.PlaylistToDetailFunc)
                 .OffsetPaginateAsync(request, cancellationToken);

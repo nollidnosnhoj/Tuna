@@ -11,8 +11,8 @@ namespace Audiochan.Core.Entities
         public User()
         {
             Audios = new HashSet<Audio>();
-            FavoriteAudios = new HashSet<FavoriteAudio>();
-            FavoritePlaylists = new HashSet<FavoritePlaylist>();
+            FavoriteAudios = new HashSet<Audio>();
+            FavoritePlaylists = new HashSet<Playlist>();
             Followings = new HashSet<FollowedUser>();
             Followers = new HashSet<FollowedUser>();
             Playlists = new HashSet<Playlist>();
@@ -36,8 +36,8 @@ namespace Audiochan.Core.Entities
         public DateTime Created { get; set; }
         public DateTime? LastModified { get; set; }
         public ICollection<Audio> Audios { get; set; }
-        public ICollection<FavoriteAudio> FavoriteAudios { get; set; }
-        public ICollection<FavoritePlaylist> FavoritePlaylists { get; set; }
+        public ICollection<Audio> FavoriteAudios { get; set; }
+        public ICollection<Playlist> FavoritePlaylists { get; set; }
         public ICollection<FollowedUser> Followings { get; set; }
         public ICollection<FollowedUser> Followers { get; set; }
         public ICollection<Playlist> Playlists { get; set; }

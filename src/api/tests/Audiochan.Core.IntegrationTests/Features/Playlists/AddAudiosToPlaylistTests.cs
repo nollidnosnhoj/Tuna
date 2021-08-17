@@ -44,7 +44,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Playlists
             result.IsSuccess.Should().BeTrue();
             loadedPlaylist.Should().NotBeNull();
             loadedPlaylist!.Audios.Count.Should().Be(audioIds.Count);
-            loadedPlaylist.Audios.Should().Contain(a => audioIds.Contains(a.AudioId));
+            loadedPlaylist.Audios.Should().Contain(a => audioIds.Contains(a.Id));
         }
         
         [Fact]
@@ -74,7 +74,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Playlists
             result.ErrorCode.Should().Be(ResultError.Forbidden);
             loadedPlaylist.Should().NotBeNull();
             loadedPlaylist!.Audios.Count.Should().Be(0);
-            loadedPlaylist.Audios.Should().NotContain(a => audioIds.Contains(a.AudioId));
+            loadedPlaylist.Audios.Should().NotContain(a => audioIds.Contains(a.Id));
         }
 
         [Fact]

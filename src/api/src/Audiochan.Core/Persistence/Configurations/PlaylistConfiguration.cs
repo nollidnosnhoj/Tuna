@@ -21,49 +21,44 @@ namespace Audiochan.Core.Persistence.Configurations
             builder.HasMany(a => a.Tags)
                 .WithMany(t => t.Playlists)
                 .UsingEntity(j => j.ToTable("playlist_tags"));
+            
+            builder.HasMany(a => a.Favorited)
+                .WithMany(u => u.FavoritePlaylists)
+                .UsingEntity<FavoritePlaylist>(
+                    j => j.HasOne(o => o.User)
+                        .WithMany()
+                        .HasForeignKey(o => o.UserId)
+                        .OnDelete(DeleteBehavior.Cascade),
+                    j => j.HasOne(o => o.Playlist)
+                        .WithMany()
+                        .HasForeignKey(o => o.PlaylistId)
+                        .OnDelete(DeleteBehavior.Cascade),
+                    j =>
+                    {
+                        j.HasKey(fa => new { fa.PlaylistId, fa.UserId });
+                    });
+            
+            builder.HasMany(p => p.Audios)
+                .WithMany(a => a.Playlists)
+                .UsingEntity<PlaylistAudio>(
+                    j => j.HasOne(pa => pa.Audio)
+                        .WithMany()
+                        .HasForeignKey(o => o.AudioId)
+                        .OnDelete(DeleteBehavior.Cascade),
+                    j => j.HasOne(pa => pa.Playlist)
+                        .WithMany()
+                        .HasForeignKey(o => o.PlaylistId)
+                        .OnDelete(DeleteBehavior.Cascade),
+                    j =>
+                    {
+                        j.HasKey(x => x.Id);
+                        j.Property(x => x.Id).ValueGeneratedOnAdd(); 
+                        j.HasIndex(x => new { x.PlaylistId, x.AudioId });
+                    });
 
             builder.HasOne(x => x.User)
                 .WithMany(x => x.Playlists)
                 .IsRequired()
-                .HasForeignKey(x => x.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
-        }
-    }
-    
-    public class PlaylistAudioConfiguration : IEntityTypeConfiguration<PlaylistAudio>
-    {
-        public void Configure(EntityTypeBuilder<PlaylistAudio> builder)
-        {
-            builder.HasKey(x => x.Id);
-            builder.Property(x => x.Id).ValueGeneratedOnAdd();
-
-            builder.HasIndex(x => new { x.PlaylistId, x.AudioId });
-
-            builder.HasOne(x => x.Playlist)
-                .WithMany(x => x.Audios)
-                .HasForeignKey(x => x.PlaylistId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            builder.HasOne(x => x.Audio)
-                .WithMany()
-                .HasForeignKey(x => x.AudioId)
-                .OnDelete(DeleteBehavior.Cascade);
-        }
-    }
-    
-    public class FavoritePlaylistConfiguration : IEntityTypeConfiguration<FavoritePlaylist>
-    {
-        public void Configure(EntityTypeBuilder<FavoritePlaylist> builder)
-        {
-            builder.HasKey(x => new {x.PlaylistId, x.UserId});
-
-            builder.HasOne(x => x.Playlist)
-                .WithMany(x => x.Favorited)
-                .HasForeignKey(x => x.PlaylistId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            builder.HasOne(x => x.User)
-                .WithMany(x => x.FavoritePlaylists)
                 .HasForeignKey(x => x.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
         }

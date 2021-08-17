@@ -37,10 +37,8 @@ namespace Audiochan.Core.Features.Users.GetUserFavoriteAudios
             return await _unitOfWork.Users
                 .AsNoTracking()
                 .Include(u => u.FavoriteAudios)
-                .ThenInclude(fa => fa.Audio)
                 .Where(u => u.UserName == query.Username)
                 .SelectMany(u => u.FavoriteAudios)
-                .Select(fa => fa.Audio)
                 .Where(p => p.Visibility == Visibility.Public)
                 .Select(AudioMaps.AudioToView(_currentUserId))
                 .OffsetPaginateAsync(query, cancellationToken);

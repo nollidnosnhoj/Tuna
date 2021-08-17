@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Entities.Enums;
@@ -26,15 +27,13 @@ namespace Audiochan.Core.IntegrationTests.Features.Playlists
             var audios = audioFaker.Generate(5);
             InsertRange(audios);
             var playlist = playlistFaker.Generate();
-            foreach (var audio in audios)
-            {
-                playlist.Audios.Add(new PlaylistAudio
-                {
-                    AudioId = audio.Id,
-                });
-            }
-
             Insert(playlist);
+            var playlistAudios = audios.Select(a => new PlaylistAudio
+            {
+                PlaylistId = playlist.Id,
+                AudioId = a.Id
+            });
+            InsertRange(playlistAudios);
 
             var response = await SendAsync(new GetPlaylistAudiosQuery(playlist.Id));
 
