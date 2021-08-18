@@ -3,6 +3,7 @@ import {
   chakra,
   Flex,
   IconButton,
+  Stack,
   useColorModeValue,
 } from "@chakra-ui/react";
 import NextImage from "next/image";
@@ -14,6 +15,7 @@ import { formatDuration } from "~/utils/format";
 import PictureContainer from "~/components/Picture/PictureContainer";
 import AudioMiscMenu from "../ContextMenu";
 import { useAudioPlayer } from "~/lib/stores";
+import AudioFavoriteButton from "../Buttons/Favorite";
 
 export interface AudioListItemProps {
   audio: AudioView;
@@ -27,6 +29,7 @@ const AudioStackItem: React.FC<AudioListItemProps> = ({
   onPlayClick,
   isActive,
   removeArtistName = false,
+  children,
 }) => {
   const isPlaying = useAudioPlayer((state) => state.isPlaying);
   const [hoverItem, setHoverItem] = useState(false);
@@ -96,9 +99,14 @@ const AudioStackItem: React.FC<AudioListItemProps> = ({
       <Flex paddingX={{ base: 2, md: 4 }}>
         {formatDuration(audio.duration)}
       </Flex>
-      <Box paddingX={{ base: 2, md: 4 }}>
+      <Stack direction="row" spacing={2} paddingX={{ base: 2, md: 4 }}>
+        {children}
+        <AudioFavoriteButton
+          audioId={audio.id}
+          isFavorite={audio.isFavorited}
+        />
         <AudioMiscMenu audio={audio} size="sm" />
-      </Box>
+      </Stack>
     </Box>
   );
 };

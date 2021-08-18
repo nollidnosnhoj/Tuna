@@ -1,17 +1,30 @@
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-import { useMutation } from "react-query";
+import { useMutation, UseMutationResult } from "react-query";
 import { AudioId } from "~/features/audio/api/types";
-import { addAudiosToPlaylistRequest } from "..";
+import request from "~/lib/http";
 import { PlaylistId } from "../types";
 
-export function useAddAudiosToPlaylist() {
-  const handler = async (request: {
-    id: PlaylistId;
-    audioIds: AudioId[];
-  }): Promise<void> => {
-    const { id, audioIds } = request;
-    return await addAudiosToPlaylistRequest(id, audioIds);
+type UseAddAudiosToPlaylistInputs = {
+  id: PlaylistId;
+  audioIds: AudioId[];
+};
+
+export function useAddAudiosToPlaylist(): UseMutationResult<
+  void,
+  unknown,
+  UseAddAudiosToPlaylistInputs,
+  unknown
+> {
+  const handler = async (
+    inputs: UseAddAudiosToPlaylistInputs
+  ): Promise<void> => {
+    const { id, audioIds } = inputs;
+    await request({
+      method: "put",
+      url: `playlists/${id}/audios`,
+      data: {
+        audioIds,
+      },
+    });
   };
 
   return useMutation(handler);

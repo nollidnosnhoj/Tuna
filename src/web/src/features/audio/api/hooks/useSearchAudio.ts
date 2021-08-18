@@ -5,7 +5,9 @@ import {
   UsePaginationResultType,
 } from "~/lib/hooks";
 import { AudioView } from "../types";
-import { SearchAudioParams, searchAudiosRequest } from "..";
+import { useCallback } from "react";
+import request from "~/lib/http";
+import { PagedList } from "~/lib/types";
 
 export const SEARCH_AUDIO_QUERY_KEY = (
   term: string,
@@ -15,13 +17,28 @@ export const SEARCH_AUDIO_QUERY_KEY = (
 export function useSearchAudio(
   searchTerm: string,
   page: number,
-  params: SearchAudioParams = {},
+  params: Record<string, any> = {},
   options: UsePaginationOptions<AudioView> = {}
 ): UsePaginationResultType<AudioView> {
   const { tags } = params;
+  const fetcher = useCallback(
+    async (pageNumber: number) => {
+      const { data } = await request<PagedList<AudioView>>({
+        method: "get",
+        url: "search/audios",
+        params: {
+          ...params,
+          q: searchTerm,
+          page: pageNumber,
+        },
+      });
+      return data;
+    },
+    [searchTerm, params]
+  );
   return usePagination<AudioView>(
     SEARCH_AUDIO_QUERY_KEY(searchTerm, tags),
-    (page) => searchAudiosRequest(searchTerm, page, params),
+    fetcher,
     page,
     options
   );

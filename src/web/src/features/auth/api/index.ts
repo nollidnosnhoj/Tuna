@@ -1,48 +1,7 @@
 import Axios from "axios";
 import SETTINGS from "~/lib/config";
-import request from "~/lib/http";
 import { setAccessTokenExpiration } from "~/lib/http/utils";
-import { OffsetPagedList } from "~/lib/types";
-import { AudioView } from "../../audio/api/types";
-import { Playlist } from "../../playlist/api/types";
 import { LoginFormValues } from "../components/Forms/Login";
-
-export async function getCurrentUserAudiosRequest(
-  offset = 0
-): Promise<OffsetPagedList<AudioView>> {
-  const { data } = await request<OffsetPagedList<AudioView>>({
-    method: "get",
-    url: "me/audios",
-    params: {
-      offset,
-    },
-  });
-  return data;
-}
-
-export async function getCurrentUserPlaylistsRequest(
-  offset = 0
-): Promise<OffsetPagedList<Playlist>> {
-  const { data } = await request<OffsetPagedList<Playlist>>({
-    method: "get",
-    url: "me/playlists",
-    params: {
-      offset,
-    },
-  });
-  return data;
-}
-
-export async function getCurrentUserFavoriteAudiosRequest(
-  offset = 0
-): Promise<OffsetPagedList<AudioView>> {
-  const { data } = await request<OffsetPagedList<AudioView>>({
-    method: "get",
-    url: "me/favorite/audios",
-    params: { offset },
-  });
-  return data;
-}
 
 export async function authenticateRequest(
   request: LoginFormValues
