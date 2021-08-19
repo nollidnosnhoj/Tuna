@@ -1,10 +1,9 @@
-import { Flex, Box, VStack, Heading, Spacer } from "@chakra-ui/react";
+import { Flex, Box, Heading, Stack } from "@chakra-ui/react";
 import React from "react";
 import PictureController from "~/components/Picture";
 import { useAddUserPicture } from "../../api/hooks";
 import { Profile } from "../../api/types";
 import { useUser } from "../../hooks";
-import ProfileEditButton from "./Buttons/Edit";
 import ProfileFollowButton from "./Buttons/Follow";
 
 interface ProfileDetailsProps {
@@ -18,31 +17,42 @@ export default function ProfileDetails({ profile }: ProfileDetailsProps) {
     useAddUserPicture(profile.username);
 
   return (
-    <Flex marginBottom={4}>
-      <Box flex="1" marginRight={4}>
-        <PictureController
-          title={profile.username}
-          src={profile.picture}
-          onChange={async (croppedData) => {
-            await addPictureAsync(croppedData);
-          }}
-          isUploading={isAddingPicture}
-          canEdit={user?.id === profile.id}
-        />
-      </Box>
-      <Flex flex="4">
-        <VStack alignItems="flex-start" width="100%">
-          <Box paddingY={2} flex="3">
-            <Heading as="strong">{profile.username}</Heading>
-          </Box>
-          <Spacer />
-          <Flex justifyContent="flex-end" flex="1">
-            <ProfileFollowButton profileId={profile.id} />
-            <ProfileEditButton profileId={profile.id} />
-          </Flex>
-        </VStack>
-        <Box></Box>
+    <>
+      <Flex
+        marginBottom={4}
+        justifyContent="center"
+        direction={{ base: "column", md: "row" }}
+      >
+        <Flex
+          flex="1"
+          marginRight={4}
+          justify={{ base: "center", md: "normal" }}
+        >
+          <PictureController
+            title={profile.username}
+            src={profile.picture}
+            onChange={async (croppedData) => {
+              await addPictureAsync(croppedData);
+            }}
+            isUploading={isAddingPicture}
+            canEdit={user?.id === profile.id}
+          />
+        </Flex>
+        <Box flex="6">
+          <Stack
+            direction="row"
+            marginTop={{ base: 4, md: 0 }}
+            marginBottom={4}
+          >
+            <Heading as="h1" fontSize={{ base: "3xl", md: "5xl" }}>
+              {profile.username}
+            </Heading>
+            <Flex justifyContent="flex-end" flex="1">
+              <ProfileFollowButton profileId={profile.id} />
+            </Flex>
+          </Stack>
+        </Box>
       </Flex>
-    </Flex>
+    </>
   );
 }
