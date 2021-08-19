@@ -16,6 +16,7 @@ import PictureContainer from "~/components/Picture/PictureContainer";
 import AudioMiscMenu from "../ContextMenu";
 import { useAudioPlayer } from "~/lib/stores";
 import AudioFavoriteButton from "../Buttons/Favorite";
+import AddToPlaylistButton from "../Buttons/AddToPlaylist";
 
 export interface AudioListItemProps {
   audio: AudioView;
@@ -79,19 +80,17 @@ const AudioStackItem: React.FC<AudioListItemProps> = ({
           />
         )}
       </PictureContainer>
-      <Flex width="100%" align="center">
-        <Box marginX={4}>
-          <Flex align="center">
-            <Link
-              href={`/audios/${audio.slug}`}
-              _hover={{ textDecoration: "none" }}
-            >
-              <chakra.b fontSize="md">{audio.title}</chakra.b>
-            </Link>
-          </Flex>
+      <Flex flex={2} align="center" marginX={4}>
+        <Box>
+          <Link
+            href={`/audios/${audio.slug}`}
+            _hover={{ textDecoration: "none" }}
+          >
+            <chakra.b fontSize="md">{audio.title}</chakra.b>
+          </Link>
           {!removeArtistName && (
             <Link href={`/users/${audio.user.username}`}>
-              <chakra.span>{audio.user.username}</chakra.span>
+              <chakra.div>{audio.user.username}</chakra.div>
             </Link>
           )}
         </Box>
@@ -101,11 +100,12 @@ const AudioStackItem: React.FC<AudioListItemProps> = ({
       </Flex>
       <Stack direction="row" spacing={2} paddingX={{ base: 2, md: 4 }}>
         {children}
+        <AddToPlaylistButton audio={audio} />
         <AudioFavoriteButton
           audioId={audio.id}
           isFavorite={audio.isFavorited}
         />
-        <AudioMiscMenu audio={audio} size="sm" />
+        <AudioMiscMenu audio={audio} />
       </Stack>
     </Box>
   );
