@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Audiochan.API.Extensions;
 using Audiochan.API.Models;
 using Audiochan.Core.Common.Models;
+using Audiochan.Core.Features.Audios;
 using Audiochan.Core.Features.Audios.CreateAudio;
 using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Features.Audios.RemoveAudio;

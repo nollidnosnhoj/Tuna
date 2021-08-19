@@ -3,6 +3,7 @@ import {
   chakra,
   Flex,
   IconButton,
+  Stack,
   useColorModeValue,
 } from "@chakra-ui/react";
 import NextImage from "next/image";
@@ -14,6 +15,8 @@ import { formatDuration } from "~/utils/format";
 import PictureContainer from "~/components/Picture/PictureContainer";
 import AudioMiscMenu from "../ContextMenu";
 import { useAudioPlayer } from "~/lib/stores";
+import AudioFavoriteButton from "../Buttons/Favorite";
+import AddToPlaylistButton from "../Buttons/AddToPlaylist";
 
 export interface AudioListItemProps {
   audio: AudioView;
@@ -27,6 +30,7 @@ const AudioStackItem: React.FC<AudioListItemProps> = ({
   onPlayClick,
   isActive,
   removeArtistName = false,
+  children,
 }) => {
   const isPlaying = useAudioPlayer((state) => state.isPlaying);
   const [hoverItem, setHoverItem] = useState(false);
@@ -76,19 +80,17 @@ const AudioStackItem: React.FC<AudioListItemProps> = ({
           />
         )}
       </PictureContainer>
-      <Flex width="100%" align="center">
-        <Box marginX={4}>
-          <Flex align="center">
-            <Link
-              href={`/audios/${audio.slug}`}
-              _hover={{ textDecoration: "none" }}
-            >
-              <chakra.b fontSize="md">{audio.title}</chakra.b>
-            </Link>
-          </Flex>
+      <Flex flex={2} align="center" marginX={4}>
+        <Box>
+          <Link
+            href={`/audios/${audio.slug}`}
+            _hover={{ textDecoration: "none" }}
+          >
+            <chakra.b fontSize="md">{audio.title}</chakra.b>
+          </Link>
           {!removeArtistName && (
             <Link href={`/users/${audio.user.username}`}>
-              <chakra.span>{audio.user.username}</chakra.span>
+              <chakra.div>{audio.user.username}</chakra.div>
             </Link>
           )}
         </Box>
@@ -96,9 +98,15 @@ const AudioStackItem: React.FC<AudioListItemProps> = ({
       <Flex paddingX={{ base: 2, md: 4 }}>
         {formatDuration(audio.duration)}
       </Flex>
-      <Box paddingX={{ base: 2, md: 4 }}>
-        <AudioMiscMenu audio={audio} size="sm" />
-      </Box>
+      <Stack direction="row" spacing={2} paddingX={{ base: 2, md: 4 }}>
+        {children}
+        <AddToPlaylistButton audio={audio} />
+        <AudioFavoriteButton
+          audioId={audio.id}
+          isFavorite={audio.isFavorited}
+        />
+        <AudioMiscMenu audio={audio} />
+      </Stack>
     </Box>
   );
 };

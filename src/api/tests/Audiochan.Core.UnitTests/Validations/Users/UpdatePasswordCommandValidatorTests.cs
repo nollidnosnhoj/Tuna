@@ -1,5 +1,4 @@
-﻿using Audiochan.Core.Common.Constants;
-using Audiochan.Core.Common.Settings;
+﻿using Audiochan.Core.Common;
 using Audiochan.Core.Features.Users.UpdatePassword;
 using FluentValidation;
 using FluentValidation.TestHelper;

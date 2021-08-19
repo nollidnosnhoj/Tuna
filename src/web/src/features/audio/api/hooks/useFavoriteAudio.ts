@@ -1,11 +1,9 @@
+import { useCallback } from "react";
 import { QueryKey, useMutation, useQuery, useQueryClient } from "react-query";
 import { GET_YOUR_FAV_AUDIOS_KEY } from "~/features/auth/api/hooks/useYourFavoriteAudios";
 import { useUser } from "~/features/user/hooks";
-import {
-  favoriteAnAudioRequest,
-  checkIfUserFavoritedAudioRequest,
-  unfavoriteAnAudioRequest,
-} from "..";
+import request from "~/lib/http";
+import { errorToast } from "~/utils";
 import { AudioId } from "../types";
 
 type UseFavoriteAudioResult = {
@@ -26,30 +24,62 @@ export function useFavoriteAudio(
   const { user } = useUser();
   const queryClient = useQueryClient();
 
-  const { data, isLoading: isQueryLoading } = useQuery(
+  const { data: isFavorite, isLoading: isQueryLoading } = useQuery(
     IS_FAVORITE_AUDIO_QUERY_KEY(audioId),
-    () => checkIfUserFavoritedAudioRequest(audioId),
+    async () => {
+      try {
+        const res = await request({
+          method: "head",
+          url: `me/favorites/audios/${audioId}`,
+          validateStatus: (status) => {
+            return status === 404 || status < 400;
+          },
+        });
+
+        return res.status !== 404;
+      } catch (err) {
+        return false;
+      }
+    },
     {
-      enabled: !!user,
+      enabled: !!user && !initialData,
       initialData: initialData,
+      onError(err) {
+        errorToast(err);
+      },
     }
   );
 
+  const mutateHandler = useCallback(async () => {
+    if (isFavorite) {
+      await request({
+        method: "DELETE",
+        url: `me/favorites/audios/${audioId}`,
+      });
+    } else {
+      await request({
+        method: "PUT",
+        url: `me/favorites/audios/${audioId}`,
+      });
+    }
+    return true;
+  }, [audioId, isFavorite]);
+
   const { mutateAsync, isLoading: isMutationLoading } = useMutation<boolean>(
-    () =>
-      data
-        ? unfavoriteAnAudioRequest(audioId)
-        : favoriteAnAudioRequest(audioId),
+    mutateHandler,
     {
       onSuccess() {
-        queryClient.setQueryData(IS_FAVORITE_AUDIO_QUERY_KEY(audioId), !data);
+        queryClient.setQueryData(
+          IS_FAVORITE_AUDIO_QUERY_KEY(audioId),
+          !isFavorite
+        );
         queryClient.invalidateQueries(GET_YOUR_FAV_AUDIOS_KEY);
       },
     }
   );
 
   return {
-    isFavorite: data,
+    isFavorite,
     favorite: mutateAsync,
     isLoading: isQueryLoading || isMutationLoading,
   };

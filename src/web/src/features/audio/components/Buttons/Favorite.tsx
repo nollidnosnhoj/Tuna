@@ -8,14 +8,19 @@ import { ButtonProps } from "@chakra-ui/react";
 
 interface AudioFavoriteButtonProps extends ButtonProps {
   audioId: AudioId;
+  isFavorite?: boolean;
 }
 
 export default function AudioFavoriteButton({
   audioId,
+  isFavorite: initIsFavorite,
   ...buttonProps
 }: AudioFavoriteButtonProps) {
   const { user } = useUser();
-  const { isFavorite, favorite, isLoading } = useFavoriteAudio(audioId);
+  const { isFavorite, favorite, isLoading } = useFavoriteAudio(
+    audioId,
+    initIsFavorite
+  );
 
   if (!user) {
     return null;

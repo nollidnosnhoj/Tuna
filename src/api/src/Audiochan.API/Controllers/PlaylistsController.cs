@@ -3,12 +3,15 @@ using System.Threading.Tasks;
 using Audiochan.API.Extensions;
 using Audiochan.API.Models;
 using Audiochan.Core.Common.Models;
+using Audiochan.Core.Common.Models.Pagination;
+using Audiochan.Core.Features.Audios;
 using Audiochan.Core.Features.Audios.GetAudio;
+using Audiochan.Core.Features.Playlists;
 using Audiochan.Core.Features.Playlists.AddAudiosToPlaylist;
 using Audiochan.Core.Features.Playlists.CheckDuplicatedAudios;
 using Audiochan.Core.Features.Playlists.CreatePlaylist;
 using Audiochan.Core.Features.Playlists.GetPlaylistAudios;
-using Audiochan.Core.Features.Playlists.GetPlaylistDetail;
+using Audiochan.Core.Features.Playlists.GetPlaylist;
 using Audiochan.Core.Features.Playlists.RemoveAudiosFromPlaylist;
 using Audiochan.Core.Features.Playlists.RemovePlaylist;
 using Audiochan.Core.Features.Playlists.UpdatePlaylistDetails;
@@ -36,7 +39,7 @@ namespace Audiochan.API.Controllers
         public async Task<ActionResult<PlaylistViewModel>> GetPlaylist(string idSlug, CancellationToken cancellationToken)
         {
             var (id, _) = idSlug.ExtractIdAndSlugFromSlug();
-            var playlist = await _mediator.Send(new GetPlaylistDetailQuery(id), cancellationToken);
+            var playlist = await _mediator.Send(new GetPlaylistQuery(id), cancellationToken);
             return playlist is null
                 ? NotFound(ErrorApiResponse.NotFound("Playlist was not found."))
                 : Ok(playlist);
@@ -59,7 +62,7 @@ namespace Audiochan.API.Controllers
         {
             var result = await _mediator.Send(command, cancellationToken);
             if (!result.IsSuccess) return result.ReturnErrorResponse();
-            var response = await _mediator.Send(new GetPlaylistDetailQuery(result.Data), cancellationToken);
+            var response = await _mediator.Send(new GetPlaylistQuery(result.Data), cancellationToken);
             return CreatedAtAction(nameof(GetPlaylist), new
             {
                 playlistId = response!.Id

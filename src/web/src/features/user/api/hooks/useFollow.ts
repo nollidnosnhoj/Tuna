@@ -1,10 +1,7 @@
+import { useCallback } from "react";
 import { QueryKey, useMutation, useQuery, useQueryClient } from "react-query";
 import { useUser } from "~/features/user/hooks";
-import {
-  followAUserRequest,
-  checkIfCurrentUserIsFollowingRequest,
-  unfollowAUserRequest,
-} from "..";
+import request from "~/lib/http";
 
 type UseFollowResult = {
   isFollowing?: boolean;
@@ -24,23 +21,48 @@ export function useFollow(
   const { user } = useUser();
   const queryClient = useQueryClient();
 
-  const { data, isLoading } = useQuery(
+  const fetcher = useCallback(async () => {
+    try {
+      const res = await request({
+        method: "head",
+        url: `me/following/${userId}`,
+        validateStatus: (status) => status === 404 || status < 400,
+      });
+      return res.status !== 404;
+    } catch (err) {
+      return false;
+    }
+  }, [userId]);
+
+  const { data: isFollowing, isLoading } = useQuery(
     IS_FOLLOWING_QUERY_KEY(userId),
-    () => checkIfCurrentUserIsFollowingRequest(userId),
+    fetcher,
     {
       enabled: !!user && !!userId,
       initialData: initialData,
     }
   );
 
-  const { mutateAsync } = useMutation(
-    () => (data ? followAUserRequest(userId) : unfollowAUserRequest(userId)),
-    {
-      onSuccess(data) {
-        queryClient.setQueryData(IS_FOLLOWING_QUERY_KEY(userId), data);
-      },
+  const mutate = useCallback(async () => {
+    if (isFollowing) {
+      await request({
+        method: "DELETE",
+        url: `me/followings/${userId}`,
+      });
+    } else {
+      await request({
+        method: "PUT",
+        url: `me/followings/${userId}`,
+      });
     }
-  );
+    return true;
+  }, [userId, isFollowing]);
 
-  return { isFollowing: data, follow: mutateAsync, isLoading };
+  const { mutateAsync } = useMutation(mutate, {
+    onSuccess() {
+      queryClient.setQueryData(IS_FOLLOWING_QUERY_KEY(userId), !isFollowing);
+    },
+  });
+
+  return { isFollowing, follow: mutateAsync, isLoading };
 }

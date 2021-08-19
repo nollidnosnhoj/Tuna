@@ -2,7 +2,9 @@
 using System.Threading.Tasks;
 using Audiochan.API.Models;
 using Audiochan.Core.Common.Models;
-using Audiochan.Core.Features.Playlists.GetPlaylistDetail;
+using Audiochan.Core.Common.Models.Pagination;
+using Audiochan.Core.Features.Playlists;
+using Audiochan.Core.Features.Playlists.GetPlaylist;
 using Audiochan.Core.Features.Users.GetUserPlaylists;
 using Audiochan.Core.Interfaces;
 using MediatR;

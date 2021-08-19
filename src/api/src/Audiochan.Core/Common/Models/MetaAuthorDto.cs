@@ -1,7 +1,4 @@
-﻿using Audiochan.Core.Common.Constants;
-using Audiochan.Core.Entities;
-
-namespace Audiochan.Core.Common.Models
+﻿namespace Audiochan.Core.Common.Models
 {
     public record MetaAuthorDto
     {

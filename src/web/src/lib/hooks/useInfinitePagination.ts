@@ -27,7 +27,7 @@ export function useInfinitePagination<TItem>(
 ): UseInfinitePaginationReturnType<TItem> {
   const { data, ...result } = useInfiniteQuery<OffsetPagedList<TItem>>(
     key,
-    ({ pageParam = 0 }) => func(pageParam),
+    ({ pageParam = undefined }) => func(pageParam),
     {
       getNextPageParam: (lastPage) => lastPage.next,
       ...options,

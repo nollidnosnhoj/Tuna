@@ -2,7 +2,8 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Audiochan.Core.Entities;
-using Audiochan.Core.Features.Playlists.GetPlaylistDetail;
+using Audiochan.Core.Features.Playlists;
+using Audiochan.Core.Features.Playlists.GetPlaylist;
 using Audiochan.Tests.Common.Fakers.Audios;
 using Audiochan.Tests.Common.Fakers.Playlists;
 using FluentAssertions;
@@ -34,7 +35,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Playlists
                 }).ToList();
             InsertRangeIntoDatabase(playlistAudios);
 
-            var response = await SendAsync(new GetPlaylistDetailQuery(playlist.Id));
+            var response = await SendAsync(new GetPlaylistQuery(playlist.Id));
 
             response.Should().NotBeNull();
             response.Should().BeOfType<PlaylistViewModel>();

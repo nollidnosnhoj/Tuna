@@ -4,16 +4,24 @@ import {
   UseInfinitePaginationOptions,
   UseInfinitePaginationReturnType,
 } from "~/lib/hooks";
-import { getCurrentUserPlaylistsRequest } from "..";
+import request from "~/lib/http";
+import { OffsetPagedList } from "~/lib/types";
 
 export const GET_YOUR_PLAYLISTS_KEY = "your_playlists";
 
 export function useYourPlaylists(
   options: UseInfinitePaginationOptions<Playlist> = {}
 ): UseInfinitePaginationReturnType<Playlist> {
-  return useInfinitePagination(
-    GET_YOUR_PLAYLISTS_KEY,
-    (page) => getCurrentUserPlaylistsRequest(page),
-    options
-  );
+  async function fetcher(offset = 0): Promise<OffsetPagedList<Playlist>> {
+    const { data } = await request<OffsetPagedList<Playlist>>({
+      method: "get",
+      url: "me/playlists",
+      params: {
+        offset,
+      },
+    });
+    return data;
+  }
+
+  return useInfinitePagination(GET_YOUR_PLAYLISTS_KEY, fetcher, options);
 }

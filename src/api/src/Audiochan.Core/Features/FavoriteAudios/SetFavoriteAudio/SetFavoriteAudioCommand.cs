@@ -18,12 +18,10 @@ namespace Audiochan.Core.Features.FavoriteAudios.SetFavoriteAudio
     public class SetFavoriteAudioCommandHandler : IRequestHandler<SetFavoriteAudioCommand, Result<bool>>
     {
         private readonly ApplicationDbContext _unitOfWork;
-        private readonly IDateTimeProvider _dateTimeProvider;
 
-        public SetFavoriteAudioCommandHandler(ApplicationDbContext unitOfWork, IDateTimeProvider dateTimeProvider)
+        public SetFavoriteAudioCommandHandler(ApplicationDbContext unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            _dateTimeProvider = dateTimeProvider;
         }
 
         public async Task<Result<bool>> Handle(SetFavoriteAudioCommand command, CancellationToken cancellationToken)
@@ -32,7 +30,7 @@ namespace Audiochan.Core.Features.FavoriteAudios.SetFavoriteAudio
                 .IgnoreQueryFilters()
                 .Where(a => a.Id == command.AudioId);
 
-            queryable = UserHelpers.IsValidId(command.UserId)
+            queryable = command.UserId > 0
                 ? queryable.Include(a => 
                     a.Favorited.Where(fa => fa.Id == command.UserId)) 
                 : queryable.Include(a => a.Favorited);
@@ -42,7 +40,7 @@ namespace Audiochan.Core.Features.FavoriteAudios.SetFavoriteAudio
             if (audio == null)
                 return Result<bool>.NotFound<Audio>();
 
-            var isFavoriting = command.IsFavoriting
+            var isFavoriting = UserHelpers.IsValidId(command.UserId)
                 ? await Favorite(audio, command.UserId, cancellationToken)
                 : await Unfavorite(audio, command.UserId, cancellationToken);
             

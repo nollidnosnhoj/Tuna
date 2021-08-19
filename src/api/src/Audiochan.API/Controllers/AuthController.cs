@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Audiochan.API.Extensions;
 using Audiochan.Core.Common.Models;
+using Audiochan.Core.Features.Auth;
 using Audiochan.Core.Features.Auth.CreateUser;
 using Audiochan.Core.Features.Auth.Login;
 using Audiochan.Core.Features.Auth.Refresh;
@@ -30,7 +31,7 @@ namespace Audiochan.API.Controllers
             OperationId = "Login",
             Tags = new[] {"auth"}
         )]
-        public async Task<ActionResult<AuthResult>> Login([FromBody] LoginCommand command,
+        public async Task<ActionResult<AuthResultViewModel>> Login([FromBody] LoginCommand command,
             CancellationToken cancellationToken)
         {
             var authResult = await _mediator.Send(command, cancellationToken);
@@ -67,7 +68,7 @@ namespace Audiochan.API.Controllers
             OperationId = "RefreshAccessToken",
             Tags = new[] {"auth"}
         )]
-        public async Task<ActionResult<AuthResult>> Refresh([FromBody] RefreshTokenCommand command,
+        public async Task<ActionResult<AuthResultViewModel>> Refresh([FromBody] RefreshTokenCommand command,
             CancellationToken cancellationToken)
         {
             var authResult = await _mediator.Send(command, cancellationToken);

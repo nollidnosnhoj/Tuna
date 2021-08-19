@@ -1,3 +1,4 @@
+import { useCallback } from "react";
 import { QueryKey } from "react-query";
 import { AudioView } from "~/features/audio/api/types";
 import {
@@ -5,7 +6,8 @@ import {
   UseInfinitePaginationOptions,
   UseInfinitePaginationReturnType,
 } from "~/lib/hooks";
-import { getUserFavoriteAudiosRequest } from "..";
+import request from "~/lib/http";
+import { OffsetPagedList } from "~/lib/types";
 
 type UseGetUserFavoriteAudiosParams = {
   size?: number;
@@ -20,9 +22,24 @@ export function useGetUserFavoriteAudios(
   params: UseGetUserFavoriteAudiosParams = {},
   options: UseInfinitePaginationOptions<AudioView> = {}
 ): UseInfinitePaginationReturnType<AudioView> {
+  const fetcher = useCallback(
+    async (offset: number) => {
+      const { data } = await request<OffsetPagedList<AudioView>>({
+        method: "get",
+        url: `users/${username}/favorite/audios`,
+        params: {
+          ...params,
+          offset,
+        },
+      });
+      return data;
+    },
+    [username, params]
+  );
+
   return useInfinitePagination(
     GET_USER_FAVORITE_AUDIOS_QUERY_KEY(username),
-    (offset) => getUserFavoriteAudiosRequest(username, offset, params),
+    fetcher,
     {
       ...options,
       enabled: !!username && (options.enabled ?? true),

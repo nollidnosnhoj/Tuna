@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Audiochan.Core.Common.Settings;
+using Audiochan.Core.Common;
 using Audiochan.Core.Features.Audios.CreateAudioUploadUrl;
 using Audiochan.Tests.Common.Builders;
 using Bogus;

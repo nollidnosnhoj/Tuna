@@ -16,10 +16,10 @@ import {
   useGetUserAudios,
   useGetUserFavoriteAudios,
 } from "~/features/user/api/hooks";
-import { getProfileRequest } from "~/features/user/api";
 import { Profile } from "~/features/user/api/types";
 import ProfileDetails from "~/features/user/components/Profile";
 import AudioList from "~/features/audio/components/List";
+import request from "~/lib/http";
 
 interface ProfilePageProps {
   profile?: Profile;
@@ -30,8 +30,14 @@ export const getServerSideProps: GetServerSideProps<ProfilePageProps> = async (
   context
 ) => {
   const username = context.params?.username as string;
+  const { req, res } = context;
   try {
-    const data = await getProfileRequest(username, context);
+    const { data } = await request<Profile>({
+      method: "get",
+      url: `users/${username}`,
+      req,
+      res,
+    });
     return {
       props: {
         profile: data,

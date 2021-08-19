@@ -12,12 +12,12 @@ import Page from "~/components/Page";
 import AudioDetails from "~/features/audio/components/Details";
 import AudioFileInfo from "~/features/audio/components/Details/FileInfo";
 import { useGetAudio } from "~/features/audio/api/hooks";
-import { getAudioRequest } from "~/features/audio/api";
 import { AudioView } from "~/features/audio/api/types";
 import AudioTags from "~/features/audio/components/Details/Tags";
 import { IdSlug } from "~/lib/types";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
+import request from "~/lib/http";
 
 interface AudioPageProps {
   audio: AudioView;
@@ -30,9 +30,17 @@ export const getServerSideProps: GetServerSideProps<AudioPageProps> = async (
 ) => {
   const slug = context.params?.slug as IdSlug;
   const secret = (context.query?.secret as string) ?? null;
-
+  const { req, res } = context;
   try {
-    const data = await getAudioRequest(slug, secret, context);
+    const { data } = await request<AudioView>({
+      method: "get",
+      url: `audios/${slug}`,
+      params: {
+        secret: secret || undefined,
+      },
+      req,
+      res,
+    });
     return {
       props: {
         audio: data,
