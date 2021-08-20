@@ -163,5 +163,29 @@ namespace Audiochan.API.Controllers.Me
                 ? Ok(result.Data)
                 : result.ReturnErrorResponse();
         }
+        
+        [HttpPatch("picture")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
+        [SwaggerOperation(
+            Summary = "Remove picture to user.",
+            Description = "Requires authentication.",
+            OperationId = "RemoveUserPicture",
+            Tags = new[] {"me"}
+        )]
+        public async Task<ActionResult> RemovePicture(CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(new UpdateUserPictureCommand
+            {
+                UserId = _currentUserId,
+                Data = string.Empty
+            }, cancellationToken);
+            
+            return result.IsSuccess
+                ? NoContent()
+                : result.ReturnErrorResponse();
+        }
     }
 }

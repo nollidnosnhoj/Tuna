@@ -118,5 +118,29 @@ namespace Audiochan.API.Controllers
                 ? Ok(result.Data)
                 : result.ReturnErrorResponse();
         }
+        
+        [HttpDelete("{audioId:long}/picture")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
+        [SwaggerOperation(
+            Summary = "Remove Picture.",
+            Description = "Requires authentication.",
+            OperationId = "RemoveAudioPicture",
+            Tags = new[] {"audios"})]
+        public async Task<ActionResult> RemovePicture(long audioId,
+            CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(new UpdateAudioPictureCommand
+            {
+                AudioId = audioId,
+                Data = string.Empty
+            }, cancellationToken);
+            
+            return result.IsSuccess
+                ? NoContent()
+                : result.ReturnErrorResponse();
+        }
     }
 }
