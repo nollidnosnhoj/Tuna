@@ -1,7 +1,7 @@
 import { Flex, Box, Heading, Stack } from "@chakra-ui/react";
 import React from "react";
 import PictureController from "~/components/Picture";
-import { useAddUserPicture } from "../../api/hooks";
+import { useAddUserPicture, useRemoveUserPicture } from "../../api/hooks";
 import { Profile } from "../../api/types";
 import { useUser } from "../../hooks";
 import ProfileFollowButton from "./Buttons/Follow";
@@ -15,6 +15,9 @@ export default function ProfileDetails({ profile }: ProfileDetailsProps) {
 
   const { mutateAsync: addPictureAsync, isLoading: isAddingPicture } =
     useAddUserPicture(profile.username);
+
+  const { mutateAsync: removePictureAsync, isLoading: isRemovingPicture } =
+    useRemoveUserPicture(profile.username);
 
   return (
     <>
@@ -34,7 +37,8 @@ export default function ProfileDetails({ profile }: ProfileDetailsProps) {
             onChange={async (croppedData) => {
               await addPictureAsync(croppedData);
             }}
-            isUploading={isAddingPicture}
+            onRemove={removePictureAsync}
+            isMutating={isAddingPicture || isRemovingPicture}
             canEdit={user?.id === profile.id}
           />
         </Flex>

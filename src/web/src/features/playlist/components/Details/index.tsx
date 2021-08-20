@@ -38,7 +38,8 @@ const PlaylistDetails: React.FC<PlaylistDetailsProps> = ({ playlist }) => {
           title={playlist.title}
           src={playlist.picture || ""}
           onChange={async () => console.log("")}
-          isUploading={false}
+          onRemove={async () => console.log("")}
+          isMutating={false}
           canEdit={currentUser?.id === playlist.user.id}
         />
       </Flex>

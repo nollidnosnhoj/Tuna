@@ -15,7 +15,7 @@ import { relativeDate } from "~/utils/time";
 import AudioPlayButton from "../Buttons/Play";
 import AudioFavoriteButton from "../Buttons/Favorite";
 import PictureController from "~/components/Picture";
-import { useAddAudioPicture } from "../../api/hooks";
+import { useAddAudioPicture, useRemoveAudioPicture } from "../../api/hooks";
 import AudioMiscMenu from "../ContextMenu";
 
 interface AudioDetailProps {
@@ -28,6 +28,9 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
 
   const { mutateAsync: addPictureAsync, isLoading: isAddingPicture } =
     useAddAudioPicture(audio.id);
+
+  const { mutateAsync: removePictureAsync, isLoading: isRemovingPicture } =
+    useRemoveAudioPicture(audio.id);
 
   useEffect(() => {
     Router.prefetch(`/users/${audio.user.username}`);
@@ -46,7 +49,8 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
           onChange={async (croppedData) => {
             await addPictureAsync(croppedData);
           }}
-          isUploading={isAddingPicture}
+          onRemove={removePictureAsync}
+          isMutating={isAddingPicture || isRemovingPicture}
           canEdit={currentUser?.id === audio.user.id}
         />
       </Flex>

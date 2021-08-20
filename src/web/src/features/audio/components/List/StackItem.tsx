@@ -22,14 +22,12 @@ export interface AudioListItemProps {
   audio: AudioView;
   isActive?: boolean;
   onPlayClick?: () => void;
-  removeArtistName?: boolean;
 }
 
 const AudioStackItem: React.FC<AudioListItemProps> = ({
   audio,
   onPlayClick,
   isActive,
-  removeArtistName = false,
   children,
 }) => {
   const isPlaying = useAudioPlayer((state) => state.isPlaying);
@@ -88,11 +86,9 @@ const AudioStackItem: React.FC<AudioListItemProps> = ({
           >
             <chakra.b fontSize="md">{audio.title}</chakra.b>
           </Link>
-          {!removeArtistName && (
-            <Link href={`/users/${audio.user.username}`}>
-              <chakra.div>{audio.user.username}</chakra.div>
-            </Link>
-          )}
+          <Link href={`/users/${audio.user.username}`}>
+            <chakra.div>{audio.user.username}</chakra.div>
+          </Link>
         </Box>
       </Flex>
       <Flex paddingX={{ base: 2, md: 4 }}>

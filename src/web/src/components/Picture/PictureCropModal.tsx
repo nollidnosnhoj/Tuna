@@ -25,7 +25,7 @@ export default function PictureCropModal({
   isOpen,
   onClose,
 }: PictureCropProps) {
-  const { onUpload, isUploading } = usePicture();
+  const { onUpload, isMutating } = usePicture();
   const [imageData, setImageData] = useState("");
   const [cropper, setCropper] = useState<Cropper | null>(null);
 
@@ -94,7 +94,7 @@ export default function PictureCropModal({
           </ModalBody>
           <ModalFooter>
             <Button
-              isLoading={isUploading}
+              isLoading={isMutating}
               loadingText="Uploading..."
               colorScheme="primary"
               onClick={handleCropAndUpload}

@@ -1,6 +1,13 @@
-import { Box, Button, useDisclosure } from "@chakra-ui/react";
+import { DeleteIcon } from "@chakra-ui/icons";
+import {
+  Box,
+  Button,
+  ButtonGroup,
+  IconButton,
+  useDisclosure,
+} from "@chakra-ui/react";
 import NextImage from "next/image";
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, { useContext, useMemo, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import SETTINGS from "~/lib/config";
 import { errorToast, toast } from "~/utils";
@@ -11,14 +18,15 @@ import PictureModal from "./PictureModal";
 type PictureContextType = {
   canEdit: boolean;
   onUpload: (imageData: string) => Promise<void>;
-  isUploading: boolean;
+  isMutating: boolean;
 };
 
 interface PictureProps {
   src: string;
   title: string;
   onChange: (data: string) => Promise<void>;
-  isUploading: boolean;
+  onRemove: () => Promise<void>;
+  isMutating: boolean;
   canEdit?: boolean;
 }
 
@@ -27,18 +35,12 @@ const PictureContext = React.createContext<PictureContextType>(
 );
 
 export default function PictureController(props: PictureProps) {
-  const { src, title, onChange, isUploading, canEdit = false } = props;
+  const { src, title, onChange, onRemove, isMutating, canEdit = false } = props;
 
   const {
     isOpen: isPictureModalOpen,
     onOpen: onPictureModalOpen,
     onClose: onPictureModalClose,
-  } = useDisclosure();
-
-  const {
-    isOpen: isCropModalOpen,
-    onOpen: onCropModalOpen,
-    onClose: onCropModalClose,
   } = useDisclosure();
 
   const [file, setFile] = useState<File | null>(null);
@@ -69,17 +71,15 @@ export default function PictureController(props: PictureProps) {
     }
   };
 
-  useEffect(() => {
-    if (file) {
-      onCropModalOpen();
-    }
-  }, [file]);
+  const onCloseCropModal = () => {
+    setFile(null);
+  };
 
   const values = useMemo(
     () => ({
       onUpload,
       canEdit,
-      isUploading,
+      isMutating,
     }),
     [onUpload, canEdit]
   );
@@ -93,7 +93,7 @@ export default function PictureController(props: PictureProps) {
         display="flex"
         position="relative"
       >
-        <PictureContainer width={200}>
+        <PictureContainer width={300}>
           {src && (
             <NextImage
               src={src}
@@ -105,30 +105,43 @@ export default function PictureController(props: PictureProps) {
           )}
         </PictureContainer>
         {canEdit && (
-          <Button
-            colorScheme="primary"
-            size="sm"
+          <ButtonGroup
             position="absolute"
             bottom="5%"
             left="50%"
             transform="translate(-50%, -5%)"
-            paddingX={4}
-            onClick={(e) => {
-              e.stopPropagation();
-              open();
-            }}
+            size="sm"
+            isAttached
+            isDisabled={isMutating}
           >
-            Upload
-          </Button>
+            <Button
+              colorScheme="primary"
+              paddingX={4}
+              onClick={(e) => {
+                e.stopPropagation();
+                open();
+              }}
+            >
+              Upload
+            </Button>
+            <IconButton
+              colorScheme="primary"
+              aria-label="Remove Image"
+              icon={<DeleteIcon />}
+              onClick={async (e) => {
+                e.stopPropagation();
+                if (!confirm("Are you sure you want to remove image?")) return;
+                await onRemove();
+              }}
+            />
+          </ButtonGroup>
         )}
       </Box>
-      {file && (
-        <PictureCropModal
-          isOpen={isCropModalOpen}
-          onClose={onCropModalClose}
-          file={file}
-        />
-      )}
+      <PictureCropModal
+        isOpen={!!file}
+        onClose={onCloseCropModal}
+        file={file}
+      />
       <PictureModal
         title={title}
         src={src}
