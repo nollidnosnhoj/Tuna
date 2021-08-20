@@ -23,7 +23,7 @@ export default function AudioTags({ tags }: AudioTagsProps) {
         {tags.map((tag, idx) => (
           <WrapItem key={idx}>
             <NextLink href={`/tags/${tag}/`}>
-              <Tag size="sm" cursor="pointer">
+              <Tag size="md" cursor="pointer">
                 <TagLeftIcon as={FaHashtag} />
                 <TagLabel>{tag}</TagLabel>
               </Tag>
