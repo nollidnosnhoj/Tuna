@@ -187,7 +187,47 @@ namespace Audiochan.Infrastructure.Storage.AmazonS3
             }
         }
 
-        public async Task CopyBlobAsync(string sourceBucket, string sourceBlobName, string targetBucket, string? targetBlobName = null,
+        public async Task MoveBlobAsync(string sourceBucket,
+            string sourceBlobName,
+            string targetBucket,
+            string? targetKey = null,
+            CancellationToken cancellationToken = default)
+        {
+            await CopyBlobAsync(sourceBucket,
+                sourceBlobName, 
+                targetBucket,
+                targetKey,
+                cancellationToken);
+
+            await RemoveAsync(sourceBucket, sourceBlobName, cancellationToken);
+        }
+
+        public async Task MoveBlobAsync(string sourceBucket,
+            string sourceContainer,
+            string sourceBlobName,
+            string targetBucket,
+            string targetContainer,
+            string targetKey,
+            CancellationToken cancellationToken = default)
+        {
+            await CopyBlobAsync(sourceBucket,
+                GetKeyName(sourceContainer, sourceBlobName),
+                targetBucket,
+                GetKeyName(targetContainer, targetKey),
+                cancellationToken);
+
+            await RemoveAsync(sourceBucket, GetKeyName(sourceContainer, sourceBlobName), cancellationToken);
+        }
+
+        private string GetKeyName(string container, string blobName)
+        {
+            return $"{container}/{blobName}";
+        }
+        
+        private async Task CopyBlobAsync(string sourceBucket, 
+            string sourceBlobName, 
+            string targetBucket, 
+            string? targetBlobName = null,
             CancellationToken cancellationToken = default)
         {
             var newTargetKey = targetBlobName ?? sourceBlobName;
@@ -211,26 +251,6 @@ namespace Audiochan.Infrastructure.Storage.AmazonS3
             {
                 throw new StorageException(ex.Message, ex);
             }
-        }
-
-        public async Task MoveBlobAsync(string sourceBucket,
-            string sourceBlobName,
-            string targetBucket,
-            string? targetKey = null,
-            CancellationToken cancellationToken = default)
-        {
-            await CopyBlobAsync(sourceBucket,
-                sourceBlobName, 
-                targetBucket,
-                targetKey,
-                cancellationToken);
-
-            await RemoveAsync(sourceBucket, sourceBlobName, cancellationToken);
-        }
-
-        private string GetKeyName(string container, string blobName)
-        {
-            return $"{container}/{blobName}";
         }
     }
 

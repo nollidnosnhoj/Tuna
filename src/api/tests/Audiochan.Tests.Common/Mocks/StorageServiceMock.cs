@@ -54,16 +54,7 @@ namespace Audiochan.Tests.Common.Mocks
                         It.IsAny<string>(),
                         It.IsAny<Dictionary<string, string>>(),
                         It.IsAny<CancellationToken>()))
-                .Returns(Task.CompletedTask);
-            mock
-                .Setup(x =>
-                    x.CopyBlobAsync(It.IsAny<string>(),
-                        It.IsAny<string>(),
-                        It.IsAny<string>(),
-                        It.IsAny<string>(),
-                        It.IsAny<CancellationToken>()))
-                .Returns(Task.CompletedTask);
-
+                .Returns(Task.CompletedTask); 
             return mock;
         }
     }

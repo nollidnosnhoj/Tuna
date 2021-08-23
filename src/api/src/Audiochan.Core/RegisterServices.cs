@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using Audiochan.Core.Common.Pipelines;
 using Audiochan.Core.Persistence;
+using Audiochan.Core.Services;
 using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -14,17 +15,19 @@ namespace Audiochan.Core
     {
         public static IServiceCollection AddCore(this IServiceCollection services, IConfiguration config, IHostEnvironment env)
         {
-            return services
-                .AddValidatorsFromAssembly(Assembly.GetExecutingAssembly())
-                .AddMediatR(Assembly.GetExecutingAssembly())
-                .AddBehaviorPipelines()
-                .ConfigurePersistence(config, env);
+            services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+            services.AddMediatR(Assembly.GetExecutingAssembly());
+            services.AddBehaviorPipelines();
+            services.ConfigurePersistence(config, env);
+            services.AddTransient<IAudioUploadService, AudioUploadService>();
+            return services;
         }
 
         private static IServiceCollection AddBehaviorPipelines(this IServiceCollection services)
         {
             return services
-                .AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehavior<,>));
+                .AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehavior<,>))
+                .AddTransient(typeof(IPipelineBehavior<,>), typeof(DbContextTransactionPipelineBehavior<,>));
         }
         
         private static IServiceCollection ConfigurePersistence(this IServiceCollection services, 

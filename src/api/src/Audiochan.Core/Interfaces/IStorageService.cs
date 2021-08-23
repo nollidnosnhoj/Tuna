@@ -31,12 +31,6 @@ namespace Audiochan.Core.Interfaces
         Task<bool> ExistsAsync(string bucket, string blobName,
             CancellationToken cancellationToken = default);
 
-        Task CopyBlobAsync(string sourceBucket,
-            string sourceBlobName,
-            string targetBucket,
-            string? targetBlobName = null,
-            CancellationToken cancellationToken = default);
-
         Task MoveBlobAsync(string sourceBucket,
             string sourceBlobName,
             string targetBucket,

@@ -6,9 +6,9 @@ using Audiochan.Core.Common.Models;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Interfaces;
 using Audiochan.Core.Persistence;
+using Audiochan.Core.Services;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Audios.RemoveAudio
 {
@@ -19,19 +19,18 @@ namespace Audiochan.Core.Features.Audios.RemoveAudio
     public class RemoveAudioCommandHandler : IRequestHandler<RemoveAudioCommand, Result<bool>>
     {
         private readonly ApplicationDbContext _dbContext;
-        private readonly MediaStorageSettings _storageSettings;
-        private readonly IStorageService _storageService;
         private readonly ICurrentUserService _currentUserService;
+        private readonly IAudioUploadService _audioUploadService;
+        private readonly IImageUploadService _imageUploadService;
 
-        public RemoveAudioCommandHandler(IOptions<MediaStorageSettings> options,
-            IStorageService storageService,
-            ICurrentUserService currentUserService, 
-            ApplicationDbContext dbContext)
+        public RemoveAudioCommandHandler(ICurrentUserService currentUserService, 
+            ApplicationDbContext dbContext, IAudioUploadService audioUploadService, 
+            IImageUploadService imageUploadService)
         {
-            _storageSettings = options.Value;
-            _storageService = storageService;
             _currentUserService = currentUserService;
             _dbContext = dbContext;
+            _audioUploadService = audioUploadService;
+            _imageUploadService = imageUploadService;
         }
 
         public async Task<Result<bool>> Handle(RemoveAudioCommand command, CancellationToken cancellationToken)
@@ -64,17 +63,13 @@ namespace Audiochan.Core.Features.Audios.RemoveAudio
         {
             var tasks = new List<Task>
             {
-                _storageService.RemoveAsync(
-                    _storageSettings.Audio.Bucket,
-                    audio.File,
-                    cancellationToken)
+                _audioUploadService.RemoveAudioFromStorage(audio.File, cancellationToken)
             };
 
             if (!string.IsNullOrEmpty(audio.Picture))
             {
-                tasks.Add(_storageService.RemoveAsync(_storageSettings.Image.Bucket,
-                    AssetContainerConstants.AudioPictures,
-                    audio.Picture,
+                tasks.Add(_imageUploadService.RemoveImage(AssetContainerConstants.AudioPictures, 
+                    audio.Picture, 
                     cancellationToken));
             }
 

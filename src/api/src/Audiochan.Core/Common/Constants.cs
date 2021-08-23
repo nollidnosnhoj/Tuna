@@ -2,9 +2,9 @@
 {
     public static class AssetContainerConstants
     {
-        public const string AudioPictures = "audios";
-        public const string PlaylistPictures = "playlists";
-        public const string UserPictures = "avatars";
+        public const string AudioPictures = "images/audios";
+        public const string PlaylistPictures = "images/playlists";
+        public const string UserPictures = "images/users";
     }
     
     public static class CacheKeys
@@ -17,10 +17,10 @@
     
     public static class MediaLinkInvariants
     {
-        public const string AudioPictureUrl = "https://audiochan-assets.s3.amazonaws.com/audios/{0}";
-        public const string PlaylistPictureUrl = "https://audiochan-assets.s3.amazonaws.com/playlists/{0}";
-        public const string AudioUrl = "https://audiochan-audios.s3.amazonaws.com/{0}";
-        public const string UserPictureUrl = "https://audiochan-assets.s3.amazonaws.com/avatars/{0}";
+        public const string AudioPictureUrl = "https://audiochan.s3.amazonaws.com/images/audios/{0}";
+        public const string PlaylistPictureUrl = "https://audiochan.s3.amazonaws.com/images/playlists/{0}";
+        public const string AudioUrl = "https://audiochan.s3.amazonaws.com/audios/{0}";
+        public const string UserPictureUrl = "https://audiochan.s3.amazonaws.com/images/users/{0}";
     }
     
     public static class ValidationErrorCodes

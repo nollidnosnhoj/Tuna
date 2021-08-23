@@ -18,16 +18,15 @@ namespace Audiochan.Core.Features.Playlists.RemovePlaylist
     public class RemovePlaylistCommandHandler : IRequestHandler<RemovePlaylistCommand, Result>
     {
         private readonly long _currentUserId;
-        private readonly IStorageService _storageService;
-        private readonly MediaStorageSettings _storageSettings;
         private readonly ApplicationDbContext _unitOfWork;
+        private readonly IImageUploadService _imageUploadService;
 
-        public RemovePlaylistCommandHandler(ICurrentUserService currentUserService, ApplicationDbContext unitOfWork, IStorageService storageService, IOptions<MediaStorageSettings> storageSettings)
+        public RemovePlaylistCommandHandler(ICurrentUserService currentUserService, ApplicationDbContext unitOfWork, 
+            IImageUploadService imageUploadService)
         {
             _currentUserId = currentUserService.GetUserId();
             _unitOfWork = unitOfWork;
-            _storageService = storageService;
-            _storageSettings = storageSettings.Value;
+            _imageUploadService = imageUploadService;
         }
 
         public async Task<Result> Handle(RemovePlaylistCommand request, CancellationToken cancellationToken)
@@ -47,9 +46,7 @@ namespace Audiochan.Core.Features.Playlists.RemovePlaylist
             
             if (!string.IsNullOrEmpty(playlist.Picture))
             {
-                await _storageService.RemoveAsync(_storageSettings.Image.Bucket,
-                    AssetContainerConstants.PlaylistPictures,
-                    playlist.Picture,
+                await _imageUploadService.RemoveImage(AssetContainerConstants.PlaylistPictures, playlist.Picture,
                     cancellationToken);
             }
 
