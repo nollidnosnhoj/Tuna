@@ -28,6 +28,7 @@ interface PictureProps {
   onRemove: () => Promise<void>;
   isMutating: boolean;
   canEdit?: boolean;
+  width?: number;
 }
 
 const PictureContext = React.createContext<PictureContextType>(
@@ -35,7 +36,15 @@ const PictureContext = React.createContext<PictureContextType>(
 );
 
 export default function PictureController(props: PictureProps) {
-  const { src, title, onChange, onRemove, isMutating, canEdit = false } = props;
+  const {
+    src,
+    title,
+    onChange,
+    onRemove,
+    isMutating,
+    canEdit = false,
+    width = 300,
+  } = props;
 
   const {
     isOpen: isPictureModalOpen,
@@ -93,7 +102,7 @@ export default function PictureController(props: PictureProps) {
         display="flex"
         position="relative"
       >
-        <PictureContainer width={300}>
+        <PictureContainer width={width}>
           {src && (
             <NextImage
               src={src}

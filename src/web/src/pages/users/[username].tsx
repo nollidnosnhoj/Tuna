@@ -59,13 +59,13 @@ export default function UserProfileNextPage(props: ProfilePageProps) {
 
   const { items: latestAudios } = useGetUserAudios(
     profile?.username ?? "",
-    { size: 30 },
+    { size: 5 },
     { staleTime: 1000 * 60 * 5 }
   );
 
   const { items: latestFavoriteAudios } = useGetUserFavoriteAudios(
     profile?.username ?? "",
-    { size: 30 },
+    { size: 5 },
     { staleTime: 1000 * 60 * 5 }
   );
 
@@ -82,10 +82,12 @@ export default function UserProfileNextPage(props: ProfilePageProps) {
         <TabPanels>
           <TabPanel>
             <Box>
-              <AudioList
-                audios={latestAudios}
-                context={`users:${profile.username}`}
-              />
+              <Box marginBottom={4}>
+                <AudioList
+                  audios={latestAudios}
+                  context={`users:${profile.username}`}
+                />
+              </Box>
               {latestAudios.length > 0 && (
                 <NextLink href={`/users/${profile.username}/audios`}>
                   <Button width="100%">View More</Button>
@@ -95,10 +97,12 @@ export default function UserProfileNextPage(props: ProfilePageProps) {
           </TabPanel>
           <TabPanel>
             <Box>
-              <AudioList
-                audios={latestFavoriteAudios}
-                context={`user_favorites:${profile.username}`}
-              />
+              <Box marginBottom={4}>
+                <AudioList
+                  audios={latestFavoriteAudios}
+                  context={`user_favorites:${profile.username}`}
+                />
+              </Box>
               {latestFavoriteAudios.length > 0 && (
                 <NextLink href={`/users/${profile.username}/favorite/audios`}>
                   <Button width="100%">View More</Button>
