@@ -27,7 +27,7 @@ export default function SearchBar(props: BoxProps) {
 
   const handleSearch = useCallback(() => {
     if (!term) return;
-    routerPush(stringifyUrl("/search", { q: term }));
+    routerPush(stringifyUrl("/search?", { q: term }));
   }, [term, query]);
 
   return (
