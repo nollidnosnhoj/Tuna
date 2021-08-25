@@ -3,9 +3,11 @@ using System.Threading.Tasks;
 using Audiochan.API.Extensions;
 using Audiochan.API.Models;
 using Audiochan.Core.Common.Models;
+using Audiochan.Core.Common.Models.Pagination;
 using Audiochan.Core.Features.Audios;
 using Audiochan.Core.Features.Audios.CreateAudio;
 using Audiochan.Core.Features.Audios.GetAudio;
+using Audiochan.Core.Features.Audios.GetAudios;
 using Audiochan.Core.Features.Audios.RemoveAudio;
 using Audiochan.Core.Features.Audios.UpdateAudio;
 using Audiochan.Core.Features.Audios.UpdatePicture;
@@ -25,6 +27,15 @@ namespace Audiochan.API.Controllers
         public AudiosController(IMediator mediator)
         {
             _mediator = mediator;
+        }
+        
+        [AllowAnonymous]
+        [HttpGet(Name = "GetAudios")]
+        [ProducesResponseType(200)]
+        [SwaggerOperation(Summary = "Return audios by latest.", OperationId = "GetAudios", Tags = new[] {"audios"})]
+        public async Task<ActionResult<CursorPagedListDto<AudioViewModel>>> Get([FromQuery] GetAudiosQuery query, CancellationToken cancellationToken)
+        {
+            return new JsonResult(await _mediator.Send(query, cancellationToken));
         }
 
         [AllowAnonymous]

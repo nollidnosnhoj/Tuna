@@ -42,6 +42,7 @@ namespace Audiochan.Core.Features.Users.GetUserAudios
                 .AsNoTracking()
                 .Where(a => a.User.UserName == request.Username)
                 .Where(a => a.UserId == _currentUserId || a.Visibility == Visibility.Public)
+                .OrderByDescending(a => a.Id)
                 .Select(AudioMaps.AudioToView(_currentUserId))
                 .OffsetPaginateAsync(request, cancellationToken);
         }

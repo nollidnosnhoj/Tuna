@@ -6,7 +6,7 @@ using Audiochan.Core.Common.Models.Pagination;
 using Audiochan.Core.Features.Audios;
 using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Features.Audios.GetAudioFeed;
-using Audiochan.Core.Features.Audios.GetLatestAudios;
+using Audiochan.Core.Features.Audios.GetAudios;
 using Audiochan.Core.Features.Users.GetUserAudios;
 using Audiochan.Core.Interfaces;
 using MediatR;
@@ -42,7 +42,7 @@ namespace Audiochan.API.Controllers.Me
             OperationId = "YourAudios",
             Tags = new [] {"me"}
         )]
-        public async Task<ActionResult<GetAudioListViewModel>> GetYourAudios(
+        public async Task<ActionResult<OffsetPagedListDto<AudioViewModel>>> GetYourAudios(
             [FromQuery] OffsetPaginationQueryParams queryParams, 
             CancellationToken cancellationToken = default)
         {
