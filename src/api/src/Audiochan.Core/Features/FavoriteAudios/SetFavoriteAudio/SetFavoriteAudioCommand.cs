@@ -30,7 +30,7 @@ namespace Audiochan.Core.Features.FavoriteAudios.SetFavoriteAudio
                 .IgnoreQueryFilters()
                 .Where(a => a.Id == command.AudioId);
 
-            queryable = command.UserId > 0
+            queryable = UserHelpers.IsValidId(command.UserId)
                 ? queryable.Include(a => 
                     a.Favorited.Where(fa => fa.Id == command.UserId)) 
                 : queryable.Include(a => a.Favorited);
@@ -40,7 +40,7 @@ namespace Audiochan.Core.Features.FavoriteAudios.SetFavoriteAudio
             if (audio == null)
                 return Result<bool>.NotFound<Audio>();
 
-            var isFavoriting = UserHelpers.IsValidId(command.UserId)
+            var isFavoriting = command.IsFavoriting
                 ? await Favorite(audio, command.UserId, cancellationToken)
                 : await Unfavorite(audio, command.UserId, cancellationToken);
             
