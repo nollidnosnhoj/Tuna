@@ -9,16 +9,16 @@ namespace Audiochan.Core.Features.Users
 {
     public static class UserMaps
     {
-        public static Expression<Func<User, CurrentUserViewModel>> UserToCurrentUserFunc = user =>
-            new CurrentUserViewModel
+        public static Expression<Func<User, CurrentUserDto>> UserToCurrentUserFunc = user =>
+            new CurrentUserDto
             {
                 Id = user.Id,
                 Email = user.Email,
                 Username = user.UserName
             };
 
-        public static Expression<Func<User, ProfileViewModel>> UserToProfileFunc = user =>
-            new ProfileViewModel
+        public static Expression<Func<User, ProfileDto>> UserToProfileFunc = user =>
+            new ProfileDto
             {
                 Id = user.Id,
                 Username = user.UserName,

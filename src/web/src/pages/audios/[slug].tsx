@@ -14,21 +14,20 @@ import AudioFileInfo from "~/features/audio/components/Details/FileInfo";
 import { useGetAudio } from "~/features/audio/api/hooks";
 import { AudioView } from "~/features/audio/api/types";
 import AudioTags from "~/features/audio/components/Details/Tags";
-import { IdSlug } from "~/lib/types";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import request from "~/lib/http";
 
 interface AudioPageProps {
   audio: AudioView;
-  slug: IdSlug;
+  slug: string;
   secret?: string;
 }
 
 export const getServerSideProps: GetServerSideProps<AudioPageProps> = async (
   context
 ) => {
-  const slug = context.params?.slug as IdSlug;
+  const slug = context.params?.slug as string;
   const secret = (context.query?.secret as string) ?? null;
   const { req, res } = context;
   try {

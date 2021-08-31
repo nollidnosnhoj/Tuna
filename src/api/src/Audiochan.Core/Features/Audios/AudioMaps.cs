@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Linq.Expressions;
 using Audiochan.Core.Common;
+using Audiochan.Core.Common.Helpers;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Audios.GetAudio;
@@ -10,13 +11,12 @@ namespace Audiochan.Core.Features.Audios
 {
     public static class AudioMaps
     {
-        public static Expression<Func<Audio, AudioViewModel>> AudioToView(long? userId = null)
+        public static Expression<Func<Audio, AudioDto>> AudioToView(long? userId = null)
         {
-            return audio => new AudioViewModel
+            return audio => new AudioDto
             {
                 Id = audio.Id,
                 Title = audio.Title,
-                Slug = audio.FullSlug,
                 Description = audio.Description ?? string.Empty,
                 Visibility = audio.Visibility,
                 Secret = audio.Secret,

@@ -10,8 +10,8 @@ namespace Audiochan.Core.Features.Playlists
 {
     public static class PlaylistMaps
     {
-        public static readonly Expression<Func<Playlist, PlaylistViewModel>> PlaylistToDetailFunc = playlist =>
-            new PlaylistViewModel
+        public static readonly Expression<Func<Playlist, PlaylistDto>> PlaylistToDetailFunc = playlist =>
+            new PlaylistDto
             {
                 Id = playlist.Id,
                 Title = playlist.Title,

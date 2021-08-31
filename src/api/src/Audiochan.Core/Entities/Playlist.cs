@@ -28,8 +28,6 @@ namespace Audiochan.Core.Entities
         public long UserId { get; set; }
         public User User { get; set; } = null!;
 
-        public string FullSlug => $"{Id}-{Slug}";
-        
         public ICollection<Audio> Audios { get; set; }
         public ICollection<User> Favorited { get; set; }
         public ICollection<PlaylistAudio> PlaylistAudios { get; set; }

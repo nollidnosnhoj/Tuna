@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using Audiochan.Core.Common.Helpers;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Entities.Enums;
 
 namespace Audiochan.Core.Features.Audios
 {
-    public record AudioViewModel : IResourceModel<long>
+    public record AudioDto : IResourceDto<long>
     {
         public long Id { get; init; }
         public string Title { get; init; } = null!;
-        public string Slug { get; init; } = null!;
+        public string Slug => HashIdHelper.EncodeLong(Id);
         public string Description { get; init; } = string.Empty;
         public Visibility Visibility { get; init; }
         public string? Secret { get; init; }

@@ -143,7 +143,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             await SendAsync(command);
             
             // Act
-            var (cacheExists, _) = await GetCache<AudioViewModel>(CacheKeys.Audio.GetAudio(audio.Id));
+            var (cacheExists, _) = await GetCache<AudioDto>(CacheKeys.Audio.GetAudio(audio.Id));
             
             // Assert
             cacheExists.Should().BeFalse();

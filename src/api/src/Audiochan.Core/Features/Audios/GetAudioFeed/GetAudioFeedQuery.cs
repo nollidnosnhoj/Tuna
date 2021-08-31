@@ -15,14 +15,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Audios.GetAudioFeed
 {
-    public record GetAudioFeedQuery : IHasOffsetPage, IRequest<OffsetPagedListDto<AudioViewModel>>
+    public record GetAudioFeedQuery : IHasOffsetPage, IRequest<OffsetPagedListDto<AudioDto>>
     {
         public long UserId { get; init; }
         public int Offset { get; init; }
         public int Size { get; init; }
     }
 
-    public class GetAudioFeedQueryHandler : IRequestHandler<GetAudioFeedQuery, OffsetPagedListDto<AudioViewModel>>
+    public class GetAudioFeedQueryHandler : IRequestHandler<GetAudioFeedQuery, OffsetPagedListDto<AudioDto>>
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly long _currentUserId;
@@ -33,7 +33,7 @@ namespace Audiochan.Core.Features.Audios.GetAudioFeed
             _currentUserId = currentUserService.GetUserId();
         }
 
-        public async Task<OffsetPagedListDto<AudioViewModel>> Handle(GetAudioFeedQuery query,
+        public async Task<OffsetPagedListDto<AudioDto>> Handle(GetAudioFeedQuery query,
             CancellationToken cancellationToken)
         {
             var followingIds = await _dbContext.Users

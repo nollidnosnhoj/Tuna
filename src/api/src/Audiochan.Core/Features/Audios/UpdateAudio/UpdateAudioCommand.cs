@@ -15,7 +15,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Audios.UpdateAudio
 {
-    public class UpdateAudioCommand : IRequest<Result<AudioViewModel>>
+    public class UpdateAudioCommand : IRequest<Result<AudioDto>>
     {
         public long AudioId { get; set; }
         public string? Title { get; init; }
@@ -70,7 +70,7 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
         }
     }
 
-    public class UpdateAudioCommandHandler : IRequestHandler<UpdateAudioCommand, Result<AudioViewModel>>
+    public class UpdateAudioCommandHandler : IRequestHandler<UpdateAudioCommand, Result<AudioDto>>
     {
         private readonly ICurrentUserService _currentUserService;
         private readonly ICacheService _cacheService;
@@ -87,11 +87,11 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
             _slugGenerator = slugGenerator;
         }
 
-        public async Task<Result<AudioViewModel>> Handle(UpdateAudioCommand command,
+        public async Task<Result<AudioDto>> Handle(UpdateAudioCommand command,
             CancellationToken cancellationToken)
         {
             if (!_currentUserService.TryGetUserId(out var currentUserId))
-                return Result<AudioViewModel>.Unauthorized();
+                return Result<AudioDto>.Unauthorized();
 
             var audio = await _dbContext.Audios
                 .Include(a => a.User)
@@ -99,17 +99,17 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
                 .SingleOrDefaultAsync(a => a.Id == command.AudioId, cancellationToken);
 
             if (audio == null)
-                return Result<AudioViewModel>.NotFound<Audio>();
+                return Result<AudioDto>.NotFound<Audio>();
 
             if (audio.UserId != currentUserId)
-                return Result<AudioViewModel>.Forbidden();
+                return Result<AudioDto>.Forbidden();
             
             await UpdateAudioFromCommandAsync(audio, command, cancellationToken);
             _dbContext.Audios.Update(audio);
             await _dbContext.SaveChangesAsync(cancellationToken);
             await _cacheService.RemoveAsync(new GetAudioCacheOptions(audio.Id), cancellationToken);
             
-            return Result<AudioViewModel>.Success(AudioMaps.AudioToView().CompileFast().Invoke(audio));
+            return Result<AudioDto>.Success(AudioMaps.AudioToView().CompileFast().Invoke(audio));
         }
 
         private async Task UpdateAudioFromCommandAsync(Audio audio, UpdateAudioCommand command,

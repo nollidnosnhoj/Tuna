@@ -6,17 +6,14 @@ import {
   UseQueryResult,
 } from "react-query";
 import request from "~/lib/http";
-import { IdSlug } from "~/lib/types";
-import { getIdAndSlugFromSlug } from "~/utils";
 import { Playlist, PlaylistId } from "../types";
 
 export const GET_PLAYLIST_KEY = (id: PlaylistId): QueryKey => ["playlist", id];
 
 export function useGetPlaylist(
-  slug: IdSlug,
+  id: number,
   options: UseQueryOptions<Playlist> = {}
 ): UseQueryResult<Playlist> {
-  const [id] = getIdAndSlugFromSlug(slug);
   const fetcher = useCallback(async () => {
     const { data } = await request<Playlist>({
       method: "GET",

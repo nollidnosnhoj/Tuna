@@ -7,30 +7,30 @@ import { useGetPlaylistAudios } from "~/features/playlist/api/hooks/useGetPlayli
 import { Playlist } from "~/features/playlist/api/types";
 import PlaylistDetails from "~/features/playlist/components/Details";
 import request from "~/lib/http";
-import { IdSlug } from "~/lib/types";
 
 interface PlaylistPageProps {
   playlist: Playlist;
-  slug: IdSlug;
+  id: number;
   secret?: string;
 }
 
 export const getServerSideProps: GetServerSideProps<PlaylistPageProps> = async (
   context
 ) => {
-  const slug = context.params?.slug as IdSlug;
-  const { req, res } = context;
+  const { req, res, params } = context;
   try {
+    const id = parseInt(params?.id as string, 10);
+    if (isNaN(id)) throw new Error("Id is invalid.");
     const { data } = await request<Playlist>({
       method: "GET",
-      url: `playlists/${slug}`,
+      url: `playlists/${id}`,
       req,
       res,
     });
     return {
       props: {
         playlist: data,
-        slug,
+        id,
       },
     };
   } catch (err) {
@@ -42,10 +42,10 @@ export const getServerSideProps: GetServerSideProps<PlaylistPageProps> = async (
 
 export default function PlaylistPage({
   playlist: initPlaylist,
-  slug,
+  id,
 }: PlaylistPageProps) {
-  const { data: playlist } = useGetPlaylist(slug, {
-    enabled: !!slug,
+  const { data: playlist } = useGetPlaylist(id, {
+    enabled: !!id,
     initialData: initPlaylist,
   });
   const { items: playlistAudios } = useGetPlaylistAudios(playlist?.id);

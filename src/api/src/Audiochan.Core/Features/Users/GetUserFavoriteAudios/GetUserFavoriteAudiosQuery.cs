@@ -16,14 +16,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Users.GetUserFavoriteAudios
 {
-    public record GetUserFavoriteAudiosQuery : IHasOffsetPage, IRequest<OffsetPagedListDto<AudioViewModel>>
+    public record GetUserFavoriteAudiosQuery : IHasOffsetPage, IRequest<OffsetPagedListDto<AudioDto>>
     {
         public string? Username { get; set; }
         public int Offset { get; init; }
         public int Size { get; init; }
     }
     
-    public class GetUserFavoriteAudiosQueryHandler : IRequestHandler<GetUserFavoriteAudiosQuery, OffsetPagedListDto<AudioViewModel>>
+    public class GetUserFavoriteAudiosQueryHandler : IRequestHandler<GetUserFavoriteAudiosQuery, OffsetPagedListDto<AudioDto>>
     {
         private readonly ApplicationDbContext _unitOfWork;
         private readonly long _currentUserId;
@@ -34,7 +34,7 @@ namespace Audiochan.Core.Features.Users.GetUserFavoriteAudios
             _currentUserId = currentUserService.GetUserId();
         }
 
-        public async Task<OffsetPagedListDto<AudioViewModel>> Handle(GetUserFavoriteAudiosQuery query, CancellationToken cancellationToken)
+        public async Task<OffsetPagedListDto<AudioDto>> Handle(GetUserFavoriteAudiosQuery query, CancellationToken cancellationToken)
         {
             return await _unitOfWork.Users
                 .AsNoTracking()

@@ -38,7 +38,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Playlists
             var response = await SendAsync(new GetPlaylistQuery(playlist.Id));
 
             response.Should().NotBeNull();
-            response.Should().BeOfType<PlaylistViewModel>();
+            response.Should().BeOfType<PlaylistDto>();
             response!.Title.Should().Be(playlist.Title);
             response.Description.Should().Be(playlist.Description);
             response.Visibility.Should().Be(playlist.Visibility);

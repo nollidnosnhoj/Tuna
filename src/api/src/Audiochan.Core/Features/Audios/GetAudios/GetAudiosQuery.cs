@@ -16,14 +16,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Audios.GetAudios
 {
-    public record GetAudiosQuery : IHasCursorPage<long>, IRequest<CursorPagedListDto<AudioViewModel>>
+    public record GetAudiosQuery : IHasCursorPage<long>, IRequest<CursorPagedListDto<AudioDto>>
     {
         public List<string> Tags { get; init; } = new();
         public long? Cursor { get; init; }
         public int Size { get; init; } = 30;
     }
 
-    public class GetAudiosQueryHandler : IRequestHandler<GetAudiosQuery, CursorPagedListDto<AudioViewModel>>
+    public class GetAudiosQueryHandler : IRequestHandler<GetAudiosQuery, CursorPagedListDto<AudioDto>>
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly long _currentUserId;
@@ -34,7 +34,7 @@ namespace Audiochan.Core.Features.Audios.GetAudios
             _currentUserId = currentUserService.GetUserId();
         }
 
-        public async Task<CursorPagedListDto<AudioViewModel>> Handle(GetAudiosQuery query,
+        public async Task<CursorPagedListDto<AudioDto>> Handle(GetAudiosQuery query,
             CancellationToken cancellationToken)
         {
             var queryable = _dbContext.Audios

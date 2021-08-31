@@ -13,7 +13,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Playlists.UpdatePlaylistDetails
 {
-    public record UpdatePlaylistDetailsCommand : IRequest<Result<PlaylistViewModel>>
+    public record UpdatePlaylistDetailsCommand : IRequest<Result<PlaylistDto>>
     {
         public long Id { get; init; }
         public string? Title { get; init; }
@@ -69,7 +69,7 @@ namespace Audiochan.Core.Features.Playlists.UpdatePlaylistDetails
     }
     
     public class UpdatePlaylistDetailsCommandHandler 
-        : IRequestHandler<UpdatePlaylistDetailsCommand,Result<PlaylistViewModel>>
+        : IRequestHandler<UpdatePlaylistDetailsCommand,Result<PlaylistDto>>
     {
         private readonly long _currentUserId;
         private readonly ApplicationDbContext _unitOfWork;
@@ -80,17 +80,17 @@ namespace Audiochan.Core.Features.Playlists.UpdatePlaylistDetails
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Result<PlaylistViewModel>> Handle(UpdatePlaylistDetailsCommand request, CancellationToken cancellationToken)
+        public async Task<Result<PlaylistDto>> Handle(UpdatePlaylistDetailsCommand request, CancellationToken cancellationToken)
         {
             var playlist = await _unitOfWork.Playlists
                 .Include(p => p.User)
                 .SingleOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
 
             if (playlist is null)
-                return Result<PlaylistViewModel>.NotFound<Playlist>();
+                return Result<PlaylistDto>.NotFound<Playlist>();
 
             if (playlist.UserId != _currentUserId)
-                return Result<PlaylistViewModel>.Forbidden();
+                return Result<PlaylistDto>.Forbidden();
 
             if (!string.IsNullOrWhiteSpace(request.Title))
                 playlist.Title = request.Title;
@@ -103,7 +103,7 @@ namespace Audiochan.Core.Features.Playlists.UpdatePlaylistDetails
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             
-            return Result<PlaylistViewModel>.Success(PlaylistMaps.PlaylistToDetailFunc.Compile().Invoke(playlist));
+            return Result<PlaylistDto>.Success(PlaylistMaps.PlaylistToDetailFunc.Compile().Invoke(playlist));
         }
     }
 }

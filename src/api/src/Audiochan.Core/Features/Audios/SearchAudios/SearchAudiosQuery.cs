@@ -16,7 +16,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Audios.SearchAudios
 {
-    public record SearchAudiosQuery : IHasPage, IRequest<PagedListDto<AudioViewModel>>
+    public record SearchAudiosQuery : IHasPage, IRequest<PagedListDto<AudioDto>>
     {
         public string Q { get; init; } = string.Empty;
         public string Tags { get; init; } = string.Empty;
@@ -24,7 +24,7 @@ namespace Audiochan.Core.Features.Audios.SearchAudios
         public int Size { get; init; }
     }
 
-    public class SearchAudiosQueryHandler : IRequestHandler<SearchAudiosQuery, PagedListDto<AudioViewModel>>
+    public class SearchAudiosQueryHandler : IRequestHandler<SearchAudiosQuery, PagedListDto<AudioDto>>
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly long _currentUserId;
@@ -35,7 +35,7 @@ namespace Audiochan.Core.Features.Audios.SearchAudios
             _currentUserId = currentUserService.GetUserId();
         }
 
-        public async Task<PagedListDto<AudioViewModel>> Handle(SearchAudiosQuery query,
+        public async Task<PagedListDto<AudioDto>> Handle(SearchAudiosQuery query,
             CancellationToken cancellationToken)
         {
             var parsedTags = !string.IsNullOrWhiteSpace(query.Tags)

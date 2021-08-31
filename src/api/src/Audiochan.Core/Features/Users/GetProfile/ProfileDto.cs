@@ -2,7 +2,7 @@
 
 namespace Audiochan.Core.Features.Users.GetProfile
 {
-    public record ProfileViewModel : IResourceModel<long>
+    public record ProfileDto : IResourceDto<long>
     {
         public long Id { get; init; }
         public string Username { get; init; } = null!;

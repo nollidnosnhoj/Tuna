@@ -1,5 +1,3 @@
-export type IdSlug = string | number;
-
 export type MetaAuthor = {
   id: number;
   username: string;

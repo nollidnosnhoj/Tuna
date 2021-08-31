@@ -33,7 +33,7 @@ namespace Audiochan.API.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         [SwaggerOperation(Summary = "Return user's profile.", OperationId = "GetProfile", Tags = new[] {"users"})]
-        public async Task<ActionResult<ProfileViewModel>> GetUser(string username, CancellationToken cancellationToken)
+        public async Task<ActionResult<ProfileDto>> GetUser(string username, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new GetProfileQuery(username), cancellationToken);
 
@@ -46,7 +46,7 @@ namespace Audiochan.API.Controllers
         [ProducesResponseType(200)]
         [SwaggerOperation(Summary = "Return a list of the user's audios.", OperationId = "GetUserAudios",
             Tags = new[] {"users"})]
-        public async Task<ActionResult<PagedListDto<AudioViewModel>>> GetUserAudios(string username, 
+        public async Task<ActionResult<PagedListDto<AudioDto>>> GetUserAudios(string username, 
             [FromQuery] OffsetPaginationQueryParams paginationQueryParams,
             CancellationToken cancellationToken)
         {

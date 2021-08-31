@@ -1,6 +1,6 @@
 ﻿namespace Audiochan.Core.Common.Interfaces
 {
-    public interface IResourceModel<out TKey>
+    public interface IResourceDto<out TKey>
     {
         TKey Id { get; }
     }

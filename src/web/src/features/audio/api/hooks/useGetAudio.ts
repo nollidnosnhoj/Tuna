@@ -2,41 +2,49 @@ import { useCallback } from "react";
 import {
   QueryKey,
   useQuery,
+  useQueryClient,
   UseQueryOptions,
   UseQueryResult,
 } from "react-query";
 import request from "~/lib/http";
-import { ErrorResponse, IdSlug } from "~/lib/types";
-import { getIdAndSlugFromSlug } from "~/utils";
-import { AudioId, AudioView } from "../types";
+import { ErrorResponse } from "~/lib/types";
+import { AudioView } from "../types";
 
-export const GET_AUDIO_QUERY_KEY = (id: AudioId): QueryKey => ["audios", id];
+export const GET_AUDIO_QUERY_BYSLUG_KEY = (slug: string): QueryKey => [
+  "audios",
+  slug,
+];
+export const GET_AUDIO_QUERY_KEY = (id: number): QueryKey => ["audios", id];
 
 type UseGetAudioQueryOptions = UseQueryOptions<AudioView, ErrorResponse> & {
   secret?: string;
 };
 
 export function useGetAudio(
-  idSlug: IdSlug,
+  slug: string,
   options: UseGetAudioQueryOptions = {}
 ): UseQueryResult<AudioView, ErrorResponse> {
-  const [id] = getIdAndSlugFromSlug(idSlug);
   const { secret, ...queryOptions } = options;
-
+  const queryClient = useQueryClient();
   const fetcher = useCallback(async () => {
     const { data } = await request<AudioView>({
       method: "get",
-      url: `audios/${idSlug}`,
+      url: `audios/${slug}`,
       params: {
         secret: secret || undefined,
       },
     });
     return data;
-  }, [idSlug, secret]);
+  }, [slug, secret]);
 
   return useQuery<AudioView, ErrorResponse>(
-    GET_AUDIO_QUERY_KEY(id),
+    GET_AUDIO_QUERY_BYSLUG_KEY(slug),
     fetcher,
-    queryOptions
+    {
+      ...queryOptions,
+      onSuccess(data) {
+        queryClient.setQueryData<AudioView>(GET_AUDIO_QUERY_KEY(data.id), data);
+      },
+    }
   );
 }

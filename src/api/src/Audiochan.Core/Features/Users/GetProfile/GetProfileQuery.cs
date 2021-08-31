@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Users.GetProfile
 {
-    public record GetProfileQuery(string Username) : IRequest<ProfileViewModel?>
+    public record GetProfileQuery(string Username) : IRequest<ProfileDto?>
     {
     }
 
-    public class GetProfileQueryHandler : IRequestHandler<GetProfileQuery, ProfileViewModel?>
+    public class GetProfileQueryHandler : IRequestHandler<GetProfileQuery, ProfileDto?>
     {
         private readonly ApplicationDbContext _unitOfWork;
 
@@ -20,7 +20,7 @@ namespace Audiochan.Core.Features.Users.GetProfile
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<ProfileViewModel?> Handle(GetProfileQuery query, CancellationToken cancellationToken)
+        public async Task<ProfileDto?> Handle(GetProfileQuery query, CancellationToken cancellationToken)
         {
             return await _unitOfWork.Users
                 .AsNoTracking()

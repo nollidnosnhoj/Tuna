@@ -4,9 +4,9 @@ using Audiochan.Core.Common.Models;
 using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Features.Audios;
 
-namespace Audiochan.Core.Features.Playlists.GetPlaylist
+namespace Audiochan.Core.Features.Playlists
 {
-    public record PlaylistViewModel : IResourceModel<long>
+    public record PlaylistDto : IResourceDto<long>
     {
         public long Id { get; init; }
         public string Title { get; init; } = string.Empty;
@@ -14,7 +14,7 @@ namespace Audiochan.Core.Features.Playlists.GetPlaylist
         public string? Picture { get; init; }
         public Visibility Visibility { get; init; }
         public List<string> Tags { get; init; } = new();
-        public List<AudioViewModel> Audios { get; init; } = new();
+        public List<AudioDto> Audios { get; init; } = new();
         public MetaAuthorDto User { get; init; } = null!;
     }
 }

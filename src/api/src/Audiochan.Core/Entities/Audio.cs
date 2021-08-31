@@ -34,8 +34,6 @@ namespace Audiochan.Core.Entities
         public ICollection<User> Favorited { get; set; }
         public ICollection<Tag> Tags { get; set; }
 
-        public string FullSlug => $"{Id}-{Slug}";
-
         public void UpdateTags(List<Tag> tags)
         {
             if (this.Tags.Count > 0)

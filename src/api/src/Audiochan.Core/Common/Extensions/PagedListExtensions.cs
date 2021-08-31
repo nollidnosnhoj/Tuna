@@ -18,7 +18,7 @@ namespace Audiochan.Core.Common.Extensions
             this IQueryable<TResponse> queryable,
             long? cursor,
             int size = DefaultPageSize,
-            CancellationToken cancellationToken = default) where TResponse : IResourceModel<long>
+            CancellationToken cancellationToken = default) where TResponse : IResourceDto<long>
         {
             cursor ??= null;
             if (size == default) size = DefaultPageSize;
@@ -42,7 +42,7 @@ namespace Audiochan.Core.Common.Extensions
             this IQueryable<TResponse> queryable,
             IHasCursorPage<long> query,
             CancellationToken cancellationToken = default) 
-                where TResponse : IResourceModel<long>
+                where TResponse : IResourceDto<long>
         {
             return await queryable.CursorPaginateAsync(query.Cursor, query.Size, cancellationToken);
         }

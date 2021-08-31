@@ -54,7 +54,7 @@ namespace Audiochan.API.Controllers.Me
             OperationId = "GetYourInfo",
             Tags = new[] {"me"}
         )]
-        public async Task<ActionResult<CurrentUserViewModel>> GetYourInfo(CancellationToken cancellationToken)
+        public async Task<ActionResult<CurrentUserDto>> GetYourInfo(CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new GetCurrentUserQuery(_currentUserId), cancellationToken);
             return result != null

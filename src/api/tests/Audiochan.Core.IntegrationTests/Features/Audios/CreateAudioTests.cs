@@ -75,12 +75,12 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             
             // Act
             var (exists, audio) =
-                await GetCache<AudioViewModel>(CacheKeys.Audio.GetAudio(response.Data));
+                await GetCache<AudioDto>(CacheKeys.Audio.GetAudio(response.Data));
 
             // Assert
             exists.Should().BeTrue();
             audio.Should().NotBeNull();
-            audio.Should().BeOfType<AudioViewModel>();
+            audio.Should().BeOfType<AudioDto>();
         }
     }
 }

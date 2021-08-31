@@ -42,7 +42,7 @@ namespace Audiochan.API.Controllers.Me
             OperationId = "YourAudios",
             Tags = new [] {"me"}
         )]
-        public async Task<ActionResult<OffsetPagedListDto<AudioViewModel>>> GetYourAudios(
+        public async Task<ActionResult<OffsetPagedListDto<AudioDto>>> GetYourAudios(
             [FromQuery] OffsetPaginationQueryParams queryParams, 
             CancellationToken cancellationToken = default)
         {
@@ -64,7 +64,7 @@ namespace Audiochan.API.Controllers.Me
             OperationId = "GetYourFeed",
             Tags = new[] {"me"}
         )]
-        public async Task<ActionResult<PagedListDto<AudioViewModel>>> GetYourFeed(
+        public async Task<ActionResult<PagedListDto<AudioDto>>> GetYourFeed(
             [FromQuery] OffsetPaginationQueryParams queryParams, 
             CancellationToken cancellationToken)
         {

@@ -33,7 +33,7 @@ namespace Audiochan.API.Controllers.Me
         [HttpGet(Name="GetYourPlaylists")]
         [ProducesResponseType(200)]
         [SwaggerOperation(Summary = "Get user's playlists", OperationId = "GetYourPlaylists", Tags = new []{"me"})]
-        public async Task<ActionResult<PagedListDto<PlaylistViewModel>>> GetYourPlaylists(
+        public async Task<ActionResult<PagedListDto<PlaylistDto>>> GetYourPlaylists(
             [FromQuery] OffsetPaginationQueryParams paginationQueryParams,
             CancellationToken cancellationToken)
         {

@@ -17,14 +17,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Users.GetUserAudios
 {
-    public class GetUsersAudioQuery : IHasOffsetPage, IRequest<OffsetPagedListDto<AudioViewModel>>
+    public class GetUsersAudioQuery : IHasOffsetPage, IRequest<OffsetPagedListDto<AudioDto>>
     {
         public string? Username { get; set; }
         public int Offset { get; init; } = 1;
         public int Size { get; init; } = 30;
     }
 
-    public class GetUsersAudioQueryHandler : IRequestHandler<GetUsersAudioQuery, OffsetPagedListDto<AudioViewModel>>
+    public class GetUsersAudioQueryHandler : IRequestHandler<GetUsersAudioQuery, OffsetPagedListDto<AudioDto>>
     {
         private readonly ApplicationDbContext _unitOfWork;
         private readonly long _currentUserId;
@@ -35,7 +35,7 @@ namespace Audiochan.Core.Features.Users.GetUserAudios
             _currentUserId = currentUserService.GetUserId();
         }
 
-        public async Task<OffsetPagedListDto<AudioViewModel>> Handle(GetUsersAudioQuery request,
+        public async Task<OffsetPagedListDto<AudioDto>> Handle(GetUsersAudioQuery request,
             CancellationToken cancellationToken)
         {
             return await _unitOfWork.Audios

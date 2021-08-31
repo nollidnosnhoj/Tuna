@@ -36,7 +36,7 @@ namespace Audiochan.API.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         [SwaggerOperation(Summary = "Return an playlist by ID.", OperationId = "GetPlaylist", Tags = new[] {"playlists"})]
-        public async Task<ActionResult<PlaylistViewModel>> GetPlaylist(string idSlug, CancellationToken cancellationToken)
+        public async Task<ActionResult<PlaylistDto>> GetPlaylist(string idSlug, CancellationToken cancellationToken)
         {
             var (id, _) = idSlug.ExtractIdAndSlugFromSlug();
             var playlist = await _mediator.Send(new GetPlaylistQuery(id), cancellationToken);
@@ -57,7 +57,7 @@ namespace Audiochan.API.Controllers
             OperationId = "CreatePlaylist",
             Tags = new[] {"playlists"}
         )]
-        public async Task<ActionResult<PlaylistViewModel>> CreatePlaylist(
+        public async Task<ActionResult<PlaylistDto>> CreatePlaylist(
             [FromBody] CreatePlaylistCommand command, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(command, cancellationToken);
@@ -120,7 +120,7 @@ namespace Audiochan.API.Controllers
             Summary = "Return list of audios from a playlist",
             OperationId = "GetPlaylistAudios",
             Tags = new[] { "playlists" })]
-        public async Task<ActionResult<PagedListDto<AudioViewModel>>> GetPlaylistAudios(long playlistId,
+        public async Task<ActionResult<PagedListDto<AudioDto>>> GetPlaylistAudios(long playlistId,
             [FromQuery] CursorPaginationQueryParams<long> queryParams,
             CancellationToken cancellationToken)
         {

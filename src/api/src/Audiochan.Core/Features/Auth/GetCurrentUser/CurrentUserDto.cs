@@ -2,7 +2,7 @@
 
 namespace Audiochan.Core.Features.Auth.GetCurrentUser
 {
-    public record CurrentUserViewModel : IResourceModel<long>
+    public record CurrentUserDto : IResourceDto<long>
     {
         public long Id { get; init; }
         public string Username { get; init; } = null!;

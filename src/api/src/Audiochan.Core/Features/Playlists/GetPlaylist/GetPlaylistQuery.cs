@@ -11,9 +11,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Playlists.GetPlaylist
 {
-    public record GetPlaylistQuery(long Id) : IRequest<PlaylistViewModel?>;
+    public record GetPlaylistQuery(long Id) : IRequest<PlaylistDto?>;
     
-    public class GetPlaylistQueryHandler : IRequestHandler<GetPlaylistQuery, PlaylistViewModel?>
+    public class GetPlaylistQueryHandler : IRequestHandler<GetPlaylistQuery, PlaylistDto?>
     {
         private readonly long _currentUserId;
         private readonly ApplicationDbContext _unitOfWork;
@@ -24,7 +24,7 @@ namespace Audiochan.Core.Features.Playlists.GetPlaylist
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<PlaylistViewModel?> Handle(GetPlaylistQuery request, CancellationToken cancellationToken)
+        public async Task<PlaylistDto?> Handle(GetPlaylistQuery request, CancellationToken cancellationToken)
         {
             var playlist = await _unitOfWork.Playlists
                 .AsNoTracking()
@@ -38,7 +38,7 @@ namespace Audiochan.Core.Features.Playlists.GetPlaylist
             return playlist;
         }
         
-        private bool CanAccessPrivatePlaylist(PlaylistViewModel playlist)
+        private bool CanAccessPrivatePlaylist(PlaylistDto playlist)
         {
             return _currentUserId == playlist.User.Id || playlist.Visibility != Visibility.Private;
         }

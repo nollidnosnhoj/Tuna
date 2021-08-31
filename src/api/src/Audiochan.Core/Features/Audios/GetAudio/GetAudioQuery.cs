@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Audios.GetAudio
 {
-    public record GetAudioQuery : IRequest<AudioViewModel?>
+    public record GetAudioQuery : IRequest<AudioDto?>
     {
         public long Id { get; init; }
         public string? Secret { get; init; }
@@ -21,7 +21,7 @@ namespace Audiochan.Core.Features.Audios.GetAudio
         }
     }
 
-    public class GetAudioQueryHandler : IRequestHandler<GetAudioQuery, AudioViewModel?>
+    public class GetAudioQueryHandler : IRequestHandler<GetAudioQuery, AudioDto?>
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly ICacheService _cacheService;
@@ -34,20 +34,20 @@ namespace Audiochan.Core.Features.Audios.GetAudio
             _currentUserId = currentUserService.GetUserId();
         }
 
-        public async Task<AudioViewModel?> Handle(GetAudioQuery query, CancellationToken cancellationToken)
+        public async Task<AudioDto?> Handle(GetAudioQuery query, CancellationToken cancellationToken)
         {
             var audio = await FetchAudioFromCacheOrDatabaseAsync(query.Id, cancellationToken);
             if (audio == null || !CanAccessPrivateAudio(audio, query.Secret)) return null;
             return audio;
         }
 
-        private async Task<AudioViewModel?> FetchAudioFromCacheOrDatabaseAsync(long audioId, 
+        private async Task<AudioDto?> FetchAudioFromCacheOrDatabaseAsync(long audioId, 
             CancellationToken cancellationToken = default)
         {
             var cacheOptions = new GetAudioCacheOptions(audioId);
             
             var (cacheExists, audio) = await _cacheService
-                .GetAsync<AudioViewModel>(cacheOptions, cancellationToken);
+                .GetAsync<AudioDto>(cacheOptions, cancellationToken);
 
             if (cacheExists) return audio;
             
@@ -62,7 +62,7 @@ namespace Audiochan.Core.Features.Audios.GetAudio
             return audio;
         }
 
-        private bool CanAccessPrivateAudio(AudioViewModel audio, string? secret)
+        private bool CanAccessPrivateAudio(AudioDto audio, string? secret)
         {
             return _currentUserId == audio.User.Id || audio.Visibility != Visibility.Private || audio.Secret == secret;
         }

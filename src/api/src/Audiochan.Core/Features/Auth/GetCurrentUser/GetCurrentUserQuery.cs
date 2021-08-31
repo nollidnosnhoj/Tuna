@@ -8,11 +8,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Auth.GetCurrentUser
 {
-    public record GetCurrentUserQuery(long UserId) : IRequest<CurrentUserViewModel?>
+    public record GetCurrentUserQuery(long UserId) : IRequest<CurrentUserDto?>
     {
     }
 
-    public class GetCurrentUserQueryHandler : IRequestHandler<GetCurrentUserQuery, CurrentUserViewModel?>
+    public class GetCurrentUserQueryHandler : IRequestHandler<GetCurrentUserQuery, CurrentUserDto?>
     {
         private readonly ApplicationDbContext _dbContext;
 
@@ -21,7 +21,7 @@ namespace Audiochan.Core.Features.Auth.GetCurrentUser
             _dbContext = dbContext;
         }
 
-        public async Task<CurrentUserViewModel?> Handle(GetCurrentUserQuery query,
+        public async Task<CurrentUserDto?> Handle(GetCurrentUserQuery query,
             CancellationToken cancellationToken)
         {
             return await _dbContext.Users
