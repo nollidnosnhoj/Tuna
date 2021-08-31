@@ -27,17 +27,17 @@ namespace Audiochan.Core.Features.Users.UpdatePicture
         private readonly IImageUploadService _imageUploadService;
         private readonly long _currentUserId;
         private readonly ApplicationDbContext _unitOfWork;
-        private readonly INanoidGenerator _nanoidGenerator;
+        private readonly IRandomIdGenerator _randomIdGenerator;
 
         public UpdateUserPictureCommandHandler(IImageUploadService imageUploadService,
             ICurrentUserService currentUserService, 
             ApplicationDbContext unitOfWork, 
-            INanoidGenerator nanoidGenerator)
+            IRandomIdGenerator randomIdGenerator)
         {
             _imageUploadService = imageUploadService;
             _currentUserId = currentUserService.GetUserId();
             _unitOfWork = unitOfWork;
-            _nanoidGenerator = nanoidGenerator;
+            _randomIdGenerator = randomIdGenerator;
         }
 
         public async Task<Result<ImageUploadResponse>> Handle(UpdateUserPictureCommand command, CancellationToken cancellationToken)
@@ -58,7 +58,7 @@ namespace Audiochan.Core.Features.Users.UpdatePicture
             }
             else
             {
-                blobName = $"{await _nanoidGenerator.GenerateAsync(size: 15)}.jpg";
+                blobName = $"{await _randomIdGenerator.GenerateAsync(size: 15)}.jpg";
                 await _imageUploadService.UploadImage(command.Data, AssetContainerConstants.UserPictures, blobName, cancellationToken);
                 await RemoveOriginalPicture(user.Picture, cancellationToken);
                 user.Picture = blobName;

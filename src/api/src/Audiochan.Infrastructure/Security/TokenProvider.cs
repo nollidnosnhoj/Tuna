@@ -14,7 +14,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Audiochan.Infrastructure.Shared
+namespace Audiochan.Infrastructure.Security
 {
     internal class TokenProvider : ITokenProvider
     {

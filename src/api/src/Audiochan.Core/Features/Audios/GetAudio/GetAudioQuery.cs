@@ -49,15 +49,15 @@ namespace Audiochan.Core.Features.Audios.GetAudio
             var (cacheExists, audio) = await _cacheService
                 .GetAsync<AudioViewModel>(cacheOptions, cancellationToken);
 
-            if (!cacheExists)
-            {
-                audio = await _dbContext.Audios
-                    .AsNoTracking()
-                    .Where(x => x.Id == audioId)
-                    .Select(AudioMaps.AudioToView())
-                    .SingleOrDefaultAsync(cancellationToken);
-                await _cacheService.SetAsync(audio, cacheOptions, cancellationToken);
-            }
+            if (cacheExists) return audio;
+            
+            audio = await _dbContext.Audios
+                .AsNoTracking()
+                .Where(x => x.Id == audioId)
+                .Select(AudioMaps.AudioToView())
+                .SingleOrDefaultAsync(cancellationToken);
+            
+            await _cacheService.SetAsync(audio, cacheOptions, cancellationToken);
 
             return audio;
         }

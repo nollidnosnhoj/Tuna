@@ -14,14 +14,14 @@ namespace Audiochan.Core.Features.Playlists.ResetPlaylistSecretKey
     public class ResetPlaylistSecretKeyCommandHandler : IRequestHandler<ResetPlaylistSecretKeyCommand, Result<string>>
     {
         private readonly ApplicationDbContext _dbContext;
-        private readonly INanoidGenerator _nanoidGenerator;
+        private readonly IRandomIdGenerator _randomIdGenerator;
         private readonly long _currentUserId;
 
-        public ResetPlaylistSecretKeyCommandHandler(ApplicationDbContext dbContext, INanoidGenerator nanoidGenerator,
+        public ResetPlaylistSecretKeyCommandHandler(ApplicationDbContext dbContext, IRandomIdGenerator randomIdGenerator,
             ICurrentUserService currentUserService)
         {
             _dbContext = dbContext;
-            _nanoidGenerator = nanoidGenerator;
+            _randomIdGenerator = randomIdGenerator;
             _currentUserId = currentUserService.GetUserId();
         }
 
@@ -35,7 +35,7 @@ namespace Audiochan.Core.Features.Playlists.ResetPlaylistSecretKey
                 return Result<string>.NotFound<Playlist>();
             if (playlist.UserId != _currentUserId)
                 return Result<string>.NotFound<Playlist>();
-            playlist.Secret = await _nanoidGenerator.GenerateAsync(size: 10);
+            playlist.Secret = await _randomIdGenerator.GenerateAsync(size: 10);
             await _dbContext.SaveChangesAsync(cancellationToken);
             return Result<string>.Success(playlist.Secret);
         }

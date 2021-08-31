@@ -16,15 +16,15 @@ namespace Audiochan.Core.Persistence
     public class ApplicationDbContext : DbContext
     {
         private readonly IDateTimeProvider _dateTimeProvider;
-        private readonly INanoidGenerator _nanoidGenerator;
+        private readonly IRandomIdGenerator _randomIdGenerator;
         private IDbContextTransaction? _currentTransaction;
 
         public ApplicationDbContext(DbContextOptions options,
             IDateTimeProvider dateTimeProvider, 
-            INanoidGenerator nanoidGenerator) : base(options)
+            IRandomIdGenerator randomIdGenerator) : base(options)
         {
             _dateTimeProvider = dateTimeProvider;
-            _nanoidGenerator = nanoidGenerator;
+            _randomIdGenerator = randomIdGenerator;
         }
 
         public DbSet<Audio> Audios { get; set; } = null!;
@@ -150,7 +150,7 @@ namespace Audiochan.Core.Persistence
                     case EntityState.Added:
                         if (visibility == Visibility.Private)
                         {
-                            entry.Property(nameof(IHasVisibility.Secret)).CurrentValue = _nanoidGenerator.Generate(size: 10);
+                            entry.Property(nameof(IHasVisibility.Secret)).CurrentValue = _randomIdGenerator.Generate(size: 10);
                         }
                         break;
                     case EntityState.Modified:
@@ -164,7 +164,7 @@ namespace Audiochan.Core.Persistence
                         else if (og != Visibility.Private && visibility == Visibility.Private)
                         {
                             entry.Property(nameof(IHasVisibility.Secret)).CurrentValue =
-                                _nanoidGenerator.Generate(size: 10);
+                                _randomIdGenerator.Generate(size: 10);
                         }
                         break;
                     }

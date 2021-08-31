@@ -1,6 +1,6 @@
 ﻿using Audiochan.Core.Interfaces;
 
-namespace Audiochan.Infrastructure.Shared
+namespace Audiochan.Infrastructure.Security
 {
     public class BCryptHasher : IPasswordHasher
     {

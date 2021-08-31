@@ -27,18 +27,18 @@ namespace Audiochan.Core.Features.Playlists.UpdatePlaylistPicture
     public class UpdatePlaylistPictureCommandHandler : IRequestHandler<UpdatePlaylistPictureCommand, Result<ImageUploadResponse>>
     {
         private readonly long _currentUserId;
-        private readonly INanoidGenerator _nanoidGenerator;
+        private readonly IRandomIdGenerator _randomIdGenerator;
         private readonly IImageUploadService _imageUploadService;
         private readonly ApplicationDbContext _unitOfWork;
 
         public UpdatePlaylistPictureCommandHandler(IImageUploadService imageUploadService,
             ApplicationDbContext unitOfWork, 
             ICurrentUserService currentUserService, 
-            INanoidGenerator nanoidGenerator)
+            IRandomIdGenerator randomIdGenerator)
         {
             _imageUploadService = imageUploadService;
             _unitOfWork = unitOfWork;
-            _nanoidGenerator = nanoidGenerator;
+            _randomIdGenerator = randomIdGenerator;
             _currentUserId = currentUserService.GetUserId();
         }
         
@@ -62,7 +62,7 @@ namespace Audiochan.Core.Features.Playlists.UpdatePlaylistPicture
             }
             else
             {
-                blobName = $"{await _nanoidGenerator.GenerateAsync(size: 15)}.jpg";
+                blobName = $"{await _randomIdGenerator.GenerateAsync(size: 15)}.jpg";
                 await _imageUploadService.UploadImage(request.Data, AssetContainerConstants.PlaylistPictures, blobName, cancellationToken);
                 await RemoveOriginalPicture(playlist.Picture, cancellationToken);
                 playlist.Picture = blobName;

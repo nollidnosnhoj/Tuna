@@ -14,14 +14,14 @@ namespace Audiochan.Core.Features.Audios.ResetAudioSecretKey
     public class ResetAudioSecretKeyCommandHandler : IRequestHandler<ResetAudioSecretKeyCommand, Result<string>>
     {
         private readonly ApplicationDbContext _dbContext;
-        private readonly INanoidGenerator _nanoidGenerator;
+        private readonly IRandomIdGenerator _randomIdGenerator;
         private readonly long _currentUserId;
 
-        public ResetAudioSecretKeyCommandHandler(ApplicationDbContext dbContext, INanoidGenerator nanoidGenerator, 
+        public ResetAudioSecretKeyCommandHandler(ApplicationDbContext dbContext, IRandomIdGenerator randomIdGenerator, 
             ICurrentUserService currentUserService)
         {
             _dbContext = dbContext;
-            _nanoidGenerator = nanoidGenerator;
+            _randomIdGenerator = randomIdGenerator;
             _currentUserId = currentUserService.GetUserId();
         }
 
@@ -34,7 +34,7 @@ namespace Audiochan.Core.Features.Audios.ResetAudioSecretKey
                 return Result<string>.NotFound<Audio>();
             if (audio.UserId != _currentUserId)
                 return Result<string>.NotFound<Audio>();
-            audio.Secret = await _nanoidGenerator.GenerateAsync(size: 10);
+            audio.Secret = await _randomIdGenerator.GenerateAsync(size: 10);
             await _dbContext.SaveChangesAsync(cancellationToken);
             return Result<string>.Success(audio.Secret);
         }

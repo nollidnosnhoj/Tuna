@@ -18,16 +18,16 @@ namespace Audiochan.Core.Services
     
     public class AudioUploadService : IAudioUploadService
     {
-        private readonly INanoidGenerator _nanoidGenerator;
+        private readonly IRandomIdGenerator _randomIdGenerator;
         private readonly IStorageService _storageService;
         private readonly AudioStorageSettings _audioStorageSettings;
         
 
-        public AudioUploadService(INanoidGenerator nanoidGenerator, 
+        public AudioUploadService(IRandomIdGenerator randomIdGenerator, 
             IStorageService storageService,
             IOptions<MediaStorageSettings> mediaStorageSettings)
         {
-            _nanoidGenerator = nanoidGenerator;
+            _randomIdGenerator = randomIdGenerator;
             _storageService = storageService;
             _audioStorageSettings = mediaStorageSettings.Value.Audio;
         }
@@ -35,7 +35,7 @@ namespace Audiochan.Core.Services
         public async Task<(string, string)> CreateUploadUrl(string fileName, long userId)
         {
             var fileExt = Path.GetExtension(fileName);
-            var uploadId = await _nanoidGenerator.GenerateAsync(size: 21);
+            var uploadId = await _randomIdGenerator.GenerateAsync(size: 21);
             var blobName = uploadId + fileExt;
             var metadata = new Dictionary<string, string> {{"UserId", userId.ToString()}};
             var url = _storageService.CreatePutPresignedUrl(

@@ -3,7 +3,7 @@ using Audiochan.Core.Interfaces;
 
 namespace Audiochan.Infrastructure.Shared
 {
-    public class NanoidGenerator : INanoidGenerator
+    public class NanoidGenerator : IRandomIdGenerator
     {
         public string Generate(int size = 21, string chars = "_-0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
         {

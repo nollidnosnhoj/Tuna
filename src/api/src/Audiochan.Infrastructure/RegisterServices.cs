@@ -1,6 +1,7 @@
 ﻿using Amazon.S3;
 using Audiochan.Core.Interfaces;
 using Audiochan.Infrastructure.Caching;
+using Audiochan.Infrastructure.Security;
 using Audiochan.Infrastructure.Shared;
 using Audiochan.Infrastructure.Storage.AmazonS3;
 using Microsoft.Extensions.Configuration;
@@ -32,7 +33,7 @@ namespace Audiochan.Infrastructure
             services.AddTransient<IImageUploadService, ImageUploadService>();
             services.AddTransient<ITokenProvider, TokenProvider>();
             services.AddTransient<IDateTimeProvider, DateTimeProvider>();
-            services.AddTransient<INanoidGenerator, NanoidGenerator>();
+            services.AddTransient<IRandomIdGenerator, NanoidGenerator>();
             services.AddTransient<IPasswordHasher, BCryptHasher>();
             return services;
         }
