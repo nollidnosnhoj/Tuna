@@ -13,7 +13,7 @@ import React, { useState } from "react";
 import * as yup from "yup";
 import { errorToast, toast } from "~/utils/toast";
 import { useEditAudio, useRemoveAudio } from "../api/hooks";
-import { AudioView, AudioRequest, Visibility } from "../api/types";
+import { AudioView, AudioRequest } from "../api/types";
 import AudioForm from "./Form";
 import { useRouter } from "next/router";
 import { FormProvider, useForm } from "react-hook-form";
@@ -47,10 +47,6 @@ const validationSchema: yup.SchemaOf<AudioRequest> = yup
       .max(10, validationMessages.max("Tags", 10))
       .ensure()
       .defined(),
-    visibility: yup
-      .mixed<Visibility>()
-      .required(validationMessages.required("Visibility"))
-      .oneOf([...Object.values(Visibility)], "Visibility choice is invalid."),
   })
   .defined();
 
@@ -67,7 +63,6 @@ const AudioEditDrawer: React.FC<AudioEditDrawerProps> = (props) => {
       title: audio.title,
       description: audio.description,
       tags: audio.tags,
-      visibility: audio.visibility,
     },
     resolver: yupResolver(validationSchema),
   });

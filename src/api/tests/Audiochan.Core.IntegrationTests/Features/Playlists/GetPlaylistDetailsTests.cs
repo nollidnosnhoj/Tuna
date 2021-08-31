@@ -41,7 +41,6 @@ namespace Audiochan.Core.IntegrationTests.Features.Playlists
             response.Should().BeOfType<PlaylistDto>();
             response!.Title.Should().Be(playlist.Title);
             response.Description.Should().Be(playlist.Description);
-            response.Visibility.Should().Be(playlist.Visibility);
             response.Picture.Should().BeNullOrEmpty();
         }
     }

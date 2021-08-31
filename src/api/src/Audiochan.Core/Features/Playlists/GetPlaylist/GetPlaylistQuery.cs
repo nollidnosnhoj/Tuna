@@ -29,18 +29,10 @@ namespace Audiochan.Core.Features.Playlists.GetPlaylist
             var playlist = await _unitOfWork.Playlists
                 .AsNoTracking()
                 .Where(x => x.Id == request.Id)
-                .Where(p => p.UserId == _currentUserId || p.Visibility == Visibility.Public)
                 .Select(PlaylistMaps.PlaylistToDetailFunc)
                 .SingleOrDefaultAsync(cancellationToken);
-            
-            if (playlist == null || !CanAccessPrivatePlaylist(playlist)) return null;
 
             return playlist;
-        }
-        
-        private bool CanAccessPrivatePlaylist(PlaylistDto playlist)
-        {
-            return _currentUserId == playlist.User.Id || playlist.Visibility != Visibility.Private;
         }
     }
 }

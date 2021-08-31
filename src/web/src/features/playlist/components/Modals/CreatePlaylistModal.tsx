@@ -10,7 +10,6 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
-import RadioInputs from "~/components/Forms/Inputs/Radios";
 import TagInput from "~/components/Forms/Inputs/Tags";
 import TextInput from "~/components/Forms/Inputs/Text";
 import { useAddToPlaylist } from "~/lib/stores";
@@ -89,26 +88,6 @@ export default function CreatePlaylistModal({
                   error={error?.message}
                   {...restField}
                   disabled={isSubmitting}
-                />
-              )}
-            />
-            <Controller
-              name="visibility"
-              control={control}
-              render={({
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                field: { ref: _, ...restField },
-                fieldState: { error },
-              }) => (
-                <RadioInputs
-                  {...restField}
-                  error={error?.message}
-                  options={[
-                    { name: "Public", value: "public" },
-                    { name: "Private", value: "private" },
-                  ]}
-                  isDisabled={isSubmitting}
-                  helperText="Private audio will generate a secret key that should be used to access private audios."
                 />
               )}
             />

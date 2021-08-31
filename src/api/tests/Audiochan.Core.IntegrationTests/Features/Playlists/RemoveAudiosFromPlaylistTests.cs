@@ -26,7 +26,6 @@ namespace Audiochan.Core.IntegrationTests.Features.Playlists
             InsertIntoDatabase(playlist);
             
             var audios = new AudioFaker(userId)
-                .WithVisibility(Visibility.Public)
                 .Generate(5);
             InsertRangeIntoDatabase(audios);
             
@@ -60,7 +59,6 @@ namespace Audiochan.Core.IntegrationTests.Features.Playlists
             var playlist = new PlaylistFaker(userId).Generate();
             InsertIntoDatabase(playlist);
             var audios = new AudioFaker(userId)
-                .WithVisibility(Visibility.Public)
                 .Generate(5);
             InsertRangeIntoDatabase(audios);
             var playlistAudios = audios

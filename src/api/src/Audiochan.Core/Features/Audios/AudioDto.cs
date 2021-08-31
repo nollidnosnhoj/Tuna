@@ -13,8 +13,6 @@ namespace Audiochan.Core.Features.Audios
         public string Title { get; init; } = null!;
         public string Slug => HashIdHelper.EncodeLong(Id);
         public string Description { get; init; } = string.Empty;
-        public Visibility Visibility { get; init; }
-        public string? Secret { get; init; }
         public List<string> Tags { get; init; } = new();
         public decimal Duration { get; init; }
         public long Size { get; init; }

@@ -94,8 +94,7 @@ namespace Audiochan.Core.Features.Playlists.AddAudiosToPlaylist
         private async Task<bool> CheckIfAudioIdsAreValid(ICollection<long> audioIds, CancellationToken cancellationToken)
         {
             var audioCount = await _unitOfWork.Audios
-                .CountAsync(x => audioIds.Contains(x.Id)
-                    && x.Visibility == Visibility.Public, cancellationToken);
+                .CountAsync(x => audioIds.Contains(x.Id), cancellationToken);
 
             return audioCount == audioIds.Count;
         }

@@ -70,66 +70,6 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             created.Description.Should().Be(command.Description);
             created.Tags.Count.Should().Be(command.Tags!.Count);
         }
-        
-        [Fact]
-        public async Task ShouldAddSecret_WhenAudioChangedToPrivate()
-        {
-            // Assign
-            var (ownerId, _) = await RunAsUserAsync("kopacetic");
-
-            var audio = new AudioFaker(ownerId)
-                .WithVisibility(Visibility.Public)
-                .Generate();
-
-            InsertIntoDatabase(audio);
-            
-            // Act
-            var command = new UpdateAudioRequestFaker(audio.Id)
-                .SetFixedVisibility(Visibility.Private)
-                .Generate();
-
-            await SendAsync(command);
-
-            var created = ExecuteDbContext(database =>
-            {
-                return database.Audios
-                    .SingleOrDefault(a => a.Id == audio.Id);
-            });
-
-            // Assert
-            created.Should().NotBeNull();
-            created!.Secret.Should().NotBeNullOrEmpty();
-        }
-        
-        [Fact]
-        public async Task ShouldRemoveSecret_WhenAudioChangedToPublic()
-        {
-            // Assign
-            var (ownerId, _) = await RunAsUserAsync("kopacetic");
-
-            var audio = new AudioFaker(ownerId)
-                .WithVisibility(Visibility.Private)
-                .Generate();
-
-            InsertIntoDatabase(audio);
-            
-            // Act
-            var command = new UpdateAudioRequestFaker(audio.Id)
-                .SetFixedVisibility(Visibility.Public)
-                .Generate();
-
-            await SendAsync(command);
-
-            var created = ExecuteDbContext(database =>
-            {
-                return database.Audios
-                    .SingleOrDefault(a => a.Id == audio.Id);
-            });
-
-            // Assert
-            created.Should().NotBeNull();
-            created!.Secret.Should().BeNullOrEmpty();
-        }
 
         [Fact]
         public async Task ShouldInvalidateCacheSuccessfully()

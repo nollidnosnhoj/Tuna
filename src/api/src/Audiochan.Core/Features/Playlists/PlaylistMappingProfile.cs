@@ -16,7 +16,6 @@ namespace Audiochan.Core.Features.Playlists
                 Id = playlist.Id,
                 Title = playlist.Title,
                 Description = playlist.Description ?? string.Empty,
-                Visibility = playlist.Visibility,
                 Picture = playlist.Picture != null
                     ? string.Format(MediaLinkInvariants.PlaylistPictureUrl, playlist.Picture)
                     : null,

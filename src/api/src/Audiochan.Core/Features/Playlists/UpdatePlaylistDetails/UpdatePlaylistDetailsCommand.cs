@@ -18,7 +18,6 @@ namespace Audiochan.Core.Features.Playlists.UpdatePlaylistDetails
         public long Id { get; init; }
         public string? Title { get; init; }
         public string? Description { get; init; }
-        public Visibility? Visibility { get; init; }
         public List<string>? Tags { get; init; }
 
         public UpdatePlaylistDetailsCommand(long id, UpdatePlaylistDetailsRequest request)
@@ -26,7 +25,6 @@ namespace Audiochan.Core.Features.Playlists.UpdatePlaylistDetails
             Id = id;
             Title = request.Title;
             Description = request.Description;
-            Visibility = request.Visibility;
             Tags = request.Tags;
         }
     }
@@ -97,9 +95,6 @@ namespace Audiochan.Core.Features.Playlists.UpdatePlaylistDetails
 
             if (request.Description is not null)
                 playlist.Description = request.Description;
-
-            if (request.Visibility is not null)
-                playlist.Visibility = request.Visibility.Value;
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             

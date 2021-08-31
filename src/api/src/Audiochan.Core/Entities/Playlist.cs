@@ -6,7 +6,7 @@ using Audiochan.Core.Entities.Enums;
 
 namespace Audiochan.Core.Entities
 {
-    public class Playlist : IHasVisibility, IAudited, IResourceEntity<long>
+    public class Playlist : IAudited, IResourceEntity<long>
     {
         public Playlist()
         {
@@ -20,8 +20,6 @@ namespace Audiochan.Core.Entities
         public string Title { get; set; } = null!;
         public string Slug { get; set; } = null!;
         public string? Description { get; set; }
-        public Visibility Visibility { get; set; }
-        public string? Secret { get; set; }
         public string? Picture { get; set; }
         public DateTime Created { get; set; }
         public DateTime? LastModified { get; set; }

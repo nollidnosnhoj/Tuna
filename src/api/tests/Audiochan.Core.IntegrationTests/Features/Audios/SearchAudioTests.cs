@@ -32,7 +32,6 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             var (ownerId, _) = await RunAsAdministratorAsync();
 
             var audioFaker = new AudioFaker(ownerId)
-                .RuleFor(x => x.Visibility, _ => Visibility.Public)
                 .FinishWith((f, a) =>
                 {
                     a.Tags = new List<Tag> {new() {Name = tags[0]}, new() {Name = tags[1]}};

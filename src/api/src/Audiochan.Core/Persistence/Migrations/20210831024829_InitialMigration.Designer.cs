@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Audiochan.Core.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210817024200_InitialMigration")]
+    [Migration("20210831024829_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -76,11 +76,6 @@ namespace Audiochan.Core.Persistence.Migrations
                         .HasColumnType("character varying(256)")
                         .HasColumnName("picture");
 
-                    b.Property<string>("Secret")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("secret");
-
                     b.Property<long>("Size")
                         .HasColumnType("bigint")
                         .HasColumnName("size");
@@ -100,10 +95,6 @@ namespace Audiochan.Core.Persistence.Migrations
                     b.Property<long>("UserId")
                         .HasColumnType("bigint")
                         .HasColumnName("user_id");
-
-                    b.Property<int>("Visibility")
-                        .HasColumnType("integer")
-                        .HasColumnName("visibility");
 
                     b.HasKey("Id")
                         .HasName("pk_audios");
@@ -210,11 +201,6 @@ namespace Audiochan.Core.Persistence.Migrations
                         .HasColumnType("character varying(256)")
                         .HasColumnName("picture");
 
-                    b.Property<string>("Secret")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("secret");
-
                     b.Property<string>("Slug")
                         .IsRequired()
                         .HasMaxLength(256)
@@ -230,10 +216,6 @@ namespace Audiochan.Core.Persistence.Migrations
                     b.Property<long>("UserId")
                         .HasColumnType("bigint")
                         .HasColumnName("user_id");
-
-                    b.Property<int>("Visibility")
-                        .HasColumnType("integer")
-                        .HasColumnName("visibility");
 
                     b.HasKey("Id")
                         .HasName("pk_playlists");
@@ -487,7 +469,7 @@ namespace Audiochan.Core.Persistence.Migrations
                         .IsRequired();
 
                     b.HasOne("Audiochan.Core.Entities.Playlist", "Playlist")
-                        .WithMany()
+                        .WithMany("PlaylistAudios")
                         .HasForeignKey("PlaylistId")
                         .HasConstraintName("fk_playlist_audios_playlists_playlist_id")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -556,6 +538,11 @@ namespace Audiochan.Core.Persistence.Migrations
                         .HasConstraintName("fk_playlist_tags_tags_tags_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Audiochan.Core.Entities.Playlist", b =>
+                {
+                    b.Navigation("PlaylistAudios");
                 });
 
             modelBuilder.Entity("Audiochan.Core.Entities.User", b =>

@@ -9,16 +9,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Audios.GetAudio
 {
-    public record GetAudioQuery : IRequest<AudioDto?>
+    public record GetAudioQuery(long Id) : IRequest<AudioDto?>
     {
-        public long Id { get; init; }
-        public string? Secret { get; init; }
-
-        public GetAudioQuery(long id, string? secret = null)
-        {
-            Id = id;
-            Secret = secret;
-        }
     }
 
     public class GetAudioQueryHandler : IRequestHandler<GetAudioQuery, AudioDto?>
@@ -36,15 +28,7 @@ namespace Audiochan.Core.Features.Audios.GetAudio
 
         public async Task<AudioDto?> Handle(GetAudioQuery query, CancellationToken cancellationToken)
         {
-            var audio = await FetchAudioFromCacheOrDatabaseAsync(query.Id, cancellationToken);
-            if (audio == null || !CanAccessPrivateAudio(audio, query.Secret)) return null;
-            return audio;
-        }
-
-        private async Task<AudioDto?> FetchAudioFromCacheOrDatabaseAsync(long audioId, 
-            CancellationToken cancellationToken = default)
-        {
-            var cacheOptions = new GetAudioCacheOptions(audioId);
+            var cacheOptions = new GetAudioCacheOptions(query.Id);
             
             var (cacheExists, audio) = await _cacheService
                 .GetAsync<AudioDto>(cacheOptions, cancellationToken);
@@ -53,18 +37,13 @@ namespace Audiochan.Core.Features.Audios.GetAudio
             
             audio = await _dbContext.Audios
                 .AsNoTracking()
-                .Where(x => x.Id == audioId)
+                .Where(x => x.Id == query.Id)
                 .Select(AudioMaps.AudioToView())
                 .SingleOrDefaultAsync(cancellationToken);
             
             await _cacheService.SetAsync(audio, cacheOptions, cancellationToken);
 
             return audio;
-        }
-
-        private bool CanAccessPrivateAudio(AudioDto audio, string? secret)
-        {
-            return _currentUserId == audio.User.Id || audio.Visibility != Visibility.Private || audio.Secret == secret;
         }
     }
 }

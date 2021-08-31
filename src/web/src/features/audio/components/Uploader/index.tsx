@@ -16,7 +16,7 @@ import * as yup from "yup";
 import { useNavigationLock } from "~/lib/hooks";
 import { errorToast, toast, validationMessages } from "~/utils";
 import { useCreateAudio } from "../../api/hooks";
-import { AudioId, CreateAudioRequest, Visibility } from "../../api/types";
+import { AudioId, CreateAudioRequest } from "../../api/types";
 import AudioForm from "../Form";
 import AudioDropzone from "./Dropzone";
 
@@ -40,10 +40,6 @@ const validationSchema: yup.SchemaOf<CreateAudioRequest> = yup
       .max(10, validationMessages.max("Tags", 10))
       .ensure()
       .defined(),
-    visibility: yup
-      .mixed<Visibility>()
-      .required(validationMessages.required("Visibility"))
-      .oneOf([...Object.values(Visibility)], "Visibility choice is invalid."),
     uploadId: yup.string().required("Audio file has not been uploaded."),
     fileName: yup.string().required(),
     fileSize: yup.number().required().min(0),

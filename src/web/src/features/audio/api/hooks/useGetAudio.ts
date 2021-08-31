@@ -16,32 +16,26 @@ export const GET_AUDIO_QUERY_BYSLUG_KEY = (slug: string): QueryKey => [
 ];
 export const GET_AUDIO_QUERY_KEY = (id: number): QueryKey => ["audios", id];
 
-type UseGetAudioQueryOptions = UseQueryOptions<AudioView, ErrorResponse> & {
-  secret?: string;
-};
+type UseGetAudioQueryOptions = UseQueryOptions<AudioView, ErrorResponse>;
 
 export function useGetAudio(
   slug: string,
   options: UseGetAudioQueryOptions = {}
 ): UseQueryResult<AudioView, ErrorResponse> {
-  const { secret, ...queryOptions } = options;
   const queryClient = useQueryClient();
   const fetcher = useCallback(async () => {
     const { data } = await request<AudioView>({
       method: "get",
       url: `audios/${slug}`,
-      params: {
-        secret: secret || undefined,
-      },
     });
     return data;
-  }, [slug, secret]);
+  }, [slug]);
 
   return useQuery<AudioView, ErrorResponse>(
     GET_AUDIO_QUERY_BYSLUG_KEY(slug),
     fetcher,
     {
-      ...queryOptions,
+      ...options,
       onSuccess(data) {
         queryClient.setQueryData<AudioView>(GET_AUDIO_QUERY_KEY(data.id), data);
       },

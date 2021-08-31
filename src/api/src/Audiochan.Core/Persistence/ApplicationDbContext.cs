@@ -42,9 +42,6 @@ namespace Audiochan.Core.Persistence
             // Add default created/updated date
             HandleAuditedEntities();
             
-            // Handle creating secret key for private resources
-            HandleVisibilityEntities();
-            
             // Add soft delete property
             HandleSoftDeletion();
 
@@ -134,41 +131,6 @@ namespace Audiochan.Core.Persistence
                 
                 entry.State = EntityState.Modified;
                 entry.Property(nameof(ISoftDeletable.Deleted)).CurrentValue = _dateTimeProvider.Now;
-            }
-        }
-
-        private void HandleVisibilityEntities()
-        {
-            foreach (var entry in ChangeTracker.Entries<IHasVisibility>())
-            {
-                if (entry is null) continue;
-                
-                var visibility = (Visibility)entry.Property(nameof(IHasVisibility.Visibility)).CurrentValue;
-
-                switch (entry.State)
-                {
-                    case EntityState.Added:
-                        if (visibility == Visibility.Private)
-                        {
-                            entry.Property(nameof(IHasVisibility.Secret)).CurrentValue = _randomIdGenerator.Generate(size: 10);
-                        }
-                        break;
-                    case EntityState.Modified:
-                    {
-                        var og = (Visibility)entry.Property(nameof(IHasVisibility.Visibility)).OriginalValue;
-
-                        if (og == Visibility.Private && visibility != Visibility.Private)
-                        {
-                            entry.Property(nameof(IHasVisibility.Secret)).CurrentValue = null;
-                        }
-                        else if (og != Visibility.Private && visibility == Visibility.Private)
-                        {
-                            entry.Property(nameof(IHasVisibility.Secret)).CurrentValue =
-                                _randomIdGenerator.Generate(size: 10);
-                        }
-                        break;
-                    }
-                }
             }
         }
 

@@ -26,7 +26,6 @@ namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
             var (targetId, _) = await RunAsAdministratorAsync();
             var audioFaker = new AudioFaker(targetId);
             var audios = audioFaker
-                .WithVisibility(Visibility.Public)
                 .Generate(3);
             InsertIntoDatabase(audios.ToArray());
             var (observerId, observerUsername) = await RunAsUserAsync(_faker.Random.String2(15));

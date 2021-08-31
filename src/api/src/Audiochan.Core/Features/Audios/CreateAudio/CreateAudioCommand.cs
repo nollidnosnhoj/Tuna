@@ -24,7 +24,6 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
         public decimal Duration { get; init; }
         public string Title { get; init; } = null!;
         public string Description { get; init; } = string.Empty;
-        public Visibility Visibility { get; init; }
         public List<string> Tags { get; init; } = new();
         public string BlobName => UploadId + Path.GetExtension(FileName);
     }
@@ -109,7 +108,6 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
                 Duration = command.Duration,
                 Title = command.Title,
                 Description = command.Description,
-                Visibility = command.Visibility,
                 File = command.BlobName,
             };
 

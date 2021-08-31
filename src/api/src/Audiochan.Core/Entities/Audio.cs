@@ -7,7 +7,7 @@ using Audiochan.Core.Entities.Enums;
 
 namespace Audiochan.Core.Entities
 {
-    public class Audio : IHasVisibility, IAudited, IResourceEntity<long>
+    public class Audio : IAudited, IResourceEntity<long>
     {
         public Audio()
         {
@@ -26,8 +26,6 @@ namespace Audiochan.Core.Entities
         public string File { get; set; } = null!;
         public long Size { get; set; }
         public string? Picture { get; set; }
-        public Visibility Visibility { get; set; }
-        public string? Secret { get; set; }
         public long UserId { get; set; }
         public User User { get; set; } = null!;
         public ICollection<Playlist> Playlists { get; set; }

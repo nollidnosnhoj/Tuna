@@ -20,7 +20,6 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
         public long AudioId { get; set; }
         public string? Title { get; init; }
         public string? Description { get; init; }
-        public Visibility? Visibility { get; init; }
         public List<string>? Tags { get; init; }
 
         public static UpdateAudioCommand FromRequest(long audioId, UpdateAudioRequest request) => new()
@@ -28,7 +27,6 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
             AudioId = audioId,
             Tags = request.Tags,
             Title = request.Title,
-            Visibility = request.Visibility,
             Description = request.Description,
         };
     }
@@ -138,11 +136,6 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
             if (command.Description is not null)
             {
                 audio.Description = command.Description;
-            }
-
-            if (command.Visibility.HasValue)
-            {
-                audio.Visibility = command.Visibility.Value;
             }
         }
     }

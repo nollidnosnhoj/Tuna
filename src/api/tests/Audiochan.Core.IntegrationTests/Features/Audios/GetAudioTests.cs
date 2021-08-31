@@ -31,24 +31,6 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             // Assert
             result.Should().BeNull();
         }
-
-        [Fact]
-        public async Task ShouldGetAudio_WhenCreatorViews()
-        {
-            // Assign
-            var (userId, _) = await RunAsDefaultUserAsync();
-
-            var audio = new AudioFaker(userId).Generate();
-            
-            InsertIntoDatabase(audio);
-
-            // Act
-            var result = await SendAsync(new GetAudioQuery(audio.Id));
-
-            // Assert
-            result.Should().NotBeNull();
-            result.Should().BeOfType<AudioDto>();
-        }
         
         [Fact]
         public async Task ShouldSuccessfullyGetAudio()
@@ -57,7 +39,6 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             var (userId, _) = await RunAsAdministratorAsync();
 
             var audio = new AudioFaker(userId).Generate();
-            audio.Visibility = Visibility.Public;
             InsertIntoDatabase(audio);
 
             await RunAsDefaultUserAsync();
@@ -76,54 +57,10 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             result.Tags.Count.Should().Be(audio.Tags.Count);
             result.AudioUrl.Should().Be(string.Format(MediaLinkInvariants.AudioUrl, audio.File));
             result.Size.Should().Be(audio.Size);
-            result.Visibility.Should().Be(audio.Visibility);
             result.LastModified.Should().BeNull();
             result.User.Should().NotBeNull();
             result.User.Should().BeOfType<MetaAuthorDto>();
             result.User.Id.Should().Be(userId);
-        }
-
-        [Fact]
-        public async Task ShouldSuccessfullyGetPrivateAudio_WhenSecretIsValid()
-        {
-            // Assign
-            var (userId, _) = await RunAsAdministratorAsync();
-
-            var audio = new AudioFaker(userId)
-                .WithVisibility(Visibility.Private)
-                .Generate();
-            
-            InsertIntoDatabase(audio);
-
-            await RunAsDefaultUserAsync();
-
-            // Act
-            var result = await SendAsync(new GetAudioQuery(audio.Id, audio.Secret));
-
-            // Assert
-            result.Should().NotBeNull();
-            result.Should().BeOfType<AudioDto>();
-        }
-
-        [Fact]
-        public async Task ShouldNotGetPrivateAudio()
-        {
-            // Assign
-            var (userId, _) = await RunAsAdministratorAsync();
-
-            var audio = new AudioFaker(userId)
-                .WithVisibility(Visibility.Private)
-                .Generate();
-            
-            InsertIntoDatabase(audio);
-
-            await RunAsDefaultUserAsync();
-
-            // Act
-            var result = await SendAsync(new GetAudioQuery(audio.Id));
-
-            // Assert
-            result.Should().BeNull();
         }
 
         [Fact]
@@ -150,7 +87,6 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             cacheResult.Picture.Should().BeNullOrEmpty();
             cacheResult.Tags.Count.Should().Be(result!.Tags.Count);
             cacheResult.Size.Should().Be(result!.Size);
-            cacheResult.Visibility.Should().Be(result!.Visibility);
             result.LastModified.Should().BeNull();
             result.User.Should().NotBeNull();
             result.User.Should().BeOfType<MetaAuthorDto>();

@@ -70,7 +70,6 @@ namespace Audiochan.Core.Persistence
                     Created = DateTime.UtcNow,
                     Slug = "test-playlist",
                     UserId = userId,
-                    Visibility = Visibility.Public,
                     Audios = audios
                 };
 
@@ -79,8 +78,7 @@ namespace Audiochan.Core.Persistence
             }
         }
 
-        private static Audio CreateDemoAudio(int index, long userId, long duration, long fileSize, 
-            Visibility visibility = Visibility.Public)
+        private static Audio CreateDemoAudio(int index, long userId, long duration, long fileSize)
         {
             return new Audio
             {
@@ -92,7 +90,6 @@ namespace Audiochan.Core.Persistence
                 File = $"test0{index}.mp3",
                 Slug = $"test0{index}",
                 Size = fileSize,
-                Visibility = visibility
             };
         }
     }

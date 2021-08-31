@@ -21,22 +21,17 @@ import request from "~/lib/http";
 interface AudioPageProps {
   audio: AudioView;
   slug: string;
-  secret?: string;
 }
 
 export const getServerSideProps: GetServerSideProps<AudioPageProps> = async (
   context
 ) => {
   const slug = context.params?.slug as string;
-  const secret = (context.query?.secret as string) ?? null;
   const { req, res } = context;
   try {
     const { data } = await request<AudioView>({
       method: "get",
       url: `audios/${slug}`,
-      params: {
-        secret: secret || undefined,
-      },
       req,
       res,
     });
@@ -44,7 +39,6 @@ export const getServerSideProps: GetServerSideProps<AudioPageProps> = async (
       props: {
         audio: data,
         slug,
-        secret,
       },
     };
   } catch (err) {
@@ -54,14 +48,9 @@ export const getServerSideProps: GetServerSideProps<AudioPageProps> = async (
   }
 };
 
-export default function AudioPage({
-  audio: initAudio,
-  slug,
-  secret,
-}: AudioPageProps) {
+export default function AudioPage({ audio: initAudio, slug }: AudioPageProps) {
   const router = useRouter();
   const { data: audio } = useGetAudio(slug, {
-    secret,
     staleTime: 1000,
     initialData: initAudio,
   });

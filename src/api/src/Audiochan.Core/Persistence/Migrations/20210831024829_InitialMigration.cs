@@ -58,8 +58,6 @@ namespace Audiochan.Core.Persistence.Migrations
                     file = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
                     size = table.Column<long>(type: "bigint", nullable: false),
                     picture = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
-                    visibility = table.Column<int>(type: "integer", nullable: false),
-                    secret = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
                     user_id = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
@@ -108,8 +106,6 @@ namespace Audiochan.Core.Persistence.Migrations
                     title = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     slug = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
                     description = table.Column<string>(type: "text", nullable: true),
-                    visibility = table.Column<int>(type: "integer", nullable: false),
-                    secret = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
                     picture = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     created = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     last_modified = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),

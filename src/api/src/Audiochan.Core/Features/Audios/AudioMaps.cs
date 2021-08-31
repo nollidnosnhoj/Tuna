@@ -18,8 +18,6 @@ namespace Audiochan.Core.Features.Audios
                 Id = audio.Id,
                 Title = audio.Title,
                 Description = audio.Description ?? string.Empty,
-                Visibility = audio.Visibility,
-                Secret = audio.Secret,
                 Created = audio.Created,
                 LastModified = audio.LastModified,
                 Duration = audio.Duration,

@@ -48,7 +48,6 @@ namespace Audiochan.Core.Features.Users.GetUserFavoritePlaylists
                 .AsNoTracking()
                 .Where(u => u.UserName == request.Username)
                 .SelectMany(u => u.FavoritePlaylists)
-                .Where(p => p.Visibility == Visibility.Public)
                 .Select(PlaylistMaps.PlaylistToDetailFunc)
                 .OffsetPaginateAsync(request, cancellationToken);
         }

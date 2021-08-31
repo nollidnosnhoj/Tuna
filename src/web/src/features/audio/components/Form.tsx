@@ -4,7 +4,6 @@ import TagInput from "~/components/Forms/Inputs/Tags";
 import TextInput from "~/components/Forms/Inputs/Text";
 import { AudioRequest } from "../api/types";
 import { Controller, useFormContext } from "react-hook-form";
-import RadioInputs from "~/components/Forms/Inputs/Radios";
 
 interface AudioFormProps {
   disableFields?: boolean;
@@ -43,26 +42,6 @@ export default function AudioForm({ disableFields = false }: AudioFormProps) {
             error={error?.message}
             {...restField}
             disabled={disableFields}
-          />
-        )}
-      />
-      <Controller
-        name="visibility"
-        control={control}
-        render={({
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          field: { ref: _, ...restField },
-          fieldState: { error },
-        }) => (
-          <RadioInputs
-            {...restField}
-            error={error?.message}
-            options={[
-              { name: "Public", value: "public" },
-              { name: "Private", value: "private" },
-            ]}
-            isDisabled={disableFields}
-            helperText="Private audio will generate a secret key that should be used to access private audios."
           />
         )}
       />

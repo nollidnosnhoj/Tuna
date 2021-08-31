@@ -20,7 +20,6 @@ namespace Audiochan.Core.IntegrationTests.Features.Playlists
         {
             var (userId, _) = await RunAsDefaultUserAsync();
             var audios = new AudioFaker(userId)
-                .WithVisibility(Visibility.Public)
                 .Generate(3);
             InsertRangeIntoDatabase(audios);
             var audioIds = audios.Select(x => x.Id).ToList();
@@ -40,7 +39,6 @@ namespace Audiochan.Core.IntegrationTests.Features.Playlists
             playlist.Should().NotBeNull();
             playlist!.Title.Should().Be(request.Title);
             playlist.Description.Should().BeNullOrEmpty();
-            playlist.Visibility.Should().Be(request.Visibility);
             playlist.Audios.Should().NotBeEmpty();
             playlist.Audios.Select(p => p.Id).Should().Contain(audioIds);
         }
@@ -50,12 +48,10 @@ namespace Audiochan.Core.IntegrationTests.Features.Playlists
         {
             var (userId, _) = await RunAsDefaultUserAsync();
             var audios = new AudioFaker(userId)
-                .WithVisibility(Visibility.Public)
                 .Generate(3);
             InsertRangeIntoDatabase(audios);
             var audioIds = audios.Select(x => x.Id).ToList();
             var request = new CreatePlaylistCommandFaker(audioIds)
-                .SetFixedVisibility(Visibility.Private)
                 .Generate();
             var result = await SendAsync(request);
             var playlist = ExecuteDbContext(db =>
@@ -68,8 +64,6 @@ namespace Audiochan.Core.IntegrationTests.Features.Playlists
             result.IsSuccess.Should().BeTrue();
             result.Data.Should().BeGreaterThan(0);
             playlist.Should().NotBeNull();
-            playlist!.Visibility.Should().Be(Visibility.Private);
-            playlist!.Secret.Should().NotBeNullOrEmpty();
         }
     }
 }

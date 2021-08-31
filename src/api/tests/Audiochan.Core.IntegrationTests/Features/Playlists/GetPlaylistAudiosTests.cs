@@ -23,7 +23,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Playlists
         public async Task ShouldSuccessfullyFetchPlaylistAudios()
         {
             var (userId, _) = await RunAsDefaultUserAsync();
-            var audioFaker = new AudioFaker(userId).WithVisibility(Visibility.Public);
+            var audioFaker = new AudioFaker(userId);
             var playlistFaker = new PlaylistFaker(userId);
             var audios = audioFaker.Generate(5);
             InsertRangeIntoDatabase(audios);

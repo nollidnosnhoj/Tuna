@@ -38,8 +38,7 @@ namespace Audiochan.Core.Features.Audios.GetAudios
             CancellationToken cancellationToken)
         {
             var queryable = _dbContext.Audios
-                .AsNoTracking()
-                .Where(a => a.UserId == _currentUserId || a.Visibility == Visibility.Public);
+                .AsNoTracking();
 
 
             if (query.Tags.Count > 0)

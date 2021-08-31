@@ -15,7 +15,7 @@ import { HiDotsHorizontal } from "react-icons/hi";
 import { MdQueueMusic } from "react-icons/md";
 import { useUser } from "~/features/user/hooks";
 import { useAudioQueue } from "~/lib/stores";
-import { AudioView, Visibility } from "../api/types";
+import { AudioView } from "../api/types";
 import AudioEditDrawer from "./Edit";
 import AudioShareModal from "./Share";
 
@@ -65,11 +65,9 @@ export default function AudioMiscMenu({ audio, ...props }: AudioMiscMenuProps) {
           >
             Add to queue
           </MenuItem>
-          {audio.visibility != Visibility.Private && (
-            <MenuItem icon={<FaShare />} onClick={onShareOpen}>
-              Share
-            </MenuItem>
-          )}
+          <MenuItem icon={<FaShare />} onClick={onShareOpen}>
+            Share
+          </MenuItem>
         </MenuList>
       </Menu>
       <AudioEditDrawer

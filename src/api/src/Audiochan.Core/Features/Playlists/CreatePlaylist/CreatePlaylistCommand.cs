@@ -17,7 +17,6 @@ namespace Audiochan.Core.Features.Playlists.CreatePlaylist
     {
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
-        public Visibility Visibility { get; set; }
         public List<long> AudioIds { get; set; } = new();
         public List<string> Tags { get; init; } = new();
     }
@@ -83,7 +82,6 @@ namespace Audiochan.Core.Features.Playlists.CreatePlaylist
             {
                 Title = request.Title,
                 Description = request.Description,
-                Visibility = request.Visibility,
                 UserId = userId,
                 User = user,
                 Slug = _slugGenerator.GenerateSlug(request.Title),
@@ -99,7 +97,7 @@ namespace Audiochan.Core.Features.Playlists.CreatePlaylist
             CancellationToken cancellationToken = default)
         {
             return await _unitOfWork.Audios
-                .Where(x => audioIds.Contains(x.Id) && x.Visibility == Visibility.Public)
+                .Where(x => audioIds.Contains(x.Id))
                 .ToListAsync(cancellationToken);
         }
     }

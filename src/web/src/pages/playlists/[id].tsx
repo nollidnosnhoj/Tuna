@@ -11,7 +11,6 @@ import request from "~/lib/http";
 interface PlaylistPageProps {
   playlist: Playlist;
   id: number;
-  secret?: string;
 }
 
 export const getServerSideProps: GetServerSideProps<PlaylistPageProps> = async (

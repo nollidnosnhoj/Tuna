@@ -47,7 +47,6 @@ namespace Audiochan.Core.Features.Users.GetUserPlaylists
             var playlists = await _dbContext.Playlists
                 .AsNoTracking()
                 .Where(p => p.User.UserName == request.Username)
-                .Where(p => p.UserId == _currentUserId || p.Visibility == Visibility.Public)
                 .OrderBy(p => p.Title)
                 .Select(PlaylistMaps.PlaylistToDetailFunc)
                 .OffsetPaginateAsync(request, cancellationToken);

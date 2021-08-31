@@ -44,10 +44,10 @@ namespace Audiochan.API.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         [SwaggerOperation(Summary = "Return an audio by ID.", OperationId = "GetAudio", Tags = new[] {"audios"})]
-        public async Task<ActionResult<AudioDto>> Get([FromRoute] string slug, [FromQuery] string? secret, CancellationToken cancellationToken)
+        public async Task<ActionResult<AudioDto>> Get([FromRoute] string slug, CancellationToken cancellationToken)
         {
             var id = HashIdHelper.DecodeLong(slug);
-            var result = await _mediator.Send(new GetAudioQuery(id, secret), cancellationToken);
+            var result = await _mediator.Send(new GetAudioQuery(id), cancellationToken);
             return result != null
                 ? Ok(result)
                 : NotFound(ErrorApiResponse.NotFound("Audio was not found."));
@@ -68,7 +68,7 @@ namespace Audiochan.API.Controllers
         {
             var result = await _mediator.Send(command, cancellationToken);
             if (!result.IsSuccess) return result.ReturnErrorResponse();
-            var response = await _mediator.Send(new GetAudioQuery(result.Data, ""), cancellationToken);
+            var response = await _mediator.Send(new GetAudioQuery(result.Data), cancellationToken);
             return CreatedAtAction(nameof(Get), new {idSlug = response!.Slug}, response);
         }
 

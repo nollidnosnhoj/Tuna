@@ -39,7 +39,6 @@ namespace Audiochan.Core.Features.Playlists.GetPlaylistAudios
             var playlistExists = await _unitOfWork.Playlists
                 .AsNoTracking()
                 .Where(p => p.Id == request.Id)
-                .Where(p => p.UserId == _currentUserId || p.Visibility == Visibility.Public)
                 .AnyAsync(cancellationToken);
 
             if (!playlistExists)
@@ -51,7 +50,6 @@ namespace Audiochan.Core.Features.Playlists.GetPlaylistAudios
                 .AsNoTracking()
                 .Where(pa => pa.PlaylistId == request.Id)
                 .Select(pa => pa.Audio)
-                .Where(a => a.UserId == _currentUserId || a.Visibility == Visibility.Public)
                 .Select(AudioMaps.AudioToView(_currentUserId))
                 .CursorPaginateAsync(request, cancellationToken);
         }
