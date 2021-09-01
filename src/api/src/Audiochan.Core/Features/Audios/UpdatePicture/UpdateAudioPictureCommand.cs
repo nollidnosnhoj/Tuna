@@ -12,10 +12,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Audios.UpdatePicture
 {
-    public record UpdateAudioPictureCommand : IImageData, IRequest<Result<ImageUploadResponse>>
+    public record UpdateAudioPictureCommand(long AudioId, string Data = "") : IImageData, IRequest<Result<ImageUploadResponse>>
     {
-        public long AudioId { get; init; }
-        public string Data { get; init; } = string.Empty;
     }
 
     public class UpdateAudioCommandHandler : IRequestHandler<UpdateAudioPictureCommand, Result<ImageUploadResponse>>
@@ -42,8 +40,7 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
         public async Task<Result<ImageUploadResponse>> Handle(UpdateAudioPictureCommand command,
             CancellationToken cancellationToken)
         {
-            if (!_currentUserService.TryGetUserId(out var currentUserId))
-                return Result<ImageUploadResponse>.Unauthorized();
+            var currentUserId = _currentUserService.GetUserId();
 
             var audio = await _dbContext.Audios
                 .Include(a => a.User)

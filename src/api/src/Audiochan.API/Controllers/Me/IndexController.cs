@@ -4,6 +4,7 @@ using Audiochan.API.Extensions;
 using Audiochan.API.Models;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Features.Auth.GetCurrentUser;
+using Audiochan.Core.Features.Users.RemovePicture;
 using Audiochan.Core.Features.Users.UpdateEmail;
 using Audiochan.Core.Features.Users.UpdatePassword;
 using Audiochan.Core.Features.Users.UpdatePicture;
@@ -157,7 +158,7 @@ namespace Audiochan.API.Controllers.Me
         public async Task<IActionResult> AddPicture([FromBody] ImageUploadRequest request,
             CancellationToken cancellationToken)
         {
-            var command = UpdateUserPictureCommand.FromRequest(_currentUserId, request);
+            var command = new UpdateUserPictureCommand(_currentUserId, request.Data);
             var result = await _mediator.Send(command, cancellationToken);
             return result.IsSuccess
                 ? Ok(result.Data)
@@ -177,11 +178,7 @@ namespace Audiochan.API.Controllers.Me
         )]
         public async Task<ActionResult> RemovePicture(CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(new UpdateUserPictureCommand
-            {
-                UserId = _currentUserId,
-                Data = string.Empty
-            }, cancellationToken);
+            var result = await _mediator.Send(new RemoveUserPictureCommand(_currentUserId), cancellationToken);
             
             return result.IsSuccess
                 ? NoContent()

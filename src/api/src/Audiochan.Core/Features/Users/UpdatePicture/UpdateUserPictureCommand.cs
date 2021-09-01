@@ -10,17 +10,8 @@ using MediatR;
 
 namespace Audiochan.Core.Features.Users.UpdatePicture
 {
-    public record UpdateUserPictureCommand : IImageData, IRequest<Result<ImageUploadResponse>>
-    {
-        public long UserId { get; init; }
-        public string Data { get; init; } = null!;
-
-        public static UpdateUserPictureCommand FromRequest(long userId, ImageUploadRequest request) => new()
-        {
-            UserId = userId,
-            Data = request.Data
-        };
-    }
+    public record UpdateUserPictureCommand(long UserId, string Data = "") : IImageData,
+        IRequest<Result<ImageUploadResponse>>;
 
     public class UpdateUserPictureCommandHandler : IRequestHandler<UpdateUserPictureCommand, Result<ImageUploadResponse>>
     {

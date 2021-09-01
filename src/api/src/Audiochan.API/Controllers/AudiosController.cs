@@ -10,6 +10,7 @@ using Audiochan.Core.Features.Audios.CreateAudio;
 using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Features.Audios.GetAudios;
 using Audiochan.Core.Features.Audios.RemoveAudio;
+using Audiochan.Core.Features.Audios.RemovePicture;
 using Audiochan.Core.Features.Audios.UpdateAudio;
 using Audiochan.Core.Features.Audios.UpdatePicture;
 using MediatR;
@@ -46,10 +47,12 @@ namespace Audiochan.API.Controllers
         [SwaggerOperation(Summary = "Return an audio by ID.", OperationId = "GetAudio", Tags = new[] {"audios"})]
         public async Task<ActionResult<AudioDto>> Get([FromRoute] string slug, CancellationToken cancellationToken)
         {
+            // Decode hash into audio id
             var id = HashIdHelper.DecodeLong(slug);
+            
             var result = await _mediator.Send(new GetAudioQuery(id), cancellationToken);
             return result != null
-                ? Ok(result)
+                ? new JsonResult(result)
                 : NotFound(ErrorApiResponse.NotFound("Audio was not found."));
         }
 
@@ -68,8 +71,10 @@ namespace Audiochan.API.Controllers
         {
             var result = await _mediator.Send(command, cancellationToken);
             if (!result.IsSuccess) return result.ReturnErrorResponse();
+            
+            // Fetch the newly created audio
             var response = await _mediator.Send(new GetAudioQuery(result.Data), cancellationToken);
-            return CreatedAtAction(nameof(Get), new {idSlug = response!.Slug}, response);
+            return Created($"/audios/{response!.Slug}", response);
         }
 
         [HttpPut("{audioId:long}", Name = "UpdateAudio")]
@@ -83,8 +88,7 @@ namespace Audiochan.API.Controllers
             Description = "Requires authentication.",
             OperationId = "UpdateAudio",
             Tags = new[] {"audios"})]
-        public async Task<ActionResult<AudioDto>> Update(long audioId,
-            [FromBody] UpdateAudioRequest request,
+        public async Task<ActionResult<AudioDto>> Update(long audioId, [FromBody] UpdateAudioRequest request,
             CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(UpdateAudioCommand.FromRequest(audioId, request), cancellationToken);
@@ -117,15 +121,11 @@ namespace Audiochan.API.Controllers
             Description = "Requires authentication.",
             OperationId = "AddAudioPicture",
             Tags = new[] {"audios"})]
-        public async Task<ActionResult<ImageUploadResponse>> AddPicture(long audioId,
-            [FromBody] ImageUploadRequest request,
+        public async Task<ActionResult<ImageUploadResponse>> AddPicture(long audioId, [FromBody] ImageUploadRequest request,
             CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(new UpdateAudioPictureCommand
-            {
-                AudioId = audioId,
-                Data = request.Data
-            }, cancellationToken);
+            var command = new UpdateAudioPictureCommand(audioId, request.Data);
+            var result = await _mediator.Send(command, cancellationToken);
             return result.IsSuccess
                 ? Ok(result.Data)
                 : result.ReturnErrorResponse();
@@ -144,11 +144,7 @@ namespace Audiochan.API.Controllers
         public async Task<ActionResult> RemovePicture(long audioId,
             CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(new UpdateAudioPictureCommand
-            {
-                AudioId = audioId,
-                Data = string.Empty
-            }, cancellationToken);
+            var result = await _mediator.Send(new RemoveAudioPictureCommand(audioId), cancellationToken);
             
             return result.IsSuccess
                 ? NoContent()
