@@ -165,7 +165,7 @@ namespace Audiochan.API.Controllers.Me
                 : result.ReturnErrorResponse();
         }
         
-        [HttpPatch("picture")]
+        [HttpDelete("picture")]
         [ProducesResponseType(204)]
         [ProducesResponseType(401)]
         [ProducesResponseType(403)]

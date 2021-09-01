@@ -32,13 +32,13 @@ namespace Audiochan.API.Controllers
             _mediator = mediator;
         }
 
-        [HttpGet("{idSlug:idSlug}", Name="GetPlaylist")]
+        [HttpGet("{id:long}", Name="GetPlaylist")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         [SwaggerOperation(Summary = "Return an playlist by ID.", OperationId = "GetPlaylist", Tags = new[] {"playlists"})]
-        public async Task<ActionResult<PlaylistDto>> GetPlaylist(string idSlug, CancellationToken cancellationToken)
+        public async Task<ActionResult<PlaylistDto>> GetPlaylist(long id, CancellationToken cancellationToken)
         {
-            var (id, _) = idSlug.ExtractIdAndSlugFromSlug();
+
             var playlist = await _mediator.Send(new GetPlaylistQuery(id), cancellationToken);
             return playlist is null
                 ? NotFound(ErrorApiResponse.NotFound("Playlist was not found."))
