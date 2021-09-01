@@ -26,38 +26,17 @@ namespace Audiochan.Core.Features.Audios.SearchAudios
 
     public class SearchAudiosQueryHandler : IRequestHandler<SearchAudiosQuery, PagedListDto<AudioDto>>
     {
-        private readonly ApplicationDbContext _dbContext;
-        private readonly long _currentUserId;
+        private readonly ISearchService _searchService;
 
-        public SearchAudiosQueryHandler(ApplicationDbContext dbContext, ICurrentUserService currentUserService)
+        public SearchAudiosQueryHandler(ISearchService searchService)
         {
-            _dbContext = dbContext;
-            _currentUserId = currentUserService.GetUserId();
+            _searchService = searchService;
         }
 
         public async Task<PagedListDto<AudioDto>> Handle(SearchAudiosQuery query,
             CancellationToken cancellationToken)
         {
-            var parsedTags = !string.IsNullOrWhiteSpace(query.Tags)
-                ? query.Tags.Split(',')
-                    .Select(t => t.Trim().ToLower())
-                    .Where(t => !string.IsNullOrWhiteSpace(t))
-                    .ToList()
-                : new List<string>();
-
-            var queryable = _dbContext.Audios
-                .AsNoTracking();
-
-            if (!string.IsNullOrWhiteSpace(query.Q))
-                queryable = queryable.Where(a => 
-                    EF.Functions.Like(a.Title.ToLower(), $"%{query.Q.ToLower()}%"));
-
-            if (parsedTags.Count > 0)
-                queryable = queryable.Where(a => a.Tags.Any(x => parsedTags.Contains(x.Name)));
-
-            return await queryable
-                .Select(AudioMaps.AudioToView(_currentUserId))
-                .PaginateAsync(query, cancellationToken);
+            return await _searchService.SearchAudiosAsync(query, cancellationToken);
         }
     }
 }

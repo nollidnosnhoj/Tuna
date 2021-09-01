@@ -36,7 +36,6 @@ namespace Audiochan.API.Extensions.ConfigurationExtensions
             services.AddRouting(options =>
             {
                 options.LowercaseUrls = true;
-                options.ConstraintMap.Add("idSlug", typeof(IdSlugRouteConstraint));
             });
 
             return services;
