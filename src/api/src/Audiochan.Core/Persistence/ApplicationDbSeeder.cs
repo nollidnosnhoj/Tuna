@@ -88,7 +88,6 @@ namespace Audiochan.Core.Persistence
                 Duration = duration,
                 Created = DateTime.UtcNow,
                 File = $"test0{index}.mp3",
-                Slug = $"test0{index}",
                 Size = fileSize,
             };
         }

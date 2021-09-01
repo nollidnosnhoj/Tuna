@@ -20,7 +20,6 @@ namespace Audiochan.Core.Entities
         public DateTime Created { get; set; }
         public DateTime? LastModified { get; set; }
         public string Title { get; set; } = null!;
-        public string Slug { get; set; } = null!;
         public string? Description { get; set; }
         public decimal Duration { get; set; }
         public string File { get; set; } = null!;

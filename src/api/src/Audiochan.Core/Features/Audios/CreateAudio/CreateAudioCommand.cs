@@ -118,9 +118,6 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
                 audio.Tags = await _applicationDbContext.Tags.GetAppropriateTags(tags, cancellationToken);
             }
 
-            // Slugify
-            audio.Slug = _slugGenerator.GenerateSlug(audio.Title);
-            
             await _applicationDbContext.Audios.AddAsync(audio, cancellationToken);
             await _applicationDbContext.SaveChangesAsync(cancellationToken);
             await _audioUploadService.MoveTempAudioToPublic(audio.File, cancellationToken);

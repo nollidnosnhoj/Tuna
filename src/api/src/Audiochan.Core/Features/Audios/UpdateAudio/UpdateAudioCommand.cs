@@ -130,7 +130,6 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
             if (command.Title is not null && !string.IsNullOrWhiteSpace(command.Title))
             {
                 audio.Title = command.Title;
-                audio.Slug = _slugGenerator.GenerateSlug(command.Title);
             }
 
             if (command.Description is not null)
