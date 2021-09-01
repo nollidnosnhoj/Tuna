@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Audiochan.Core.Entities;
+using Audiochan.Domain.Entities;
 
 namespace Audiochan.Core.Interfaces
 {

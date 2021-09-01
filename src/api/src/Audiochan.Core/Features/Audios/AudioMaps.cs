@@ -4,8 +4,8 @@ using System.Linq.Expressions;
 using Audiochan.Core.Common;
 using Audiochan.Core.Common.Helpers;
 using Audiochan.Core.Common.Models;
-using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Audios.GetAudio;
+using Audiochan.Domain.Entities;
 
 namespace Audiochan.Core.Features.Audios
 {

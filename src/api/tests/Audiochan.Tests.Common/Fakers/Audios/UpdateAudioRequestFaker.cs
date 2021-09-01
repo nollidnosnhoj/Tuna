@@ -1,5 +1,4 @@
-﻿using Audiochan.Core.Entities.Enums;
-using Audiochan.Core.Features.Audios.UpdateAudio;
+﻿using Audiochan.Core.Features.Audios.UpdateAudio;
 using Bogus;
 
 namespace Audiochan.Tests.Common.Fakers.Audios

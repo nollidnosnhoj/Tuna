@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Audiochan.Core.Common.Interfaces;
-using Audiochan.Core.Entities.Abstractions;
-using Audiochan.Core.Entities.Enums;
+using Audiochan.Domain.Abstractions;
 
-namespace Audiochan.Core.Entities
+namespace Audiochan.Domain.Entities
 {
     public class Playlist : IAudited, IResourceEntity<long>
     {

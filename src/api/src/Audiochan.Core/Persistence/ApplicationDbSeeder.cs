@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Audiochan.Core.Entities;
-using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Interfaces;
+using Audiochan.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Persistence

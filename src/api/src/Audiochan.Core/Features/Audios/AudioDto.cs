@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Audiochan.Core.Common.Helpers;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
-using Audiochan.Core.Entities.Enums;
 
 namespace Audiochan.Core.Features.Audios
 {

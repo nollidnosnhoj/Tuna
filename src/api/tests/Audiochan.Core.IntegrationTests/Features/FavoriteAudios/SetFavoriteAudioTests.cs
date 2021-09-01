@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using Audiochan.Core.Entities;
 using Audiochan.Core.Features.FavoriteAudios.SetFavoriteAudio;
+using Audiochan.Domain.Entities;
 using Audiochan.Tests.Common.Fakers.Audios;
 using Bogus;
 using FluentAssertions;

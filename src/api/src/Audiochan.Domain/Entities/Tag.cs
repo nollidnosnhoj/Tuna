@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Audiochan.Core.Entities
+namespace Audiochan.Domain.Entities
 {
     public class Tag
     {

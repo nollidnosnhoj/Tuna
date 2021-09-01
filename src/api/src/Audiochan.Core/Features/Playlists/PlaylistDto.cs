@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
-using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Features.Audios;
 
 namespace Audiochan.Core.Features.Playlists

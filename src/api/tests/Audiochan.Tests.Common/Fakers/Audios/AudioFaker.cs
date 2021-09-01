@@ -1,5 +1,4 @@
-﻿using Audiochan.Core.Entities;
-using Audiochan.Core.Entities.Enums;
+﻿using Audiochan.Domain.Entities;
 using Bogus;
 using Slugify;
 

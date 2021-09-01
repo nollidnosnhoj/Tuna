@@ -1,4 +1,4 @@
-﻿namespace Audiochan.Core.Entities.Enums
+﻿namespace Audiochan.Domain.Enums
 {
     public enum UserRole
     {

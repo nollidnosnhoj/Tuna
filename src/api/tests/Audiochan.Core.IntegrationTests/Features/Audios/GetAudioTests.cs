@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Audiochan.Core.Common;
 using Audiochan.Core.Common.Models;
-using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Features.Audios;
 using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Tests.Common.Fakers.Audios;

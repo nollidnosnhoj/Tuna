@@ -2,9 +2,9 @@
 using System.Threading.Tasks;
 using Audiochan.Core.Common;
 using Audiochan.Core.Common.Models;
-using Audiochan.Core.Entities;
 using Audiochan.Core.Interfaces;
 using Audiochan.Core.Persistence;
+using Audiochan.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;

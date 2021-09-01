@@ -3,8 +3,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Models;
-using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Audios.GetAudio;
+using Audiochan.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Common.Extensions

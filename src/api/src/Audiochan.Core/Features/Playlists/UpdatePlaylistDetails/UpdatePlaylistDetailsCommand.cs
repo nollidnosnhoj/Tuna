@@ -2,11 +2,10 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Models;
-using Audiochan.Core.Entities;
-using Audiochan.Core.Entities.Enums;
 using Audiochan.Core.Features.Playlists.GetPlaylist;
 using Audiochan.Core.Interfaces;
 using Audiochan.Core.Persistence;
+using Audiochan.Domain.Entities;
 using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;

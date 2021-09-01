@@ -1,4 +1,4 @@
-﻿namespace Audiochan.Core.Entities.Abstractions
+﻿namespace Audiochan.Domain.Abstractions
 {
     public interface IResourceEntity<out TKey>
     {

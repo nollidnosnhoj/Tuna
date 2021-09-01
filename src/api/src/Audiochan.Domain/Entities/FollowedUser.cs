@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Audiochan.Core.Entities
+namespace Audiochan.Domain.Entities
 {
     public class FollowedUser
     {
