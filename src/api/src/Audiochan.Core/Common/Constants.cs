@@ -17,10 +17,10 @@
     
     public static class MediaLinkInvariants
     {
-        public const string AudioPictureUrl = "https://audiochan.s3.amazonaws.com/images/audios/{0}";
-        public const string PlaylistPictureUrl = "https://audiochan.s3.amazonaws.com/images/playlists/{0}";
-        public const string AudioUrl = "https://audiochan.s3.amazonaws.com/audios/{0}";
-        public const string UserPictureUrl = "https://audiochan.s3.amazonaws.com/images/users/{0}";
+        public const string AudioPicture = "https://audiochan.s3.amazonaws.com/images/audios/";
+        public const string PlaylistPicture = "https://audiochan.s3.amazonaws.com/images/playlists/";
+        public const string AudioStream = "https://audiochan.s3.amazonaws.com/audios/";
+        public const string UserPicture = "https://audiochan.s3.amazonaws.com/images/users/";
     }
     
     public static class ValidationErrorCodes

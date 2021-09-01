@@ -13,9 +13,7 @@ namespace Audiochan.Core.Features.Followers
             new FollowerViewModel
             {
                 ObserverUserName = user.Observer.UserName,
-                ObserverPicture = user.Observer.Picture != null
-                    ? string.Format(MediaLinkInvariants.UserPictureUrl, user.Observer.Picture)
-                    : null,
+                ObserverPicture = user.Observer.Picture,
                 FollowedDate = user.FollowedDate
             };
         
@@ -23,9 +21,7 @@ namespace Audiochan.Core.Features.Followers
             new FollowingViewModel
             {
                 TargetUserName = user.Target.UserName,
-                TargetPicture = user.Target.Picture != null
-                    ? string.Format(MediaLinkInvariants.UserPictureUrl, user.Target.Picture)
-                    : null,
+                TargetPicture = user.Target.Picture,
                 FollowedDate = user.FollowedDate
             };
     }

@@ -16,17 +16,13 @@ namespace Audiochan.Core.Features.Playlists
                 Id = playlist.Id,
                 Title = playlist.Title,
                 Description = playlist.Description ?? string.Empty,
-                Picture = playlist.Picture != null
-                    ? string.Format(MediaLinkInvariants.PlaylistPictureUrl, playlist.Picture)
-                    : null,
+                Picture = playlist.Picture,
                 Tags = playlist.Tags.Select(t => t.Name).ToList(),
                 User = new MetaAuthorDto
                 {
                     Id = playlist.User.Id,
                     Username = playlist.User.UserName,
-                    Picture = playlist.User.Picture != null
-                        ? string.Format(MediaLinkInvariants.UserPictureUrl, playlist.User.Picture)
-                        : null
+                    Picture = playlist.User.Picture
                 },
             };
     }

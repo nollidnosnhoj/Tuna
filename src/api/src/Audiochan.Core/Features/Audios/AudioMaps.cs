@@ -22,18 +22,14 @@ namespace Audiochan.Core.Features.Audios
                 LastModified = audio.LastModified,
                 Duration = audio.Duration,
                 Size = audio.Size,
-                Picture = audio.Picture != null
-                    ? string.Format(MediaLinkInvariants.AudioPictureUrl, audio.Picture)
-                    : null,
+                Picture = audio.Picture,
                 Tags = audio.Tags.Select(t => t.Name).ToList(),
-                AudioUrl = string.Format(MediaLinkInvariants.AudioUrl, audio.File),
+                Audio = audio.File,
                 User = new MetaAuthorDto
                 {
                     Id = audio.User.Id,
                     Username = audio.User.UserName,
-                    Picture = audio.User.Picture != null
-                    ? string.Format(MediaLinkInvariants.UserPictureUrl, audio.User.Picture)
-                        : null
+                    Picture = audio.User.Picture
                 },
                 IsFavorited = userId > 0
                     ? audio.Favorited.Any(fa => fa.Id == userId)

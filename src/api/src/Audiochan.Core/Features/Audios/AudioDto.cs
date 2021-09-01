@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
+using Audiochan.Core.Common.Converters.Json;
 using Audiochan.Core.Common.Helpers;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
@@ -19,7 +21,8 @@ namespace Audiochan.Core.Features.Audios
         public bool? IsFavorited { get; init; }
         public DateTime Created { get; init; }
         public DateTime? LastModified { get; init; }
-        public string AudioUrl { get; init; } = null!;
+        [JsonConverter(typeof(AudioUrlJsonConverter))]
+        public string Audio { get; init; } = null!;
         public MetaAuthorDto User { get; init; } = null!;
     }
 }

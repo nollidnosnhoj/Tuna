@@ -14,7 +14,7 @@ export interface AudioView {
   isFavorited?: boolean;
   created: string;
   lastModified?: string;
-  audioUrl: string;
+  audio: string;
   user: MetaAuthor;
 }
 

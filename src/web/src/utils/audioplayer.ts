@@ -12,7 +12,7 @@ export function mapAudioForAudioQueue(audio: AudioView): AudioQueueItem[] {
       artistId: audio.user.id,
       cover: audio.picture ?? "",
       duration: audio.duration,
-      source: audio.audioUrl,
+      source: audio.audio,
       related: false,
     },
   ];
@@ -30,7 +30,7 @@ export function mapAudiosForAudioQueue(
     artistId: audio.user.id,
     cover: audio.picture ?? "",
     duration: audio.duration,
-    source: audio.audioUrl,
+    source: audio.audio,
     related: isRelatedAudio,
   }));
 }
