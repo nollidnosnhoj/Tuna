@@ -52,7 +52,6 @@ namespace Audiochan.Core.Persistence.Migrations
                     created = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     last_modified = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     title = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    slug = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
                     description = table.Column<string>(type: "text", nullable: true),
                     duration = table.Column<decimal>(type: "numeric", nullable: false),
                     file = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),

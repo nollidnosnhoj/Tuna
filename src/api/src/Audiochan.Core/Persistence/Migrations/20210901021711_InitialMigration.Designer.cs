@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Audiochan.Core.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210831024829_InitialMigration")]
+    [Migration("20210901021711_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -41,7 +41,7 @@ namespace Audiochan.Core.Persistence.Migrations
                     b.ToTable("audio_tags");
                 });
 
-            modelBuilder.Entity("Audiochan.Core.Entities.Audio", b =>
+            modelBuilder.Entity("Audiochan.Domain.Entities.Audio", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -80,12 +80,6 @@ namespace Audiochan.Core.Persistence.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("size");
 
-                    b.Property<string>("Slug")
-                        .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
-                        .HasColumnName("slug");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -108,7 +102,7 @@ namespace Audiochan.Core.Persistence.Migrations
                     b.ToTable("audios");
                 });
 
-            modelBuilder.Entity("Audiochan.Core.Entities.FavoriteAudio", b =>
+            modelBuilder.Entity("Audiochan.Domain.Entities.FavoriteAudio", b =>
                 {
                     b.Property<long>("AudioId")
                         .HasColumnType("bigint")
@@ -127,7 +121,7 @@ namespace Audiochan.Core.Persistence.Migrations
                     b.ToTable("favorite_audios");
                 });
 
-            modelBuilder.Entity("Audiochan.Core.Entities.FavoritePlaylist", b =>
+            modelBuilder.Entity("Audiochan.Domain.Entities.FavoritePlaylist", b =>
                 {
                     b.Property<long>("PlaylistId")
                         .HasColumnType("bigint")
@@ -146,7 +140,7 @@ namespace Audiochan.Core.Persistence.Migrations
                     b.ToTable("favorite_playlists");
                 });
 
-            modelBuilder.Entity("Audiochan.Core.Entities.FollowedUser", b =>
+            modelBuilder.Entity("Audiochan.Domain.Entities.FollowedUser", b =>
                 {
                     b.Property<long>("ObserverId")
                         .HasColumnType("bigint")
@@ -176,7 +170,7 @@ namespace Audiochan.Core.Persistence.Migrations
                     b.ToTable("followed_users");
                 });
 
-            modelBuilder.Entity("Audiochan.Core.Entities.Playlist", b =>
+            modelBuilder.Entity("Audiochan.Domain.Entities.Playlist", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -229,7 +223,7 @@ namespace Audiochan.Core.Persistence.Migrations
                     b.ToTable("playlists");
                 });
 
-            modelBuilder.Entity("Audiochan.Core.Entities.PlaylistAudio", b =>
+            modelBuilder.Entity("Audiochan.Domain.Entities.PlaylistAudio", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -257,7 +251,7 @@ namespace Audiochan.Core.Persistence.Migrations
                     b.ToTable("playlist_audios");
                 });
 
-            modelBuilder.Entity("Audiochan.Core.Entities.Tag", b =>
+            modelBuilder.Entity("Audiochan.Domain.Entities.Tag", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -281,7 +275,7 @@ namespace Audiochan.Core.Persistence.Migrations
                     b.ToTable("tags");
                 });
 
-            modelBuilder.Entity("Audiochan.Core.Entities.User", b =>
+            modelBuilder.Entity("Audiochan.Domain.Entities.User", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -357,14 +351,14 @@ namespace Audiochan.Core.Persistence.Migrations
 
             modelBuilder.Entity("AudioTag", b =>
                 {
-                    b.HasOne("Audiochan.Core.Entities.Audio", null)
+                    b.HasOne("Audiochan.Domain.Entities.Audio", null)
                         .WithMany()
                         .HasForeignKey("AudiosId")
                         .HasConstraintName("fk_audio_tags_audios_audios_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Audiochan.Core.Entities.Tag", null)
+                    b.HasOne("Audiochan.Domain.Entities.Tag", null)
                         .WithMany()
                         .HasForeignKey("TagsId")
                         .HasConstraintName("fk_audio_tags_tags_tags_id")
@@ -372,9 +366,9 @@ namespace Audiochan.Core.Persistence.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Audiochan.Core.Entities.Audio", b =>
+            modelBuilder.Entity("Audiochan.Domain.Entities.Audio", b =>
                 {
-                    b.HasOne("Audiochan.Core.Entities.User", "User")
+                    b.HasOne("Audiochan.Domain.Entities.User", "User")
                         .WithMany("Audios")
                         .HasForeignKey("UserId")
                         .HasConstraintName("fk_audios_users_user_id")
@@ -384,16 +378,16 @@ namespace Audiochan.Core.Persistence.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Audiochan.Core.Entities.FavoriteAudio", b =>
+            modelBuilder.Entity("Audiochan.Domain.Entities.FavoriteAudio", b =>
                 {
-                    b.HasOne("Audiochan.Core.Entities.Audio", "Audio")
+                    b.HasOne("Audiochan.Domain.Entities.Audio", "Audio")
                         .WithMany()
                         .HasForeignKey("AudioId")
                         .HasConstraintName("fk_favorite_audios_audios_audio_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Audiochan.Core.Entities.User", "User")
+                    b.HasOne("Audiochan.Domain.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .HasConstraintName("fk_favorite_audios_users_user_id")
@@ -405,16 +399,16 @@ namespace Audiochan.Core.Persistence.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Audiochan.Core.Entities.FavoritePlaylist", b =>
+            modelBuilder.Entity("Audiochan.Domain.Entities.FavoritePlaylist", b =>
                 {
-                    b.HasOne("Audiochan.Core.Entities.Playlist", "Playlist")
+                    b.HasOne("Audiochan.Domain.Entities.Playlist", "Playlist")
                         .WithMany()
                         .HasForeignKey("PlaylistId")
                         .HasConstraintName("fk_favorite_playlists_playlists_playlist_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Audiochan.Core.Entities.User", "User")
+                    b.HasOne("Audiochan.Domain.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .HasConstraintName("fk_favorite_playlists_users_user_id")
@@ -426,16 +420,16 @@ namespace Audiochan.Core.Persistence.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Audiochan.Core.Entities.FollowedUser", b =>
+            modelBuilder.Entity("Audiochan.Domain.Entities.FollowedUser", b =>
                 {
-                    b.HasOne("Audiochan.Core.Entities.User", "Observer")
+                    b.HasOne("Audiochan.Domain.Entities.User", "Observer")
                         .WithMany("Followings")
                         .HasForeignKey("ObserverId")
                         .HasConstraintName("fk_followed_users_users_observer_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Audiochan.Core.Entities.User", "Target")
+                    b.HasOne("Audiochan.Domain.Entities.User", "Target")
                         .WithMany("Followers")
                         .HasForeignKey("TargetId")
                         .HasConstraintName("fk_followed_users_users_target_id")
@@ -447,9 +441,9 @@ namespace Audiochan.Core.Persistence.Migrations
                     b.Navigation("Target");
                 });
 
-            modelBuilder.Entity("Audiochan.Core.Entities.Playlist", b =>
+            modelBuilder.Entity("Audiochan.Domain.Entities.Playlist", b =>
                 {
-                    b.HasOne("Audiochan.Core.Entities.User", "User")
+                    b.HasOne("Audiochan.Domain.Entities.User", "User")
                         .WithMany("Playlists")
                         .HasForeignKey("UserId")
                         .HasConstraintName("fk_playlists_users_user_id")
@@ -459,16 +453,16 @@ namespace Audiochan.Core.Persistence.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Audiochan.Core.Entities.PlaylistAudio", b =>
+            modelBuilder.Entity("Audiochan.Domain.Entities.PlaylistAudio", b =>
                 {
-                    b.HasOne("Audiochan.Core.Entities.Audio", "Audio")
+                    b.HasOne("Audiochan.Domain.Entities.Audio", "Audio")
                         .WithMany()
                         .HasForeignKey("AudioId")
                         .HasConstraintName("fk_playlist_audios_audios_audio_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Audiochan.Core.Entities.Playlist", "Playlist")
+                    b.HasOne("Audiochan.Domain.Entities.Playlist", "Playlist")
                         .WithMany("PlaylistAudios")
                         .HasForeignKey("PlaylistId")
                         .HasConstraintName("fk_playlist_audios_playlists_playlist_id")
@@ -480,9 +474,9 @@ namespace Audiochan.Core.Persistence.Migrations
                     b.Navigation("Playlist");
                 });
 
-            modelBuilder.Entity("Audiochan.Core.Entities.User", b =>
+            modelBuilder.Entity("Audiochan.Domain.Entities.User", b =>
                 {
-                    b.OwnsMany("Audiochan.Core.Entities.RefreshToken", "RefreshTokens", b1 =>
+                    b.OwnsMany("Audiochan.Domain.Entities.RefreshToken", "RefreshTokens", b1 =>
                         {
                             b1.Property<long>("Id")
                                 .ValueGeneratedOnAdd()
@@ -525,14 +519,14 @@ namespace Audiochan.Core.Persistence.Migrations
 
             modelBuilder.Entity("PlaylistTag", b =>
                 {
-                    b.HasOne("Audiochan.Core.Entities.Playlist", null)
+                    b.HasOne("Audiochan.Domain.Entities.Playlist", null)
                         .WithMany()
                         .HasForeignKey("PlaylistsId")
                         .HasConstraintName("fk_playlist_tags_playlists_playlists_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Audiochan.Core.Entities.Tag", null)
+                    b.HasOne("Audiochan.Domain.Entities.Tag", null)
                         .WithMany()
                         .HasForeignKey("TagsId")
                         .HasConstraintName("fk_playlist_tags_tags_tags_id")
@@ -540,12 +534,12 @@ namespace Audiochan.Core.Persistence.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Audiochan.Core.Entities.Playlist", b =>
+            modelBuilder.Entity("Audiochan.Domain.Entities.Playlist", b =>
                 {
                     b.Navigation("PlaylistAudios");
                 });
 
-            modelBuilder.Entity("Audiochan.Core.Entities.User", b =>
+            modelBuilder.Entity("Audiochan.Domain.Entities.User", b =>
                 {
                     b.Navigation("Audios");
 
