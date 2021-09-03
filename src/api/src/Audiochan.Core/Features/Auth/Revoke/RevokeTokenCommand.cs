@@ -2,10 +2,10 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Models;
-using Audiochan.Core.Persistence;
+using Audiochan.Core.Features.Auth.Refresh;
+using Audiochan.Core.Interfaces.Persistence;
 using FluentValidation;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Auth.Revoke
 {
@@ -26,32 +26,30 @@ namespace Audiochan.Core.Features.Auth.Revoke
 
     public class RevokeTokenCommandHandler : IRequestHandler<RevokeTokenCommand, Result<bool>>
     {
-        private readonly ApplicationDbContext _dbContext;
+        private readonly IUnitOfWork _dbContext;
 
-        public RevokeTokenCommandHandler(ApplicationDbContext dbContext)
+        public RevokeTokenCommandHandler(IUnitOfWork dbContext)
         {
             _dbContext = dbContext;
         }
 
         public async Task<Result<bool>> Handle(RevokeTokenCommand command, CancellationToken cancellationToken)
         {
-            if (!string.IsNullOrWhiteSpace(command.RefreshToken))
-            {
-                var user = await _dbContext.Users
-                    .Include(u => u.RefreshTokens)
-                    .SingleOrDefaultAsync(u => u.RefreshTokens
-                        .Any(t => t.Token == command.RefreshToken && t.UserId == u.Id), cancellationToken);
+            if (string.IsNullOrWhiteSpace(command.RefreshToken)) 
+                return Result<bool>.Success(true);
+            
+            var user = await _dbContext.Users
+                .GetFirstAsync(new LoadUserByRefreshToken(command.RefreshToken), cancellationToken);
 
-                if (user != null)
-                {
-                    var existingRefreshToken = user.RefreshTokens
-                        .Single(r => r.Token == command.RefreshToken);
+            if (user == null) 
+                return Result<bool>.Success(true);
+                
+            var existingRefreshToken = user.RefreshTokens
+                .Single(r => r.Token == command.RefreshToken);
 
-                    user.RefreshTokens.Remove(existingRefreshToken);
+            user.RefreshTokens.Remove(existingRefreshToken);
 
-                    await _dbContext.SaveChangesAsync(cancellationToken);
-                }
-            }
+            await _dbContext.SaveChangesAsync(cancellationToken);
 
             return Result<bool>.Success(true);
         }

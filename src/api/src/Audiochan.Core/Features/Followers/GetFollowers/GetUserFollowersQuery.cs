@@ -1,29 +1,36 @@
-﻿using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Extensions;
-using Audiochan.Core.Common.Interfaces;
+using Ardalis.Specification;
 using Audiochan.Core.Common.Interfaces.Pagination;
-using Audiochan.Core.Common.Models;
 using Audiochan.Core.Common.Models.Pagination;
-using Audiochan.Core.Persistence;
+using Audiochan.Core.Interfaces.Persistence;
+using Audiochan.Domain.Entities;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Followers.GetFollowers
 {
-    public record GetUserFollowersQuery : IHasOffsetPage, IRequest<OffsetPagedListDto<FollowerViewModel>>
+    public record GetUserFollowersQuery(string Username) : IHasOffsetPage, IRequest<OffsetPagedListDto<FollowerViewModel>>
     {
-        public string Username { get; init; } = string.Empty;
         public int Offset { get; init; }
         public int Size { get; init; }
     }
 
+    public sealed class GetUserFollowersSpecification : Specification<FollowedUser, FollowerViewModel>
+    {
+        public GetUserFollowersSpecification(string username)
+        {
+            Query.AsNoTracking();
+            Query.Where(u => u.Target.UserName == username);
+            Query.OrderByDescending(u => u.FollowedDate);
+            Query.Select(FollowedUserMaps.UserToFollowerFunc);
+        }
+    }
+
     public class GetUserFollowersQueryHandler : IRequestHandler<GetUserFollowersQuery, OffsetPagedListDto<FollowerViewModel>>
     {
-        private readonly ApplicationDbContext _unitOfWork;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public GetUserFollowersQueryHandler(ApplicationDbContext unitOfWork)
+        public GetUserFollowersQueryHandler(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
@@ -31,13 +38,9 @@ namespace Audiochan.Core.Features.Followers.GetFollowers
         public async Task<OffsetPagedListDto<FollowerViewModel>> Handle(GetUserFollowersQuery query,
             CancellationToken cancellationToken)
         {
-            return await _unitOfWork.Users
-                .AsNoTracking()
-                .Where(u => u.UserName == query.Username)
-                .SelectMany(u => u.Followers)
-                .OrderByDescending(fu => fu.FollowedDate)
-                .Select(FollowedUserMaps.UserToFollowerFunc)
-                .OffsetPaginateAsync(query, cancellationToken);
+            var list = await _unitOfWork.FollowedUsers
+                .GetOffsetPagedListAsync(new GetUserFollowersSpecification(query.Username), query.Offset, query.Size, cancellationToken);
+            return new OffsetPagedListDto<FollowerViewModel>(list, query.Offset, query.Size);
         }
     }
 }

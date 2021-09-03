@@ -6,7 +6,7 @@ using Audiochan.Core.Common;
 using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Interfaces;
-using Audiochan.Core.Persistence;
+using Audiochan.Core.Interfaces.Persistence;
 using Audiochan.Core.Services;
 using Audiochan.Domain.Entities;
 using FluentValidation;
@@ -71,20 +71,19 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
 
     public class CreateAudioCommandHandler : IRequestHandler<CreateAudioCommand, Result<long>>
     {
-        private readonly ApplicationDbContext _applicationDbContext;
         private readonly ICurrentUserService _currentUserService;
         private readonly ISlugGenerator _slugGenerator;
         private readonly IAudioUploadService _audioUploadService;
+        private readonly IUnitOfWork _unitOfWork;
 
         public CreateAudioCommandHandler(ICurrentUserService currentUserService, 
-            ApplicationDbContext applicationDbContext, 
             ISlugGenerator slugGenerator, 
-            IAudioUploadService audioUploadService)
+            IAudioUploadService audioUploadService, IUnitOfWork unitOfWork)
         {
             _currentUserService = currentUserService;
-            _applicationDbContext = applicationDbContext;
             _slugGenerator = slugGenerator;
             _audioUploadService = audioUploadService;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<Result<long>> Handle(CreateAudioCommand command,
@@ -100,7 +99,7 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
                 return Result<long>.BadRequest("Cannot find upload. Please upload and try again.");
             }
             
-            var audio = new Audio
+            Audio audio = new Audio
             {
                 UserId = currentUserId,
                 Size = command.FileSize,
@@ -114,11 +113,11 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
             if (command.Tags.Count > 0)
             {
                 var tags = _slugGenerator.GenerateSlugs(command.Tags);
-                audio.Tags = await _applicationDbContext.Tags.GetAppropriateTags(tags, cancellationToken);
+                audio.Tags = await _unitOfWork.Tags.GetAppropriateTags(tags, cancellationToken);
             }
 
-            await _applicationDbContext.Audios.AddAsync(audio, cancellationToken);
-            await _applicationDbContext.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.Audios.AddAsync(audio, cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
             await _audioUploadService.MoveTempAudioToPublic(audio.File, cancellationToken);
             return Result<long>.Success(audio.Id);
         }

@@ -36,14 +36,14 @@ namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
             {
                 return database.Audios
                     .AsNoTracking()
-                    .Include(u => u.Favorited)
+                    .Include(u => u.FavoriteAudios)
                     .SingleOrDefault(a => a.Id == audio.Id);
             });
 
             // Assert
             refetchAudio.Should().NotBeNull();
-            refetchAudio!.Favorited.Should().NotBeEmpty();
-            refetchAudio.Favorited.Should().Contain(x => x.Id == observerId);
+            refetchAudio!.FavoriteAudios.Should().NotBeEmpty();
+            refetchAudio.FavoriteAudios.Should().Contain(x => x.UserId == observerId);
         }
 
         [Fact]
@@ -71,13 +71,13 @@ namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
             {
                 return database.Audios
                     .AsNoTracking()
-                    .Include(u => u.Favorited)
+                    .Include(u => u.FavoriteAudios)
                     .SingleOrDefault(a => a.Id == audio.Id);
             });
 
             // Assert
             refetchAudio.Should().NotBeNull();
-            refetchAudio!.Favorited.Should().BeEmpty();
+            refetchAudio!.FavoriteAudios.Should().BeEmpty();
         }
     }
 }

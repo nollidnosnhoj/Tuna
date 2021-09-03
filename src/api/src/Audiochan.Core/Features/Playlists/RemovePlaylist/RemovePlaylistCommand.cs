@@ -3,11 +3,9 @@ using System.Threading.Tasks;
 using Audiochan.Core.Common;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Interfaces;
-using Audiochan.Core.Persistence;
+using Audiochan.Core.Interfaces.Persistence;
 using Audiochan.Domain.Entities;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Playlists.RemovePlaylist
 {
@@ -18,10 +16,10 @@ namespace Audiochan.Core.Features.Playlists.RemovePlaylist
     public class RemovePlaylistCommandHandler : IRequestHandler<RemovePlaylistCommand, Result>
     {
         private readonly long _currentUserId;
-        private readonly ApplicationDbContext _unitOfWork;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IImageUploadService _imageUploadService;
 
-        public RemovePlaylistCommandHandler(ICurrentUserService currentUserService, ApplicationDbContext unitOfWork, 
+        public RemovePlaylistCommandHandler(ICurrentUserService currentUserService, IUnitOfWork unitOfWork, 
             IImageUploadService imageUploadService)
         {
             _currentUserId = currentUserService.GetUserId();
@@ -31,9 +29,7 @@ namespace Audiochan.Core.Features.Playlists.RemovePlaylist
 
         public async Task<Result> Handle(RemovePlaylistCommand request, CancellationToken cancellationToken)
         {
-            var playlist = await _unitOfWork.Playlists
-                .Include(a => a.Audios)
-                .SingleOrDefaultAsync(a => a.Id == request.Id, cancellationToken);
+            var playlist = await _unitOfWork.Playlists.FindAsync(request.Id, cancellationToken);
 
             if (playlist is null)
                 return Result.NotFound<Playlist>();

@@ -16,15 +16,15 @@ namespace Audiochan.Infrastructure.Storage.Local
             _basePath = basePath;
         }
         
-        public string CreatePutPresignedUrl(string bucket, string container, string blobName, int expirationInMinutes,
+        public string CreatePutPreSignedUrl(string bucket, string container, string blobName, int expirationInMinutes,
             Dictionary<string, string>? metadata = null)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
-        public string CreatePutPresignedUrl(string bucket, string blobName, int expirationInMinutes, Dictionary<string, string>? metadata = null)
+        public string CreatePutPreSignedUrl(string bucket, string blobName, int expirationInMinutes, Dictionary<string, string>? metadata = null)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public Task RemoveAsync(string bucket, string container, string blobName, CancellationToken cancellationToken = default)

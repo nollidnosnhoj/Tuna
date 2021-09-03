@@ -2,16 +2,14 @@
 using System.Threading.Tasks;
 using Audiochan.API.Extensions;
 using Audiochan.API.Models;
-using Audiochan.Core.Common.Models;
 using Audiochan.Core.Common.Models.Pagination;
 using Audiochan.Core.Features.Audios;
-using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Features.Playlists;
 using Audiochan.Core.Features.Playlists.AddAudiosToPlaylist;
-using Audiochan.Core.Features.Playlists.CheckDuplicatedAudios;
+using Audiochan.Core.Features.Playlists.GetDuplicatedAudiosInPlaylist;
 using Audiochan.Core.Features.Playlists.CreatePlaylist;
-using Audiochan.Core.Features.Playlists.GetPlaylistAudios;
 using Audiochan.Core.Features.Playlists.GetPlaylist;
+using Audiochan.Core.Features.Playlists.GetPlaylistAudios;
 using Audiochan.Core.Features.Playlists.RemoveAudiosFromPlaylist;
 using Audiochan.Core.Features.Playlists.RemovePlaylist;
 using Audiochan.Core.Features.Playlists.UpdatePlaylistDetails;
@@ -192,7 +190,7 @@ namespace Audiochan.API.Controllers
         public async Task<IActionResult> CheckDuplicatedAudios(long playlistId,
             [FromBody] CheckDuplicatedAudiosRequest request, CancellationToken cancellationToken)
         {
-            var command = new CheckDuplicatedAudiosQuery(playlistId, request.AudioIds);
+            var command = new GetDuplicatedAudiosInPlaylistQuery(playlistId, request.AudioIds);
             var result = await _mediator.Send(command, cancellationToken);
             return new JsonResult(result);
         }

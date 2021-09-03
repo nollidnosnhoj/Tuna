@@ -1,12 +1,13 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Ardalis.Specification;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Interfaces;
-using Audiochan.Core.Persistence;
+using Audiochan.Core.Interfaces.Persistence;
+using Audiochan.Domain.Entities;
 using FluentValidation;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Auth.Refresh
 {
@@ -25,12 +26,21 @@ namespace Audiochan.Core.Features.Auth.Refresh
         }
     }
 
+    public sealed class LoadUserByRefreshToken : Specification<User>
+    {
+        public LoadUserByRefreshToken(string refreshToken)
+        {
+            Query.Include(u => u.RefreshTokens);
+            Query.Where(u => u.RefreshTokens.Any(t => t.Token == refreshToken && t.UserId == u.Id));
+        }
+    }
+
     public class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommand, Result<AuthResultViewModel>>
     {
         private readonly ITokenProvider _tokenProvider;
-        private readonly ApplicationDbContext _dbContext;
+        private readonly IUnitOfWork _dbContext;
 
-        public RefreshTokenCommandHandler(ITokenProvider tokenProvider, ApplicationDbContext dbContext)
+        public RefreshTokenCommandHandler(ITokenProvider tokenProvider, IUnitOfWork dbContext)
         {
             _tokenProvider = tokenProvider;
             _dbContext = dbContext;
@@ -40,9 +50,7 @@ namespace Audiochan.Core.Features.Auth.Refresh
             CancellationToken cancellationToken)
         {
             var user = await _dbContext.Users
-                .Include(u => u.RefreshTokens)
-                .SingleOrDefaultAsync(u => u.RefreshTokens
-                    .Any(t => t.Token == command.RefreshToken && t.UserId == u.Id), cancellationToken);
+                .GetFirstAsync(new LoadUserByRefreshToken(command.RefreshToken), cancellationToken);
 
             if (user == null)
                 return Result<AuthResultViewModel>.BadRequest("Refresh token does not belong to a user.");

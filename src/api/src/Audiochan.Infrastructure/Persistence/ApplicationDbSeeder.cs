@@ -6,7 +6,7 @@ using Audiochan.Core.Interfaces;
 using Audiochan.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Audiochan.Core.Persistence
+namespace Audiochan.Infrastructure.Persistence
 {
     public static class ApplicationDbSeeder
     {
@@ -67,7 +67,6 @@ namespace Audiochan.Core.Persistence
                     Title = "Test Playlist",
                     Description = "Playlist composing of bensound.com audios",
                     Created = DateTime.UtcNow,
-                    Slug = "test-playlist",
                     UserId = userId,
                     Audios = audios
                 };

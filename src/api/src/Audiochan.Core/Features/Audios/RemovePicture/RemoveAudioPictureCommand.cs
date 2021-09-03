@@ -4,10 +4,9 @@ using Audiochan.Core.Common;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Interfaces;
-using Audiochan.Core.Persistence;
+using Audiochan.Core.Interfaces.Persistence;
 using Audiochan.Domain.Entities;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Audios.RemovePicture
 {
@@ -18,25 +17,22 @@ namespace Audiochan.Core.Features.Audios.RemovePicture
         private readonly ICurrentUserService _currentUserService;
         private readonly IImageUploadService _imageUploadService;
         private readonly ICacheService _cacheService;
-        private readonly ApplicationDbContext _dbContext;
+        private readonly IUnitOfWork _unitOfWork;
 
         public RemoveAudioPictureCommandHandler(ICurrentUserService currentUserService, 
-            IImageUploadService imageUploadService, ICacheService cacheService, ApplicationDbContext dbContext)
+            IImageUploadService imageUploadService, ICacheService cacheService, IUnitOfWork unitOfWork)
         {
             _currentUserService = currentUserService;
             _imageUploadService = imageUploadService;
             _cacheService = cacheService;
-            _dbContext = dbContext;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<Result> Handle(RemoveAudioPictureCommand request, CancellationToken cancellationToken)
         {
             var currentUserId = _currentUserService.GetUserId();
 
-            var audio = await _dbContext.Audios
-                .Include(a => a.User)
-                .Include(a => a.Tags)
-                .SingleOrDefaultAsync(a => a.Id == request.AudioId, cancellationToken);
+            var audio = await _unitOfWork.Audios.FindAsync(request.AudioId, cancellationToken);
 
             if (audio == null)
                 return Result<ImageUploadResponse>.NotFound<Audio>();
@@ -49,7 +45,7 @@ namespace Audiochan.Core.Features.Audios.RemovePicture
             await _imageUploadService.RemoveImage(AssetContainerConstants.AudioPictures, audio.Picture, cancellationToken);
             audio.Picture = null;
 
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
             await _cacheService.RemoveAsync(new GetAudioCacheOptions(request.AudioId), cancellationToken);
 
             return Result.Success();

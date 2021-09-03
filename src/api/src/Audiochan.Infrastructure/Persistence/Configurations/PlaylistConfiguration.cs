@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Audiochan.Core.Persistence.Configurations
+namespace Audiochan.Infrastructure.Persistence.Configurations
 {
     public class PlaylistConfiguration : IEntityTypeConfiguration<Playlist>
     {
@@ -12,7 +12,6 @@ namespace Audiochan.Core.Persistence.Configurations
             builder.Property(x => x.Id).ValueGeneratedOnAdd();
             
             builder.Property(x => x.Title).HasMaxLength(100);
-            builder.Property(x => x.Slug).HasMaxLength(256);
             builder.Property(x => x.Picture).HasMaxLength(256);
 
             builder.HasIndex(x => x.Created);
@@ -21,21 +20,21 @@ namespace Audiochan.Core.Persistence.Configurations
                 .WithMany(t => t.Playlists)
                 .UsingEntity(j => j.ToTable("playlist_tags"));
             
-            builder.HasMany(a => a.Favorited)
-                .WithMany(u => u.FavoritePlaylists)
-                .UsingEntity<FavoritePlaylist>(
-                    j => j.HasOne(o => o.User)
-                        .WithMany()
-                        .HasForeignKey(o => o.UserId)
-                        .OnDelete(DeleteBehavior.Cascade),
-                    j => j.HasOne(o => o.Playlist)
-                        .WithMany()
-                        .HasForeignKey(o => o.PlaylistId)
-                        .OnDelete(DeleteBehavior.Cascade),
-                    j =>
-                    {
-                        j.HasKey(fa => new { fa.PlaylistId, fa.UserId });
-                    });
+            // builder.HasMany(a => a.Favorited)
+            //     .WithMany(u => u.FavoritePlaylists)
+            //     .UsingEntity<FavoritePlaylist>(
+            //         j => j.HasOne(o => o.User)
+            //             .WithMany()
+            //             .HasForeignKey(o => o.UserId)
+            //             .OnDelete(DeleteBehavior.Cascade),
+            //         j => j.HasOne(o => o.Playlist)
+            //             .WithMany()
+            //             .HasForeignKey(o => o.PlaylistId)
+            //             .OnDelete(DeleteBehavior.Cascade),
+            //         j =>
+            //         {
+            //             j.HasKey(fa => new { fa.PlaylistId, fa.UserId });
+            //         });
             
             builder.HasMany(p => p.Audios)
                 .WithMany(a => a.Playlists)
@@ -59,6 +58,24 @@ namespace Audiochan.Core.Persistence.Configurations
                 .WithMany(x => x.Playlists)
                 .IsRequired()
                 .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+        }
+    }
+    
+    public class FavoritePlaylistConfiguration : IEntityTypeConfiguration<FavoritePlaylist>
+    {
+        public void Configure(EntityTypeBuilder<FavoritePlaylist> builder)
+        {
+            builder.HasKey(x => new {x.PlaylistId, x.UserId});
+            builder.HasOne(x => x.User)
+                .WithMany(u => u.FavoritePlaylists)
+                .HasForeignKey(x => x.UserId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Cascade);
+            builder.HasOne(x => x.Playlist)
+                .WithMany()
+                .HasForeignKey(fa => fa.PlaylistId)
+                .IsRequired()
                 .OnDelete(DeleteBehavior.Cascade);
         }
     }

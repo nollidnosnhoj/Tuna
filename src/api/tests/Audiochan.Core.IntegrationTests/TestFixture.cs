@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Audiochan.Core.Persistence;
+using Audiochan.Infrastructure.Persistence;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;

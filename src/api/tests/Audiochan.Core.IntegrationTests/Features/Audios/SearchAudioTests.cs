@@ -51,7 +51,6 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
 
             //Assert 
             results.Should().NotBeNull();
-            results.Count.Should().BeGreaterThan(0);
             results.Items.Count.Should().BeGreaterThan(0);
             results.Items.Should().Contain(x => x.Id == audio.Id);
         }

@@ -1,4 +1,6 @@
-﻿namespace Audiochan.Domain.Entities
+﻿using System;
+
+namespace Audiochan.Domain.Entities
 {
     public class FavoritePlaylist
     {
@@ -6,5 +8,7 @@
         public Playlist Playlist { get; set; } = null!;
         public long UserId { get; set; }
         public User User { get; set; } = null!;
+        
+        public DateTime Favorited { get; set; }
     }
 }

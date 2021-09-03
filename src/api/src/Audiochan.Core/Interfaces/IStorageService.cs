@@ -7,10 +7,10 @@ namespace Audiochan.Core.Interfaces
 {
     public interface IStorageService
     {
-        string CreatePutPresignedUrl(string bucket, string container, string blobName, int expirationInMinutes,
+        string CreatePutPreSignedUrl(string bucket, string container, string blobName, int expirationInMinutes,
             Dictionary<string, string>? metadata = null);
         
-        string CreatePutPresignedUrl(string bucket, string blobName, int expirationInMinutes,
+        string CreatePutPreSignedUrl(string bucket, string blobName, int expirationInMinutes,
             Dictionary<string, string>? metadata = null);
 
         Task RemoveAsync(string bucket, string container, string blobName,

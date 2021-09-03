@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage;
 
-namespace Audiochan.Core.Persistence
+namespace Audiochan.Infrastructure.Persistence
 {
     public class ApplicationDbContext : DbContext
     {

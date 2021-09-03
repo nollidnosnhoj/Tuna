@@ -6,7 +6,7 @@ This project is the data-access layer (DAL). Since this project uses Entity Fram
 
 ### Updating Migrations
 
-`dotnet ef migrations add InitialMigration -p src/Audiochan.Core -s src/Audiochan.API -o Persistence/Migrations`
+`dotnet ef migrations add InitialMigration -p src/Audiochan.Infrastructure -s src/Audiochan.API -o Persistence/Migrations`
 
 ### Update database
 

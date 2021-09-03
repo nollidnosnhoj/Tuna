@@ -2,12 +2,13 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Ardalis.Specification;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Interfaces;
-using Audiochan.Core.Persistence;
+using Audiochan.Core.Interfaces.Persistence;
+using Audiochan.Domain.Entities;
 using FluentValidation;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Playlists.RemoveAudiosFromPlaylist
 {
@@ -32,13 +33,23 @@ namespace Audiochan.Core.Features.Playlists.RemoveAudiosFromPlaylist
                 .WithMessage("Audio ids cannot be empty.");
         }
     }
-    
+
+    public sealed class LoadPlaylistForAudioRemovalSpecification : Specification<Playlist>
+    {
+        public LoadPlaylistForAudioRemovalSpecification(long playlistId, ICollection<long> playlistAudioIds)
+        {
+            Query.Include(p => p.PlaylistAudios
+                .Where(pa => playlistAudioIds.Contains(pa.Id)));
+            Query.Where(p => p.Id == playlistId);
+        }
+    }
+
     public class RemoveAudiosFromPlaylistCommandHandler : IRequestHandler<RemoveAudiosFromPlaylistCommand, Result>
     {
         private readonly long _currentUserId;
-        private readonly ApplicationDbContext _unitOfWork;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public RemoveAudiosFromPlaylistCommandHandler(ICurrentUserService currentUserService, ApplicationDbContext unitOfWork)
+        public RemoveAudiosFromPlaylistCommandHandler(ICurrentUserService currentUserService, IUnitOfWork unitOfWork)
         {
             _currentUserId = currentUserService.GetUserId();
             _unitOfWork = unitOfWork;
@@ -46,11 +57,8 @@ namespace Audiochan.Core.Features.Playlists.RemoveAudiosFromPlaylist
 
         public async Task<Result> Handle(RemoveAudiosFromPlaylistCommand request, CancellationToken cancellationToken)
         {
-            var playlist = await _unitOfWork.Playlists
-                .Include(p => p.PlaylistAudios
-                    .Where(pa => request.PlaylistAudioIds.Contains(pa.Id)))
-                .Where(p => p.Id == request.PlaylistId)
-                .SingleOrDefaultAsync(cancellationToken);
+            var spec = new LoadPlaylistForAudioRemovalSpecification(request.PlaylistId, request.PlaylistAudioIds);
+            var playlist = await _unitOfWork.Playlists.GetFirstAsync(spec, cancellationToken);
 
             if (playlist is null)
                 return Result.NotFound("Playlist was not found.");

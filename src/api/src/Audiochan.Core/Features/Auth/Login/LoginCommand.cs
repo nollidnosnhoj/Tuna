@@ -1,12 +1,12 @@
-﻿using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
+using Ardalis.Specification;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Interfaces;
-using Audiochan.Core.Persistence;
+using Audiochan.Core.Interfaces.Persistence;
+using Audiochan.Domain.Entities;
 using FluentValidation;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Auth.Login
 {
@@ -25,13 +25,22 @@ namespace Audiochan.Core.Features.Auth.Login
         }
     }
 
+    public sealed class LoadUserForLoginSpecification : Specification<User>
+    {
+        public LoadUserForLoginSpecification(string login)
+        {
+            Query.Include(u => u.RefreshTokens);
+            Query.Where(u => u.UserName == login || u.Email == login);
+        }
+    }
+
     public class LoginCommandHandler : IRequestHandler<LoginCommand, Result<AuthResultViewModel>>
     {
         private readonly ITokenProvider _tokenProvider;
-        private readonly ApplicationDbContext _dbContext;
+        private readonly IUnitOfWork _dbContext;
         private readonly IPasswordHasher _passwordHasher;
 
-        public LoginCommandHandler(ITokenProvider tokenProvider, ApplicationDbContext dbContext, IPasswordHasher passwordHasher)
+        public LoginCommandHandler(ITokenProvider tokenProvider, IUnitOfWork dbContext, IPasswordHasher passwordHasher)
         {
             _tokenProvider = tokenProvider;
             _dbContext = dbContext;
@@ -42,9 +51,7 @@ namespace Audiochan.Core.Features.Auth.Login
             CancellationToken cancellationToken)
         {
             var user = await _dbContext.Users
-                .Include(u => u.RefreshTokens)
-                .Where(u => u.UserName == command.Login || u.Email == command.Login)
-                .SingleOrDefaultAsync(cancellationToken);
+                .GetFirstAsync(new LoadUserForLoginSpecification(command.Login), cancellationToken);
 
             if (user == null || !_passwordHasher.Verify(command.Password, user.PasswordHash))
                 return Result<AuthResultViewModel>.BadRequest("Invalid Username/Password");

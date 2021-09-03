@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Persistence;
+using Audiochan.Core.Interfaces.Persistence;
 using MediatR;
 
 namespace Audiochan.Core.Common.Pipelines
@@ -9,11 +9,11 @@ namespace Audiochan.Core.Common.Pipelines
     public class DbContextTransactionPipelineBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
         where TRequest : notnull
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public DbContextTransactionPipelineBehavior(ApplicationDbContext context)
+        public DbContextTransactionPipelineBehavior(IUnitOfWork unitOfWork)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
@@ -22,15 +22,15 @@ namespace Audiochan.Core.Common.Pipelines
 
             try
             {
-                _context.BeginTransaction();
+                await _unitOfWork.BeginTransactionAsync();
 
                 result = await next();
 
-                _context.CommitTransaction();
+                await _unitOfWork.CommitTransactionAsync(cancellationToken);
             }
             catch (Exception)
             {
-                _context.RollbackTransaction();
+                await _unitOfWork.RollbackTransactionAsync();
                 throw;
             }
 

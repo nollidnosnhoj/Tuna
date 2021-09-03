@@ -1,33 +1,39 @@
-﻿using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Extensions;
-using Audiochan.Core.Common.Interfaces;
+using Ardalis.Specification;
 using Audiochan.Core.Common.Interfaces.Pagination;
-using Audiochan.Core.Common.Models;
 using Audiochan.Core.Common.Models.Pagination;
 using Audiochan.Core.Features.Audios;
-using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Interfaces;
-using Audiochan.Core.Persistence;
+using Audiochan.Core.Interfaces.Persistence;
+using Audiochan.Domain.Entities;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Users.GetUserAudios
 {
-    public class GetUsersAudioQuery : IHasOffsetPage, IRequest<OffsetPagedListDto<AudioDto>>
+    public record GetUsersAudioQuery(string Username) : IHasOffsetPage, IRequest<OffsetPagedListDto<AudioDto>>
     {
-        public string? Username { get; set; }
         public int Offset { get; init; } = 1;
         public int Size { get; init; } = 30;
     }
 
+    public sealed class GetUserAudiosSpecification : Specification<Audio, AudioDto>
+    {
+        public GetUserAudiosSpecification(string username)
+        {
+            Query.AsNoTracking();
+            Query.Where(a => a.User.UserName == username);
+            Query.OrderByDescending(a => a.Id);
+            Query.Select(AudioMaps.AudioToView());
+        }
+    }
+
     public class GetUsersAudioQueryHandler : IRequestHandler<GetUsersAudioQuery, OffsetPagedListDto<AudioDto>>
     {
-        private readonly ApplicationDbContext _unitOfWork;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly long _currentUserId;
 
-        public GetUsersAudioQueryHandler(ApplicationDbContext unitOfWork, ICurrentUserService currentUserService)
+        public GetUsersAudioQueryHandler(IUnitOfWork unitOfWork, ICurrentUserService currentUserService)
         {
             _unitOfWork = unitOfWork;
             _currentUserId = currentUserService.GetUserId();
@@ -36,12 +42,11 @@ namespace Audiochan.Core.Features.Users.GetUserAudios
         public async Task<OffsetPagedListDto<AudioDto>> Handle(GetUsersAudioQuery request,
             CancellationToken cancellationToken)
         {
-            return await _unitOfWork.Audios
-                .AsNoTracking()
-                .Where(a => a.User.UserName == request.Username)
-                .OrderByDescending(a => a.Id)
-                .Select(AudioMaps.AudioToView(_currentUserId))
-                .OffsetPaginateAsync(request, cancellationToken);
+            var list = await _unitOfWork.Audios
+                .GetOffsetPagedListAsync(new GetUserAudiosSpecification(request.Username), request.Offset, request.Size,
+                    cancellationToken);
+
+            return new OffsetPagedListDto<AudioDto>(list, request.Offset, request.Size);
         }
     }
 }

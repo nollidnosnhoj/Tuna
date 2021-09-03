@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using Audiochan.Core.Common.Converters.Json;
 using Audiochan.Core.Common.Helpers;
-using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
+using Audiochan.Domain.Abstractions;
 
 namespace Audiochan.Core.Features.Audios
 {
-    public record AudioDto : IResourceDto<long>
+    public record AudioDto : IHasId<long>
     {
         public long Id { get; init; }
         public string Title { get; init; } = null!;

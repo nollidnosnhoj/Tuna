@@ -4,11 +4,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Interfaces;
-using Audiochan.Core.Persistence;
+using Audiochan.Core.Interfaces.Persistence;
 using Audiochan.Domain.Entities;
 using FluentValidation;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Playlists.AddAudiosToPlaylist
 {
@@ -33,40 +32,29 @@ namespace Audiochan.Core.Features.Playlists.AddAudiosToPlaylist
                 .WithMessage("Audio ids cannot be empty.");
         }
     }
-    
+
     public class AddAudiosToPlaylistCommandHandler : IRequestHandler<AddAudiosToPlaylistCommand, Result>
     {
         private readonly ICurrentUserService _currentUserService;
-        private readonly ApplicationDbContext _unitOfWork;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public AddAudiosToPlaylistCommandHandler(ApplicationDbContext unitOfWork, ICurrentUserService currentUserService)
+        public AddAudiosToPlaylistCommandHandler(ICurrentUserService currentUserService, IUnitOfWork unitOfWork)
         {
-            _unitOfWork = unitOfWork;
             _currentUserService = currentUserService;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<Result> Handle(AddAudiosToPlaylistCommand request, CancellationToken cancellationToken)
         {
-            IQueryable<Playlist> queryable = _unitOfWork.Playlists;
-            if (request.AudioIds.Count == 0)
-            {
-                queryable = queryable.Include(x => x.Audios);
-            }
-            else
-            {
-                queryable = queryable
-                    .Include(x => x.Audios
-                        .Where(a => request.AudioIds.Contains(a.Id)));
-            }
-
-            var playlist = await queryable.SingleOrDefaultAsync(p => p.Id == request.PlaylistId, cancellationToken);
+            var currentUserId = _currentUserService.GetUserId();
+            var playlist = await _unitOfWork.Playlists.FindAsync(request.PlaylistId, cancellationToken);
 
             if (playlist is null)
             {
                 return Result.NotFound<Playlist>();
             }
 
-            if (playlist.UserId != _currentUserService.GetUserId())
+            if (playlist.UserId != currentUserId)
             {
                 return Result.Forbidden();
             }

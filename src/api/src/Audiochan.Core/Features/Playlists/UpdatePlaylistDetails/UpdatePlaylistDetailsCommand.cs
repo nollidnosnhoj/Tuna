@@ -1,14 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Ardalis.Specification;
 using Audiochan.Core.Common.Models;
-using Audiochan.Core.Features.Playlists.GetPlaylist;
 using Audiochan.Core.Interfaces;
-using Audiochan.Core.Persistence;
+using Audiochan.Core.Interfaces.Persistence;
 using Audiochan.Domain.Entities;
 using FluentValidation;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Playlists.UpdatePlaylistDetails
 {
@@ -64,14 +63,23 @@ namespace Audiochan.Core.Features.Playlists.UpdatePlaylistDetails
             });
         }
     }
-    
+
+    public sealed class LoadPlaylistForUpdatingSpecification : Specification<Playlist>
+    {
+        public LoadPlaylistForUpdatingSpecification(long id)
+        {
+            Query.Include(p => p.User);
+            Query.Where(p => p.Id == id);
+        }
+    }
+
     public class UpdatePlaylistDetailsCommandHandler 
         : IRequestHandler<UpdatePlaylistDetailsCommand,Result<PlaylistDto>>
     {
         private readonly long _currentUserId;
-        private readonly ApplicationDbContext _unitOfWork;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public UpdatePlaylistDetailsCommandHandler(ICurrentUserService currentUserService, ApplicationDbContext unitOfWork)
+        public UpdatePlaylistDetailsCommandHandler(ICurrentUserService currentUserService, IUnitOfWork unitOfWork)
         {
             _currentUserId = currentUserService.GetUserId();
             _unitOfWork = unitOfWork;
@@ -80,8 +88,7 @@ namespace Audiochan.Core.Features.Playlists.UpdatePlaylistDetails
         public async Task<Result<PlaylistDto>> Handle(UpdatePlaylistDetailsCommand request, CancellationToken cancellationToken)
         {
             var playlist = await _unitOfWork.Playlists
-                .Include(p => p.User)
-                .SingleOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
+                .GetFirstAsync(new LoadPlaylistForUpdatingSpecification(request.Id), cancellationToken);
 
             if (playlist is null)
                 return Result<PlaylistDto>.NotFound<Playlist>();

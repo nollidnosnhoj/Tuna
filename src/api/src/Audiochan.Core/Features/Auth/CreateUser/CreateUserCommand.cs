@@ -4,11 +4,10 @@ using Audiochan.Core.Common;
 using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Interfaces;
-using Audiochan.Core.Persistence;
+using Audiochan.Core.Interfaces.Persistence;
 using Audiochan.Domain.Entities;
 using FluentValidation;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Auth.CreateUser
@@ -38,10 +37,10 @@ namespace Audiochan.Core.Features.Auth.CreateUser
     public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Result>
     {
         private readonly IDateTimeProvider _dateTimeProvider;
-        private readonly ApplicationDbContext _dbContext;
+        private readonly IUnitOfWork _dbContext;
         private readonly IPasswordHasher _passwordHasher;
 
-        public CreateUserCommandHandler(IDateTimeProvider dateTimeProvider, ApplicationDbContext dbContext, IPasswordHasher passwordHasher)
+        public CreateUserCommandHandler(IDateTimeProvider dateTimeProvider, IUnitOfWork dbContext, IPasswordHasher passwordHasher)
         {
             _dateTimeProvider = dateTimeProvider;
             _dbContext = dbContext;
@@ -51,9 +50,9 @@ namespace Audiochan.Core.Features.Auth.CreateUser
         public async Task<Result> Handle(CreateUserCommand command, CancellationToken cancellationToken)
         {
             var trimmedUsername = command.Username.Trim();
-            if (await _dbContext.Users.AnyAsync(u => u.UserName == trimmedUsername, cancellationToken))
+            if (await _dbContext.Users.ExistsAsync(u => u.UserName == trimmedUsername, cancellationToken))
                 return Result.BadRequest("Username already taken."); // Maybe a generic error message
-            if (await _dbContext.Users.AnyAsync(u => u.Email == command.Email, cancellationToken))
+            if (await _dbContext.Users.ExistsAsync(u => u.Email == command.Email, cancellationToken))
                 return Result.BadRequest("Email already taken."); // Maybe a generic error message
             var passwordHash = _passwordHasher.Hash(command.Password);
             var user = new User(trimmedUsername, command.Email, passwordHash);

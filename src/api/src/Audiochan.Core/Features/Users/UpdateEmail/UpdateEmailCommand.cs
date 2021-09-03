@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Interfaces;
-using Audiochan.Core.Persistence;
+using Audiochan.Core.Interfaces.Persistence;
 using FluentValidation;
 using MediatR;
 
@@ -33,9 +33,9 @@ namespace Audiochan.Core.Features.Users.UpdateEmail
     public class UpdateEmailCommandHandler : IRequestHandler<UpdateEmailCommand, Result>
     {
         private readonly long _currentUserId;
-        private readonly ApplicationDbContext _unitOfWork;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public UpdateEmailCommandHandler(ICurrentUserService currentUserService, ApplicationDbContext unitOfWork)
+        public UpdateEmailCommandHandler(ICurrentUserService currentUserService, IUnitOfWork unitOfWork)
         {
             _currentUserId = currentUserService.GetUserId();
             _unitOfWork = unitOfWork;
@@ -43,7 +43,7 @@ namespace Audiochan.Core.Features.Users.UpdateEmail
 
         public async Task<Result> Handle(UpdateEmailCommand command, CancellationToken cancellationToken)
         {
-            var user = await _unitOfWork.Users.FindAsync(new object[]{command.UserId}, cancellationToken);
+            var user = await _unitOfWork.Users.FindAsync(command.UserId, cancellationToken);
             if (user == null) return Result.Unauthorized();
             if (user.Id != _currentUserId) return Result.Forbidden();
 

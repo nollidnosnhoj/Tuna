@@ -1,17 +1,11 @@
-﻿using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Extensions;
-using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Interfaces.Pagination;
-using Audiochan.Core.Common.Models;
 using Audiochan.Core.Common.Models.Pagination;
 using Audiochan.Core.Features.Playlists;
-using Audiochan.Core.Features.Playlists.GetPlaylist;
 using Audiochan.Core.Interfaces;
-using Audiochan.Core.Persistence;
+using Audiochan.Core.Interfaces.Persistence;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Users.GetUserFavoritePlaylists
 {
@@ -31,10 +25,10 @@ namespace Audiochan.Core.Features.Users.GetUserFavoritePlaylists
     
     public class GetUserFavoritePlaylistsQueryHandler : IRequestHandler<GetUserFavoritePlaylistsQuery, OffsetPagedListDto<PlaylistDto>>
     {
-        private readonly ApplicationDbContext _dbContext;
+        private readonly IUnitOfWork _dbContext;
         private readonly long _currentUserId;
 
-        public GetUserFavoritePlaylistsQueryHandler(ApplicationDbContext dbContext, ICurrentUserService currentUserService)
+        public GetUserFavoritePlaylistsQueryHandler(IUnitOfWork dbContext, ICurrentUserService currentUserService)
         {
             _dbContext = dbContext;
             _currentUserId = currentUserService.GetUserId();
@@ -43,12 +37,8 @@ namespace Audiochan.Core.Features.Users.GetUserFavoritePlaylists
         public async Task<OffsetPagedListDto<PlaylistDto>> Handle(GetUserFavoritePlaylistsQuery request, 
             CancellationToken cancellationToken)
         {
-            return await _dbContext.Users
-                .AsNoTracking()
-                .Where(u => u.UserName == request.Username)
-                .SelectMany(u => u.FavoritePlaylists)
-                .Select(PlaylistMaps.PlaylistToDetailFunc)
-                .OffsetPaginateAsync(request, cancellationToken);
+            var results = await _dbContext.Playlists.GetUserFavoritePlaylists(request, cancellationToken);
+            return new OffsetPagedListDto<PlaylistDto>(results, request.Offset, request.Size);
         }
     }
 }

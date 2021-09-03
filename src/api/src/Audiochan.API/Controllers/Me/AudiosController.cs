@@ -1,12 +1,9 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.API.Models;
-using Audiochan.Core.Common.Models;
 using Audiochan.Core.Common.Models.Pagination;
 using Audiochan.Core.Features.Audios;
-using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Features.Audios.GetAudioFeed;
-using Audiochan.Core.Features.Audios.GetAudios;
 using Audiochan.Core.Features.Users.GetUserAudios;
 using Audiochan.Core.Interfaces;
 using MediatR;
@@ -46,11 +43,10 @@ namespace Audiochan.API.Controllers.Me
             [FromQuery] OffsetPaginationQueryParams queryParams, 
             CancellationToken cancellationToken = default)
         {
-            var result = await _mediator.Send(new GetUsersAudioQuery
+            var result = await _mediator.Send(new GetUsersAudioQuery(_currentUsername)
             {
                 Offset = queryParams.Offset,
                 Size = queryParams.Size,
-                Username = _currentUsername
             }, cancellationToken);
             return Ok(result);
         }

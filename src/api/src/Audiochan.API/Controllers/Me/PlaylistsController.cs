@@ -1,10 +1,8 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.API.Models;
-using Audiochan.Core.Common.Models;
 using Audiochan.Core.Common.Models.Pagination;
 using Audiochan.Core.Features.Playlists;
-using Audiochan.Core.Features.Playlists.GetPlaylist;
 using Audiochan.Core.Features.Users.GetUserPlaylists;
 using Audiochan.Core.Interfaces;
 using MediatR;
@@ -38,7 +36,11 @@ namespace Audiochan.API.Controllers.Me
             CancellationToken cancellationToken)
         {
             var audios = await _mediator.Send(
-                new GetUserPlaylistsQuery(_currentUsername, paginationQueryParams),
+                new GetUserPlaylistsQuery(_currentUsername)
+                {
+                    Offset = paginationQueryParams.Offset,
+                    Size = paginationQueryParams.Size
+                },
                 cancellationToken);
 
             return new JsonResult(audios);
