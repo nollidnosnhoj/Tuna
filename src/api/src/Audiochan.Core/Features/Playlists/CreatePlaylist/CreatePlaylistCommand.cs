@@ -1,14 +1,12 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Interfaces;
-using Audiochan.Core.Persistence;
+using Audiochan.Core.Interfaces.Persistence;
 using Audiochan.Domain.Entities;
 using FluentValidation;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Playlists.CreatePlaylist
 {
@@ -52,25 +50,19 @@ namespace Audiochan.Core.Features.Playlists.CreatePlaylist
     
     public class CreatePlaylistCommandHandler : IRequestHandler<CreatePlaylistCommand, Result<long>>
     {
-        private readonly ApplicationDbContext _unitOfWork;
         private readonly ICurrentUserService _currentUserService;
-        private readonly ISlugGenerator _slugGenerator;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public CreatePlaylistCommandHandler(ApplicationDbContext unitOfWork, 
-            ICurrentUserService currentUserService, ISlugGenerator slugGenerator)
+        public CreatePlaylistCommandHandler(ICurrentUserService currentUserService, IUnitOfWork unitOfWork)
         {
-            _unitOfWork = unitOfWork;
             _currentUserService = currentUserService;
-            _slugGenerator = slugGenerator;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<Result<long>> Handle(CreatePlaylistCommand request, CancellationToken cancellationToken)
         {
             var userId = _currentUserService.GetUserId();
-            
-            var user = await _unitOfWork.Users.SingleOrDefaultAsync(u => u.Id == userId, cancellationToken);
-            if (user is null) return Result<long>.Unauthorized();
-            
+
             var audios = await GetExistingAudios(request.AudioIds, cancellationToken);
             if (audios.Count == 0)
             {
@@ -82,8 +74,6 @@ namespace Audiochan.Core.Features.Playlists.CreatePlaylist
                 Title = request.Title,
                 Description = request.Description,
                 UserId = userId,
-                User = user,
-                Slug = _slugGenerator.GenerateSlug(request.Title),
                 Audios = audios
             };
 
@@ -95,9 +85,7 @@ namespace Audiochan.Core.Features.Playlists.CreatePlaylist
         private async Task<List<Audio>> GetExistingAudios(ICollection<long> audioIds,
             CancellationToken cancellationToken = default)
         {
-            return await _unitOfWork.Audios
-                .Where(x => audioIds.Contains(x.Id))
-                .ToListAsync(cancellationToken);
+            return await _unitOfWork.Audios.GetListAsync(x => audioIds.Contains(x.Id), cancellationToken);
         }
     }
 }

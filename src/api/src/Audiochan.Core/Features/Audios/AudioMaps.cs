@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Linq.Expressions;
-using Audiochan.Core.Common;
-using Audiochan.Core.Common.Helpers;
 using Audiochan.Core.Common.Models;
-using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Domain.Entities;
 
 namespace Audiochan.Core.Features.Audios
@@ -32,7 +29,7 @@ namespace Audiochan.Core.Features.Audios
                     Picture = audio.User.Picture
                 },
                 IsFavorited = userId > 0
-                    ? audio.Favorited.Any(fa => fa.Id == userId)
+                    ? audio.FavoriteAudios.Any(fa => fa.UserId == userId)
                     : null
             };
         }

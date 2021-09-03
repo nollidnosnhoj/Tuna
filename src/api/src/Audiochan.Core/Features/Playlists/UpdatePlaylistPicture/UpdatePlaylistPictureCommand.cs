@@ -4,10 +4,9 @@ using Audiochan.Core.Common;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Interfaces;
-using Audiochan.Core.Persistence;
+using Audiochan.Core.Interfaces.Persistence;
 using Audiochan.Domain.Entities;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Playlists.UpdatePlaylistPicture
 {
@@ -29,10 +28,10 @@ namespace Audiochan.Core.Features.Playlists.UpdatePlaylistPicture
         private readonly long _currentUserId;
         private readonly IRandomIdGenerator _randomIdGenerator;
         private readonly IImageUploadService _imageUploadService;
-        private readonly ApplicationDbContext _unitOfWork;
+        private readonly IUnitOfWork _unitOfWork;
 
         public UpdatePlaylistPictureCommandHandler(IImageUploadService imageUploadService,
-            ApplicationDbContext unitOfWork, 
+            IUnitOfWork unitOfWork, 
             ICurrentUserService currentUserService, 
             IRandomIdGenerator randomIdGenerator)
         {
@@ -44,9 +43,7 @@ namespace Audiochan.Core.Features.Playlists.UpdatePlaylistPicture
         
         public async Task<Result<ImageUploadResponse>> Handle(UpdatePlaylistPictureCommand request, CancellationToken cancellationToken)
         {
-            var playlist = await _unitOfWork.Playlists
-                .Include(p => p.User)
-                .SingleOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
+            var playlist = await _unitOfWork.Playlists.FindAsync(request.Id, cancellationToken);
 
             if (playlist == null)
                 return Result<ImageUploadResponse>.NotFound<Playlist>();

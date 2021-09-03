@@ -1,8 +1,8 @@
-﻿using Audiochan.Core.Common.Interfaces;
+﻿using Audiochan.Domain.Abstractions;
 
 namespace Audiochan.Core.Features.Auth.GetCurrentUser
 {
-    public record CurrentUserDto : IResourceDto<long>
+    public record CurrentUserDto : IHasId<long>
     {
         public long Id { get; init; }
         public string Username { get; init; } = null!;

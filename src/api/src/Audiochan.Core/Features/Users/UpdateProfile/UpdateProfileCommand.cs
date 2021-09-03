@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Interfaces;
-using Audiochan.Core.Persistence;
+using Audiochan.Core.Interfaces.Persistence;
 using Audiochan.Domain.Entities;
 using MediatR;
 
@@ -27,9 +27,9 @@ namespace Audiochan.Core.Features.Users.UpdateProfile
     public class UpdateProfileCommandHandler : IRequestHandler<UpdateProfileCommand, Result<bool>>
     {
         private readonly long _currentUserId;
-        private readonly ApplicationDbContext _unitOfWork;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public UpdateProfileCommandHandler(ICurrentUserService currentUserService, ApplicationDbContext unitOfWork)
+        public UpdateProfileCommandHandler(ICurrentUserService currentUserService, IUnitOfWork unitOfWork)
         {
             _currentUserId = currentUserService.GetUserId();
             _unitOfWork = unitOfWork;
@@ -37,7 +37,7 @@ namespace Audiochan.Core.Features.Users.UpdateProfile
 
         public async Task<Result<bool>> Handle(UpdateProfileCommand command, CancellationToken cancellationToken)
         {
-            var user = await _unitOfWork.Users.FindAsync(new object[]{command.UserId}, cancellationToken);
+            var user = await _unitOfWork.Users.FindAsync(command.UserId, cancellationToken);
             if (user == null) return Result<bool>.NotFound<User>();
             if (user.Id != _currentUserId)
                 return Result<bool>.Forbidden();

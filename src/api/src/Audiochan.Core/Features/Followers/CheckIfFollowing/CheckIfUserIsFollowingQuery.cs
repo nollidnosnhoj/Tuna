@@ -1,8 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Persistence;
+using Audiochan.Core.Interfaces.Persistence;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Followers.CheckIfFollowing
 {
@@ -12,9 +11,9 @@ namespace Audiochan.Core.Features.Followers.CheckIfFollowing
 
     public class CheckIfUserIsFollowingQueryHandler : IRequestHandler<CheckIfUserIsFollowingQuery, bool>
     {
-        private readonly ApplicationDbContext _unitOfWork;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public CheckIfUserIsFollowingQueryHandler(ApplicationDbContext unitOfWork)
+        public CheckIfUserIsFollowingQueryHandler(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
@@ -22,7 +21,7 @@ namespace Audiochan.Core.Features.Followers.CheckIfFollowing
         public async Task<bool> Handle(CheckIfUserIsFollowingQuery query, CancellationToken cancellationToken)
         {
             return await _unitOfWork.FollowedUsers
-                .AnyAsync(fu => fu.ObserverId == query.ObserverId && fu.TargetId == query.TargetId,
+                .ExistsAsync(fu => fu.ObserverId == query.ObserverId && fu.TargetId == query.TargetId,
                     cancellationToken);
         }
     }

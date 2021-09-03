@@ -1,26 +1,44 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Ardalis.Specification;
 using Audiochan.Core.Common.Helpers;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Interfaces;
-using Audiochan.Core.Persistence;
+using Audiochan.Core.Interfaces.Persistence;
 using Audiochan.Domain.Entities;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Followers.SetFollow
 {
     public record SetFollowCommand(long ObserverId, long TargetId, bool IsFollowing) : IRequest<Result<bool>>
     {
     }
+    
+    public sealed class LoadUserForFollowingSpecification : Specification<User>
+    {
+        public LoadUserForFollowingSpecification(long targetId, long observerId)
+        {
+            if (UserHelpers.IsValidId(observerId))
+            {
+                Query.Include(a =>
+                    a.Followers.Where(fa => fa.ObserverId == observerId));
+            }
+            else
+            {
+                Query.Include(a => a.Followers);
+            }
+
+            Query.Where(a => a.Id == targetId);
+        }
+    }
 
     public class SetFollowCommandHandler : IRequestHandler<SetFollowCommand, Result<bool>>
     {
         private readonly IDateTimeProvider _dateTimeProvider;
-        private readonly ApplicationDbContext _unitOfWork;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public SetFollowCommandHandler(IDateTimeProvider dateTimeProvider, ApplicationDbContext unitOfWork)
+        public SetFollowCommandHandler(IDateTimeProvider dateTimeProvider, IUnitOfWork unitOfWork)
         {
             _dateTimeProvider = dateTimeProvider;
             _unitOfWork = unitOfWork;
@@ -28,15 +46,8 @@ namespace Audiochan.Core.Features.Followers.SetFollow
 
         public async Task<Result<bool>> Handle(SetFollowCommand command, CancellationToken cancellationToken)
         {
-            var queryable = _unitOfWork.Users
-                .IgnoreQueryFilters()
-                .Where(u => u.Id == command.TargetId);
-
-            queryable = UserHelpers.IsValidId(command.ObserverId)
-                ? queryable.Include(u => u.Followers)
-                : queryable.Include(u => u.Followers.Where(f => f.ObserverId == command.ObserverId));
-
-            var target = await queryable.SingleOrDefaultAsync(cancellationToken);
+            var target = await _unitOfWork.Users
+                .GetFirstAsync(new LoadUserForFollowingSpecification(command.TargetId, command.ObserverId), cancellationToken);
 
             if (target == null)
                 return Result<bool>.NotFound<User>();
@@ -45,8 +56,8 @@ namespace Audiochan.Core.Features.Followers.SetFollow
                 return Result<bool>.Forbidden();
 
             var isFollowed = command.IsFollowing
-                ? await Follow(target, command.ObserverId, cancellationToken)
-                : await Unfollow(target, command.ObserverId, cancellationToken);
+                ? Follow(target, command.ObserverId, cancellationToken)
+                : Unfollow(target, command.ObserverId, cancellationToken);
 
             _unitOfWork.Users.Update(target);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
@@ -54,7 +65,7 @@ namespace Audiochan.Core.Features.Followers.SetFollow
             return Result<bool>.Success(isFollowed);
         }
 
-        private Task<bool> Follow(User target, long observerId, CancellationToken cancellationToken = default)
+        private bool Follow(User target, long observerId, CancellationToken cancellationToken = default)
         {
             var follower = target.Followers.FirstOrDefault(f => f.ObserverId == observerId);
 
@@ -75,10 +86,10 @@ namespace Audiochan.Core.Features.Followers.SetFollow
                 follower.UnfollowedDate = null;
             }
             
-            return Task.FromResult(true);
+            return true;
         }
 
-        private Task<bool> Unfollow(User target, long observerId, CancellationToken cancellationToken = default)
+        private bool Unfollow(User target, long observerId, CancellationToken cancellationToken = default)
         {
             var follower = target.Followers.FirstOrDefault(f => f.ObserverId == observerId);
 
@@ -87,7 +98,7 @@ namespace Audiochan.Core.Features.Followers.SetFollow
                 follower.UnfollowedDate = _dateTimeProvider.Now;
             }
 
-            return Task.FromResult(false);
+            return false;
         }
     }
 }

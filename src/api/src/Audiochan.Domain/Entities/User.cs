@@ -5,13 +5,15 @@ using Audiochan.Domain.Enums;
 
 namespace Audiochan.Domain.Entities
 {
-    public class User : IAudited, IResourceEntity<long>
+    public class User : IAudited, IHasId<long>
     {
         public User()
         {
             Audios = new HashSet<Audio>();
-            FavoriteAudios = new HashSet<Audio>();
-            FavoritePlaylists = new HashSet<Playlist>();
+            // FavoriteAudios = new HashSet<Audio>();
+            // FavoritePlaylists = new HashSet<Playlist>();
+            FavoriteAudios = new HashSet<FavoriteAudio>();
+            FavoritePlaylists = new HashSet<FavoritePlaylist>();
             Followings = new HashSet<FollowedUser>();
             Followers = new HashSet<FollowedUser>();
             Playlists = new HashSet<Playlist>();
@@ -35,8 +37,10 @@ namespace Audiochan.Domain.Entities
         public DateTime Created { get; set; }
         public DateTime? LastModified { get; set; }
         public ICollection<Audio> Audios { get; set; }
-        public ICollection<Audio> FavoriteAudios { get; set; }
-        public ICollection<Playlist> FavoritePlaylists { get; set; }
+        // public ICollection<Audio> FavoriteAudios { get; set; }
+        // public ICollection<Playlist> FavoritePlaylists { get; set; }
+        public ICollection<FavoriteAudio> FavoriteAudios { get; set; }
+        public ICollection<FavoritePlaylist> FavoritePlaylists { get; set; }
         public ICollection<FollowedUser> Followings { get; set; }
         public ICollection<FollowedUser> Followers { get; set; }
         public ICollection<Playlist> Playlists { get; set; }

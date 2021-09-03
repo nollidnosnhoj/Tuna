@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Audiochan.Core.Interfaces;
-using Audiochan.Core.Persistence;
 using Audiochan.Domain.Entities;
 using Audiochan.Domain.Enums;
+using Audiochan.Infrastructure.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;

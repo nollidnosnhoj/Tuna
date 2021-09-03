@@ -35,7 +35,7 @@ namespace Audiochan.API.Controllers
         [HttpGet(Name = "GetAudios")]
         [ProducesResponseType(200)]
         [SwaggerOperation(Summary = "Return audios by latest.", OperationId = "GetAudios", Tags = new[] {"audios"})]
-        public async Task<ActionResult<CursorPagedListDto<AudioDto>>> Get([FromQuery] GetAudiosQuery query, CancellationToken cancellationToken)
+        public async Task<ActionResult<CursorPagedListDto<AudioDto, long>>> Get([FromQuery] GetAudiosQuery query, CancellationToken cancellationToken)
         {
             return new JsonResult(await _mediator.Send(query, cancellationToken));
         }

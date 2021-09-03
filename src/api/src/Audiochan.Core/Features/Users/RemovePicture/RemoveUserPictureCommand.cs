@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Audiochan.Core.Common;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Interfaces;
-using Audiochan.Core.Persistence;
+using Audiochan.Core.Interfaces.Persistence;
 using Audiochan.Domain.Entities;
 using MediatR;
 
@@ -14,9 +14,9 @@ namespace Audiochan.Core.Features.Users.RemovePicture
     public class RemoveUserPictureCommandHandler : IRequestHandler<RemoveUserPictureCommand, Result>
     {
         private readonly IImageUploadService _imageUploadService;
-        private readonly ApplicationDbContext _unitOfWork;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public RemoveUserPictureCommandHandler(IImageUploadService imageUploadService, ApplicationDbContext unitOfWork)
+        public RemoveUserPictureCommandHandler(IImageUploadService imageUploadService, IUnitOfWork unitOfWork)
         {
             _imageUploadService = imageUploadService;
             _unitOfWork = unitOfWork;
@@ -24,7 +24,7 @@ namespace Audiochan.Core.Features.Users.RemovePicture
 
         public async Task<Result> Handle(RemoveUserPictureCommand command, CancellationToken cancellationToken)
         {
-            var user = await _unitOfWork.Users.FindAsync(new object[]{command.UserId}, cancellationToken);
+            var user = await _unitOfWork.Users.FindAsync(command.UserId, cancellationToken);
 
             if (user == null)
                 return Result<ImageUploadResponse>.NotFound<User>();

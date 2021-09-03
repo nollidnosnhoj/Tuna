@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq.Expressions;
-using Audiochan.Core.Common;
 using Audiochan.Core.Features.Followers.GetFollowers;
 using Audiochan.Core.Features.Followers.GetFollowings;
 using Audiochan.Domain.Entities;

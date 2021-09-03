@@ -2,54 +2,54 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Extensions;
-using Audiochan.Core.Common.Interfaces;
+using Ardalis.Specification;
 using Audiochan.Core.Common.Interfaces.Pagination;
-using Audiochan.Core.Common.Models;
 using Audiochan.Core.Common.Models.Pagination;
-using Audiochan.Core.Features.Audios.GetAudio;
-using Audiochan.Core.Interfaces;
-using Audiochan.Core.Persistence;
+using Audiochan.Core.Interfaces.Persistence;
+using Audiochan.Domain.Entities;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Audios.GetAudios
 {
-    public record GetAudiosQuery : IHasCursorPage<long>, IRequest<CursorPagedListDto<AudioDto>>
+    public record GetAudiosQuery : IHasCursorPage<long>, IRequest<CursorPagedListDto<AudioDto, long>>
     {
         public List<string> Tags { get; init; } = new();
-        public long? Cursor { get; init; }
+        public long Cursor { get; init; }
         public int Size { get; init; } = 30;
     }
 
-    public class GetAudiosQueryHandler : IRequestHandler<GetAudiosQuery, CursorPagedListDto<AudioDto>>
+    public sealed class GetAudiosSpecification : Specification<Audio, AudioDto>
     {
-        private readonly ApplicationDbContext _dbContext;
-        private readonly long _currentUserId;
-
-        public GetAudiosQueryHandler(ApplicationDbContext dbContext, ICurrentUserService currentUserService)
+        public GetAudiosSpecification(GetAudiosQuery request)
         {
-            _dbContext = dbContext;
-            _currentUserId = currentUserService.GetUserId();
-        }
-
-        public async Task<CursorPagedListDto<AudioDto>> Handle(GetAudiosQuery query,
-            CancellationToken cancellationToken)
-        {
-            var queryable = _dbContext.Audios
-                .AsNoTracking();
-
-
-            if (query.Tags.Count > 0)
+            Query.AsNoTracking();
+            
+            if (request.Tags.Count > 0)
             {
-                queryable = queryable
-                    .Where(a => a.Tags.Any(t => query.Tags.Contains(t.Name)));
+                Query.Where(a => a.Tags.Any(t => request.Tags.Contains(t.Name)));
             }
 
-            return await queryable
-                .OrderByDescending(a => a.Id)
-                .Select(AudioMaps.AudioToView(_currentUserId))
-                .CursorPaginateAsync(query, cancellationToken);
+            Query.OrderByDescending(a => a.Id);
+            Query.Select(AudioMaps.AudioToView());
+        }
+    }
+
+    public class GetAudiosQueryHandler : IRequestHandler<GetAudiosQuery, CursorPagedListDto<AudioDto, long>>
+    {
+        private readonly IUnitOfWork _unitOfWork;
+
+        public GetAudiosQueryHandler(IUnitOfWork unitOfWork)
+        {
+            _unitOfWork = unitOfWork;
+        }
+
+        public async Task<CursorPagedListDto<AudioDto, long>> Handle(GetAudiosQuery query,
+            CancellationToken cancellationToken)
+        {
+            var spec = new GetAudiosSpecification(query);
+            var list = await _unitOfWork.Audios
+                .GetCursorPagedListAsync(spec, query.Cursor, query.Size, cancellationToken);
+            return new CursorPagedListDto<AudioDto, long>(list, query.Size);
         }
     }
 }

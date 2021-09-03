@@ -4,7 +4,7 @@ using Audiochan.Core.Common;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Interfaces;
-using Audiochan.Core.Persistence;
+using Audiochan.Core.Interfaces.Persistence;
 using Audiochan.Domain.Entities;
 using MediatR;
 
@@ -17,12 +17,12 @@ namespace Audiochan.Core.Features.Users.UpdatePicture
     {
         private readonly IImageUploadService _imageUploadService;
         private readonly long _currentUserId;
-        private readonly ApplicationDbContext _unitOfWork;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IRandomIdGenerator _randomIdGenerator;
 
         public UpdateUserPictureCommandHandler(IImageUploadService imageUploadService,
             ICurrentUserService currentUserService, 
-            ApplicationDbContext unitOfWork, 
+            IUnitOfWork unitOfWork, 
             IRandomIdGenerator randomIdGenerator)
         {
             _imageUploadService = imageUploadService;
@@ -33,7 +33,7 @@ namespace Audiochan.Core.Features.Users.UpdatePicture
 
         public async Task<Result<ImageUploadResponse>> Handle(UpdateUserPictureCommand command, CancellationToken cancellationToken)
         {
-            var user = await _unitOfWork.Users.FindAsync(new object[]{command.UserId}, cancellationToken);
+            var user = await _unitOfWork.Users.FindAsync(command.UserId, cancellationToken);
 
             if (user == null)
                 return Result<ImageUploadResponse>.NotFound<User>();

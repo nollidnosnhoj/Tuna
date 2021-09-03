@@ -4,10 +4,9 @@ using Audiochan.Core.Common;
 using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Interfaces;
-using Audiochan.Core.Persistence;
+using Audiochan.Core.Interfaces.Persistence;
 using FluentValidation;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Users.UpdateUsername
@@ -35,10 +34,10 @@ namespace Audiochan.Core.Features.Users.UpdateUsername
     public class UpdateUsernameCommandHandler : IRequestHandler<UpdateUsernameCommand, Result>
     {
         private readonly long _currentUserId;
-        private readonly ApplicationDbContext _unitOfWork;
+        private readonly IUnitOfWork _unitOfWork;
 
         public UpdateUsernameCommandHandler(ICurrentUserService currentUserService,
-            ApplicationDbContext unitOfWork)
+            IUnitOfWork unitOfWork)
         {
             _currentUserId = currentUserService.GetUserId();
             _unitOfWork = unitOfWork;
@@ -46,13 +45,13 @@ namespace Audiochan.Core.Features.Users.UpdateUsername
 
         public async Task<Result> Handle(UpdateUsernameCommand command, CancellationToken cancellationToken)
         {
-            var user = await _unitOfWork.Users.FindAsync(new object[]{command.UserId}, cancellationToken);
+            var user = await _unitOfWork.Users.FindAsync(command.UserId, cancellationToken);
             if (user == null) return Result.Unauthorized();
             if (user.Id != _currentUserId) return Result.Forbidden();
             
             // check if username already exists
             var usernameExists =
-                await _unitOfWork.Users.AnyAsync(u => u.UserName == command.NewUsername, cancellationToken);
+                await _unitOfWork.Users.ExistsAsync(u => u.UserName == command.NewUsername, cancellationToken);
             if (usernameExists)
                 return Result.BadRequest("Username already exists");
 

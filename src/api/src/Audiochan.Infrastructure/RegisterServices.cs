@@ -1,10 +1,16 @@
 ﻿using Amazon.S3;
 using Audiochan.Core.Interfaces;
+using Audiochan.Core.Interfaces.Persistence;
+using Audiochan.Domain.Entities;
 using Audiochan.Infrastructure.Caching;
+using Audiochan.Infrastructure.Persistence;
+using Audiochan.Infrastructure.Persistence.Repositories;
+using Audiochan.Infrastructure.Persistence.Repositories.Abstractions;
 using Audiochan.Infrastructure.Search;
 using Audiochan.Infrastructure.Security;
 using Audiochan.Infrastructure.Shared;
 using Audiochan.Infrastructure.Storage.AmazonS3;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -27,6 +33,30 @@ namespace Audiochan.Infrastructure
             services.AddTransient<IDateTimeProvider, DateTimeProvider>();
             services.AddTransient<IRandomIdGenerator, NanoidGenerator>();
             services.AddTransient<IPasswordHasher, BCryptHasher>();
+            services.AddPersistence(configuration, environment);
+            return services;
+        }
+
+        private static IServiceCollection AddPersistence(this IServiceCollection services, 
+            IConfiguration configuration, IHostEnvironment env)
+        {
+            services.AddDbContext<ApplicationDbContext>(o =>
+            {
+                o.UseNpgsql(configuration.GetConnectionString("Database"));
+                o.UseSnakeCaseNamingConvention();
+                if (env.IsDevelopment())
+                {
+                    o.EnableSensitiveDataLogging();
+                }
+            });
+
+            services.AddScoped(typeof(IEntityRepository<>), typeof(EfRepository<>));
+            services.AddScoped<IAudioRepository, AudioRepository>();
+            services.AddScoped<IPlaylistRepository, PlaylistRepository>();
+            services.AddScoped<ITagRepository, TagRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            
             return services;
         }
 

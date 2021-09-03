@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Audiochan.Core.Features.Playlists.CheckDuplicatedAudios
+namespace Audiochan.Core.Features.Playlists.GetDuplicatedAudiosInPlaylist
 {
     public record CheckDuplicatedAudiosRequest
     {

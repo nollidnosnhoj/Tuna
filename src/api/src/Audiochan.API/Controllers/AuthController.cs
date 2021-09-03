@@ -1,7 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.API.Extensions;
-using Audiochan.Core.Common.Models;
 using Audiochan.Core.Features.Auth;
 using Audiochan.Core.Features.Auth.CreateUser;
 using Audiochan.Core.Features.Auth.Login;

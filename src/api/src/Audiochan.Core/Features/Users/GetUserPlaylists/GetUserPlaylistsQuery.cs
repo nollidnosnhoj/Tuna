@@ -1,56 +1,49 @@
-﻿using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Extensions;
-using Audiochan.Core.Common.Interfaces;
+using Ardalis.Specification;
 using Audiochan.Core.Common.Interfaces.Pagination;
-using Audiochan.Core.Common.Models;
 using Audiochan.Core.Common.Models.Pagination;
 using Audiochan.Core.Features.Playlists;
-using Audiochan.Core.Features.Playlists.GetPlaylist;
 using Audiochan.Core.Interfaces;
-using Audiochan.Core.Persistence;
+using Audiochan.Core.Interfaces.Persistence;
+using Audiochan.Domain.Entities;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Users.GetUserPlaylists
 {
-    public record GetUserPlaylistsQuery : IHasOffsetPage, IRequest<OffsetPagedListDto<PlaylistDto>>
+    public record GetUserPlaylistsQuery(string Username) : IHasOffsetPage, IRequest<OffsetPagedListDto<PlaylistDto>>
     {
-        public string Username { get; }
         public int Offset { get; init; } = 1;
         public int Size { get; init; } = 30;
+    }
 
-        public GetUserPlaylistsQuery(string username, IHasOffsetPage pageParams)
+    public sealed class GetUserPlaylistsSpecification : Specification<Playlist, PlaylistDto>
+    {
+        public GetUserPlaylistsSpecification(string username)
         {
-            Username = username;
-            Offset = pageParams.Offset;
-            Size = pageParams.Size;
+            Query.AsNoTracking();
+            Query.Where(p => p.User.UserName == username);
+            Query.OrderBy(p => p.Title);
+            Query.Select(PlaylistMaps.PlaylistToDetailFunc);
         }
     }
-    
+
     public class GetUserPlaylistsQueryHandler : IRequestHandler<GetUserPlaylistsQuery, OffsetPagedListDto<PlaylistDto>>
     {
-        private readonly ApplicationDbContext _dbContext;
-        private readonly long _currentUserId;
+        private readonly IUnitOfWork _dbContext;
 
-        public GetUserPlaylistsQueryHandler(ApplicationDbContext dbContext, ICurrentUserService currentUserService)
+        public GetUserPlaylistsQueryHandler(IUnitOfWork dbContext)
         {
             _dbContext = dbContext;
-            _currentUserId = currentUserService.GetUserId();
         }
 
         public async Task<OffsetPagedListDto<PlaylistDto>> Handle(GetUserPlaylistsQuery request, 
             CancellationToken cancellationToken)
         {
             var playlists = await _dbContext.Playlists
-                .AsNoTracking()
-                .Where(p => p.User.UserName == request.Username)
-                .OrderBy(p => p.Title)
-                .Select(PlaylistMaps.PlaylistToDetailFunc)
-                .OffsetPaginateAsync(request, cancellationToken);
+                .GetOffsetPagedListAsync(new GetUserPlaylistsSpecification(request.Username), request.Offset, request.Size, cancellationToken);
 
-            return playlists;
+            return new OffsetPagedListDto<PlaylistDto>(playlists, request.Offset, request.Size);
         }
     }
 }

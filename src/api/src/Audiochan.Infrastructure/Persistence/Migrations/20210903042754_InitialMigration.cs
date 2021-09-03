@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
-namespace Audiochan.Core.Persistence.Migrations
+namespace Audiochan.Infrastructure.Persistence.Migrations
 {
     public partial class InitialMigration : Migration
     {
@@ -103,7 +103,6 @@ namespace Audiochan.Core.Persistence.Migrations
                     id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     title = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    slug = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
                     description = table.Column<string>(type: "text", nullable: true),
                     picture = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     created = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
@@ -172,7 +171,9 @@ namespace Audiochan.Core.Persistence.Migrations
                 columns: table => new
                 {
                     audio_id = table.Column<long>(type: "bigint", nullable: false),
-                    user_id = table.Column<long>(type: "bigint", nullable: false)
+                    user_id = table.Column<long>(type: "bigint", nullable: false),
+                    favorited = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    audio_id1 = table.Column<long>(type: "bigint", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -183,6 +184,12 @@ namespace Audiochan.Core.Persistence.Migrations
                         principalTable: "audios",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "fk_favorite_audios_audios_audio_id1",
+                        column: x => x.audio_id1,
+                        principalTable: "audios",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "fk_favorite_audios_users_user_id",
                         column: x => x.user_id,
@@ -196,7 +203,9 @@ namespace Audiochan.Core.Persistence.Migrations
                 columns: table => new
                 {
                     playlist_id = table.Column<long>(type: "bigint", nullable: false),
-                    user_id = table.Column<long>(type: "bigint", nullable: false)
+                    user_id = table.Column<long>(type: "bigint", nullable: false),
+                    favorited = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    playlist_id1 = table.Column<long>(type: "bigint", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -207,6 +216,12 @@ namespace Audiochan.Core.Persistence.Migrations
                         principalTable: "playlists",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "fk_favorite_playlists_playlists_playlist_id1",
+                        column: x => x.playlist_id1,
+                        principalTable: "playlists",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "fk_favorite_playlists_users_user_id",
                         column: x => x.user_id,
@@ -281,9 +296,19 @@ namespace Audiochan.Core.Persistence.Migrations
                 column: "user_id");
 
             migrationBuilder.CreateIndex(
+                name: "ix_favorite_audios_audio_id1",
+                table: "favorite_audios",
+                column: "audio_id1");
+
+            migrationBuilder.CreateIndex(
                 name: "ix_favorite_audios_user_id",
                 table: "favorite_audios",
                 column: "user_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_favorite_playlists_playlist_id1",
+                table: "favorite_playlists",
+                column: "playlist_id1");
 
             migrationBuilder.CreateIndex(
                 name: "ix_favorite_playlists_user_id",

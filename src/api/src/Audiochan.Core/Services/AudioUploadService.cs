@@ -38,7 +38,7 @@ namespace Audiochan.Core.Services
             var uploadId = await _randomIdGenerator.GenerateAsync(size: 21);
             var blobName = uploadId + fileExt;
             var metadata = new Dictionary<string, string> {{"UserId", userId.ToString()}};
-            var url = _storageService.CreatePutPresignedUrl(
+            var url = _storageService.CreatePutPreSignedUrl(
                 _audioStorageSettings.TempBucket,
                 blobName,
                 5,

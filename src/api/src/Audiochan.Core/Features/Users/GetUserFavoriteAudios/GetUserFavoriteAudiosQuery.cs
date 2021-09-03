@@ -1,17 +1,11 @@
-﻿using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Extensions;
-using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Interfaces.Pagination;
-using Audiochan.Core.Common.Models;
 using Audiochan.Core.Common.Models.Pagination;
 using Audiochan.Core.Features.Audios;
-using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Interfaces;
-using Audiochan.Core.Persistence;
+using Audiochan.Core.Interfaces.Persistence;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Users.GetUserFavoriteAudios
 {
@@ -24,10 +18,10 @@ namespace Audiochan.Core.Features.Users.GetUserFavoriteAudios
     
     public class GetUserFavoriteAudiosQueryHandler : IRequestHandler<GetUserFavoriteAudiosQuery, OffsetPagedListDto<AudioDto>>
     {
-        private readonly ApplicationDbContext _unitOfWork;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly long _currentUserId;
 
-        public GetUserFavoriteAudiosQueryHandler(ApplicationDbContext unitOfWork, ICurrentUserService currentUserService)
+        public GetUserFavoriteAudiosQueryHandler(IUnitOfWork unitOfWork, ICurrentUserService currentUserService)
         {
             _unitOfWork = unitOfWork;
             _currentUserId = currentUserService.GetUserId();
@@ -35,13 +29,8 @@ namespace Audiochan.Core.Features.Users.GetUserFavoriteAudios
 
         public async Task<OffsetPagedListDto<AudioDto>> Handle(GetUserFavoriteAudiosQuery query, CancellationToken cancellationToken)
         {
-            return await _unitOfWork.Users
-                .AsNoTracking()
-                .Where(u => u.UserName == query.Username)
-                .SelectMany(u => u.FavoriteAudios)
-                .OrderByDescending(a => a.Id)
-                .Select(AudioMaps.AudioToView(_currentUserId))
-                .OffsetPaginateAsync(query, cancellationToken);
+            var results = await _unitOfWork.Audios.GetUserFavoriteAudios(query, cancellationToken);
+            return new OffsetPagedListDto<AudioDto>(results, query.Offset, query.Size);
         }
     }
 }

@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
+using Audiochan.Domain.Abstractions;
 
 namespace Audiochan.Domain.Entities
 {
-    public class Tag
+    public class Tag : IHasId<long>
     {
         public Tag()
         {
@@ -10,6 +11,7 @@ namespace Audiochan.Domain.Entities
             Playlists = new HashSet<Playlist>();
         }
 
+        public long Id { get; }
         public string Name { get; set; } = null!;
         public ICollection<Audio> Audios { get; set; }
         public ICollection<Playlist> Playlists { get; set; }

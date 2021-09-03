@@ -1,37 +1,38 @@
-﻿using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Extensions;
-using Audiochan.Core.Features.Audios;
+using Ardalis.Specification;
 using Audiochan.Core.Interfaces;
-using Audiochan.Core.Persistence;
+using Audiochan.Core.Interfaces.Persistence;
+using Audiochan.Domain.Entities;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Playlists.GetPlaylist
 {
     public record GetPlaylistQuery(long Id) : IRequest<PlaylistDto?>;
-    
+
+    public sealed class GetPlaylistByIdSpecification : Specification<Playlist, PlaylistDto>
+    {
+        public GetPlaylistByIdSpecification(long id)
+        {
+            Query.AsNoTracking();
+            Query.Where(p => p.Id == id);
+            Query.Select(PlaylistMaps.PlaylistToDetailFunc);
+        }
+    }
+
     public class GetPlaylistQueryHandler : IRequestHandler<GetPlaylistQuery, PlaylistDto?>
     {
-        private readonly long _currentUserId;
-        private readonly ApplicationDbContext _unitOfWork;
-
-        public GetPlaylistQueryHandler(ICurrentUserService currentUserService, ApplicationDbContext unitOfWork)
+        private readonly IUnitOfWork _unitOfWork;
+        
+        public GetPlaylistQueryHandler(IUnitOfWork unitOfWork)
         {
-            _currentUserId = currentUserService.GetUserId();
             _unitOfWork = unitOfWork;
         }
 
         public async Task<PlaylistDto?> Handle(GetPlaylistQuery request, CancellationToken cancellationToken)
         {
-            var playlist = await _unitOfWork.Playlists
-                .AsNoTracking()
-                .Where(x => x.Id == request.Id)
-                .Select(PlaylistMaps.PlaylistToDetailFunc)
-                .SingleOrDefaultAsync(cancellationToken);
-
-            return playlist;
+            return await _unitOfWork.Playlists
+                .GetFirstAsync(new GetPlaylistByIdSpecification(request.Id), cancellationToken);
         }
     }
 }

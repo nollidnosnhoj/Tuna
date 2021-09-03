@@ -5,14 +5,13 @@ using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Interfaces;
-using Audiochan.Core.Persistence;
+using Audiochan.Core.Interfaces.Persistence;
 using Audiochan.Domain.Entities;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Audios.UpdatePicture
 {
-    public record UpdateAudioPictureCommand(long AudioId, string Data = "") : IImageData, IRequest<Result<ImageUploadResponse>>
+    public record UpdateAudioPictureCommand(long AudioId, string Data) : IImageData, IRequest<Result<ImageUploadResponse>>
     {
     }
 
@@ -21,20 +20,19 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
         private readonly ICurrentUserService _currentUserService;
         private readonly IImageUploadService _imageUploadService;
         private readonly ICacheService _cacheService;
-        private readonly ApplicationDbContext _dbContext;
         private readonly IRandomIdGenerator _randomIdGenerator;
+        private readonly IUnitOfWork _unitOfWork;
 
         public UpdateAudioCommandHandler(ICurrentUserService currentUserService,
             IImageUploadService imageUploadService,
             ICacheService cacheService, 
-            ApplicationDbContext dbContext, 
-            IRandomIdGenerator randomIdGenerator)
+            IRandomIdGenerator randomIdGenerator, IUnitOfWork unitOfWork)
         {
             _currentUserService = currentUserService;
             _imageUploadService = imageUploadService;
             _cacheService = cacheService;
-            _dbContext = dbContext;
             _randomIdGenerator = randomIdGenerator;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<Result<ImageUploadResponse>> Handle(UpdateAudioPictureCommand command,
@@ -42,10 +40,7 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
         {
             var currentUserId = _currentUserService.GetUserId();
 
-            var audio = await _dbContext.Audios
-                .Include(a => a.User)
-                .Include(a => a.Tags)
-                .SingleOrDefaultAsync(a => a.Id == command.AudioId, cancellationToken);
+            var audio = await _unitOfWork.Audios.FindAsync(command.AudioId, cancellationToken);
 
             if (audio == null)
                 return Result<ImageUploadResponse>.NotFound<Audio>();
@@ -67,7 +62,7 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
                 audio.Picture = blobName;
             }
 
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
             await _cacheService.RemoveAsync(new GetAudioCacheOptions(command.AudioId), cancellationToken);
                 
             return Result<ImageUploadResponse>.Success(new ImageUploadResponse

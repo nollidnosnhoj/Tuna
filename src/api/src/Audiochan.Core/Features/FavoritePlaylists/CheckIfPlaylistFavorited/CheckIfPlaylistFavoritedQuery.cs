@@ -1,8 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Persistence;
+using Audiochan.Core.Interfaces.Persistence;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.FavoritePlaylists.CheckIfPlaylistFavorited
 {
@@ -13,9 +12,9 @@ namespace Audiochan.Core.Features.FavoritePlaylists.CheckIfPlaylistFavorited
 
     public class CheckIfPlaylistFavoritedQueryHandler : IRequestHandler<CheckIfPlaylistFavoritedQuery, bool>
     {
-        private readonly ApplicationDbContext _unitOfWork;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public CheckIfPlaylistFavoritedQueryHandler(ApplicationDbContext unitOfWork)
+        public CheckIfPlaylistFavoritedQueryHandler(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
@@ -23,7 +22,7 @@ namespace Audiochan.Core.Features.FavoritePlaylists.CheckIfPlaylistFavorited
         public async Task<bool> Handle(CheckIfPlaylistFavoritedQuery request, CancellationToken cancellationToken)
         {
             return await _unitOfWork.FavoritePlaylists
-                .AnyAsync(fp => fp.PlaylistId == request.PlaylistId 
+                .ExistsAsync(fp => fp.PlaylistId == request.PlaylistId 
                                    && fp.UserId == request.UserId, cancellationToken);
         }
     }

@@ -19,7 +19,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Followers
         public async Task AddFollowerTest()
         {
             // Assign
-            var (targetId, _) = await RunAsDefaultUserAsync();
+            var (targetId, _) = await RunAsUserAsync("targetuser");
             var (observerId, _) = await RunAsUserAsync("kopacetic");
 
             // Act

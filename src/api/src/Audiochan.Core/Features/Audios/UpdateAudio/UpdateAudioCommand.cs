@@ -1,16 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Extensions;
+using Ardalis.Specification;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Interfaces;
-using Audiochan.Core.Persistence;
+using Audiochan.Core.Interfaces.Persistence;
 using Audiochan.Domain.Entities;
 using FastExpressionCompiler;
 using FluentValidation;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Audios.UpdateAudio
 {
@@ -67,33 +66,41 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
         }
     }
 
+    public sealed class LoadAudioForUpdateSpecification : Specification<Audio>
+    {
+        public LoadAudioForUpdateSpecification(long audioId)
+        {
+            Query.Include(a => a.User);
+            Query.Include(a => a.Tags);
+            Query.Where(a => a.Id == audioId);
+        }
+    }
+
     public class UpdateAudioCommandHandler : IRequestHandler<UpdateAudioCommand, Result<AudioDto>>
     {
         private readonly ICurrentUserService _currentUserService;
         private readonly ICacheService _cacheService;
-        private readonly ApplicationDbContext _dbContext;
         private readonly ISlugGenerator _slugGenerator;
+        private readonly IUnitOfWork _unitOfWork;
 
         public UpdateAudioCommandHandler(ICurrentUserService currentUserService, 
             ICacheService cacheService, 
-            ApplicationDbContext dbContext, ISlugGenerator slugGenerator)
+            ISlugGenerator slugGenerator, 
+            IUnitOfWork unitOfWork)
         {
             _currentUserService = currentUserService;
             _cacheService = cacheService;
-            _dbContext = dbContext;
             _slugGenerator = slugGenerator;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<Result<AudioDto>> Handle(UpdateAudioCommand command,
             CancellationToken cancellationToken)
         {
-            if (!_currentUserService.TryGetUserId(out var currentUserId))
-                return Result<AudioDto>.Unauthorized();
+            var currentUserId = _currentUserService.GetUserId();
 
-            var audio = await _dbContext.Audios
-                .Include(a => a.User)
-                .Include(a => a.Tags)
-                .SingleOrDefaultAsync(a => a.Id == command.AudioId, cancellationToken);
+            var audio = await _unitOfWork.Audios
+                .GetFirstAsync(new LoadAudioForUpdateSpecification(command.AudioId), cancellationToken);
 
             if (audio == null)
                 return Result<AudioDto>.NotFound<Audio>();
@@ -102,8 +109,8 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
                 return Result<AudioDto>.Forbidden();
             
             await UpdateAudioFromCommandAsync(audio, command, cancellationToken);
-            _dbContext.Audios.Update(audio);
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            _unitOfWork.Audios.Update(audio);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
             await _cacheService.RemoveAsync(new GetAudioCacheOptions(audio.Id), cancellationToken);
             
             return Result<AudioDto>.Success(AudioMaps.AudioToView().CompileFast().Invoke(audio));
@@ -121,7 +128,7 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
                 else
                 {
                     var tagStrings = _slugGenerator.GenerateSlugs(command.Tags);
-                    var newTags = await _dbContext.Tags.GetAppropriateTags(tagStrings, cancellationToken);
+                    var newTags = await _unitOfWork.Tags.GetAppropriateTags(tagStrings, cancellationToken);
                     audio.UpdateTags(newTags);
                 }
             }

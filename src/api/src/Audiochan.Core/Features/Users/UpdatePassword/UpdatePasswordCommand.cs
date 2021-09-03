@@ -4,7 +4,7 @@ using Audiochan.Core.Common;
 using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Interfaces;
-using Audiochan.Core.Persistence;
+using Audiochan.Core.Interfaces.Persistence;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.Options;
@@ -41,10 +41,10 @@ namespace Audiochan.Core.Features.Users.UpdatePassword
     public class UpdatePasswordCommandHandler : IRequestHandler<UpdatePasswordCommand, Result>
     {
         private readonly long _currentUserId;
-        private readonly ApplicationDbContext _unitOfWork;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IPasswordHasher _passwordHasher;
 
-        public UpdatePasswordCommandHandler(ICurrentUserService currentUserService, ApplicationDbContext unitOfWork, 
+        public UpdatePasswordCommandHandler(ICurrentUserService currentUserService, IUnitOfWork unitOfWork, 
             IPasswordHasher passwordHasher)
         {
             _currentUserId = currentUserService.GetUserId();
@@ -54,7 +54,7 @@ namespace Audiochan.Core.Features.Users.UpdatePassword
 
         public async Task<Result> Handle(UpdatePasswordCommand command, CancellationToken cancellationToken)
         {
-            var user = await _unitOfWork.Users.FindAsync(new object[]{command.UserId}, cancellationToken);
+            var user = await _unitOfWork.Users.FindAsync(command.UserId, cancellationToken);
             if (user == null) return Result<bool>.Unauthorized();
             if (user.Id != _currentUserId) return Result<bool>.Forbidden();
             if (!_passwordHasher.Verify(command.CurrentPassword, user.PasswordHash))

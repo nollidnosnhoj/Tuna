@@ -1,10 +1,10 @@
-﻿using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
+using Ardalis.Specification;
 using Audiochan.Core.Features.Users;
-using Audiochan.Core.Persistence;
+using Audiochan.Core.Interfaces.Persistence;
+using Audiochan.Domain.Entities;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Auth.GetCurrentUser
 {
@@ -12,11 +12,21 @@ namespace Audiochan.Core.Features.Auth.GetCurrentUser
     {
     }
 
+    public sealed class GetCurrentUserSpecification : Specification<User, CurrentUserDto>
+    {
+        public GetCurrentUserSpecification(long userId)
+        {
+            Query.AsNoTracking();
+            Query.Where(u => u.Id == userId);
+            Query.Select(UserMaps.UserToCurrentUserFunc);
+        }
+    }
+
     public class GetCurrentUserQueryHandler : IRequestHandler<GetCurrentUserQuery, CurrentUserDto?>
     {
-        private readonly ApplicationDbContext _dbContext;
+        private readonly IUnitOfWork _dbContext;
 
-        public GetCurrentUserQueryHandler(ApplicationDbContext dbContext)
+        public GetCurrentUserQueryHandler(IUnitOfWork dbContext)
         {
             _dbContext = dbContext;
         }
@@ -25,10 +35,7 @@ namespace Audiochan.Core.Features.Auth.GetCurrentUser
             CancellationToken cancellationToken)
         {
             return await _dbContext.Users
-                .AsNoTracking()
-                .Where(u => u.Id == query.UserId)
-                .Select(UserMaps.UserToCurrentUserFunc)
-                .SingleOrDefaultAsync(cancellationToken);
+                .GetFirstAsync(new GetCurrentUserSpecification(query.UserId), cancellationToken);
         }
     }
 }

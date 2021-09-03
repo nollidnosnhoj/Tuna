@@ -1,11 +1,9 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.API.Models;
-using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Common.Models.Pagination;
 using Audiochan.Core.Features.Audios;
-using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Features.Followers.GetFollowers;
 using Audiochan.Core.Features.Followers.GetFollowings;
 using Audiochan.Core.Features.Users.GetProfile;
@@ -50,9 +48,8 @@ namespace Audiochan.API.Controllers
             [FromQuery] OffsetPaginationQueryParams paginationQueryParams,
             CancellationToken cancellationToken)
         {
-            var list = await _mediator.Send(new GetUsersAudioQuery
+            var list = await _mediator.Send(new GetUsersAudioQuery(username)
             {
-                Username = username,
                 Offset = paginationQueryParams.Offset,
                 Size = paginationQueryParams.Size
             }, cancellationToken);
@@ -86,9 +83,8 @@ namespace Audiochan.API.Controllers
             [FromQuery] OffsetPaginationQueryParams paginationQueryParams, 
             CancellationToken cancellationToken)
         {
-            return Ok(await _mediator.Send(new GetUserFollowersQuery
+            return Ok(await _mediator.Send(new GetUserFollowersQuery(username)
             {
-                Username = username,
                 Offset = paginationQueryParams.Offset,
                 Size = paginationQueryParams.Size
             }, cancellationToken));

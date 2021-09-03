@@ -1,10 +1,10 @@
 ﻿using System.Text.Json.Serialization;
 using Audiochan.Core.Common.Converters.Json;
-using Audiochan.Core.Common.Interfaces;
+using Audiochan.Domain.Abstractions;
 
 namespace Audiochan.Core.Features.Users.GetProfile
 {
-    public record ProfileDto : IResourceDto<long>
+    public record ProfileDto : IHasId<long>
     {
         public long Id { get; init; }
         

@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using Audiochan.Core.Common.Converters.Json;
-using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Features.Audios;
+using Audiochan.Domain.Abstractions;
 
 namespace Audiochan.Core.Features.Playlists
 {
-    public record PlaylistDto : IResourceDto<long>
+    public record PlaylistDto : IHasId<long>
     {
         public long Id { get; init; }
         

@@ -41,8 +41,8 @@ namespace Audiochan.API
             };
 
             services.AddMemoryCache();
-            services.AddCore(Configuration, Environment);
             services.AddInfrastructure(Configuration, Environment);
+            services.AddCore(Configuration, Environment);
             services.Configure<JsonSerializerOptions>(options =>
             {
                 options.IgnoreNullValues = jsonSerializerOptions.IgnoreNullValues;

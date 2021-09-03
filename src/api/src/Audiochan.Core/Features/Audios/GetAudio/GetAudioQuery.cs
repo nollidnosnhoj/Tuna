@@ -1,10 +1,10 @@
-﻿using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
+using Ardalis.Specification;
 using Audiochan.Core.Interfaces;
-using Audiochan.Core.Persistence;
+using Audiochan.Core.Interfaces.Persistence;
+using Audiochan.Domain.Entities;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Audios.GetAudio
 {
@@ -12,17 +12,25 @@ namespace Audiochan.Core.Features.Audios.GetAudio
     {
     }
 
+    public sealed class GetAudioSpecification : Specification<Audio, AudioDto>
+    {
+        public GetAudioSpecification(long id)
+        {
+            Query.AsNoTracking();
+            Query.Where(x => x.Id == id);
+            Query.Select(AudioMaps.AudioToView());
+        }
+    }
+
     public class GetAudioQueryHandler : IRequestHandler<GetAudioQuery, AudioDto?>
     {
-        private readonly ApplicationDbContext _dbContext;
         private readonly ICacheService _cacheService;
-        private readonly long _currentUserId;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public GetAudioQueryHandler(ICacheService cacheService, ICurrentUserService currentUserService, ApplicationDbContext dbContext)
+        public GetAudioQueryHandler(ICacheService cacheService, IUnitOfWork unitOfWork)
         {
             _cacheService = cacheService;
-            _dbContext = dbContext;
-            _currentUserId = currentUserService.GetUserId();
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<AudioDto?> Handle(GetAudioQuery query, CancellationToken cancellationToken)
@@ -33,12 +41,8 @@ namespace Audiochan.Core.Features.Audios.GetAudio
                 .GetAsync<AudioDto>(cacheOptions, cancellationToken);
 
             if (cacheExists) return audio;
-            
-            audio = await _dbContext.Audios
-                .AsNoTracking()
-                .Where(x => x.Id == query.Id)
-                .Select(AudioMaps.AudioToView())
-                .SingleOrDefaultAsync(cancellationToken);
+
+            audio = await _unitOfWork.Audios.GetFirstAsync(new GetAudioSpecification(query.Id), cancellationToken);
             
             await _cacheService.SetAsync(audio, cacheOptions, cancellationToken);
 

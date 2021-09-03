@@ -36,17 +36,17 @@ namespace Audiochan.Infrastructure.Storage.AmazonS3
             _client = new AmazonS3Client(credentials, s3Config);
         }
         
-        public string CreatePutPresignedUrl(
+        public string CreatePutPreSignedUrl(
             string bucket,
             string container,
             string blobName,
             int expirationInMinutes,
             Dictionary<string, string>? metadata = null)
         {
-            return CreatePutPresignedUrl(bucket, GetKeyName(container, blobName), expirationInMinutes, metadata);
+            return CreatePutPreSignedUrl(bucket, GetKeyName(container, blobName), expirationInMinutes, metadata);
         }
 
-        public string CreatePutPresignedUrl(string bucket, string blobName, int expirationInMinutes, 
+        public string CreatePutPreSignedUrl(string bucket, string blobName, int expirationInMinutes, 
             Dictionary<string, string>? metadata = null)
         {
             try

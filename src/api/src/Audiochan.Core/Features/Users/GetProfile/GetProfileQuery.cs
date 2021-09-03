@@ -1,9 +1,9 @@
-﻿using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Persistence;
+using Ardalis.Specification;
+using Audiochan.Core.Interfaces.Persistence;
+using Audiochan.Domain.Entities;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Users.GetProfile
 {
@@ -11,11 +11,21 @@ namespace Audiochan.Core.Features.Users.GetProfile
     {
     }
 
+    public sealed class GetProfileByUsernameSpecification : Specification<User, ProfileDto>
+    {
+        public GetProfileByUsernameSpecification(string username)
+        {
+            Query.AsNoTracking();
+            Query.Where(u => u.UserName == username);
+            Query.Select(UserMaps.UserToProfileFunc);
+        }
+    }
+
     public class GetProfileQueryHandler : IRequestHandler<GetProfileQuery, ProfileDto?>
     {
-        private readonly ApplicationDbContext _unitOfWork;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public GetProfileQueryHandler(ApplicationDbContext unitOfWork)
+        public GetProfileQueryHandler(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
@@ -23,10 +33,7 @@ namespace Audiochan.Core.Features.Users.GetProfile
         public async Task<ProfileDto?> Handle(GetProfileQuery query, CancellationToken cancellationToken)
         {
             return await _unitOfWork.Users
-                .AsNoTracking()
-                .Where(u => u.UserName == query.Username)
-                .Select(UserMaps.UserToProfileFunc)
-                .SingleOrDefaultAsync(cancellationToken);
+                .GetFirstAsync(new GetProfileByUsernameSpecification(query.Username), cancellationToken);
         }
     }
 }

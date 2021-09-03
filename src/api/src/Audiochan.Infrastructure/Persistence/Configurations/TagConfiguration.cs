@@ -2,14 +2,13 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Audiochan.Core.Persistence.Configurations
+namespace Audiochan.Infrastructure.Persistence.Configurations
 {
     public class TagConfiguration : IEntityTypeConfiguration<Tag>
     {
         public void Configure(EntityTypeBuilder<Tag> builder)
         {
-            builder.Property<long>("Id");
-            builder.HasKey("Id");
+            builder.HasKey(x => x.Id);
             builder.Property(x => x.Name)
                 .IsRequired()
                 .HasMaxLength(30);

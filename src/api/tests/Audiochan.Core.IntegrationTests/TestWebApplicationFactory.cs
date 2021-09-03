@@ -30,7 +30,7 @@ namespace Audiochan.Core.IntegrationTests
             {
                 configBuilder.AddInMemoryCollection(new Dictionary<string, string>
                 {
-                    {"ConnectionStrings:Database", "Server=localhost;Port=5433;Database=audiochan_test;Username=postgres;Password=pokemon123;"}
+                    {"ConnectionStrings:Database", "Server=localhost;Port=5433;Database=audiochan_integration_test;Username=postgres;Password=pokemon123;"}
                 });
             });
 
