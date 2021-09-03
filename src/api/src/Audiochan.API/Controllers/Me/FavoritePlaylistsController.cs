@@ -1,8 +1,8 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.API.Extensions;
-using Audiochan.Core.Features.FavoritePlaylists.CheckIfPlaylistFavorited;
-using Audiochan.Core.Features.FavoritePlaylists.SetFavoritePlaylist;
+using Audiochan.Core.Features.Users.CheckIfPlaylistFavorited;
+using Audiochan.Core.Features.Users.SetFavoritePlaylist;
 using Audiochan.Core.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;

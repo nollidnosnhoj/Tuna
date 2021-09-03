@@ -2,14 +2,13 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.Specification;
-using Audiochan.Core.Common.Helpers;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Interfaces;
 using Audiochan.Core.Interfaces.Persistence;
 using Audiochan.Domain.Entities;
 using MediatR;
 
-namespace Audiochan.Core.Features.FavoritePlaylists.SetFavoritePlaylist
+namespace Audiochan.Core.Features.Users.SetFavoritePlaylist
 {
     public record SetFavoritePlaylistCommand(long PlaylistId, long UserId, bool IsFavoriting) : IRequest<Result<bool>>
     {

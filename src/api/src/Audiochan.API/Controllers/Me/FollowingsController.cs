@@ -1,8 +1,8 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.API.Extensions;
-using Audiochan.Core.Features.Followers.CheckIfFollowing;
-using Audiochan.Core.Features.Followers.SetFollow;
+using Audiochan.Core.Features.Users.CheckIfFollowing;
+using Audiochan.Core.Features.Users.SetFollow;
 using Audiochan.Core.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;

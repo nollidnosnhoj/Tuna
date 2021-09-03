@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Linq.Expressions;
-using Audiochan.Core.Features.Followers.GetFollowers;
-using Audiochan.Core.Features.Followers.GetFollowings;
+using Audiochan.Core.Features.Users.GetFollowers;
+using Audiochan.Core.Features.Users.GetFollowings;
 using Audiochan.Domain.Entities;
 
-namespace Audiochan.Core.Features.Followers
+namespace Audiochan.Core.Features.Users
 {
     public static class FollowedUserMaps
     {

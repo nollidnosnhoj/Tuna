@@ -2,14 +2,14 @@
 using System.Text.Json.Serialization;
 using Audiochan.Core.Common.Converters.Json;
 
-namespace Audiochan.Core.Features.Followers.GetFollowers
+namespace Audiochan.Core.Features.Users.GetFollowings
 {
-    public record FollowerViewModel
+    public record FollowingViewModel
     {
-        public string ObserverUserName { get; init; } = null!;
+        public string TargetUserName { get; init; } = null!;
         
         [JsonConverter(typeof(UserPictureUrlJsonConverter))]
-        public string? ObserverPicture { get; init; }
+        public string? TargetPicture { get; init; }
         
         public DateTime FollowedDate { get; init; }
     }

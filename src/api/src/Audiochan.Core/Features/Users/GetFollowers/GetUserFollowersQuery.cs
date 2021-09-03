@@ -7,7 +7,7 @@ using Audiochan.Core.Interfaces.Persistence;
 using Audiochan.Domain.Entities;
 using MediatR;
 
-namespace Audiochan.Core.Features.Followers.GetFollowers
+namespace Audiochan.Core.Features.Users.GetFollowers
 {
     public record GetUserFollowersQuery(string Username) : IHasOffsetPage, IRequest<OffsetPagedListDto<FollowerViewModel>>
     {

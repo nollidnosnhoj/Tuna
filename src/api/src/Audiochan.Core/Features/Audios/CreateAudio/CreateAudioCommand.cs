@@ -7,7 +7,6 @@ using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Interfaces;
 using Audiochan.Core.Interfaces.Persistence;
-using Audiochan.Core.Services;
 using Audiochan.Domain.Entities;
 using FluentValidation;
 using MediatR;
@@ -73,17 +72,21 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
     {
         private readonly ICurrentUserService _currentUserService;
         private readonly ISlugGenerator _slugGenerator;
-        private readonly IAudioUploadService _audioUploadService;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IStorageService _storageService;
+        private readonly AudioStorageSettings _audioStorageSettings;
 
         public CreateAudioCommandHandler(ICurrentUserService currentUserService, 
-            ISlugGenerator slugGenerator, 
-            IAudioUploadService audioUploadService, IUnitOfWork unitOfWork)
+            ISlugGenerator slugGenerator,
+            IUnitOfWork unitOfWork, 
+            IStorageService storageService,
+            IOptions<MediaStorageSettings> mediaStorageOptions)
         {
             _currentUserService = currentUserService;
             _slugGenerator = slugGenerator;
-            _audioUploadService = audioUploadService;
             _unitOfWork = unitOfWork;
+            _storageService = storageService;
+            _audioStorageSettings = mediaStorageOptions.Value.Audio;
         }
 
         public async Task<Result<long>> Handle(CreateAudioCommand command,
@@ -94,7 +97,7 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
                 return Result<long>.Unauthorized();
             }
 
-            if (!await _audioUploadService.ExistsInTempStorage(command.BlobName, cancellationToken))
+            if (!await ExistsInTempStorage(command.BlobName, cancellationToken))
             {
                 return Result<long>.BadRequest("Cannot find upload. Please upload and try again.");
             }
@@ -118,8 +121,26 @@ namespace Audiochan.Core.Features.Audios.CreateAudio
 
             await _unitOfWork.Audios.AddAsync(audio, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
-            await _audioUploadService.MoveTempAudioToPublic(audio.File, cancellationToken);
+            await MoveTempAudioToPublic(audio.File, cancellationToken);
             return Result<long>.Success(audio.Id);
+        }
+        
+        private async Task MoveTempAudioToPublic(string fileName, CancellationToken cancellationToken = default)
+        {
+            await _storageService.MoveBlobAsync(
+                _audioStorageSettings.TempBucket,
+                fileName,
+                _audioStorageSettings.Bucket,
+                $"audios/{fileName}",
+                cancellationToken: cancellationToken);
+        }
+        
+        private async Task<bool> ExistsInTempStorage(string fileName, CancellationToken cancellationToken = default)
+        {
+            return await _storageService.ExistsAsync(
+                _audioStorageSettings.TempBucket,
+                fileName,
+                cancellationToken);
         }
     }
 }

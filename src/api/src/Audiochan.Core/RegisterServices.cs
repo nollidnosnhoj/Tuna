@@ -1,9 +1,7 @@
 ﻿using System.Reflection;
 using Audiochan.Core.Common.Pipelines;
-using Audiochan.Core.Services;
 using FluentValidation;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -17,7 +15,6 @@ namespace Audiochan.Core
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
             services.AddMediatR(Assembly.GetExecutingAssembly());
             services.AddBehaviorPipelines();
-            services.AddTransient<IAudioUploadService, AudioUploadService>();
             return services;
         }
 

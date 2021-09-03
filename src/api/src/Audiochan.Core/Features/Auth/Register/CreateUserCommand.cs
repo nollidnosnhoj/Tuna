@@ -10,7 +10,7 @@ using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.Options;
 
-namespace Audiochan.Core.Features.Auth.CreateUser
+namespace Audiochan.Core.Features.Auth.Register
 {
     public class CreateUserCommand : IRequest<Result>
     {
