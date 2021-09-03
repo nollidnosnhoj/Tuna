@@ -19,7 +19,7 @@ namespace Audiochan.Core.Features.FavoriteAudios.SetFavoriteAudio
     {
         public LoadAudioForFavoritingSpecification(long audioId, long observerId)
         {
-            if (UserHelpers.IsValidId(observerId))
+            if (observerId > 0)
             {
                 Query.Include(a =>
                     a.FavoriteAudios.Where(fa => fa.UserId == observerId));

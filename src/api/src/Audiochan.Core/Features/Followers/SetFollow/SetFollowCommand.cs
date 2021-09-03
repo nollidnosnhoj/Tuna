@@ -19,7 +19,7 @@ namespace Audiochan.Core.Features.Followers.SetFollow
     {
         public LoadUserForFollowingSpecification(long targetId, long observerId)
         {
-            if (UserHelpers.IsValidId(observerId))
+            if (observerId > 0)
             {
                 Query.Include(a =>
                     a.Followers.Where(fa => fa.ObserverId == observerId));

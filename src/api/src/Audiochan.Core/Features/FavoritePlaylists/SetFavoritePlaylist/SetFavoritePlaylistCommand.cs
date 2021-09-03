@@ -19,7 +19,7 @@ namespace Audiochan.Core.Features.FavoritePlaylists.SetFavoritePlaylist
     {
         public LoadPlaylistForFavoritingSpecification(long playlistId, long observerId)
         {
-            if (UserHelpers.IsValidId(observerId))
+            if (observerId > 0)
             {
                 Query.Include(a =>
                     a.FavoritePlaylists.Where(fa => fa.UserId == observerId));

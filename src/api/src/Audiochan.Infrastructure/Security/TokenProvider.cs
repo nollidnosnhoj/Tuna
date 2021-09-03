@@ -4,6 +4,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common;
 using Audiochan.Core.Common.Helpers;
@@ -41,13 +42,17 @@ namespace Audiochan.Infrastructure.Security
             return GenerateToken(_jwtSettings.AccessTokenSecret, new ClaimsIdentity(claims), expirationDate);
         }
 
-        public async Task<(string, long)> GenerateRefreshToken(User user, string tokenToBeRemoved = "")
+        public async Task<(string, long)> GenerateRefreshToken(User user, string tokenToBeRemoved = "", 
+            CancellationToken cancellationToken = default)
         {
             var now = _dateTimeProvider.Now;
-            var claims = GetClaims(user);
             var expirationDate = now.Add(_jwtSettings.RefreshTokenExpiration);
+
+            var claims = GetClaims(user);
+
             var (token, expirationDateEpoch) = GenerateToken(_jwtSettings.RefreshTokenSecret,
                 new ClaimsIdentity(claims), expirationDate);
+            
             var refreshToken = new RefreshToken
             {
                 Token = token,
@@ -55,6 +60,7 @@ namespace Audiochan.Infrastructure.Security
                 Created = now,
                 UserId = user.Id
             };
+            
             user.RefreshTokens.Add(refreshToken);
 
             if (!string.IsNullOrWhiteSpace(tokenToBeRemoved))
@@ -66,33 +72,40 @@ namespace Audiochan.Infrastructure.Security
                 }
             }
             
-            // Update using DbContext's SaveChanges because using UserManager.UpdateAsync() would update in a
-            // disconnected scenario, meaning it will update field, when it doesn't need to.
-            await _unitOfWork.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            
             return (token, expirationDateEpoch);
         }
 
-        public async Task<bool> ValidateRefreshToken(string token)
+        public async Task<bool> ValidateRefreshToken(string token, CancellationToken cancellationToken = default)
         {
-            return await ValidateToken(token, _jwtSettings.RefreshTokenSecret);
+            return await ValidateToken(token, cancellationToken);
         }
 
-        private async Task<bool> ValidateToken(string token, string secret)
+        private async Task<bool> ValidateToken(string token, CancellationToken cancellationToken = default)
         {
+            // setup validation token handler
             var tokenHandler = new JwtSecurityTokenHandler();
             var tokenValidationParams = _tokenValidationParameters.Clone();
-            tokenValidationParams.IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
+            tokenValidationParams.IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.RefreshTokenSecret));
             try
             {
+                // validate token
                 tokenHandler.ValidateToken(
                     token,
                     tokenValidationParams,
                     out var validatedToken);
                 var jwtSecurityToken = (JwtSecurityToken) validatedToken;
+                
+                // Grab userid from token
                 var userIdString = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Sub)?.Value;
-                if (long.TryParse(userIdString, out var userId) && !UserHelpers.IsValidId(userId))
+                
+                // Validate userid format
+                if (!long.TryParse(userIdString, out var userId) || userId <= 0)
                     return false;
-                return await _unitOfWork.Users.AnyAsync(u => u.Id == userId);
+                
+                // Check if user id exists in database
+                return await _unitOfWork.Users.AnyAsync(u => u.Id == userId, cancellationToken);
             }
             catch
             {

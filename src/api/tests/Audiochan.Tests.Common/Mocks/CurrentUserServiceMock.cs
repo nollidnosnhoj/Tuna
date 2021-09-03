@@ -13,7 +13,7 @@ namespace Audiochan.Tests.Common.Mocks
         {
             var mock = new Mock<ICurrentUserService>();
 
-            userId = !UserHelpers.IsValidId(userId) ? MockUserId : userId;
+            userId = userId <= 0 ? MockUserId : userId;
             username = string.IsNullOrWhiteSpace(username) ? MockUserName : username;
             
             mock.Setup(x => x.GetUserId()).Returns(userId);

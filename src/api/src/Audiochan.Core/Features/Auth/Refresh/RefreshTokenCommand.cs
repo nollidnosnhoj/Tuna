@@ -58,7 +58,7 @@ namespace Audiochan.Core.Features.Auth.Refresh
             var existingRefreshToken = user.RefreshTokens
                 .Single(r => r.Token == command.RefreshToken);
 
-            if (!await _tokenProvider.ValidateRefreshToken(existingRefreshToken.Token))
+            if (!await _tokenProvider.ValidateRefreshToken(existingRefreshToken.Token, cancellationToken))
                 return Result<AuthResultViewModel>.BadRequest("Refresh token is invalid/expired.");
 
             var (refreshToken, refreshTokenExpiration) =

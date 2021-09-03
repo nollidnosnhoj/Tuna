@@ -26,7 +26,7 @@ namespace Audiochan.API.Services
         public bool TryGetUserId(out long userId)
         {
             userId = GetUserId();
-            return UserHelpers.IsValidId(userId);
+            return userId > 0;
         }
 
         public bool TryGetUsername(out string username)
