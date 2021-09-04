@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 using Audiochan.Core.Common.Converters.Json;
 using Audiochan.Core.Common.Helpers;
 using Audiochan.Core.Common.Models;
+using Audiochan.Core.Features.Users;
 using Audiochan.Domain.Abstractions;
 
 namespace Audiochan.Core.Features.Audios
@@ -23,6 +24,6 @@ namespace Audiochan.Core.Features.Audios
         public DateTime? LastModified { get; init; }
         [JsonConverter(typeof(AudioUrlJsonConverter))]
         public string Audio { get; init; } = null!;
-        public MetaAuthorDto User { get; init; } = null!;
+        public UserDto User { get; init; } = null!;
     }
 }

@@ -11,7 +11,7 @@ namespace Audiochan.Domain.Entities
             Playlists = new HashSet<Playlist>();
         }
 
-        public long Id { get; }
+        public long Id { get; set; }
         public string Name { get; set; } = null!;
         public ICollection<Audio> Audios { get; set; }
         public ICollection<Playlist> Playlists { get; set; }

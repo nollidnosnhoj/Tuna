@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Audiochan.Domain.Abstractions;
 using Audiochan.Domain.Enums;
 
@@ -10,8 +11,6 @@ namespace Audiochan.Domain.Entities
         public User()
         {
             Audios = new HashSet<Audio>();
-            // FavoriteAudios = new HashSet<Audio>();
-            // FavoritePlaylists = new HashSet<Playlist>();
             FavoriteAudios = new HashSet<FavoriteAudio>();
             FavoritePlaylists = new HashSet<FavoritePlaylist>();
             Followings = new HashSet<FollowedUser>();
@@ -37,13 +36,43 @@ namespace Audiochan.Domain.Entities
         public DateTime Created { get; set; }
         public DateTime? LastModified { get; set; }
         public ICollection<Audio> Audios { get; set; }
-        // public ICollection<Audio> FavoriteAudios { get; set; }
-        // public ICollection<Playlist> FavoritePlaylists { get; set; }
         public ICollection<FavoriteAudio> FavoriteAudios { get; set; }
         public ICollection<FavoritePlaylist> FavoritePlaylists { get; set; }
         public ICollection<FollowedUser> Followings { get; set; }
         public ICollection<FollowedUser> Followers { get; set; }
         public ICollection<Playlist> Playlists { get; set; }
         public ICollection<RefreshToken> RefreshTokens { get; set; }
+
+        public void Follow(long observerId, DateTime followedDate)
+        {
+            var follower = this.Followers.FirstOrDefault(f => f.ObserverId == observerId);
+
+            if (follower is null)
+            {
+                follower = new FollowedUser
+                {
+                    TargetId = this.Id,
+                    ObserverId = observerId,
+                    FollowedDate = followedDate
+                };
+                
+                this.Followers.Add(follower);
+            }
+            else if (follower.UnfollowedDate is not null)
+            {
+                follower.FollowedDate = followedDate;
+                follower.UnfollowedDate = null;
+            }
+        }
+
+        public void UnFollow(long observerId, DateTime unfollowedDate)
+        {
+            var follower = this.Followers.FirstOrDefault(f => f.ObserverId == observerId);
+
+            if (follower is not null)
+            {
+                follower.UnfollowedDate = unfollowedDate;
+            }
+        }
     }
 }

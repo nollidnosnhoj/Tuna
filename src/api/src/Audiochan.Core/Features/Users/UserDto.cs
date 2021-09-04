@@ -1,6 +1,6 @@
-﻿namespace Audiochan.Core.Common.Models
+﻿namespace Audiochan.Core.Features.Users
 {
-    public record MetaAuthorDto
+    public record UserDto
     {
         public long Id { get; init; }
         public string Username { get; init; } = null!;

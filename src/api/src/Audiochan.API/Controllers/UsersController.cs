@@ -4,6 +4,7 @@ using Audiochan.API.Models;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Common.Models.Pagination;
 using Audiochan.Core.Features.Audios;
+using Audiochan.Core.Features.Users;
 using Audiochan.Core.Features.Users.GetFollowers;
 using Audiochan.Core.Features.Users.GetFollowings;
 using Audiochan.Core.Features.Users.GetProfile;
@@ -79,7 +80,7 @@ namespace Audiochan.API.Controllers
         [ProducesResponseType(200)]
         [SwaggerOperation(Summary = "Return a list of the user's followers.", OperationId = "GetUserFollowers",
             Tags = new[] {"users"})]
-        public async Task<ActionResult<PagedListDto<MetaAuthorDto>>> GetFollowers(string username, 
+        public async Task<ActionResult<PagedListDto<UserDto>>> GetFollowers(string username, 
             [FromQuery] OffsetPaginationQueryParams paginationQueryParams, 
             CancellationToken cancellationToken)
         {
@@ -94,7 +95,7 @@ namespace Audiochan.API.Controllers
         [ProducesResponseType(200)]
         [SwaggerOperation(Summary = "Return a list of the user's followings.", OperationId = "GetUserFollowings",
             Tags = new[] {"users"})]
-        public async Task<ActionResult<PagedListDto<MetaAuthorDto>>> GetFollowings(string username, 
+        public async Task<ActionResult<PagedListDto<UserDto>>> GetFollowings(string username, 
             [FromQuery] OffsetPaginationQueryParams paginationQueryParams, 
             CancellationToken cancellationToken)
         {

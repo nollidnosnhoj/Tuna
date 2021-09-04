@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Linq.Expressions;
 using Audiochan.Core.Common.Models;
+using Audiochan.Core.Features.Users;
 using Audiochan.Domain.Entities;
 
 namespace Audiochan.Core.Features.Audios
@@ -22,7 +23,7 @@ namespace Audiochan.Core.Features.Audios
                 Picture = audio.Picture,
                 Tags = audio.Tags.Select(t => t.Name).ToList(),
                 Audio = audio.File,
-                User = new MetaAuthorDto
+                User = new UserDto
                 {
                     Id = audio.User.Id,
                     Username = audio.User.UserName,

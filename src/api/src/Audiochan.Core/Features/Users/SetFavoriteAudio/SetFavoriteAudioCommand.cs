@@ -10,7 +10,7 @@ using MediatR;
 
 namespace Audiochan.Core.Features.Users.SetFavoriteAudio
 {
-    public record SetFavoriteAudioCommand(long AudioId, long UserId, bool IsFavoriting) : IRequest<Result<bool>>
+    public record SetFavoriteAudioCommand(long AudioId, long UserId, bool IsFavoriting) : IRequest<Result>
     {
     }
 
@@ -32,7 +32,7 @@ namespace Audiochan.Core.Features.Users.SetFavoriteAudio
         }
     }
 
-    public class SetFavoriteAudioCommandHandler : IRequestHandler<SetFavoriteAudioCommand, Result<bool>>
+    public class SetFavoriteAudioCommandHandler : IRequestHandler<SetFavoriteAudioCommand, Result>
     {
         private readonly IDateTimeProvider _dateTimeProvider;
         private readonly IUnitOfWork _unitOfWork;
@@ -43,55 +43,22 @@ namespace Audiochan.Core.Features.Users.SetFavoriteAudio
             _dateTimeProvider = dateTimeProvider;
         }
 
-        public async Task<Result<bool>> Handle(SetFavoriteAudioCommand command, CancellationToken cancellationToken)
+        public async Task<Result> Handle(SetFavoriteAudioCommand command, CancellationToken cancellationToken)
         {
             var audio = await _unitOfWork.Audios
                 .GetFirstAsync(new LoadAudioForFavoritingSpecification(command.AudioId, command.UserId), cancellationToken);
 
             if (audio == null)
-                return Result<bool>.NotFound<Audio>();
+                return Result.NotFound<Audio>();
 
-            var isFavoriting = command.IsFavoriting
-                ? Favorite(audio, command.UserId, cancellationToken)
-                : Unfavorite(audio, command.UserId, cancellationToken);
-            
+            if (command.IsFavoriting)
+                audio.Favorite(command.UserId, _dateTimeProvider.Now);
+            else
+                audio.UnFavorite(command.UserId);
+
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return Result<bool>.Success(isFavoriting);
-        }
-        
-        private bool Favorite(Audio target, long userId, CancellationToken cancellationToken = default)
-        {
-            var favoriteAudio = target.FavoriteAudios.FirstOrDefault(f => f.UserId == userId);
-
-            if (favoriteAudio is null)
-            {
-                target.FavoriteAudios.Add(new FavoriteAudio
-                {
-                    UserId = userId,
-                    AudioId = target.Id,
-                    Favorited = _dateTimeProvider.Now
-                });
-                // await _unitOfWork.FavoriteAudios.AddAsync(new FavoriteAudio
-                // {
-                //     UserId = userId,
-                //     AudioId = target.Id
-                // }, cancellationToken);
-            }
-            
-            return true;
-        }
-
-        private bool Unfavorite(Audio target, long userId, CancellationToken cancellationToken = default)
-        {
-            var favoriteAudio = target.FavoriteAudios.FirstOrDefault(f => f.UserId == userId);
-
-            if (favoriteAudio is not null)
-            {
-                target.FavoriteAudios.Remove(favoriteAudio);
-            }
-
-            return false;
+            return Result.Success();
         }
     }
 }

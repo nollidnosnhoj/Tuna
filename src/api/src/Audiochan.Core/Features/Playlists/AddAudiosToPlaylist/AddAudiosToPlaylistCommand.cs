@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Ardalis.Specification;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Interfaces;
 using Audiochan.Core.Interfaces.Persistence;
@@ -33,6 +34,15 @@ namespace Audiochan.Core.Features.Playlists.AddAudiosToPlaylist
         }
     }
 
+    public sealed class LoadPlaylistForAudioAdditionSpecification : Specification<Playlist>
+    {
+        public LoadPlaylistForAudioAdditionSpecification(long id)
+        {
+            Query.Where(p => p.Id == id);
+            Query.Include(p => p.PlaylistAudios);
+        }
+    }
+
     public class AddAudiosToPlaylistCommandHandler : IRequestHandler<AddAudiosToPlaylistCommand, Result>
     {
         private readonly ICurrentUserService _currentUserService;
@@ -47,7 +57,8 @@ namespace Audiochan.Core.Features.Playlists.AddAudiosToPlaylist
         public async Task<Result> Handle(AddAudiosToPlaylistCommand request, CancellationToken cancellationToken)
         {
             var currentUserId = _currentUserService.GetUserId();
-            var playlist = await _unitOfWork.Playlists.FindAsync(request.PlaylistId, cancellationToken);
+            var spec = new LoadPlaylistForAudioAdditionSpecification(request.PlaylistId);
+            var playlist = await _unitOfWork.Playlists.GetFirstAsync(spec, cancellationToken);
 
             if (playlist is null)
             {
@@ -63,16 +74,9 @@ namespace Audiochan.Core.Features.Playlists.AddAudiosToPlaylist
             {
                 return Result.BadRequest("AudioIds are invalid.");
             }
-
-            var playlistAudios = request.AudioIds
-                .Select(audioId => new PlaylistAudio
-                {
-                    PlaylistId = playlist.Id,
-                    AudioId = audioId
-                })
-                .ToList();
-
-            await _unitOfWork.PlaylistAudios.AddRangeAsync(playlistAudios, cancellationToken);
+            
+            playlist.AddAudios(request.AudioIds);
+            
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result.Success();

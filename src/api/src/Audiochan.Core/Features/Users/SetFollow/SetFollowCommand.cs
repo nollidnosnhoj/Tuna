@@ -10,7 +10,7 @@ using MediatR;
 
 namespace Audiochan.Core.Features.Users.SetFollow
 {
-    public record SetFollowCommand(long ObserverId, long TargetId, bool IsFollowing) : IRequest<Result<bool>>
+    public record SetFollowCommand(long ObserverId, long TargetId, bool IsFollowing) : IRequest<Result>
     {
     }
     
@@ -32,7 +32,7 @@ namespace Audiochan.Core.Features.Users.SetFollow
         }
     }
 
-    public class SetFollowCommandHandler : IRequestHandler<SetFollowCommand, Result<bool>>
+    public class SetFollowCommandHandler : IRequestHandler<SetFollowCommand, Result>
     {
         private readonly IDateTimeProvider _dateTimeProvider;
         private readonly IUnitOfWork _unitOfWork;
@@ -43,61 +43,30 @@ namespace Audiochan.Core.Features.Users.SetFollow
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Result<bool>> Handle(SetFollowCommand command, CancellationToken cancellationToken)
+        public async Task<Result> Handle(SetFollowCommand command, CancellationToken cancellationToken)
         {
             var target = await _unitOfWork.Users
                 .GetFirstAsync(new LoadUserForFollowingSpecification(command.TargetId, command.ObserverId), cancellationToken);
 
             if (target == null)
-                return Result<bool>.NotFound<User>();
+                return Result.NotFound<User>();
 
             if (target.Id == command.ObserverId)
-                return Result<bool>.Forbidden();
+                return Result.Forbidden();
 
-            var isFollowed = command.IsFollowing
-                ? Follow(target, command.ObserverId, cancellationToken)
-                : Unfollow(target, command.ObserverId, cancellationToken);
+            if (command.IsFollowing)
+            {
+                target.Follow(command.ObserverId, _dateTimeProvider.Now);
+            }
+            else
+            {
+                target.UnFollow(command.ObserverId, _dateTimeProvider.Now);
+            }
 
             _unitOfWork.Users.Update(target);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return Result<bool>.Success(isFollowed);
-        }
-
-        private bool Follow(User target, long observerId, CancellationToken cancellationToken = default)
-        {
-            var follower = target.Followers.FirstOrDefault(f => f.ObserverId == observerId);
-
-            if (follower is null)
-            {
-                follower = new FollowedUser
-                {
-                    TargetId = target.Id,
-                    ObserverId = observerId,
-                    FollowedDate = _dateTimeProvider.Now
-                };
-                
-                target.Followers.Add(follower);
-            }
-            else if (follower.UnfollowedDate is not null)
-            {
-                follower.FollowedDate = _dateTimeProvider.Now;
-                follower.UnfollowedDate = null;
-            }
-            
-            return true;
-        }
-
-        private bool Unfollow(User target, long observerId, CancellationToken cancellationToken = default)
-        {
-            var follower = target.Followers.FirstOrDefault(f => f.ObserverId == observerId);
-
-            if (follower is not null)
-            {
-                follower.UnfollowedDate = _dateTimeProvider.Now;
-            }
-
-            return false;
+            return Result.Success();
         }
     }
 }

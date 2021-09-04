@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using Audiochan.Core.Common.Converters.Json;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Features.Audios;
+using Audiochan.Core.Features.Users;
 using Audiochan.Domain.Abstractions;
 
 namespace Audiochan.Core.Features.Playlists
@@ -22,6 +23,6 @@ namespace Audiochan.Core.Features.Playlists
         
         public List<AudioDto> Audios { get; init; } = new();
         
-        public MetaAuthorDto User { get; init; } = null!;
+        public UserDto User { get; init; } = null!;
     }
 }

@@ -66,14 +66,8 @@ namespace Audiochan.Core.Features.Playlists.RemoveAudiosFromPlaylist
                 return Result.Forbidden();
             if (playlist.PlaylistAudios.Count == 0)
                 return Result.NotFound("Audios was not found in playlist.");
-
-            // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
-            foreach (var id in request.PlaylistAudioIds)
-            {
-                var playlistAudio = playlist.PlaylistAudios.FirstOrDefault(x => x.Id == id);
-                if (playlistAudio is not null)
-                    playlist.PlaylistAudios.Remove(playlistAudio);
-            }
+            
+            playlist.RemoveAudios(request.PlaylistAudioIds);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             return Result.Success();

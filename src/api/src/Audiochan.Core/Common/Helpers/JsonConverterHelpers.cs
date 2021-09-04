@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace Audiochan.Core.Common.Converters.Json
+namespace Audiochan.Core.Common.Helpers
 {
     public static class JsonConverterHelpers
     {

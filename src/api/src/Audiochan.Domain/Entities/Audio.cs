@@ -9,7 +9,6 @@ namespace Audiochan.Domain.Entities
     {
         public Audio()
         {
-            // this.UsersWhoFavorited = new HashSet<User>();
             this.FavoriteAudios = new HashSet<FavoriteAudio>();
             this.Tags = new HashSet<Tag>();
             this.Playlists = new List<Playlist>();
@@ -27,9 +26,33 @@ namespace Audiochan.Domain.Entities
         public long UserId { get; set; }
         public User User { get; set; } = null!;
         public ICollection<Playlist> Playlists { get; set; }
-        // public ICollection<User> UsersWhoFavorited { get; set; }
         public ICollection<FavoriteAudio> FavoriteAudios { get; set; }
         public ICollection<Tag> Tags { get; set; }
+
+        public void Favorite(long userId, DateTime favoritedDateTime)
+        {
+            var favoriteAudio = this.FavoriteAudios.FirstOrDefault(f => f.UserId == userId);
+
+            if (favoriteAudio is null)
+            {
+                this.FavoriteAudios.Add(new FavoriteAudio
+                {
+                    UserId = userId,
+                    AudioId = this.Id,
+                    Favorited = favoritedDateTime
+                });
+            }
+        }
+
+        public void UnFavorite(long userId)
+        {
+            var favoriteAudio = this.FavoriteAudios.FirstOrDefault(f => f.UserId == userId);
+
+            if (favoriteAudio is not null)
+            {
+                this.FavoriteAudios.Remove(favoriteAudio);
+            }
+        }
 
         public void UpdateTags(List<Tag> tags)
         {

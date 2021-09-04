@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Linq.Expressions;
 using Audiochan.Core.Common.Models;
+using Audiochan.Core.Features.Users;
 using Audiochan.Domain.Entities;
 
 namespace Audiochan.Core.Features.Playlists
@@ -16,7 +17,7 @@ namespace Audiochan.Core.Features.Playlists
                 Description = playlist.Description ?? string.Empty,
                 Picture = playlist.Picture,
                 Tags = playlist.Tags.Select(t => t.Name).ToList(),
-                User = new MetaAuthorDto
+                User = new UserDto
                 {
                     Id = playlist.User.Id,
                     Username = playlist.User.UserName,

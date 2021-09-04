@@ -3,6 +3,7 @@ using Audiochan.Core.Common;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Features.Audios;
 using Audiochan.Core.Features.Audios.GetAudio;
+using Audiochan.Core.Features.Users;
 using Audiochan.Tests.Common.Fakers.Audios;
 using FluentAssertions;
 using Xunit;
@@ -58,7 +59,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             result.Size.Should().Be(audio.Size);
             result.LastModified.Should().BeNull();
             result.User.Should().NotBeNull();
-            result.User.Should().BeOfType<MetaAuthorDto>();
+            result.User.Should().BeOfType<UserDto>();
             result.User.Id.Should().Be(userId);
         }
 
@@ -88,7 +89,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             cacheResult.Size.Should().Be(result!.Size);
             result.LastModified.Should().BeNull();
             result.User.Should().NotBeNull();
-            result.User.Should().BeOfType<MetaAuthorDto>();
+            result.User.Should().BeOfType<UserDto>();
             result.User.Id.Should().Be(userId);
         }
     }
