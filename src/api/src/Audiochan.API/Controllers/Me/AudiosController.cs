@@ -64,9 +64,8 @@ namespace Audiochan.API.Controllers.Me
             [FromQuery] OffsetPaginationQueryParams queryParams, 
             CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(new GetAudioFeedQuery
+            var result = await _mediator.Send(new GetAudioFeedQuery(_currentUserId)
             {
-                UserId = _currentUserId,
                 Offset = queryParams.Offset,
                 Size = queryParams.Size
             }, cancellationToken);

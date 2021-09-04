@@ -10,9 +10,8 @@ using MediatR;
 
 namespace Audiochan.Core.Features.Audios.GetAudioFeed
 {
-    public record GetAudioFeedQuery : IHasOffsetPage, IRequest<OffsetPagedListDto<AudioDto>>
+    public record GetAudioFeedQuery(long UserId) : IHasOffsetPage, IRequest<OffsetPagedListDto<AudioDto>>
     {
-        public long UserId { get; init; }
         public int Offset { get; init; }
         public int Size { get; init; }
     }
