@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Interfaces.Persistence;
+using Audiochan.Core.Common.Interfaces.Persistence;
 using Audiochan.Domain.Entities;
 using Audiochan.Infrastructure.Persistence.Repositories.Abstractions;
 using AutoMapper;

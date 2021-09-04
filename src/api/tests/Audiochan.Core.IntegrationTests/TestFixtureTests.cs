@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Audiochan.Core.Interfaces;
+using Audiochan.Core.Common.Interfaces.Services;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;

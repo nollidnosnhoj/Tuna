@@ -1,10 +1,10 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.API.Models;
+using Audiochan.Core.Common.Interfaces.Services;
 using Audiochan.Core.Common.Models.Pagination;
-using Audiochan.Core.Features.Playlists;
-using Audiochan.Core.Features.Users.GetUserPlaylists;
-using Audiochan.Core.Interfaces;
+using Audiochan.Core.Playlists;
+using Audiochan.Core.Users.GetUserPlaylists;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

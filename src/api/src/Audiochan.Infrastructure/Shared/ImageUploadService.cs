@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common;
 using Audiochan.Core.Common.Helpers;
-using Audiochan.Core.Interfaces;
+using Audiochan.Core.Common.Interfaces.Services;
 using Microsoft.Extensions.Options;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;

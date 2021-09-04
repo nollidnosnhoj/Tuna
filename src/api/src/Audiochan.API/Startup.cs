@@ -4,7 +4,7 @@ using Audiochan.API.Middlewares;
 using Audiochan.API.Services;
 using Audiochan.Core;
 using Audiochan.Core.Common;
-using Audiochan.Core.Interfaces;
+using Audiochan.Core.Common.Interfaces.Services;
 using Audiochan.Infrastructure;
 using Audiochan.Infrastructure.Storage.AmazonS3;
 using Microsoft.AspNetCore.Builder;

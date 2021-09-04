@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Interfaces.Persistence;
+using Audiochan.Core.Common.Interfaces.Persistence;
 using MediatR;
 
 namespace Audiochan.Core.Common.Pipelines

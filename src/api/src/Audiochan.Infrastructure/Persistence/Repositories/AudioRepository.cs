@@ -2,11 +2,11 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.Audios;
 using Audiochan.Core.Common.Extensions;
-using Audiochan.Core.Features.Audios;
-using Audiochan.Core.Features.Playlists.GetPlaylistAudios;
-using Audiochan.Core.Features.Users.GetUserFavoriteAudios;
-using Audiochan.Core.Interfaces.Persistence;
+using Audiochan.Core.Common.Interfaces.Persistence;
+using Audiochan.Core.Playlists.GetPlaylistAudios;
+using Audiochan.Core.Users.GetUserFavoriteAudios;
 using Audiochan.Domain.Entities;
 using Audiochan.Infrastructure.Persistence.Repositories.Abstractions;
 using Audiochan.Infrastructure.Persistence.Repositories.Extensions;

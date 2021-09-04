@@ -1,11 +1,11 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.API.Extensions;
-using Audiochan.Core.Features.Auth;
-using Audiochan.Core.Features.Auth.Register;
-using Audiochan.Core.Features.Auth.Login;
-using Audiochan.Core.Features.Auth.Refresh;
-using Audiochan.Core.Features.Auth.Revoke;
+using Audiochan.Core.Auth;
+using Audiochan.Core.Auth.Login;
+using Audiochan.Core.Auth.Refresh;
+using Audiochan.Core.Auth.Register;
+using Audiochan.Core.Auth.Revoke;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;

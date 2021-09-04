@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Audiochan.Core.Features.Auth.Login;
-using Audiochan.Core.Features.Auth.Refresh;
+using Audiochan.Core.Auth.Login;
+using Audiochan.Core.Auth.Refresh;
 using Audiochan.Domain.Entities;
 using Bogus;
 using FluentAssertions;

@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Audiochan.Core.Features.Playlists.CreatePlaylist;
+using Audiochan.Core.Playlists.CreatePlaylist;
 using Bogus;
 
 namespace Audiochan.Tests.Common.Fakers.Playlists

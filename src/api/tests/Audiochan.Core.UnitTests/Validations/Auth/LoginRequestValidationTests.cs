@@ -1,4 +1,4 @@
-﻿using Audiochan.Core.Features.Auth.Login;
+﻿using Audiochan.Core.Auth.Login;
 using FluentValidation;
 using FluentValidation.TestHelper;
 using Xunit;

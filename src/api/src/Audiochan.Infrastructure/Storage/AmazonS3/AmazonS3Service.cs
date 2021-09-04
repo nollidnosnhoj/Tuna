@@ -10,7 +10,7 @@ using Amazon.S3;
 using Amazon.S3.Model;
 using Amazon.S3.Transfer;
 using Audiochan.Core.Common.Extensions;
-using Audiochan.Core.Interfaces;
+using Audiochan.Core.Common.Interfaces.Services;
 using Microsoft.Extensions.Options;
 
 namespace Audiochan.Infrastructure.Storage.AmazonS3

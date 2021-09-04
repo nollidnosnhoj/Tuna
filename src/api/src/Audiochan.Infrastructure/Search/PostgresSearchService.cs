@@ -1,10 +1,10 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.Audios;
+using Audiochan.Core.Audios.SearchAudios;
+using Audiochan.Core.Common.Interfaces.Persistence;
+using Audiochan.Core.Common.Interfaces.Services;
 using Audiochan.Core.Common.Models.Pagination;
-using Audiochan.Core.Features.Audios;
-using Audiochan.Core.Features.Audios.SearchAudios;
-using Audiochan.Core.Interfaces;
-using Audiochan.Core.Interfaces.Persistence;
 
 namespace Audiochan.Infrastructure.Search
 {

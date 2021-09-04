@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Audiochan.Core.Interfaces;
+using Audiochan.Core.Common.Interfaces.Services;
 using Audiochan.Domain.Entities;
 using Audiochan.Domain.Enums;
 using Audiochan.Infrastructure.Persistence;

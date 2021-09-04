@@ -2,10 +2,10 @@
 using System.Threading.Tasks;
 using Audiochan.API.Extensions;
 using Audiochan.API.Models;
-using Audiochan.Core.Features.Users.CheckIfAudioFavorited;
-using Audiochan.Core.Features.Users.GetUserFavoriteAudios;
-using Audiochan.Core.Features.Users.SetFavoriteAudio;
-using Audiochan.Core.Interfaces;
+using Audiochan.Core.Common.Interfaces.Services;
+using Audiochan.Core.Users.CheckIfAudioFavorited;
+using Audiochan.Core.Users.GetUserFavoriteAudios;
+using Audiochan.Core.Users.SetFavoriteAudio;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

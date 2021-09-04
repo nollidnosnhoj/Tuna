@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
+using Audiochan.Core.Audios;
+using Audiochan.Core.Audios.GetAudio;
 using Audiochan.Core.Common;
 using Audiochan.Core.Common.Models;
-using Audiochan.Core.Features.Audios;
-using Audiochan.Core.Features.Audios.GetAudio;
-using Audiochan.Core.Features.Users;
+using Audiochan.Core.Users;
 using Audiochan.Tests.Common.Fakers.Audios;
 using FluentAssertions;
 using Xunit;
