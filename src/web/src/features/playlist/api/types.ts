@@ -7,7 +7,6 @@ export type PlaylistAudioId = number;
 export interface Playlist {
   id: PlaylistId;
   title: string;
-  slug: string;
   description: string;
   picture?: string;
   tags: string[];

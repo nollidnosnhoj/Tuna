@@ -1,7 +1,7 @@
 export type MetaAuthor = {
   id: number;
   username: string;
-  displayName: string;
+  picture?: string;
 };
 
 export type ErrorResponse = {
