@@ -21,7 +21,7 @@ namespace Audiochan.Infrastructure.Search
         {
             var spec = new SearchAudiosSpecification(query);
             var count = await _unitOfWork.Audios.CountAsync(spec, ct);
-            var results = await _unitOfWork.Audios.GetPagedListAsync(spec, query.Page, query.Size, ct);
+            var results = await _unitOfWork.Audios.GetPagedListAsync<AudioDto>(spec, query.Page, query.Size, ct);
             return new PagedListDto<AudioDto>(results, count, query.Page, query.Size);
         }
     }

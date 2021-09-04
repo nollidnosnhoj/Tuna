@@ -36,7 +36,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             audio.Size.Should().Be(request.FileSize);
             audio.User.Should().NotBeNull();
             audio.User.Id.Should().Be(userId);
-            audio.User.Username.Should().Be(userName);
+            audio.User.UserName.Should().Be(userName);
             audio.Created.Should().BeCloseTo(GetCurrentTime(), TimeSpan.FromSeconds(5));
         }
         

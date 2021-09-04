@@ -15,7 +15,7 @@
         }
     }
     
-    public static class MediaLinkInvariants
+    public static class MediaLinkConstants
     {
         public const string AudioPicture = "https://audiochan.s3.amazonaws.com/images/audios/";
         public const string PlaylistPicture = "https://audiochan.s3.amazonaws.com/images/playlists/";

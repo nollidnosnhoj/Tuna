@@ -16,14 +16,13 @@ namespace Audiochan.Core.Features.Audios.GetAudioFeed
         public int Size { get; init; }
     }
 
-    public sealed class GetAudioFeedSpecification : Specification<Audio, AudioDto>
+    public sealed class GetAudioFeedSpecification : Specification<Audio>
     {
         public GetAudioFeedSpecification(long[] userIds)
         {
             Query.AsNoTracking();
             Query.Where(a => userIds.Contains(a.UserId));
             Query.OrderByDescending(a => a.Created);
-            Query.Select(AudioMaps.AudioToView());
         }
     }
 
@@ -41,7 +40,8 @@ namespace Audiochan.Core.Features.Audios.GetAudioFeed
         {
             var followingIds = await _unitOfWork.Users.GetObserverFollowingIds(query.UserId, cancellationToken);
             var spec = new GetAudioFeedSpecification(followingIds);
-            var list = await _unitOfWork.Audios.GetOffsetPagedListAsync(spec, query.Offset, query.Size, cancellationToken);
+            var list = await _unitOfWork.Audios
+                .GetOffsetPagedListAsync<AudioDto>(spec, query.Offset, query.Size, cancellationToken);
             return new OffsetPagedListDto<AudioDto>(list, query.Offset, query.Size);
         }
     }

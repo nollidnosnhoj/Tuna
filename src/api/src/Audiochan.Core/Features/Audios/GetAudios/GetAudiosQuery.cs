@@ -18,7 +18,7 @@ namespace Audiochan.Core.Features.Audios.GetAudios
         public int Size { get; init; } = 30;
     }
 
-    public sealed class GetAudiosSpecification : Specification<Audio, AudioDto>
+    public sealed class GetAudiosSpecification : Specification<Audio>
     {
         public GetAudiosSpecification(GetAudiosQuery request)
         {
@@ -30,7 +30,6 @@ namespace Audiochan.Core.Features.Audios.GetAudios
             }
 
             Query.OrderByDescending(a => a.Id);
-            Query.Select(AudioMaps.AudioToView());
         }
     }
 
@@ -48,7 +47,7 @@ namespace Audiochan.Core.Features.Audios.GetAudios
         {
             var spec = new GetAudiosSpecification(query);
             var list = await _unitOfWork.Audios
-                .GetCursorPagedListAsync(spec, query.Cursor, query.Size, cancellationToken);
+                .GetCursorPagedListAsync<AudioDto, long>(spec, query.Cursor, query.Size, cancellationToken);
             return new CursorPagedListDto<AudioDto, long>(list, query.Size);
         }
     }

@@ -15,14 +15,13 @@ namespace Audiochan.Core.Features.Users.GetFollowers
         public int Size { get; init; }
     }
 
-    public sealed class GetUserFollowersSpecification : Specification<FollowedUser, FollowerViewModel>
+    public sealed class GetUserFollowersSpecification : Specification<FollowedUser>
     {
         public GetUserFollowersSpecification(string username)
         {
             Query.AsNoTracking();
             Query.Where(u => u.Target.UserName == username);
             Query.OrderByDescending(u => u.FollowedDate);
-            Query.Select(FollowedUserMaps.UserToFollowerFunc);
         }
     }
 
@@ -39,7 +38,7 @@ namespace Audiochan.Core.Features.Users.GetFollowers
             CancellationToken cancellationToken)
         {
             var list = await _unitOfWork.FollowedUsers
-                .GetOffsetPagedListAsync(new GetUserFollowersSpecification(query.Username), query.Offset, query.Size, cancellationToken);
+                .GetOffsetPagedListAsync<FollowerViewModel>(new GetUserFollowersSpecification(query.Username), query.Offset, query.Size, cancellationToken);
             return new OffsetPagedListDto<FollowerViewModel>(list, query.Offset, query.Size);
         }
     }

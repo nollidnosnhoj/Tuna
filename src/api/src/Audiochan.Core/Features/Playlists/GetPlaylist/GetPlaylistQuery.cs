@@ -10,13 +10,12 @@ namespace Audiochan.Core.Features.Playlists.GetPlaylist
 {
     public record GetPlaylistQuery(long Id) : IRequest<PlaylistDto?>;
 
-    public sealed class GetPlaylistByIdSpecification : Specification<Playlist, PlaylistDto>
+    public sealed class GetPlaylistByIdSpecification : Specification<Playlist>
     {
         public GetPlaylistByIdSpecification(long id)
         {
             Query.AsNoTracking();
             Query.Where(p => p.Id == id);
-            Query.Select(PlaylistMaps.PlaylistToDetailFunc);
         }
     }
 
@@ -32,7 +31,7 @@ namespace Audiochan.Core.Features.Playlists.GetPlaylist
         public async Task<PlaylistDto?> Handle(GetPlaylistQuery request, CancellationToken cancellationToken)
         {
             return await _unitOfWork.Playlists
-                .GetFirstAsync(new GetPlaylistByIdSpecification(request.Id), cancellationToken);
+                .GetFirstAsync<PlaylistDto>(new GetPlaylistByIdSpecification(request.Id), cancellationToken);
         }
     }
 }

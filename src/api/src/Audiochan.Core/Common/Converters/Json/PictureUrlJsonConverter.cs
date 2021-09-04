@@ -22,16 +22,16 @@ namespace Audiochan.Core.Common.Converters.Json
     
     public class AudioPictureUrlJsonConverter : PictureUrlJsonConverter
     {
-        protected override string Url => MediaLinkInvariants.AudioPicture;
+        protected override string Url => MediaLinkConstants.AudioPicture;
     }
     
     public class PlaylistPictureUrlJsonConverter : PictureUrlJsonConverter
     {
-        protected override string Url => MediaLinkInvariants.PlaylistPicture;
+        protected override string Url => MediaLinkConstants.PlaylistPicture;
     }
     
     public class UserPictureUrlJsonConverter : PictureUrlJsonConverter
     {
-        protected override string Url => MediaLinkInvariants.UserPicture;
+        protected override string Url => MediaLinkConstants.UserPicture;
     }
 }

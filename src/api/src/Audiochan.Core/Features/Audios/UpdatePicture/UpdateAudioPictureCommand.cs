@@ -67,7 +67,7 @@ namespace Audiochan.Core.Features.Audios.UpdatePicture
                 
             return Result<ImageUploadResponse>.Success(new ImageUploadResponse
             {
-                Url = MediaLinkInvariants.AudioPicture + blobName
+                Url = MediaLinkConstants.AudioPicture + blobName
             });
         }
 

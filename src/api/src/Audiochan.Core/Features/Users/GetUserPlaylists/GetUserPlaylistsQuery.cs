@@ -17,14 +17,13 @@ namespace Audiochan.Core.Features.Users.GetUserPlaylists
         public int Size { get; init; } = 30;
     }
 
-    public sealed class GetUserPlaylistsSpecification : Specification<Playlist, PlaylistDto>
+    public sealed class GetUserPlaylistsSpecification : Specification<Playlist>
     {
         public GetUserPlaylistsSpecification(string username)
         {
             Query.AsNoTracking();
             Query.Where(p => p.User.UserName == username);
             Query.OrderBy(p => p.Title);
-            Query.Select(PlaylistMaps.PlaylistToDetailFunc);
         }
     }
 
@@ -40,8 +39,9 @@ namespace Audiochan.Core.Features.Users.GetUserPlaylists
         public async Task<OffsetPagedListDto<PlaylistDto>> Handle(GetUserPlaylistsQuery request, 
             CancellationToken cancellationToken)
         {
+            var spec = new GetUserPlaylistsSpecification(request.Username);
             var playlists = await _dbContext.Playlists
-                .GetOffsetPagedListAsync(new GetUserPlaylistsSpecification(request.Username), request.Offset, request.Size, cancellationToken);
+                .GetOffsetPagedListAsync<PlaylistDto>(spec, request.Offset, request.Size, cancellationToken);
 
             return new OffsetPagedListDto<PlaylistDto>(playlists, request.Offset, request.Size);
         }

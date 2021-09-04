@@ -10,13 +10,15 @@ using Audiochan.Core.Interfaces.Persistence;
 using Audiochan.Domain.Entities;
 using Audiochan.Infrastructure.Persistence.Repositories.Abstractions;
 using Audiochan.Infrastructure.Persistence.Repositories.Extensions;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Infrastructure.Persistence.Repositories
 {
     public class AudioRepository : EfRepository<Audio>, IAudioRepository
     {
-        public AudioRepository(ApplicationDbContext dbContext) : base(dbContext)
+        public AudioRepository(ApplicationDbContext dbContext, IMapper mapper) : base(dbContext, mapper)
         {
         }
 
@@ -27,7 +29,7 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
                 .AsNoTracking()
                 .SelectMany(p => p.Audios)
                 .OrderByDescending(a => a.Id)
-                .Select(AudioMaps.AudioToView())
+                .ProjectTo<AudioDto>(Mapper.ConfigurationProvider)
                 .CursorPaginateAsync(query.Cursor, query.Size, cancellationToken);
         }
 
@@ -38,7 +40,7 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
                 .OrderByDescending(fa => fa.Favorited)
                 .AsNoTracking()
                 .Select(fa => fa.Audio)
-                .Select(AudioMaps.AudioToView())
+                .ProjectTo<AudioDto>(Mapper.ConfigurationProvider)
                 .OffsetPaginateAsync(query.Offset, query.Size, cancellationToken);
         }
     }

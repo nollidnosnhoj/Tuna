@@ -10,8 +10,9 @@ namespace Audiochan.Core
 {
     public static class RegisterServices
     {
-        public static IServiceCollection AddCore(this IServiceCollection services, IConfiguration config, IHostEnvironment env)
+        public static IServiceCollection AddCore(this IServiceCollection services)
         {
+            services.AddAutoMapper(Assembly.GetExecutingAssembly());
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
             services.AddMediatR(Assembly.GetExecutingAssembly());
             services.AddBehaviorPipelines();

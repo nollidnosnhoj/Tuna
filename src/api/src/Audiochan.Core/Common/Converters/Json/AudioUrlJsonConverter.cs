@@ -9,12 +9,12 @@ namespace Audiochan.Core.Common.Converters.Json
     {
         public override string? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            return JsonConverterHelpers.ReadPathFromUrl(ref reader, MediaLinkInvariants.AudioStream);
+            return JsonConverterHelpers.ReadPathFromUrl(ref reader, MediaLinkConstants.AudioStream);
         }
 
         public override void Write(Utf8JsonWriter writer, string value, JsonSerializerOptions options)
         {
-            JsonConverterHelpers.WritePathToUrl(MediaLinkInvariants.AudioStream, writer, value);
+            JsonConverterHelpers.WritePathToUrl(MediaLinkConstants.AudioStream, writer, value);
         }
     }
 }

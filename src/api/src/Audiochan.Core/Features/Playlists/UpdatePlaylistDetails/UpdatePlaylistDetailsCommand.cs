@@ -6,6 +6,7 @@ using Audiochan.Core.Common.Models;
 using Audiochan.Core.Interfaces;
 using Audiochan.Core.Interfaces.Persistence;
 using Audiochan.Domain.Entities;
+using AutoMapper;
 using FluentValidation;
 using MediatR;
 
@@ -78,11 +79,13 @@ namespace Audiochan.Core.Features.Playlists.UpdatePlaylistDetails
     {
         private readonly long _currentUserId;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public UpdatePlaylistDetailsCommandHandler(ICurrentUserService currentUserService, IUnitOfWork unitOfWork)
+        public UpdatePlaylistDetailsCommandHandler(ICurrentUserService currentUserService, IUnitOfWork unitOfWork, IMapper mapper)
         {
             _currentUserId = currentUserService.GetUserId();
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
         public async Task<Result<PlaylistDto>> Handle(UpdatePlaylistDetailsCommand request, CancellationToken cancellationToken)
@@ -104,7 +107,7 @@ namespace Audiochan.Core.Features.Playlists.UpdatePlaylistDetails
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             
-            return Result<PlaylistDto>.Success(PlaylistMaps.PlaylistToDetailFunc.Compile().Invoke(playlist));
+            return Result<PlaylistDto>.Success(_mapper.Map<PlaylistDto>(playlist));
         }
     }
 }

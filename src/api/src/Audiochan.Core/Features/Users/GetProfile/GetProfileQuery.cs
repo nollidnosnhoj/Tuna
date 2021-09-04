@@ -11,13 +11,12 @@ namespace Audiochan.Core.Features.Users.GetProfile
     {
     }
 
-    public sealed class GetProfileByUsernameSpecification : Specification<User, ProfileDto>
+    public sealed class GetProfileByUsernameSpecification : Specification<User>
     {
         public GetProfileByUsernameSpecification(string username)
         {
             Query.AsNoTracking();
             Query.Where(u => u.UserName == username);
-            Query.Select(UserMaps.UserToProfileFunc);
         }
     }
 
@@ -33,7 +32,7 @@ namespace Audiochan.Core.Features.Users.GetProfile
         public async Task<ProfileDto?> Handle(GetProfileQuery query, CancellationToken cancellationToken)
         {
             return await _unitOfWork.Users
-                .GetFirstAsync(new GetProfileByUsernameSpecification(query.Username), cancellationToken);
+                .GetFirstAsync<ProfileDto>(new GetProfileByUsernameSpecification(query.Username), cancellationToken);
         }
     }
 }

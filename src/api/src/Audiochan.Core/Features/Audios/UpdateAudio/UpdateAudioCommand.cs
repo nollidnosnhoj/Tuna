@@ -7,6 +7,7 @@ using Audiochan.Core.Features.Audios.GetAudio;
 using Audiochan.Core.Interfaces;
 using Audiochan.Core.Interfaces.Persistence;
 using Audiochan.Domain.Entities;
+using AutoMapper;
 using FastExpressionCompiler;
 using FluentValidation;
 using MediatR;
@@ -82,16 +83,18 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
         private readonly ICacheService _cacheService;
         private readonly ISlugGenerator _slugGenerator;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
         public UpdateAudioCommandHandler(ICurrentUserService currentUserService, 
             ICacheService cacheService, 
             ISlugGenerator slugGenerator, 
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork, IMapper mapper)
         {
             _currentUserService = currentUserService;
             _cacheService = cacheService;
             _slugGenerator = slugGenerator;
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
         public async Task<Result<AudioDto>> Handle(UpdateAudioCommand command,
@@ -113,7 +116,7 @@ namespace Audiochan.Core.Features.Audios.UpdateAudio
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             await _cacheService.RemoveAsync(new GetAudioCacheOptions(audio.Id), cancellationToken);
             
-            return Result<AudioDto>.Success(AudioMaps.AudioToView().CompileFast().Invoke(audio));
+            return Result<AudioDto>.Success(_mapper.Map<AudioDto>(audio));
         }
 
         private async Task UpdateAudioFromCommandAsync(Audio audio, UpdateAudioCommand command,

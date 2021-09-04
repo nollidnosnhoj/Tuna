@@ -1,7 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.Specification;
-using Audiochan.Core.Features.Users;
 using Audiochan.Core.Interfaces.Persistence;
 using Audiochan.Domain.Entities;
 using MediatR;
@@ -12,13 +11,12 @@ namespace Audiochan.Core.Features.Auth.GetCurrentUser
     {
     }
 
-    public sealed class GetCurrentUserSpecification : Specification<User, CurrentUserDto>
+    public sealed class GetCurrentUserSpecification : Specification<User>
     {
         public GetCurrentUserSpecification(long userId)
         {
             Query.AsNoTracking();
             Query.Where(u => u.Id == userId);
-            Query.Select(UserMaps.UserToCurrentUserFunc);
         }
     }
 
@@ -35,7 +33,7 @@ namespace Audiochan.Core.Features.Auth.GetCurrentUser
             CancellationToken cancellationToken)
         {
             return await _dbContext.Users
-                .GetFirstAsync(new GetCurrentUserSpecification(query.UserId), cancellationToken);
+                .GetFirstAsync<CurrentUserDto>(new GetCurrentUserSpecification(query.UserId), cancellationToken);
         }
     }
 }

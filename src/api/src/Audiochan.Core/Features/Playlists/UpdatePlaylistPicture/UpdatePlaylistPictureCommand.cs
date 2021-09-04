@@ -69,7 +69,7 @@ namespace Audiochan.Core.Features.Playlists.UpdatePlaylistPicture
 
             return Result<ImageUploadResponse>.Success(new ImageUploadResponse
             {
-                Url = MediaLinkInvariants.PlaylistPicture + blobName
+                Url = MediaLinkConstants.PlaylistPicture + blobName
             });
         }
         

@@ -12,13 +12,12 @@ namespace Audiochan.Core.Features.Audios.GetAudio
     {
     }
 
-    public sealed class GetAudioSpecification : Specification<Audio, AudioDto>
+    public sealed class GetAudioSpecification : Specification<Audio>
     {
         public GetAudioSpecification(long id)
         {
             Query.AsNoTracking();
             Query.Where(x => x.Id == id);
-            Query.Select(AudioMaps.AudioToView());
         }
     }
 
@@ -42,7 +41,7 @@ namespace Audiochan.Core.Features.Audios.GetAudio
 
             if (cacheExists) return audio;
 
-            audio = await _unitOfWork.Audios.GetFirstAsync(new GetAudioSpecification(query.Id), cancellationToken);
+            audio = await _unitOfWork.Audios.GetFirstAsync<AudioDto>(new GetAudioSpecification(query.Id), cancellationToken);
             
             await _cacheService.SetAsync(audio, cacheOptions, cancellationToken);
 

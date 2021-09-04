@@ -1,9 +1,23 @@
-﻿namespace Audiochan.Core.Features.Users
+﻿using Audiochan.Core.Common;
+using Audiochan.Core.Common.Mappings;
+using Audiochan.Domain.Entities;
+using AutoMapper;
+
+namespace Audiochan.Core.Features.Users
 {
-    public record UserDto
+    public record UserDto : IMapFrom<User>
     {
         public long Id { get; init; }
-        public string Username { get; init; } = null!;
+        public string UserName { get; init; } = null!;
         public string? Picture { get; init; }
+
+        public void Mapping(Profile profile)
+        {
+            profile.CreateMap<User, UserDto>()
+                .ForMember(dest => dest.Picture, c =>
+                {
+                    c.MapFrom(src => src.Picture != null ? MediaLinkConstants.UserPicture + src.Picture : null);
+                });
+        }
     }
 }

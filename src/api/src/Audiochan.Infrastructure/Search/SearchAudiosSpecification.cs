@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Infrastructure.Search
 {
-    public sealed class SearchAudiosSpecification : Specification<Audio, AudioDto>
+    public sealed class SearchAudiosSpecification : Specification<Audio>
     {
         public SearchAudiosSpecification(SearchAudiosQuery query)
         {
@@ -27,8 +27,6 @@ namespace Audiochan.Infrastructure.Search
 
             if (parsedTags.Count > 0)
                 Query.Where(a => a.Tags.Any(x => parsedTags.Contains(x.Name)));
-
-            Query.Select(AudioMaps.AudioToView());
         }   
     }
 }

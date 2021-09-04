@@ -17,14 +17,13 @@ namespace Audiochan.Core.Features.Users.GetUserAudios
         public int Size { get; init; } = 30;
     }
 
-    public sealed class GetUserAudiosSpecification : Specification<Audio, AudioDto>
+    public sealed class GetUserAudiosSpecification : Specification<Audio>
     {
         public GetUserAudiosSpecification(string username)
         {
             Query.AsNoTracking();
             Query.Where(a => a.User.UserName == username);
             Query.OrderByDescending(a => a.Id);
-            Query.Select(AudioMaps.AudioToView());
         }
     }
 
@@ -42,10 +41,9 @@ namespace Audiochan.Core.Features.Users.GetUserAudios
         public async Task<OffsetPagedListDto<AudioDto>> Handle(GetUsersAudioQuery request,
             CancellationToken cancellationToken)
         {
+            var spec = new GetUserAudiosSpecification(request.Username);
             var list = await _unitOfWork.Audios
-                .GetOffsetPagedListAsync(new GetUserAudiosSpecification(request.Username), request.Offset, request.Size,
-                    cancellationToken);
-
+                .GetOffsetPagedListAsync<AudioDto>(spec, request.Offset, request.Size, cancellationToken);
             return new OffsetPagedListDto<AudioDto>(list, request.Offset, request.Size);
         }
     }

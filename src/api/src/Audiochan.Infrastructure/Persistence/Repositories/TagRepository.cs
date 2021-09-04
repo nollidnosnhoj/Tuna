@@ -5,13 +5,14 @@ using System.Threading.Tasks;
 using Audiochan.Core.Interfaces.Persistence;
 using Audiochan.Domain.Entities;
 using Audiochan.Infrastructure.Persistence.Repositories.Abstractions;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Infrastructure.Persistence.Repositories
 {
     public class TagRepository : EfRepository<Tag>, ITagRepository
     {
-        public TagRepository(ApplicationDbContext dbContext) : base(dbContext)
+        public TagRepository(ApplicationDbContext dbContext, IMapper mapper) : base(dbContext, mapper)
         {
         }
 
