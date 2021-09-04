@@ -7,7 +7,7 @@ using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 
-namespace Audiochan.Core.IntegrationTests.Features.Followers
+namespace Audiochan.Core.IntegrationTests.Features.Users
 {
     public class SetFollowTest : TestBase
     {
@@ -19,8 +19,8 @@ namespace Audiochan.Core.IntegrationTests.Features.Followers
         public async Task AddFollowerTest()
         {
             // Assign
-            var (targetId, _) = await RunAsUserAsync("targetuser");
-            var (observerId, _) = await RunAsUserAsync("kopacetic");
+            var (targetId, _) = await RunAsUserAsync();
+            var (observerId, _) = await RunAsUserAsync();
 
             // Act
             await SendAsync(new SetFollowCommand(observerId, targetId, true));
@@ -37,8 +37,8 @@ namespace Audiochan.Core.IntegrationTests.Features.Followers
         public async Task RemoveFollowerTest()
         {
             // Assign
-            var (targetId, _) = await RunAsDefaultUserAsync();
-            var (observerId, _) = await RunAsUserAsync("kopacetic");
+            var (targetId, _) = await RunAsUserAsync();
+            var (observerId, _) = await RunAsUserAsync();
 
             var user = GetUsersWithFollowers(targetId);
 

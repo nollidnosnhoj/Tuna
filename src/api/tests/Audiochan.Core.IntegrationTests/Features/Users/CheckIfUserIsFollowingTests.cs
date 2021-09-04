@@ -1,4 +1,4 @@
-﻿namespace Audiochan.Core.IntegrationTests.Features.Followers
+﻿namespace Audiochan.Core.IntegrationTests.Features.Users
 {
     public class CheckIfUserIsFollowingTests
     {

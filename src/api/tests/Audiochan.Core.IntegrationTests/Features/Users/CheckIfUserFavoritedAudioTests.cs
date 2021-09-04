@@ -6,7 +6,7 @@ using Bogus;
 using FluentAssertions;
 using Xunit;
 
-namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
+namespace Audiochan.Core.IntegrationTests.Features.Users
 {
     public class CheckIfUserFavoritedAudioTests : TestBase
     {
@@ -21,10 +21,10 @@ namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
         public async Task ShouldReturnTrue_WhenUserFavoritedAudio()
         {
             // Assign
-            var (targetId, _) = await RunAsAdministratorAsync();
+            var (targetId, _) = await RunAsDefaultUserAsync();
             var audio = new AudioFaker(targetId).Generate();
             InsertIntoDatabase(audio);
-            var (observerId, _) = await RunAsUserAsync(_faker.Random.String2(15));
+            var (observerId, _) = await RunAsUserAsync();
             var favoriteAudio = new FavoriteAudio
             {
                 AudioId = audio.Id,
@@ -43,10 +43,10 @@ namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
         public async Task ShouldReturnFalse_WhenUserDidNotFavorite()
         {
             // Assign
-            var (targetId, _) = await RunAsAdministratorAsync();
+            var (targetId, _) = await RunAsDefaultUserAsync();
             var audio = new AudioFaker(targetId).Generate();
             InsertIntoDatabase(audio);
-            var (observerId, _) = await RunAsUserAsync(_faker.Random.String2(15));
+            var (observerId, _) = await RunAsUserAsync();
 
             // Act
             var isFavorited = await SendAsync(new CheckIfAudioFavoritedQuery(audio.Id, observerId));

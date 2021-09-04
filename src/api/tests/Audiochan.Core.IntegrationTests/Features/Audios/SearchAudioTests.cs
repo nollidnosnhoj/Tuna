@@ -28,9 +28,9 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
 
 
             // create posts
-            var (ownerId, _) = await RunAsAdministratorAsync();
+            var (userId, _) = await RunAsDefaultUserAsync();
 
-            var audioFaker = new AudioFaker(ownerId)
+            var audioFaker = new AudioFaker(userId)
                 .FinishWith((f, a) =>
                 {
                     a.Tags = new List<Tag> {new() {Name = tags[0]}, new() {Name = tags[1]}};

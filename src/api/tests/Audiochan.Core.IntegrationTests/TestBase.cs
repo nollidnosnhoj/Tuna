@@ -158,30 +158,37 @@ namespace Audiochan.Core.IntegrationTests
             return await RunAsUserAsync("defaultuser", "Testing1234!");
         }
         
-        protected async Task<(long, string)> RunAsModeratorAsync()
-        {
-            return await RunAsUserAsync("admin", "Administrator1234!", UserRole.Moderator);
-        }
+        // protected async Task<(long, string)> RunAsModeratorAsync()
+        // {
+        //     return await RunAsUserAsync("admin", "Administrator1234!", UserRole.Moderator);
+        // }
+        //
+        // protected async Task<(long, string)> RunAsAdministratorAsync()
+        // {
+        //     return await RunAsUserAsync("admin", "Administrator1234!", UserRole.Admin);
+        // }
 
-        protected async Task<(long, string)> RunAsAdministratorAsync()
-        {
-            return await RunAsUserAsync("admin", "Administrator1234!", UserRole.Admin);
-        }
-
-        protected async Task<(long, string)> RunAsUserAsync(string userName, string password = "", UserRole role = UserRole.Regular)
+        protected async Task<(long, string)> RunAsUserAsync(string userName = "", string password = "", UserRole role = UserRole.Regular)
         {
             using var scope =  Factory.Services.CreateScope();
 
             var dbContext = scope.ServiceProvider.GetService<ApplicationDbContext>()
                               ?? throw new Exception("No user manager");
 
-            var user = await dbContext.Users.SingleOrDefaultAsync(u => u.UserName == userName);
-
-            if (user != null)
+            if (!string.IsNullOrEmpty(userName))
             {
-                Factory.CurrentUserId = user.Id;
-                Factory.CurrentUserName = user.UserName;
-                return (Factory.CurrentUserId, Factory.CurrentUserName);
+                var user = await dbContext.Users.SingleOrDefaultAsync(u => u.UserName == userName);
+
+                if (user != null)
+                {
+                    Factory.CurrentUserId = user.Id;
+                    Factory.CurrentUserName = user.UserName;
+                    return (Factory.CurrentUserId, Factory.CurrentUserName);
+                }
+            }
+            else
+            {
+                userName = $"user{DateTime.Now.Ticks}";
             }
 
             if (string.IsNullOrEmpty(password))
@@ -192,13 +199,13 @@ namespace Audiochan.Core.IntegrationTests
             var pwHasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
             password = pwHasher.Hash(password);
             
-            user = new User(userName, userName + "@localhost", password, role);
+            var newUser = new User(userName, userName + "@localhost", password, role);
 
-            await dbContext.Users.AddAsync(user);
+            await dbContext.Users.AddAsync(newUser);
             await dbContext.SaveChangesAsync();
             
-            Factory.CurrentUserId = user.Id;
-            Factory.CurrentUserName = user.UserName;
+            Factory.CurrentUserId = newUser.Id;
+            Factory.CurrentUserName = newUser.UserName;
             
             return (Factory.CurrentUserId, Factory.CurrentUserName);
         }

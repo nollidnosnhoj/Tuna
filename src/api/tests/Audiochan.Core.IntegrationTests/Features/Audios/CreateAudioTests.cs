@@ -19,7 +19,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
         public async Task SuccessfullyCreateAudio()
         {
             // Assign
-            var (adminId, adminUsername) = await RunAsAdministratorAsync();
+            var (userId, userName) = await RunAsDefaultUserAsync();
             var request = new CreateAudioRequestFaker().Generate();
 
             // Act
@@ -35,8 +35,8 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             audio.Duration.Should().Be(request.Duration);
             audio.Size.Should().Be(request.FileSize);
             audio.User.Should().NotBeNull();
-            audio.User.Id.Should().Be(adminId);
-            audio.User.Username.Should().Be(adminUsername);
+            audio.User.Id.Should().Be(userId);
+            audio.User.Username.Should().Be(userName);
             audio.Created.Should().BeCloseTo(GetCurrentTime(), TimeSpan.FromSeconds(5));
         }
         
@@ -44,7 +44,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
         public async Task ShouldCreateCacheSuccessfully()
         {
             // Assign
-            await RunAsAdministratorAsync();
+            await RunAsDefaultUserAsync();
             var request = new CreateAudioRequestFaker()
                 .Generate();
             var response = await SendAsync(request);

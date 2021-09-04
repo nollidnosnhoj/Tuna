@@ -8,7 +8,7 @@ using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 
-namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
+namespace Audiochan.Core.IntegrationTests.Features.Users
 {
     public class SetFavoriteAudioTests : TestBase
     {
@@ -24,7 +24,7 @@ namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
         {
             // Assign
             var (targetId, _) = await RunAsDefaultUserAsync();
-            var (observerId, _) = await RunAsUserAsync(_faker.Random.String2(15));
+            var (observerId, _) = await RunAsUserAsync();
 
             var audio = new AudioFaker(targetId).Generate();
             InsertIntoDatabase(audio);
@@ -55,7 +55,7 @@ namespace Audiochan.Core.IntegrationTests.Features.FavoriteAudios
             var audio = new AudioFaker(targetId).Generate();
             InsertIntoDatabase(audio);
             
-            var (observerId, _) = await RunAsUserAsync(_faker.Random.String2(15));
+            var (observerId, _) = await RunAsUserAsync();
 
             var favoriteAudio = new FavoriteAudio
             {

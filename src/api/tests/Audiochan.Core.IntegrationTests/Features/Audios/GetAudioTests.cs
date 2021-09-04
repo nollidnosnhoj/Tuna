@@ -36,7 +36,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
         public async Task ShouldSuccessfullyGetAudio()
         {
             // Assign
-            var (userId, _) = await RunAsAdministratorAsync();
+            var (userId, _) = await RunAsDefaultUserAsync();
 
             var audio = new AudioFaker(userId).Generate();
             InsertIntoDatabase(audio);
@@ -67,7 +67,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
         public async Task ShouldCacheSuccessfully()
         {
             // Assign
-            var (userId, _) = await RunAsAdministratorAsync();
+            var (userId, _) = await RunAsDefaultUserAsync();
 
             var audio = new AudioFaker(userId).Generate();
             InsertIntoDatabase(audio);
