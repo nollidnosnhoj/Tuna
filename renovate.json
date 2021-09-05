@@ -1,7 +1,6 @@
 {
   "extends": ["config:base"],
   "baseBranches": ["staging"],
-  "requiredStatusChecks": null,
   "packageRules": [
     {
       "updateTypes": [
