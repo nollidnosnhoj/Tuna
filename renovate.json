@@ -1,6 +1,6 @@
 {
   "extends": ["config:base"],
-  "baseBranches": ["staging", "production"],
+  "baseBranches": ["staging"],
   "automerge": true,
   "major": {
     "automerge": false
