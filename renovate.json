@@ -1,12 +1,15 @@
 {
   "extends": ["config:base"],
   "baseBranches": ["staging", "production"],
-  "automerge": true,
-  "major": {
-    "automerge": false
-  },
   "requiredStatusChecks": null,
   "packageRules": [
+    {
+      "updateTypes": [
+        "minor",
+        "patch"
+      ],
+      "automerge": true
+    },
     {
       "packagePatterns": ["eslint"],
       "groupName": "eslint"
