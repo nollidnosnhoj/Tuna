@@ -1,0 +1,20 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/src/web"
+    schedule:
+      interval: "daily"
+    commit-message:
+      prefix: "[npm]"
+
+  - package-ecosystem: "nuget"
+    directory: "/src/api"
+    schedule:
+      interval: "daily"
+    commit-message:
+      prefix: "[nuget]"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
