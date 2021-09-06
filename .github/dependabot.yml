@@ -6,6 +6,7 @@ updates:
       interval: "daily"
     commit-message:
       prefix: "[npm]"
+    open-pull-requests-limit: 10
 
   - package-ecosystem: "nuget"
     directory: "/src/api"
@@ -13,8 +14,10 @@ updates:
       interval: "daily"
     commit-message:
       prefix: "[nuget]"
+    open-pull-requests-limit: 10
 
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "daily"
+    open-pull-requests-limit: 10
