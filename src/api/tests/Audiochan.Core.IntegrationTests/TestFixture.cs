@@ -9,7 +9,7 @@ using Audiochan.Domain.Entities;
 using Audiochan.Domain.Enums;
 using Audiochan.Infrastructure.Caching;
 using Audiochan.Infrastructure.Persistence;
-using Audiochan.Infrastructure.Storage.Local;
+using Audiochan.Infrastructure.Storage.File;
 using Audiochan.Tests.Common.Mocks;
 using MediatR;
 using Microsoft.AspNetCore.Hosting;

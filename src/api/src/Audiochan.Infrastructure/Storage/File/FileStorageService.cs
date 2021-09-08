@@ -5,13 +5,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Interfaces.Services;
 
-namespace Audiochan.Infrastructure.Storage.Local
+namespace Audiochan.Infrastructure.Storage.File
 {
-    public class LocalStorageService : IStorageService
+    public class FileStorageService : IStorageService
     {
         private readonly string _basePath;
 
-        public LocalStorageService(string basePath)
+        public FileStorageService(string basePath)
         {
             _basePath = basePath;
         }
@@ -37,8 +37,8 @@ namespace Audiochan.Infrastructure.Storage.Local
         public Task RemoveAsync(string bucket, string blobName, CancellationToken cancellationToken = default)
         {
             var path = Path.Combine(_basePath, bucket, blobName);
-            if (!File.Exists(path)) throw new StorageException("File does not exist");
-            File.Delete(path);
+            if (!System.IO.File.Exists(path)) throw new StorageException("File does not exist");
+            System.IO.File.Delete(path);
             return Task.CompletedTask;
         }
 
@@ -57,7 +57,7 @@ namespace Audiochan.Infrastructure.Storage.Local
             {
                 var path = Path.Combine(_basePath, bucket, blobName);
                 Directory.CreateDirectory(Path.GetDirectoryName(path)!);
-                await using (var file = File.Create(path))
+                await using (var file = System.IO.File.Create(path))
                 {
                     await stream.CopyToAsync(file, cancellationToken);
                 }
@@ -80,7 +80,7 @@ namespace Audiochan.Infrastructure.Storage.Local
         public Task<bool> ExistsAsync(string bucket, string blobName, CancellationToken cancellationToken = default)
         {
             var path = Path.Combine(_basePath, bucket, blobName);
-            return Task.FromResult(File.Exists(path));
+            return Task.FromResult(System.IO.File.Exists(path));
         }
 
         public Task MoveBlobAsync(string sourceBucket, string sourceBlobName, string targetBucket, string? targetBlobName = null,
@@ -89,9 +89,9 @@ namespace Audiochan.Infrastructure.Storage.Local
             var sourcePath = Path.Combine(_basePath, sourceBucket, sourceBlobName);
             var targetPath = Path.Combine(_basePath, targetBucket, targetBlobName ?? sourceBlobName);
 
-            if (!File.Exists(sourcePath)) throw new StorageException("File does not exists.");
+            if (!System.IO.File.Exists(sourcePath)) throw new StorageException("File does not exists.");
             
-            File.Move(sourcePath, targetPath);
+            System.IO.File.Move(sourcePath, targetPath);
 
             return Task.CompletedTask;
         }

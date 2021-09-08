@@ -8,11 +8,11 @@ using Microsoft.Extensions.Options;
 
 namespace Audiochan.Infrastructure.Caching
 {
-    public class MemoryCacheService : ICacheService
+    public class InMemoryCacheService : ICacheService
     {
         private readonly IMemoryCache _cache;
 
-        public MemoryCacheService(IOptions<MemoryCacheOptions> memoryCacheOptions)
+        public InMemoryCacheService(IOptions<MemoryCacheOptions> memoryCacheOptions)
         {
             _cache = new MemoryCache(memoryCacheOptions.Value);
         }

@@ -64,7 +64,7 @@ namespace Audiochan.Infrastructure
         {
             if (!environment.IsProduction())
             {
-                services.AddSingleton<ICacheService, MemoryCacheService>();
+                services.AddSingleton<ICacheService, InMemoryCacheService>();
             }
             else
             {
