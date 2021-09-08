@@ -28,7 +28,7 @@ namespace Audiochan.Infrastructure
             services.AddStorage();
             services.AddSearch();
             services.AddTransient<ISlugGenerator, SlugGenerator>();
-            services.AddTransient<IImageUploadService, ImageUploadService>();
+            services.AddTransient<IImageService, ImageService>();
             services.AddTransient<ITokenProvider, TokenProvider>();
             services.AddTransient<IDateTimeProvider, DateTimeProvider>();
             services.AddTransient<IRandomIdGenerator, NanoidGenerator>();

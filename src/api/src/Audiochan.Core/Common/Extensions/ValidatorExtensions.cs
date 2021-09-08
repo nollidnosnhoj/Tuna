@@ -30,7 +30,7 @@ namespace Audiochan.Core.Common.Extensions
                 .WithMessage($"File size is over {fileSizeLimit / 1000000} MB");
         }
 
-        public static IRuleBuilder<T, string> Password<T>(this IRuleBuilder<T, string> ruleBuilder,
+        public static IRuleBuilder<T, string> PasswordValidation<T>(this IRuleBuilder<T, string> ruleBuilder,
             IdentitySettings.PasswordRules passwordRules, string field = "Password")
         {
             if (passwordRules.RequiresDigit)
@@ -57,7 +57,7 @@ namespace Audiochan.Core.Common.Extensions
             return ruleBuilder;
         }
 
-        public static IRuleBuilder<T, string> Username<T>(this IRuleBuilder<T, string> ruleBuilder,
+        public static IRuleBuilder<T, string> UsernameValidation<T>(this IRuleBuilder<T, string> ruleBuilder,
             IdentitySettings.UsernameRules identitySettings)
         {
             return ruleBuilder

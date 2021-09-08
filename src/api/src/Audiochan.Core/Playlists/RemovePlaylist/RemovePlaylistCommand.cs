@@ -17,14 +17,14 @@ namespace Audiochan.Core.Playlists.RemovePlaylist
     {
         private readonly long _currentUserId;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IImageUploadService _imageUploadService;
+        private readonly IImageService _imageService;
 
         public RemovePlaylistCommandHandler(ICurrentUserService currentUserService, IUnitOfWork unitOfWork, 
-            IImageUploadService imageUploadService)
+            IImageService imageService)
         {
             _currentUserId = currentUserService.GetUserId();
             _unitOfWork = unitOfWork;
-            _imageUploadService = imageUploadService;
+            _imageService = imageService;
         }
 
         public async Task<Result> Handle(RemovePlaylistCommand request, CancellationToken cancellationToken)
@@ -42,7 +42,7 @@ namespace Audiochan.Core.Playlists.RemovePlaylist
             
             if (!string.IsNullOrEmpty(playlist.Picture))
             {
-                await _imageUploadService.RemoveImage(AssetContainerConstants.PlaylistPictures, playlist.Picture,
+                await _imageService.RemoveImage(AssetContainerConstants.PlaylistPictures, playlist.Picture,
                     cancellationToken);
             }
 

@@ -13,12 +13,12 @@ namespace Audiochan.Core.Users.RemovePicture
     
     public class RemoveUserPictureCommandHandler : IRequestHandler<RemoveUserPictureCommand, Result>
     {
-        private readonly IImageUploadService _imageUploadService;
+        private readonly IImageService _imageService;
         private readonly IUnitOfWork _unitOfWork;
 
-        public RemoveUserPictureCommandHandler(IImageUploadService imageUploadService, IUnitOfWork unitOfWork)
+        public RemoveUserPictureCommandHandler(IImageService imageService, IUnitOfWork unitOfWork)
         {
-            _imageUploadService = imageUploadService;
+            _imageService = imageService;
             _unitOfWork = unitOfWork;
         }
 
@@ -34,7 +34,7 @@ namespace Audiochan.Core.Users.RemovePicture
 
             if (string.IsNullOrEmpty(user.Picture)) return Result.Success();
             
-            await _imageUploadService.RemoveImage(AssetContainerConstants.UserPictures, user.Picture, cancellationToken);
+            await _imageService.RemoveImage(AssetContainerConstants.UserPictures, user.Picture, cancellationToken);
 
             user.Picture = null;
 

@@ -20,17 +20,17 @@ namespace Audiochan.Core.Audios.RemoveAudio
         private readonly ICurrentUserService _currentUserService;
         private readonly IStorageService _storageService;
         private readonly AudioStorageSettings _audioStorageSettings;
-        private readonly IImageUploadService _imageUploadService;
+        private readonly IImageService _imageService;
         private readonly IUnitOfWork _unitOfWork;
 
         public RemoveAudioCommandHandler(ICurrentUserService currentUserService, 
-            IImageUploadService imageUploadService, 
+            IImageService imageService, 
             IUnitOfWork unitOfWork, 
             IStorageService storageService, 
             IOptions<MediaStorageSettings> mediaStorageOptions)
         {
             _currentUserService = currentUserService;
-            _imageUploadService = imageUploadService;
+            _imageService = imageService;
             _unitOfWork = unitOfWork;
             _storageService = storageService;
             _audioStorageSettings = mediaStorageOptions.Value.Audio;
@@ -64,7 +64,7 @@ namespace Audiochan.Core.Audios.RemoveAudio
 
             if (!string.IsNullOrEmpty(audio.Picture))
             {
-                tasks.Add(_imageUploadService.RemoveImage(AssetContainerConstants.AudioPictures, 
+                tasks.Add(_imageService.RemoveImage(AssetContainerConstants.AudioPictures, 
                     audio.Picture, 
                     cancellationToken));
             }

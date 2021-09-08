@@ -6,11 +6,11 @@ namespace Audiochan.Core.Common.Validators
 {
     public class ImageDataValidator : AbstractValidator<IImageData>
     {
-        private readonly IImageUploadService _imageUploadService;
+        private readonly IImageService _imageService;
         
-        public ImageDataValidator(IImageUploadService imageUploadService)
+        public ImageDataValidator(IImageService imageService)
         {
-            _imageUploadService = imageUploadService;
+            _imageService = imageService;
             RuleFor(x => x.Data)
                 .Must(ValidateImage)
                 .When(x => !string.IsNullOrEmpty(x.Data))
@@ -18,6 +18,6 @@ namespace Audiochan.Core.Common.Validators
         }
 
         private bool ValidateImage(string base64)
-            => _imageUploadService.ValidateImageSize(base64, 500, 2000);
+            => _imageService.ValidateImageSize(base64, 500, 2000);
     }
 }

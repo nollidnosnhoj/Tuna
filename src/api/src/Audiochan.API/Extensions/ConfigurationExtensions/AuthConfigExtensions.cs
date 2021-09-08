@@ -10,14 +10,6 @@ namespace Audiochan.API.Extensions.ConfigurationExtensions
 {
     public static class AuthConfigExtensions
     {
-        public static IServiceCollection ConfigureIdentity(this IServiceCollection services,
-            IConfiguration configuration)
-        {
-            var settings = new IdentitySettings();
-            configuration.GetSection(nameof(IdentitySettings)).Bind(settings);
-            return services;
-        }
-
         public static IServiceCollection ConfigureAuthentication(this IServiceCollection services,
             IConfiguration configuration)
         {

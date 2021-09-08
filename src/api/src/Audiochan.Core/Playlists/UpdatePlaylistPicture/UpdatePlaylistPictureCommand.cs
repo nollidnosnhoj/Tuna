@@ -10,32 +10,23 @@ using MediatR;
 
 namespace Audiochan.Core.Playlists.UpdatePlaylistPicture
 {
-    public record UpdatePlaylistPictureCommand : IImageData, IRequest<Result<ImageUploadResponse>>
-    {
-        public long Id { get; init; }
-        public string Data { get; init; } = null!;
-
-        public UpdatePlaylistPictureCommand(long id, ImageUploadRequest request)
-        {
-            Id = id;
-            Data = request.Data;
-        }
-    }
+    public record UpdatePlaylistPictureCommand(long Id, string Data) 
+        : IImageData, IRequest<Result<ImageUploadResponse>>;
     
     
     public class UpdatePlaylistPictureCommandHandler : IRequestHandler<UpdatePlaylistPictureCommand, Result<ImageUploadResponse>>
     {
         private readonly long _currentUserId;
         private readonly IRandomIdGenerator _randomIdGenerator;
-        private readonly IImageUploadService _imageUploadService;
+        private readonly IImageService _imageService;
         private readonly IUnitOfWork _unitOfWork;
 
-        public UpdatePlaylistPictureCommandHandler(IImageUploadService imageUploadService,
+        public UpdatePlaylistPictureCommandHandler(IImageService imageService,
             IUnitOfWork unitOfWork, 
             ICurrentUserService currentUserService, 
             IRandomIdGenerator randomIdGenerator)
         {
-            _imageUploadService = imageUploadService;
+            _imageService = imageService;
             _unitOfWork = unitOfWork;
             _randomIdGenerator = randomIdGenerator;
             _currentUserId = currentUserService.GetUserId();
@@ -60,7 +51,7 @@ namespace Audiochan.Core.Playlists.UpdatePlaylistPicture
             else
             {
                 blobName = $"{await _randomIdGenerator.GenerateAsync(size: 15)}.jpg";
-                await _imageUploadService.UploadImage(request.Data, AssetContainerConstants.PlaylistPictures, blobName, cancellationToken);
+                await _imageService.UploadImage(request.Data, AssetContainerConstants.PlaylistPictures, blobName, cancellationToken);
                 await RemoveOriginalPicture(playlist.Picture, cancellationToken);
                 playlist.Picture = blobName;
             }
@@ -77,7 +68,7 @@ namespace Audiochan.Core.Playlists.UpdatePlaylistPicture
         {
             if (!string.IsNullOrEmpty(picture))
             {
-                await _imageUploadService.RemoveImage(AssetContainerConstants.PlaylistPictures, picture, cancellationToken);
+                await _imageService.RemoveImage(AssetContainerConstants.PlaylistPictures, picture, cancellationToken);
             }
         }
     }

@@ -24,13 +24,13 @@ namespace Audiochan.Core.Auth.Register
         public CreateUserCommandValidator(IOptions<IdentitySettings> identitySettings)
         {
             RuleFor(req => req.Username)
-                .Username(identitySettings.Value.UsernameSettings);
+                .UsernameValidation(identitySettings.Value.UsernameSettings);
             RuleFor(req => req.Email)
                 .NotEmpty().WithMessage("Email is required.")
                 .EmailAddress().WithMessage("Email is invalid.");
             RuleFor(req => req.Password)
                 .NotEmpty().WithMessage("Password is required.")
-                .Password(identitySettings.Value.PasswordSettings);
+                .PasswordValidation(identitySettings.Value.PasswordSettings);
         }
     }
 

@@ -12,12 +12,12 @@ using SixLabors.ImageSharp.Processing;
 
 namespace Audiochan.Infrastructure.Shared
 {
-    internal class ImageUploadService : IImageUploadService
+    internal class ImageService : IImageService
     {
         private readonly IStorageService _storageService;
         private readonly PictureStorageSettings _storageSettings;
 
-        public ImageUploadService(IStorageService storageService, IOptions<MediaStorageSettings> mediaStorageOptions)
+        public ImageService(IStorageService storageService, IOptions<MediaStorageSettings> mediaStorageOptions)
         {
             _storageService = storageService;
             var mediaStorageSettings = mediaStorageOptions.Value;

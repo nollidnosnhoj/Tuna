@@ -15,17 +15,17 @@ namespace Audiochan.Core.Users.UpdatePicture
 
     public class UpdateUserPictureCommandHandler : IRequestHandler<UpdateUserPictureCommand, Result<ImageUploadResponse>>
     {
-        private readonly IImageUploadService _imageUploadService;
+        private readonly IImageService _imageService;
         private readonly long _currentUserId;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IRandomIdGenerator _randomIdGenerator;
 
-        public UpdateUserPictureCommandHandler(IImageUploadService imageUploadService,
+        public UpdateUserPictureCommandHandler(IImageService imageService,
             ICurrentUserService currentUserService, 
             IUnitOfWork unitOfWork, 
             IRandomIdGenerator randomIdGenerator)
         {
-            _imageUploadService = imageUploadService;
+            _imageService = imageService;
             _currentUserId = currentUserService.GetUserId();
             _unitOfWork = unitOfWork;
             _randomIdGenerator = randomIdGenerator;
@@ -50,7 +50,7 @@ namespace Audiochan.Core.Users.UpdatePicture
             else
             {
                 blobName = $"{await _randomIdGenerator.GenerateAsync(size: 15)}.jpg";
-                await _imageUploadService.UploadImage(command.Data, AssetContainerConstants.UserPictures, blobName, cancellationToken);
+                await _imageService.UploadImage(command.Data, AssetContainerConstants.UserPictures, blobName, cancellationToken);
                 await RemoveOriginalPicture(user.Picture, cancellationToken);
                 user.Picture = blobName;
             }
@@ -67,7 +67,7 @@ namespace Audiochan.Core.Users.UpdatePicture
         {
             if (!string.IsNullOrEmpty(picture))
             {
-                await _imageUploadService.RemoveImage(AssetContainerConstants.UserPictures, picture, cancellationToken);
+                await _imageService.RemoveImage(AssetContainerConstants.UserPictures, picture, cancellationToken);
             }
         }
     }
