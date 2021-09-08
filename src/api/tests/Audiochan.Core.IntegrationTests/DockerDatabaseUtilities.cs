@@ -32,21 +32,26 @@ namespace Audiochan.Core.IntegrationTests
             
             var freePort = GetFreePort();
 
+            // find docker uri
             var hosts = new Hosts().Discover();
             var docker = hosts.FirstOrDefault(x => x.IsNative) 
                          ?? hosts.FirstOrDefault(x => x.Name == "default");
 
+            // find or create volume
             var volume = docker?.GetVolumes().FirstOrDefault(v => v.Name == DB_VOLUME_NAME)
                          ?? new Builder().UseVolume().WithName(DB_VOLUME_NAME).Build();
 
+            // find container
             var container = docker?.GetContainers()
                 .FirstOrDefault(c => c.Name == DB_CONTAINER_NAME);
 
             if (container != null)
             {
+                // expose the port of the container
                 return container.ToHostExposedEndpoint($"{PROVIDER_PORT}/tcp").Port;
             }
 
+            // build database container for integration tests
             container = new Builder().UseContainer()
                 .WithName(DB_CONTAINER_NAME)
                 .UseImage(DB_IMAGE)
@@ -56,7 +61,7 @@ namespace Audiochan.Core.IntegrationTests
                 .WaitForPort($"{PROVIDER_PORT}/tcp", 30000)
                 .MountVolume(volume, "/var/lib/postgresql/data", MountType.ReadWrite)
                 .Build();
-
+            
             container.Start();
 
             await WaitUntilDatabaseAvailableAsync(freePort);
@@ -98,6 +103,7 @@ namespace Audiochan.Core.IntegrationTests
             foreach (var runningContainer in runningContainers.Where(c =>
                 c.Names.Any(n => n.Contains(DB_CONTAINER_NAME))))
             {
+                // If the container created 24 hours ago, stop and remove it.
                 var expiration = hoursTillExpiration > 0 ? hoursTillExpiration * -1 : hoursTillExpiration;
 
                 if (runningContainer.Created >= DateTime.UtcNow.AddHours(expiration)) continue;
@@ -162,6 +168,7 @@ namespace Audiochan.Core.IntegrationTests
             const int maxWithTimeSeconds = 60;
             var connectionEstablished = false;
 
+            // Try connecting to database until 60 seconds is up
             while (!connectionEstablished && start.AddSeconds(maxWithTimeSeconds) > DateTime.UtcNow)
             {
                 try

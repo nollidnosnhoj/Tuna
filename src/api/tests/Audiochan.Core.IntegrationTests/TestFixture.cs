@@ -38,9 +38,11 @@ namespace Audiochan.Core.IntegrationTests
         [OneTimeSetUp]
         public async Task RunBeforeAnyTests()
         {
+            // Create database container for integration tests
             var dockerSqlPort = await DockerDatabaseUtilities.EnsureDockerStartedAsync();
             var dockerConnectionString = DockerDatabaseUtilities.GetSqlConnectionString(dockerSqlPort);
 
+            // Build configuration, including the connection string from the database container
             var builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", false, true)
@@ -76,6 +78,7 @@ namespace Audiochan.Core.IntegrationTests
             
             _scopeFactory = services.BuildServiceProvider().GetService<IServiceScopeFactory>() 
                             ?? throw new InvalidOperationException();
+            
             _checkpoint = new Checkpoint
             {
                 TablesToIgnore = new[] { "__EFMigrationsHistory" },
