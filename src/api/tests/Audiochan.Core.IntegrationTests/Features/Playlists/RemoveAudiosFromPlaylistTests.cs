@@ -6,17 +6,15 @@ using Audiochan.Domain.Entities;
 using Audiochan.Tests.Common.Fakers.Audios;
 using Audiochan.Tests.Common.Fakers.Playlists;
 using FluentAssertions;
-using Xunit;
+using NUnit.Framework;
 
 namespace Audiochan.Core.IntegrationTests.Features.Playlists
 {
+    using static TestFixture;
+
     public class RemoveAudiosFromPlaylistTests : TestBase
     {
-        public RemoveAudiosFromPlaylistTests(TestFixture testFixture) : base(testFixture)
-        {
-        }
-
-        [Fact]
+        [Test]
         public async Task ShouldSuccessfullyRemoveAudiosFromPlaylist()
         {
             var (userId, _) = await RunAsDefaultUserAsync();
@@ -51,7 +49,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Playlists
             newAudios.Should().BeEmpty();
         }
 
-        [Fact]
+        [Test]
         public async Task ShouldFail_WhenPlaylistDoesNotBelongToUser()
         {
             var (userId, _) = await RunAsDefaultUserAsync();

@@ -1,21 +1,18 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Audiochan.Core.Audios;
 using Audiochan.Core.Audios.GetAudio;
 using Audiochan.Core.Common;
 using Audiochan.Tests.Common.Fakers.Audios;
 using FluentAssertions;
-using Xunit;
+using NUnit.Framework;
 
 namespace Audiochan.Core.IntegrationTests.Features.Audios
 {
+    using static TestFixture;
+    
     public class CreateAudioTests : TestBase
     {
-        public CreateAudioTests(TestFixture fixture) : base(fixture)
-        {
-        }
-
-        [Fact]
+        [Test]
         public async Task SuccessfullyCreateAudio()
         {
             // Assign
@@ -37,10 +34,9 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             audio.User.Should().NotBeNull();
             audio.User.Id.Should().Be(userId);
             audio.User.UserName.Should().Be(userName);
-            audio.Created.Should().BeCloseTo(GetCurrentTime(), TimeSpan.FromSeconds(5));
         }
         
-        [Fact]
+        [Test]
         public async Task ShouldCreateCacheSuccessfully()
         {
             // Assign

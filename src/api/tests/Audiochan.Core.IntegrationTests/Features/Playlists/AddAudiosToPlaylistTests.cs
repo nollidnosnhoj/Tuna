@@ -6,17 +6,15 @@ using Audiochan.Tests.Common.Fakers.Audios;
 using Audiochan.Tests.Common.Fakers.Playlists;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using Xunit;
+using NUnit.Framework;
 
 namespace Audiochan.Core.IntegrationTests.Features.Playlists
 {
+    using static TestFixture;
+
     public class AddAudiosToPlaylistTests : TestBase
     {
-        public AddAudiosToPlaylistTests(TestFixture testFixture) : base(testFixture)
-        {
-        }
-
-        [Fact]
+        [Test]
         public async Task ShouldSuccessfullyAddAudiosToPlaylist()
         {
             var (userId, _) = await RunAsUserAsync("kopacetic");
@@ -45,7 +43,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Playlists
             loadedPlaylist.Audios.Should().Contain(a => audioIds.Contains(a.Id));
         }
         
-        [Fact]
+        [Test]
         public async Task ShouldNotAddAudios_WhenPlaylistDoesNotBelongToUser()
         {
             var (userId, _) = await RunAsUserAsync("kopacetic");

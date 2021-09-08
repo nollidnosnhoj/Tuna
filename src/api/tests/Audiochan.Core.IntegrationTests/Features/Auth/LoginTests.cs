@@ -6,17 +6,15 @@ using Audiochan.Domain.Entities;
 using Bogus;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using Xunit;
+using NUnit.Framework;
 
 namespace Audiochan.Core.IntegrationTests.Features.Auth
 {
+    using static TestFixture;
+
     public class LoginTests : TestBase
     {
-        public LoginTests(TestFixture fixture) : base(fixture)
-        {
-        }
-
-        [Fact]
+        [Test]
         public async Task ShouldSuccessfullyLoginAndCreateRefreshToken()
         {
             // Assign

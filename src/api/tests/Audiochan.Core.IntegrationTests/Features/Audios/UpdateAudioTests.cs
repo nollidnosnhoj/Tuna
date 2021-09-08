@@ -7,17 +7,15 @@ using Audiochan.Core.Common.Models;
 using Audiochan.Tests.Common.Fakers.Audios;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using Xunit;
+using NUnit.Framework;
 
 namespace Audiochan.Core.IntegrationTests.Features.Audios
 {
+    using static TestFixture;
+
     public class UpdateAudioTests : TestBase
     {
-        public UpdateAudioTests(TestFixture fixture) : base(fixture)
-        {
-        }
-
-        [Fact]
+        [Test]
         public async Task ShouldNotUpdate_WhenUserCannotModify()
         {
             // Assign
@@ -40,7 +38,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             result.ErrorCode.Should().Be(ResultError.Forbidden);
         }
 
-        [Fact]
+        [Test]
         public async Task ShouldUpdateSuccessfully()
         {
             // Assign
@@ -70,7 +68,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             created.Tags.Count.Should().Be(command.Tags!.Count);
         }
 
-        [Fact]
+        [Test]
         public async Task ShouldInvalidateCacheSuccessfully()
         {
             // Assign

@@ -46,7 +46,7 @@ namespace Audiochan.API.Extensions.ConfigurationExtensions
                 {
                     options.TokenValidationParameters = tokenValidationParams;
                     options.TokenValidationParameters.IssuerSigningKey =
-                        new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSetting.RefreshTokenSecret));
+                        new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSetting.AccessTokenSecret));
                 });
 
             return services;

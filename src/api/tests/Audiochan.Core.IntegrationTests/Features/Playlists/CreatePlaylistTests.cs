@@ -4,17 +4,15 @@ using Audiochan.Tests.Common.Fakers.Audios;
 using Audiochan.Tests.Common.Fakers.Playlists;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using Xunit;
+using NUnit.Framework;
 
 namespace Audiochan.Core.IntegrationTests.Features.Playlists
 {
+    using static TestFixture;
+
     public class CreatePlaylistTests : TestBase
     {
-        public CreatePlaylistTests(TestFixture testFixture) : base(testFixture)
-        {
-        }
-
-        [Fact]
+        [Test]
         public async Task ShouldCreateSuccessfully()
         {
             var (userId, _) = await RunAsDefaultUserAsync();
@@ -42,7 +40,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Playlists
             playlist.Audios.Select(p => p.Id).Should().Contain(audioIds);
         }
         
-        [Fact]
+        [Test]
         public async Task ShouldCreatePrivateSuccessfully()
         {
             var (userId, _) = await RunAsDefaultUserAsync();

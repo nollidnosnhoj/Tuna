@@ -6,24 +6,22 @@ using Audiochan.Domain.Entities;
 using Audiochan.Tests.Common.Fakers.Audios;
 using Bogus;
 using FluentAssertions;
-using Xunit;
+using NUnit.Framework;
 
 namespace Audiochan.Core.IntegrationTests.Features.Audios
 {
+    using static TestFixture;
+
     public class SearchAudioTests : TestBase
     {
-        public SearchAudioTests(TestFixture fixture) : base(fixture)
-        {
-        }
-
-        [Fact]
+        [Test]
         public async Task SearchForAudiosSuccessfully()
         {
             var faker = new Faker();
 
             // create tags
             var tags = Enumerable.Range(1, 5)
-                .Select(_ => faker.Random.String2(5, 10))
+                .Select<int, string>(_ => faker.Random.String2(5, 10))
                 .ToList();
 
 

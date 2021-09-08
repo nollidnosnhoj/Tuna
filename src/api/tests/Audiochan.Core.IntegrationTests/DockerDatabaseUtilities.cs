@@ -9,7 +9,6 @@ using Ductus.FluentDocker.Builders;
 using Ductus.FluentDocker.Model.Builders;
 using Ductus.FluentDocker.Services;
 using Ductus.FluentDocker.Services.Extensions;
-using Microsoft.Data.SqlClient;
 using Npgsql;
 
 namespace Audiochan.Core.IntegrationTests
@@ -62,6 +61,18 @@ namespace Audiochan.Core.IntegrationTests
 
             await WaitUntilDatabaseAvailableAsync(freePort);
             return freePort;
+        }
+
+        public static string GetSqlConnectionString(int port)
+        {
+            return new NpgsqlConnectionStringBuilder
+            {
+                Host = "localhost",
+                Password = DB_PASSWORD,
+                Username = DB_USER,
+                Database = DB_NAME,
+                Port = port
+            }.ToString();
         }
 
         private static bool IsRunningOnWindows()
@@ -156,7 +167,7 @@ namespace Audiochan.Core.IntegrationTests
                 try
                 {
                     var connectionString = GetSqlConnectionString(databasePort);
-                    await using var connection = new SqlConnection(connectionString);
+                    await using var connection = new NpgsqlConnection(connectionString);
                     await connection.OpenAsync();
                     connectionEstablished = true;
                 }
@@ -169,7 +180,7 @@ namespace Audiochan.Core.IntegrationTests
             if (!connectionEstablished)
             {
                 throw new Exception(
-                    $"Connection to the PostgreSQL docker database coult not be established within {maxWithTimeSeconds} seconds.");
+                    $"Connection to the PostgreSQL docker database could not be established within {maxWithTimeSeconds} seconds.");
             }
         }
 
@@ -180,17 +191,6 @@ namespace Audiochan.Core.IntegrationTests
             var port = ((IPEndPoint)tcpListener.LocalEndpoint).Port;
             tcpListener.Stop();
             return port;
-        }
-
-        private static string GetSqlConnectionString(int port)
-        {
-            return new NpgsqlConnectionStringBuilder
-            {
-                Host = "localhost",
-                Password = DB_PASSWORD,
-                Username = DB_USER,
-                Port = port
-            }.ToString();
         }
     }
 }

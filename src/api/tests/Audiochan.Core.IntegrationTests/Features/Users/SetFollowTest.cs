@@ -5,17 +5,15 @@ using Audiochan.Core.Users.SetFollow;
 using Audiochan.Domain.Entities;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using Xunit;
+using NUnit.Framework;
 
 namespace Audiochan.Core.IntegrationTests.Features.Users
 {
+    using static TestFixture;
+
     public class SetFollowTest : TestBase
     {
-        public SetFollowTest(TestFixture testFixture) : base(testFixture)
-        {
-        }
-
-        [Fact]
+        [Test]
         public async Task AddFollowerTest()
         {
             // Assign
@@ -33,7 +31,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Users
             user.Followers.Should().Contain(x => x.ObserverId == observerId && x.TargetId == targetId);
         }
 
-        [Fact]
+        [Test]
         public async Task RemoveFollowerTest()
         {
             // Assign

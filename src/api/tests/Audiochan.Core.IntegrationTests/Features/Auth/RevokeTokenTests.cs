@@ -7,17 +7,15 @@ using Audiochan.Domain.Entities;
 using Bogus;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using Xunit;
+using NUnit.Framework;
 
 namespace Audiochan.Core.IntegrationTests.Features.Auth
 {
+    using static TestFixture;
+
     public class RevokeTokenTests : TestBase
     {
-        public RevokeTokenTests(TestFixture fixture) : base(fixture)
-        {
-        }
-
-        [Fact]
+        [Test]
         public async Task ShouldSuccessfullyRevokeToken()
         {
             // Assign
@@ -45,7 +43,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Auth
             userRefreshTokens.Count.Should().Be(0);
         }
 
-        [Fact]
+        [Test]
         public async Task ShouldSuccessfullyRevokeOneToken()
         {
             // Assign
