@@ -33,7 +33,7 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
     useRemoveAudioPicture(audio.id);
 
   useEffect(() => {
-    Router.prefetch(`/users/${audio.user.username}`);
+    Router.prefetch(`/users/${audio.user.userName}`);
   }, []);
 
   return (
@@ -60,8 +60,8 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
             {audio.title}
           </Heading>
           <chakra.div display="flex">
-            <Link href={`/users/${audio.user.username}`} fontWeight="500">
-              {audio.user.username}
+            <Link href={`/users/${audio.user.userName}`} fontWeight="500">
+              {audio.user.userName}
             </Link>
             <chakra.span
               color={secondaryColor}

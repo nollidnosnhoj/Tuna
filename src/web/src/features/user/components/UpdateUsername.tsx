@@ -19,7 +19,7 @@ export default function UpdateUsername() {
     resolver: yupResolver(
       yup.object().shape({
         username: usernameRule("Username").notOneOf(
-          [user?.username],
+          [user?.userName],
           "Username cannot be the same."
         ),
       })
@@ -28,7 +28,7 @@ export default function UpdateUsername() {
 
   const handleUsernameSubmit = async (values: { username: string }) => {
     const { username: newUsername } = values;
-    if (newUsername.toLowerCase() === user?.username) return;
+    if (newUsername.toLowerCase() === user?.userName) return;
 
     try {
       await request({
@@ -41,7 +41,7 @@ export default function UpdateUsername() {
         description: "You have successfully updated your username.",
       });
       if (user) {
-        updateUser({ ...user, username: newUsername });
+        updateUser({ ...user, userName: newUsername });
       }
     } catch (err) {
       errorToast(err);

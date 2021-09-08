@@ -86,8 +86,8 @@ const AudioStackItem: React.FC<AudioListItemProps> = ({
           >
             <chakra.b fontSize="md">{audio.title}</chakra.b>
           </Link>
-          <Link href={`/users/${audio.user.username}`}>
-            <chakra.div>{audio.user.username}</chakra.div>
+          <Link href={`/users/${audio.user.userName}`}>
+            <chakra.div>{audio.user.userName}</chakra.div>
           </Link>
         </Box>
       </Flex>
