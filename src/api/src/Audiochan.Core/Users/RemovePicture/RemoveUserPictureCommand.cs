@@ -34,7 +34,7 @@ namespace Audiochan.Core.Users.RemovePicture
 
             if (string.IsNullOrEmpty(user.Picture)) return Result.Success();
             
-            await _imageService.RemoveImage(AssetContainerConstants.UserPictures, user.Picture, cancellationToken);
+            await _imageService.RemoveImage(AssetContainerConstants.USER_PICTURES, user.Picture, cancellationToken);
 
             user.Picture = null;
 

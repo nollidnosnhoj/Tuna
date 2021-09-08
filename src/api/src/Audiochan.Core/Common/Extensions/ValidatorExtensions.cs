@@ -35,23 +35,23 @@ namespace Audiochan.Core.Common.Extensions
         {
             if (passwordRules.RequiresDigit)
                 ruleBuilder.Matches(@"[0-9]+")
-                    .WithErrorCode(ValidationErrorCodes.Password.Digits)
+                    .WithErrorCode(ValidationErrorCodes.Password.DIGITS)
                     .WithMessage($"{field} must contain one digit.");
             if (passwordRules.RequiresLowercase)
                 ruleBuilder.Matches(@"[a-z]+")
-                    .WithErrorCode(ValidationErrorCodes.Password.Lowercase)
+                    .WithErrorCode(ValidationErrorCodes.Password.LOWERCASE)
                     .WithMessage($"{field} must contain one lowercase character.");
             if (passwordRules.RequiresUppercase)
                 ruleBuilder.Matches(@"[A-Z]+")
-                    .WithErrorCode(ValidationErrorCodes.Password.Uppercase)
+                    .WithErrorCode(ValidationErrorCodes.Password.UPPERCASE)
                     .WithMessage($"{field} must contain one uppercase character.");
             if (passwordRules.RequiresNonAlphanumeric)
                 ruleBuilder.Matches(@"[^a-zA-Z\d]+")
-                    .WithErrorCode(ValidationErrorCodes.Password.NonAlphanumeric)
+                    .WithErrorCode(ValidationErrorCodes.Password.NON_ALPHANUMERIC)
                     .WithMessage($"{field} must contain one non-alphanumeric character.");
             if (passwordRules.MinimumLength > 0)
                 ruleBuilder.MinimumLength(passwordRules.MinimumLength)
-                    .WithErrorCode(ValidationErrorCodes.Password.Length)
+                    .WithErrorCode(ValidationErrorCodes.Password.LENGTH)
                     .WithMessage($"{field} must be at least {passwordRules.MinimumLength} characters long.");
 
             return ruleBuilder;
@@ -68,10 +68,10 @@ namespace Audiochan.Core.Common.Extensions
                 .MaximumLength(identitySettings.MaximumLength)
                 .WithMessage("Username must be at most 20 characters long.")
                 .Must(username => username.All(x => identitySettings.AllowedCharacters.Contains(x)))
-                .WithErrorCode(ValidationErrorCodes.Username.Characters)
+                .WithErrorCode(ValidationErrorCodes.Username.CHARACTERS)
                 .WithMessage("Username is invalid.")
                 .Must(username => !username.All(char.IsDigit))
-                .WithErrorCode(ValidationErrorCodes.Username.Format)
+                .WithErrorCode(ValidationErrorCodes.Username.FORMAT)
                 .WithMessage("Username cannot contain only numbers.");
         }
     }

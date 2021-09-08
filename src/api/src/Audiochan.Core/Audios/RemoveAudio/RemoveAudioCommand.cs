@@ -64,7 +64,7 @@ namespace Audiochan.Core.Audios.RemoveAudio
 
             if (!string.IsNullOrEmpty(audio.Picture))
             {
-                tasks.Add(_imageService.RemoveImage(AssetContainerConstants.AudioPictures, 
+                tasks.Add(_imageService.RemoveImage(AssetContainerConstants.AUDIO_PICTURES, 
                     audio.Picture, 
                     cancellationToken));
             }

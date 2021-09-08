@@ -19,7 +19,7 @@ namespace Audiochan.Core.Users.GetFollowers
                     c.MapFrom(src => src.Observer.UserName))
                 .ForMember(dest => dest.Picture, c =>
                 {
-                    c.MapFrom(src => src.Observer.Picture != null ? MediaLinkConstants.UserPicture + src.Observer.Picture : null);
+                    c.MapFrom(src => src.Observer.Picture != null ? MediaLinkConstants.USER_PICTURE + src.Observer.Picture : null);
                 });
         }
     }

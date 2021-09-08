@@ -51,7 +51,7 @@ namespace Audiochan.Core.Playlists.UpdatePlaylistPicture
             else
             {
                 blobName = $"{await _randomIdGenerator.GenerateAsync(size: 15)}.jpg";
-                await _imageService.UploadImage(request.Data, AssetContainerConstants.PlaylistPictures, blobName, cancellationToken);
+                await _imageService.UploadImage(request.Data, AssetContainerConstants.PLAYLIST_PICTURES, blobName, cancellationToken);
                 await RemoveOriginalPicture(playlist.Picture, cancellationToken);
                 playlist.Picture = blobName;
             }
@@ -60,7 +60,7 @@ namespace Audiochan.Core.Playlists.UpdatePlaylistPicture
 
             return Result<ImageUploadResponse>.Success(new ImageUploadResponse
             {
-                Url = MediaLinkConstants.PlaylistPicture + blobName
+                Url = MediaLinkConstants.PLAYLIST_PICTURE + blobName
             });
         }
         
@@ -68,7 +68,7 @@ namespace Audiochan.Core.Playlists.UpdatePlaylistPicture
         {
             if (!string.IsNullOrEmpty(picture))
             {
-                await _imageService.RemoveImage(AssetContainerConstants.PlaylistPictures, picture, cancellationToken);
+                await _imageService.RemoveImage(AssetContainerConstants.PLAYLIST_PICTURES, picture, cancellationToken);
             }
         }
     }

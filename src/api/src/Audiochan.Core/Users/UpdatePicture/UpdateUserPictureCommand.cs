@@ -50,7 +50,7 @@ namespace Audiochan.Core.Users.UpdatePicture
             else
             {
                 blobName = $"{await _randomIdGenerator.GenerateAsync(size: 15)}.jpg";
-                await _imageService.UploadImage(command.Data, AssetContainerConstants.UserPictures, blobName, cancellationToken);
+                await _imageService.UploadImage(command.Data, AssetContainerConstants.USER_PICTURES, blobName, cancellationToken);
                 await RemoveOriginalPicture(user.Picture, cancellationToken);
                 user.Picture = blobName;
             }
@@ -59,7 +59,7 @@ namespace Audiochan.Core.Users.UpdatePicture
 
             return Result<ImageUploadResponse>.Success(new ImageUploadResponse
             {
-                Url = MediaLinkConstants.UserPicture + blobName
+                Url = MediaLinkConstants.USER_PICTURE + blobName
             });
         }
         
@@ -67,7 +67,7 @@ namespace Audiochan.Core.Users.UpdatePicture
         {
             if (!string.IsNullOrEmpty(picture))
             {
-                await _imageService.RemoveImage(AssetContainerConstants.UserPictures, picture, cancellationToken);
+                await _imageService.RemoveImage(AssetContainerConstants.USER_PICTURES, picture, cancellationToken);
             }
         }
     }

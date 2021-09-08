@@ -36,7 +36,7 @@ namespace Audiochan.Core.UnitTests.Validations.Users
 
             validationResult
                 .ShouldHaveValidationErrorFor(x => x.NewPassword)
-                .WithErrorCode(ValidationErrorCodes.Password.Digits);
+                .WithErrorCode(ValidationErrorCodes.Password.DIGITS);
         }
 
         [Theory]
@@ -49,7 +49,7 @@ namespace Audiochan.Core.UnitTests.Validations.Users
 
             validationResult
                 .ShouldHaveValidationErrorFor(x => x.NewPassword)
-                .WithErrorCode(ValidationErrorCodes.Password.Lowercase);
+                .WithErrorCode(ValidationErrorCodes.Password.LOWERCASE);
         }
 
         [Theory]
@@ -62,7 +62,7 @@ namespace Audiochan.Core.UnitTests.Validations.Users
 
             validationResult
                 .ShouldHaveValidationErrorFor(x => x.NewPassword)
-                .WithErrorCode(ValidationErrorCodes.Password.Uppercase);
+                .WithErrorCode(ValidationErrorCodes.Password.UPPERCASE);
         }
 
         [Theory]
@@ -75,7 +75,7 @@ namespace Audiochan.Core.UnitTests.Validations.Users
 
             validationResult
                 .ShouldHaveValidationErrorFor(x => x.NewPassword)
-                .WithErrorCode(ValidationErrorCodes.Password.NonAlphanumeric);
+                .WithErrorCode(ValidationErrorCodes.Password.NON_ALPHANUMERIC);
         }
 
         [Theory]
@@ -88,7 +88,7 @@ namespace Audiochan.Core.UnitTests.Validations.Users
 
             validationResult
                 .ShouldHaveValidationErrorFor(x => x.NewPassword)
-                .WithErrorCode(ValidationErrorCodes.Password.Length);
+                .WithErrorCode(ValidationErrorCodes.Password.LENGTH);
         }
     }
 }

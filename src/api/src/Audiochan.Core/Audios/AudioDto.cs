@@ -37,10 +37,10 @@ namespace Audiochan.Core.Audios
                     c.MapFrom(src => HashIdHelper.EncodeLong(src.Id)))
                 .ForMember(dest => dest.Picture, c =>
                 {
-                    c.MapFrom(src => src.Picture != null ? MediaLinkConstants.AudioPicture + src.Picture : null);
+                    c.MapFrom(src => src.Picture != null ? MediaLinkConstants.AUDIO_PICTURE + src.Picture : null);
                 })
                 .ForMember(dest => dest.Audio, c =>
-                    c.MapFrom(src => MediaLinkConstants.AudioStream + src.File))
+                    c.MapFrom(src => MediaLinkConstants.AUDIO_STREAM + src.File))
                 .ForMember(dest => dest.Tags, c =>
                     c.MapFrom(src => src.Tags.Select(t => t.Name).ToList()))
                 .ForMember(dest => dest.IsFavorited, c =>

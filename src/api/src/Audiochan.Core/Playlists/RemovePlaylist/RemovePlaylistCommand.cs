@@ -42,7 +42,7 @@ namespace Audiochan.Core.Playlists.RemovePlaylist
             
             if (!string.IsNullOrEmpty(playlist.Picture))
             {
-                await _imageService.RemoveImage(AssetContainerConstants.PlaylistPictures, playlist.Picture,
+                await _imageService.RemoveImage(AssetContainerConstants.PLAYLIST_PICTURES, playlist.Picture,
                     cancellationToken);
             }
 

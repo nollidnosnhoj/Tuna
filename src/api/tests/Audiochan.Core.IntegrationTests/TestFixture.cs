@@ -20,6 +20,7 @@ using Moq;
 using Npgsql;
 using NUnit.Framework;
 using Respawn;
+#pragma warning disable 8618
 
 namespace Audiochan.Core.IntegrationTests
 {

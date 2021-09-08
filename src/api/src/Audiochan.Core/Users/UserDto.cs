@@ -16,7 +16,7 @@ namespace Audiochan.Core.Users
             profile.CreateMap<User, UserDto>()
                 .ForMember(dest => dest.Picture, c =>
                 {
-                    c.MapFrom(src => src.Picture != null ? MediaLinkConstants.UserPicture + src.Picture : null);
+                    c.MapFrom(src => src.Picture != null ? MediaLinkConstants.USER_PICTURE + src.Picture : null);
                 });
         }
     }

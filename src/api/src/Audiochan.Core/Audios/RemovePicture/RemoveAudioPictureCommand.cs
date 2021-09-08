@@ -42,7 +42,7 @@ namespace Audiochan.Core.Audios.RemovePicture
 
             if (string.IsNullOrEmpty(audio.Picture)) return Result.Success();
             
-            await _imageService.RemoveImage(AssetContainerConstants.AudioPictures, audio.Picture, cancellationToken);
+            await _imageService.RemoveImage(AssetContainerConstants.AUDIO_PICTURES, audio.Picture, cancellationToken);
             audio.Picture = null;
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);

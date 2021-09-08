@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Audiochan.Core.Users.SetFavoriteAudio;
 using Audiochan.Domain.Entities;
 using Audiochan.Tests.Common.Fakers.Audios;
-using Bogus;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
@@ -14,8 +13,6 @@ namespace Audiochan.Core.IntegrationTests.Features.Users
 
     public class SetFavoriteAudioTests : TestBase
     {
-        private readonly Faker _faker;
-
         [Test]
         public async Task AddFavoriteTest()
         {
