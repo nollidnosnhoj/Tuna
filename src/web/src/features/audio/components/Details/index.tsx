@@ -8,7 +8,7 @@ import {
 } from "@chakra-ui/react";
 import Router from "next/router";
 import React, { useEffect } from "react";
-import Link from "~/components/ui/Link";
+import Link from "~/components/UI/Link";
 import { AudioView } from "~/features/audio/api/types";
 import { useUser } from "~/features/user/hooks";
 import { relativeDate } from "~/utils/time";

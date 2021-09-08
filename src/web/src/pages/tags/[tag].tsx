@@ -1,6 +1,6 @@
 import React from "react";
 import { Heading } from "@chakra-ui/react";
-import InfiniteListControls from "~/components/ui/ListControls/Infinite";
+import InfiniteListControls from "~/components/UI/ListControls/Infinite";
 import Page from "~/components/Page";
 import AudioList from "~/features/audio/components/List";
 import { useGetTagAudioList } from "~/features/audio/api/hooks";

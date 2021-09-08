@@ -1,7 +1,7 @@
 import { Box, Flex, Heading, Stack, chakra } from "@chakra-ui/react";
 import Router from "next/router";
 import React, { useEffect } from "react";
-import Link from "~/components/ui/Link";
+import Link from "~/components/UI/Link";
 import { useUser } from "~/features/user/hooks";
 import PictureController from "~/components/Picture";
 import { Playlist } from "../../api/types";

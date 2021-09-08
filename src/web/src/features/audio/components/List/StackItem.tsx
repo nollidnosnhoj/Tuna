@@ -9,7 +9,7 @@ import {
 import NextImage from "next/image";
 import React, { useState } from "react";
 import { FaPause, FaPlay } from "react-icons/fa";
-import Link from "~/components/ui/Link";
+import Link from "~/components/UI/Link";
 import { AudioView } from "~/features/audio/api/types";
 import { formatDuration } from "~/utils/format";
 import PictureContainer from "~/components/Picture/PictureContainer";
