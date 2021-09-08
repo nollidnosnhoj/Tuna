@@ -79,15 +79,15 @@ namespace Audiochan.Infrastructure.Security
 
         public async Task<bool> ValidateRefreshToken(string token, CancellationToken cancellationToken = default)
         {
-            return await ValidateToken(token, cancellationToken);
+            return await ValidateToken(token, _jwtSettings.RefreshTokenSecret, cancellationToken);
         }
 
-        private async Task<bool> ValidateToken(string token, CancellationToken cancellationToken = default)
+        private async Task<bool> ValidateToken(string token, string secret, CancellationToken cancellationToken = default)
         {
             // setup validation token handler
             var tokenHandler = new JwtSecurityTokenHandler();
             var tokenValidationParams = _tokenValidationParameters.Clone();
-            tokenValidationParams.IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.RefreshTokenSecret));
+            tokenValidationParams.IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
             try
             {
                 // validate token

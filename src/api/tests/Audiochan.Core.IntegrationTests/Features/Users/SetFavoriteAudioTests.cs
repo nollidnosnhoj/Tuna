@@ -6,20 +6,17 @@ using Audiochan.Tests.Common.Fakers.Audios;
 using Bogus;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using Xunit;
+using NUnit.Framework;
 
 namespace Audiochan.Core.IntegrationTests.Features.Users
 {
+    using static TestFixture;
+
     public class SetFavoriteAudioTests : TestBase
     {
         private readonly Faker _faker;
 
-        public SetFavoriteAudioTests(TestFixture testFixture) : base(testFixture)
-        {
-            _faker = new Faker();
-        }
-        
-        [Fact]
+        [Test]
         public async Task AddFavoriteTest()
         {
             // Assign
@@ -46,7 +43,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Users
             refetchAudio.FavoriteAudios.Should().Contain(x => x.UserId == observerId);
         }
 
-        [Fact]
+        [Test]
         public async Task ShouldSuccessfullyUnfavoriteAudio()
         {
             // Assign

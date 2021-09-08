@@ -62,7 +62,7 @@ namespace Audiochan.Infrastructure
 
         private static IServiceCollection AddCaching(this IServiceCollection services, IConfiguration configuration, IHostEnvironment environment)
         {
-            if (environment.IsDevelopment())
+            if (!environment.IsProduction())
             {
                 services.AddSingleton<ICacheService, MemoryCacheService>();
             }

@@ -3,18 +3,15 @@ using Audiochan.Core.Audios.GetAudioFeed;
 using Audiochan.Domain.Entities;
 using Audiochan.Tests.Common.Fakers.Audios;
 using FluentAssertions;
-using JetBrains.Annotations;
-using Xunit;
+using NUnit.Framework;
 
 namespace Audiochan.Core.IntegrationTests.Features.Audios
 {
+    using static TestFixture;
+    
     public class GetAudioFeedTests : TestBase
     {
-        public GetAudioFeedTests(TestFixture fixture) : base(fixture)
-        {
-        }
-
-        [Fact]
+        [Test]
         public async Task SuccessfullyGetAudioFeed()
         {
             var (oneId, _) = await RunAsUserAsync();
@@ -39,7 +36,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             var result = await SendAsync(new GetAudioFeedQuery(userId));
 
             result.Items.Should().NotBeEmpty();
-            result.Items.Count.Should().Be(10);
+            result.Items.Count.Should().Be(10);       
         }
     }
 }

@@ -7,17 +7,15 @@ using Audiochan.Domain.Entities;
 using Audiochan.Tests.Common.Fakers.Audios;
 using Audiochan.Tests.Common.Fakers.Playlists;
 using FluentAssertions;
-using Xunit;
+using NUnit.Framework;
 
 namespace Audiochan.Core.IntegrationTests.Features.Playlists
 {
+    using static TestFixture;
+
     public class GetPlaylistAudiosTests : TestBase
     {
-        public GetPlaylistAudiosTests(TestFixture testFixture) : base(testFixture)
-        {
-        }
-
-        [Fact]
+        [Test]
         public async Task ShouldSuccessfullyFetchPlaylistAudios()
         {
             var (userId, _) = await RunAsDefaultUserAsync();

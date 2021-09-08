@@ -4,17 +4,15 @@ using Audiochan.Core.Audios.RemoveAudio;
 using Audiochan.Core.Common.Models;
 using Audiochan.Tests.Common.Fakers.Audios;
 using FluentAssertions;
-using Xunit;
+using NUnit.Framework;
 
 namespace Audiochan.Core.IntegrationTests.Features.Audios
 {
+    using static TestFixture;
+
     public class RemoveAudioTests : TestBase
     {
-        public RemoveAudioTests(TestFixture fixture) : base(fixture)
-        {
-        }
-
-        [Fact]
+        [Test]
         public async Task ShouldRemoveAudio()
         {
             var (ownerId, _) = await RunAsDefaultUserAsync();
@@ -29,11 +27,10 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
 
             result.Should().NotBeNull();
             result.IsSuccess.Should().Be(true);
-
             created.Should().BeNull();
         }
 
-        [Fact]
+        [Test]
         public async Task ShouldNotRemoveAudio_WhenNotTheAuthor()
         {
             var (ownerId, _) = await RunAsDefaultUserAsync();

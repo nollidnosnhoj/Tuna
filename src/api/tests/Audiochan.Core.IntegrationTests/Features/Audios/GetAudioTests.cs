@@ -1,22 +1,20 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Audiochan.Core.Audios;
 using Audiochan.Core.Audios.GetAudio;
 using Audiochan.Core.Common;
-using Audiochan.Core.Common.Models;
 using Audiochan.Core.Users;
 using Audiochan.Tests.Common.Fakers.Audios;
 using FluentAssertions;
-using Xunit;
+using NUnit.Framework;
 
 namespace Audiochan.Core.IntegrationTests.Features.Audios
 {
+    using static TestFixture;
+
     public class GetAudioTests : TestBase
     {
-        public GetAudioTests(TestFixture fixture) : base(fixture)
-        {
-        }
-        
-        [Fact]
+        [Test]
         public async Task ShouldNotGetAudio_WhenAudioIdIsInvalid()
         {
             // Assign
@@ -32,7 +30,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             result.Should().BeNull();
         }
         
-        [Fact]
+        [Test]
         public async Task ShouldSuccessfullyGetAudio()
         {
             // Assign
@@ -63,7 +61,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             result.User.Id.Should().Be(userId);
         }
 
-        [Fact]
+        [Test]
         public async Task ShouldCacheSuccessfully()
         {
             // Assign
