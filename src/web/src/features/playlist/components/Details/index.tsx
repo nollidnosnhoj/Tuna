@@ -24,7 +24,7 @@ const PlaylistDetails: React.FC<PlaylistDetailsProps> = ({ playlist }) => {
   }, [playlist.id, audios.length]);
 
   useEffect(() => {
-    Router.prefetch(`/users/${playlist.user.username}`);
+    Router.prefetch(`/users/${playlist.user.userName}`);
   }, []);
 
   return (
@@ -49,8 +49,8 @@ const PlaylistDetails: React.FC<PlaylistDetailsProps> = ({ playlist }) => {
             {playlist.title}
           </Heading>
           <chakra.div display="flex">
-            <Link href={`/users/${playlist.user.username}`} fontWeight="500">
-              {playlist.user.username}
+            <Link href={`/users/${playlist.user.userName}`} fontWeight="500">
+              {playlist.user.userName}
             </Link>
           </chakra.div>
         </chakra.div>

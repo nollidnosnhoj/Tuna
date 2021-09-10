@@ -58,13 +58,13 @@ export default function UserProfileNextPage(props: ProfilePageProps) {
   });
 
   const { items: latestAudios } = useGetUserAudios(
-    profile?.username ?? "",
+    profile?.userName ?? "",
     { size: 5 },
     { staleTime: 1000 * 60 * 5 }
   );
 
   const { items: latestFavoriteAudios } = useGetUserFavoriteAudios(
-    profile?.username ?? "",
+    profile?.userName ?? "",
     { size: 5 },
     { staleTime: 1000 * 60 * 5 }
   );
@@ -72,7 +72,7 @@ export default function UserProfileNextPage(props: ProfilePageProps) {
   if (!profile) return null;
 
   return (
-    <Page title={`${profile.username} | Audiochan`}>
+    <Page title={`${profile.userName} | Audiochan`}>
       <ProfileDetails profile={profile} />
       <Tabs isLazy>
         <TabList>
@@ -85,11 +85,11 @@ export default function UserProfileNextPage(props: ProfilePageProps) {
               <Box marginBottom={4}>
                 <AudioList
                   audios={latestAudios}
-                  context={`users:${profile.username}`}
+                  context={`users:${profile.userName}`}
                 />
               </Box>
               {latestAudios.length > 0 && (
-                <NextLink href={`/users/${profile.username}/audios`}>
+                <NextLink href={`/users/${profile.userName}/audios`}>
                   <Button width="100%">View More</Button>
                 </NextLink>
               )}
@@ -100,11 +100,11 @@ export default function UserProfileNextPage(props: ProfilePageProps) {
               <Box marginBottom={4}>
                 <AudioList
                   audios={latestFavoriteAudios}
-                  context={`user_favorites:${profile.username}`}
+                  context={`user_favorites:${profile.userName}`}
                 />
               </Box>
               {latestFavoriteAudios.length > 0 && (
-                <NextLink href={`/users/${profile.username}/favorite/audios`}>
+                <NextLink href={`/users/${profile.userName}/favorite/audios`}>
                   <Button width="100%">View More</Button>
                 </NextLink>
               )}

@@ -32,7 +32,7 @@ export function useRemoveAudioPicture(
       }
       queryClient.invalidateQueries(GET_AUDIO_LIST_QUERY_KEY);
       if (user) {
-        queryClient.invalidateQueries(GET_USER_AUDIOS_QUERY_KEY(user.username));
+        queryClient.invalidateQueries(GET_USER_AUDIOS_QUERY_KEY(user.userName));
       }
     },
   });

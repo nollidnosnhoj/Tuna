@@ -23,6 +23,7 @@ export default function AddToPlaylistButton({
       icon={<AddIcon />}
       onClick={() => addToPlaylist([audio])}
       variant="ghost"
+      isRound
     >
       Add To Playlist
     </IconButton>

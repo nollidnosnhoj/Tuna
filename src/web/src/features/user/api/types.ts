@@ -1,11 +1,11 @@
 export type CurrentUser = {
   id: number;
-  username: string;
+  userName: string;
   email: string;
 };
 
 export type Profile = {
   id: number;
-  username: string;
+  userName: string;
   picture: string;
 };

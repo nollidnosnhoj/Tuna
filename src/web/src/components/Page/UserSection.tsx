@@ -19,12 +19,12 @@ const UserSection: React.FC = () => {
   return (
     <Menu placement="bottom-end" isLazy>
       <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
-        {user?.username}
+        {user?.userName}
       </MenuButton>
       <Portal>
         <MenuList>
           <MenuGroup>
-            <NextLink href={`/users/${user?.username}`}>
+            <NextLink href={`/users/${user?.userName}`}>
               <MenuItem>Profile</MenuItem>
             </NextLink>
             <NextLink href="/settings">

@@ -6,17 +6,16 @@ import {
   Stack,
   useColorModeValue,
 } from "@chakra-ui/react";
-import NextImage from "next/image";
 import React, { useState } from "react";
 import { FaPause, FaPlay } from "react-icons/fa";
 import Link from "~/components/UI/Link";
 import { AudioView } from "~/features/audio/api/types";
 import { formatDuration } from "~/utils/format";
-import PictureContainer from "~/components/Picture/PictureContainer";
 import AudioMiscMenu from "../ContextMenu";
 import { useAudioPlayer } from "~/lib/stores";
 import AudioFavoriteButton from "../Buttons/Favorite";
 import AddToPlaylistButton from "../Buttons/AddToPlaylist";
+import AudioShareButton from "../Buttons/Share";
 
 export interface AudioListItemProps {
   audio: AudioView;
@@ -42,52 +41,33 @@ const AudioStackItem: React.FC<AudioListItemProps> = ({
       onMouseOver={() => setHoverItem(true)}
       onMouseLeave={() => setHoverItem(false)}
       backgroundColor={hoverItem ? hoverBg : undefined}
-      borderRadius="md"
-      padding={1}
+      padding={2}
       _notLast={{
         marginBottom: 1,
       }}
     >
-      <Flex paddingX={{ base: 2, md: 4 }}>
+      <Flex paddingX={2}>
         <IconButton
-          opacity={hoverItem || isActive ? 1 : 0}
-          variant="unstyled"
           justifyContent="center"
           alignItems="center"
           display="flex"
-          size="sm"
+          size="md"
+          isRound
           icon={isPlaying && isActive ? <FaPause /> : <FaPlay />}
           aria-label="Play"
           onClick={onPlayClick}
         />
       </Flex>
-      <PictureContainer
-        width={75}
-        borderWidth="1px"
-        position="relative"
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-      >
-        {audio.picture && (
-          <NextImage
-            src={audio.picture}
-            layout="fill"
-            objectFit="cover"
-            loading="lazy"
-          />
-        )}
-      </PictureContainer>
       <Flex flex={2} align="center" marginX={4}>
         <Box>
           <Link
             href={`/audios/${audio.slug}`}
             _hover={{ textDecoration: "none" }}
           >
-            <chakra.b fontSize="md">{audio.title}</chakra.b>
+            <chakra.b fontSize="lg">{audio.title}</chakra.b>
           </Link>
-          <Link href={`/users/${audio.user.username}`}>
-            <chakra.div>{audio.user.username}</chakra.div>
+          <Link href={`/users/${audio.user.userName}`}>
+            <chakra.div>{audio.user.userName}</chakra.div>
           </Link>
         </Box>
       </Flex>
@@ -101,6 +81,7 @@ const AudioStackItem: React.FC<AudioListItemProps> = ({
           audioId={audio.id}
           isFavorite={audio.isFavorited}
         />
+        <AudioShareButton audio={audio} />
         <AudioMiscMenu audio={audio} />
       </Stack>
     </Box>
