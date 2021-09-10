@@ -3,6 +3,8 @@ import {
   FormErrorMessage,
   FormLabel,
   Input,
+  List,
+  ListItem,
   Tag,
   TagCloseButton,
   TagLabel,
@@ -18,7 +20,7 @@ interface TagInputProps {
   value: string[];
   onChange: (value: string[]) => void;
   placeholder?: string;
-  error?: string;
+  errors?: string[];
   disabled?: boolean;
 }
 
@@ -26,11 +28,11 @@ const TagInput: React.FC<TagInputProps> = ({
   name,
   value,
   onChange,
-  error,
+  errors,
   disabled = false,
 }) => {
   const [currentInput, setCurrentInput] = useState("");
-  const [inputError, setInputError] = useState(error);
+  const [inputErrors, setInputErrors] = useState(errors);
   const tags = useMemo(() => {
     return value.length === 0 ? [] : value.filter((val) => val.length > 0);
   }, [value]);
@@ -79,13 +81,13 @@ const TagInput: React.FC<TagInputProps> = ({
     if (validationSchema) {
       const [isValid, errorMessage] = await applyValidationSchema(taggifyTag);
       if (!isValid) {
-        setInputError(errorMessage);
+        setInputErrors([errorMessage]);
         return;
       }
     }
     onChange([...tags, taggifyTag]);
     setCurrentInput("");
-    setInputError("");
+    setInputErrors([]);
   };
 
   const removeTag = (idx: number) => {
@@ -96,7 +98,7 @@ const TagInput: React.FC<TagInputProps> = ({
   };
 
   return (
-    <FormControl paddingY={2} id={name} isInvalid={!!inputError}>
+    <FormControl paddingY={2} id={name} isInvalid={!!inputErrors}>
       <FormLabel>Tags</FormLabel>
       <Input
         name={name}
@@ -105,7 +107,15 @@ const TagInput: React.FC<TagInputProps> = ({
         onKeyDown={onKeyDown}
         disabled={disabled}
       />
-      <FormErrorMessage>{inputError}</FormErrorMessage>
+      <FormErrorMessage>
+        <List>
+          {inputErrors?.map((err, i) => (
+            <ListItem key={i} color="red">
+              {err}
+            </ListItem>
+          ))}
+        </List>
+      </FormErrorMessage>
       {!!tags.length && (
         <Wrap marginTop={4}>
           {tags.map((tag, idx) => (
