@@ -10,14 +10,12 @@ import {
   MenuProps,
 } from "@chakra-ui/react";
 import React from "react";
-import { FaShare } from "react-icons/fa";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { MdQueueMusic } from "react-icons/md";
 import { useUser } from "~/features/user/hooks";
 import { useAudioQueue } from "~/lib/stores";
 import { AudioView } from "../api/types";
 import AudioEditDrawer from "./Edit";
-import AudioShareModal from "./Share";
 
 type ButtonSizeType = Pick<ButtonProps, "size">;
 type MenuPlacementType = Pick<MenuProps, "placement">;
@@ -36,12 +34,6 @@ export default function AudioMiscMenu({ audio, ...props }: AudioMiscMenuProps) {
     isOpen: isEditOpen,
     onOpen: onEditOpen,
     onClose: onEditClose,
-  } = useDisclosure();
-
-  const {
-    isOpen: isShareOpen,
-    onOpen: onShareOpen,
-    onClose: onShareClose,
   } = useDisclosure();
   return (
     <>
@@ -65,20 +57,12 @@ export default function AudioMiscMenu({ audio, ...props }: AudioMiscMenuProps) {
           >
             Add to queue
           </MenuItem>
-          <MenuItem icon={<FaShare />} onClick={onShareOpen}>
-            Share
-          </MenuItem>
         </MenuList>
       </Menu>
       <AudioEditDrawer
         audio={audio}
         isOpen={isEditOpen}
         onClose={onEditClose}
-      />
-      <AudioShareModal
-        slug={audio.slug}
-        isOpen={isShareOpen}
-        onClose={onShareClose}
       />
     </>
   );

@@ -40,10 +40,10 @@ export default function ProfileDetails({ profile }: ProfileDetailsProps) {
             onRemove={removePictureAsync}
             isMutating={isAddingPicture || isRemovingPicture}
             canEdit={user?.id === profile.id}
-            width={200}
+            width={250}
           />
         </Flex>
-        <Box flex="6">
+        <Box flex="7">
           <Stack
             direction="row"
             marginTop={{ base: 4, md: 0 }}
