@@ -39,7 +39,7 @@ export default function AudioForm({ disableFields = false }: AudioFormProps) {
         render={({ field: { ref, ...restField }, fieldState: { error } }) => (
           <TagInput
             placeholder="Add Tag..."
-            error={error?.message}
+            errors={error?.map((x) => x.message ?? "")}
             {...restField}
             disabled={disableFields}
           />
