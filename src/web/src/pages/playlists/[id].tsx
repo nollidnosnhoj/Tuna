@@ -10,7 +10,7 @@ import request from "~/lib/http";
 
 interface PlaylistPageProps {
   playlist: Playlist;
-  id: number;
+  playlistId: number;
 }
 
 export const getServerSideProps: GetServerSideProps<PlaylistPageProps> = async (
@@ -19,17 +19,24 @@ export const getServerSideProps: GetServerSideProps<PlaylistPageProps> = async (
   const { req, res, params } = context;
   try {
     const id = parseInt(params?.id as string, 10);
-    if (isNaN(id)) throw new Error("Id is invalid.");
+
+    if (isNaN(id)) {
+      return {
+        notFound: true,
+      };
+    }
+
     const { data } = await request<Playlist>({
       method: "GET",
       url: `playlists/${id}`,
       req,
       res,
     });
+
     return {
       props: {
         playlist: data,
-        id,
+        playlistId: id,
       },
     };
   } catch (err) {
@@ -41,10 +48,10 @@ export const getServerSideProps: GetServerSideProps<PlaylistPageProps> = async (
 
 export default function PlaylistPage({
   playlist: initPlaylist,
-  id,
+  playlistId,
 }: PlaylistPageProps) {
-  const { data: playlist } = useGetPlaylist(id, {
-    enabled: !!id,
+  const { data: playlist } = useGetPlaylist(playlistId, {
+    enabled: !!playlistId,
     initialData: initPlaylist,
   });
   const { items: playlistAudios } = useGetPlaylistAudios(playlist?.id);

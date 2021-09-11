@@ -12,17 +12,16 @@ export function useAddAudioPicture(
 ): UseMutationResult<ImageUploadResponse, ErrorResponse, string> {
   const queryClient = useQueryClient();
   const { user } = useUser();
-  const uploadArtwork = async (
-    imageData: string
-  ): Promise<ImageUploadResponse> => {
-    const { data } = await request<ImageUploadResponse>({
+
+  const uploadArtwork = async (data: string): Promise<ImageUploadResponse> => {
+    const { data: result } = await request<ImageUploadResponse>({
       url: `audios/${id}/picture`,
       method: "PATCH",
       data: {
-        data: imageData,
+        data,
       },
     });
-    return data;
+    return result;
   };
 
   return useMutation(uploadArtwork, {
@@ -30,13 +29,16 @@ export function useAddAudioPicture(
       const audio = queryClient.getQueryData<AudioView>(
         GET_AUDIO_QUERY_KEY(id)
       );
+
       if (audio) {
         queryClient.setQueryData<AudioView>(GET_AUDIO_QUERY_KEY(id), {
           ...audio,
           picture: data.url,
         });
       }
+
       queryClient.invalidateQueries(GET_AUDIO_LIST_QUERY_KEY);
+
       if (user) {
         queryClient.invalidateQueries(GET_USER_AUDIOS_QUERY_KEY(user.userName));
       }

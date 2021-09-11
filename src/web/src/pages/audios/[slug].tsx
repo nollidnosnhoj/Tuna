@@ -14,8 +14,6 @@ import AudioFileInfo from "~/features/audio/components/Details/FileInfo";
 import { useGetAudio } from "~/features/audio/api/hooks";
 import { AudioView } from "~/features/audio/api/types";
 import AudioTags from "~/features/audio/components/Details/Tags";
-import { useEffect } from "react";
-import { useRouter } from "next/router";
 import request from "~/lib/http";
 
 interface AudioPageProps {
@@ -49,19 +47,10 @@ export const getServerSideProps: GetServerSideProps<AudioPageProps> = async (
 };
 
 export default function AudioPage({ audio: initAudio, slug }: AudioPageProps) {
-  const router = useRouter();
   const { data: audio } = useGetAudio(slug, {
     staleTime: 1000,
     initialData: initAudio,
   });
-
-  useEffect(() => {
-    if (audio && audio.slug !== slug) {
-      router.replace(`/audios/${audio.slug}`, undefined, {
-        shallow: true,
-      });
-    }
-  }, []);
 
   if (!audio) return null;
 

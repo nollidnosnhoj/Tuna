@@ -30,7 +30,7 @@ namespace Audiochan.API.Controllers
             OperationId = "Login",
             Tags = new[] {"auth"}
         )]
-        public async Task<ActionResult<AuthResultViewModel>> Login([FromBody] LoginCommand command,
+        public async Task<ActionResult<AuthResultDto>> Login([FromBody] LoginCommand command,
             CancellationToken cancellationToken)
         {
             var authResult = await _mediator.Send(command, cancellationToken);
@@ -67,7 +67,7 @@ namespace Audiochan.API.Controllers
             OperationId = "RefreshAccessToken",
             Tags = new[] {"auth"}
         )]
-        public async Task<ActionResult<AuthResultViewModel>> Refresh([FromBody] RefreshTokenCommand command,
+        public async Task<ActionResult<AuthResultDto>> Refresh([FromBody] RefreshTokenCommand command,
             CancellationToken cancellationToken)
         {
             var authResult = await _mediator.Send(command, cancellationToken);
