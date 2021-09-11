@@ -72,10 +72,9 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             var result = await SendAsync(new GetAudioQuery(audio.Id));
 
             // Act
-            var (cacheExists, cacheResult) = await GetCache<AudioDto>(CacheKeys.Audio.GetAudio(audio.Id));
+            var cacheResult = await GetCache<AudioDto>(CacheKeys.Audio.GetAudio(audio.Id));
             
             // Assert
-            cacheExists.Should().BeTrue();
             cacheResult.Should().NotBeNull();
             cacheResult.Should().BeOfType<AudioDto>();
             cacheResult!.Title.Should().Be(result!.Title);

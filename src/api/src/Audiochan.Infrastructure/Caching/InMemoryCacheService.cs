@@ -17,65 +17,89 @@ namespace Audiochan.Infrastructure.Caching
             _cache = new MemoryCache(memoryCacheOptions.Value);
         }
         
-        public Task<(bool cacheExists, TResponse? response)> GetAsync<TResponse>(string key, CancellationToken cancellationToken = default)
+        public Task<TResponse?> GetAsync<TResponse>(string key, CancellationToken cancellationToken = default)
         {
-            _cache.TryGetValue<TResponse?>(key, out var response);
-            return Task.FromResult((response is not null, response));
+            return Task.FromResult(Get<TResponse>(key));
         }
 
-        public async Task<(bool cacheExists, TResponse? response)> GetAsync<TResponse>(ICacheOptions cacheOptions, CancellationToken cancellationToken = default)
+        public Task<TResponse?> GetAsync<TResponse>(ICacheOptions cacheOptions, CancellationToken cancellationToken = default)
         {
-            return await GetAsync<TResponse>(cacheOptions.Key, cancellationToken);
+            return Task.FromResult(Get<TResponse>(cacheOptions.Key));
         }
 
         public Task<bool> SetAsync<TValue>(string key, TValue value, TimeSpan? expiration = null,
             CancellationToken cancellationToken = default)
         {
-            try
-            {
-                _cache.Set(key, value, expiration ?? TimeSpan.Zero);
-                return Task.FromResult(true);
-            }
-            catch (Exception)
-            {
-                return Task.FromResult(false);
-            }
+            return Task.FromResult(Set(key, value, expiration));
         }
 
-        public async Task<bool> SetAsync<TValue>(TValue value, ICacheOptions cacheOptions, CancellationToken cancellationToken = default)
+        public Task<bool> SetAsync<TValue>(TValue value, ICacheOptions cacheOptions, CancellationToken cancellationToken = default)
         {
-            return await SetAsync(cacheOptions.Key, value, cacheOptions.Expiration, cancellationToken);
+            return Task.FromResult(Set(cacheOptions.Key, value, cacheOptions.Expiration));
         }
 
         public Task<bool> RemoveAsync(string key, CancellationToken cancellationToken = default)
         {
+            return Task.FromResult(Remove(key));
+        }
+
+        public Task<bool> RemoveAsync(ICacheOptions cacheOptions, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(Remove(cacheOptions.Key));
+        }
+
+        public Task<long> IncrementAsync(string key, long value, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(Increment(key, value));
+        }
+
+        public Task<long> IncrementAsync(long value, ICacheOptions cacheOptions, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(Increment(cacheOptions.Key, value));
+        }
+        
+        private TResponse? Get<TResponse>(string key)
+        {
+            return _cache.TryGetValue<TResponse>(key, out var response)
+                ? response
+                : default;
+        }
+
+        private bool Set<TValue>(string key, TValue value, TimeSpan? expiration = null)
+        {
+            try
+            {
+                _cache.Set(key, value, expiration ?? TimeSpan.Zero);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private bool Remove(string key)
+        {
             try
             {
                 _cache.Remove(key);
-                return Task.FromResult(true);
+                return true;
             }
-            catch (Exception)
+            catch
             {
-                return Task.FromResult(false);
+                return false;
             }
         }
 
-        public async Task<bool> RemoveAsync(ICacheOptions cacheOptions, CancellationToken cancellationToken = default)
+        private long Increment(string key, long value = 1)
         {
-            return await RemoveAsync(cacheOptions.Key, cancellationToken);
-        }
+            if (_cache.TryGetValue<long>(key, out var val))
+            {
+                value += val;
+            }
 
-        public async Task<long> Increment(string key, long value = 1, CancellationToken cancellationToken = default)
-        {
-            var (_, val) = await GetAsync<long>(key, cancellationToken);
-            val += value;
-            await SetAsync(key, val, cancellationToken: cancellationToken);
-            return val;
-        }
-
-        public async Task<long> Increment(long value, ICacheOptions cacheOptions, CancellationToken cancellationToken = default)
-        {
-            return await Increment(cacheOptions.Key, value, cancellationToken);
+            _cache.Set(key, value);
+            return value;
         }
     }
 }

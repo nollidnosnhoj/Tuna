@@ -17,17 +17,19 @@ namespace Audiochan.Infrastructure.Caching
             _cache = connectionMultiplexer.GetDatabase();
         }
 
-        public async Task<(bool cacheExists, TResponse? response)> GetAsync<TResponse>(string key, CancellationToken cancellationToken = default)
+        public async Task<TResponse?> GetAsync<TResponse>(string key, CancellationToken cancellationToken = default)
         {
-            var value = (string?)await _cache.StringGetAsync((RedisKey) key);
-            var exists = value is not null;
-            var response = exists 
-                ?  JsonSerializer.Deserialize<TResponse>(value!)
-                : default;
-            return (exists, response);
+            var value = await _cache.StringGetAsync(key);
+            
+            if (value.IsNull)
+            {
+                return default;
+            }
+
+            return (TResponse)value.Box();
         }
 
-        public async Task<(bool cacheExists, TResponse? response)> GetAsync<TResponse>(ICacheOptions cacheOptions, CancellationToken cancellationToken = default)
+        public async Task<TResponse?> GetAsync<TResponse>(ICacheOptions cacheOptions, CancellationToken cancellationToken = default)
         {
             return await GetAsync<TResponse>(cacheOptions.Key, cancellationToken);
         }
@@ -54,14 +56,14 @@ namespace Audiochan.Infrastructure.Caching
             return await RemoveAsync(cacheOptions.Key, cancellationToken);
         }
 
-        public async Task<long> Increment(string key, long value = 1, CancellationToken cancellationToken = default)
+        public async Task<long> IncrementAsync(string key, long value, CancellationToken cancellationToken = default)
         {
             return await _cache.StringIncrementAsync(key, value);
         }
 
-        public async Task<long> Increment(long value, ICacheOptions cacheOptions, CancellationToken cancellationToken = default)
+        public async Task<long> IncrementAsync(long value, ICacheOptions cacheOptions, CancellationToken cancellationToken = default)
         {
-            return await Increment(cacheOptions.Key, value, cancellationToken);
+            return await IncrementAsync(cacheOptions.Key, value, cancellationToken);
         }
     }
 }

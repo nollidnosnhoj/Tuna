@@ -190,7 +190,7 @@ namespace Audiochan.Core.IntegrationTests
             });
         }
 
-        public static Task<(bool, TResponse?)> GetCache<TResponse>(string key)
+        public static Task<TResponse?> GetCache<TResponse>(string key)
         {
             return ExecuteScopeAsync(sp =>
             {
