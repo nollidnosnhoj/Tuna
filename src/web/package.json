@@ -14,7 +14,7 @@
     "axios-auth-refresh": "^3.1.0",
     "cookie": "^0.4.1",
     "cross-env": "^7.0.3",
-    "dayjs": "^1.10.6",
+    "dayjs": "^1.10.7",
     "framer-motion": "^4.1.17",
     "lodash": "^4.17.21",
     "next": "^11.1.2",
