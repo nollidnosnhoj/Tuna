@@ -4,6 +4,7 @@ using Audiochan.Core.Audios;
 using Audiochan.Core.Auth.GetCurrentUser;
 using Audiochan.Core.Common.Mappings;
 using Audiochan.Core.Playlists;
+using Audiochan.Core.Playlists.GetPlaylistAudios;
 using Audiochan.Core.Users;
 using Audiochan.Core.Users.GetFollowers;
 using Audiochan.Core.Users.GetFollowings;
@@ -44,6 +45,7 @@ namespace Audiochan.Core.UnitTests.Mappings
         [InlineData(typeof(User), typeof(CurrentUserDto))]
         [InlineData(typeof(FollowedUser), typeof(FollowingViewModel))]
         [InlineData(typeof(FollowedUser), typeof(FollowerViewModel))]
+        [InlineData(typeof(PlaylistAudio), typeof(PlaylistAudioDto))]
         public void ShouldSupportMappingFromSourceToDestination(Type source, Type destination)
         {
             var instance = GetInstanceOf(source);

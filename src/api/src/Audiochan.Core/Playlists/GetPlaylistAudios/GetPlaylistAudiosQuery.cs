@@ -9,13 +9,13 @@ using MediatR;
 
 namespace Audiochan.Core.Playlists.GetPlaylistAudios
 {
-    public record GetPlaylistAudiosQuery(long Id) : IHasCursorPage<long>, IRequest<CursorPagedListDto<AudioDto, long>>
+    public record GetPlaylistAudiosQuery(long Id) : IHasCursorPage<long>, IRequest<CursorPagedListDto<PlaylistAudioDto, long>>
     {
         public long Cursor { get; init; }
         public int Size { get; init; }
     }
 
-    public class GetPlaylistAudiosQueryHandler : IRequestHandler<GetPlaylistAudiosQuery, CursorPagedListDto<AudioDto, long>>
+    public class GetPlaylistAudiosQueryHandler : IRequestHandler<GetPlaylistAudiosQuery, CursorPagedListDto<PlaylistAudioDto, long>>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly long _currentUserId;
@@ -26,10 +26,10 @@ namespace Audiochan.Core.Playlists.GetPlaylistAudios
             _currentUserId = currentUserService.GetUserId();
         }
 
-        public async Task<CursorPagedListDto<AudioDto, long>> Handle(GetPlaylistAudiosQuery request, CancellationToken cancellationToken)
+        public async Task<CursorPagedListDto<PlaylistAudioDto, long>> Handle(GetPlaylistAudiosQuery request, CancellationToken cancellationToken)
         {
             var results = await _unitOfWork.Audios.GetPlaylistAudios(request, cancellationToken);
-            return new CursorPagedListDto<AudioDto, long>(results, request.Size);
+            return new CursorPagedListDto<PlaylistAudioDto, long>(results, request.Size);
         }
     }
 }

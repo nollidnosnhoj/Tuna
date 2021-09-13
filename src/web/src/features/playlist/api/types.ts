@@ -14,6 +14,11 @@ export interface Playlist {
   user: MetaAuthor;
 }
 
+export interface PlaylistAudio {
+  id: number;
+  audio: AudioView;
+}
+
 export interface PlaylistRequest {
   title: string;
   description?: string;

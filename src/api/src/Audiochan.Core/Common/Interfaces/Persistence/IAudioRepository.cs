@@ -10,7 +10,7 @@ namespace Audiochan.Core.Common.Interfaces.Persistence
 {
     public interface IAudioRepository : IEntityRepository<Audio>
     {
-        Task<List<AudioDto>> GetPlaylistAudios(GetPlaylistAudiosQuery query, CancellationToken cancellationToken = default);
+        Task<List<PlaylistAudioDto>> GetPlaylistAudios(GetPlaylistAudiosQuery query, CancellationToken cancellationToken = default);
         Task<List<AudioDto>> GetUserFavoriteAudios(GetUserFavoriteAudiosQuery query,
             CancellationToken cancellationToken = default);
     }

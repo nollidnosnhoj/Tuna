@@ -22,14 +22,13 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
         {
         }
 
-        public async Task<List<AudioDto>> GetPlaylistAudios(GetPlaylistAudiosQuery query, CancellationToken cancellationToken = default)
+        public async Task<List<PlaylistAudioDto>> GetPlaylistAudios(GetPlaylistAudiosQuery query, CancellationToken cancellationToken = default)
         {
-            return await DbContext.Playlists
+            return await DbContext.PlaylistAudios
                 .Where(p => p.Id == query.Id)
                 .AsNoTracking()
-                .SelectMany(p => p.Audios)
                 .OrderByDescending(a => a.Id)
-                .ProjectTo<AudioDto>(Mapper.ConfigurationProvider)
+                .ProjectTo<PlaylistAudioDto>(Mapper.ConfigurationProvider)
                 .CursorPaginateAsync(query.Cursor, query.Size, cancellationToken);
         }
 
