@@ -1,4 +1,6 @@
-﻿namespace Audiochan.Domain.Entities
+﻿using System;
+
+namespace Audiochan.Domain.Entities
 {
     public class PlaylistAudio
     {
@@ -7,5 +9,7 @@
         public Playlist Playlist { get; set; } = null!;
         public long AudioId { get; set; }
         public Audio Audio { get; set; } = null!;
+        
+        public DateTime AddedBy { get; set; }
     }
 }

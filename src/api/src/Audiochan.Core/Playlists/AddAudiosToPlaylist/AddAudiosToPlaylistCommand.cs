@@ -45,12 +45,15 @@ namespace Audiochan.Core.Playlists.AddAudiosToPlaylist
     public class AddAudiosToPlaylistCommandHandler : IRequestHandler<AddAudiosToPlaylistCommand, Result>
     {
         private readonly ICurrentUserService _currentUserService;
+        private readonly IDateTimeProvider _dateTimeProvider;
         private readonly IUnitOfWork _unitOfWork;
 
-        public AddAudiosToPlaylistCommandHandler(ICurrentUserService currentUserService, IUnitOfWork unitOfWork)
+        public AddAudiosToPlaylistCommandHandler(ICurrentUserService currentUserService, IUnitOfWork unitOfWork, 
+            IDateTimeProvider dateTimeProvider)
         {
             _currentUserService = currentUserService;
             _unitOfWork = unitOfWork;
+            _dateTimeProvider = dateTimeProvider;
         }
 
         public async Task<Result> Handle(AddAudiosToPlaylistCommand request, CancellationToken cancellationToken)
@@ -73,8 +76,8 @@ namespace Audiochan.Core.Playlists.AddAudiosToPlaylist
             {
                 return Result.BadRequest("AudioIds are invalid.");
             }
-            
-            playlist.AddAudios(request.AudioIds);
+
+            playlist.AddAudios(request.AudioIds, _dateTimeProvider.Now);
             
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 

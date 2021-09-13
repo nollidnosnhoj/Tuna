@@ -27,7 +27,7 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
             return await DbContext.PlaylistAudios
                 .Where(p => p.Id == query.Id)
                 .AsNoTracking()
-                .OrderByDescending(a => a.Id)
+                .OrderByDescending(a => a.AddedBy)
                 .ProjectTo<PlaylistAudioDto>(Mapper.ConfigurationProvider)
                 .CursorPaginateAsync(query.Cursor, query.Size, cancellationToken);
         }

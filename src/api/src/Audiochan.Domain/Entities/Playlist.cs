@@ -29,14 +29,15 @@ namespace Audiochan.Domain.Entities
         public ICollection<PlaylistAudio> PlaylistAudios { get; set; }
         public ICollection<Tag> Tags { get; set; }
 
-        public void AddAudios(IEnumerable<long> audioIds)
+        public void AddAudios(IEnumerable<long> audioIds, DateTime addedDate)
         {
             foreach (var audioId in audioIds)
             {
                 this.PlaylistAudios.Add(new PlaylistAudio
                 {
                     PlaylistId = this.Id,
-                    AudioId = audioId
+                    AudioId = audioId,
+                    AddedBy = addedDate,
                 });
             }
         }
