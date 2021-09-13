@@ -2,6 +2,7 @@ import { useCallback } from "react";
 import { QueryKey, useMutation, useQuery, useQueryClient } from "react-query";
 import { useUser } from "~/features/user/hooks";
 import request from "~/lib/http";
+import { ID } from "~/lib/types";
 
 type UseFollowResult = {
   isFollowing?: boolean;
@@ -9,15 +10,12 @@ type UseFollowResult = {
   isLoading: boolean;
 };
 
-export const IS_FOLLOWING_QUERY_KEY = (userId: number): QueryKey => [
+export const IS_FOLLOWING_QUERY_KEY = (userId: ID): QueryKey => [
   "isFollowing",
   userId,
 ];
 
-export function useFollow(
-  userId: number,
-  initialData?: boolean
-): UseFollowResult {
+export function useFollow(userId: ID, initialData?: boolean): UseFollowResult {
   const { user } = useUser();
   const queryClient = useQueryClient();
 

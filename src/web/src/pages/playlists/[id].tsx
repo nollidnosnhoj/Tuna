@@ -1,5 +1,5 @@
 import { GetServerSideProps } from "next";
-import React from "react";
+import React, { useMemo } from "react";
 import Page from "~/components/Page";
 import AudioList from "~/features/audio/components/List";
 import { useGetPlaylist } from "~/features/playlist/api/hooks";
@@ -7,10 +7,11 @@ import { useGetPlaylistAudios } from "~/features/playlist/api/hooks/useGetPlayli
 import { Playlist } from "~/features/playlist/api/types";
 import PlaylistDetails from "~/features/playlist/components/Details";
 import request from "~/lib/http";
+import { ID } from "~/lib/types";
 
 interface PlaylistPageProps {
   playlist: Playlist;
-  playlistId: number;
+  playlistId: ID;
 }
 
 export const getServerSideProps: GetServerSideProps<PlaylistPageProps> = async (
@@ -18,13 +19,7 @@ export const getServerSideProps: GetServerSideProps<PlaylistPageProps> = async (
 ) => {
   const { req, res, params } = context;
   try {
-    const id = parseInt(params?.id as string, 10);
-
-    if (isNaN(id)) {
-      return {
-        notFound: true,
-      };
-    }
+    const id = params?.id as string;
 
     const { data } = await request<Playlist>({
       method: "GET",
@@ -56,12 +51,17 @@ export default function PlaylistPage({
   });
   const { items: playlistAudios } = useGetPlaylistAudios(playlist?.id);
 
+  const audios = useMemo(
+    () => playlistAudios.map((x) => x.audio),
+    [playlistAudios]
+  );
+
   if (!playlist) return null;
 
   return (
     <Page title="Playlist">
       <PlaylistDetails playlist={playlist} />
-      <AudioList audios={playlistAudios} context={`playlist:${playlist.id}`} />
+      <AudioList audios={audios} context={`playlist:${playlist.id}`} />
     </Page>
   );
 }

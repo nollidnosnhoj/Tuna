@@ -11,12 +11,12 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 import { useAddToPlaylist } from "~/lib/stores";
+import { ID } from "~/lib/types";
 import { errorToast, toast } from "~/utils";
 import { useAddAudiosToPlaylist } from "../../api/hooks";
-import { PlaylistId } from "../../api/types";
 
 interface DuplicateAudiosModalProps {
-  playlistId: PlaylistId;
+  playlistId: ID;
   onModalClose: () => void;
 }
 
@@ -31,7 +31,7 @@ export default function DuplicateAudiosModal({
 
   const handleSubmitAfterDuplicateCheck = async () => {
     const input = {
-      id: playlistId,
+      playlistId,
       audioIds: selectedIds,
     };
     await addToPlaylistAsync(input, {

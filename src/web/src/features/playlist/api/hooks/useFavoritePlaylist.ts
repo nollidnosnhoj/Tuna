@@ -2,6 +2,7 @@ import { useCallback } from "react";
 import { QueryKey, useMutation, useQuery, useQueryClient } from "react-query";
 import { useUser } from "~/features/user/hooks";
 import request from "~/lib/http";
+import { ID } from "~/lib/types";
 
 type UseFavoriteAudioResult = {
   isFavorite?: boolean;
@@ -9,12 +10,13 @@ type UseFavoriteAudioResult = {
   isLoading: boolean;
 };
 
-export const IS_FAVORITE_PLAYLIST_QUERY_KEY = (
-  playlistId: string
-): QueryKey => ["isFavoritePlaylist", playlistId];
+export const IS_FAVORITE_PLAYLIST_QUERY_KEY = (playlistId: ID): QueryKey => [
+  "isFavoritePlaylist",
+  playlistId,
+];
 
 export function useFavoritePlaylist(
-  playlistId: string,
+  playlistId: ID,
   initialData?: boolean
 ): UseFavoriteAudioResult {
   const { user } = useUser();

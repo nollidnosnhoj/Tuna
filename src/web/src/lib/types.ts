@@ -1,5 +1,7 @@
+export type ID = string | number;
+
 export type MetaAuthor = {
-  id: number;
+  id: ID;
   userName: string;
   picture?: string;
 };

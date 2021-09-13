@@ -3,11 +3,11 @@ import React from "react";
 import { FaHeart } from "react-icons/fa";
 import { useUser } from "~/features/user/hooks";
 import { useFavoriteAudio } from "../../api/hooks";
-import { AudioId } from "../../api/types";
 import { ButtonProps } from "@chakra-ui/react";
+import { ID } from "~/lib/types";
 
 interface AudioFavoriteButtonProps extends ButtonProps {
-  audioId: AudioId;
+  audioId: ID;
   isFavorite?: boolean;
 }
 

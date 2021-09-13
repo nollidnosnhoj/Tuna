@@ -1,11 +1,11 @@
-import { AudioId } from "~/features/audio/api/types";
 import request from "~/lib/http";
+import { ID } from "~/lib/types";
 
 export async function checkDuplicatedAudiosRequest(
-  id: number,
-  audioIds: AudioId[]
-): Promise<AudioId[]> {
-  const { data } = await request<AudioId[]>({
+  id: ID,
+  audioIds: ID[]
+): Promise<ID[]> {
+  const { data } = await request<ID[]>({
     method: "post",
     url: `playlists/${id}/audios/duplicate`,
     data: {

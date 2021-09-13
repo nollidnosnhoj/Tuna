@@ -1,6 +1,6 @@
 import { Box, Flex, Heading, Stack, chakra } from "@chakra-ui/react";
 import Router from "next/router";
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import Link from "~/components/UI/Link";
 import { useUser } from "~/features/user/hooks";
 import PictureController from "~/components/Picture";
@@ -16,7 +16,11 @@ interface PlaylistDetailsProps {
 
 const PlaylistDetails: React.FC<PlaylistDetailsProps> = ({ playlist }) => {
   const setNewQueue = useAudioQueue((state) => state.setNewQueue);
-  const { items: audios } = useGetPlaylistAudios(playlist.id);
+  const { items: playlistAudios } = useGetPlaylistAudios(playlist.id);
+  const audios = useMemo(
+    () => playlistAudios.map((x) => x.audio),
+    [playlistAudios]
+  );
   const { user: currentUser } = useUser();
 
   const playPlaylist = useCallback(async () => {

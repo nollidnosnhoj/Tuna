@@ -7,15 +7,15 @@ import {
   UseInfiniteCursorPaginationReturnType,
 } from "~/lib/hooks";
 import request from "~/lib/http";
-import { CursorPagedList } from "~/lib/types";
-import { PlaylistAudio, PlaylistId } from "../types";
+import { CursorPagedList, ID } from "~/lib/types";
+import { PlaylistAudio } from "../types";
 
 export const GET_PLAYLIST_AUDIOS_KEY = (
-  id: PlaylistId | undefined
-): QueryKey => ["playlist_audios", id];
+  playlistId: ID | undefined
+): QueryKey => ["playlist_audios", playlistId];
 
 export function useGetPlaylistAudios(
-  id: PlaylistId | undefined,
+  playlistId: ID | undefined,
   options: UseInfiniteCursorPaginationOptions<PlaylistAudio> = {}
 ): UseInfiniteCursorPaginationReturnType<PlaylistAudio> {
   const fetcher = useCallback(
@@ -24,21 +24,21 @@ export function useGetPlaylistAudios(
     ): Promise<CursorPagedList<PlaylistAudio>> {
       const { data } = await request<CursorPagedList<PlaylistAudio>>({
         method: "GET",
-        url: `playlists/${id}/audios`,
+        url: `playlists/${playlistId}/audios`,
         params: {
           offset,
         },
       });
       return data;
     },
-    [id]
+    [playlistId]
   );
 
   return useInfiniteCursorPagination<PlaylistAudio>(
-    GET_PLAYLIST_AUDIOS_KEY(id),
+    GET_PLAYLIST_AUDIOS_KEY(playlistId),
     fetcher,
     {
-      enabled: !!id,
+      enabled: !!playlistId,
       ...options,
     }
   );

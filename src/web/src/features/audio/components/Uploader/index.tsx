@@ -14,9 +14,10 @@ import { useEffect } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { useNavigationLock } from "~/lib/hooks";
+import { ID } from "~/lib/types";
 import { errorToast, toast, validationMessages } from "~/utils";
 import { useCreateAudio } from "../../api/hooks";
-import { AudioId, CreateAudioRequest } from "../../api/types";
+import { CreateAudioRequest } from "../../api/types";
 import AudioForm from "../Form";
 import AudioDropzone from "./Dropzone";
 
@@ -49,7 +50,7 @@ const validationSchema: yup.SchemaOf<CreateAudioRequest> = yup
 
 export default function AudioUploader() {
   const router = useRouter();
-  const [audioId, setAudioId] = useState<AudioId>(0);
+  const [audioId, setAudioId] = useState<ID>(0);
   const { mutateAsync: createAudio, isLoading: isCreatingAudio } =
     useCreateAudio();
   const formMethods = useForm<CreateAudioRequest>({

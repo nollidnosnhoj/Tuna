@@ -7,32 +7,36 @@ import {
   UseQueryResult,
 } from "react-query";
 import request from "~/lib/http";
-import { ErrorResponse } from "~/lib/types";
+import { ErrorResponse, ID } from "~/lib/types";
 import { AudioView } from "../types";
 
-export const GET_AUDIO_QUERY_BYSLUG_KEY = (slug: string): QueryKey => [
+export const GET_AUDIO_QUERY_BYSLUG_KEY = (audioSlug: string): QueryKey => [
   "audios",
-  slug,
+  audioSlug,
 ];
-export const GET_AUDIO_QUERY_KEY = (id: number): QueryKey => ["audios", id];
+
+export const GET_AUDIO_QUERY_KEY = (audioId: ID): QueryKey => [
+  "audios",
+  audioId,
+];
 
 type UseGetAudioQueryOptions = UseQueryOptions<AudioView, ErrorResponse>;
 
 export function useGetAudio(
-  slug: string,
+  audioSlug: string,
   options: UseGetAudioQueryOptions = {}
 ): UseQueryResult<AudioView, ErrorResponse> {
   const queryClient = useQueryClient();
   const fetcher = useCallback(async () => {
     const { data } = await request<AudioView>({
       method: "get",
-      url: `audios/${slug}`,
+      url: `audios/${audioSlug}`,
     });
     return data;
-  }, [slug]);
+  }, [audioSlug]);
 
   return useQuery<AudioView, ErrorResponse>(
-    GET_AUDIO_QUERY_BYSLUG_KEY(slug),
+    GET_AUDIO_QUERY_BYSLUG_KEY(audioSlug),
     fetcher,
     {
       ...options,

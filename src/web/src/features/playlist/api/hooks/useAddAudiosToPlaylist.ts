@@ -1,11 +1,10 @@
 import { useMutation, UseMutationResult } from "react-query";
-import { AudioId } from "~/features/audio/api/types";
 import request from "~/lib/http";
-import { PlaylistId } from "../types";
+import { ID } from "~/lib/types";
 
 type UseAddAudiosToPlaylistInputs = {
-  id: PlaylistId;
-  audioIds: AudioId[];
+  playlistId: ID;
+  audioIds: ID[];
 };
 
 export function useAddAudiosToPlaylist(): UseMutationResult<
@@ -17,10 +16,10 @@ export function useAddAudiosToPlaylist(): UseMutationResult<
   const handler = async (
     inputs: UseAddAudiosToPlaylistInputs
   ): Promise<void> => {
-    const { id, audioIds } = inputs;
+    const { playlistId, audioIds } = inputs;
     await request({
       method: "put",
-      url: `playlists/${id}/audios`,
+      url: `playlists/${playlistId}/audios`,
       data: {
         audioIds,
       },

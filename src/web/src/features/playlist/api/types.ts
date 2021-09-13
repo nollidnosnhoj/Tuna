@@ -1,11 +1,8 @@
-import { MetaAuthor } from "~/lib/types";
-import { AudioId, AudioView } from "../../audio/api/types";
-
-export type PlaylistId = number;
-export type PlaylistAudioId = number;
+import { ID, MetaAuthor } from "~/lib/types";
+import { AudioView } from "../../audio/api/types";
 
 export interface Playlist {
-  id: PlaylistId;
+  id: ID;
   title: string;
   description: string;
   picture?: string;
@@ -26,5 +23,5 @@ export interface PlaylistRequest {
 }
 
 export interface CreatePlaylistRequest extends PlaylistRequest {
-  audioIds: AudioId[];
+  audioIds: ID[];
 }

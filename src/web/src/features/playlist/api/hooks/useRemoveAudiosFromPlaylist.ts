@@ -1,23 +1,23 @@
 import { useCallback } from "react";
 import { useMutation, UseMutationResult } from "react-query";
 import request from "~/lib/http";
-import { PlaylistAudioId, PlaylistId } from "../types";
+import { ID } from "~/lib/types";
 
 export function useRemoveAudiosFromPlaylist(
-  id: PlaylistId
-): UseMutationResult<void, unknown, PlaylistAudioId[]> {
+  playlistId: ID
+): UseMutationResult<void, unknown, ID[]> {
   const handler = useCallback(
-    async (audioIds: PlaylistAudioId[]) => {
+    async (audioIds: ID[]) => {
       await request({
         method: "delete",
-        url: `playlists/${id}/audios`,
+        url: `playlists/${playlistId}/audios`,
         data: {
           playlistAudioIds: audioIds,
         },
       });
     },
-    [id]
+    [playlistId]
   );
 
-  return useMutation<void, unknown, PlaylistAudioId[]>(handler);
+  return useMutation<void, unknown, ID[]>(handler);
 }

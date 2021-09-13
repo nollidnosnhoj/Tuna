@@ -3,8 +3,8 @@ import { QueryKey, useMutation, useQuery, useQueryClient } from "react-query";
 import { GET_YOUR_FAV_AUDIOS_KEY } from "~/features/auth/api/hooks/useYourFavoriteAudios";
 import { useUser } from "~/features/user/hooks";
 import request from "~/lib/http";
+import { ID } from "~/lib/types";
 import { errorToast } from "~/utils";
-import { AudioId } from "../types";
 
 type UseFavoriteAudioResult = {
   isFavorite?: boolean;
@@ -12,13 +12,13 @@ type UseFavoriteAudioResult = {
   isLoading: boolean;
 };
 
-export const IS_FAVORITE_AUDIO_QUERY_KEY = (audioId: AudioId): QueryKey => [
+export const IS_FAVORITE_AUDIO_QUERY_KEY = (audioId: ID): QueryKey => [
   "isFavoriteAudio",
   audioId,
 ];
 
 export function useFavoriteAudio(
-  audioId: AudioId,
+  audioId: ID,
   initialData?: boolean
 ): UseFavoriteAudioResult {
   const { user } = useUser();

@@ -1,9 +1,7 @@
-import { MetaAuthor } from "~/lib/types";
-
-export type AudioId = number;
+import { ID, MetaAuthor } from "~/lib/types";
 
 export interface AudioView {
-  id: AudioId;
+  id: ID;
   title: string;
   slug: string;
   description: string;

@@ -19,6 +19,7 @@ import React from "react";
 import { useState } from "react";
 import { useYourPlaylists } from "~/features/auth/api/hooks";
 import { useAddToPlaylist } from "~/lib/stores";
+import { ID } from "~/lib/types";
 import { toast } from "~/utils";
 import { checkDuplicatedAudiosRequest } from "../../api";
 import { useAddAudiosToPlaylist } from "../../api/hooks";
@@ -27,7 +28,7 @@ import DuplicateAudiosModal from "./DuplicateAudiosModal";
 
 export default function AddToPlaylistModal() {
   const { open, addDups, closeDialog, selectedIds } = useAddToPlaylist();
-  const [playlistId, setPlaylistId] = useState(0);
+  const [playlistId, setPlaylistId] = useState<ID>(0);
   const [createPlaylist, setCreatePlaylist] = useState(false);
 
   const {
@@ -51,16 +52,19 @@ export default function AddToPlaylistModal() {
     fetchNextPage();
   };
 
-  const handleSubmit = async (id: number) => {
+  const handleSubmit = async (playlistId: ID) => {
     try {
-      setPlaylistId(id);
-      const dupIds = await checkDuplicatedAudiosRequest(id, selectedIds);
+      setPlaylistId(playlistId);
+      const dupIds = await checkDuplicatedAudiosRequest(
+        playlistId,
+        selectedIds
+      );
       if (dupIds.length > 0) {
         return addDups(dupIds);
       }
 
       const input = {
-        id,
+        playlistId,
         audioIds: selectedIds,
       };
 

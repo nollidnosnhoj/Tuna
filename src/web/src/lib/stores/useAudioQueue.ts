@@ -1,6 +1,7 @@
 import create from "zustand";
-import { AudioId, AudioView } from "~/features/audio/api/types";
+import { AudioView } from "~/features/audio/api/types";
 import { mapAudiosForAudioQueue } from "~/utils";
+import { ID } from "../types";
 import { useAudioPlayer as audioPlayerStore } from "./useAudioPlayer";
 
 export enum REPEAT_MODE {
@@ -11,10 +12,10 @@ export enum REPEAT_MODE {
 
 export type AudioQueueItem = {
   queueId: string;
-  audioId: AudioId;
+  audioId: ID;
   title: string;
   artist: string;
-  artistId: number;
+  artistId: ID;
   duration: number;
   cover: string;
   source: string;
@@ -32,7 +33,7 @@ interface UseAudioQueueState {
   playNext: () => void;
   playPrevious: () => void;
   removeFromQueue: (context: string, index: number) => Promise<void>;
-  removeAudioFromQueue: (audioId: AudioId) => Promise<void>;
+  removeAudioFromQueue: (audioId: ID) => Promise<void>;
   setNewQueue: (
     context: string,
     queue: AudioView[],

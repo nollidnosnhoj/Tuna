@@ -1,27 +1,28 @@
 import { useCallback } from "react";
 import { useMutation, UseMutationResult, useQueryClient } from "react-query";
 import request from "~/lib/http";
-import { Playlist, PlaylistId, PlaylistRequest } from "../types";
+import { ID } from "~/lib/types";
+import { Playlist, PlaylistRequest } from "../types";
 import { GET_PLAYLIST_KEY } from "./useGetPlaylist";
 
-export function useEditPlaylist(id: PlaylistId): UseMutationResult<Playlist> {
+export function useEditPlaylist(playlistId: ID): UseMutationResult<Playlist> {
   const qc = useQueryClient();
 
   const mutate = useCallback(
     async (input: PlaylistRequest) => {
       const { data } = await request({
         method: "put",
-        url: `playlists/${id}`,
+        url: `playlists/${playlistId}`,
         data: input,
       });
       return data;
     },
-    [id]
+    [playlistId]
   );
 
   return useMutation(mutate, {
     onSuccess: (data) => {
-      qc.setQueryData<Playlist>(GET_PLAYLIST_KEY(id), data);
+      qc.setQueryData<Playlist>(GET_PLAYLIST_KEY(playlistId), data);
     },
   });
 }
