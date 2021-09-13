@@ -30,7 +30,7 @@ namespace Audiochan.API.Controllers.Me
             _currentUserId = currentUserService.GetUserId();
         }
         
-        [HttpGet]
+        [HttpGet(Name = "YourAudios")]
         [Produces("application/json")]
         [ProducesResponseType(200)]
         [SwaggerOperation(
@@ -51,13 +51,13 @@ namespace Audiochan.API.Controllers.Me
             return Ok(result);
         }
         
-        [HttpGet("feed", Name = "GetAuthenticatedUserFeed")]
+        [HttpGet("feed", Name = "YourAudioFeed")]
         [Produces("application/json")]
         [ProducesResponseType(200)]
         [SwaggerOperation(
             Summary = "Returns a list of tracks uploaded by authenticated user's followings.",
             Description = "Requires authentication.",
-            OperationId = "GetYourFeed",
+            OperationId = "YourAudioFeed",
             Tags = new[] {"me"}
         )]
         public async Task<ActionResult<PagedListDto<AudioDto>>> GetYourFeed(

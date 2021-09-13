@@ -1,7 +1,11 @@
+using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.API.Extensions;
 using Audiochan.Core.Common.Interfaces.Services;
+using Audiochan.Core.Common.Models.Pagination;
+using Audiochan.Core.Playlists;
 using Audiochan.Core.Users.CheckIfPlaylistFavorited;
 using Audiochan.Core.Users.SetFavoritePlaylist;
 using MediatR;
@@ -25,7 +29,7 @@ namespace Audiochan.API.Controllers.Me
             _mediator = mediator;
             _currentUserId = currentUserService.GetUserId();
         }
-        
+
         [HttpHead("{playlistId:long}", Name = "CheckIfUserFavoritedPlaylist")]
         [SwaggerOperation(
             Summary = "Check if the authenticated user favorited a playlist",

@@ -30,7 +30,7 @@ namespace Audiochan.API.Controllers.Me
             _currentUserId = currentUserService.GetUserId();
         }
         
-        [HttpGet]
+        [HttpGet(Name = "YourFavoriteAudios")]
         [SwaggerOperation(
             Summary = "Get Your favorite audios",
             Description = "Requires authentication.",
@@ -81,14 +81,14 @@ namespace Audiochan.API.Controllers.Me
                 : result.ReturnErrorResponse();
         }
 
-        [HttpDelete("{audioId:long}", Name = "UnfavoriteAudio")]
+        [HttpDelete("{audioId:long}", Name = "UnFavoriteAudio")]
         [SwaggerOperation(
-            Summary = "Unfavorite an audio",
+            Summary = "UnFavorite an audio",
             Description = "Requires authentication.",
-            OperationId = "UnfavoriteAudio",
+            OperationId = "UnFavoriteAudio",
             Tags = new[] {"me"}
         )]
-        public async Task<IActionResult> UnfavoriteAudio(long audioId, CancellationToken cancellationToken)
+        public async Task<IActionResult> UnFavoriteAudio(long audioId, CancellationToken cancellationToken)
         {
             var command = new SetFavoriteAudioCommand(audioId, _currentUserId, false);
             var result = await _mediator.Send(command, cancellationToken);
