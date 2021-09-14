@@ -21,11 +21,13 @@ interface AudioMiscMenuProps
   extends ButtonSizeType,
     ButtonVariantType,
     MenuPlacementType {
-  items: { title?: string; items: ContextMenuItem[] }[];
+  items: ContextMenuGroup[];
   icon?: JSX.Element;
 }
 
-type ContextMenuItem = {
+export type ContextMenuGroup = { title?: string; items: ContextMenuItem[] };
+
+export type ContextMenuItem = {
   name: string;
   isVisible: boolean;
   icon?: React.ReactElement<any, string | React.JSXElementConstructor<any>>;

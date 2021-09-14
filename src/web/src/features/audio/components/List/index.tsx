@@ -1,6 +1,6 @@
 import { Box, List, ListItem, chakra } from "@chakra-ui/react";
 import React, { useCallback } from "react";
-import AudioStackMiniItem from "./StackItem";
+import AudioStackMiniItem from "./Item";
 import { AudioView } from "~/features/audio/api/types";
 import { useAudioPlayer, useAudioQueue } from "~/lib/stores";
 
@@ -53,6 +53,7 @@ export default function AudioList(props: AudioListProps) {
                   audio={audio}
                   isActive={isAudioPlaying(audio)}
                   onPlayClick={() => onPlayClick(audio, index)}
+                  actions={["addToPlaylist", "favorite", "share"]}
                 />
               </ListItem>
             ))}
