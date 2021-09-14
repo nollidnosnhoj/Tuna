@@ -5,6 +5,7 @@ import {
   Stack,
   useColorModeValue,
   chakra,
+  useDisclosure,
 } from "@chakra-ui/react";
 import Router from "next/router";
 import React, { useEffect } from "react";
@@ -16,7 +17,11 @@ import AudioPlayButton from "../Buttons/Play";
 import AudioFavoriteButton from "../Buttons/Favorite";
 import PictureController from "~/components/Picture";
 import { useAddAudioPicture, useRemoveAudioPicture } from "../../api/hooks";
-import AudioMiscMenu from "../ContextMenu";
+import AudioMiscMenu from "../../../../components/UI/ContextMenu";
+import { useAudioQueue } from "~/lib/stores";
+import { MdQueueMusic } from "react-icons/md";
+import { EditIcon } from "@chakra-ui/icons";
+import AudioEditDrawer from "../Edit";
 
 interface AudioDetailProps {
   audio: AudioView;
@@ -25,6 +30,13 @@ interface AudioDetailProps {
 const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
   const secondaryColor = useColorModeValue("black.300", "gray.300");
   const { user: currentUser } = useUser();
+  const addToQueue = useAudioQueue((state) => state.addToQueue);
+
+  const {
+    isOpen: isEditOpen,
+    onOpen: onEditOpen,
+    onClose: onEditClose,
+  } = useDisclosure();
 
   const { mutateAsync: addPictureAsync, isLoading: isAddingPicture } =
     useAddAudioPicture(audio.id);
@@ -74,8 +86,33 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
         <Stack direction="row" alignItems="center">
           <AudioPlayButton audio={audio} size="lg" />
           <AudioFavoriteButton audioId={audio.id} size="lg" />
-          <AudioMiscMenu audio={audio} size="lg" />
+          <AudioMiscMenu
+            size="lg"
+            items={[
+              {
+                items: [
+                  {
+                    name: "Edit",
+                    isVisible: audio.user.id === currentUser?.id,
+                    onClick: onEditOpen,
+                    icon: <EditIcon />,
+                  },
+                  {
+                    name: "Add to Queue",
+                    isVisible: true,
+                    icon: <MdQueueMusic />,
+                    onClick: async () => await addToQueue("custom", [audio]),
+                  },
+                ],
+              },
+            ]}
+          />
         </Stack>
+        <AudioEditDrawer
+          audio={audio}
+          isOpen={isEditOpen}
+          onClose={onEditClose}
+        />
       </Box>
     </Flex>
   );

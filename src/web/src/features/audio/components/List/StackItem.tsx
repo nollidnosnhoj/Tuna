@@ -11,11 +11,12 @@ import { FaPause, FaPlay } from "react-icons/fa";
 import Link from "~/components/UI/Link";
 import { AudioView } from "~/features/audio/api/types";
 import { formatDuration } from "~/utils/format";
-import AudioMiscMenu from "../ContextMenu";
-import { useAudioPlayer } from "~/lib/stores";
+import AudioMiscMenu from "../../../../components/UI/ContextMenu";
+import { useAudioPlayer, useAudioQueue } from "~/lib/stores";
 import AudioFavoriteButton from "../Buttons/Favorite";
 import AddToPlaylistButton from "../Buttons/AddToPlaylist";
 import AudioShareButton from "../Buttons/Share";
+import { MdQueueMusic } from "react-icons/md";
 
 export interface AudioListItemProps {
   audio: AudioView;
@@ -30,6 +31,7 @@ const AudioStackItem: React.FC<AudioListItemProps> = ({
   children,
 }) => {
   const isPlaying = useAudioPlayer((state) => state.isPlaying);
+  const addToQueue = useAudioQueue((state) => state.addToQueue);
   const [hoverItem, setHoverItem] = useState(false);
   const hoverBg = useColorModeValue("inherit", "whiteAlpha.200");
 
@@ -82,7 +84,20 @@ const AudioStackItem: React.FC<AudioListItemProps> = ({
           isFavorite={audio.isFavorited}
         />
         <AudioShareButton audio={audio} />
-        <AudioMiscMenu audio={audio} />
+        <AudioMiscMenu
+          items={[
+            {
+              items: [
+                {
+                  name: "Add to Queue",
+                  isVisible: true,
+                  icon: <MdQueueMusic />,
+                  onClick: async () => await addToQueue("custom", [audio]),
+                },
+              ],
+            },
+          ]}
+        />
       </Stack>
     </Box>
   );
