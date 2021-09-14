@@ -39,7 +39,7 @@ namespace Audiochan.Core.Audios.GetAudio
             var audio = await _cacheService
                 .GetAsync<AudioDto>(cacheOptions, cancellationToken);
 
-            if (audio is null) return null;
+            if (audio is not null) return audio;
 
             audio = await _unitOfWork.Audios.GetFirstAsync<AudioDto>(new GetAudioSpecification(query.Id), cancellationToken);
 
