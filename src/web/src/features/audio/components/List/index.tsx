@@ -1,46 +1,18 @@
 import { Box, List, ListItem, chakra } from "@chakra-ui/react";
-import React, { useCallback } from "react";
+import React from "react";
 import AudioStackMiniItem from "./Item";
 import { AudioView } from "~/features/audio/api/types";
 import { useAudioPlayer, useAudioQueue } from "~/lib/stores";
 
 type AudioListProps = {
   audios: AudioView[];
-  context?: string;
 };
 
 export default function AudioList(props: AudioListProps) {
-  const { audios, context = "custom" } = props;
-  const [isPlaying, setIsPlaying] = useAudioPlayer((state) => [
-    state.isPlaying,
-    state.setIsPlaying,
-  ]);
+  const { audios } = props;
+  const [isPlaying] = useAudioPlayer((state) => [state.isPlaying]);
 
-  const {
-    context: queueContext,
-    current: currentAudio,
-    setNewQueue,
-    setPlayIndex,
-  } = useAudioQueue();
-
-  const isAudioPlaying = useCallback(
-    (audio: AudioView) =>
-      currentAudio !== undefined && currentAudio?.audioId === audio.id,
-    [currentAudio?.queueId]
-  );
-
-  const onPlayClick = useCallback(
-    (audio: AudioView, index: number) => {
-      if (isAudioPlaying(audio)) {
-        setIsPlaying(!isPlaying);
-      } else if (queueContext === context) {
-        setPlayIndex(index);
-      } else {
-        setNewQueue(context, audios, index);
-      }
-    },
-    [isAudioPlaying, audios, isPlaying, context, queueContext]
-  );
+  const { current: currentAudio } = useAudioQueue();
 
   return (
     <Box>
@@ -48,11 +20,11 @@ export default function AudioList(props: AudioListProps) {
         <React.Fragment>
           <List>
             {audios.map((audio, index) => (
-              <ListItem key={index}>
+              <ListItem key={`${index}.${audio.slug}.${audio.id}`}>
                 <AudioStackMiniItem
                   audio={audio}
-                  isActive={isAudioPlaying(audio)}
-                  onPlayClick={() => onPlayClick(audio, index)}
+                  index={index}
+                  isPlaying={currentAudio?.audioId === audio.id && isPlaying}
                   actions={["addToPlaylist", "favorite", "share"]}
                 />
               </ListItem>

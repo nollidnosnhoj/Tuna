@@ -23,10 +23,10 @@ import RemoveFromPlaylistButton from "../Buttons/RemoveFromPlaylist";
 
 export interface AudioListItemProps {
   audio: AudioView;
+  index: number;
   playlist?: Playlist;
   playlistAudioId?: ID;
-  isActive?: boolean;
-  onPlayClick?: () => void;
+  isPlaying?: boolean;
   actions?: ActionChoice[];
 }
 
@@ -38,14 +38,29 @@ type ActionChoice =
 
 const AudioStackItem: React.FC<AudioListItemProps> = ({
   audio,
+  index,
   playlist,
   playlistAudioId,
-  onPlayClick,
-  isActive,
+  isPlaying,
   actions = [],
 }) => {
-  const isPlaying = useAudioPlayer((state) => state.isPlaying);
-  const addToQueue = useAudioQueue((state) => state.addToQueue);
+  const setIsPlaying = useAudioPlayer((state) => state.setIsPlaying);
+  const { currentAudioPlaying, addToQueue, setNewQueue } = useAudioQueue(
+    (state) => ({
+      currentAudioPlaying: state.current,
+      addToQueue: state.addToQueue,
+      setNewQueue: state.setNewQueue,
+    })
+  );
+
+  const clickPlayButton = useCallback(() => {
+    if (currentAudioPlaying?.audioId === audio.id) {
+      setIsPlaying(!isPlaying);
+    } else {
+      setNewQueue("custom", [audio], 0);
+    }
+  }, [audio, isPlaying, currentAudioPlaying?.queueId]);
+
   const [hoverItem, setHoverItem] = useState(false);
   const hoverBg = useColorModeValue("inherit", "whiteAlpha.200");
 
@@ -101,9 +116,9 @@ const AudioStackItem: React.FC<AudioListItemProps> = ({
           display="flex"
           size="md"
           isRound
-          icon={isPlaying && isActive ? <FaPause /> : <FaPlay />}
+          icon={isPlaying ? <FaPause /> : <FaPlay />}
           aria-label="Play"
-          onClick={onPlayClick}
+          onClick={clickPlayButton}
         />
       </Flex>
       <Flex flex={2} align="center" marginX={4}>
@@ -147,4 +162,7 @@ const AudioStackItem: React.FC<AudioListItemProps> = ({
   );
 };
 
-export default memo(AudioStackItem);
+export default memo(
+  AudioStackItem,
+  (prev, next) => prev.isPlaying === next.isPlaying
+);
