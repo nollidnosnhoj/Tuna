@@ -11,7 +11,6 @@ type AudioListProps = {
 export default function AudioList(props: AudioListProps) {
   const { audios } = props;
   const [isPlaying] = useAudioPlayer((state) => [state.isPlaying]);
-
   const { current: currentAudio } = useAudioQueue();
 
   return (

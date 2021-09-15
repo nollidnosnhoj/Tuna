@@ -26,7 +26,7 @@ export default function TagAudioPage() {
           Showing '{tag}' audios
         </Heading>
       )}
-      <AudioList audios={audios} context={`tags:${tag}`} />
+      <AudioList audios={audios} />
       <InfiniteListControls
         fetchNext={fetchNextPage}
         hasNext={hasNextPage}

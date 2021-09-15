@@ -11,7 +11,7 @@ export default function YourAudiosPage() {
   return (
     <Page title="Your audios" requiresAuth>
       <Heading>Your audios</Heading>
-      <AudioList audios={items} context={`me`} />
+      <AudioList audios={items} />
       <InfiniteListControls
         hasNext={hasNextPage}
         fetchNext={fetchNextPage}

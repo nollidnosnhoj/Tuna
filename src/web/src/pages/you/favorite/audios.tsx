@@ -12,7 +12,7 @@ export default function YourAudiosPage() {
   return (
     <Page title="Your Favorite audios" requiresAuth>
       <Heading>Your Favorite Audios</Heading>
-      <AudioList audios={items} context={`me_favorites`} />
+      <AudioList audios={items} />
       <InfiniteListControls
         hasNext={hasNextPage}
         fetchNext={fetchNextPage}

@@ -1,11 +1,10 @@
 import { GetServerSideProps } from "next";
-import React, { useMemo } from "react";
+import React from "react";
 import Page from "~/components/Page";
-import AudioList from "~/features/audio/components/List";
 import { useGetPlaylist } from "~/features/playlist/api/hooks";
-import { useGetPlaylistAudios } from "~/features/playlist/api/hooks/useGetPlaylistAudios";
 import { Playlist } from "~/features/playlist/api/types";
 import PlaylistDetails from "~/features/playlist/components/Details";
+import PlaylistAudioList from "~/features/playlist/components/PlaylistAudioList";
 import request from "~/lib/http";
 import { ID } from "~/lib/types";
 
@@ -49,19 +48,13 @@ export default function PlaylistPage({
     enabled: !!playlistId,
     initialData: initPlaylist,
   });
-  const { items: playlistAudios } = useGetPlaylistAudios(playlist?.id);
-
-  const audios = useMemo(
-    () => playlistAudios.map((x) => x.audio),
-    [playlistAudios]
-  );
 
   if (!playlist) return null;
 
   return (
     <Page title="Playlist">
       <PlaylistDetails playlist={playlist} />
-      <AudioList audios={audios} context={`playlist:${playlist.id}`} />
+      <PlaylistAudioList playlistId={playlist.id} />
     </Page>
   );
 }

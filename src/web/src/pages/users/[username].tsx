@@ -83,10 +83,7 @@ export default function UserProfileNextPage(props: ProfilePageProps) {
           <TabPanel>
             <Box>
               <Box marginBottom={4}>
-                <AudioList
-                  audios={latestAudios}
-                  context={`users:${profile.userName}`}
-                />
+                <AudioList audios={latestAudios} />
               </Box>
               {latestAudios.length > 0 && (
                 <NextLink href={`/users/${profile.userName}/audios`}>
@@ -98,10 +95,7 @@ export default function UserProfileNextPage(props: ProfilePageProps) {
           <TabPanel>
             <Box>
               <Box marginBottom={4}>
-                <AudioList
-                  audios={latestFavoriteAudios}
-                  context={`user_favorites:${profile.userName}`}
-                />
+                <AudioList audios={latestFavoriteAudios} />
               </Box>
               {latestFavoriteAudios.length > 0 && (
                 <NextLink href={`/users/${profile.userName}/favorite/audios`}>
