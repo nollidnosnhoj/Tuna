@@ -15,15 +15,12 @@ namespace Audiochan.Infrastructure.Persistence
     public class ApplicationDbContext : DbContext
     {
         private readonly IDateTimeProvider _dateTimeProvider;
-        private readonly IRandomIdGenerator _randomIdGenerator;
-        private IDbContextTransaction? _currentTransaction;
 
         public ApplicationDbContext(DbContextOptions options,
             IDateTimeProvider dateTimeProvider, 
             IRandomIdGenerator randomIdGenerator) : base(options)
         {
             _dateTimeProvider = dateTimeProvider;
-            _randomIdGenerator = randomIdGenerator;
         }
 
         public DbSet<Audio> Audios { get; set; } = null!;
@@ -55,51 +52,6 @@ namespace Audiochan.Infrastructure.Persistence
             builder.HasPostgresExtension("uuid-ossp");
             builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
             RenameToSnakeCase(builder);
-        }
-
-        public void BeginTransaction()
-        {
-            if (_currentTransaction != null)
-                return;
-
-            _currentTransaction = Database.BeginTransaction(IsolationLevel.ReadCommitted);
-        }
-
-        public void CommitTransaction()
-        {
-            try
-            {
-                _currentTransaction?.Commit();
-            }
-            catch
-            {
-                RollbackTransaction();
-                throw;
-            }
-            finally
-            {
-                if (_currentTransaction != null)
-                {
-                    _currentTransaction.Dispose();
-                    _currentTransaction = null;
-                }
-            }
-        }
-
-        public void RollbackTransaction()
-        {
-            try
-            {
-                _currentTransaction?.Rollback();
-            }
-            finally
-            {
-                if (_currentTransaction != null)
-                {
-                    _currentTransaction.Dispose();
-                    _currentTransaction = null;
-                }
-            }
         }
 
         private void HandleAuditedEntities()
