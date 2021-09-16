@@ -83,7 +83,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             var cacheResult = await GetCache<AudioDto>(CacheKeys.Audio.GetAudio(audio.Id));
             
             // Assert
-            cacheResult.Should().NotBeNull();
+            cacheResult.Should().BeNull();
         }
     }
 }
