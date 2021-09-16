@@ -25,7 +25,7 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
         public async Task<List<PlaylistAudioDto>> GetPlaylistAudios(GetPlaylistAudiosQuery query, CancellationToken cancellationToken = default)
         {
             return await DbContext.PlaylistAudios
-                .Where(p => p.Id == query.Id)
+                .Where(p => p.PlaylistId == query.Id)
                 .AsNoTracking()
                 .OrderByDescending(a => a.AddedBy)
                 .ProjectTo<PlaylistAudioDto>(Mapper.ConfigurationProvider)

@@ -36,7 +36,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Playlists
 
             response.Should().NotBeNull();
             response.Items.Count.Should().Be(audios.Count);
-            response.Items.Should().BeOfType<List<AudioDto>>();
+            response.Items.Should().BeOfType<List<PlaylistAudioDto>>();
         }
     }
 }
