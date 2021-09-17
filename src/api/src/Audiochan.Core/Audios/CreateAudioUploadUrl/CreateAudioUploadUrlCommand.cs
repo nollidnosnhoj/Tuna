@@ -33,17 +33,17 @@ namespace Audiochan.Core.Audios.CreateAudioUploadUrl
     public class CreateAudioUploadUrlCommandHandler 
         : IRequestHandler<CreateAudioUploadUrlCommand, Result<CreateAudioUploadUrlResponse>>
     {
-        private readonly IAuthService _authService;
+        private readonly ICurrentUserService _currentUserService;
         private readonly IRandomIdGenerator _randomIdGenerator;
         private readonly IStorageService _storageService;
         private readonly AudioStorageSettings _audioStorageSettings;
         
-        public CreateAudioUploadUrlCommandHandler(IAuthService authService,
+        public CreateAudioUploadUrlCommandHandler(ICurrentUserService currentUserService,
             IRandomIdGenerator randomIdGenerator,
             IStorageService storageService,
             IOptions<MediaStorageSettings> mediaStorageSettings)
         {
-            _authService = authService;
+            _currentUserService = currentUserService;
             _randomIdGenerator = randomIdGenerator;
             _storageService = storageService;
             _audioStorageSettings = mediaStorageSettings.Value.Audio;
@@ -52,7 +52,7 @@ namespace Audiochan.Core.Audios.CreateAudioUploadUrl
         public async Task<Result<CreateAudioUploadUrlResponse>> Handle(CreateAudioUploadUrlCommand command, 
             CancellationToken cancellationToken)
         {
-            if (!_authService.TryGetUserId(out var userId))
+            if (!_currentUserService.TryGetUserId(out var userId))
                 return Result<CreateAudioUploadUrlResponse>.Unauthorized();
 
             var (url, uploadId) = await CreateUploadUrl(command.FileName, userId);

@@ -20,10 +20,10 @@ namespace Audiochan.Core.Playlists.GetPlaylistAudios
         private readonly IUnitOfWork _unitOfWork;
         private readonly long _currentUserId;
 
-        public GetPlaylistAudiosQueryHandler(IUnitOfWork unitOfWork, IAuthService authService)
+        public GetPlaylistAudiosQueryHandler(IUnitOfWork unitOfWork, ICurrentUserService currentUserService)
         {
             _unitOfWork = unitOfWork;
-            _currentUserId = authService.GetUserId();
+            _currentUserId = currentUserService.GetUserId();
         }
 
         public async Task<CursorPagedListDto<PlaylistAudioDto, long>> Handle(GetPlaylistAudiosQuery request, CancellationToken cancellationToken)

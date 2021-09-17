@@ -1,13 +1,7 @@
-﻿using System.Threading.Tasks;
-using Audiochan.Core.Auth.GetCurrentUser;
-
-namespace Audiochan.Core.Common.Interfaces.Services
+﻿namespace Audiochan.Core.Common.Interfaces.Services
 {
-    public interface IAuthService
+    public interface ICurrentUserService
     {
-        Task SignIn(CurrentUserDto user);
-        Task SignOut();
-        
         /// <summary>
         /// Gets the user id from the claims
         /// </summary>

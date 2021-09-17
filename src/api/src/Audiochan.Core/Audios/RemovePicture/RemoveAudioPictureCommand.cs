@@ -14,15 +14,15 @@ namespace Audiochan.Core.Audios.RemovePicture
     
     public class RemoveAudioPictureCommandHandler : IRequestHandler<RemoveAudioPictureCommand, Result>
     {
-        private readonly IAuthService _authService;
+        private readonly ICurrentUserService _currentUserService;
         private readonly IImageService _imageService;
         private readonly ICacheService _cacheService;
         private readonly IUnitOfWork _unitOfWork;
 
-        public RemoveAudioPictureCommandHandler(IAuthService authService, 
+        public RemoveAudioPictureCommandHandler(ICurrentUserService currentUserService, 
             IImageService imageService, ICacheService cacheService, IUnitOfWork unitOfWork)
         {
-            _authService = authService;
+            _currentUserService = currentUserService;
             _imageService = imageService;
             _cacheService = cacheService;
             _unitOfWork = unitOfWork;
@@ -30,7 +30,7 @@ namespace Audiochan.Core.Audios.RemovePicture
 
         public async Task<Result> Handle(RemoveAudioPictureCommand request, CancellationToken cancellationToken)
         {
-            var currentUserId = _authService.GetUserId();
+            var currentUserId = _currentUserService.GetUserId();
 
             var audio = await _unitOfWork.Audios.FindAsync(request.AudioId, cancellationToken);
 

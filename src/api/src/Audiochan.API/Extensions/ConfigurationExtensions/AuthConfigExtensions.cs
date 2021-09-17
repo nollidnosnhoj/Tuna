@@ -29,7 +29,7 @@ namespace Audiochan.API.Extensions.ConfigurationExtensions
                         : CookieSecurePolicy.None;
                 });
 
-            services.AddTransient<IAuthService, AuthService>();
+            services.AddTransient<ICurrentUserService, CurrentUserService>();
 
             return services;
         }

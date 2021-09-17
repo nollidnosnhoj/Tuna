@@ -44,21 +44,21 @@ namespace Audiochan.Core.Playlists.AddAudiosToPlaylist
 
     public class AddAudiosToPlaylistCommandHandler : IRequestHandler<AddAudiosToPlaylistCommand, Result>
     {
-        private readonly IAuthService _authService;
+        private readonly ICurrentUserService _currentUserService;
         private readonly IDateTimeProvider _dateTimeProvider;
         private readonly IUnitOfWork _unitOfWork;
 
-        public AddAudiosToPlaylistCommandHandler(IAuthService authService, IUnitOfWork unitOfWork, 
+        public AddAudiosToPlaylistCommandHandler(ICurrentUserService currentUserService, IUnitOfWork unitOfWork, 
             IDateTimeProvider dateTimeProvider)
         {
-            _authService = authService;
+            _currentUserService = currentUserService;
             _unitOfWork = unitOfWork;
             _dateTimeProvider = dateTimeProvider;
         }
 
         public async Task<Result> Handle(AddAudiosToPlaylistCommand request, CancellationToken cancellationToken)
         {
-            var currentUserId = _authService.GetUserId();
+            var currentUserId = _currentUserService.GetUserId();
             var spec = new LoadPlaylistForAudioAdditionSpecification(request.PlaylistId);
             var playlist = await _unitOfWork.Playlists.GetFirstAsync(spec, cancellationToken);
 

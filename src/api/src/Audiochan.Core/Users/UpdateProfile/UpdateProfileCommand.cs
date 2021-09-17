@@ -29,9 +29,9 @@ namespace Audiochan.Core.Users.UpdateProfile
         private readonly long _currentUserId;
         private readonly IUnitOfWork _unitOfWork;
 
-        public UpdateProfileCommandHandler(IAuthService authService, IUnitOfWork unitOfWork)
+        public UpdateProfileCommandHandler(ICurrentUserService currentUserService, IUnitOfWork unitOfWork)
         {
-            _currentUserId = authService.GetUserId();
+            _currentUserId = currentUserService.GetUserId();
             _unitOfWork = unitOfWork;
         }
 

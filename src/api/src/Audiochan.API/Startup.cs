@@ -51,7 +51,7 @@ namespace Audiochan.API
             services.ConfigureAuthentication(Environment);
             services.ConfigureAuthorization();
             services.AddHttpContextAccessor();
-            services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.ConfigureControllers(jsonSerializerOptions);
             services.ConfigureRouting();
             services.ConfigureRateLimiting(Configuration);

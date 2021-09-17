@@ -81,9 +81,9 @@ namespace Audiochan.Core.Playlists.UpdatePlaylistDetails
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public UpdatePlaylistDetailsCommandHandler(IAuthService authService, IUnitOfWork unitOfWork, IMapper mapper)
+        public UpdatePlaylistDetailsCommandHandler(ICurrentUserService currentUserService, IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _currentUserId = authService.GetUserId();
+            _currentUserId = currentUserService.GetUserId();
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }

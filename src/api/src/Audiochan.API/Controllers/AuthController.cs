@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Security.Claims;
+using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.API.Extensions;
 using Audiochan.Core.Auth.GetCurrentUser;
@@ -6,6 +7,8 @@ using Audiochan.Core.Auth.Login;
 using Audiochan.Core.Auth.Register;
 using Audiochan.Core.Common.Interfaces.Services;
 using MediatR;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -16,12 +19,12 @@ namespace Audiochan.API.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IMediator _mediator;
-        private readonly IAuthService _authService;
+        private readonly IDateTimeProvider _dateTime;
 
-        public AuthController(IMediator mediator, IAuthService authService)
+        public AuthController(IMediator mediator, IDateTimeProvider dateTime)
         {
             _mediator = mediator;
-            _authService = authService;
+            _dateTime = dateTime;
         }
 
         [HttpPost("login", Name = "Login")]
@@ -44,7 +47,16 @@ namespace Audiochan.API.Controllers
 
             var user = loginResult.Data!;
 
-            await _authService.SignIn(user);
+            Claim[] claims = {
+                new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new(ClaimTypes.Name, user.UserName),
+                new(ClaimTypes.Email, user.Email)
+            };
+            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var principal = new ClaimsPrincipal(identity);
+            var properties = new AuthenticationProperties { ExpiresUtc = _dateTime.Now.AddDays(14) };
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, properties);
+            HttpContext.User = principal;
 
             return Ok(user);
         }
@@ -74,7 +86,7 @@ namespace Audiochan.API.Controllers
         [SwaggerOperation(Summary = "Logout user", OperationId = "Logout", Tags = new[]{"auth"})]
         public async Task<IActionResult> Logout()
         {
-            await _authService.SignOut();
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return Ok();
         }
     }

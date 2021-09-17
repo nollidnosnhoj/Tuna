@@ -21,11 +21,11 @@ namespace Audiochan.API.Controllers.Me
         private readonly long _currentUserId;
         private readonly string _currentUsername;
 
-        public PlaylistsController(IAuthService authService, IMediator mediator)
+        public PlaylistsController(ICurrentUserService currentUserService, IMediator mediator)
         {
             _mediator = mediator;
-            _currentUsername = authService.GetUsername();
-            _currentUserId = authService.GetUserId();
+            _currentUsername = currentUserService.GetUsername();
+            _currentUserId = currentUserService.GetUserId();
         }
 
         [HttpGet(Name="GetYourPlaylists")]

@@ -78,18 +78,18 @@ namespace Audiochan.Core.Audios.UpdateAudio
 
     public class UpdateAudioCommandHandler : IRequestHandler<UpdateAudioCommand, Result<AudioDto>>
     {
-        private readonly IAuthService _authService;
+        private readonly ICurrentUserService _currentUserService;
         private readonly ICacheService _cacheService;
         private readonly ISlugGenerator _slugGenerator;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public UpdateAudioCommandHandler(IAuthService authService, 
+        public UpdateAudioCommandHandler(ICurrentUserService currentUserService, 
             ICacheService cacheService, 
             ISlugGenerator slugGenerator, 
             IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _authService = authService;
+            _currentUserService = currentUserService;
             _cacheService = cacheService;
             _slugGenerator = slugGenerator;
             _unitOfWork = unitOfWork;
@@ -99,7 +99,7 @@ namespace Audiochan.Core.Audios.UpdateAudio
         public async Task<Result<AudioDto>> Handle(UpdateAudioCommand command,
             CancellationToken cancellationToken)
         {
-            var currentUserId = _authService.GetUserId();
+            var currentUserId = _currentUserService.GetUserId();
 
             var audio = await _unitOfWork.Audios
                 .GetFirstAsync(new LoadAudioForUpdateSpecification(command.AudioId), cancellationToken);

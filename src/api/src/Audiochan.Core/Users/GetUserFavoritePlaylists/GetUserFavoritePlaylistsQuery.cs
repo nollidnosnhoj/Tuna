@@ -28,10 +28,10 @@ namespace Audiochan.Core.Users.GetUserFavoritePlaylists
         private readonly IUnitOfWork _dbContext;
         private readonly long _currentUserId;
 
-        public GetUserFavoritePlaylistsQueryHandler(IUnitOfWork dbContext, IAuthService authService)
+        public GetUserFavoritePlaylistsQueryHandler(IUnitOfWork dbContext, ICurrentUserService currentUserService)
         {
             _dbContext = dbContext;
-            _currentUserId = authService.GetUserId();
+            _currentUserId = currentUserService.GetUserId();
         }
 
         public async Task<OffsetPagedListDto<PlaylistDto>> Handle(GetUserFavoritePlaylistsQuery request, 

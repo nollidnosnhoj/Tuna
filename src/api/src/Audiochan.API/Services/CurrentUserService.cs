@@ -8,36 +8,15 @@ using Microsoft.AspNetCore.Http;
 
 namespace Audiochan.API.Services
 {
-    public class AuthService : IAuthService
+    public class CurrentUserService : ICurrentUserService
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IDateTimeProvider _dateTime;
 
-        public AuthService(IHttpContextAccessor httpContextAccessor, IDateTimeProvider dateTimeProvider)
+        public CurrentUserService(IHttpContextAccessor httpContextAccessor, IDateTimeProvider dateTimeProvider)
         {
             _httpContextAccessor = httpContextAccessor;
             _dateTime = dateTimeProvider;
-        }
-
-        public async Task SignIn(CurrentUserDto user)
-        {
-            var httpContext = _httpContextAccessor.HttpContext;
-            Claim[] claims = {
-                new(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new(ClaimTypes.Name, user.UserName),
-                new(ClaimTypes.Email, user.Email)
-            };
-            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            var principal = new ClaimsPrincipal(identity);
-            var properties = new AuthenticationProperties { ExpiresUtc = _dateTime.Now.AddDays(14) };
-            await httpContext!.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, properties);
-            httpContext!.User = principal;
-        }
-
-        public async Task SignOut()
-        {
-            var httpContext = _httpContextAccessor.HttpContext;
-            await httpContext!.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         }
 
         public long GetUserId()

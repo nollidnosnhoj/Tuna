@@ -27,10 +27,10 @@ namespace Audiochan.API.Controllers.Me
         private readonly IMediator _mediator;
         private readonly long _currentUserId;
 
-        public MeController(IAuthService authService, IMediator mediator)
+        public MeController(ICurrentUserService currentUserService, IMediator mediator)
         {
             _mediator = mediator;
-            _currentUserId = authService.GetUserId();
+            _currentUserId = currentUserService.GetUserId();
         }
 
         [HttpHead(Name = "IsAuthenticated")]

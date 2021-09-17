@@ -44,10 +44,10 @@ namespace Audiochan.Core.Users.UpdatePassword
         private readonly IUnitOfWork _unitOfWork;
         private readonly IPasswordHasher _passwordHasher;
 
-        public UpdatePasswordCommandHandler(IAuthService authService, IUnitOfWork unitOfWork, 
+        public UpdatePasswordCommandHandler(ICurrentUserService currentUserService, IUnitOfWork unitOfWork, 
             IPasswordHasher passwordHasher)
         {
-            _currentUserId = authService.GetUserId();
+            _currentUserId = currentUserService.GetUserId();
             _unitOfWork = unitOfWork;
             _passwordHasher = passwordHasher;
         }

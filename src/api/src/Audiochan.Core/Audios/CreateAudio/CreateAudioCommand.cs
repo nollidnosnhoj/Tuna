@@ -70,19 +70,19 @@ namespace Audiochan.Core.Audios.CreateAudio
 
     public class CreateAudioCommandHandler : IRequestHandler<CreateAudioCommand, Result<long>>
     {
-        private readonly IAuthService _authService;
+        private readonly ICurrentUserService _currentUserService;
         private readonly ISlugGenerator _slugGenerator;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IStorageService _storageService;
         private readonly AudioStorageSettings _audioStorageSettings;
 
-        public CreateAudioCommandHandler(IAuthService authService, 
+        public CreateAudioCommandHandler(ICurrentUserService currentUserService, 
             ISlugGenerator slugGenerator,
             IUnitOfWork unitOfWork, 
             IStorageService storageService,
             IOptions<MediaStorageSettings> mediaStorageOptions)
         {
-            _authService = authService;
+            _currentUserService = currentUserService;
             _slugGenerator = slugGenerator;
             _unitOfWork = unitOfWork;
             _storageService = storageService;
@@ -92,7 +92,7 @@ namespace Audiochan.Core.Audios.CreateAudio
         public async Task<Result<long>> Handle(CreateAudioCommand command,
             CancellationToken cancellationToken)
         {
-            if (!_authService.TryGetUserId(out var currentUserId))
+            if (!_currentUserService.TryGetUserId(out var currentUserId))
             {
                 return Result<long>.Unauthorized();
             }
