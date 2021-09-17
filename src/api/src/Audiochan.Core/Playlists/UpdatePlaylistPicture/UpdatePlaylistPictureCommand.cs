@@ -23,13 +23,13 @@ namespace Audiochan.Core.Playlists.UpdatePlaylistPicture
 
         public UpdatePlaylistPictureCommandHandler(IImageService imageService,
             IUnitOfWork unitOfWork, 
-            ICurrentUserService currentUserService, 
+            IAuthService authService, 
             IRandomIdGenerator randomIdGenerator)
         {
             _imageService = imageService;
             _unitOfWork = unitOfWork;
             _randomIdGenerator = randomIdGenerator;
-            _currentUserId = currentUserService.GetUserId();
+            _currentUserId = authService.GetUserId();
         }
         
         public async Task<Result<ImageUploadResponse>> Handle(UpdatePlaylistPictureCommand request, CancellationToken cancellationToken)

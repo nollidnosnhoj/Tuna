@@ -50,18 +50,18 @@ namespace Audiochan.Core.Playlists.CreatePlaylist
     
     public class CreatePlaylistCommandHandler : IRequestHandler<CreatePlaylistCommand, Result<long>>
     {
-        private readonly ICurrentUserService _currentUserService;
+        private readonly IAuthService _authService;
         private readonly IUnitOfWork _unitOfWork;
 
-        public CreatePlaylistCommandHandler(ICurrentUserService currentUserService, IUnitOfWork unitOfWork)
+        public CreatePlaylistCommandHandler(IAuthService authService, IUnitOfWork unitOfWork)
         {
-            _currentUserService = currentUserService;
+            _authService = authService;
             _unitOfWork = unitOfWork;
         }
 
         public async Task<Result<long>> Handle(CreatePlaylistCommand request, CancellationToken cancellationToken)
         {
-            var userId = _currentUserService.GetUserId();
+            var userId = _authService.GetUserId();
 
             var audios = await GetExistingAudios(request.AudioIds, cancellationToken);
             if (audios.Count == 0)

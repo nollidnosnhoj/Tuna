@@ -21,12 +21,12 @@ namespace Audiochan.Core.Users.UpdatePicture
         private readonly IRandomIdGenerator _randomIdGenerator;
 
         public UpdateUserPictureCommandHandler(IImageService imageService,
-            ICurrentUserService currentUserService, 
+            IAuthService authService, 
             IUnitOfWork unitOfWork, 
             IRandomIdGenerator randomIdGenerator)
         {
             _imageService = imageService;
-            _currentUserId = currentUserService.GetUserId();
+            _currentUserId = authService.GetUserId();
             _unitOfWork = unitOfWork;
             _randomIdGenerator = randomIdGenerator;
         }

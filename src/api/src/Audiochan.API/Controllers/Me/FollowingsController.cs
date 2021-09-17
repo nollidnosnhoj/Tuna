@@ -20,10 +20,10 @@ namespace Audiochan.API.Controllers.Me
         private readonly IMediator _mediator;
         private readonly long _currentUserId;
 
-        public FollowingsController(ICurrentUserService currentUserService, IMediator mediator)
+        public FollowingsController(IAuthService authService, IMediator mediator)
         {
             _mediator = mediator;
-            _currentUserId = currentUserService.GetUserId();
+            _currentUserId = authService.GetUserId();
         }
         
         [HttpHead(Name = "CheckIfUserFollowedUser")]

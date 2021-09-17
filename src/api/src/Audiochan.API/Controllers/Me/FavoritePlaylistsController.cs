@@ -24,10 +24,10 @@ namespace Audiochan.API.Controllers.Me
         private readonly IMediator _mediator;
         private readonly long _currentUserId;
 
-        public FavoritePlaylistsController(ICurrentUserService currentUserService, IMediator mediator)
+        public FavoritePlaylistsController(IAuthService authService, IMediator mediator)
         {
             _mediator = mediator;
-            _currentUserId = currentUserService.GetUserId();
+            _currentUserId = authService.GetUserId();
         }
 
         [HttpHead("{playlistId:long}", Name = "CheckIfUserFavoritedPlaylist")]

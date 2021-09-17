@@ -17,18 +17,18 @@ namespace Audiochan.Core.Audios.UpdatePicture
 
     public class UpdateAudioCommandHandler : IRequestHandler<UpdateAudioPictureCommand, Result<ImageUploadResponse>>
     {
-        private readonly ICurrentUserService _currentUserService;
+        private readonly IAuthService _authService;
         private readonly IImageService _imageService;
         private readonly ICacheService _cacheService;
         private readonly IRandomIdGenerator _randomIdGenerator;
         private readonly IUnitOfWork _unitOfWork;
 
-        public UpdateAudioCommandHandler(ICurrentUserService currentUserService,
+        public UpdateAudioCommandHandler(IAuthService authService,
             IImageService imageService,
             ICacheService cacheService, 
             IRandomIdGenerator randomIdGenerator, IUnitOfWork unitOfWork)
         {
-            _currentUserService = currentUserService;
+            _authService = authService;
             _imageService = imageService;
             _cacheService = cacheService;
             _randomIdGenerator = randomIdGenerator;
@@ -38,7 +38,7 @@ namespace Audiochan.Core.Audios.UpdatePicture
         public async Task<Result<ImageUploadResponse>> Handle(UpdateAudioPictureCommand command,
             CancellationToken cancellationToken)
         {
-            var currentUserId = _currentUserService.GetUserId();
+            var currentUserId = _authService.GetUserId();
 
             var audio = await _unitOfWork.Audios.FindAsync(command.AudioId, cancellationToken);
 

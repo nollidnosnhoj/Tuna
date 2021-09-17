@@ -62,9 +62,9 @@ namespace Audiochan.Core.IntegrationTests
 
             #region Register mocks
 
-            var descriptorCurrentUserService = services.FirstOrDefault(d => d.ServiceType == typeof(ICurrentUserService));
+            var descriptorCurrentUserService = services.FirstOrDefault(d => d.ServiceType == typeof(IAuthService));
             services.Remove(descriptorCurrentUserService!);
-            services.AddTransient(_ => CurrentUserServiceMock.Create(_currentUserId, _currentUsername).Object);
+            services.AddTransient(_ => AuthServiceMock.Create(_currentUserId, _currentUsername).Object);
                 
             // var descriptorDateTimeProvider = services.FirstOrDefault(d => d.ServiceType == typeof(IDateTimeProvider));
             // services.Remove(descriptorDateTimeProvider!);

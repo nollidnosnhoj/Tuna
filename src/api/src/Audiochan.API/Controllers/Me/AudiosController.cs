@@ -23,11 +23,11 @@ namespace Audiochan.API.Controllers.Me
         private readonly long _currentUserId;
         private readonly string _currentUsername;
 
-        public MyAudiosController(ICurrentUserService currentUserService, IMediator mediator)
+        public MyAudiosController(IAuthService authService, IMediator mediator)
         {
             _mediator = mediator;
-            _currentUsername = currentUserService.GetUsername();
-            _currentUserId = currentUserService.GetUserId();
+            _currentUsername = authService.GetUsername();
+            _currentUserId = authService.GetUserId();
         }
         
         [HttpGet(Name = "YourAudios")]

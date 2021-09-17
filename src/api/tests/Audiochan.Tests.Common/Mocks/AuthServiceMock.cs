@@ -1,21 +1,24 @@
-﻿using Audiochan.Core.Common.Helpers;
+﻿using Audiochan.Core.Auth.GetCurrentUser;
+using Audiochan.Core.Common.Helpers;
 using Audiochan.Core.Common.Interfaces.Services;
 using Moq;
 
 namespace Audiochan.Tests.Common.Mocks
 {
-    public static class CurrentUserServiceMock
+    public static class AuthServiceMock
     {
         public const long MockUserId = 1996;
         public const string MockUserName = "testuser";
         
-        public static Mock<ICurrentUserService> Create(long userId = 0, string? username = null)
+        public static Mock<IAuthService> Create(long userId = 0, string? username = null)
         {
-            var mock = new Mock<ICurrentUserService>();
+            var mock = new Mock<IAuthService>();
 
             userId = userId <= 0 ? MockUserId : userId;
             username = string.IsNullOrWhiteSpace(username) ? MockUserName : username;
-            
+
+            mock.Setup(x => x.SignIn(It.IsAny<CurrentUserDto>()));
+            mock.Setup(x => x.SignOut());
             mock.Setup(x => x.GetUserId()).Returns(userId);
             mock.Setup(x => x.GetUsername()).Returns(username);
             mock.Setup(x => x.IsAuthenticated()).Returns(true);

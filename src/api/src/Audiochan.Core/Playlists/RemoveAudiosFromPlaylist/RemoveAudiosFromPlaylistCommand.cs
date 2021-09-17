@@ -49,9 +49,9 @@ namespace Audiochan.Core.Playlists.RemoveAudiosFromPlaylist
         private readonly long _currentUserId;
         private readonly IUnitOfWork _unitOfWork;
 
-        public RemoveAudiosFromPlaylistCommandHandler(ICurrentUserService currentUserService, IUnitOfWork unitOfWork)
+        public RemoveAudiosFromPlaylistCommandHandler(IAuthService authService, IUnitOfWork unitOfWork)
         {
-            _currentUserId = currentUserService.GetUserId();
+            _currentUserId = authService.GetUserId();
             _unitOfWork = unitOfWork;
         }
 

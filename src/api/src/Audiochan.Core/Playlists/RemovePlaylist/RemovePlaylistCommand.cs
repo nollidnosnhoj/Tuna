@@ -19,10 +19,10 @@ namespace Audiochan.Core.Playlists.RemovePlaylist
         private readonly IUnitOfWork _unitOfWork;
         private readonly IImageService _imageService;
 
-        public RemovePlaylistCommandHandler(ICurrentUserService currentUserService, IUnitOfWork unitOfWork, 
+        public RemovePlaylistCommandHandler(IAuthService authService, IUnitOfWork unitOfWork, 
             IImageService imageService)
         {
-            _currentUserId = currentUserService.GetUserId();
+            _currentUserId = authService.GetUserId();
             _unitOfWork = unitOfWork;
             _imageService = imageService;
         }

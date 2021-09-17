@@ -23,11 +23,11 @@ namespace Audiochan.API.Controllers.Me
         private readonly long _currentUserId;
         private readonly string _currentUsername;
 
-        public FavoriteAudiosController(ICurrentUserService currentUserService, IMediator mediator)
+        public FavoriteAudiosController(IAuthService authService, IMediator mediator)
         {
             _mediator = mediator;
-            _currentUsername = currentUserService.GetUsername();
-            _currentUserId = currentUserService.GetUserId();
+            _currentUsername = authService.GetUsername();
+            _currentUserId = authService.GetUserId();
         }
         
         [HttpGet(Name = "YourFavoriteAudios")]

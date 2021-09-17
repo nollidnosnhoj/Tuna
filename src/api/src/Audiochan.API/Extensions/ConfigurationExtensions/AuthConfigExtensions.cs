@@ -1,9 +1,16 @@
 ﻿using System;
 using System.Text;
+using Audiochan.API.Services;
 using Audiochan.Core.Common;
+using Audiochan.Core.Common.Interfaces.Services;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Audiochan.API.Extensions.ConfigurationExtensions
@@ -11,35 +18,18 @@ namespace Audiochan.API.Extensions.ConfigurationExtensions
     public static class AuthConfigExtensions
     {
         public static IServiceCollection ConfigureAuthentication(this IServiceCollection services,
-            IConfiguration configuration)
+            IWebHostEnvironment environment)
         {
-            var jwtSetting = new JwtSettings();
-            configuration.GetSection(nameof(JwtSettings)).Bind(jwtSetting);
-
-            var tokenValidationParams = new TokenValidationParameters
-            {
-                ValidateAudience = false,
-                ValidateIssuer = false,
-                ValidateLifetime = true,
-                ValidateIssuerSigningKey = true,
-                ClockSkew = TimeSpan.Zero
-            };
-
-            services.AddSingleton(tokenValidationParams);
-
-            services
-                .AddAuthentication(options =>
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
                 {
-                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                })
-                .AddJwtBearer(options =>
-                {
-                    options.TokenValidationParameters = tokenValidationParams;
-                    options.TokenValidationParameters.IssuerSigningKey =
-                        new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSetting.AccessTokenSecret));
+                    options.Cookie.Name = "auth.cookie";
+                    options.Cookie.SecurePolicy = environment.IsProduction()
+                        ? CookieSecurePolicy.Always
+                        : CookieSecurePolicy.None;
                 });
+
+            services.AddTransient<IAuthService, AuthService>();
 
             return services;
         }
