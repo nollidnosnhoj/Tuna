@@ -6,6 +6,7 @@ using Audiochan.Core.Auth.Login;
 using Audiochan.Core.Auth.Register;
 using Audiochan.Core.Common.Interfaces.Services;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -64,6 +65,17 @@ namespace Audiochan.API.Controllers
             return result.IsSuccess
                 ? Ok()
                 : result.ReturnErrorResponse();
+        }
+
+        [HttpPost("logout")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(401)]
+        [Authorize]
+        [SwaggerOperation(Summary = "Logout user", OperationId = "Logout", Tags = new[]{"auth"})]
+        public async Task<IActionResult> Logout()
+        {
+            await _authService.SignOut();
+            return Ok();
         }
     }
 }
