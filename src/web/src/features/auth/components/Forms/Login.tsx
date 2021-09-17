@@ -4,8 +4,7 @@ import { useForm } from "react-hook-form";
 import TextInput from "~/components/Forms/Inputs/Text";
 import { toast, isAxiosError } from "~/utils";
 import { ErrorResponse } from "~/lib/types";
-import { authenticateRequest } from "../../api";
-import { useUser } from "~/features/user/hooks";
+import { useLogin } from "../../api/hooks";
 
 export type LoginFormValues = {
   login: string;
@@ -18,10 +17,9 @@ interface LoginFormProps {
 }
 
 export default function LoginForm(props: LoginFormProps) {
-  const { refreshUser } = useUser();
   const [error, setError] = useState("");
-
   const formik = useForm<LoginFormValues>();
+  const { mutateAsync: loginAsync } = useLogin();
 
   const {
     handleSubmit,
@@ -32,8 +30,7 @@ export default function LoginForm(props: LoginFormProps) {
 
   const handleLoginSubmit = async (values: LoginFormValues) => {
     try {
-      await authenticateRequest(values);
-      await refreshUser();
+      await loginAsync(values);
       toast("success", { title: "You have logged in successfully. " });
       if (props.onSuccess) props.onSuccess();
     } catch (err) {
@@ -64,7 +61,7 @@ export default function LoginForm(props: LoginFormProps) {
           {...register("login", {
             required: true,
           })}
-          ref={props.initialRef}
+          // ref={props.initialRef}
           label="Username/Email"
           error={errors.login?.message}
           isRequired
