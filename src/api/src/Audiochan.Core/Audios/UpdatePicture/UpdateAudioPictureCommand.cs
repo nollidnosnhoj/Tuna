@@ -8,6 +8,7 @@ using Audiochan.Core.Common.Interfaces.Services;
 using Audiochan.Core.Common.Models;
 using Audiochan.Domain.Entities;
 using MediatR;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace Audiochan.Core.Audios.UpdatePicture
 {
@@ -17,22 +18,21 @@ namespace Audiochan.Core.Audios.UpdatePicture
 
     public class UpdateAudioCommandHandler : IRequestHandler<UpdateAudioPictureCommand, Result<ImageUploadResponse>>
     {
+        private readonly IDistributedCache _cache;
         private readonly ICurrentUserService _currentUserService;
         private readonly IImageService _imageService;
-        private readonly ICacheService _cacheService;
         private readonly IRandomIdGenerator _randomIdGenerator;
         private readonly IUnitOfWork _unitOfWork;
 
         public UpdateAudioCommandHandler(ICurrentUserService currentUserService,
             IImageService imageService,
-            ICacheService cacheService, 
-            IRandomIdGenerator randomIdGenerator, IUnitOfWork unitOfWork)
+            IRandomIdGenerator randomIdGenerator, IUnitOfWork unitOfWork, IDistributedCache cache)
         {
             _currentUserService = currentUserService;
             _imageService = imageService;
-            _cacheService = cacheService;
             _randomIdGenerator = randomIdGenerator;
             _unitOfWork = unitOfWork;
+            _cache = cache;
         }
 
         public async Task<Result<ImageUploadResponse>> Handle(UpdateAudioPictureCommand command,
@@ -63,7 +63,7 @@ namespace Audiochan.Core.Audios.UpdatePicture
             }
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
-            await _cacheService.RemoveAsync(new GetAudioCacheOptions(command.AudioId), cancellationToken);
+            await _cache.RemoveAsync(CacheKeys.Audio.GetAudio(command.AudioId), cancellationToken);
                 
             return Result<ImageUploadResponse>.Success(new ImageUploadResponse
             {

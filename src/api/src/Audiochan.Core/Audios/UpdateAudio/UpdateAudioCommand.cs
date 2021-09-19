@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.Specification;
 using Audiochan.Core.Audios.GetAudio;
+using Audiochan.Core.Common;
 using Audiochan.Core.Common.Interfaces.Persistence;
 using Audiochan.Core.Common.Interfaces.Services;
 using Audiochan.Core.Common.Models;
@@ -10,6 +11,7 @@ using Audiochan.Domain.Entities;
 using AutoMapper;
 using FluentValidation;
 using MediatR;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace Audiochan.Core.Audios.UpdateAudio
 {
@@ -78,22 +80,21 @@ namespace Audiochan.Core.Audios.UpdateAudio
 
     public class UpdateAudioCommandHandler : IRequestHandler<UpdateAudioCommand, Result<AudioDto>>
     {
+        private readonly IDistributedCache _cache;
         private readonly ICurrentUserService _currentUserService;
-        private readonly ICacheService _cacheService;
         private readonly ISlugGenerator _slugGenerator;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
         public UpdateAudioCommandHandler(ICurrentUserService currentUserService, 
-            ICacheService cacheService, 
             ISlugGenerator slugGenerator, 
-            IUnitOfWork unitOfWork, IMapper mapper)
+            IUnitOfWork unitOfWork, IMapper mapper, IDistributedCache cache)
         {
             _currentUserService = currentUserService;
-            _cacheService = cacheService;
             _slugGenerator = slugGenerator;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _cache = cache;
         }
 
         public async Task<Result<AudioDto>> Handle(UpdateAudioCommand command,
@@ -113,7 +114,7 @@ namespace Audiochan.Core.Audios.UpdateAudio
             await UpdateAudioFromCommandAsync(audio, command, cancellationToken);
             _unitOfWork.Audios.Update(audio);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
-            await _cacheService.RemoveAsync(new GetAudioCacheOptions(audio.Id), cancellationToken);
+            await _cache.RemoveAsync(CacheKeys.Audio.GetAudio(command.AudioId), cancellationToken);
             
             return Result<AudioDto>.Success(_mapper.Map<AudioDto>(audio));
         }

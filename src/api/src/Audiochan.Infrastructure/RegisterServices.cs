@@ -1,8 +1,6 @@
 ﻿using Amazon.S3;
 using Audiochan.Core.Common.Interfaces.Persistence;
 using Audiochan.Core.Common.Interfaces.Services;
-using Audiochan.Domain.Entities;
-using Audiochan.Infrastructure.Caching;
 using Audiochan.Infrastructure.Persistence;
 using Audiochan.Infrastructure.Persistence.Repositories;
 using Audiochan.Infrastructure.Persistence.Repositories.Abstractions;
@@ -14,7 +12,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using StackExchange.Redis;
 
 namespace Audiochan.Infrastructure
 {
@@ -64,13 +61,15 @@ namespace Audiochan.Infrastructure
         {
             if (!environment.IsProduction())
             {
-                services.AddSingleton<ICacheService, InMemoryCacheService>();
+                services.AddDistributedMemoryCache();
             }
             else
             {
-                services.AddSingleton<IConnectionMultiplexer>(_ => 
-                    ConnectionMultiplexer.Connect(configuration.GetConnectionString("Redis")));
-                services.AddSingleton<ICacheService, RedisCacheService>();
+                services.AddStackExchangeRedisCache(options =>
+                {
+                    options.Configuration = configuration.GetConnectionString("Redis");
+                    options.InstanceName = "audiochan_redis";
+                });
             }
 
             return services;

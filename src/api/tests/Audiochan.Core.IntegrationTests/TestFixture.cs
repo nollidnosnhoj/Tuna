@@ -4,16 +4,16 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Audiochan.API;
+using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Interfaces.Services;
 using Audiochan.Domain.Entities;
 using Audiochan.Domain.Enums;
-using Audiochan.Infrastructure.Caching;
 using Audiochan.Infrastructure.Persistence;
-using Audiochan.Infrastructure.Storage.File;
 using Audiochan.Tests.Common.Mocks;
 using MediatR;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
@@ -194,8 +194,8 @@ namespace Audiochan.Core.IntegrationTests
         {
             return ExecuteScopeAsync(sp =>
             {
-                var cache = sp.GetService<ICacheService>();
-                return cache?.GetAsync<TResponse>(key) ?? throw new Exception("ICacheService was not registered.");
+                var cache = sp.GetRequiredService<IDistributedCache>();
+                return cache.GetAsync<TResponse>(key);
             });
         }
 

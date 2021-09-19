@@ -7,6 +7,7 @@ using Audiochan.Core.Common.Interfaces.Services;
 using Audiochan.Core.Common.Models;
 using Audiochan.Domain.Entities;
 using MediatR;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace Audiochan.Core.Audios.RemovePicture
 {
@@ -14,18 +15,18 @@ namespace Audiochan.Core.Audios.RemovePicture
     
     public class RemoveAudioPictureCommandHandler : IRequestHandler<RemoveAudioPictureCommand, Result>
     {
+        private readonly IDistributedCache _cache;
         private readonly ICurrentUserService _currentUserService;
         private readonly IImageService _imageService;
-        private readonly ICacheService _cacheService;
         private readonly IUnitOfWork _unitOfWork;
 
         public RemoveAudioPictureCommandHandler(ICurrentUserService currentUserService, 
-            IImageService imageService, ICacheService cacheService, IUnitOfWork unitOfWork)
+            IImageService imageService, IUnitOfWork unitOfWork, IDistributedCache cache)
         {
             _currentUserService = currentUserService;
             _imageService = imageService;
-            _cacheService = cacheService;
             _unitOfWork = unitOfWork;
+            _cache = cache;
         }
 
         public async Task<Result> Handle(RemoveAudioPictureCommand request, CancellationToken cancellationToken)
@@ -46,7 +47,7 @@ namespace Audiochan.Core.Audios.RemovePicture
             audio.Picture = null;
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
-            await _cacheService.RemoveAsync(new GetAudioCacheOptions(request.AudioId), cancellationToken);
+            await _cache.RemoveAsync(CacheKeys.Audio.GetAudio(request.AudioId), cancellationToken);
 
             return Result.Success();
         }
