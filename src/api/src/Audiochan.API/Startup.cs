@@ -30,7 +30,6 @@ namespace Audiochan.API
         {
             services.Configure<AmazonS3Settings>(Configuration.GetSection(nameof(AmazonS3Settings)));
             services.Configure<MediaStorageSettings>(Configuration.GetSection(nameof(MediaStorageSettings)));
-            services.Configure<JwtSettings>(Configuration.GetSection(nameof(JwtSettings)));
             services.Configure<IdentitySettings>(Configuration.GetSection(nameof(IdentitySettings)));
 
             var jsonSerializerOptions = new JsonSerializerOptions()
@@ -49,7 +48,7 @@ namespace Audiochan.API
                 options.PropertyNamingPolicy = jsonSerializerOptions.PropertyNamingPolicy;
                 options.PropertyNameCaseInsensitive = jsonSerializerOptions.PropertyNameCaseInsensitive;
             });
-            services.ConfigureAuthentication(Configuration);
+            services.ConfigureAuthentication(Configuration, Environment);
             services.ConfigureAuthorization();
             services.AddHttpContextAccessor();
             services.AddScoped<ICurrentUserService, CurrentUserService>();

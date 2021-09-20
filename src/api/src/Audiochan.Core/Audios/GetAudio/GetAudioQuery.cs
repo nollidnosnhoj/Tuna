@@ -42,7 +42,7 @@ namespace Audiochan.Core.Audios.GetAudio
             return await _cache.GetOrCreateAsync(
                 key: key,
                 factory: async () => await GetAudioFromDatabase(query.Id, cancellationToken), 
-                options: new DistributedCacheEntryOptions
+                cachingOptions: new DistributedCacheEntryOptions
                 {
                     AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30)
                 }, 

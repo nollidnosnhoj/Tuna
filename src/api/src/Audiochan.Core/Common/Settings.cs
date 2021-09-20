@@ -3,6 +3,12 @@ using System.Collections.Generic;
 
 namespace Audiochan.Core.Common
 {
+    public class AuthenticationSettings
+    {
+        public string DiscordClientId { get; set; } = null!;
+        public string DiscordClientSecret { get; set; } = null!;
+    }
+    
     public record IdentitySettings
     {
         public class UsernameRules
@@ -24,15 +30,7 @@ namespace Audiochan.Core.Common
         public UsernameRules UsernameSettings { get; init; } = new();
         public PasswordRules PasswordSettings { get; init; } = new();
     }
-    
-    public record JwtSettings
-    {
-        public string AccessTokenSecret { get; init; } = null!;
-        public string RefreshTokenSecret { get; init; } = null!;
-        public TimeSpan AccessTokenExpiration { get; init; }
-        public TimeSpan RefreshTokenExpiration { get; init; }
-    }
-    
+
     public record MediaStorageSettings
     {
         public AudioStorageSettings Audio { get; init; } = null!;

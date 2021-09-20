@@ -3,15 +3,13 @@ import { useEffect } from "react";
 import Router from "next/router";
 import Page from "~/components/Page";
 import { toast } from "~/utils/toast";
-import { revokeRefreshTokenRequest } from "~/features/auth/api";
-import { useUser } from "~/features/user/hooks";
+import { useLogout } from "~/features/auth/api/hooks";
 
 const LogoutPage: React.FC = () => {
-  const { updateUser } = useUser();
+  const { mutateAsync: logoutAsync } = useLogout();
   useEffect(() => {
-    revokeRefreshTokenRequest()
+    logoutAsync()
       .then(() => {
-        updateUser(null);
         Router.push("/").then(() => {
           toast("success", {
             title: "You have successfully logged out.",

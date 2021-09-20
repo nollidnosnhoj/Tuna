@@ -1,12 +1,15 @@
-﻿using System.Threading;
+﻿using System.Security.Claims;
+using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.API.Extensions;
-using Audiochan.Core.Auth;
+using Audiochan.Core.Auth.GetCurrentUser;
 using Audiochan.Core.Auth.Login;
-using Audiochan.Core.Auth.Refresh;
 using Audiochan.Core.Auth.Register;
-using Audiochan.Core.Auth.Revoke;
+using Audiochan.Core.Common.Interfaces.Services;
 using MediatR;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -16,27 +19,46 @@ namespace Audiochan.API.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly IDateTimeProvider _dateTime;
 
-        public AuthController(IMediator mediator)
+        public AuthController(IMediator mediator, IDateTimeProvider dateTime)
         {
             _mediator = mediator;
+            _dateTime = dateTime;
         }
 
         [HttpPost("login", Name = "Login")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [SwaggerOperation(
-            Summary = "Obtain access and refresh token using your login credentials.",
+            Summary = "Login using your credentials.",
             OperationId = "Login",
             Tags = new[] {"auth"}
         )]
-        public async Task<ActionResult<AuthResultDto>> Login([FromBody] LoginCommand command,
+        public async Task<ActionResult<CurrentUserDto>> Login([FromBody] LoginCommand command,
             CancellationToken cancellationToken)
         {
-            var authResult = await _mediator.Send(command, cancellationToken);
-            return authResult.IsSuccess
-                ? Ok(authResult.Data)
-                : authResult.ReturnErrorResponse();
+            var loginResult = await _mediator.Send(command, cancellationToken);
+            
+            if (!loginResult.IsSuccess)
+            {
+                return loginResult.ReturnErrorResponse();
+            }
+
+            var user = loginResult.Data!;
+
+            Claim[] claims = {
+                new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new(ClaimTypes.Name, user.UserName),
+                new(ClaimTypes.Email, user.Email)
+            };
+            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var principal = new ClaimsPrincipal(identity);
+            var properties = new AuthenticationProperties { ExpiresUtc = _dateTime.Now.AddDays(14) };
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, properties);
+            HttpContext.User = principal;
+
+            return Ok(user);
         }
 
         [HttpPost("register", Name = "CreateAccount")]
@@ -57,39 +79,15 @@ namespace Audiochan.API.Controllers
                 : result.ReturnErrorResponse();
         }
 
-        [HttpPost("refresh", Name = "RefreshAccessToken")]
+        [HttpPost("logout")]
         [ProducesResponseType(200)]
-        [ProducesResponseType(400)]
-        [SwaggerOperation(
-            Summary = "Refresh access token using valid refresh token.",
-            Description =
-                "Once successful, you will also get a new refresh token, and the previous token will be invalid.",
-            OperationId = "RefreshAccessToken",
-            Tags = new[] {"auth"}
-        )]
-        public async Task<ActionResult<AuthResultDto>> Refresh([FromBody] RefreshTokenCommand command,
-            CancellationToken cancellationToken)
+        [ProducesResponseType(401)]
+        [Authorize]
+        [SwaggerOperation(Summary = "Logout user", OperationId = "Logout", Tags = new[]{"auth"})]
+        public async Task<IActionResult> Logout()
         {
-            var authResult = await _mediator.Send(command, cancellationToken);
-            return authResult.IsSuccess
-                ? Ok(authResult.Data)
-                : authResult.ReturnErrorResponse();
-        }
-
-        [HttpPost("revoke", Name = "RevokeRefreshToken")]
-        [ProducesResponseType(200)]
-        [SwaggerOperation(
-            Summary = "Revoke a refresh token",
-            OperationId = "RevokeRefreshToken",
-            Tags = new[] {"auth"}
-        )]
-        public async Task<ActionResult> Revoke([FromBody] RevokeTokenCommand command,
-            CancellationToken cancellationToken)
-        {
-            var result = await _mediator.Send(command, cancellationToken);
-            return result.IsSuccess
-                ? Ok()
-                : result.ReturnErrorResponse();
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return Ok();
         }
     }
 }

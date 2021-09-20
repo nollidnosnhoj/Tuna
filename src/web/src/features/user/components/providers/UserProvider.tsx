@@ -2,7 +2,6 @@ import React, { PropsWithChildren, useMemo, useState } from "react";
 import { CurrentUser } from "../../api/types";
 import { UserContextType, UserContext } from "../../contexts";
 import { useGetCurrentUser } from "../../api/hooks/useGetCurrentUser";
-import { getAccessToken } from "~/lib/http/utils";
 
 interface UserProviderProps {
   initialUser: CurrentUser | null;
@@ -10,11 +9,10 @@ interface UserProviderProps {
 
 export function UserProvider(props: PropsWithChildren<UserProviderProps>) {
   const { initialUser, children } = props;
-  const accessToken = getAccessToken();
   const [user, setUser] = useState<CurrentUser | null>(initialUser);
 
   const { isLoading, refetch } = useGetCurrentUser({
-    enabled: !!accessToken,
+    enabled: !user,
     onSuccess(data) {
       setUser(data);
     },

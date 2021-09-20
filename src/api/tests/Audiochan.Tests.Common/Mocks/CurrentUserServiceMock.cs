@@ -1,4 +1,5 @@
-﻿using Audiochan.Core.Common.Helpers;
+﻿using Audiochan.Core.Auth.GetCurrentUser;
+using Audiochan.Core.Common.Helpers;
 using Audiochan.Core.Common.Interfaces.Services;
 using Moq;
 

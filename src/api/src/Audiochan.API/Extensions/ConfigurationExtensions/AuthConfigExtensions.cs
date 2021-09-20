@@ -1,45 +1,55 @@
-﻿using System;
-using System.Text;
-using Audiochan.Core.Common;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Audiochan.API.Models;
+using Audiochan.API.Services;
+using Audiochan.Core.Common.Interfaces.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.Hosting;
 
 namespace Audiochan.API.Extensions.ConfigurationExtensions
 {
     public static class AuthConfigExtensions
     {
-        public static IServiceCollection ConfigureAuthentication(this IServiceCollection services,
-            IConfiguration configuration)
+        public static IServiceCollection ConfigureAuthentication(this IServiceCollection services, IConfiguration configuration, 
+            IWebHostEnvironment environment)
         {
-            var jwtSetting = new JwtSettings();
-            configuration.GetSection(nameof(JwtSettings)).Bind(jwtSetting);
+            services.AddSingleton<ITicketStore, DistributedCacheTicketStore>();
 
-            var tokenValidationParams = new TokenValidationParameters
-            {
-                ValidateAudience = false,
-                ValidateIssuer = false,
-                ValidateLifetime = true,
-                ValidateIssuerSigningKey = true,
-                ClockSkew = TimeSpan.Zero
-            };
-
-            services.AddSingleton(tokenValidationParams);
-
-            services
-                .AddAuthentication(options =>
+            services.AddOptions<CookieAuthenticationOptions>(CookieAuthenticationDefaults.AuthenticationScheme)
+                .Configure<ITicketStore>((options, ticketStore) =>
                 {
-                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                })
-                .AddJwtBearer(options =>
-                {
-                    options.TokenValidationParameters = tokenValidationParams;
-                    options.TokenValidationParameters.IssuerSigningKey =
-                        new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSetting.AccessTokenSecret));
+                    options.Cookie.Name = "auth.cookie";
+                    options.SessionStore = ticketStore;
+                    options.Cookie.SameSite = environment.IsProduction()
+                        ? SameSiteMode.Lax
+                        : SameSiteMode.None;
+
+                    options.Cookie.SecurePolicy = environment.IsProduction()
+                        ? CookieSecurePolicy.Always
+                        : CookieSecurePolicy.None;
+
+                    options.Events.OnRedirectToLogin = async context =>
+                    {
+                        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                        var response = ErrorApiResponse.Unauthorized();
+                        await context.Response.WriteAsJsonAsync(response);
+                        await context.Response.Body.FlushAsync();
+                    };
+
+                    options.Events.OnRedirectToAccessDenied = async context =>
+                    {
+                        context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                        var response = ErrorApiResponse.Forbidden();
+                        await context.Response.WriteAsJsonAsync(response);
+                        await context.Response.Body.FlushAsync();
+                    };
                 });
+            
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
+
+            services.AddTransient<ICurrentUserService, CurrentUserService>();
 
             return services;
         }

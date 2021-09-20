@@ -1,6 +1,9 @@
 ﻿using System.Security.Claims;
-using Audiochan.Core.Common.Helpers;
+using System.Threading.Tasks;
+using Audiochan.Core.Auth.GetCurrentUser;
 using Audiochan.Core.Common.Interfaces.Services;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 
 namespace Audiochan.API.Services
@@ -8,18 +11,18 @@ namespace Audiochan.API.Services
     public class CurrentUserService : ICurrentUserService
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IDateTimeProvider _dateTime;
 
-        public CurrentUserService(IHttpContextAccessor httpContextAccessor)
+        public CurrentUserService(IHttpContextAccessor httpContextAccessor, IDateTimeProvider dateTimeProvider)
         {
             _httpContextAccessor = httpContextAccessor;
+            _dateTime = dateTimeProvider;
         }
 
         public long GetUserId()
         {
             var value = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
-#pragma warning disable CA1806
             long.TryParse(value, out long id);
-#pragma warning restore CA1806
             return id;
         }
 

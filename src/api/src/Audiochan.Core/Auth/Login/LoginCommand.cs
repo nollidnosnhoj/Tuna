@@ -1,16 +1,18 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.Specification;
+using Audiochan.Core.Auth.GetCurrentUser;
 using Audiochan.Core.Common.Interfaces.Persistence;
 using Audiochan.Core.Common.Interfaces.Services;
 using Audiochan.Core.Common.Models;
 using Audiochan.Domain.Entities;
+using AutoMapper;
 using FluentValidation;
 using MediatR;
 
 namespace Audiochan.Core.Auth.Login
 {
-    public record LoginCommand : IRequest<Result<AuthResultDto>>
+    public record LoginCommand : IRequest<Result<CurrentUserDto>>
     {
         public string Login { get; init; } = null!;
         public string Password { get; init; } = null!;
@@ -34,43 +36,31 @@ namespace Audiochan.Core.Auth.Login
         }
     }
 
-    public class LoginCommandHandler : IRequestHandler<LoginCommand, Result<AuthResultDto>>
+    public class LoginCommandHandler : IRequestHandler<LoginCommand, Result<CurrentUserDto>>
     {
-        private readonly ITokenProvider _tokenProvider;
         private readonly IUnitOfWork _dbContext;
         private readonly IPasswordHasher _passwordHasher;
+        private readonly IMapper _mapper;
 
-        public LoginCommandHandler(ITokenProvider tokenProvider, IUnitOfWork dbContext, IPasswordHasher passwordHasher)
+        public LoginCommandHandler(IUnitOfWork dbContext, IPasswordHasher passwordHasher, IMapper mapper)
         {
-            _tokenProvider = tokenProvider;
             _dbContext = dbContext;
             _passwordHasher = passwordHasher;
+            _mapper = mapper;
         }
 
-        public async Task<Result<AuthResultDto>> Handle(LoginCommand command,
+        public async Task<Result<CurrentUserDto>> Handle(LoginCommand command,
             CancellationToken cancellationToken)
         {
             var user = await _dbContext.Users
                 .GetFirstAsync(new LoadUserForLoginSpecification(command.Login), cancellationToken);
 
             if (user == null || !_passwordHasher.Verify(command.Password, user.PasswordHash))
-                return Result<AuthResultDto>.BadRequest("Invalid Username/Password");
+                return Result<CurrentUserDto>.BadRequest("Invalid Username/Password");
 
+            var currentUser = _mapper.Map<CurrentUserDto>(user);
 
-            var (accessToken, accessTokenExpiration) = _tokenProvider.GenerateAccessToken(user);
-
-            var (refreshToken, refreshTokenExpiration) = await _tokenProvider
-                .GenerateRefreshToken(user, cancellationToken: cancellationToken);
-
-            var result = new AuthResultDto
-            {
-                AccessToken = accessToken,
-                AccessTokenExpires = accessTokenExpiration,
-                RefreshToken = refreshToken,
-                RefreshTokenExpires = refreshTokenExpiration
-            };
-
-            return Result<AuthResultDto>.Success(result);
+            return Result<CurrentUserDto>.Success(currentUser);
         }
     }
 }
