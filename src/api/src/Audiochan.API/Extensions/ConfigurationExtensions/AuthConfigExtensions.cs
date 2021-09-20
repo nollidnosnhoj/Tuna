@@ -1,8 +1,6 @@
 ﻿using Audiochan.API.Models;
 using Audiochan.API.Services;
-using Audiochan.Core.Common;
 using Audiochan.Core.Common.Interfaces.Services;
-using Audiochan.Infrastructure;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -17,14 +15,13 @@ namespace Audiochan.API.Extensions.ConfigurationExtensions
         public static IServiceCollection ConfigureAuthentication(this IServiceCollection services, IConfiguration configuration, 
             IWebHostEnvironment environment)
         {
-            var authConfiguration =
-                configuration.GetSection(nameof(AuthenticationSettings)).Get<AuthenticationSettings>();
+            services.AddSingleton<ITicketStore, DistributedCacheTicketStore>();
 
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie(options =>
+            services.AddOptions<CookieAuthenticationOptions>(CookieAuthenticationDefaults.AuthenticationScheme)
+                .Configure<ITicketStore>((options, ticketStore) =>
                 {
                     options.Cookie.Name = "auth.cookie";
-
+                    options.SessionStore = ticketStore;
                     options.Cookie.SameSite = environment.IsProduction()
                         ? SameSiteMode.Lax
                         : SameSiteMode.None;
@@ -49,6 +46,8 @@ namespace Audiochan.API.Extensions.ConfigurationExtensions
                         await context.Response.Body.FlushAsync();
                     };
                 });
+            
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
 
             services.AddTransient<ICurrentUserService, CurrentUserService>();
 
