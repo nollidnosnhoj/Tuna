@@ -21,32 +21,28 @@ import { CreateAudioRequest } from "../../api/types";
 import AudioForm from "../Form";
 import AudioDropzone from "./Dropzone";
 
-const validationSchema: yup.SchemaOf<CreateAudioRequest> = yup
-  .object({
-    title: yup
-      .string()
-      .defined()
-      .required(validationMessages.required("Title"))
-      .min(5, validationMessages.min("Title", 5))
-      .max(30, validationMessages.max("Title", 30))
-      .ensure(),
-    description: yup
-      .string()
-      .defined()
-      .max(500, validationMessages.max("Description", 500))
-      .ensure(),
-    tags: yup
-      .array()
-      .required()
-      .max(10, validationMessages.max("Tags", 10))
-      .ensure()
-      .defined(),
-    uploadId: yup.string().required("Audio file has not been uploaded."),
-    fileName: yup.string().required(),
-    fileSize: yup.number().required().min(0),
-    duration: yup.number().required().min(0),
-  })
-  .defined();
+const uploadNewAudioSchema = yup.object().shape({
+  title: yup
+    .string()
+    .required(validationMessages.required("Title"))
+    .min(5, validationMessages.min("Title", 5))
+    .max(30, validationMessages.max("Title", 30))
+    .ensure(),
+  description: yup
+    .string()
+    .optional()
+    .max(500, validationMessages.max("Description", 500))
+    .ensure(),
+  tags: yup
+    .array()
+    .required()
+    .max(10, validationMessages.max("Tags", 10))
+    .ensure(),
+  uploadId: yup.string().required("Audio file has not been uploaded."),
+  fileName: yup.string().required(),
+  fileSize: yup.number().required().min(0),
+  duration: yup.number().required().min(0),
+});
 
 export default function AudioUploader() {
   const router = useRouter();
@@ -57,7 +53,7 @@ export default function AudioUploader() {
     defaultValues: {
       tags: [],
     },
-    resolver: yupResolver(validationSchema),
+    resolver: yupResolver(uploadNewAudioSchema),
   });
   const { handleSubmit } = formMethods;
 

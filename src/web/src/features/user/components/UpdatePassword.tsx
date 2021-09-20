@@ -15,6 +15,19 @@ type UpdatePasswordValues = {
   confirmPassword: string;
 };
 
+const updatePasswordSchema: yup.SchemaOf<UpdatePasswordValues> = yup
+  .object()
+  .shape({
+    currentPassword: yup
+      .string()
+      .required(validationMessages.required("Current Password")),
+    newPassword: passwordRule("New Password"),
+    confirmPassword: yup
+      .string()
+      .required()
+      .oneOf([yup.ref("newPassword")], "Password does not match."),
+  });
+
 export default function UpdatePassword() {
   const router = useRouter();
   const {
@@ -23,18 +36,7 @@ export default function UpdatePassword() {
     formState: { isSubmitting, errors },
     handleSubmit,
   } = useForm<UpdatePasswordValues>({
-    resolver: yupResolver(
-      yup.object().shape({
-        currentPassword: yup
-          .string()
-          .required(validationMessages.required("Current Password")),
-        newPassword: passwordRule("New Password"),
-        confirmPassword: yup
-          .string()
-          .required()
-          .oneOf([yup.ref("newPassword")], "Password does not match."),
-      })
-    ),
+    resolver: yupResolver(updatePasswordSchema),
   });
 
   const handlePasswordChange = async (values: UpdatePasswordValues) => {

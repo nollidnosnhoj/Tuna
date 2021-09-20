@@ -27,28 +27,23 @@ interface AudioEditDrawerProps {
   buttonRef?: React.RefObject<HTMLButtonElement>;
 }
 
-const validationSchema: yup.SchemaOf<AudioRequest> = yup
-  .object({
-    title: yup
-      .string()
-      .defined()
-      .required(validationMessages.required("Title"))
-      .min(5, validationMessages.min("Title", 5))
-      .max(30, validationMessages.max("Title", 30))
-      .ensure(),
-    description: yup
-      .string()
-      .defined()
-      .max(500, validationMessages.max("Description", 500))
-      .ensure(),
-    tags: yup
-      .array()
-      .required()
-      .max(10, validationMessages.max("Tags", 10))
-      .ensure()
-      .defined(),
-  })
-  .defined();
+const editAudioSchema = yup.object().shape({
+  title: yup
+    .string()
+    .ensure()
+    .required(validationMessages.required("Title"))
+    .min(5, validationMessages.min("Title", 5))
+    .max(30, validationMessages.max("Title", 30)),
+  description: yup
+    .string()
+    .notRequired()
+    .max(500, validationMessages.max("Description", 500)),
+  tags: yup
+    .array()
+    .required()
+    .max(10, validationMessages.max("Tags", 10))
+    .ensure(),
+});
 
 const AudioEditDrawer: React.FC<AudioEditDrawerProps> = (props) => {
   const { audio, isOpen, onClose, buttonRef } = props;
@@ -64,7 +59,7 @@ const AudioEditDrawer: React.FC<AudioEditDrawerProps> = (props) => {
       description: audio.description,
       tags: audio.tags,
     },
-    resolver: yupResolver(validationSchema),
+    resolver: yupResolver(editAudioSchema),
   });
 
   const onEditSubmit = async (values: AudioRequest) => {

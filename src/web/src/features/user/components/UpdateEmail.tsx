@@ -8,6 +8,20 @@ import request from "~/lib/http";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 
+type NewEmailRequest = {
+  email: string;
+};
+
+const newEmailSchema: yup.SchemaOf<NewEmailRequest> = yup
+  .object({
+    email: yup
+      .string()
+      .required(validationMessages.required("Email"))
+      .email("Email is invalid")
+      .defined(),
+  })
+  .defined();
+
 export default function UpdateEmail() {
   const { user, updateUser } = useUser();
 
@@ -15,18 +29,11 @@ export default function UpdateEmail() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<{ email: string }>({
-    resolver: yupResolver(
-      yup.object().shape({
-        email: yup
-          .string()
-          .required(validationMessages.required("Email"))
-          .email("Email is invalid"),
-      })
-    ),
+  } = useForm<NewEmailRequest>({
+    resolver: yupResolver(newEmailSchema),
   });
 
-  const handleEmailSubmit = async (values: { email: string }) => {
+  const handleEmailSubmit = async (values: NewEmailRequest) => {
     const { email: newEmail } = values;
     if (newEmail.trim() === user?.email) return;
 
