@@ -60,7 +60,7 @@ namespace Audiochan.API.Controllers.Me
             var result = await _mediator.Send(new GetCurrentUserQuery(_currentUserId), cancellationToken);
             return result != null
                 ? Ok(result)
-                : Unauthorized(ErrorApiResponse.Unauthorized("You are not authorized access."));
+                : Unauthorized(ErrorApiResponse.Unauthorized());
         }
 
         [HttpPut(Name = "UpdateUser")]

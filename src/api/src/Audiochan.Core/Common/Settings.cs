@@ -3,6 +3,12 @@ using System.Collections.Generic;
 
 namespace Audiochan.Core.Common
 {
+    public class AuthenticationSettings
+    {
+        public string DiscordClientId { get; set; } = null!;
+        public string DiscordClientSecret { get; set; } = null!;
+    }
+    
     public record IdentitySettings
     {
         public class UsernameRules

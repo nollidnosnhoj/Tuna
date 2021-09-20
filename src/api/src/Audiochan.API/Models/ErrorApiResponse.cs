@@ -10,9 +10,14 @@ namespace Audiochan.API.Models
             return new(StatusCodes.Status404NotFound, message, null);
         }
 
-        public static ErrorApiResponse Unauthorized(string message)
+        public static ErrorApiResponse Unauthorized()
         {
-            return new(StatusCodes.Status401Unauthorized, message, null);
+            return new(StatusCodes.Status401Unauthorized, "You are not authorized.", null);
+        }
+
+        public static ErrorApiResponse Forbidden()
+        {
+            return new ErrorApiResponse(StatusCodes.Status403Forbidden, "You are forbidden access.", null);
         }
     }
 }

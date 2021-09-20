@@ -48,7 +48,7 @@ namespace Audiochan.API
                 options.PropertyNamingPolicy = jsonSerializerOptions.PropertyNamingPolicy;
                 options.PropertyNameCaseInsensitive = jsonSerializerOptions.PropertyNameCaseInsensitive;
             });
-            services.ConfigureAuthentication(Environment);
+            services.ConfigureAuthentication(Configuration, Environment);
             services.ConfigureAuthorization();
             services.AddHttpContextAccessor();
             services.AddScoped<ICurrentUserService, CurrentUserService>();
