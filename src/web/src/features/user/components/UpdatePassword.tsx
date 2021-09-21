@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "@chakra-ui/react";
-import * as yup from "yup";
+import { z } from "zod";
 import TextInput from "~/components/Forms/Inputs/Text";
 import { validationMessages, errorToast } from "~/utils";
 import { passwordRule } from "../schemas";
@@ -9,24 +9,39 @@ import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 
-type UpdatePasswordValues = {
-  currentPassword: string;
-  newPassword: string;
-  confirmPassword: string;
-};
+// const updatePasswordSchema: yup.SchemaOf<UpdatePasswordValues> = yup
+//   .object()
+//   .shape({
+//     currentPassword: yup
+//       .string()
+//       .required(validationMessages.required("Current Password")),
+//     newPassword: passwordRule("New Password"),
+//     confirmPassword: yup
+//       .string()
+//       .required()
+//       .oneOf([yup.ref("newPassword")], "Password does not match."),
+//   });
 
-const updatePasswordSchema: yup.SchemaOf<UpdatePasswordValues> = yup
-  .object()
-  .shape({
-    currentPassword: yup
+const updatePasswordSchema = z
+  .object({
+    currentPassword: z
       .string()
-      .required(validationMessages.required("Current Password")),
+      .min(1, validationMessages.required("Current Password")),
     newPassword: passwordRule("New Password"),
-    confirmPassword: yup
+    confirmPassword: z
       .string()
-      .required()
-      .oneOf([yup.ref("newPassword")], "Password does not match."),
+      .min(1, validationMessages.required("Confirm Password")),
+  })
+  .superRefine((arg, ctx) => {
+    if (arg.confirmPassword !== arg.newPassword) {
+      ctx.addIssue({
+        code: "custom",
+        message: "Password does not match.",
+      });
+    }
   });
+
+type UpdatePasswordValues = z.infer<typeof updatePasswordSchema>;
 
 export default function UpdatePassword() {
   const router = useRouter();

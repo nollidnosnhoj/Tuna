@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Alert, Box, Button, CloseButton, Flex, Text } from "@chakra-ui/react";
-import * as yup from "yup";
+import { z } from "zod";
 import TextInput from "~/components/Forms/Inputs/Text";
 import { validationMessages } from "~/utils";
 import { toast, isAxiosError } from "~/utils";
@@ -10,29 +10,25 @@ import request from "~/lib/http";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 
-type RegisterFormInputs = {
-  username: string;
-  password: string;
-  email: string;
-  confirmPassword: string;
-};
-
-const schema: yup.SchemaOf<RegisterFormInputs> = yup
-  .object()
-  .shape({
+const registerFormSchema = z
+  .object({
     username: usernameRule("Username"),
     password: passwordRule("Password"),
-    email: yup
+    email: z.string().min(1, validationMessages.required("Email")).email(),
+    confirmPassword: z
       .string()
-      .required(validationMessages.required("Email"))
-      .email()
-      .defined(),
-    confirmPassword: yup
-      .string()
-      .oneOf([yup.ref("password")], "Password does not match.")
-      .defined(),
+      .min(1, validationMessages.required("Confirm Password")),
   })
-  .defined();
+  .superRefine((arg, ctx) => {
+    if (arg.confirmPassword !== arg.password) {
+      ctx.addIssue({
+        code: "custom",
+        message: "Password does not match.",
+      });
+    }
+  });
+
+type RegisterFormInputs = z.infer<typeof registerFormSchema>;
 
 interface RegisterFormProps {
   initialRef?: React.RefObject<HTMLInputElement>;
@@ -42,7 +38,7 @@ interface RegisterFormProps {
 export default function RegisterForm(props: RegisterFormProps) {
   const [error, setError] = useState("");
   const formik = useForm<RegisterFormInputs>({
-    resolver: yupResolver(schema),
+    resolver: yupResolver(registerFormSchema),
   });
 
   const {

@@ -1,6 +1,6 @@
 import { Button } from "@chakra-ui/react";
 import React from "react";
-import * as yup from "yup";
+import { z } from "zod";
 import TextInput from "~/components/Forms/Inputs/Text";
 import { useUser } from "~/features/user/hooks";
 import { validationMessages, errorToast, toast } from "~/utils";
@@ -8,19 +8,11 @@ import request from "~/lib/http";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 
-type NewEmailRequest = {
-  email: string;
-};
+const newEmailSchema = z.object({
+  email: z.string().min(1, validationMessages.required("Email")).email(),
+});
 
-const newEmailSchema: yup.SchemaOf<NewEmailRequest> = yup
-  .object({
-    email: yup
-      .string()
-      .required(validationMessages.required("Email"))
-      .email("Email is invalid")
-      .defined(),
-  })
-  .defined();
+type NewEmailRequest = z.infer<typeof newEmailSchema>;
 
 export default function UpdateEmail() {
   const { user, updateUser } = useUser();

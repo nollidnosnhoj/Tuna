@@ -10,15 +10,15 @@ import {
   Spacer,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
-import * as yup from "yup";
+import { z } from "zod";
 import { errorToast, toast } from "~/utils/toast";
 import { useEditAudio, useRemoveAudio } from "../api/hooks";
-import { AudioView, AudioRequest } from "../api/types";
+import { AudioView } from "../api/types";
 import AudioForm from "./Form";
 import { useRouter } from "next/router";
 import { FormProvider, useForm } from "react-hook-form";
-import { validationMessages } from "~/utils";
-import { yupResolver } from "@hookform/resolvers/yup";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { audioSchema } from "../schama";
 
 interface AudioEditDrawerProps {
   audio: AudioView;
@@ -27,23 +27,7 @@ interface AudioEditDrawerProps {
   buttonRef?: React.RefObject<HTMLButtonElement>;
 }
 
-const editAudioSchema = yup.object().shape({
-  title: yup
-    .string()
-    .ensure()
-    .required(validationMessages.required("Title"))
-    .min(5, validationMessages.min("Title", 5))
-    .max(30, validationMessages.max("Title", 30)),
-  description: yup
-    .string()
-    .notRequired()
-    .max(500, validationMessages.max("Description", 500)),
-  tags: yup
-    .array()
-    .required()
-    .max(10, validationMessages.max("Tags", 10))
-    .ensure(),
-});
+type UpdateAudioFormValues = z.infer<typeof audioSchema>;
 
 const AudioEditDrawer: React.FC<AudioEditDrawerProps> = (props) => {
   const { audio, isOpen, onClose, buttonRef } = props;
@@ -53,16 +37,16 @@ const AudioEditDrawer: React.FC<AudioEditDrawerProps> = (props) => {
   const { mutateAsync: deleteAudio } = useRemoveAudio(audioId);
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const formMethods = useForm<AudioRequest>({
+  const formMethods = useForm<UpdateAudioFormValues>({
     defaultValues: {
       title: audio.title,
       description: audio.description,
       tags: audio.tags,
     },
-    resolver: yupResolver(editAudioSchema),
+    resolver: zodResolver(audioSchema),
   });
 
-  const onEditSubmit = async (values: AudioRequest) => {
+  const onEditSubmit = async (values: UpdateAudioFormValues) => {
     setIsProcessing(true);
     updateAudio(values)
       .then(() => {

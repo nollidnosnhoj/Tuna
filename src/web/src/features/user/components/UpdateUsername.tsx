@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { Button } from "@chakra-ui/react";
-import * as yup from "yup";
+import { z } from "zod";
 import TextInput from "~/components/Forms/Inputs/Text";
 import { useUser } from "~/features/user/hooks";
 import { errorToast, toast } from "~/utils";
@@ -9,30 +9,30 @@ import request from "~/lib/http";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 
-type UpdateUsernameRequest = {
-  username: string;
-};
+const updateUsernameSchema = z.object({ username: usernameRule("Username") });
+
+type UpdateUsernameRequest = z.infer<typeof updateUsernameSchema>;
 
 export default function UpdateUsername() {
   const { user, updateUser } = useUser();
 
-  const updateUsernameSchema: yup.SchemaOf<UpdateUsernameRequest> = useMemo(
-    () =>
-      yup.object({
-        username: usernameRule("Username").notOneOf(
-          [user?.userName],
-          "Username cannot be the same"
-        ),
-      }),
-    [user?.userName]
-  );
+  const validationSchema = useMemo(() => {
+    return updateUsernameSchema.superRefine((args, ctx) => {
+      if (args.username === user?.userName) {
+        ctx.addIssue({
+          code: "custom",
+          message: "Cannot update to same username",
+        });
+      }
+    });
+  }, [user?.userName]);
 
   const {
     handleSubmit,
     register,
     formState: { errors, isSubmitting },
   } = useForm<UpdateUsernameRequest>({
-    resolver: yupResolver(updateUsernameSchema),
+    resolver: yupResolver(validationSchema),
   });
 
   const handleUsernameSubmit = async (values: UpdateUsernameRequest) => {
