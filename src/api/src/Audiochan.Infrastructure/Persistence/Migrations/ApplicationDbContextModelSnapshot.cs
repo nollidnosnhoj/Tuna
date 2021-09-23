@@ -448,49 +448,6 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                     b.Navigation("Playlist");
                 });
 
-            modelBuilder.Entity("Audiochan.Domain.Entities.User", b =>
-                {
-                    b.OwnsMany("Audiochan.Domain.Entities.RefreshToken", "RefreshTokens", b1 =>
-                        {
-                            b1.Property<long>("Id")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("bigint")
-                                .HasColumnName("id")
-                                .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-                            b1.Property<DateTime>("Created")
-                                .HasColumnType("timestamp without time zone")
-                                .HasColumnName("created");
-
-                            b1.Property<DateTime>("Expiry")
-                                .HasColumnType("timestamp without time zone")
-                                .HasColumnName("expiry");
-
-                            b1.Property<string>("Token")
-                                .IsRequired()
-                                .HasColumnType("text")
-                                .HasColumnName("token");
-
-                            b1.Property<long>("UserId")
-                                .HasColumnType("bigint")
-                                .HasColumnName("user_id");
-
-                            b1.HasKey("Id")
-                                .HasName("pk_refresh_tokens");
-
-                            b1.HasIndex("UserId")
-                                .HasDatabaseName("ix_refresh_tokens_user_id");
-
-                            b1.ToTable("refresh_tokens");
-
-                            b1.WithOwner()
-                                .HasForeignKey("UserId")
-                                .HasConstraintName("fk_refresh_tokens_users_user_id");
-                        });
-
-                    b.Navigation("RefreshTokens");
-                });
-
             modelBuilder.Entity("Audiochan.Domain.Entities.Audio", b =>
                 {
                     b.Navigation("FavoriteAudios");

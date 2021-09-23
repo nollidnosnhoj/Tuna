@@ -16,17 +16,6 @@ namespace Audiochan.Infrastructure.Persistence.Configurations
 
             builder.HasIndex(x => x.UserName).IsUnique();
             builder.HasIndex(x => x.Email).IsUnique();
-
-            builder.OwnsMany(u => u.RefreshTokens, refreshToken =>
-            {
-                refreshToken.WithOwner().HasForeignKey(r => r.UserId);
-                refreshToken.Property<long>("Id");
-                refreshToken.HasKey("Id");
-                refreshToken.Property(x => x.Token).IsRequired();
-                refreshToken.Property(x => x.Expiry).IsRequired();
-                refreshToken.Property(x => x.Created).IsRequired();
-                refreshToken.ToTable("refresh_tokens");
-            });
         }
     }
     

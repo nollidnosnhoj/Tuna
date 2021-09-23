@@ -16,7 +16,6 @@ namespace Audiochan.Domain.Entities
             Followings = new HashSet<FollowedUser>();
             Followers = new HashSet<FollowedUser>();
             Playlists = new HashSet<Playlist>();
-            RefreshTokens = new HashSet<RefreshToken>();
         }
 
         public User(string username, string email, string passwordHash, UserRole userRole = UserRole.Regular) : this()
@@ -41,7 +40,6 @@ namespace Audiochan.Domain.Entities
         public ICollection<FollowedUser> Followings { get; set; }
         public ICollection<FollowedUser> Followers { get; set; }
         public ICollection<Playlist> Playlists { get; set; }
-        public ICollection<RefreshToken> RefreshTokens { get; set; }
 
         public void Follow(long observerId, DateTime followedDate)
         {
