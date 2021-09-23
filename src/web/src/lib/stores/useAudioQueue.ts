@@ -1,6 +1,6 @@
 import create from "zustand";
+import { v4 as uuidv4 } from "uuid";
 import { AudioView } from "~/features/audio/api/types";
-import { mapAudiosForAudioQueue } from "~/utils";
 import { ID } from "../types";
 import { useAudioPlayer as audioPlayerStore } from "./useAudioPlayer";
 
@@ -171,3 +171,20 @@ export const useAudioQueue = create<UseAudioQueueState>((set, get) => ({
       repeat: mode,
     }),
 }));
+
+export function mapAudiosForAudioQueue(
+  audios: AudioView[],
+  isRelatedAudio = false
+): AudioQueueItem[] {
+  return audios.map((audio) => ({
+    queueId: uuidv4(),
+    audioId: audio.id,
+    title: audio.title,
+    artist: audio.user.userName,
+    artistId: audio.user.id,
+    cover: audio.picture ?? "",
+    duration: audio.duration,
+    source: audio.audio,
+    related: isRelatedAudio,
+  }));
+}
