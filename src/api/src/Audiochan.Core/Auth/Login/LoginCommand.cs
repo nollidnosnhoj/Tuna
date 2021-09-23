@@ -31,7 +31,6 @@ namespace Audiochan.Core.Auth.Login
     {
         public LoadUserForLoginSpecification(string login)
         {
-            Query.Include(u => u.RefreshTokens);
             Query.Where(u => u.UserName == login || u.Email == login);
         }
     }
