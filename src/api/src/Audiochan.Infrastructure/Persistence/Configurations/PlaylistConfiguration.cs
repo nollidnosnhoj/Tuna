@@ -14,28 +14,10 @@ namespace Audiochan.Infrastructure.Persistence.Configurations
             builder.Property(x => x.Title).HasMaxLength(100);
             builder.Property(x => x.Picture).HasMaxLength(256);
 
+            builder.HasIndex(x => x.Title);
+            builder.HasIndex(x => x.Tags).HasMethod("GIN");
             builder.HasIndex(x => x.Created);
-            
-            builder.HasMany(a => a.Tags)
-                .WithMany(t => t.Playlists)
-                .UsingEntity(j => j.ToTable("playlist_tags"));
-            
-            // builder.HasMany(a => a.Favorited)
-            //     .WithMany(u => u.FavoritePlaylists)
-            //     .UsingEntity<FavoritePlaylist>(
-            //         j => j.HasOne(o => o.User)
-            //             .WithMany()
-            //             .HasForeignKey(o => o.UserId)
-            //             .OnDelete(DeleteBehavior.Cascade),
-            //         j => j.HasOne(o => o.Playlist)
-            //             .WithMany()
-            //             .HasForeignKey(o => o.PlaylistId)
-            //             .OnDelete(DeleteBehavior.Cascade),
-            //         j =>
-            //         {
-            //             j.HasKey(fa => new { fa.PlaylistId, fa.UserId });
-            //         });
-            
+
             builder.HasMany(p => p.Audios)
                 .WithMany(a => a.Playlists)
                 .UsingEntity<PlaylistAudio>(

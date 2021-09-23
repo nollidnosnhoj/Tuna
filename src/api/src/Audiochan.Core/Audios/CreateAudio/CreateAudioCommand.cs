@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common;
@@ -115,8 +116,7 @@ namespace Audiochan.Core.Audios.CreateAudio
             // Create tags
             if (command.Tags.Count > 0)
             {
-                var tags = _slugGenerator.GenerateSlugs(command.Tags);
-                audio.Tags = await _unitOfWork.Tags.GetAppropriateTags(tags, cancellationToken);
+                audio.Tags = _slugGenerator.GenerateSlugs(command.Tags).ToList();
             }
 
             await _unitOfWork.Audios.AddAsync(audio, cancellationToken);

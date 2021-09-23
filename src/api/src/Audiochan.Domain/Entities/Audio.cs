@@ -9,8 +9,8 @@ namespace Audiochan.Domain.Entities
     {
         public Audio()
         {
+            this.Tags = new List<string>();
             this.FavoriteAudios = new HashSet<FavoriteAudio>();
-            this.Tags = new HashSet<Tag>();
             this.Playlists = new List<Playlist>();
         }
         
@@ -19,6 +19,7 @@ namespace Audiochan.Domain.Entities
         public DateTime? LastModified { get; set; }
         public string Title { get; set; } = null!;
         public string? Description { get; set; }
+        public List<string> Tags { get; set; }
         public decimal Duration { get; set; }
         public string File { get; set; } = null!;
         public long Size { get; set; }
@@ -27,7 +28,6 @@ namespace Audiochan.Domain.Entities
         public User User { get; set; } = null!;
         public ICollection<Playlist> Playlists { get; set; }
         public ICollection<FavoriteAudio> FavoriteAudios { get; set; }
-        public ICollection<Tag> Tags { get; set; }
 
         public void Favorite(long userId, DateTime favoritedDateTime)
         {
@@ -51,33 +51,6 @@ namespace Audiochan.Domain.Entities
             if (favoriteAudio is not null)
             {
                 this.FavoriteAudios.Remove(favoriteAudio);
-            }
-        }
-
-        public void UpdateTags(List<Tag> tags)
-        {
-            if (this.Tags.Count > 0)
-            {
-                foreach (var audioTag in this.Tags.ToList())
-                {
-                    if (tags.All(t => t.Name != audioTag.Name))
-                    {
-                        this.Tags.Remove(audioTag);
-                    }
-                }
-
-                foreach (var tag in tags)
-                {
-                    if (this.Tags.All(t => t.Name != tag.Name))
-                        this.Tags.Add(tag);
-                }
-            }
-            else
-            {
-                foreach (var tag in tags)
-                {
-                    this.Tags.Add(tag);
-                }
             }
         }
     }
