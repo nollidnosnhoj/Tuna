@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -10,19 +11,6 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
         {
             migrationBuilder.AlterDatabase()
                 .Annotation("Npgsql:PostgresExtension:uuid-ossp", ",,");
-
-            migrationBuilder.CreateTable(
-                name: "tags",
-                columns: table => new
-                {
-                    id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    name = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_tags", x => x.id);
-                });
 
             migrationBuilder.CreateTable(
                 name: "users",
@@ -53,6 +41,7 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                     last_modified = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     title = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     description = table.Column<string>(type: "text", nullable: true),
+                    tags = table.Column<List<string>>(type: "text[]", nullable: false),
                     duration = table.Column<decimal>(type: "numeric", nullable: false),
                     file = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
                     size = table.Column<long>(type: "bigint", nullable: false),
@@ -104,6 +93,7 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     title = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     description = table.Column<string>(type: "text", nullable: true),
+                    tags = table.Column<List<string>>(type: "text[]", nullable: false),
                     picture = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     created = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     last_modified = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
@@ -138,30 +128,6 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                         name: "fk_refresh_tokens_users_user_id",
                         column: x => x.user_id,
                         principalTable: "users",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "audio_tags",
-                columns: table => new
-                {
-                    audios_id = table.Column<long>(type: "bigint", nullable: false),
-                    tags_id = table.Column<long>(type: "bigint", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_audio_tags", x => new { x.audios_id, x.tags_id });
-                    table.ForeignKey(
-                        name: "fk_audio_tags_audios_audios_id",
-                        column: x => x.audios_id,
-                        principalTable: "audios",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "fk_audio_tags_tags_tags_id",
-                        column: x => x.tags_id,
-                        principalTable: "tags",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -237,7 +203,8 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                     id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     playlist_id = table.Column<long>(type: "bigint", nullable: false),
-                    audio_id = table.Column<long>(type: "bigint", nullable: false)
+                    audio_id = table.Column<long>(type: "bigint", nullable: false),
+                    added_by = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -256,39 +223,21 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "playlist_tags",
-                columns: table => new
-                {
-                    playlists_id = table.Column<long>(type: "bigint", nullable: false),
-                    tags_id = table.Column<long>(type: "bigint", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_playlist_tags", x => new { x.playlists_id, x.tags_id });
-                    table.ForeignKey(
-                        name: "fk_playlist_tags_playlists_playlists_id",
-                        column: x => x.playlists_id,
-                        principalTable: "playlists",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "fk_playlist_tags_tags_tags_id",
-                        column: x => x.tags_id,
-                        principalTable: "tags",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateIndex(
-                name: "ix_audio_tags_tags_id",
-                table: "audio_tags",
-                column: "tags_id");
-
             migrationBuilder.CreateIndex(
                 name: "ix_audios_created",
                 table: "audios",
                 column: "created");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_audios_tags",
+                table: "audios",
+                column: "tags")
+                .Annotation("Npgsql:IndexMethod", "GIN");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_audios_title",
+                table: "audios",
+                column: "title");
 
             migrationBuilder.CreateIndex(
                 name: "ix_audios_user_id",
@@ -336,14 +285,20 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                 columns: new[] { "playlist_id", "audio_id" });
 
             migrationBuilder.CreateIndex(
-                name: "ix_playlist_tags_tags_id",
-                table: "playlist_tags",
-                column: "tags_id");
-
-            migrationBuilder.CreateIndex(
                 name: "ix_playlists_created",
                 table: "playlists",
                 column: "created");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_playlists_tags",
+                table: "playlists",
+                column: "tags")
+                .Annotation("Npgsql:IndexMethod", "GIN");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_playlists_title",
+                table: "playlists",
+                column: "title");
 
             migrationBuilder.CreateIndex(
                 name: "ix_playlists_user_id",
@@ -354,12 +309,6 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                 name: "ix_refresh_tokens_user_id",
                 table: "refresh_tokens",
                 column: "user_id");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_tags_name",
-                table: "tags",
-                column: "name",
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "ix_users_email",
@@ -377,9 +326,6 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "audio_tags");
-
-            migrationBuilder.DropTable(
                 name: "favorite_audios");
 
             migrationBuilder.DropTable(
@@ -392,9 +338,6 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
                 name: "playlist_audios");
 
             migrationBuilder.DropTable(
-                name: "playlist_tags");
-
-            migrationBuilder.DropTable(
                 name: "refresh_tokens");
 
             migrationBuilder.DropTable(
@@ -402,9 +345,6 @@ namespace Audiochan.Infrastructure.Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "playlists");
-
-            migrationBuilder.DropTable(
-                name: "tags");
 
             migrationBuilder.DropTable(
                 name: "users");

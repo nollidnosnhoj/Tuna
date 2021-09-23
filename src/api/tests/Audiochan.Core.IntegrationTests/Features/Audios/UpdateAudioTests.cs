@@ -56,7 +56,6 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             var created = ExecuteDbContext(database =>
             {
                 return database.Audios
-                    .Include(a => a.Tags)
                     .Include(a => a.User)
                     .SingleOrDefault(a => a.Id == audio.Id);
             });

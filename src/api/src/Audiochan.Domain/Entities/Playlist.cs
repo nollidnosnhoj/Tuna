@@ -12,12 +12,13 @@ namespace Audiochan.Domain.Entities
             Audios = new List<Audio>();
             FavoritePlaylists = new HashSet<FavoritePlaylist>();
             PlaylistAudios = new HashSet<PlaylistAudio>();
-            Tags = new HashSet<Tag>();
+            Tags = new List<string>();
         }
         
         public long Id { get; set; }
         public string Title { get; set; } = null!;
         public string? Description { get; set; }
+        public List<string> Tags { get; set; }
         public string? Picture { get; set; }
         public DateTime Created { get; set; }
         public DateTime? LastModified { get; set; }
@@ -27,7 +28,6 @@ namespace Audiochan.Domain.Entities
         public ICollection<Audio> Audios { get; set; }
         public ICollection<FavoritePlaylist> FavoritePlaylists { get; set; }
         public ICollection<PlaylistAudio> PlaylistAudios { get; set; }
-        public ICollection<Tag> Tags { get; set; }
 
         public void AddAudios(IEnumerable<long> audioIds, DateTime addedDate)
         {

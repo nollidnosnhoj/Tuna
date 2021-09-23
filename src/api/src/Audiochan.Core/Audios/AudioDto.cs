@@ -41,8 +41,6 @@ namespace Audiochan.Core.Audios
                 })
                 .ForMember(dest => dest.Audio, c =>
                     c.MapFrom(src => MediaLinkConstants.AUDIO_STREAM + src.File))
-                .ForMember(dest => dest.Tags, c =>
-                    c.MapFrom(src => src.Tags.Select(t => t.Name).ToList()))
                 .ForMember(dest => dest.IsFavorited, c =>
                     c.MapFrom(src => userId > 0 ? src.FavoriteAudios.Any(fa => fa.UserId == userId) : (bool?)null));
         }

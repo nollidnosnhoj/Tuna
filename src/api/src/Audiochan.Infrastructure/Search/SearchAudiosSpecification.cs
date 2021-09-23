@@ -25,7 +25,7 @@ namespace Audiochan.Infrastructure.Search
                     EF.Functions.Like(a.Title.ToLower(), $"%{query.Q.ToLower()}%"));
 
             if (parsedTags.Count > 0)
-                Query.Where(a => a.Tags.Any(x => parsedTags.Contains(x.Name)));
+                Query.Where(a => a.Tags.Any(x => parsedTags.Contains(x)));
         }   
     }
 }

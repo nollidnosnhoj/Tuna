@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.Specification;
@@ -73,7 +74,6 @@ namespace Audiochan.Core.Audios.UpdateAudio
         public LoadAudioForUpdateSpecification(long audioId)
         {
             Query.Include(a => a.User);
-            Query.Include(a => a.Tags);
             Query.Where(a => a.Id == audioId);
         }
     }
@@ -111,7 +111,7 @@ namespace Audiochan.Core.Audios.UpdateAudio
             if (audio.UserId != currentUserId)
                 return Result<AudioDto>.Forbidden();
             
-            await UpdateAudioFromCommandAsync(audio, command, cancellationToken);
+            UpdateAudioFromCommandAsync(audio, command, cancellationToken);
             _unitOfWork.Audios.Update(audio);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             await _cache.RemoveAsync(CacheKeys.Audio.GetAudio(command.AudioId), cancellationToken);
@@ -119,7 +119,7 @@ namespace Audiochan.Core.Audios.UpdateAudio
             return Result<AudioDto>.Success(_mapper.Map<AudioDto>(audio));
         }
 
-        private async Task UpdateAudioFromCommandAsync(Audio audio, UpdateAudioCommand command,
+        private void UpdateAudioFromCommandAsync(Audio audio, UpdateAudioCommand command,
             CancellationToken cancellationToken)
         {
             if (command.Tags is not null)
@@ -130,9 +130,7 @@ namespace Audiochan.Core.Audios.UpdateAudio
                 }
                 else
                 {
-                    var tagStrings = _slugGenerator.GenerateSlugs(command.Tags);
-                    var newTags = await _unitOfWork.Tags.GetAppropriateTags(tagStrings, cancellationToken);
-                    audio.UpdateTags(newTags);
+                    audio.Tags = _slugGenerator.GenerateSlugs(command.Tags).ToList();
                 }
             }
 
