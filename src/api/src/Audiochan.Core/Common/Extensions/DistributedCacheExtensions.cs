@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Distributed;
@@ -9,12 +8,12 @@ namespace Audiochan.Core.Common.Extensions
 {
     public static class DistributedCacheExtensions
     {
-        public static async Task<T?> GetAsync<T>(this IDistributedCache cache, string key, 
+        public static async Task<T?> GetAsync<T>(this IDistributedCache cache, string key, JsonSerializerOptions? jsonSerializerOptions = null,
             CancellationToken cancellationToken = default)
         {
             var bytes = await cache.GetAsync(key, cancellationToken);
             if (bytes is null) return default;
-            return JsonSerializer.Deserialize<T>(bytes);
+            return JsonSerializer.Deserialize<T>(bytes, jsonSerializerOptions ?? new JsonSerializerOptions());
         }
 
         public static async Task SetAsync<T>(this IDistributedCache cache, string key, T value,
@@ -55,7 +54,7 @@ namespace Audiochan.Core.Common.Extensions
             JsonSerializerOptions? jsonSerializerOptions = null,
             CancellationToken cancellationToken = default)
         {
-            var cacheContent = await cache.GetAsync<T>(key, cancellationToken);
+            var cacheContent = await cache.GetAsync<T>(key, jsonSerializerOptions, cancellationToken);
             if (cacheContent is not null) return cacheContent;
             var value = await factory();
             if (value is null) return default;

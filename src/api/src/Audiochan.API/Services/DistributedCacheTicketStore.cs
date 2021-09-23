@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Extensions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Caching.Distributed;
@@ -34,16 +31,16 @@ namespace Audiochan.API.Services
                 AbsoluteExpiration = ticket.Properties.ExpiresUtc
             };
 
-            await _cache.SetAsync(key, ticket, options, new JsonSerializerOptions
-            {
-                ReferenceHandler = ReferenceHandler.Preserve
-            });
+            var bytes = TicketSerializer.Default.Serialize(ticket);
+
+            await _cache.SetAsync(key, bytes, options);
         }
 
         public async Task<AuthenticationTicket> RetrieveAsync(string key)
         {
-            // TODO
-            return (await _cache.GetAsync<AuthenticationTicket>(key))!;
+            var bytes = await _cache.GetAsync(key);
+            if (bytes is null) return default!;
+            return TicketSerializer.Default.Deserialize(bytes)!;
         }
 
         public async Task RemoveAsync(string key)
