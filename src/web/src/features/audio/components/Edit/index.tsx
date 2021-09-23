@@ -6,19 +6,13 @@ import {
   DrawerHeader,
   DrawerBody,
   Button,
-  Stack,
-  Spacer,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
-import * as yup from "yup";
 import { errorToast, toast } from "~/utils/toast";
-import { useEditAudio, useRemoveAudio } from "../api/hooks";
-import { AudioView, AudioRequest } from "../api/types";
-import AudioForm from "./Form";
+import { useEditAudio, useRemoveAudio } from "../../api/hooks";
+import { AudioView } from "../../api/types";
+import EditForm, { UpdateAudioFormValues } from "./Form";
 import { useRouter } from "next/router";
-import { FormProvider, useForm } from "react-hook-form";
-import { validationMessages } from "~/utils";
-import { yupResolver } from "@hookform/resolvers/yup";
 
 interface AudioEditDrawerProps {
   audio: AudioView;
@@ -26,24 +20,6 @@ interface AudioEditDrawerProps {
   onClose: () => void;
   buttonRef?: React.RefObject<HTMLButtonElement>;
 }
-
-const editAudioSchema = yup.object().shape({
-  title: yup
-    .string()
-    .ensure()
-    .required(validationMessages.required("Title"))
-    .min(5, validationMessages.min("Title", 5))
-    .max(30, validationMessages.max("Title", 30)),
-  description: yup
-    .string()
-    .notRequired()
-    .max(500, validationMessages.max("Description", 500)),
-  tags: yup
-    .array()
-    .required()
-    .max(10, validationMessages.max("Tags", 10))
-    .ensure(),
-});
 
 const AudioEditDrawer: React.FC<AudioEditDrawerProps> = (props) => {
   const { audio, isOpen, onClose, buttonRef } = props;
@@ -53,16 +29,7 @@ const AudioEditDrawer: React.FC<AudioEditDrawerProps> = (props) => {
   const { mutateAsync: deleteAudio } = useRemoveAudio(audioId);
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const formMethods = useForm<AudioRequest>({
-    defaultValues: {
-      title: audio.title,
-      description: audio.description,
-      tags: audio.tags,
-    },
-    resolver: yupResolver(editAudioSchema),
-  });
-
-  const onEditSubmit = async (values: AudioRequest) => {
+  const onEditSubmit = async (values: UpdateAudioFormValues) => {
     setIsProcessing(true);
     updateAudio(values)
       .then(() => {
@@ -78,6 +45,7 @@ const AudioEditDrawer: React.FC<AudioEditDrawerProps> = (props) => {
   };
 
   const onDeleteSubmit = () => {
+    // TODO: Implement confirm modal
     if (
       !confirm(
         "Are you sure you want to remove audio? You cannot undo this action."
@@ -112,22 +80,20 @@ const AudioEditDrawer: React.FC<AudioEditDrawerProps> = (props) => {
         <DrawerCloseButton />
         <DrawerHeader>Edit</DrawerHeader>
         <DrawerBody>
-          <form onSubmit={formMethods.handleSubmit(onEditSubmit)}>
-            <FormProvider {...formMethods}>
-              <AudioForm />
-              <Stack direction="row">
-                <Button
-                  colorScheme="red"
-                  onClick={onDeleteSubmit}
-                  disabled={isProcessing}
-                >
-                  Remove
-                </Button>
-                <Spacer />
-                <Button type="submit">Submit</Button>
-              </Stack>
-            </FormProvider>
-          </form>
+          <EditForm
+            audio={audio}
+            onSubmit={onEditSubmit}
+            isDisabled={isProcessing}
+            removeButton={
+              <Button
+                colorScheme="red"
+                onClick={onDeleteSubmit}
+                disabled={isProcessing}
+              >
+                Remove
+              </Button>
+            }
+          />
         </DrawerBody>
       </DrawerContent>
     </Drawer>

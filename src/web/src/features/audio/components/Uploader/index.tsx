@@ -7,62 +7,27 @@ import {
   Spinner,
   Stack,
 } from "@chakra-ui/react";
-import { yupResolver } from "@hookform/resolvers/yup";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { useEffect } from "react";
-import { FormProvider, useForm } from "react-hook-form";
-import * as yup from "yup";
 import { useNavigationLock } from "~/lib/hooks";
 import { ID } from "~/lib/types";
-import { errorToast, toast, validationMessages } from "~/utils";
+import { errorToast, toast } from "~/utils";
 import { useCreateAudio } from "../../api/hooks";
-import { CreateAudioRequest } from "../../api/types";
-import AudioForm from "../Form";
-import AudioDropzone from "./Dropzone";
-
-const uploadNewAudioSchema = yup.object().shape({
-  title: yup
-    .string()
-    .required(validationMessages.required("Title"))
-    .min(5, validationMessages.min("Title", 5))
-    .max(30, validationMessages.max("Title", 30))
-    .ensure(),
-  description: yup
-    .string()
-    .optional()
-    .max(500, validationMessages.max("Description", 500))
-    .ensure(),
-  tags: yup
-    .array()
-    .required()
-    .max(10, validationMessages.max("Tags", 10))
-    .ensure(),
-  uploadId: yup.string().required("Audio file has not been uploaded."),
-  fileName: yup.string().required(),
-  fileSize: yup.number().required().min(0),
-  duration: yup.number().required().min(0),
-});
+import UploadForm, { UploadAudioFormValues } from "./UploadForm";
 
 export default function AudioUploader() {
   const router = useRouter();
   const [audioId, setAudioId] = useState<ID>(0);
   const { mutateAsync: createAudio, isLoading: isCreatingAudio } =
     useCreateAudio();
-  const formMethods = useForm<CreateAudioRequest>({
-    defaultValues: {
-      tags: [],
-    },
-    resolver: yupResolver(uploadNewAudioSchema),
-  });
-  const { handleSubmit } = formMethods;
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [unsavedChanges, setUnsavedChanges] = useNavigationLock(
     "Are you sure you want to leave page? You will lose progress."
   );
 
-  const handleFormSubmit = async (values: CreateAudioRequest) => {
+  const handleUpload = async (values: UploadAudioFormValues) => {
     try {
       const { id } = await createAudio(values);
       setAudioId(id);
@@ -100,18 +65,15 @@ export default function AudioUploader() {
 
   return (
     <Box>
-      <FormProvider {...formMethods}>
-        <form onSubmit={handleSubmit(handleFormSubmit)}>
-          <AudioDropzone
-            onFileDrop={(isFileUpload) => setUnsavedChanges(isFileUpload)}
-          />
-          <AudioForm />
-          <Stack direction="row">
-            <Spacer />
-            <Button type="submit">Submit</Button>
-          </Stack>
-        </form>
-      </FormProvider>
+      <UploadForm
+        onSubmit={handleUpload}
+        onFileDropped={() => setUnsavedChanges(true)}
+        onFileCleared={() => setUnsavedChanges(false)}
+      />
+      <Stack direction="row">
+        <Spacer />
+        <Button type="submit">Submit</Button>
+      </Stack>
     </Box>
   );
 }

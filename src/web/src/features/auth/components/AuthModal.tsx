@@ -10,16 +10,56 @@ import {
   Tab,
   TabPanels,
   TabPanel,
+  useToast,
 } from "@chakra-ui/react";
 import React, { useEffect, useRef, useState } from "react";
+import request from "~/lib/http";
 import { useLoginModal } from "~/lib/stores";
-import LoginForm from "./Forms/Login";
-import RegisterForm from "./Forms/Register";
+import { errorToast } from "~/utils";
+import { useLogin } from "../api/hooks";
+import LoginForm, { LoginFormValues } from "./Forms/Login";
+import RegisterForm, { RegisterFormInputs } from "./Forms/Register";
 
 export default function LoginModal() {
+  const toast = useToast();
   const { modalState, open, onClose } = useLoginModal();
   const [tabIndex, setTabIndex] = useState(0);
   const authInputRef = useRef<HTMLInputElement | null>(null);
+  const { mutate: login } = useLogin();
+
+  const handleLogin = async (values: LoginFormValues) => {
+    login(values, {
+      onSuccess() {
+        toast({
+          status: "success",
+          description: "You have logged in successfully. ",
+        });
+        onClose();
+      },
+    });
+  };
+
+  const handleRegister = async (values: RegisterFormInputs) => {
+    try {
+      await request({
+        method: "post",
+        url: "auth/register",
+        data: {
+          username: values.username,
+          password: values.password,
+          email: values.email,
+        },
+      });
+      toast({
+        title: "Thank you for registering.",
+        description: "You can now login to your account.",
+        status: "success",
+      });
+      onClose();
+    } catch (err) {
+      errorToast(err);
+    }
+  };
 
   useEffect(() => {
     switch (modalState) {
@@ -54,10 +94,13 @@ export default function LoginModal() {
             </TabList>
             <TabPanels>
               <TabPanel>
-                <LoginForm initialRef={authInputRef} onSuccess={onClose} />
+                <LoginForm initialRef={authInputRef} onSubmit={handleLogin} />
               </TabPanel>
               <TabPanel>
-                <RegisterForm initialRef={authInputRef} onSuccess={onClose} />
+                <RegisterForm
+                  initialRef={authInputRef}
+                  onSubmit={handleRegister}
+                />
               </TabPanel>
             </TabPanels>
           </Tabs>

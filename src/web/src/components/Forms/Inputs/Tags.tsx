@@ -13,7 +13,7 @@ import {
 } from "@chakra-ui/react";
 import React, { useCallback, useMemo, useState } from "react";
 import slugify from "slugify";
-import * as yup from "yup";
+import { z } from "zod";
 
 interface TagInputProps {
   name: string;
@@ -37,30 +37,25 @@ const TagInput: React.FC<TagInputProps> = ({
     return value.length === 0 ? [] : value.filter((val) => val.length > 0);
   }, [value]);
   const validationSchema = useMemo(() => {
-    return yup
+    return z
       .string()
-      .ensure()
-      .required("Input is invalid.")
       .min(3, "Input must have at least 3 characters long.")
       .max(25, "Input must have no more than 25 characters long.")
-      .notOneOf([...value], "No duplicate tags.")
-      .defined();
+      .superRefine((args, ctx) => {
+        if (value.includes(args)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "No duplicate tags.",
+          });
+        }
+      });
   }, [value]);
 
   const applyValidationSchema = useCallback(
-    (input: string) => {
-      return new Promise<[boolean, string]>((resolve) => {
-        validationSchema
-          ?.validate(input)
-          .then(() => resolve([true, ""]))
-          .catch((err) => {
-            let message = "Unknown validation error.";
-            if (err instanceof yup.ValidationError) {
-              message = Array.isArray(err.errors) ? err.errors[0] : err.errors;
-            }
-            resolve([false, message]);
-          });
-      });
+    async (input: string): Promise<[boolean, string]> => {
+      const result = await validationSchema.safeParseAsync(input);
+      if (result.success) return [true, ""];
+      return [false, result.error.message];
     },
     [validationSchema]
   );

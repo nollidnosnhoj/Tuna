@@ -20,6 +20,7 @@ export default function RemoveFromPlaylistButton({
     playlist.id
   );
   const handleRemove = useCallback(async () => {
+    // TODO: Implement confirm modal
     if (!confirm("Are you sure you want to remove audio from playlist?"))
       return;
     await removeFromPlaylistAsync([playlistAudioId]);

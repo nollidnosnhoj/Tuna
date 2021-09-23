@@ -1,76 +1,111 @@
-import { string } from "yup";
-import { DefinedStringSchema } from "yup/lib/string";
-import { AnyObject } from "yup/lib/types";
+import { z, ZodType } from "zod";
 import SETTINGS from "~/lib/config";
 import { validationMessages } from "~/utils";
 
-const {
-  usernameMinLength,
-  usernameMaxLength,
-  usernameAllowedChars,
-  passwordRequiresDigit: passwordRequireDigit,
-  passwordRequiresLowercase: passwordRequireLowercase,
-  passwordRequiresNonAlphanumeric: passwordRequireNonAlphanumeric,
-  passwordRequiresUppercase: passwordRequireUppercase,
-  passwordMinimumLength: passwordMinLength,
-} = SETTINGS.IDENTITY;
+const DefaultUsernameRules = SETTINGS.IDENTITY.usernameRules;
+const DefaultPasswordRules = SETTINGS.IDENTITY.passwordRules;
+
+export type UsernameRulesType = typeof DefaultUsernameRules;
+export type PasswordRulesType = typeof DefaultPasswordRules;
 
 export const usernameRule = (
-  label: string
-): DefinedStringSchema<string | undefined, Record<string, unknown>> => {
-  let schema = string().test(
-    "allowedCharacters",
-    "Username can only contain lowercase, numbers, hyphens, or underscores.",
-    (value) => {
-      if (value) {
-        for (const char of value) {
-          if (usernameAllowedChars.indexOf(char) == -1) {
-            return false;
-          }
-        }
+  label: string,
+  rules: UsernameRulesType = DefaultUsernameRules
+): ZodType<string> => {
+  const { allowedCharacters, maxLength, minLength } = rules;
+
+  if (maxLength < 0) throw Error("maxLength cannot be negative.");
+  if (minLength < 0) throw Error("minLength cannot be negative.");
+
+  return z.string().superRefine((arg, ctx) => {
+    for (const char of arg) {
+      if (allowedCharacters.indexOf(char) == -1) {
+        ctx.addIssue({
+          code: "custom",
+          message:
+            "Username can only contain lowercase, numbers, hyphens, or underscores.",
+        });
+        break;
       }
-      return true;
     }
-  );
-  if (usernameMinLength)
-    schema = schema.min(
-      usernameMinLength,
-      validationMessages.min(label, usernameMinLength)
-    );
-  if (usernameMaxLength)
-    schema = schema.max(
-      usernameMaxLength,
-      validationMessages.max(label, usernameMaxLength)
-    );
-  return schema.defined();
+
+    if (minLength && arg.length < minLength) {
+      ctx.addIssue({
+        code: "too_small",
+        minimum: minLength,
+        inclusive: false,
+        type: "string",
+        message: validationMessages.min(label, minLength),
+      });
+    }
+
+    if (maxLength && arg.length > maxLength) {
+      ctx.addIssue({
+        code: "too_big",
+        inclusive: false,
+        maximum: maxLength,
+        type: "string",
+        message: validationMessages.max(label, maxLength),
+      });
+    }
+  });
 };
 
 export const passwordRule = (
-  label: string
-): DefinedStringSchema<string, AnyObject> => {
-  let schema = string();
-  if (passwordMinLength)
-    schema = schema.min(
-      passwordMinLength,
-      validationMessages.min(label, passwordMinLength)
-    );
-  if (passwordRequireDigit)
-    schema = schema.matches(/[\d]+/, "Password must contain one digit.");
-  if (passwordRequireLowercase)
-    schema = schema.matches(
-      /[a-z]+/,
-      "Password must contain one lowercase character."
-    );
-  if (passwordRequireUppercase)
-    schema = schema.matches(
-      /[A-Z]+/,
-      "Password must contain one uppercase character."
-    );
-  if (passwordRequireNonAlphanumeric)
-    schema = schema.matches(
-      /[^a-zA-Z\d]+/,
-      "Password must contain one non-alphanumeric character."
-    );
+  label: string,
+  rules: PasswordRulesType = DefaultPasswordRules
+): ZodType<string> => {
+  const {
+    minLength,
+    requiresDigit,
+    requiresLowercase,
+    requiresNonAlphanumeric,
+    requiresUppercase,
+  } = rules;
 
-  return schema.ensure().defined();
+  if (minLength < 0) throw Error("minLength cannot be negative.");
+
+  return z.string().superRefine((arg, ctx) => {
+    if (minLength && arg.length < minLength) {
+      ctx.addIssue({
+        code: "too_small",
+        inclusive: false,
+        minimum: minLength,
+        type: "string",
+        message: validationMessages.min(label, minLength),
+      });
+    }
+
+    if (requiresDigit && !/[\d]+/.test(arg)) {
+      ctx.addIssue({
+        code: "invalid_string",
+        validation: "regex",
+        message: "Password must contain one digit.",
+      });
+    }
+
+    if (requiresUppercase && !/[A-Z]+/.test(arg)) {
+      ctx.addIssue({
+        code: "invalid_string",
+        validation: "regex",
+        message: "Password must contain one uppercase character.",
+      });
+    }
+
+    if (requiresLowercase && !/[a-z]+/.test(arg)) {
+      ctx.addIssue({
+        code: "invalid_string",
+        validation: "regex",
+        message: "Password must contain one lowercase character.",
+      });
+    }
+
+    if (requiresNonAlphanumeric && !/[^a-zA-Z\d]+/.test(arg)) {
+      ctx.addIssue({
+        code: "invalid_string",
+        validation: "regex",
+        message: "Password must contain one non-alphanumeric character.",
+      });
+    }
+  });
 };
