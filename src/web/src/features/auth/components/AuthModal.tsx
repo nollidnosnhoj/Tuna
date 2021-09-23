@@ -11,11 +11,15 @@ import {
   TabPanels,
   TabPanel,
   useToast,
+  Alert,
+  AlertIcon,
+  CloseButton,
+  AlertDescription,
 } from "@chakra-ui/react";
 import React, { useEffect, useRef, useState } from "react";
 import request from "~/lib/http";
 import { useLoginModal } from "~/lib/stores";
-import { errorToast } from "~/utils";
+import { getErrorMessage } from "~/utils/error";
 import { useLogin } from "../api/hooks";
 import LoginForm, { LoginFormValues } from "./Forms/Login";
 import RegisterForm, { RegisterFormInputs } from "./Forms/Register";
@@ -24,19 +28,22 @@ export default function LoginModal() {
   const toast = useToast();
   const { modalState, open, onClose } = useLoginModal();
   const [tabIndex, setTabIndex] = useState(0);
+  const [loginError, setLoginError] = useState("");
+  const [registerError, setRegisterError] = useState("");
   const authInputRef = useRef<HTMLInputElement | null>(null);
-  const { mutate: login } = useLogin();
+  const { mutateAsync: loginAsync } = useLogin();
 
   const handleLogin = async (values: LoginFormValues) => {
-    login(values, {
-      onSuccess() {
-        toast({
-          status: "success",
-          description: "You have logged in successfully. ",
-        });
-        onClose();
-      },
-    });
+    try {
+      await loginAsync(values);
+      toast({
+        status: "success",
+        description: "You have logged in successfully. ",
+      });
+      onClose();
+    } catch (err) {
+      setLoginError(getErrorMessage(err));
+    }
   };
 
   const handleRegister = async (values: RegisterFormInputs) => {
@@ -57,8 +64,26 @@ export default function LoginModal() {
       });
       onClose();
     } catch (err) {
-      errorToast(err);
+      setRegisterError(getErrorMessage(err));
     }
+  };
+
+  const renderAlertMessage = (err: string, onClose: () => void) => {
+    if (!err) return null;
+    return (
+      <Alert status="error">
+        <AlertIcon />
+        <AlertDescription>
+          There was an error processing your request
+        </AlertDescription>
+        <CloseButton
+          onClick={onClose}
+          position="absolute"
+          right="8px"
+          top="8px"
+        />
+      </Alert>
+    );
   };
 
   useEffect(() => {
@@ -94,9 +119,11 @@ export default function LoginModal() {
             </TabList>
             <TabPanels>
               <TabPanel>
+                {renderAlertMessage(loginError, () => setLoginError(""))}
                 <LoginForm initialRef={authInputRef} onSubmit={handleLogin} />
               </TabPanel>
               <TabPanel>
+                {renderAlertMessage(registerError, () => setRegisterError(""))}
                 <RegisterForm
                   initialRef={authInputRef}
                   onSubmit={handleRegister}
