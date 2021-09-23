@@ -31,7 +31,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             var audioFaker = new AudioFaker(userId)
                 .FinishWith((f, a) =>
                 {
-                    a.Tags = new List<Tag> {new() {Name = tags[0]}, new() {Name = tags[1]}};
+                    a.Tags = new List<string> {tags[0], tags[1]};
                 });
 
             var audio = audioFaker.Generate();

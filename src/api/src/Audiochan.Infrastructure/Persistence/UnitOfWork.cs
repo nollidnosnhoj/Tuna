@@ -17,12 +17,10 @@ namespace Audiochan.Infrastructure.Persistence
         public IEntityRepository<FollowedUser> FollowedUsers { get; }
         public IEntityRepository<PlaylistAudio> PlaylistAudios { get; }
         public IPlaylistRepository Playlists { get; }
-        public ITagRepository Tags { get; }
         public IUserRepository Users { get; }
         
         public UnitOfWork(IAudioRepository audios, 
             IPlaylistRepository playlists, 
-            ITagRepository tags, 
             IUserRepository users, 
             IEntityRepository<FavoriteAudio> favoriteAudios, 
             IEntityRepository<FavoritePlaylist> favoritePlaylists, 
@@ -37,7 +35,6 @@ namespace Audiochan.Infrastructure.Persistence
             PlaylistAudios = playlistAudios;
             Audios = audios;
             Playlists = playlists;
-            Tags = tags;
             Users = users;
         }
         

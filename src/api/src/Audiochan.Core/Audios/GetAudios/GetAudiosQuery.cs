@@ -26,7 +26,7 @@ namespace Audiochan.Core.Audios.GetAudios
             
             if (request.Tags.Count > 0)
             {
-                Query.Where(a => a.Tags.Any(t => request.Tags.Contains(t.Name)));
+                Query.Where(a => a.Tags.Any(t => request.Tags.Contains(t)));
             }
 
             Query.OrderByDescending(a => a.Id);

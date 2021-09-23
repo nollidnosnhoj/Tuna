@@ -12,7 +12,6 @@ namespace Audiochan.Core.Common.Interfaces.Persistence
         IEntityRepository<FollowedUser> FollowedUsers { get; }
         IEntityRepository<PlaylistAudio> PlaylistAudios { get; }
         IPlaylistRepository Playlists { get; }
-        ITagRepository Tags { get; }
         IUserRepository Users { get; }
 
         Task BeginTransactionAsync();

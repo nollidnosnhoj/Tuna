@@ -34,9 +34,7 @@ namespace Audiochan.Core.Playlists
                 .ForMember(dest => dest.Picture, c =>
                 {
                     c.MapFrom(src => src.Picture != null ? MediaLinkConstants.PLAYLIST_PICTURE + src.Picture : null);
-                })
-                .ForMember(dest => dest.Tags, c =>
-                    c.MapFrom(src => src.Tags.Select(t => t.Name).ToList()));
+                });
         }
     }
 }
