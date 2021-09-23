@@ -7,7 +7,7 @@ import {
 } from "react-query";
 import request from "~/lib/http";
 import { ErrorResponse } from "~/lib/types";
-import { Profile } from "../types";
+import { Profile } from "../../types";
 
 export const GET_PROFILE_QUERY_KEY = (username: string): QueryKey => [
   "profile",

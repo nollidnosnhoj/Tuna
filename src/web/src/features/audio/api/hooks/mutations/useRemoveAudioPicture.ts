@@ -1,9 +1,9 @@
 import { useMutation, UseMutationResult, useQueryClient } from "react-query";
-import { AudioView } from "../types";
-import { GET_AUDIO_QUERY_KEY } from "./useGetAudio";
-import { GET_AUDIO_LIST_QUERY_KEY } from "./useGetAudioList";
+import { AudioView } from "../../types";
+import { GET_AUDIO_QUERY_KEY } from "../queries/useGetAudio";
+import { GET_AUDIO_LIST_QUERY_KEY } from "../queries/useGetAudioList";
 import { useUser } from "~/features/user/hooks";
-import { GET_USER_AUDIOS_QUERY_KEY } from "~/features/user/api/hooks/useGetUserAudios";
+import { GET_USER_AUDIOS_QUERY_KEY } from "~/features/user/api/hooks/queries/useGetUserAudios";
 import { ErrorResponse, ID, ImageUploadResponse } from "~/lib/types";
 import request from "~/lib/http";
 

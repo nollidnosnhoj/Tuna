@@ -2,8 +2,8 @@ import { useCallback } from "react";
 import { useMutation, UseMutationResult, useQueryClient } from "react-query";
 import request from "~/lib/http";
 import { ID } from "~/lib/types";
-import { Playlist, PlaylistRequest } from "../types";
-import { GET_PLAYLIST_KEY } from "./useGetPlaylist";
+import { Playlist, PlaylistRequest } from "../../types";
+import { GET_PLAYLIST_KEY } from "../queries/useGetPlaylist";
 
 export function useEditPlaylist(playlistId: ID): UseMutationResult<Playlist> {
   const qc = useQueryClient();

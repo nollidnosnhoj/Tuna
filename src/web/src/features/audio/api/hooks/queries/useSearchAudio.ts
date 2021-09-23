@@ -4,7 +4,7 @@ import {
   UsePaginationOptions,
   UsePaginationResultType,
 } from "~/lib/hooks";
-import { AudioView } from "../types";
+import { AudioView } from "../../types";
 import { useCallback } from "react";
 import request from "~/lib/http";
 import { PagedList } from "~/lib/types";

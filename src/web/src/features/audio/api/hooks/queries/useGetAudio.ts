@@ -8,7 +8,7 @@ import {
 } from "react-query";
 import request from "~/lib/http";
 import { ErrorResponse, ID } from "~/lib/types";
-import { AudioView } from "../types";
+import { AudioView } from "../../types";
 
 export const GET_AUDIO_QUERY_BYSLUG_KEY = (audioSlug: string): QueryKey => [
   "audios",

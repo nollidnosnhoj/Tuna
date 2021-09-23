@@ -5,9 +5,9 @@ import request from "~/lib/http";
 import { useLoginModal } from "~/lib/stores";
 import { ErrorResponse } from "~/lib/types";
 import { errorToast } from "~/utils";
-import { useUser } from "../../hooks";
-import { CurrentUser } from "../types";
-import { ME_QUERY_KEY } from "./useGetCurrentUser";
+import { useUser } from "../../../hooks";
+import { CurrentUser } from "../../types";
+import { ME_QUERY_KEY } from "../queries/useGetCurrentUser";
 
 type Input = { currentPassword: string; newPassword: string };
 

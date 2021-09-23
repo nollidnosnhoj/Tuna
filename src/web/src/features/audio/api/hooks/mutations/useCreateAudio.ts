@@ -1,9 +1,12 @@
 import { useMutation, UseMutationResult, useQueryClient } from "react-query";
-import { GET_USER_AUDIOS_QUERY_KEY } from "~/features/user/api/hooks/useGetUserAudios";
+import { GET_USER_AUDIOS_QUERY_KEY } from "~/features/user/api/hooks/queries/useGetUserAudios";
 import { useUser } from "~/features/user/hooks";
 import request from "~/lib/http";
-import { AudioView, CreateAudioRequest } from "../types";
-import { GET_AUDIO_QUERY_BYSLUG_KEY, GET_AUDIO_QUERY_KEY } from "./useGetAudio";
+import { AudioView, CreateAudioRequest } from "../../types";
+import {
+  GET_AUDIO_QUERY_BYSLUG_KEY,
+  GET_AUDIO_QUERY_KEY,
+} from "../queries/useGetAudio";
 
 export function useCreateAudio(): UseMutationResult<
   AudioView,

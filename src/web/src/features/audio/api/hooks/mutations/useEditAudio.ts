@@ -1,10 +1,10 @@
 import { useMutation, UseMutationResult, useQueryClient } from "react-query";
-import { GET_YOUR_AUDIOS_KEY } from "~/features/auth/api/hooks/useYourAudios";
+import { GET_YOUR_AUDIOS_KEY } from "~/features/auth/api/hooks/queries/useYourAudios";
 import { useUser } from "~/features/user/hooks";
-import { GET_USER_AUDIOS_QUERY_KEY } from "~/features/user/api/hooks/useGetUserAudios";
-import { AudioView, AudioRequest } from "../types";
-import { GET_AUDIO_QUERY_KEY } from "./useGetAudio";
-import { GET_AUDIO_LIST_QUERY_KEY } from "./useGetAudioList";
+import { GET_USER_AUDIOS_QUERY_KEY } from "~/features/user/api/hooks/queries/useGetUserAudios";
+import { AudioView, AudioRequest } from "../../types";
+import { GET_AUDIO_QUERY_KEY } from "../queries/useGetAudio";
+import { GET_AUDIO_LIST_QUERY_KEY } from "../queries/useGetAudioList";
 import request from "~/lib/http";
 import { ID } from "~/lib/types";
 

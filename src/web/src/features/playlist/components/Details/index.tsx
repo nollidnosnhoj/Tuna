@@ -6,7 +6,7 @@ import { useUser } from "~/features/user/hooks";
 import PictureController from "~/components/Picture";
 import { Playlist } from "../../api/types";
 import { useAudioQueue } from "~/lib/stores";
-import { useGetPlaylistAudios } from "../../api/hooks/useGetPlaylistAudios";
+import { useGetPlaylistAudios } from "../../api/hooks/queries/useGetPlaylistAudios";
 import { useCallback } from "react";
 import PlaylistPlayButton from "../Buttons/Play";
 

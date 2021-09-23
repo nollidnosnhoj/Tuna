@@ -6,7 +6,7 @@ import {
 } from "~/lib/hooks";
 import request from "~/lib/http";
 import { CursorPagedList } from "~/lib/types";
-import { AudioView } from "../types";
+import { AudioView } from "../../types";
 
 export const GET_AUDIO_LIST_QUERY_KEY = "audios";
 

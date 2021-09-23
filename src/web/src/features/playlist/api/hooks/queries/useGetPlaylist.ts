@@ -7,7 +7,7 @@ import {
 } from "react-query";
 import request from "~/lib/http";
 import { ID } from "~/lib/types";
-import { Playlist } from "../types";
+import { Playlist } from "../../types";
 
 export const GET_PLAYLIST_KEY = (playlistId: ID): QueryKey => [
   "playlist",

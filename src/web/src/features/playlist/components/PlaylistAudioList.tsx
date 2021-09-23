@@ -2,7 +2,7 @@ import { List, ListItem } from "@chakra-ui/layout";
 import React, { useMemo } from "react";
 import AudioStackMiniItem from "../../audio/components/List/Item";
 import { ID } from "~/lib/types";
-import { useGetPlaylistAudios } from "../api/hooks/useGetPlaylistAudios";
+import { useGetPlaylistAudios } from "../api/hooks/queries/useGetPlaylistAudios";
 import { useAudioPlayer, useAudioQueue } from "~/lib/stores";
 
 interface PlaylistAudioListProps {

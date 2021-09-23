@@ -1,6 +1,6 @@
-export { useAddAudiosToPlaylist } from "./useAddAudiosToPlaylist";
-export { useCreatePlaylist } from "./useCreatePlaylist";
-export { useEditPlaylist } from "./useEditPlaylist";
-export { useFavoritePlaylist } from "./useFavoritePlaylist";
-export { useGetPlaylist } from "./useGetPlaylist";
-export { useRemoveAudiosFromPlaylist } from "./useRemoveAudiosFromPlaylist";
+export { useAddAudiosToPlaylist } from "./mutations/useAddAudiosToPlaylist";
+export { useCreatePlaylist } from "./mutations/useCreatePlaylist";
+export { useEditPlaylist } from "./mutations/useEditPlaylist";
+export { useFavoritePlaylist } from "./mutations/useFavoritePlaylist";
+export { useGetPlaylist } from "./queries/useGetPlaylist";
+export { useRemoveAudiosFromPlaylist } from "./mutations/useRemoveAudiosFromPlaylist";

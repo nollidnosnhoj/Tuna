@@ -8,7 +8,7 @@ import {
 } from "~/lib/hooks";
 import request from "~/lib/http";
 import { CursorPagedList, ID } from "~/lib/types";
-import { PlaylistAudio } from "../types";
+import { PlaylistAudio } from "../../types";
 
 export const GET_PLAYLIST_AUDIOS_KEY = (
   playlistId: ID | undefined

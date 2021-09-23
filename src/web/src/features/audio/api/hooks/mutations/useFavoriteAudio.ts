@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { QueryKey, useMutation, useQuery, useQueryClient } from "react-query";
-import { GET_YOUR_FAV_AUDIOS_KEY } from "~/features/auth/api/hooks/useYourFavoriteAudios";
+import { GET_YOUR_FAV_AUDIOS_KEY } from "~/features/auth/api/hooks/queries/useYourFavoriteAudios";
 import { useUser } from "~/features/user/hooks";
 import request from "~/lib/http";
 import { ID } from "~/lib/types";

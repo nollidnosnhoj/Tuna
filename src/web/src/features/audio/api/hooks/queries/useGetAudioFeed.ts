@@ -4,7 +4,7 @@ import {
   UseInfinitePaginationOptions,
   UseInfinitePaginationReturnType,
 } from "~/lib/hooks";
-import { AudioView } from "../types";
+import { AudioView } from "../../types";
 import { useUser } from "~/features/user/hooks";
 import request from "~/lib/http";
 import { OffsetPagedList } from "~/lib/types";

@@ -1,5 +1,5 @@
 import { useMutation, UseMutationResult, useQueryClient } from "react-query";
-import { ME_QUERY_KEY } from "~/features/user/api/hooks/useGetCurrentUser";
+import { ME_QUERY_KEY } from "~/features/user/api/hooks/queries/useGetCurrentUser";
 import { CurrentUser } from "~/features/user/api/types";
 import { useUser } from "~/features/user/hooks";
 import request from "~/lib/http";
