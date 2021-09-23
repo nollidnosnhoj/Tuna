@@ -139,6 +139,7 @@ export default function PictureController(props: PictureProps) {
               icon={<DeleteIcon />}
               onClick={async (e) => {
                 e.stopPropagation();
+                // TODO: Implement Confirm Modal
                 if (!confirm("Are you sure you want to remove image?")) return;
                 await onRemove();
               }}

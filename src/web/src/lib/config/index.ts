@@ -2,14 +2,18 @@ export default {
   BACKEND_API: process.env.NEXT_PUBLIC_BACKEND_API,
   FRONTEND_URL: process.env.NEXT_PUBLIC_FRONTEND_URL,
   IDENTITY: {
-    usernameMinLength: 3,
-    usernameMaxLength: 20,
-    usernameAllowedChars: "abcdefghijklmnopqrstuvwxyz-_",
-    passwordMinimumLength: 6,
-    passwordRequiresDigit: true,
-    passwordRequiresLowercase: true,
-    passwordRequiresUppercase: true,
-    passwordRequiresNonAlphanumeric: false,
+    usernameRules: {
+      minLength: 3,
+      maxLength: 20,
+      allowedCharacters: "0123456789abcdefghijklmnopqrstuvwxyz-_",
+    },
+    passwordRules: {
+      minLength: 6,
+      requiresDigit: true,
+      requiresUppercase: true,
+      requiresLowercase: true,
+      requiresNonAlphanumeric: false,
+    },
   },
   UPLOAD: {
     AUDIO: {

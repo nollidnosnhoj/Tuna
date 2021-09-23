@@ -1,66 +1,48 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { Button } from "@chakra-ui/react";
 import { z } from "zod";
 import TextInput from "~/components/Forms/Inputs/Text";
-import { useUser } from "~/features/user/hooks";
-import { errorToast, toast } from "~/utils";
-import { usernameRule } from "../schemas";
-import request from "~/lib/http";
+import SETTINGS from "~/lib/config";
+import { usernameRule, UsernameRulesType } from "../schemas";
 import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-const updateUsernameSchema = z.object({ username: usernameRule("Username") });
+export const updateUsernameSchema = (
+  rules: UsernameRulesType = SETTINGS.IDENTITY.usernameRules
+) =>
+  z.object({
+    username: usernameRule("Username", rules),
+  });
 
-type UpdateUsernameRequest = z.infer<typeof updateUsernameSchema>;
+type UpdateUsernameRequest = z.infer<ReturnType<typeof updateUsernameSchema>>;
 
-export default function UpdateUsername() {
-  const { user, updateUser } = useUser();
+interface UpdateUsernameFormProps {
+  onSubmit?: (values: UpdateUsernameRequest) => Promise<void>;
+}
 
-  const validationSchema = useMemo(() => {
-    return updateUsernameSchema.superRefine((args, ctx) => {
-      if (args.username === user?.userName) {
-        ctx.addIssue({
-          code: "custom",
-          message: "Cannot update to same username",
-        });
-      }
-    });
-  }, [user?.userName]);
-
+export default function UpdateUsernameForm({
+  onSubmit,
+}: UpdateUsernameFormProps) {
   const {
     handleSubmit,
     register,
+    reset,
     formState: { errors, isSubmitting },
   } = useForm<UpdateUsernameRequest>({
-    resolver: yupResolver(validationSchema),
+    resolver: zodResolver(updateUsernameSchema()),
   });
 
   const handleUsernameSubmit = async (values: UpdateUsernameRequest) => {
-    const { username: newUsername } = values;
-    if (newUsername.toLowerCase() === user?.userName) return;
-
-    try {
-      await request({
-        method: "patch",
-        url: "me/username",
-        data: { newUsername },
-      });
-      toast("success", {
-        title: "Username updated.",
-        description: "You have successfully updated your username.",
-      });
-      if (user) {
-        updateUser({ ...user, userName: newUsername });
-      }
-    } catch (err) {
-      errorToast(err);
-    }
+    await onSubmit?.(values);
+    reset({});
   };
 
   return (
     <form onSubmit={handleSubmit(handleUsernameSubmit)}>
       <TextInput
-        {...register("username")}
+        {...register("username", {
+          setValueAs: (val: string) => val.toLowerCase(),
+        })}
         error={errors.username?.message}
         label="Change Username"
         isRequired

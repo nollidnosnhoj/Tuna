@@ -2,74 +2,57 @@ import React from "react";
 import { Button } from "@chakra-ui/react";
 import { z } from "zod";
 import TextInput from "~/components/Forms/Inputs/Text";
-import { validationMessages, errorToast } from "~/utils";
-import { passwordRule } from "../schemas";
-import request from "~/lib/http";
-import { useRouter } from "next/router";
+import SETTINGS from "~/lib/config";
+import { validationMessages } from "~/utils";
+import { passwordRule, PasswordRulesType } from "../schemas";
 import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-// const updatePasswordSchema: yup.SchemaOf<UpdatePasswordValues> = yup
-//   .object()
-//   .shape({
-//     currentPassword: yup
-//       .string()
-//       .required(validationMessages.required("Current Password")),
-//     newPassword: passwordRule("New Password"),
-//     confirmPassword: yup
-//       .string()
-//       .required()
-//       .oneOf([yup.ref("newPassword")], "Password does not match."),
-//   });
+export const updatePasswordSchema = (
+  rules: PasswordRulesType = SETTINGS.IDENTITY.passwordRules
+) =>
+  z
+    .object({
+      currentPassword: z
+        .string()
+        .min(1, validationMessages.required("Current Password")),
+      newPassword: passwordRule("New Password", rules),
+      confirmPassword: z
+        .string()
+        .min(1, validationMessages.required("Confirm Password")),
+    })
+    .superRefine((arg, ctx) => {
+      if (arg.confirmPassword !== arg.newPassword) {
+        ctx.addIssue({
+          code: "custom",
+          message: "Password does not match.",
+        });
+      }
+    });
 
-const updatePasswordSchema = z
-  .object({
-    currentPassword: z
-      .string()
-      .min(1, validationMessages.required("Current Password")),
-    newPassword: passwordRule("New Password"),
-    confirmPassword: z
-      .string()
-      .min(1, validationMessages.required("Confirm Password")),
-  })
-  .superRefine((arg, ctx) => {
-    if (arg.confirmPassword !== arg.newPassword) {
-      ctx.addIssue({
-        code: "custom",
-        message: "Password does not match.",
-      });
-    }
-  });
+export type UpdatePasswordValues = z.infer<
+  ReturnType<typeof updatePasswordSchema>
+>;
 
-type UpdatePasswordValues = z.infer<typeof updatePasswordSchema>;
+interface UpdatePasswordFormProps {
+  onSubmit?: (currentPassword: string, newPassword: string) => Promise<void>;
+}
 
-export default function UpdatePassword() {
-  const router = useRouter();
+export default function UpdatePasswordForm({
+  onSubmit,
+}: UpdatePasswordFormProps) {
   const {
     register,
     reset,
     formState: { isSubmitting, errors },
     handleSubmit,
   } = useForm<UpdatePasswordValues>({
-    resolver: yupResolver(updatePasswordSchema),
+    resolver: zodResolver(updatePasswordSchema()),
   });
 
   const handlePasswordChange = async (values: UpdatePasswordValues) => {
-    const { currentPassword, newPassword } = values;
-    try {
-      await request({
-        method: "patch",
-        url: "me/password",
-        data: {
-          currentPassword: currentPassword,
-          newPassword: newPassword,
-        },
-      });
-      reset();
-      router.push("/logout");
-    } catch (err) {
-      errorToast(err);
-    }
+    await onSubmit?.(values.currentPassword, values.newPassword);
+    reset({});
   };
 
   return (

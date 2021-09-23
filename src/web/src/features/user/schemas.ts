@@ -2,21 +2,24 @@ import { z, ZodType } from "zod";
 import SETTINGS from "~/lib/config";
 import { validationMessages } from "~/utils";
 
-const {
-  usernameMinLength,
-  usernameMaxLength,
-  usernameAllowedChars,
-  passwordRequiresDigit: passwordRequireDigit,
-  passwordRequiresLowercase: passwordRequireLowercase,
-  passwordRequiresNonAlphanumeric: passwordRequireNonAlphanumeric,
-  passwordRequiresUppercase: passwordRequireUppercase,
-  passwordMinimumLength: passwordMinLength,
-} = SETTINGS.IDENTITY;
+const DefaultUsernameRules = SETTINGS.IDENTITY.usernameRules;
+const DefaultPasswordRules = SETTINGS.IDENTITY.passwordRules;
 
-export const usernameRule = (label: string): ZodType<string> => {
+export type UsernameRulesType = typeof DefaultUsernameRules;
+export type PasswordRulesType = typeof DefaultPasswordRules;
+
+export const usernameRule = (
+  label: string,
+  rules: UsernameRulesType = DefaultUsernameRules
+): ZodType<string> => {
+  const { allowedCharacters, maxLength, minLength } = rules;
+
+  if (maxLength < 0) throw Error("maxLength cannot be negative.");
+  if (minLength < 0) throw Error("minLength cannot be negative.");
+
   return z.string().superRefine((arg, ctx) => {
     for (const char of arg) {
-      if (usernameAllowedChars.indexOf(char) == -1) {
+      if (allowedCharacters.indexOf(char) == -1) {
         ctx.addIssue({
           code: "custom",
           message:
@@ -26,41 +29,54 @@ export const usernameRule = (label: string): ZodType<string> => {
       }
     }
 
-    if (usernameMinLength && arg.length < usernameMinLength) {
+    if (minLength && arg.length < minLength) {
       ctx.addIssue({
         code: "too_small",
-        minimum: usernameMinLength,
+        minimum: minLength,
         inclusive: false,
         type: "string",
-        message: validationMessages.min(label, usernameMinLength),
+        message: validationMessages.min(label, minLength),
       });
     }
 
-    if (usernameMaxLength && arg.length > usernameMaxLength) {
+    if (maxLength && arg.length > maxLength) {
       ctx.addIssue({
         code: "too_big",
         inclusive: false,
-        maximum: usernameMaxLength,
+        maximum: maxLength,
         type: "string",
-        message: validationMessages.max(label, usernameMaxLength),
+        message: validationMessages.max(label, maxLength),
       });
     }
   });
 };
 
-export const passwordRule = (label: string): ZodType<string> => {
+export const passwordRule = (
+  label: string,
+  rules: PasswordRulesType = DefaultPasswordRules
+): ZodType<string> => {
+  const {
+    minLength,
+    requiresDigit,
+    requiresLowercase,
+    requiresNonAlphanumeric,
+    requiresUppercase,
+  } = rules;
+
+  if (minLength < 0) throw Error("minLength cannot be negative.");
+
   return z.string().superRefine((arg, ctx) => {
-    if (passwordMinLength && arg.length < passwordMinLength) {
+    if (minLength && arg.length < minLength) {
       ctx.addIssue({
         code: "too_small",
         inclusive: false,
-        minimum: passwordMinLength,
+        minimum: minLength,
         type: "string",
-        message: validationMessages.min(label, passwordMinLength),
+        message: validationMessages.min(label, minLength),
       });
     }
 
-    if (passwordRequireDigit && !/[\d]+/.test(arg)) {
+    if (requiresDigit && !/[\d]+/.test(arg)) {
       ctx.addIssue({
         code: "invalid_string",
         validation: "regex",
@@ -68,7 +84,7 @@ export const passwordRule = (label: string): ZodType<string> => {
       });
     }
 
-    if (passwordRequireUppercase && !/[a-z]+/.test(arg)) {
+    if (requiresUppercase && !/[A-Z]+/.test(arg)) {
       ctx.addIssue({
         code: "invalid_string",
         validation: "regex",
@@ -76,7 +92,7 @@ export const passwordRule = (label: string): ZodType<string> => {
       });
     }
 
-    if (passwordRequireLowercase && !/[a-z]+/.test(arg)) {
+    if (requiresLowercase && !/[a-z]+/.test(arg)) {
       ctx.addIssue({
         code: "invalid_string",
         validation: "regex",
@@ -84,7 +100,7 @@ export const passwordRule = (label: string): ZodType<string> => {
       });
     }
 
-    if (passwordRequireNonAlphanumeric && !/[^a-zA-Z\d]+/.test(arg)) {
+    if (requiresNonAlphanumeric && !/[^a-zA-Z\d]+/.test(arg)) {
       ctx.addIssue({
         code: "invalid_string",
         validation: "regex",

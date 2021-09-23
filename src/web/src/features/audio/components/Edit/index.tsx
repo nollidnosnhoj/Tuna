@@ -6,19 +6,13 @@ import {
   DrawerHeader,
   DrawerBody,
   Button,
-  Stack,
-  Spacer,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
-import { z } from "zod";
 import { errorToast, toast } from "~/utils/toast";
-import { useEditAudio, useRemoveAudio } from "../api/hooks";
-import { AudioView } from "../api/types";
-import AudioForm from "./Form";
+import { useEditAudio, useRemoveAudio } from "../../api/hooks";
+import { AudioView } from "../../api/types";
+import EditForm, { UpdateAudioFormValues } from "./Form";
 import { useRouter } from "next/router";
-import { FormProvider, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { audioSchema } from "../schama";
 
 interface AudioEditDrawerProps {
   audio: AudioView;
@@ -27,8 +21,6 @@ interface AudioEditDrawerProps {
   buttonRef?: React.RefObject<HTMLButtonElement>;
 }
 
-type UpdateAudioFormValues = z.infer<typeof audioSchema>;
-
 const AudioEditDrawer: React.FC<AudioEditDrawerProps> = (props) => {
   const { audio, isOpen, onClose, buttonRef } = props;
   const { id: audioId } = audio;
@@ -36,15 +28,6 @@ const AudioEditDrawer: React.FC<AudioEditDrawerProps> = (props) => {
   const { mutateAsync: updateAudio } = useEditAudio(audioId);
   const { mutateAsync: deleteAudio } = useRemoveAudio(audioId);
   const [isProcessing, setIsProcessing] = useState(false);
-
-  const formMethods = useForm<UpdateAudioFormValues>({
-    defaultValues: {
-      title: audio.title,
-      description: audio.description,
-      tags: audio.tags,
-    },
-    resolver: zodResolver(audioSchema),
-  });
 
   const onEditSubmit = async (values: UpdateAudioFormValues) => {
     setIsProcessing(true);
@@ -62,6 +45,7 @@ const AudioEditDrawer: React.FC<AudioEditDrawerProps> = (props) => {
   };
 
   const onDeleteSubmit = () => {
+    // TODO: Implement confirm modal
     if (
       !confirm(
         "Are you sure you want to remove audio? You cannot undo this action."
@@ -96,22 +80,20 @@ const AudioEditDrawer: React.FC<AudioEditDrawerProps> = (props) => {
         <DrawerCloseButton />
         <DrawerHeader>Edit</DrawerHeader>
         <DrawerBody>
-          <form onSubmit={formMethods.handleSubmit(onEditSubmit)}>
-            <FormProvider {...formMethods}>
-              <AudioForm />
-              <Stack direction="row">
-                <Button
-                  colorScheme="red"
-                  onClick={onDeleteSubmit}
-                  disabled={isProcessing}
-                >
-                  Remove
-                </Button>
-                <Spacer />
-                <Button type="submit">Submit</Button>
-              </Stack>
-            </FormProvider>
-          </form>
+          <EditForm
+            audio={audio}
+            onSubmit={onEditSubmit}
+            isDisabled={isProcessing}
+            removeButton={
+              <Button
+                colorScheme="red"
+                onClick={onDeleteSubmit}
+                disabled={isProcessing}
+              >
+                Remove
+              </Button>
+            }
+          />
         </DrawerBody>
       </DrawerContent>
     </Drawer>

@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { createStandaloneToast, UseToastOptions } from "@chakra-ui/react";
 import theme from "~/lib/theme";
+import { ErrorResponse } from "~/lib/types";
 import { isAxiosError } from "./http";
 
 const chakraToast = createStandaloneToast({ theme: theme });
@@ -12,6 +13,10 @@ type ErrorToastOptions = Omit<
   UseToastOptions,
   "title" | "description" | "status" | "id"
 >;
+
+function checkIfErrorResponse(err: any): err is ErrorResponse {
+  return "code" in err && "message" in err;
+}
 
 export function toast(
   status: ToastStatus,
@@ -39,35 +44,37 @@ export function errorToast(
     ...options,
   };
 
+  if (isAxiosError(err)) {
+    if (checkIfErrorResponse(err.response?.data)) {
+      chakraToast({
+        ...toastOptions,
+        title: err.response?.data.message,
+      });
+      return;
+    }
+  }
+
+  if (checkIfErrorResponse(err)) {
+    chakraToast({
+      ...toastOptions,
+      title: err.message,
+    });
+    return;
+  }
+
   if (err instanceof Error) {
     chakraToast({
       ...toastOptions,
     });
-  } else if (isAxiosError(err)) {
-    if (err.response?.status === 401) return;
-    if (err.response?.data.errors) {
-      Object.entries(err.response?.data.errors).forEach(([key, errors]) => {
-        chakraToast({
-          ...toastOptions,
-          title: key,
-          description: (errors as string[]).join(". "),
-        });
-      });
-    } else {
-      chakraToast({
-        ...toastOptions,
-        title: "A request error has occurred.",
-        description: err.response?.data.message,
-      });
-    }
-  } else if (typeof err === "string") {
-    chakraToast({
-      ...toastOptions,
-      description: err,
-    });
-  } else {
-    chakraToast({
-      ...toastOptions,
-    });
+    return;
   }
+
+  if (typeof err === "string") {
+    chakraToast({ ...toastOptions, title: err });
+    return;
+  }
+
+  chakraToast({
+    ...toastOptions,
+  });
 }

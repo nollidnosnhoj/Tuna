@@ -5,3 +5,6 @@ export { useGetUserFavoriteAudios } from "./useGetUserFavoriteAudios";
 export { useGetProfile } from "./useGetProfile";
 export { useGetCurrentUser } from "./useGetCurrentUser";
 export { useRemoveUserPicture } from "./useRemoveUserPicture";
+export { useUpdateEmail } from "./useUpdateEmail";
+export { useUpdatePassword } from "./useUpdatePassword";
+export { useUpdateUsername } from "./useUpdateUsername";

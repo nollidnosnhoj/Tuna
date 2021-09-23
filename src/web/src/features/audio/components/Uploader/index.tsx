@@ -7,41 +7,27 @@ import {
   Spinner,
   Stack,
 } from "@chakra-ui/react";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { useEffect } from "react";
-import { FormProvider, useForm } from "react-hook-form";
-import { z } from "zod";
 import { useNavigationLock } from "~/lib/hooks";
 import { ID } from "~/lib/types";
 import { errorToast, toast } from "~/utils";
 import { useCreateAudio } from "../../api/hooks";
-import { uploadAudioSchema } from "../../schama";
-import AudioForm from "../Form";
-import AudioDropzone from "./Dropzone";
-
-type UploadAudioFormValues = z.infer<typeof uploadAudioSchema>;
+import UploadForm, { UploadAudioFormValues } from "./UploadForm";
 
 export default function AudioUploader() {
   const router = useRouter();
   const [audioId, setAudioId] = useState<ID>(0);
   const { mutateAsync: createAudio, isLoading: isCreatingAudio } =
     useCreateAudio();
-  const formMethods = useForm<UploadAudioFormValues>({
-    defaultValues: {
-      tags: [],
-    },
-    resolver: zodResolver(uploadAudioSchema),
-  });
-  const { handleSubmit } = formMethods;
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [unsavedChanges, setUnsavedChanges] = useNavigationLock(
     "Are you sure you want to leave page? You will lose progress."
   );
 
-  const handleFormSubmit = async (values: UploadAudioFormValues) => {
+  const handleUpload = async (values: UploadAudioFormValues) => {
     try {
       const { id } = await createAudio(values);
       setAudioId(id);
@@ -79,18 +65,15 @@ export default function AudioUploader() {
 
   return (
     <Box>
-      <FormProvider {...formMethods}>
-        <form onSubmit={handleSubmit(handleFormSubmit)}>
-          <AudioDropzone
-            onFileDrop={(isFileUpload) => setUnsavedChanges(isFileUpload)}
-          />
-          <AudioForm />
-          <Stack direction="row">
-            <Spacer />
-            <Button type="submit">Submit</Button>
-          </Stack>
-        </form>
-      </FormProvider>
+      <UploadForm
+        onSubmit={handleUpload}
+        onFileDropped={() => setUnsavedChanges(true)}
+        onFileCleared={() => setUnsavedChanges(false)}
+      />
+      <Stack direction="row">
+        <Spacer />
+        <Button type="submit">Submit</Button>
+      </Stack>
     </Box>
   );
 }
