@@ -32,5 +32,8 @@ export function createApiAxiosInstance(): AxiosInstance {
     baseURL: SETTINGS.BACKEND_API,
     withCredentials: true,
     paramsSerializer: (params) => stringifyQueryObject(params),
+    headers: {
+      "X-Requested-With": "XMLHttpRequest",
+    },
   });
 }
