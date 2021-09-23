@@ -24,7 +24,7 @@ namespace Audiochan.API.Extensions.ConfigurationExtensions
                     options.SessionStore = ticketStore;
                     options.Cookie.SameSite = environment.IsProduction()
                         ? SameSiteMode.Lax
-                        : SameSiteMode.None;
+                        : SameSiteMode.Unspecified;
 
                     options.Cookie.SecurePolicy = environment.IsProduction()
                         ? CookieSecurePolicy.Always
