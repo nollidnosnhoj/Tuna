@@ -5,7 +5,7 @@ import {
   UseInfiniteQueryOptions,
   UseInfiniteQueryResult,
 } from "react-query";
-import { OffsetPagedList } from "../types";
+import { OffsetPagedList } from "../../types";
 
 type InfinitePaginationQueryFunction<TItem> = (
   offset: number

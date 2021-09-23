@@ -5,7 +5,7 @@ import {
   UseQueryOptions,
   UseQueryResult,
 } from "react-query";
-import { ErrorResponse, PagedList } from "../types";
+import { ErrorResponse, PagedList } from "../../types";
 
 type PaginationQueryFunction<TItem> = (
   page: number

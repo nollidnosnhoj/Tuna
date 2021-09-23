@@ -5,7 +5,7 @@ import {
   UseInfiniteQueryOptions,
   UseInfiniteQueryResult,
 } from "react-query";
-import { CursorPagedList } from "../types";
+import { CursorPagedList } from "../../types";
 
 type InfiniteCursorPaginationQueryFunction<TItem> = (
   cursor: number
