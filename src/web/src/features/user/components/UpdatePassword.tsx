@@ -3,7 +3,6 @@ import { Button } from "@chakra-ui/react";
 import { z } from "zod";
 import TextInput from "~/components/Forms/Inputs/Text";
 import SETTINGS from "~/lib/config";
-import { validationMessages } from "~/utils";
 import { passwordRule, PasswordRulesType } from "../schemas";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -13,13 +12,9 @@ export const updatePasswordSchema = (
 ) =>
   z
     .object({
-      currentPassword: z
-        .string()
-        .min(1, validationMessages.required("Current Password")),
+      currentPassword: z.string().min(1),
       newPassword: passwordRule("New Password", rules),
-      confirmPassword: z
-        .string()
-        .min(1, validationMessages.required("Confirm Password")),
+      confirmPassword: z.string().min(1),
     })
     .superRefine((arg, ctx) => {
       if (arg.confirmPassword !== arg.newPassword) {

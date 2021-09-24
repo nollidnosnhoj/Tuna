@@ -87,6 +87,7 @@ const AudioEditDrawer: React.FC<AudioEditDrawerProps> = (props) => {
             removeButton={
               <Button
                 colorScheme="red"
+                variant="outline"
                 onClick={onDeleteSubmit}
                 disabled={isProcessing}
               >

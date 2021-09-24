@@ -1,16 +1,9 @@
 import { z } from "zod";
-import { validationMessages } from "~/utils";
 
 export const audioSchema = z.object({
-  title: z
-    .string()
-    .min(5, validationMessages.min("Title", 5))
-    .max(30, validationMessages.max("Title", 30)),
-  description: z
-    .string()
-    .max(500, validationMessages.max("Description", 500))
-    .optional(),
-  tags: z.string().array().max(10, validationMessages.max("Tags", 10)),
+  title: z.string().min(5).max(30),
+  description: z.string().max(500).optional(),
+  tags: z.string().array().max(10),
 });
 
 export const uploadAudioSchema = audioSchema.extend({

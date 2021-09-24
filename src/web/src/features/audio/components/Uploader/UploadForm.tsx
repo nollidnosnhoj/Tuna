@@ -6,6 +6,7 @@ import AudioDropzone from "./Dropzone";
 import TagInput from "~/components/Forms/Inputs/Tags";
 import TextInput from "~/components/Forms/Inputs/Text";
 import { uploadAudioSchema } from "../../schama";
+import { Button, Spacer, Stack } from "@chakra-ui/react";
 
 interface UploadFormProps {
   onFileDropped?: () => void;
@@ -37,8 +38,12 @@ export default function UploadForm({
   } = formMethods;
 
   const handleUploadSubmit = async (values: UploadAudioFormValues) => {
-    await onSubmit?.(values);
-    reset();
+    try {
+      await onSubmit?.(values);
+      reset({});
+    } catch {
+      reset({ ...values });
+    }
   };
 
   return (
@@ -83,6 +88,10 @@ export default function UploadForm({
           />
         )}
       />
+      <Stack direction="row">
+        <Spacer />
+        <Button type="submit">Submit</Button>
+      </Stack>
     </form>
   );
 }

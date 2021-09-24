@@ -35,19 +35,27 @@ export default function EditForm({
   const {
     control,
     register,
+    reset,
     handleSubmit,
     formState: { errors },
   } = formMethods;
 
+  const handleSubmission = async (values: UpdateAudioFormValues) => {
+    try {
+      await onSubmit(values);
+    } catch {
+      reset({ ...values });
+    }
+  };
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(handleSubmission)}>
       <Box marginBottom={8}>
         <TextInput
           {...register("title")}
           label="Title"
           error={errors.title?.message}
           isDisabled={isDisabled}
-          helperText="Note: When you change the audio's title, the url (slug) will also change to correspond with the title."
         />
         <TextInput
           {...register("description")}

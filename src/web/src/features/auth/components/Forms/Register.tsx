@@ -2,7 +2,6 @@ import React from "react";
 import { Button, Flex, Text } from "@chakra-ui/react";
 import { z } from "zod";
 import TextInput from "~/components/Forms/Inputs/Text";
-import { validationMessages } from "~/utils";
 import { usernameRule, passwordRule } from "~/features/user/schemas";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -11,10 +10,8 @@ export const registrationValidationSchema = z
   .object({
     username: usernameRule("Username"),
     password: passwordRule("Password"),
-    email: z.string().min(1, validationMessages.required("Email")).email(),
-    confirmPassword: z
-      .string()
-      .min(1, validationMessages.required("Confirm Password")),
+    email: z.string().min(1).email(),
+    confirmPassword: z.string().min(1),
   })
   .superRefine((arg, ctx) => {
     if (arg.confirmPassword !== arg.password) {
@@ -45,8 +42,11 @@ export default function RegisterForm(props: RegisterFormProps) {
   } = formik;
 
   const handleRegisterSubmit = async (values: RegisterFormInputs) => {
-    await props.onSubmit?.(values);
-    reset();
+    try {
+      await props.onSubmit?.(values);
+    } catch {
+      reset({ ...values });
+    }
   };
 
   return (

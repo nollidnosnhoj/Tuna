@@ -1,24 +1,17 @@
-import {
-  Box,
-  Button,
-  chakra,
-  Flex,
-  Spacer,
-  Spinner,
-  Stack,
-} from "@chakra-ui/react";
+import { Box, chakra, Flex, Spinner } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { useEffect } from "react";
+import Link from "~/components/UI/Link";
 import { useNavigationLock } from "~/lib/hooks";
-import { ID } from "~/lib/types";
+
 import { errorToast, toast } from "~/utils";
 import { useCreateAudio } from "../../api/hooks";
 import UploadForm, { UploadAudioFormValues } from "./UploadForm";
 
 export default function AudioUploader() {
   const router = useRouter();
-  const [audioId, setAudioId] = useState<ID>(0);
+  const [audioLink, setAudioLink] = useState<string>("");
   const { mutateAsync: createAudio, isLoading: isCreatingAudio } =
     useCreateAudio();
 
@@ -29,8 +22,8 @@ export default function AudioUploader() {
 
   const handleUpload = async (values: UploadAudioFormValues) => {
     try {
-      const { id } = await createAudio(values);
-      setAudioId(id);
+      const { slug } = await createAudio(values);
+      setAudioLink(`/audios/${slug}`);
       setUnsavedChanges(false);
     } catch (err) {
       errorToast(err);
@@ -38,19 +31,24 @@ export default function AudioUploader() {
   };
 
   useEffect(() => {
-    if (audioId && !unsavedChanges) {
-      router.push(`/audios/${audioId}`).then(() => {
+    if (audioLink && !unsavedChanges) {
+      router.push(audioLink).then(() => {
         toast("success", { title: "Audio was successfully created." });
       });
     }
-  }, [audioId, unsavedChanges]);
+  }, [audioLink, unsavedChanges]);
 
-  if (audioId) {
+  if (audioLink) {
     return (
       <Flex align="center" justify="center" height="25vh">
-        <chakra.span>
-          Audio created. You will be redirected to to newly created page.
-        </chakra.span>
+        <chakra.p>
+          Your audio has been uploaded. We will now redirect you to your newly
+          uploaded audio.
+        </chakra.p>
+        <chakra.p>
+          If the page did not redirect, click{" "}
+          <Link href={audioLink}>here to be redirected.</Link>
+        </chakra.p>
       </Flex>
     );
   }
@@ -70,10 +68,6 @@ export default function AudioUploader() {
         onFileDropped={() => setUnsavedChanges(true)}
         onFileCleared={() => setUnsavedChanges(false)}
       />
-      <Stack direction="row">
-        <Spacer />
-        <Button type="submit">Submit</Button>
-      </Stack>
     </Box>
   );
 }

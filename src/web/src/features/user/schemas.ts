@@ -1,6 +1,5 @@
 import { z, ZodType } from "zod";
 import SETTINGS from "~/lib/config";
-import { validationMessages } from "~/utils";
 
 const DefaultUsernameRules = SETTINGS.IDENTITY.usernameRules;
 const DefaultPasswordRules = SETTINGS.IDENTITY.passwordRules;
@@ -35,7 +34,6 @@ export const usernameRule = (
         minimum: minLength,
         inclusive: false,
         type: "string",
-        message: validationMessages.min(label, minLength),
       });
     }
 
@@ -45,7 +43,6 @@ export const usernameRule = (
         inclusive: false,
         maximum: maxLength,
         type: "string",
-        message: validationMessages.max(label, maxLength),
       });
     }
   });
@@ -72,7 +69,6 @@ export const passwordRule = (
         inclusive: false,
         minimum: minLength,
         type: "string",
-        message: validationMessages.min(label, minLength),
       });
     }
 

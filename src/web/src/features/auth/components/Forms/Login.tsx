@@ -3,11 +3,10 @@ import { Button } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import TextInput from "~/components/Forms/Inputs/Text";
-import { validationMessages } from "~/utils";
 
 export const loginValidationSchema = z.object({
-  login: z.string().min(1, validationMessages.required("Login")),
-  password: z.string().min(1, validationMessages.required("Password")),
+  login: z.string().min(1),
+  password: z.string().min(1),
 });
 
 export type LoginFormValues = z.infer<typeof loginValidationSchema>;
@@ -18,18 +17,21 @@ interface LoginFormProps {
 }
 
 export default function LoginForm(props: LoginFormProps) {
-  const formik = useForm<LoginFormValues>();
+  const formMethods = useForm<LoginFormValues>();
 
   const {
     handleSubmit,
     register,
     reset,
     formState: { isSubmitting, errors },
-  } = formik;
+  } = formMethods;
 
   const handleLoginSubmit = async (values: LoginFormValues) => {
-    await props.onSubmit?.(values);
-    reset();
+    try {
+      await props.onSubmit?.(values);
+    } catch {
+      reset({ ...values });
+    }
   };
 
   return (

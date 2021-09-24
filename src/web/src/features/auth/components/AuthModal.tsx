@@ -73,9 +73,7 @@ export default function LoginModal() {
     return (
       <Alert status="error">
         <AlertIcon />
-        <AlertDescription>
-          There was an error processing your request
-        </AlertDescription>
+        <AlertDescription>{err}</AlertDescription>
         <CloseButton
           onClick={onClose}
           position="absolute"

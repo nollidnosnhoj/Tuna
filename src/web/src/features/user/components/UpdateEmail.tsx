@@ -2,14 +2,13 @@ import { Button } from "@chakra-ui/react";
 import React from "react";
 import { z } from "zod";
 import TextInput from "~/components/Forms/Inputs/Text";
-import { validationMessages } from "~/utils";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 export const updateEmailValidationSchema = z.object({
   email: z
     .string()
-    .min(1, validationMessages.required("Email"))
+    .min(1)
     .email()
     .transform((arg) => arg.trim()),
 });
