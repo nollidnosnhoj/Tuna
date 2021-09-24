@@ -35,7 +35,7 @@
   "devDependencies": {
     "@testing-library/react": "12.1.0",
     "@types/cookie": "0.4.1",
-    "@types/jest": "27.0.1",
+    "@types/jest": "27.0.2",
     "@types/js-cookie": "2.2.7",
     "@types/node": "16.9.6",
     "@types/nprogress": "0.2.0",
