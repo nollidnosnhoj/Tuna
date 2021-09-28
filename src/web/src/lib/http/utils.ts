@@ -1,5 +1,4 @@
-import axios, { AxiosInstance } from "axios";
-import { AxiosAuthRefreshRequestConfig } from "axios-auth-refresh";
+import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
 import { ApiRequestConfig } from "./types";
 import SETTINGS from "~/lib/config";
 import { stringifyQueryObject } from "~/utils";
@@ -12,7 +11,7 @@ import { stringifyQueryObject } from "~/utils";
  */
 export async function createApiAxiosRequestConfig(
   config: ApiRequestConfig
-): Promise<AxiosAuthRefreshRequestConfig> {
+): Promise<AxiosRequestConfig> {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { res, req, ...axiosConfig } = config;
   return {
