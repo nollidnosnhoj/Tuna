@@ -10,24 +10,16 @@ import {
   CircularProgress,
   CircularProgressLabel,
 } from "@chakra-ui/react";
-import axios from "axios";
-import React, { useState } from "react";
+import React from "react";
 import { useDropzone } from "react-dropzone";
-import { useUser } from "~/features/user/hooks";
 import SETTINGS from "~/lib/config";
-import request from "~/lib/http";
-import { getDurationFromAudioFile } from "~/utils";
 import { formatFileSize } from "~/utils/format";
 import { errorToast } from "~/utils/toast";
+import { useUploaderContext } from "./UploaderProvider";
 
 interface AudioDropzoneProps {
-  onFileDropped?: () => void;
-  onFileUploaded: (
-    fileName: string,
-    fileSize: number,
-    uploadId: string,
-    duration: number
-  ) => void;
+  onFileDropped: (file: File) => void;
+  onFileUploaded: (uploadId: string) => void;
   onFileCleared: () => void;
 }
 
@@ -36,10 +28,8 @@ export default function AudioDropzone({
   onFileUploaded,
   onFileCleared,
 }: AudioDropzoneProps) {
-  const { user } = useUser();
-  const [isUploading, setUploading] = useState(false);
-  const [isUploaded, setUploaded] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
+  const { uploadFile, isUploaded, isUploading, uploadProgress, reset } =
+    useUploaderContext();
   const { getRootProps, getInputProps, open, isDragReject, acceptedFiles } =
     useDropzone({
       accept: SETTINGS.UPLOAD.AUDIO.accept,
@@ -49,42 +39,11 @@ export default function AudioDropzone({
       noClick: true,
       onDropAccepted: async ([droppedFile]) => {
         try {
-          onFileDropped?.();
-          setUploading(true);
-          const duration = await getDurationFromAudioFile(droppedFile);
-          const { data: response } = await request<{
-            uploadId: string;
-            uploadUrl: string;
-          }>({
-            method: "post",
-            url: "upload",
-            data: {
-              fileName: droppedFile.name,
-              fileSize: droppedFile.size,
-            },
-          });
-          await axios.put(response.uploadUrl, droppedFile, {
-            headers: {
-              "Content-Type": droppedFile.type,
-              "x-amz-meta-userId": `${user?.id}`,
-            },
-            onUploadProgress: (evt) => {
-              const currentProgress = (evt.loaded / evt.total) * 100;
-              setUploadProgress(currentProgress);
-            },
-          });
-          onFileUploaded(
-            droppedFile.name,
-            droppedFile.size,
-            response.uploadId,
-            duration
-          );
-          setUploaded(true);
+          onFileDropped(droppedFile);
+          const uploadId = await uploadFile(droppedFile);
+          onFileUploaded(uploadId);
         } catch (err) {
           onFileCleared();
-          errorToast(err);
-        } finally {
-          setUploading(false);
         }
       },
       onDropRejected: (fileRejections) => {
@@ -102,8 +61,7 @@ export default function AudioDropzone({
   const handleRemoveFile = () => {
     if (!confirm("Are you sure you want to remove file?")) return;
     onFileCleared();
-    setUploaded(false);
-    setUploadProgress(0);
+    reset();
   };
 
   if (isUploading) {
@@ -121,7 +79,9 @@ export default function AudioDropzone({
   if (isUploaded) {
     return (
       <Stack align="center" direction="row" spacing={4} marginBottom={4}>
-        <chakra.div>{acceptedFiles[0].name} uploaded.</chakra.div>
+        <chakra.div>
+          {acceptedFiles[0]?.name ?? "undefined"} uploaded.
+        </chakra.div>
         <CloseButton onClick={handleRemoveFile} />
       </Stack>
     );

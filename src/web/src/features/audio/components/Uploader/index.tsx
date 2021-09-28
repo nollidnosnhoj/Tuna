@@ -1,16 +1,18 @@
-import { Box, chakra, Flex, Spinner } from "@chakra-ui/react";
+import { chakra, Flex, Spinner } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { useEffect } from "react";
 import Link from "~/components/UI/Link";
 import { useNavigationLock } from "~/lib/hooks";
 
-import { errorToast, toast } from "~/utils";
+import { errorToast, getDurationFromAudioFile, toast } from "~/utils";
 import { useCreateAudio } from "../../api/hooks";
+import { useUploaderContext } from "./UploaderProvider";
 import UploadForm, { UploadAudioFormValues } from "./UploadForm";
 
 export default function AudioUploader() {
   const router = useRouter();
+  const { isUploaded, isUploading } = useUploaderContext();
   const [audioLink, setAudioLink] = useState<string>("");
   const { mutateAsync: createAudio, isLoading: isCreatingAudio } =
     useCreateAudio();
@@ -22,13 +24,34 @@ export default function AudioUploader() {
 
   const handleUpload = async (values: UploadAudioFormValues) => {
     try {
-      const { slug } = await createAudio(values);
+      const { file, uploadId, ...audioRequest } = values;
+      const duration = await getDurationFromAudioFile(values.file);
+      const { slug } = await createAudio({
+        ...audioRequest,
+        duration,
+        uploadId,
+        fileName: (file as File).name,
+        fileSize: (file as File).size,
+      });
       setAudioLink(`/audios/${slug}`);
       setUnsavedChanges(false);
     } catch (err) {
       errorToast(err);
     }
   };
+
+  /**
+   * Handles the navigation locks depending on the state of the uploading
+   */
+  useEffect(() => {
+    if (!isUploaded && !isUploading) {
+      setUnsavedChanges(false);
+    }
+
+    if (isUploaded || (!isUploaded && isUploading)) {
+      setUnsavedChanges(true);
+    }
+  }, [isUploading, isUploaded]);
 
   useEffect(() => {
     if (audioLink && !unsavedChanges) {
@@ -61,13 +84,5 @@ export default function AudioUploader() {
     );
   }
 
-  return (
-    <Box>
-      <UploadForm
-        onSubmit={handleUpload}
-        onFileDropped={() => setUnsavedChanges(true)}
-        onFileCleared={() => setUnsavedChanges(false)}
-      />
-    </Box>
-  );
+  return <UploadForm onSubmit={handleUpload} />;
 }

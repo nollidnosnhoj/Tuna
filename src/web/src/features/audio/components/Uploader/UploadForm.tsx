@@ -9,20 +9,15 @@ import { uploadAudioSchema } from "../../schama";
 import { Button, Spacer, Stack } from "@chakra-ui/react";
 
 interface UploadFormProps {
-  onFileDropped?: () => void;
-  onFileCleared?: () => void;
   onSubmit?: (values: UploadAudioFormValues) => Promise<void>;
 }
 
 export type UploadAudioFormValues = z.infer<typeof uploadAudioSchema>;
 
-export default function UploadForm({
-  onSubmit,
-  onFileCleared,
-  onFileDropped,
-}: UploadFormProps) {
+export default function UploadForm({ onSubmit }: UploadFormProps) {
   const formMethods = useForm<UploadAudioFormValues>({
     defaultValues: {
+      file: null,
       tags: [],
     },
     resolver: zodResolver(uploadAudioSchema),
@@ -49,19 +44,13 @@ export default function UploadForm({
   return (
     <form onSubmit={handleSubmit(handleUploadSubmit)}>
       <AudioDropzone
-        onFileDropped={onFileDropped}
-        onFileUploaded={(fileName, fileSize, uploadId, duration) => {
-          setValue("fileName", fileName);
-          setValue("fileSize", fileSize);
+        onFileDropped={(file) => setValue("file", file)}
+        onFileUploaded={(uploadId) => {
           setValue("uploadId", uploadId);
-          setValue("duration", duration);
         }}
         onFileCleared={() => {
-          onFileCleared?.();
-          setValue("fileName", "");
-          setValue("fileSize", -1);
+          setValue("file", null);
           setValue("uploadId", "");
-          setValue("duration", -1);
         }}
       />
       <TextInput

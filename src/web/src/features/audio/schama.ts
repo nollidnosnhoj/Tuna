@@ -1,4 +1,5 @@
 import { z } from "zod";
+import SETTINGS from "~/lib/config";
 
 export const audioSchema = z.object({
   title: z.string().min(5).max(30),
@@ -7,8 +8,28 @@ export const audioSchema = z.object({
 });
 
 export const uploadAudioSchema = audioSchema.extend({
+  file: z.custom().superRefine((arg, ctx) => {
+    if (typeof window === undefined || !(arg instanceof File)) {
+      ctx.addIssue({
+        code: "custom",
+        message: "Unable to read file.",
+      });
+      return;
+    }
+
+    if (!SETTINGS.UPLOAD.AUDIO.accept.includes(arg.type)) {
+      ctx.addIssue({
+        code: "custom",
+        message: "File is not a valid audio type.",
+      });
+    }
+
+    if (SETTINGS.UPLOAD.AUDIO.maxSize <= arg.size) {
+      ctx.addIssue({
+        code: "custom",
+        message: "File exceeded the file size limit",
+      });
+    }
+  }),
   uploadId: z.string().min(1, "Audio file has not been uploaded."),
-  fileName: z.string().min(1, "File name is not valid."),
-  fileSize: z.number().min(1, "File size is not valid."),
-  duration: z.number().min(1, "Duration is not valid."),
 });
