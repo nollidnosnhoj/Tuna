@@ -26,7 +26,7 @@
     "react-query": "^3.24.4",
     "slugify": "^1.6.0",
     "uuid": "^8.3.2",
-    "zod": "^3.9.1",
+    "zod": "^3.9.4",
     "zustand": "^3.5.10"
   },
   "devDependencies": {
