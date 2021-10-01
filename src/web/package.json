@@ -21,7 +21,7 @@
     "react-cropper": "^2.1.8",
     "react-dom": "^17.0.1",
     "react-dropzone": "^11.4.2",
-    "react-hook-form": "^7.16.1",
+    "react-hook-form": "^7.16.2",
     "react-icons": "^4.1.0",
     "react-query": "^3.24.5",
     "slugify": "^1.6.0",
