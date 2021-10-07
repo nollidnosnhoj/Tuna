@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using Audiochan.Core.Audios;
 using Audiochan.Core.Common;
+using Audiochan.Core.Common.Converters.Json;
 using Audiochan.Core.Common.Mappings;
 using Audiochan.Core.Users;
 using Audiochan.Domain.Abstractions;
@@ -18,6 +20,7 @@ namespace Audiochan.Core.Playlists
         
         public string Description { get; init; } = string.Empty;
         
+        [JsonConverter(typeof(PlaylistPictureJsonConverter))]
         public string? Picture { get; init; }
         
         public List<string> Tags { get; init; } = new();
@@ -30,11 +33,7 @@ namespace Audiochan.Core.Playlists
         {
             profile.CreateMap<Playlist, PlaylistDto>()
                 .ForMember(dest => dest.Description, c =>
-                    c.NullSubstitute(""))
-                .ForMember(dest => dest.Picture, c =>
-                {
-                    c.MapFrom(src => src.Picture != null ? MediaLinkConstants.PLAYLIST_PICTURE + src.Picture : null);
-                });
+                    c.NullSubstitute(""));
         }
     }
 }

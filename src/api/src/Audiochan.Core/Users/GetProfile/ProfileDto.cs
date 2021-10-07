@@ -1,4 +1,6 @@
-﻿using Audiochan.Core.Common;
+﻿using System.Text.Json.Serialization;
+using Audiochan.Core.Common;
+using Audiochan.Core.Common.Converters.Json;
 using Audiochan.Core.Common.Mappings;
 using Audiochan.Domain.Abstractions;
 using Audiochan.Domain.Entities;
@@ -11,6 +13,8 @@ namespace Audiochan.Core.Users.GetProfile
         public long Id { get; init; }
         
         public string UserName { get; init; } = null!;
+        
+        [JsonConverter(typeof(UserPictureJsonConverter))]
         public string? Picture { get; init; } = string.Empty;
         
         // public int AudioCount { get; init; }
@@ -21,11 +25,7 @@ namespace Audiochan.Core.Users.GetProfile
 
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<User, ProfileDto>()
-                .ForMember(dest => dest.Picture, c =>
-                {
-                    c.MapFrom(src => src.Picture != null ? MediaLinkConstants.USER_PICTURE + src.Picture : null);
-                });
+            profile.CreateMap<User, ProfileDto>();
         }
     }
 }
