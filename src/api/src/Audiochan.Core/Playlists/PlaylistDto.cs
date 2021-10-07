@@ -28,12 +28,5 @@ namespace Audiochan.Core.Playlists
         public List<AudioDto> Audios { get; init; } = new();
         
         public UserDto User { get; init; } = null!;
-
-        public void Mapping(Profile profile)
-        {
-            profile.CreateMap<Playlist, PlaylistDto>()
-                .ForMember(dest => dest.Description, c =>
-                    c.NullSubstitute(""));
-        }
     }
 }

@@ -42,19 +42,5 @@ namespace Audiochan.Core.Audios
         public string Audio { get; init; } = null!;
         
         public UserDto User { get; init; } = null!;
-
-        public void Mapping(Profile profile)
-        {
-            long? userId = null;
-            profile.CreateMap<Audio, AudioDto>()
-                .ForMember(dest => dest.Description, c =>
-                    c.NullSubstitute(""))
-                .ForMember(dest => dest.Slug, c =>
-                    c.MapFrom(src => HashIdHelper.EncodeLong(src.Id)))
-                .ForMember(dest => dest.Audio, c =>
-                    c.MapFrom(src => src.File))
-                .ForMember(dest => dest.IsFavorited, c =>
-                    c.MapFrom(src => userId > 0 ? src.FavoriteAudios.Any(fa => fa.UserId == userId) : (bool?)null));
-        }
     }
 }

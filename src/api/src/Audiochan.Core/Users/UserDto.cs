@@ -15,10 +15,5 @@ namespace Audiochan.Core.Users
         
         [JsonConverter(typeof(UserPictureJsonConverter))]
         public string? Picture { get; init; }
-
-        public void Mapping(Profile profile)
-        {
-            profile.CreateMap<User, UserDto>();
-        }
     }
 }

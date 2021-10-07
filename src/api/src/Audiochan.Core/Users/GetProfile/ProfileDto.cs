@@ -22,10 +22,5 @@ namespace Audiochan.Core.Users.GetProfile
         // public int FollowerCount { get; init; }
         //
         // public int FollowingCount { get; init; }
-
-        public void Mapping(Profile profile)
-        {
-            profile.CreateMap<User, ProfileDto>();
-        }
     }
 }

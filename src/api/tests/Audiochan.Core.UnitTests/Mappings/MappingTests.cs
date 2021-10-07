@@ -1,15 +1,4 @@
-﻿using System;
-using System.Runtime.Serialization;
-using Audiochan.Core.Audios;
-using Audiochan.Core.Auth.GetCurrentUser;
-using Audiochan.Core.Common.Mappings;
-using Audiochan.Core.Playlists;
-using Audiochan.Core.Playlists.GetPlaylistAudios;
-using Audiochan.Core.Users;
-using Audiochan.Core.Users.GetFollowers;
-using Audiochan.Core.Users.GetFollowings;
-using Audiochan.Core.Users.GetProfile;
-using Audiochan.Domain.Entities;
+﻿using Audiochan.Core.Common.Mappings;
 using AutoMapper;
 using Xunit;
 
@@ -25,7 +14,7 @@ namespace Audiochan.Core.UnitTests.Mappings
         {
             _configuration = new MapperConfiguration(cfg =>
             {
-                cfg.AddProfile<MappingProfile>();
+                cfg.AddProfile<AutoMapperProfile>();
             });
 
             _mapper = _configuration.CreateMapper();
@@ -35,28 +24,6 @@ namespace Audiochan.Core.UnitTests.Mappings
         public void ShouldHaveValidConfiguration()
         {
             _configuration.AssertConfigurationIsValid();
-        }
-
-        [Theory]
-        [InlineData(typeof(Audio), typeof(AudioDto))]
-        [InlineData(typeof(Playlist), typeof(PlaylistDto))]
-        [InlineData(typeof(User), typeof(UserDto))]
-        [InlineData(typeof(User), typeof(ProfileDto))]
-        [InlineData(typeof(User), typeof(CurrentUserDto))]
-        [InlineData(typeof(FollowedUser), typeof(FollowingViewModel))]
-        [InlineData(typeof(FollowedUser), typeof(FollowerViewModel))]
-        [InlineData(typeof(PlaylistAudio), typeof(PlaylistAudioDto))]
-        public void ShouldSupportMappingFromSourceToDestination(Type source, Type destination)
-        {
-            var instance = GetInstanceOf(source);
-            _mapper.Map(instance, source, destination);
-        }
-
-        private object? GetInstanceOf(Type type)
-        {
-            return type.GetConstructor(Type.EmptyTypes) != null 
-                ? Activator.CreateInstance(type) 
-                : FormatterServices.GetUninitializedObject(type);
         }
     }
 }
