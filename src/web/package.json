@@ -30,7 +30,7 @@
     "zustand": "^3.5.13"
   },
   "devDependencies": {
-    "@testing-library/react": "12.1.1",
+    "@testing-library/react": "12.1.2",
     "@types/cookie": "0.4.1",
     "@types/jest": "27.0.2",
     "@types/js-cookie": "2.2.7",
