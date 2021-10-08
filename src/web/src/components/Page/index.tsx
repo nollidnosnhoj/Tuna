@@ -16,6 +16,7 @@ import {
 import Header from "./Header";
 import { useUser } from "~/features/user/hooks";
 import Sidebar from "./Sidebar";
+import { useRouter } from "next/router";
 
 const AudioPlayer = dynamic(
   () => import("~/features/audio/components/Player"),
@@ -59,6 +60,7 @@ const Page: React.FC<PageProps> = ({
   ...props
 }) => {
   const { isLoggedIn } = useUser();
+  const router = useRouter();
 
   if (requiresAuth && !isLoggedIn) {
     return (
@@ -71,7 +73,7 @@ const Page: React.FC<PageProps> = ({
             <Box>
               <Heading as="h2">You are not authorized.</Heading>
               <Box marginTop={10}>
-                <NextLink href="/auth/login">
+                <NextLink href={`/login?redirecturl=${router.asPath}`}>
                   <Button width="100%">Login</Button>
                 </NextLink>
               </Box>

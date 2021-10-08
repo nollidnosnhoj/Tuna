@@ -4,16 +4,17 @@ import SearchBar from "./SearchBar";
 import UserSection from "./UserSection";
 import ThemeModeButton from "./ThemeModeButton";
 import { useUser } from "~/features/user/hooks";
-import { useLoginModal } from "~/lib/stores";
 import React from "react";
+import NextLink from "next/link";
+import { useRouter } from "next/router";
 
 interface HeaderProps {
   onOpenMenu?: () => void;
 }
 
 export default function Header({ onOpenMenu }: HeaderProps) {
+  const router = useRouter();
   const { isLoggedIn } = useUser();
-  const openAuthModal = useLoginModal((state) => state.onOpen);
 
   return (
     <Flex
@@ -38,24 +39,26 @@ export default function Header({ onOpenMenu }: HeaderProps) {
           <UserSection />
         ) : (
           <>
-            <Button
-              size="md"
-              colorScheme="gray"
-              variant="ghost"
-              textTransform="uppercase"
-              onClick={() => openAuthModal("login")}
-            >
-              Login
-            </Button>
-            <Button
-              size="md"
-              colorScheme="primary"
-              textTransform="uppercase"
-              onClick={() => openAuthModal("register")}
-              display={{ base: "none", md: "flex" }}
-            >
-              Register
-            </Button>
+            <NextLink href={`/login?redirecturl=${router.asPath}`}>
+              <Button
+                size="md"
+                colorScheme="gray"
+                variant="ghost"
+                textTransform="uppercase"
+              >
+                Login
+              </Button>
+            </NextLink>
+            <NextLink href="/register">
+              <Button
+                size="md"
+                colorScheme="primary"
+                textTransform="uppercase"
+                display={{ base: "none", md: "flex" }}
+              >
+                Register
+              </Button>
+            </NextLink>
           </>
         )}
       </Stack>

@@ -8,7 +8,6 @@ import { UserProvider } from "~/features/user/components/providers";
 import { CurrentUser } from "~/features/user/api/types";
 import theme from "~/lib/theme";
 import queryClient from "~/lib/queryClient";
-import LoginModal from "~/features/auth/components/AuthModal";
 import AddToPlaylistModal from "~/features/playlist/components/Modals/AddToPlaylistModal";
 
 interface AppProps extends NextAppProps {
@@ -29,7 +28,6 @@ function App({ Component, user, pageProps }: AppProps) {
             <ReactQueryDevtools initialIsOpen={false} />
             <PageLoader color={theme.colors.primary[500]} />
             <Component {...pageProps} />
-            <LoginModal />
             <AddToPlaylistModal />
           </UserProvider>
         </ChakraProvider>

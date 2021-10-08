@@ -10,17 +10,15 @@ import React from "react";
 import { useCallback } from "react";
 import Page from "~/components/Page";
 import { useUser } from "~/features/user/hooks";
-import { useLoginModal } from "~/lib/stores";
 
 const Index = () => {
   const router = useRouter();
   const { isLoggedIn } = useUser();
-  const openLoginModal = useLoginModal((state) => state.onOpen);
   const handleUploadButton = useCallback(() => {
     if (isLoggedIn) {
       router.push("/upload");
     } else {
-      openLoginModal("register");
+      router.push("/register");
     }
   }, [isLoggedIn]);
   return (

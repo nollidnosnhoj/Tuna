@@ -2,7 +2,6 @@ import { useToast } from "@chakra-ui/toast";
 import { useRouter } from "next/router";
 import { useMutation, UseMutationResult, useQueryClient } from "react-query";
 import request from "~/lib/http";
-import { useLoginModal } from "~/lib/stores";
 import { ErrorResponse } from "~/lib/types";
 import { errorToast } from "~/utils";
 import { useUser } from "../../../hooks";
@@ -16,7 +15,6 @@ export function useUpdatePassword(): UseMutationResult<
   ErrorResponse,
   Input
 > {
-  const onLoginModalOpen = useLoginModal((state) => state.onOpen);
   const toast = useToast();
   const router = useRouter();
   const qc = useQueryClient();
@@ -34,14 +32,13 @@ export function useUpdatePassword(): UseMutationResult<
       errorToast(err);
     },
     onSuccess() {
-      toast({
-        status: "info",
-        description: "You will be logged out to sign in again.",
-      });
       updateUser(null);
       qc.setQueryData<CurrentUser | null>(ME_QUERY_KEY, null);
-      router.push("/").then(() => {
-        onLoginModalOpen("login");
+      router.push("/login").then(() => {
+        toast({
+          status: "info",
+          description: "Please login again with your new password.",
+        });
       });
     },
   });
