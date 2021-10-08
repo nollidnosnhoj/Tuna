@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using Audiochan.Core.Audios;
+using Audiochan.Core.Auth.GetCurrentUser;
 using Audiochan.Core.Common.Helpers;
 using Audiochan.Core.Playlists;
 using Audiochan.Core.Users;
@@ -30,6 +31,7 @@ namespace Audiochan.Core.Common.Mappings
                     c.NullSubstitute(""));
             CreateStrictMap<User, ProfileDto>();
             CreateStrictMap<User, UserDto>();
+            CreateStrictMap<User, CurrentUserDto>();
         }
 
         private IMappingExpression<TSource, TDestination> CreateStrictMap<TSource, TDestination>()

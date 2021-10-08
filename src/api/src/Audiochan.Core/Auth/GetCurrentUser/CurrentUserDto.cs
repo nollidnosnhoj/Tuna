@@ -1,7 +1,6 @@
 ﻿using Audiochan.Core.Common.Mappings;
 using Audiochan.Domain.Abstractions;
 using Audiochan.Domain.Entities;
-using AutoMapper;
 
 namespace Audiochan.Core.Auth.GetCurrentUser
 {
@@ -10,10 +9,5 @@ namespace Audiochan.Core.Auth.GetCurrentUser
         public long Id { get; init; }
         public string UserName { get; init; } = null!;
         public string Email { get; init; } = null!;
-
-        public void Mapping(Profile profile)
-        {
-            profile.CreateMap<User, CurrentUserDto>();
-        }
     }
 }
