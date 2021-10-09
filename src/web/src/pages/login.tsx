@@ -1,13 +1,13 @@
-import { Alert, AlertIcon, AlertDescription } from "@chakra-ui/alert";
-import { CloseButton } from "@chakra-ui/close-button";
-import { Divider } from "@chakra-ui/react";
+import { Button } from "@chakra-ui/button";
+import { Stack } from "@chakra-ui/layout";
 import { chakra } from "@chakra-ui/system";
 import { useToast } from "@chakra-ui/toast";
+import NextLink from "next/link";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 import Page from "~/components/Page";
-import Link from "~/components/UI/Link";
 import { useLogin } from "~/features/auth/api/hooks";
+import AuthContainer from "~/features/auth/components/AuthContainer";
 import LoginForm, {
   LoginFormValues,
 } from "~/features/auth/components/Forms/Login";
@@ -35,34 +35,20 @@ export default function LoginPage() {
 
   return (
     <Page title="Login">
-      <chakra.div
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        height="50vh"
+      <AuthContainer
+        headingText="Login"
+        error={error}
+        footer={
+          <Stack>
+            <chakra.p fontSize="small">New here?</chakra.p>
+            <NextLink href="/register">
+              <Button>Create an account</Button>
+            </NextLink>
+          </Stack>
+        }
       >
-        <chakra.div maxWidth="500px" width="80%">
-          {!!error && (
-            <Alert status="error">
-              <AlertIcon />
-              <AlertDescription>{error}</AlertDescription>
-              <CloseButton
-                onClick={() => setError("")}
-                position="absolute"
-                right="8px"
-                top="8px"
-              />
-            </Alert>
-          )}
-          <LoginForm onSubmit={handleLogin} />
-          <Divider marginY={4} />
-          <chakra.div textAlign="center">
-            <chakra.span fontSize="small">
-              New here? Click <Link href="/register">here</Link> to register.
-            </chakra.span>
-          </chakra.div>
-        </chakra.div>
-      </chakra.div>
+        <LoginForm onSubmit={handleLogin} />
+      </AuthContainer>
     </Page>
   );
 }
