@@ -27,14 +27,12 @@ const UserSection: React.FC = () => {
             <NextLink href={`/users/${user?.userName}`}>
               <MenuItem>Profile</MenuItem>
             </NextLink>
-            <NextLink href="/you/settings">
+            <NextLink href="/me/settings">
               <MenuItem>Settings</MenuItem>
             </NextLink>
           </MenuGroup>
           <MenuDivider />
-          <MenuItem onClick={() => router.push("/auth/logout")}>
-            Logout
-          </MenuItem>
+          <MenuItem onClick={() => router.push("/logout")}>Logout</MenuItem>
         </MenuList>
       </Portal>
     </Menu>
