@@ -22,7 +22,7 @@
     "react-dom": "^17.0.1",
     "react-dropzone": "^11.4.2",
     "react-hook-form": "^7.17.1",
-    "react-icons": "^4.1.0",
+    "react-icons": "^4.3.1",
     "react-query": "^3.26.0",
     "slugify": "^1.6.1",
     "uuid": "^8.3.2",
