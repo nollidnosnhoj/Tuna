@@ -85,7 +85,7 @@ export default function CreatePlaylistModal({
               }) => (
                 <TagInput
                   placeholder="Add Tag..."
-                  errors={error?.map((x) => x.message ?? "")}
+                  error={error?.message}
                   {...restField}
                   disabled={isSubmitting}
                 />

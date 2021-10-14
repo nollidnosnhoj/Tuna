@@ -72,7 +72,7 @@ export default function UploadForm({ onSubmit }: UploadFormProps) {
         render={({ field: { ref, ...restField }, fieldState: { error } }) => (
           <TagInput
             placeholder="Add Tag..."
-            errors={error?.map((x) => x.message ?? "")}
+            error={error?.message}
             {...restField}
           />
         )}
