@@ -10,7 +10,7 @@ import request from "~/lib/http";
 import { ID } from "~/lib/types";
 
 export function useRemoveAudio(audioId: ID): UseMutationResult<void> {
-  const { removeAudioFromQueue } = useAudioQueue();
+  const { removeAudioIdFromQueue: removeAudioFromQueue } = useAudioQueue();
   const queryClient = useQueryClient();
   const { user } = useUser();
   const removeAudio = useCallback(async () => {

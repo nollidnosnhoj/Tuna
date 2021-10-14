@@ -23,8 +23,9 @@ export default function AudioQueuePanel(props: AudioQueueProps) {
     context: queueContext,
     playIndex,
     setPlayIndex,
-    removeFromQueue,
+    removeIndexFromQueue: removeFromQueue,
   } = useAudioQueue();
+  const activeQueueId = useAudioQueue((state) => state.current?.queueId);
   const bgColor = useColorModeValue("white", "gray.800");
   const hoverColor = useColorModeValue("gray.300", "gray.900");
 
@@ -92,6 +93,7 @@ export default function AudioQueuePanel(props: AudioQueueProps) {
               </Box>
               <Flex flex="1" justifyContent="flex-end" width="50px">
                 <CloseButton
+                  isDisabled={activeQueueId === audio.queueId}
                   onClick={async (e) => {
                     e.stopPropagation();
                     await removeFromQueue(queueContext, index);

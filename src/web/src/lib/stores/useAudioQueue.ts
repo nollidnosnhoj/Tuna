@@ -32,8 +32,8 @@ interface UseAudioQueueState {
   clearQueue: (context: string) => void;
   playNext: () => void;
   playPrevious: () => void;
-  removeFromQueue: (context: string, index: number) => Promise<void>;
-  removeAudioFromQueue: (audioId: ID) => Promise<void>;
+  removeIndexFromQueue: (context: string, index: number) => Promise<void>;
+  removeAudioIdFromQueue: (audioId: ID) => Promise<void>;
   setNewQueue: (
     context: string,
     queue: AudioView[],
@@ -90,7 +90,7 @@ export const useAudioQueue = create<UseAudioQueueState>((set, get) => ({
     }));
     return audioPlayerStore.setState({ isPlaying: true });
   },
-  removeFromQueue: (context, index) => {
+  removeIndexFromQueue: (context, index) => {
     return new Promise<void>((resolve) => {
       const { queue, playIndex, context: currentContext } = get();
 
@@ -128,7 +128,7 @@ export const useAudioQueue = create<UseAudioQueueState>((set, get) => ({
       return;
     });
   },
-  removeAudioFromQueue: (audioId) => {
+  removeAudioIdFromQueue: (audioId) => {
     return new Promise<void>((resolve) => {
       const { queue, current } = get();
       const filteredQueue = queue.filter((x) => x.audioId !== audioId);

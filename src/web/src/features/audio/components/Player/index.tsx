@@ -1,3 +1,4 @@
+import { useToast } from "@chakra-ui/toast";
 import React, { useEffect, useRef } from "react";
 import { useAudioQueue } from "~/lib/stores";
 import { useAudioPlayer } from "~/lib/stores/useAudioPlayer";
@@ -10,10 +11,16 @@ interface AudioPlayerProps {
 
 export default function AudioPlayer(props: AudioPlayerProps) {
   const { preload = "auto" } = props;
+  const toast = useToast();
   const audioRef = useRef<HTMLAudioElement>(null);
-  const currentAudio = useAudioQueue((state) => state.current);
-  const playNext = useAudioQueue((state) => state.playNext);
-  const repeat = useAudioQueue((state) => state.repeat);
+  const { currentAudio, playNext, repeat, queueLength } = useAudioQueue(
+    (state) => ({
+      currentAudio: state.current,
+      playNext: state.playNext,
+      repeat: state.repeat,
+      queueLength: state.queue.length,
+    })
+  );
   const isPlaying = useAudioPlayer((state) => state.isPlaying);
   const setAudioRef = useAudioPlayer((state) => state.setAudioRef);
 
@@ -38,15 +45,28 @@ export default function AudioPlayer(props: AudioPlayerProps) {
         playNext();
       }
     };
+
+    const handleOnError = () => {
+      toast({
+        title: "Error loading audio.",
+        description: "Cannot load audio. The audio could have been removed.",
+        status: "error",
+        position: "bottom-left",
+        isClosable: true,
+      });
+    };
+
     const audio = audioRef.current;
 
     if (audio) {
       audio.addEventListener("ended", handleOnEnded);
+      audio.addEventListener("error", handleOnError);
     }
 
     return () => {
       if (audio) {
         audio.removeEventListener("ended", handleOnEnded);
+        audio.removeEventListener("error", handleOnError);
       }
     };
   }, [repeat]);
@@ -74,7 +94,7 @@ export default function AudioPlayer(props: AudioPlayerProps) {
       >
         <track kind="captions"></track>
       </audio>
-      <DesktopAudioPlayer />
+      <DesktopAudioPlayer isHidden={queueLength === 0} />
     </React.Fragment>
   );
 }
