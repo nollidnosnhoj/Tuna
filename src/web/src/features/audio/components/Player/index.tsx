@@ -1,8 +1,7 @@
 import { useToast } from "@chakra-ui/toast";
 import React, { useEffect, useRef } from "react";
-import { useAudioQueue } from "~/lib/stores";
-import { useAudioPlayer } from "~/lib/stores/useAudioPlayer";
-import { REPEAT_MODE } from "~/lib/stores/useAudioQueue";
+import { useAudioPlayer } from "~/lib/stores";
+import { REPEAT_MODE } from "~/lib/stores/useAudioPlayer";
 import DesktopAudioPlayer from "./DesktopPlayer";
 
 interface AudioPlayerProps {
@@ -13,16 +12,21 @@ export default function AudioPlayer(props: AudioPlayerProps) {
   const { preload = "auto" } = props;
   const toast = useToast();
   const audioRef = useRef<HTMLAudioElement>(null);
-  const { currentAudio, playNext, repeat, queueLength } = useAudioQueue(
-    (state) => ({
-      currentAudio: state.current,
-      playNext: state.playNext,
-      repeat: state.repeat,
-      queueLength: state.queue.length,
-    })
-  );
-  const isPlaying = useAudioPlayer((state) => state.isPlaying);
-  const setAudioRef = useAudioPlayer((state) => state.setAudioRef);
+  const {
+    isPlaying,
+    setAudioRef,
+    currentAudio,
+    playNext,
+    repeat,
+    queueLength,
+  } = useAudioPlayer((state) => ({
+    currentAudio: state.current,
+    playNext: state.playNext,
+    repeat: state.repeat,
+    queueLength: state.queue.length,
+    isPlaying: state.isPlaying,
+    setAudioRef: state.setAudioRef,
+  }));
 
   const playAudioPromise = () => {
     const playPromise = audioRef.current?.play();

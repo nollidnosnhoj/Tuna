@@ -1,7 +1,7 @@
 import { ButtonProps, IconButton } from "@chakra-ui/react";
 import React, { useCallback, useMemo } from "react";
 import { FaPause, FaPlay } from "react-icons/fa";
-import { useAudioPlayer, useAudioQueue } from "~/lib/stores";
+import { useAudioPlayer } from "~/lib/stores";
 import { AudioView } from "../../api/types";
 
 interface AudioPlayButtonProps extends ButtonProps {
@@ -12,12 +12,12 @@ export default function AudioPlayButton({
   audio,
   ...buttonProps
 }: AudioPlayButtonProps) {
-  const [isPlaying, setIsPlaying] = useAudioPlayer((state) => [
-    state.isPlaying,
-    state.setIsPlaying,
-  ]);
-  const setNewQueue = useAudioQueue((state) => state.setNewQueue);
-  const currentAudio = useAudioQueue((state) => state.current);
+  const {
+    isPlaying,
+    setIsPlaying,
+    setNewQueue,
+    current: currentAudio,
+  } = useAudioPlayer();
 
   const isAudioPlaying = useMemo(() => {
     return isPlaying && currentAudio?.audioId === audio.id;

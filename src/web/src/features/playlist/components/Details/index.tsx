@@ -5,7 +5,7 @@ import Link from "~/components/UI/Link";
 import { useUser } from "~/features/user/hooks";
 import PictureController from "~/components/Picture";
 import { Playlist } from "../../api/types";
-import { useAudioQueue } from "~/lib/stores";
+import { useAudioPlayer } from "~/lib/stores";
 import { useGetPlaylistAudios } from "../../api/hooks/queries/useGetPlaylistAudios";
 import { useCallback } from "react";
 import PlaylistPlayButton from "../Buttons/Play";
@@ -15,7 +15,7 @@ interface PlaylistDetailsProps {
 }
 
 const PlaylistDetails: React.FC<PlaylistDetailsProps> = ({ playlist }) => {
-  const setNewQueue = useAudioQueue((state) => state.setNewQueue);
+  const setNewQueue = useAudioPlayer((state) => state.setNewQueue);
   const { items: playlistAudios } = useGetPlaylistAudios(playlist.id);
   const audios = useMemo(
     () => playlistAudios.map((x) => x.audio),

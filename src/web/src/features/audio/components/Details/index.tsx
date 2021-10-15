@@ -18,7 +18,7 @@ import AudioFavoriteButton from "../Buttons/Favorite";
 import PictureController from "~/components/Picture";
 import { useAddAudioPicture, useRemoveAudioPicture } from "../../api/hooks";
 import AudioMiscMenu from "../../../../components/UI/ContextMenu";
-import { useAudioQueue } from "~/lib/stores";
+import { useAudioPlayer } from "~/lib/stores";
 import { MdQueueMusic } from "react-icons/md";
 import { EditIcon } from "@chakra-ui/icons";
 import AudioEditDrawer from "../Edit";
@@ -30,7 +30,7 @@ interface AudioDetailProps {
 const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
   const secondaryColor = useColorModeValue("black.300", "gray.300");
   const { user: currentUser } = useUser();
-  const addToQueue = useAudioQueue((state) => state.addToQueue);
+  const addToQueue = useAudioPlayer((state) => state.addToQueue);
 
   const {
     isOpen: isEditOpen,

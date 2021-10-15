@@ -3,7 +3,7 @@ import React, { useMemo } from "react";
 import AudioStackMiniItem from "../../audio/components/List/Item";
 import { ID } from "~/lib/types";
 import { useGetPlaylistAudios } from "../api/hooks/queries/useGetPlaylistAudios";
-import { useAudioPlayer, useAudioQueue } from "~/lib/stores";
+import { useAudioPlayer } from "~/lib/stores";
 
 interface PlaylistAudioListProps {
   playlistId: ID;
@@ -12,8 +12,8 @@ interface PlaylistAudioListProps {
 export default function PlaylistAudioList({
   playlistId,
 }: PlaylistAudioListProps) {
-  const [isPlaying] = useAudioPlayer((state) => [state.isPlaying]);
-  const { current: currentAudio } = useAudioQueue();
+  const isPlaying = useAudioPlayer((state) => state.isPlaying);
+  const currentAudio = useAudioPlayer((state) => state.current);
   const { items: playlistAudios } = useGetPlaylistAudios(playlistId);
   const audios = useMemo(
     () => playlistAudios.map((x) => x.audio),

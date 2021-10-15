@@ -6,7 +6,7 @@ import {
   MdSkipNext,
   MdSkipPrevious,
 } from "react-icons/md";
-import { useAudioPlayer, useAudioQueue } from "~/lib/stores";
+import { useAudioPlayer } from "~/lib/stores";
 
 interface PlayerControlsProps {
   size?: "desktop";
@@ -17,7 +17,7 @@ export default function PlayerControls(props: PlayerControlsProps) {
   // const { isPlaying, playIndex, queue, togglePlaying, playPrevious, playNext } =
   //   useAudioPlayer();
 
-  const { queue, playIndex, playPrevious, playNext } = useAudioQueue(
+  const { queue, playIndex, playPrevious, playNext } = useAudioPlayer(
     (state) => ({
       queue: state.queue,
       playIndex: state.playIndex,

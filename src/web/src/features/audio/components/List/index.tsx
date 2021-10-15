@@ -2,7 +2,7 @@ import { Box, List, ListItem, chakra } from "@chakra-ui/react";
 import React from "react";
 import AudioStackMiniItem from "./Item";
 import { AudioView } from "~/features/audio/api/types";
-import { useAudioPlayer, useAudioQueue } from "~/lib/stores";
+import { useAudioPlayer } from "~/lib/stores";
 
 type AudioListProps = {
   audios: AudioView[];
@@ -10,8 +10,7 @@ type AudioListProps = {
 
 export default function AudioList(props: AudioListProps) {
   const { audios } = props;
-  const [isPlaying] = useAudioPlayer((state) => [state.isPlaying]);
-  const { current: currentAudio } = useAudioQueue();
+  const { isPlaying, current: currentAudio } = useAudioPlayer();
 
   return (
     <Box>

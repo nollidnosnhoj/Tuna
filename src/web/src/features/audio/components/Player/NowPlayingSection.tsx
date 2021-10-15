@@ -4,10 +4,10 @@ import NextImage from "next/image";
 import Link from "~/components/UI/Link";
 import PictureContainer from "~/components/Picture/PictureContainer";
 import PictureModal from "~/components/Picture/PictureModal";
-import { useAudioQueue } from "~/lib/stores";
+import { useAudioPlayer } from "~/lib/stores";
 
 export default function NowPlayingSection() {
-  const current = useAudioQueue((state) => state.current);
+  const current = useAudioPlayer((state) => state.current);
 
   const { isOpen, onClose, onOpen } = useDisclosure();
 

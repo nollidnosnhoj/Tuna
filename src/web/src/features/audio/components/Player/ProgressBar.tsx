@@ -9,7 +9,7 @@ import {
   SliderTrack,
 } from "@chakra-ui/react";
 import { formatDuration } from "~/utils/format";
-import { useAudioPlayer, useAudioQueue } from "~/lib/stores";
+import { useAudioPlayer } from "~/lib/stores";
 
 const EMPTY_TIME_FORMAT = "--:--";
 
@@ -20,7 +20,7 @@ export default function ProgressBar() {
     state.currentTime,
     state.setCurrentTime,
   ]);
-  const currentAudio = useAudioQueue((state) => state.current);
+  const currentAudio = useAudioPlayer((state) => state.current);
   const { duration } = currentAudio || { duration: 0 };
   const [sliderValue, setSliderValue] = useState(0);
   const [isDraggingProgress, setIsDraggingProgress] = useState(false);

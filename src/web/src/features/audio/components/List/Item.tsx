@@ -12,7 +12,7 @@ import Link from "~/components/UI/Link";
 import { AudioView } from "~/features/audio/api/types";
 import { formatDuration } from "~/utils/format";
 import AudioMiscMenu from "~/components/UI/ContextMenu";
-import { useAudioPlayer, useAudioQueue } from "~/lib/stores";
+import { useAudioPlayer } from "~/lib/stores";
 import AudioFavoriteButton from "../Buttons/Favorite";
 import AddToPlaylistButton from "../Buttons/AddToPlaylist";
 import AudioShareButton from "../Buttons/Share";
@@ -38,14 +38,13 @@ type ActionChoice =
 
 const AudioStackItem: React.FC<AudioListItemProps> = ({
   audio,
-  index,
   playlist,
   playlistAudioId,
   isPlaying,
   actions = [],
 }) => {
   const setIsPlaying = useAudioPlayer((state) => state.setIsPlaying);
-  const { currentAudioPlaying, addToQueue, setNewQueue } = useAudioQueue(
+  const { currentAudioPlaying, addToQueue, setNewQueue } = useAudioPlayer(
     (state) => ({
       currentAudioPlaying: state.current,
       addToQueue: state.addToQueue,
