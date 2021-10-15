@@ -71,7 +71,7 @@ export default function EditForm({
           render={({ field: { ref, ...restField }, fieldState: { error } }) => (
             <TagInput
               placeholder="Add Tag..."
-              errors={error?.map((x) => x.message ?? "")}
+              error={error?.message}
               disabled={isDisabled}
               {...restField}
             />

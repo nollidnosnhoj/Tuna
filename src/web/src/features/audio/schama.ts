@@ -8,7 +8,7 @@ export const audioSchema = z.object({
 });
 
 export const uploadAudioSchema = audioSchema.extend({
-  file: z.custom().superRefine((arg, ctx) => {
+  file: z.any().superRefine((arg, ctx) => {
     if (typeof window === undefined || !(arg instanceof File)) {
       ctx.addIssue({
         code: "custom",
