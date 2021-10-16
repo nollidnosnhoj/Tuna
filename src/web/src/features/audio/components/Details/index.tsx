@@ -6,6 +6,8 @@ import {
   useColorModeValue,
   chakra,
   useDisclosure,
+  MenuGroup,
+  MenuItem,
 } from "@chakra-ui/react";
 import Router from "next/router";
 import React, { useEffect } from "react";
@@ -17,7 +19,7 @@ import AudioPlayButton from "../Buttons/Play";
 import AudioFavoriteButton from "../Buttons/Favorite";
 import PictureController from "~/components/Picture";
 import { useAddAudioPicture, useRemoveAudioPicture } from "../../api/hooks";
-import AudioMiscMenu from "../../../../components/UI/ContextMenu";
+import AudioMiscMenu from "../Buttons/Menu";
 import { useAudioPlayer } from "~/lib/stores";
 import { MdQueueMusic } from "react-icons/md";
 import { EditIcon } from "@chakra-ui/icons";
@@ -86,27 +88,15 @@ const AudioDetails: React.FC<AudioDetailProps> = ({ audio }) => {
         <Stack direction="row" alignItems="center">
           <AudioPlayButton audio={audio} size="lg" />
           <AudioFavoriteButton audioId={audio.id} size="lg" />
-          <AudioMiscMenu
-            size="lg"
-            items={[
-              {
-                items: [
-                  {
-                    name: "Edit",
-                    isVisible: audio.user.id === currentUser?.id,
-                    onClick: onEditOpen,
-                    icon: <EditIcon />,
-                  },
-                  {
-                    name: "Add to Queue",
-                    isVisible: true,
-                    icon: <MdQueueMusic />,
-                    onClick: async () => await addToQueue("custom", [audio]),
-                  },
-                ],
-              },
-            ]}
-          />
+          <AudioMiscMenu audio={audio} size="lg">
+            {audio.user.id === currentUser?.id && (
+              <MenuGroup>
+                <MenuItem icon={<EditIcon />} onClick={onEditOpen}>
+                  Edit
+                </MenuItem>
+              </MenuGroup>
+            )}
+          </AudioMiscMenu>
         </Stack>
         <AudioEditDrawer
           audio={audio}

@@ -1,8 +1,12 @@
 import { Box, List, ListItem, chakra } from "@chakra-ui/react";
 import React from "react";
-import AudioStackMiniItem from "./Item";
+import { AudioListItem } from "./Item";
 import { AudioView } from "~/features/audio/api/types";
 import { useAudioPlayer } from "~/lib/stores";
+import AudioFavoriteButton from "~/features/audio/components/Buttons/Favorite";
+import AudioShareButton from "~/features/audio/components/Buttons/Share";
+import AudioMiscMenu from "~/features/audio/components/Buttons/Menu";
+import AddToPlaylistButton from "~/features/audio/components/Buttons/AddToPlaylist";
 
 type AudioListProps = {
   audios: AudioView[];
@@ -19,12 +23,18 @@ export default function AudioList(props: AudioListProps) {
           <List>
             {audios.map((audio, index) => (
               <ListItem key={`${index}.${audio.slug}.${audio.id}`}>
-                <AudioStackMiniItem
+                <AudioListItem
                   audio={audio}
-                  index={index}
                   isPlaying={currentAudio?.audioId === audio.id && isPlaying}
-                  actions={["addToPlaylist", "favorite", "share"]}
-                />
+                >
+                  <AddToPlaylistButton audio={audio} />
+                  <AudioFavoriteButton
+                    audioId={audio.id}
+                    isFavorite={audio.isFavorited}
+                  />
+                  <AudioShareButton audio={audio} />
+                  <AudioMiscMenu audio={audio} />
+                </AudioListItem>
               </ListItem>
             ))}
           </List>

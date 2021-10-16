@@ -15,7 +15,8 @@ export default function AddToPlaylistButton({
   const { user } = useUser();
   const addToPlaylist = useAddToPlaylist((state) => state.openDialog);
 
-  if (audio.user.id !== user?.id) return null;
+  if (!user) return null;
+  // if (audio.user.id !== user?.id) return null;
 
   return (
     <IconButton

@@ -6,95 +6,22 @@ import {
   Stack,
   useColorModeValue,
 } from "@chakra-ui/react";
-import React, { memo, useCallback, useState } from "react";
+import React, { memo, PropsWithChildren, useCallback, useState } from "react";
 import { FaPause, FaPlay } from "react-icons/fa";
 import Link from "~/components/UI/Link";
 import { AudioView } from "~/features/audio/api/types";
 import { formatDuration } from "~/utils/format";
-import AudioMiscMenu from "~/components/UI/ContextMenu";
 import { useAudioPlayer } from "~/lib/stores";
-import AudioFavoriteButton from "../Buttons/Favorite";
-import AddToPlaylistButton from "../Buttons/AddToPlaylist";
-import AudioShareButton from "../Buttons/Share";
-import { MdQueueMusic } from "react-icons/md";
-import { ID } from "~/lib/types";
-import { Playlist } from "~/features/playlist/api/types";
-import RemoveFromPlaylistButton from "../Buttons/RemoveFromPlaylist";
+import { getValidChildren } from "@chakra-ui/react-utils";
 
-export interface AudioListItemProps {
+export interface IAudioItemProps {
   audio: AudioView;
-  index: number;
-  playlist?: Playlist;
-  playlistAudioId?: ID;
-  isPlaying?: boolean;
-  actions?: ActionChoice[];
+  isPlaying: boolean;
 }
 
-type ActionChoice =
-  | "addToPlaylist"
-  | "removeFromPlaylist"
-  | "share"
-  | "favorite";
-
-const AudioStackItem: React.FC<AudioListItemProps> = ({
-  audio,
-  playlist,
-  playlistAudioId,
-  isPlaying,
-  actions = [],
-}) => {
-  const setIsPlaying = useAudioPlayer((state) => state.setIsPlaying);
-  const { currentAudioPlaying, addToQueue, setNewQueue } = useAudioPlayer(
-    (state) => ({
-      currentAudioPlaying: state.current,
-      addToQueue: state.addToQueue,
-      setNewQueue: state.setNewQueue,
-    })
-  );
-
-  const clickPlayButton = useCallback(() => {
-    if (currentAudioPlaying?.audioId === audio.id) {
-      setIsPlaying(!isPlaying);
-    } else {
-      setNewQueue("custom", [audio], 0);
-    }
-  }, [audio, isPlaying, currentAudioPlaying?.queueId]);
-
+const AudioListItemContainer: React.FC = ({ children }) => {
   const [hoverItem, setHoverItem] = useState(false);
   const hoverBg = useColorModeValue("inherit", "whiteAlpha.200");
-
-  const mapToActionButton = useCallback(
-    (action: ActionChoice) => {
-      switch (action) {
-        case "addToPlaylist":
-          return <AddToPlaylistButton audio={audio} />;
-        case "removeFromPlaylist": {
-          if (playlist && playlistAudioId) {
-            return (
-              <RemoveFromPlaylistButton
-                playlist={playlist}
-                playlistAudioId={playlistAudioId}
-              />
-            );
-          }
-          return null;
-        }
-        case "share":
-          return <AudioShareButton audio={audio} />;
-        case "favorite":
-          return (
-            <AudioFavoriteButton
-              audioId={audio.id}
-              isFavorite={audio.isFavorited}
-            />
-          );
-        default:
-          return null;
-      }
-    },
-    [audio, playlist, playlistAudioId]
-  );
-
   return (
     <Box
       as="article"
@@ -108,6 +35,32 @@ const AudioStackItem: React.FC<AudioListItemProps> = ({
         marginBottom: 1,
       }}
     >
+      {children}
+    </Box>
+  );
+};
+
+function AudioListItem(props: PropsWithChildren<IAudioItemProps>) {
+  const { audio, isPlaying, children } = props;
+  const validChildren = getValidChildren(children);
+  const { currentAudioPlaying, setIsPlaying, setNewQueue } = useAudioPlayer(
+    (state) => ({
+      currentAudioPlaying: state.current,
+      setIsPlaying: state.setIsPlaying,
+      setNewQueue: state.setNewQueue,
+    })
+  );
+
+  const clickPlayButton = useCallback(() => {
+    if (currentAudioPlaying?.audioId === audio.id) {
+      setIsPlaying(!isPlaying);
+      return;
+    }
+    setNewQueue("custom", [audio], 0);
+  }, [audio, isPlaying, currentAudioPlaying?.queueId]);
+
+  return (
+    <AudioListItemContainer>
       <Flex paddingX={2}>
         <IconButton
           justifyContent="center"
@@ -137,31 +90,15 @@ const AudioStackItem: React.FC<AudioListItemProps> = ({
         {formatDuration(audio.duration)}
       </Flex>
       <Stack direction="row" spacing={2} paddingX={{ base: 2, md: 4 }}>
-        {actions.map((action, index) => (
-          <React.Fragment key={action + index}>
-            {mapToActionButton(action)}
-          </React.Fragment>
-        ))}
-        <AudioMiscMenu
-          items={[
-            {
-              items: [
-                {
-                  name: "Add to Queue",
-                  isVisible: true,
-                  icon: <MdQueueMusic />,
-                  onClick: async () => await addToQueue("custom", [audio]),
-                },
-              ],
-            },
-          ]}
-        />
+        {validChildren}
       </Stack>
-    </Box>
+    </AudioListItemContainer>
   );
-};
+}
 
-export default memo(
-  AudioStackItem,
+const AudioListItemMemo = memo(
+  AudioListItem,
   (prev, next) => prev.isPlaying === next.isPlaying
 );
+
+export { AudioListItemMemo as AudioListItem };

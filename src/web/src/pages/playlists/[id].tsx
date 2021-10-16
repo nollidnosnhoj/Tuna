@@ -54,7 +54,7 @@ export default function PlaylistPage({
   return (
     <Page title="Playlist">
       <PlaylistDetails playlist={playlist} />
-      <PlaylistAudioList playlistId={playlist.id} />
+      <PlaylistAudioList playlist={playlist} />
     </Page>
   );
 }
