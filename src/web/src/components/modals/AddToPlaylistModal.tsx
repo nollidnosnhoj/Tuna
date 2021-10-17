@@ -18,10 +18,25 @@ import {
 import React, { useState } from "react";
 import { useAddToPlaylist } from "~/lib/stores";
 import { ID } from "~/lib/types";
-import { checkDuplicatedAudiosRequest, toast } from "~/utils";
+import { toast } from "~/utils";
 import CreatePlaylistModal from "./CreatePlaylistModal";
 import DuplicateAudiosModal from "./DuplicateAudiosModal";
 import { useAddAudiosToPlaylist, useYourPlaylists } from "~/lib/hooks/api";
+import request from "~/lib/http";
+
+async function checkDuplicatedAudiosRequest(
+  id: ID,
+  audioIds: ID[]
+): Promise<ID[]> {
+  const { data } = await request<ID[]>({
+    method: "post",
+    url: `playlists/${id}/audios/duplicate`,
+    data: {
+      audioIds,
+    },
+  });
+  return data;
+}
 
 export default function AddToPlaylistModal() {
   const { open, addDups, closeDialog, selectedIds } = useAddToPlaylist();
