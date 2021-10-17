@@ -28,7 +28,6 @@ import request from "~/lib/http";
 import { Profile } from "~/lib/types";
 import PictureController from "~/components/Picture";
 import { useUser } from "~/components/providers/UserProvider";
-import { useAudioPlayer } from "~/lib/stores";
 import { AudioListItem } from "~/components/AudioItem";
 import AudioShareButton from "~/components/buttons/Share";
 import AudioMiscMenu from "~/components/buttons/Menu";
@@ -88,8 +87,6 @@ export const getServerSideProps: GetServerSideProps<ProfilePageProps> = async (
 };
 
 export default function UserProfileNextPage(props: ProfilePageProps) {
-  const isPlaying = useAudioPlayer((state) => state.isPlaying);
-  const currentAudioPlaying = useAudioPlayer((state) => state.current);
   const { user: currentUser } = useUser();
   const { data: profile } = useGetProfile(props.username, {
     staleTime: 1000,
@@ -163,12 +160,7 @@ export default function UserProfileNextPage(props: ProfilePageProps) {
                 <List>
                   {latestAudios.map((audio) => (
                     <ListItem key={`${audio.id}:${audio.slug}`}>
-                      <AudioListItem
-                        audio={audio}
-                        isPlaying={
-                          currentAudioPlaying?.audioId === audio.id && isPlaying
-                        }
-                      >
+                      <AudioListItem audio={audio}>
                         <AudioShareButton audio={audio} />
                         <AudioMiscMenu audio={audio} />
                       </AudioListItem>
@@ -189,12 +181,7 @@ export default function UserProfileNextPage(props: ProfilePageProps) {
                 <List>
                   {latestFavoriteAudios.map((audio) => (
                     <ListItem key={`${audio.id}:${audio.slug}`}>
-                      <AudioListItem
-                        audio={audio}
-                        isPlaying={
-                          currentAudioPlaying?.audioId === audio.id && isPlaying
-                        }
-                      >
+                      <AudioListItem audio={audio}>
                         <AudioShareButton audio={audio} />
                         <AudioMiscMenu audio={audio} />
                       </AudioListItem>

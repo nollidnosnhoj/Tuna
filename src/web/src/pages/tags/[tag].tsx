@@ -6,7 +6,6 @@ import { useRouter } from "next/router";
 import { AudioListItem } from "~/components/AudioItem";
 import AudioShareButton from "~/components/buttons/Share";
 import AudioMiscMenu from "~/components/buttons/Menu";
-import { useAudioPlayer } from "~/lib/stores";
 import { useGetTagAudioList } from "~/lib/hooks/api";
 
 export default function TagAudioPage() {
@@ -22,9 +21,6 @@ export default function TagAudioPage() {
     ...otherParams,
   });
 
-  const isPlaying = useAudioPlayer((state) => state.isPlaying);
-  const audioCurrentPlaying = useAudioPlayer((state) => state.current);
-
   return (
     <Page title={`Showing '${tag}' audios`}>
       {tag && (
@@ -38,12 +34,7 @@ export default function TagAudioPage() {
         <List>
           {audios.map((audio) => (
             <ListItem key={audio.id}>
-              <AudioListItem
-                audio={audio}
-                isPlaying={
-                  audioCurrentPlaying?.audioId === audio.id && isPlaying
-                }
-              >
+              <AudioListItem audio={audio}>
                 <AudioShareButton audio={audio} />
                 <AudioMiscMenu audio={audio} />
               </AudioListItem>

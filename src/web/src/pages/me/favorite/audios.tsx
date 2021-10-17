@@ -5,12 +5,9 @@ import InfiniteListControls from "~/components/ui/ListControls/Infinite";
 import { AudioListItem } from "~/components/AudioItem";
 import AudioShareButton from "~/components/buttons/Share";
 import AudioMiscMenu from "~/components/buttons/Menu";
-import { useAudioPlayer } from "~/lib/stores";
 import { useYourFavoriteAudios } from "~/lib/hooks/api";
 
 export default function YourAudiosPage() {
-  const isPlaying = useAudioPlayer((state) => state.isPlaying);
-  const audioCurrentPlaying = useAudioPlayer((state) => state.current);
   const { items, hasNextPage, isFetching, fetchNextPage } =
     useYourFavoriteAudios();
 
@@ -23,12 +20,7 @@ export default function YourAudiosPage() {
         <List>
           {items.map((audio) => (
             <ListItem key={audio.id}>
-              <AudioListItem
-                audio={audio}
-                isPlaying={
-                  audioCurrentPlaying?.audioId === audio.id && isPlaying
-                }
-              >
+              <AudioListItem audio={audio}>
                 <AudioShareButton audio={audio} />
                 <AudioMiscMenu audio={audio} />
               </AudioListItem>

@@ -7,7 +7,6 @@ import { useGetPageParam } from "~/lib/hooks";
 import { AudioListItem } from "~/components/AudioItem";
 import AudioShareButton from "~/components/buttons/Share";
 import AudioMiscMenu from "~/components/buttons/Menu";
-import { useAudioPlayer } from "~/lib/stores";
 import { useSearchAudio } from "~/lib/hooks/api";
 
 export default function AudioSearchNextPage() {
@@ -20,8 +19,6 @@ export default function AudioSearchNextPage() {
     setPage,
     totalPages,
   } = useSearchAudio(q as string, queryPage, queryParams);
-  const isPlaying = useAudioPlayer((state) => state.isPlaying);
-  const audioCurrentPlaying = useAudioPlayer((state) => state.current);
 
   return (
     <Page title="Search audios | Audiochan">
@@ -32,12 +29,7 @@ export default function AudioSearchNextPage() {
         <List>
           {audios.map((audio) => (
             <ListItem key={audio.id}>
-              <AudioListItem
-                audio={audio}
-                isPlaying={
-                  audioCurrentPlaying?.audioId === audio.id && isPlaying
-                }
-              >
+              <AudioListItem audio={audio}>
                 <AudioShareButton audio={audio} />
                 <AudioMiscMenu audio={audio} />
               </AudioListItem>
