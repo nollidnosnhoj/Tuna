@@ -1,12 +1,12 @@
 import {
+  Flex,
+  Image,
   Modal,
-  ModalOverlay,
+  ModalBody,
+  ModalCloseButton,
   ModalContent,
   ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  Image,
-  Flex,
+  ModalOverlay,
 } from "@chakra-ui/react";
 import React from "react";
 import PictureContainer from "./PictureContainer";

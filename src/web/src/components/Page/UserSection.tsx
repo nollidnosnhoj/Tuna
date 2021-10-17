@@ -1,18 +1,18 @@
 import {
+  Button,
   Menu,
   MenuButton,
-  MenuList,
+  MenuDivider,
   MenuGroup,
   MenuItem,
-  MenuDivider,
+  MenuList,
   Portal,
-  Button,
 } from "@chakra-ui/react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import router from "next/router";
 import React from "react";
 import NextLink from "next/link";
-import { useUser } from "~/features/user/hooks/useUser";
+import { useUser } from "~/components/providers/UserProvider";
 
 const UserSection: React.FC = () => {
   const { user } = useUser();

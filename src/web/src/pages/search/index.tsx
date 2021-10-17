@@ -1,11 +1,14 @@
-import { Heading } from "@chakra-ui/react";
+import { Heading, List, ListItem } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import React from "react";
 import Page from "~/components/Page";
-import PaginationListControls from "~/components/UI/ListControls/Pagination";
-import AudioList from "~/features/audio/components/List";
-import { useSearchAudio } from "~/features/audio/api/hooks";
+import PaginationListControls from "~/components/ui/ListControls/Pagination";
 import { useGetPageParam } from "~/lib/hooks";
+import { AudioListItem } from "~/components/AudioItem";
+import AudioShareButton from "~/components/buttons/Share";
+import AudioMiscMenu from "~/components/buttons/Menu";
+import { useAudioPlayer } from "~/lib/stores";
+import { useSearchAudio } from "~/lib/hooks/api";
 
 export default function AudioSearchNextPage() {
   const { query } = useRouter();
@@ -17,11 +20,31 @@ export default function AudioSearchNextPage() {
     setPage,
     totalPages,
   } = useSearchAudio(q as string, queryPage, queryParams);
+  const isPlaying = useAudioPlayer((state) => state.isPlaying);
+  const audioCurrentPlaying = useAudioPlayer((state) => state.current);
 
   return (
     <Page title="Search audios | Audiochan">
       <Heading>Search {q ? `results for ${q}` : ""}</Heading>
-      <AudioList audios={audios} />
+      {audios.length === 0 ? (
+        <span>No audios found.</span>
+      ) : (
+        <List>
+          {audios.map((audio) => (
+            <ListItem key={audio.id}>
+              <AudioListItem
+                audio={audio}
+                isPlaying={
+                  audioCurrentPlaying?.audioId === audio.id && isPlaying
+                }
+              >
+                <AudioShareButton audio={audio} />
+                <AudioMiscMenu audio={audio} />
+              </AudioListItem>
+            </ListItem>
+          ))}
+        </List>
+      )}
       {audios.length && (
         <PaginationListControls
           currentPage={page}

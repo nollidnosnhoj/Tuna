@@ -1,14 +1,14 @@
-import { Stack, Box, Heading } from "@chakra-ui/react";
+import { Box, Heading, Stack } from "@chakra-ui/react";
 import React from "react";
 import Page from "~/components/Page";
+import UpdateEmailForm from "~/components/forms/UpdateEmailForm";
+import UpdatePasswordForm from "~/components/forms/UpdatePasswordForm";
+import UpdateUsernameForm from "~/components/forms/UpdateUsernameForm";
 import {
   useUpdateEmail,
   useUpdatePassword,
   useUpdateUsername,
-} from "~/features/user/api/hooks";
-import UpdateEmailForm from "~/features/user/components/UpdateEmail";
-import UpdatePasswordForm from "~/features/user/components/UpdatePassword";
-import UpdateUsernameForm from "~/features/user/components/UpdateUsername";
+} from "~/lib/hooks/api";
 
 const SettingPage: React.FC = () => {
   const { mutateAsync: updateUsernameAsync } = useUpdateUsername();

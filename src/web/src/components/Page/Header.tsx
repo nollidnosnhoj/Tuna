@@ -1,12 +1,12 @@
-import { Flex, IconButton, Button, Stack } from "@chakra-ui/react";
+import { Button, Flex, IconButton, Stack } from "@chakra-ui/react";
 import { HamburgerIcon } from "@chakra-ui/icons";
 import SearchBar from "./SearchBar";
 import UserSection from "./UserSection";
 import ThemeModeButton from "./ThemeModeButton";
-import { useUser } from "~/features/user/hooks";
 import React from "react";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
+import { useUser } from "~/components/providers/UserProvider";
 
 interface HeaderProps {
   onOpenMenu?: () => void;

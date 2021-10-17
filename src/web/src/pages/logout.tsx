@@ -1,9 +1,9 @@
 import { chakra } from "@chakra-ui/react";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import Router from "next/router";
 import Page from "~/components/Page";
 import { toast } from "~/utils/toast";
-import { useLogout } from "~/features/auth/api/hooks";
+import { useLogout } from "~/lib/hooks/api";
 
 const LogoutPage: React.FC = () => {
   const { mutateAsync: logoutAsync } = useLogout();

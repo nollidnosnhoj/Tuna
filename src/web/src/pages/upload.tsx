@@ -1,7 +1,7 @@
 import React from "react";
 import Page from "~/components/Page";
-import AudioUploader from "~/features/audio/components/Uploader";
-import UploaderProvider from "~/features/audio/components/Uploader/UploaderProvider";
+import AudioUploader from "~/components/AudioUploader";
+import UploaderProvider from "~/components/AudioUploader/UploaderProvider";
 
 const AudioUploadNextPage: React.FC = () => {
   return (

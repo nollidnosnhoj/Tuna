@@ -4,11 +4,11 @@ import { AppProps as NextAppProps } from "next/app";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 import PageLoader from "~/components/Page/Loader";
-import { UserProvider } from "~/features/user/components/providers";
-import { CurrentUser } from "~/features/user/api/types";
 import theme from "~/lib/theme";
-import queryClient from "~/lib/queryClient";
-import AddToPlaylistModal from "~/features/playlist/components/Modals/AddToPlaylistModal";
+import queryClient from "~/lib/query-client";
+import AddToPlaylistModal from "~/components/modals/AddToPlaylistModal";
+import { CurrentUser } from "~/lib/types";
+import { UserProvider } from "~/components/providers/UserProvider";
 
 interface AppProps extends NextAppProps {
   user?: CurrentUser;

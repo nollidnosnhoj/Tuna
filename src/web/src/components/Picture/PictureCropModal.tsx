@@ -1,15 +1,15 @@
 import {
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  ModalFooter,
+  Box,
   Button,
   Modal,
+  ModalBody,
+  ModalCloseButton,
   ModalContent,
+  ModalFooter,
+  ModalHeader,
   ModalOverlay,
-  Box,
 } from "@chakra-ui/react";
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import ReactCropper from "react-cropper";
 import "cropperjs/dist/cropper.css";
 import { usePicture } from "~/components/Picture";

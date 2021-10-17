@@ -1,16 +1,37 @@
 import { GetServerSideProps } from "next";
-import React from "react";
+import React, { useCallback, useEffect } from "react";
 import Page from "~/components/Page";
-import { useGetPlaylist } from "~/features/playlist/api/hooks";
-import { Playlist } from "~/features/playlist/api/types";
-import PlaylistDetails from "~/features/playlist/components/Details";
-import PlaylistAudioList from "~/features/playlist/components/PlaylistAudioList";
 import request from "~/lib/http";
-import { ID } from "~/lib/types";
+import { ID, Playlist } from "~/lib/types";
+import { Box, chakra, Flex, Heading, Stack } from "@chakra-ui/react";
+import PictureController from "~/components/Picture";
+import Link from "~/components/ui/Link";
+import PlaylistPlayButton from "~/components/buttons/PlayPlaylist";
+import { useUser } from "~/components/providers/UserProvider";
+import { useAudioPlayer } from "~/lib/stores";
+import { useGetPlaylistAudios } from "~/lib/hooks/api/queries/useGetPlaylistAudios";
+import Router from "next/router";
+import { useGetPlaylist } from "~/lib/hooks/api";
 
 interface PlaylistPageProps {
   playlist: Playlist;
   playlistId: ID;
+}
+
+function PlaylistDetailPicture(props: { playlist: Playlist }) {
+  const { user: currentUser } = useUser();
+  const { playlist } = props;
+
+  return (
+    <PictureController
+      title={playlist.title}
+      src={playlist.picture || ""}
+      onChange={async () => console.log("")}
+      onRemove={async () => console.log("")}
+      isMutating={false}
+      canEdit={currentUser?.id === playlist.user.id}
+    />
+  );
 }
 
 export const getServerSideProps: GetServerSideProps<PlaylistPageProps> = async (
@@ -49,12 +70,54 @@ export default function PlaylistPage({
     initialData: initPlaylist,
   });
 
+  const setNewQueue = useAudioPlayer((state) => state.setNewQueue);
+  const { items: playlistAudios } = useGetPlaylistAudios(playlist!.id);
+
+  const playPlaylist = useCallback(async () => {
+    await setNewQueue(
+      `playlist:${playlist!.id}`,
+      playlistAudios.map((x) => x.audio)
+    );
+  }, [playlist!.id, playlistAudios.length]);
+
+  useEffect(() => {
+    if (playlist) {
+      Router.prefetch(`/users/${playlist.user.userName}`);
+    }
+  }, []);
+
   if (!playlist) return null;
 
   return (
     <Page title="Playlist">
-      <PlaylistDetails playlist={playlist} />
-      <PlaylistAudioList playlist={playlist} />
+      <Flex
+        marginBottom={4}
+        justifyContent="center"
+        direction={{ base: "column", md: "row" }}
+      >
+        <Flex
+          flex="1"
+          marginRight={4}
+          justify={{ base: "center", md: "normal" }}
+        >
+          <PlaylistDetailPicture playlist={playlist} />
+        </Flex>
+        <Box flex="6">
+          <chakra.div marginTop={{ base: 4, md: 0 }} marginBottom={4}>
+            <Heading as="h1" fontSize={{ base: "3xl", md: "5xl" }}>
+              {playlist.title}
+            </Heading>
+            <chakra.div display="flex">
+              <Link href={`/users/${playlist.user.userName}`} fontWeight="500">
+                {playlist.user.userName}
+              </Link>
+            </chakra.div>
+          </chakra.div>
+          <Stack direction="row" alignItems="center">
+            <PlaylistPlayButton playlist={playlist} onPlay={playPlaylist} />
+          </Stack>
+        </Box>
+      </Flex>
     </Page>
   );
 }

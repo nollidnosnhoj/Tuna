@@ -1,7 +1,6 @@
 import create from "zustand";
 import { v4 as uuidv4 } from "uuid";
-import { AudioView } from "~/features/audio/api/types";
-import { ID } from "../types";
+import { AudioView, ID } from "../types";
 
 export enum REPEAT_MODE {
   DISABLE = "disable",

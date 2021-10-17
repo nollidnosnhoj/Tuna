@@ -6,12 +6,10 @@ import NextLink from "next/link";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 import Page from "~/components/Page";
-import { useLogin } from "~/features/auth/api/hooks";
-import AuthContainer from "~/features/auth/components/AuthContainer";
-import LoginForm, {
-  LoginFormValues,
-} from "~/features/auth/components/Forms/Login";
+import AuthContainer from "~/components/ui/AuthContainer";
+import LoginForm, { LoginFormValues } from "~/components/forms/LoginForm";
 import { getErrorMessage } from "~/utils/error";
+import { useLogin } from "~/lib/hooks/api";
 
 export default function LoginPage() {
   const [error, setError] = useState("");
@@ -27,7 +25,7 @@ export default function LoginPage() {
         status: "success",
         description: "You have logged in successfully. ",
       });
-      router.push(redirectUrl);
+      await router.push(redirectUrl);
     } catch (err) {
       setError(getErrorMessage(err));
     }

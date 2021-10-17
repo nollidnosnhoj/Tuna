@@ -1,10 +1,13 @@
 import React from "react";
-import { Heading } from "@chakra-ui/react";
-import InfiniteListControls from "~/components/UI/ListControls/Infinite";
+import { Heading, List, ListItem } from "@chakra-ui/react";
+import InfiniteListControls from "~/components/ui/ListControls/Infinite";
 import Page from "~/components/Page";
-import AudioList from "~/features/audio/components/List";
-import { useGetTagAudioList } from "~/features/audio/api/hooks";
 import { useRouter } from "next/router";
+import { AudioListItem } from "~/components/AudioItem";
+import AudioShareButton from "~/components/buttons/Share";
+import AudioMiscMenu from "~/components/buttons/Menu";
+import { useAudioPlayer } from "~/lib/stores";
+import { useGetTagAudioList } from "~/lib/hooks/api";
 
 export default function TagAudioPage() {
   const router = useRouter();
@@ -19,6 +22,9 @@ export default function TagAudioPage() {
     ...otherParams,
   });
 
+  const isPlaying = useAudioPlayer((state) => state.isPlaying);
+  const audioCurrentPlaying = useAudioPlayer((state) => state.current);
+
   return (
     <Page title={`Showing '${tag}' audios`}>
       {tag && (
@@ -26,7 +32,25 @@ export default function TagAudioPage() {
           Showing '{tag}' audios
         </Heading>
       )}
-      <AudioList audios={audios} />
+      {audios.length === 0 ? (
+        <span>No audios found.</span>
+      ) : (
+        <List>
+          {audios.map((audio) => (
+            <ListItem key={audio.id}>
+              <AudioListItem
+                audio={audio}
+                isPlaying={
+                  audioCurrentPlaying?.audioId === audio.id && isPlaying
+                }
+              >
+                <AudioShareButton audio={audio} />
+                <AudioMiscMenu audio={audio} />
+              </AudioListItem>
+            </ListItem>
+          ))}
+        </List>
+      )}
       <InfiniteListControls
         fetchNext={fetchNextPage}
         hasNext={hasNextPage}

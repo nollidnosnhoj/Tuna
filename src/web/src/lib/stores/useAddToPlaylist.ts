@@ -1,6 +1,5 @@
 import create from "zustand";
-import { AudioView } from "~/features/audio/api/types";
-import { ID } from "../types";
+import { AudioView, ID } from "../types";
 
 type UseAddToPlaylistState = {
   open: boolean;

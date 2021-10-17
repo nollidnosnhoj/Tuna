@@ -1,6 +1,11 @@
 import {
   Box,
   Button,
+  Flex,
+  Heading,
+  List,
+  ListItem,
+  Stack,
   Tab,
   TabList,
   TabPanel,
@@ -12,18 +17,49 @@ import NextLink from "next/link";
 import React from "react";
 import Page from "~/components/Page";
 import {
+  useAddUserPicture,
+  useFollow,
   useGetProfile,
   useGetUserAudios,
   useGetUserFavoriteAudios,
-} from "~/features/user/api/hooks";
-import { Profile } from "~/features/user/api/types";
-import ProfileDetails from "~/features/user/components/Profile";
-import AudioList from "~/features/audio/components/List";
+  useRemoveUserPicture,
+} from "~/lib/hooks/api";
 import request from "~/lib/http";
+import { Profile } from "~/lib/types";
+import PictureController from "~/components/Picture";
+import { useUser } from "~/components/providers/UserProvider";
+import { useAudioPlayer } from "~/lib/stores";
+import { AudioListItem } from "~/components/AudioItem";
+import AudioShareButton from "~/components/buttons/Share";
+import AudioMiscMenu from "~/components/buttons/Menu";
 
 interface ProfilePageProps {
   profile?: Profile;
   username: string;
+}
+
+function ProfilePicture(props: { profile: Profile }) {
+  const { profile } = props;
+  const { user } = useUser();
+
+  const { mutateAsync: addPictureAsync, isLoading: isAddingPicture } =
+    useAddUserPicture(profile.userName);
+
+  const { mutateAsync: removePictureAsync, isLoading: isRemovingPicture } =
+    useRemoveUserPicture(profile.userName);
+  return (
+    <PictureController
+      title={profile.userName}
+      src={profile.picture}
+      onChange={async (croppedData) => {
+        await addPictureAsync(croppedData);
+      }}
+      onRemove={removePictureAsync}
+      isMutating={isAddingPicture || isRemovingPicture}
+      canEdit={user?.id === profile.id}
+      width={250}
+    />
+  );
 }
 
 export const getServerSideProps: GetServerSideProps<ProfilePageProps> = async (
@@ -52,10 +88,15 @@ export const getServerSideProps: GetServerSideProps<ProfilePageProps> = async (
 };
 
 export default function UserProfileNextPage(props: ProfilePageProps) {
+  const isPlaying = useAudioPlayer((state) => state.isPlaying);
+  const currentAudioPlaying = useAudioPlayer((state) => state.current);
+  const { user: currentUser } = useUser();
   const { data: profile } = useGetProfile(props.username, {
     staleTime: 1000,
     initialData: props.profile,
   });
+
+  const { isFollowing, follow } = useFollow(profile!.id);
 
   const { items: latestAudios } = useGetUserAudios(
     profile?.userName ?? "",
@@ -73,7 +114,43 @@ export default function UserProfileNextPage(props: ProfilePageProps) {
 
   return (
     <Page title={`${profile.userName} | Audiochan`}>
-      <ProfileDetails profile={profile} />
+      <Flex
+        marginBottom={4}
+        justifyContent="center"
+        direction={{ base: "column", md: "row" }}
+      >
+        <Flex
+          flex="1"
+          marginRight={4}
+          justify={{ base: "center", md: "normal" }}
+        >
+          <ProfilePicture profile={profile} />
+        </Flex>
+        <Box flex="7">
+          <Stack
+            direction="row"
+            marginTop={{ base: 4, md: 0 }}
+            marginBottom={4}
+          >
+            <Heading as="h1" fontSize={{ base: "3xl", md: "5xl" }}>
+              {profile.userName}
+            </Heading>
+            <Flex justifyContent="flex-end" flex="1">
+              {currentUser?.id !== profile.id && (
+                <Button
+                  colorScheme="primary"
+                  variant={isFollowing ? "solid" : "outline"}
+                  disabled={isFollowing === undefined}
+                  paddingX={12}
+                  onClick={follow}
+                >
+                  {isFollowing ? "Followed" : "Follow"}
+                </Button>
+              )}
+            </Flex>
+          </Stack>
+        </Box>
+      </Flex>
       <Tabs isLazy>
         <TabList>
           <Tab>Uploads</Tab>
@@ -83,7 +160,21 @@ export default function UserProfileNextPage(props: ProfilePageProps) {
           <TabPanel>
             <Box>
               <Box marginBottom={4}>
-                <AudioList audios={latestAudios} />
+                <List>
+                  {latestAudios.map((audio) => (
+                    <ListItem key={`${audio.id}:${audio.slug}`}>
+                      <AudioListItem
+                        audio={audio}
+                        isPlaying={
+                          currentAudioPlaying?.audioId === audio.id && isPlaying
+                        }
+                      >
+                        <AudioShareButton audio={audio} />
+                        <AudioMiscMenu audio={audio} />
+                      </AudioListItem>
+                    </ListItem>
+                  ))}
+                </List>
               </Box>
               {latestAudios.length > 0 && (
                 <NextLink href={`/users/${profile.userName}/audios`}>
@@ -95,7 +186,21 @@ export default function UserProfileNextPage(props: ProfilePageProps) {
           <TabPanel>
             <Box>
               <Box marginBottom={4}>
-                <AudioList audios={latestFavoriteAudios} />
+                <List>
+                  {latestFavoriteAudios.map((audio) => (
+                    <ListItem key={`${audio.id}:${audio.slug}`}>
+                      <AudioListItem
+                        audio={audio}
+                        isPlaying={
+                          currentAudioPlaying?.audioId === audio.id && isPlaying
+                        }
+                      >
+                        <AudioShareButton audio={audio} />
+                        <AudioMiscMenu audio={audio} />
+                      </AudioListItem>
+                    </ListItem>
+                  ))}
+                </List>
               </Box>
               {latestFavoriteAudios.length > 0 && (
                 <NextLink href={`/users/${profile.userName}/favorite/audios`}>

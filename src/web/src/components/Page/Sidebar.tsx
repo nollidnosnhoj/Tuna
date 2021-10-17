@@ -12,8 +12,8 @@ import NextLink from "next/link";
 import React from "react";
 import { FaCloudUploadAlt } from "react-icons/fa";
 import { MdKeyboardArrowRight } from "react-icons/md";
-import { useUser } from "~/features/user/hooks";
 import Logo from "./Logo";
+import { useUser } from "~/components/providers/UserProvider";
 
 const LinkOrNot: React.FC<{ href?: string }> = ({ href, children }) => {
   if (!href) return <>{children}</>;

@@ -5,10 +5,10 @@ import NextLink from "next/link";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 import Page from "~/components/Page";
-import AuthContainer from "~/features/auth/components/AuthContainer";
+import AuthContainer from "~/components/ui/AuthContainer";
 import RegisterForm, {
   RegisterFormInputs,
-} from "~/features/auth/components/Forms/Register";
+} from "~/components/forms/RegisterForm";
 import request from "~/lib/http";
 import { getErrorMessage } from "~/utils/error";
 

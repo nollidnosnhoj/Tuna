@@ -14,16 +14,13 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import Header from "./Header";
-import { useUser } from "~/features/user/hooks";
 import Sidebar from "./Sidebar";
 import { useRouter } from "next/router";
+import { useUser } from "~/components/providers/UserProvider";
 
-const AudioPlayer = dynamic(
-  () => import("~/features/audio/components/Player"),
-  {
-    ssr: false,
-  }
-);
+const AudioPlayer = dynamic(() => import("~/components/AudioPlayer"), {
+  ssr: false,
+});
 
 const PageContainer: React.FC<BoxProps> = ({ children, ...props }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();

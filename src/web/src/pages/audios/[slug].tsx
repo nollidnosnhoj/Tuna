@@ -1,24 +1,78 @@
 import {
   Accordion,
-  AccordionItem,
   AccordionButton,
-  Box,
   AccordionIcon,
+  AccordionItem,
   AccordionPanel,
+  Box,
+  chakra,
+  Flex,
+  Heading,
+  MenuGroup,
+  MenuItem,
+  Stack,
+  Table,
+  Tag,
+  TagLabel,
+  TagLeftIcon,
+  Tbody,
+  Td,
+  Tr,
+  useColorModeValue,
+  useDisclosure,
+  Wrap,
+  WrapItem,
 } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
-import React from "react";
+import React, { useEffect } from "react";
 import Page from "~/components/Page";
-import AudioDetails from "~/features/audio/components/Details";
-import AudioFileInfo from "~/features/audio/components/Details/FileInfo";
-import { useGetAudio } from "~/features/audio/api/hooks";
-import { AudioView } from "~/features/audio/api/types";
-import AudioTags from "~/features/audio/components/Details/Tags";
 import request from "~/lib/http";
+import Link from "~/components/ui/Link";
+import { formatDuration, formatFileSize, relativeDate } from "~/utils";
+import AudioPlayButton from "~/components/buttons/Play";
+import AudioFavoriteButton from "~/components/buttons/Favorite";
+import AudioMiscMenu from "~/components/buttons/Menu";
+import { EditIcon } from "@chakra-ui/icons";
+import AudioEditDrawer from "~/components/AudioEditDrawer";
+import { useUser } from "~/components/providers/UserProvider";
+import { useRouter } from "next/router";
+import PictureController from "~/components/Picture";
+import NextLink from "next/link";
+import { FaHashtag } from "react-icons/fa";
+import { AudioView } from "~/lib/types";
+import {
+  useAddAudioPicture,
+  useGetAudio,
+  useRemoveAudioPicture,
+} from "~/lib/hooks/api";
 
 interface AudioPageProps {
   audio: AudioView;
   slug: string;
+}
+
+function AudioDetailPicture(props: { audio: AudioView }) {
+  const { audio } = props;
+
+  const { user: currentUser } = useUser();
+
+  const { mutateAsync: addPictureAsync, isLoading: isAddingPicture } =
+    useAddAudioPicture(audio.id);
+
+  const { mutateAsync: removePictureAsync, isLoading: isRemovingPicture } =
+    useRemoveAudioPicture(audio.id);
+  return (
+    <PictureController
+      title={audio.title}
+      src={audio.picture || ""}
+      onChange={async (croppedData) => {
+        await addPictureAsync(croppedData);
+      }}
+      onRemove={removePictureAsync}
+      isMutating={isAddingPicture || isRemovingPicture}
+      canEdit={currentUser?.id === audio.user.id}
+    />
+  );
 }
 
 export const getServerSideProps: GetServerSideProps<AudioPageProps> = async (
@@ -47,16 +101,75 @@ export const getServerSideProps: GetServerSideProps<AudioPageProps> = async (
 };
 
 export default function AudioPage({ audio: initAudio, slug }: AudioPageProps) {
+  const router = useRouter();
+  const secondaryColor = useColorModeValue("black.300", "gray.300");
+  const { user: currentUser } = useUser();
+
   const { data: audio } = useGetAudio(slug, {
     staleTime: 1000,
     initialData: initAudio,
   });
 
+  const {
+    isOpen: isEditOpen,
+    onOpen: onEditOpen,
+    onClose: onEditClose,
+  } = useDisclosure();
+
+  useEffect(() => {
+    if (audio) {
+      router.prefetch(`/users/${audio.user.userName}`);
+    }
+  }, []);
+
   if (!audio) return null;
 
   return (
     <Page title={audio.title}>
-      <AudioDetails audio={audio} />
+      <Flex
+        marginBottom={4}
+        justifyContent="center"
+        direction={{ base: "column", md: "row" }}
+      >
+        <Flex
+          flex="1"
+          marginRight={4}
+          justify={{ base: "center", md: "normal" }}
+        >
+          <AudioDetailPicture audio={audio} />
+        </Flex>
+        <Box flex="6">
+          <chakra.div marginTop={{ base: 4, md: 0 }} marginBottom={4}>
+            <Heading as="h1" fontSize={{ base: "3xl", md: "5xl" }}>
+              {audio.title}
+            </Heading>
+            <chakra.div display="flex">
+              <Link href={`/users/${audio.user.userName}`} fontWeight="500">
+                {audio.user.userName}
+              </Link>
+              <chakra.span
+                color={secondaryColor}
+                _before={{ content: `"•"`, marginX: 2 }}
+              >
+                {relativeDate(audio.created)}
+              </chakra.span>
+            </chakra.div>
+          </chakra.div>
+          <Stack direction="row" alignItems="center">
+            <AudioPlayButton audio={audio} size="lg" />
+            <AudioFavoriteButton audioId={audio.id} size="lg" />
+            <AudioMiscMenu audio={audio} size="lg">
+              {audio.user.id === currentUser?.id && (
+                <MenuGroup>
+                  <MenuItem icon={<EditIcon />} onClick={onEditOpen}>
+                    Edit
+                  </MenuItem>
+                </MenuGroup>
+              )}
+            </AudioMiscMenu>
+          </Stack>
+        </Box>
+      </Flex>
       <Accordion defaultIndex={[0]} allowMultiple>
         {audio.tags && audio.tags.length > 0 && (
           <AccordionItem>
@@ -68,7 +181,20 @@ export default function AudioPage({ audio: initAudio, slug }: AudioPageProps) {
               </AccordionButton>
             </h2>
             <AccordionPanel pb={4}>
-              <AudioTags tags={audio.tags} />
+              <Flex alignItems="flex-end">
+                <Wrap marginTop={2}>
+                  {audio.tags.map((tag, idx) => (
+                    <WrapItem key={idx}>
+                      <NextLink href={`/tags/${tag}/`}>
+                        <Tag size="md" cursor="pointer">
+                          <TagLeftIcon as={FaHashtag} />
+                          <TagLabel>{tag}</TagLabel>
+                        </Tag>
+                      </NextLink>
+                    </WrapItem>
+                  ))}
+                </Wrap>
+              </Flex>
             </AccordionPanel>
           </AccordionItem>
         )}
@@ -95,10 +221,26 @@ export default function AudioPage({ audio: initAudio, slug }: AudioPageProps) {
             </AccordionButton>
           </h2>
           <AccordionPanel pb={4}>
-            <AudioFileInfo duration={audio.duration} fileSize={audio.size} />
+            <Table>
+              <Tbody>
+                <Tr>
+                  <Td>Duration</Td>
+                  <Td>{formatDuration(audio.duration)}</Td>
+                </Tr>
+                <Tr>
+                  <Td>File Size</Td>
+                  <Td>{formatFileSize(audio.size)}</Td>
+                </Tr>
+              </Tbody>
+            </Table>
           </AccordionPanel>
         </AccordionItem>
       </Accordion>
+      <AudioEditDrawer
+        audio={audio}
+        isOpen={isEditOpen}
+        onClose={onEditClose}
+      />
     </Page>
   );
 }

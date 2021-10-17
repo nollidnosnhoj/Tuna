@@ -1,4 +1,4 @@
-import { useColorModeValue, Box, BoxProps } from "@chakra-ui/react";
+import { Box, BoxProps, useColorModeValue } from "@chakra-ui/react";
 import React from "react";
 
 type PictureContainerProps = BoxProps;

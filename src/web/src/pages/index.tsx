@@ -6,10 +6,9 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import React from "react";
-import { useCallback } from "react";
+import React, { useCallback } from "react";
 import Page from "~/components/Page";
-import { useUser } from "~/features/user/hooks";
+import { useUser } from "~/components/providers/UserProvider";
 
 const Index = () => {
   const router = useRouter();
