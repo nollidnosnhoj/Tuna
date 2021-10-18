@@ -5,20 +5,6 @@ export function getFilenameWithoutExtension(filename: string): string {
   return filename.split(".").slice(0, -1).join(".");
 }
 
-describe("getFilenameWithoutExtension", () => {
-  test("Successfully obtain filename without extension", () => {
-    const filename = "test.mp3";
-    const fileNameWithoutExt = getFilenameWithoutExtension(filename);
-    expect(fileNameWithoutExt).toBe("test");
-  });
-
-  test("Returns input if it does not have extension", () => {
-    const filename = "testmp3";
-    const fileNameWithoutExt = getFilenameWithoutExtension(filename);
-    expect(fileNameWithoutExt).toBe(filename);
-  });
-});
-
 export function getDurationFromAudioFile(file: any): Promise<number> {
   if (!(file instanceof File)) {
     throw Error("Input must be a file.");
