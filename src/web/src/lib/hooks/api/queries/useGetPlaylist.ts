@@ -1,17 +1,8 @@
 import { useCallback } from "react";
-import {
-  QueryKey,
-  useQuery,
-  UseQueryOptions,
-  UseQueryResult,
-} from "react-query";
+import { useQuery, UseQueryOptions, UseQueryResult } from "react-query";
 import request from "~/lib/http";
 import { ID, Playlist } from "~/lib/types";
-
-export const GET_PLAYLIST_KEY = (playlistId: ID): QueryKey => [
-  "playlist",
-  playlistId,
-];
+import { GET_PLAYLIST_KEY } from "~/lib/hooks/api/keys";
 
 export function useGetPlaylist(
   playlistId: ID,

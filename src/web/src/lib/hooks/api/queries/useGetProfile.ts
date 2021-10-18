@@ -1,17 +1,8 @@
 import { useCallback } from "react";
-import {
-  QueryKey,
-  useQuery,
-  UseQueryOptions,
-  UseQueryResult,
-} from "react-query";
+import { useQuery, UseQueryOptions, UseQueryResult } from "react-query";
 import request from "~/lib/http";
 import { ErrorResponse, Profile } from "~/lib/types";
-
-export const GET_PROFILE_QUERY_KEY = (username: string): QueryKey => [
-  "profile",
-  username,
-];
+import { GET_PROFILE_QUERY_KEY } from "~/lib/hooks/api/keys";
 
 export function useGetProfile(
   username: string,

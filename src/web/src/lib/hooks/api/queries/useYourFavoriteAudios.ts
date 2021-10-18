@@ -4,8 +4,7 @@ import {
 } from "~/lib/hooks";
 import request from "~/lib/http";
 import { AudioView, OffsetPagedList } from "~/lib/types";
-
-export const GET_YOUR_FAV_AUDIOS_KEY = "your_fav_audios";
+import { GET_YOUR_FAV_AUDIOS_KEY } from "~/lib/hooks/api/keys";
 
 export function useYourFavoriteAudios(): UseInfinitePaginationReturnType<AudioView> {
   async function fetcher(offset = 0): Promise<OffsetPagedList<AudioView>> {

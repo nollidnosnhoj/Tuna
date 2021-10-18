@@ -6,8 +6,7 @@ import {
 } from "~/lib/hooks";
 import request from "~/lib/http";
 import { AudioView, CursorPagedList } from "~/lib/types";
-
-export const GET_AUDIO_LIST_QUERY_KEY = "audios";
+import { GET_AUDIO_LIST_QUERY_KEY } from "~/lib/hooks/api/keys";
 
 export function useGetAudioList(
   params: Record<string, string | boolean | number> = {},

@@ -5,8 +5,7 @@ import {
 } from "~/lib/hooks";
 import request from "~/lib/http";
 import { OffsetPagedList, Playlist } from "~/lib/types";
-
-export const GET_YOUR_PLAYLISTS_KEY = "your_playlists";
+import { GET_YOUR_PLAYLISTS_KEY } from "~/lib/hooks/api/keys";
 
 export function useYourPlaylists(
   options: UseInfinitePaginationOptions<Playlist> = {}

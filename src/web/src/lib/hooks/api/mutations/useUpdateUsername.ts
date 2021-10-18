@@ -3,8 +3,8 @@ import { useMutation, UseMutationResult, useQueryClient } from "react-query";
 import request from "~/lib/http";
 import { CurrentUser, ErrorResponse } from "~/lib/types";
 import { errorToast } from "~/utils";
-import { ME_QUERY_KEY } from "../queries/useGetCurrentUser";
 import { useUser } from "~/components/providers/UserProvider";
+import { ME_QUERY_KEY } from "~/lib/hooks/api/keys";
 
 type Input = { newUsername: string };
 

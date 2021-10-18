@@ -1,4 +1,3 @@
-import { QueryKey } from "react-query";
 import {
   usePagination,
   UsePaginationOptions,
@@ -7,11 +6,7 @@ import {
 import { useCallback } from "react";
 import request from "~/lib/http";
 import { AudioView, PagedList } from "~/lib/types";
-
-export const SEARCH_AUDIO_QUERY_KEY = (
-  term: string,
-  tags?: string
-): QueryKey => ["searchAudios", { q: term, tags: tags }];
+import { SEARCH_AUDIO_QUERY_KEY } from "~/lib/hooks/api/keys";
 
 export function useSearchAudio(
   searchTerm: string,

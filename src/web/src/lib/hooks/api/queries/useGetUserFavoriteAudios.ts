@@ -1,5 +1,4 @@
 import { useCallback } from "react";
-import { QueryKey } from "react-query";
 import {
   useInfinitePagination,
   UseInfinitePaginationOptions,
@@ -7,14 +6,11 @@ import {
 } from "~/lib/hooks";
 import request from "~/lib/http";
 import { AudioView, OffsetPagedList } from "~/lib/types";
+import { GET_USER_FAVORITE_AUDIOS_QUERY_KEY } from "~/lib/hooks/api/keys";
 
 type UseGetUserFavoriteAudiosParams = {
   size?: number;
 };
-
-export const GET_USER_FAVORITE_AUDIOS_QUERY_KEY = (
-  username: string
-): QueryKey => ["userFavoriteAudios", username];
 
 export function useGetUserFavoriteAudios(
   username: string,

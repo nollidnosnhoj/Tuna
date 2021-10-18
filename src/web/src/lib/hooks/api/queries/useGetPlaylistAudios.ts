@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { useCallback } from "react";
-import { QueryKey } from "react-query";
 import {
   useInfiniteCursorPagination,
   UseInfiniteCursorPaginationOptions,
@@ -8,10 +7,7 @@ import {
 } from "~/lib/hooks";
 import request from "~/lib/http";
 import { CursorPagedList, ID, PlaylistAudio } from "~/lib/types";
-
-export const GET_PLAYLIST_AUDIOS_KEY = (
-  playlistId: ID | undefined
-): QueryKey => ["playlist_audios", playlistId];
+import { GET_PLAYLIST_AUDIOS_KEY } from "~/lib/hooks/api/keys";
 
 export function useGetPlaylistAudios(
   playlistId: ID | undefined,

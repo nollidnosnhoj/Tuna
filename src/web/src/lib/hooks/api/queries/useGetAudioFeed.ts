@@ -1,4 +1,3 @@
-import { QueryKey } from "react-query";
 import {
   useInfinitePagination,
   UseInfinitePaginationOptions,
@@ -7,8 +6,7 @@ import {
 import { useUser } from "~/components/providers/UserProvider";
 import request from "~/lib/http";
 import { AudioView, OffsetPagedList } from "~/lib/types";
-
-export const GET_AUDIO_FEED_QUERY_KEY: QueryKey = "feed";
+import { GET_AUDIO_FEED_QUERY_KEY } from "~/lib/hooks/api/keys";
 
 export function useGetAudioFeed(
   options: UseInfinitePaginationOptions<AudioView> = {}

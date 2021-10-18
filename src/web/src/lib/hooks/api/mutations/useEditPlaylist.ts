@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { useMutation, UseMutationResult, useQueryClient } from "react-query";
 import request from "~/lib/http";
 import { ID, Playlist, PlaylistRequest } from "~/lib/types";
-import { GET_PLAYLIST_KEY } from "../queries/useGetPlaylist";
+import { GET_PLAYLIST_KEY } from "~/lib/hooks/api/keys";
 
 export function useEditPlaylist(playlistId: ID): UseMutationResult<Playlist> {
   const qc = useQueryClient();

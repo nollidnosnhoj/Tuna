@@ -1,7 +1,7 @@
 import { useMutation, UseMutationResult, useQueryClient } from "react-query";
 import request from "~/lib/http";
-import { GET_PLAYLIST_KEY } from "../queries/useGetPlaylist";
 import { CreatePlaylistRequest, Playlist } from "~/lib/types";
+import { GET_PLAYLIST_KEY } from "~/lib/hooks/api/keys";
 
 export function useCreatePlaylist(): UseMutationResult<
   Playlist,

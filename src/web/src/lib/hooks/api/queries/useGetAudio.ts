@@ -1,23 +1,16 @@
 import { useCallback } from "react";
 import {
-  QueryKey,
   useQuery,
   useQueryClient,
   UseQueryOptions,
   UseQueryResult,
 } from "react-query";
 import request from "~/lib/http";
-import { AudioView, ErrorResponse, ID } from "~/lib/types";
-
-export const GET_AUDIO_QUERY_BYSLUG_KEY = (audioSlug: string): QueryKey => [
-  "audios",
-  audioSlug,
-];
-
-export const GET_AUDIO_QUERY_KEY = (audioId: ID): QueryKey => [
-  "audios",
-  audioId,
-];
+import { AudioView, ErrorResponse } from "~/lib/types";
+import {
+  GET_AUDIO_QUERY_BY_SLUG_KEY,
+  GET_AUDIO_QUERY_KEY,
+} from "~/lib/hooks/api/keys";
 
 type UseGetAudioQueryOptions = UseQueryOptions<AudioView, ErrorResponse>;
 
@@ -35,7 +28,7 @@ export function useGetAudio(
   }, [audioSlug]);
 
   return useQuery<AudioView, ErrorResponse>(
-    GET_AUDIO_QUERY_BYSLUG_KEY(audioSlug),
+    GET_AUDIO_QUERY_BY_SLUG_KEY(audioSlug),
     fetcher,
     {
       ...options,

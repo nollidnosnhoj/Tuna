@@ -1,13 +1,15 @@
 import { useCallback } from "react";
 import { useMutation, UseMutationResult, useQueryClient } from "react-query";
-import { GET_YOUR_AUDIOS_KEY } from "~/lib/hooks/api/queries/useYourAudios";
 import { useUser } from "~/components/providers/UserProvider";
-import { GET_USER_AUDIOS_QUERY_KEY } from "~/lib/hooks/api/queries/useGetUserAudios";
 import { useAudioPlayer } from "~/lib/stores";
-import { GET_AUDIO_QUERY_KEY } from "../queries/useGetAudio";
-import { GET_AUDIO_LIST_QUERY_KEY } from "../queries/useGetAudioList";
 import request from "~/lib/http";
 import { ID } from "~/lib/types";
+import {
+  GET_AUDIO_LIST_QUERY_KEY,
+  GET_AUDIO_QUERY_KEY,
+  GET_USER_AUDIOS_QUERY_KEY,
+  GET_YOUR_AUDIOS_KEY,
+} from "~/lib/hooks/api/keys";
 
 export function useRemoveAudio(audioId: ID): UseMutationResult<void> {
   const { removeAudioIdFromQueue: removeAudioFromQueue } = useAudioPlayer();

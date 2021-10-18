@@ -1,8 +1,8 @@
 import { useMutation, UseMutationResult, useQueryClient } from "react-query";
-import { ME_QUERY_KEY } from "~/lib/hooks/api/queries/useGetCurrentUser";
 import { useUser } from "~/components/providers/UserProvider";
 import request from "~/lib/http";
 import { CurrentUser } from "~/lib/types";
+import { ME_QUERY_KEY } from "~/lib/hooks/api/keys";
 
 export function useLogout(): UseMutationResult<void, void, void> {
   const queryClient = useQueryClient();

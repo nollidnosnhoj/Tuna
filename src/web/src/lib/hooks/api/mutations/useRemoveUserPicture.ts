@@ -1,8 +1,7 @@
 import { useMutation, UseMutationResult, useQueryClient } from "react-query";
-import { ME_QUERY_KEY } from "~/lib/hooks/api/queries/useGetCurrentUser";
 import request from "~/lib/http";
 import { ErrorResponse, Profile } from "~/lib/types";
-import { GET_PROFILE_QUERY_KEY } from "../queries/useGetProfile";
+import { GET_PROFILE_QUERY_KEY, ME_QUERY_KEY } from "~/lib/hooks/api/keys";
 
 export function useRemoveUserPicture(
   username: string

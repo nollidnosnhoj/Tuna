@@ -1,8 +1,7 @@
 import { useQuery, UseQueryOptions, UseQueryResult } from "react-query";
 import request from "~/lib/http";
 import { CurrentUser } from "~/lib/types";
-
-export const ME_QUERY_KEY = "me";
+import { ME_QUERY_KEY } from "~/lib/hooks/api/keys";
 
 export function useGetCurrentUser(
   options: UseQueryOptions<CurrentUser> = {}

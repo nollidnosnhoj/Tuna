@@ -1,10 +1,10 @@
 import { useCallback } from "react";
 import { QueryKey, useMutation, useQuery, useQueryClient } from "react-query";
-import { GET_YOUR_FAV_AUDIOS_KEY } from "~/lib/hooks/api/queries/useYourFavoriteAudios";
 import request from "~/lib/http";
 import { ID } from "~/lib/types";
 import { errorToast } from "~/utils";
 import { useUser } from "~/components/providers/UserProvider";
+import { GET_YOUR_FAV_AUDIOS_KEY } from "~/lib/hooks/api/keys";
 
 type UseFavoriteAudioResult = {
   isFavorite?: boolean;

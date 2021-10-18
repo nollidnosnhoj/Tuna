@@ -1,11 +1,13 @@
 import { useMutation, UseMutationResult, useQueryClient } from "react-query";
-import { GET_YOUR_AUDIOS_KEY } from "~/lib/hooks/api/queries/useYourAudios";
-import { GET_USER_AUDIOS_QUERY_KEY } from "~/lib/hooks/api/queries/useGetUserAudios";
-import { GET_AUDIO_QUERY_KEY } from "../queries/useGetAudio";
-import { GET_AUDIO_LIST_QUERY_KEY } from "../queries/useGetAudioList";
 import request from "~/lib/http";
 import { AudioRequest, AudioView, ID } from "~/lib/types";
 import { useUser } from "~/components/providers/UserProvider";
+import {
+  GET_AUDIO_LIST_QUERY_KEY,
+  GET_AUDIO_QUERY_KEY,
+  GET_USER_AUDIOS_QUERY_KEY,
+  GET_YOUR_AUDIOS_KEY,
+} from "~/lib/hooks/api/keys";
 
 export function useEditAudio(audioId: ID): UseMutationResult<AudioView> {
   const queryClient = useQueryClient();

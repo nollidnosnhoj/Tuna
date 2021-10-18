@@ -1,10 +1,12 @@
 import { useMutation, UseMutationResult, useQueryClient } from "react-query";
-import { GET_AUDIO_QUERY_KEY } from "../queries/useGetAudio";
-import { GET_AUDIO_LIST_QUERY_KEY } from "../queries/useGetAudioList";
-import { GET_USER_AUDIOS_QUERY_KEY } from "~/lib/hooks/api/queries/useGetUserAudios";
 import { AudioView, ErrorResponse, ID, ImageUploadResponse } from "~/lib/types";
 import request from "~/lib/http";
 import { useUser } from "~/components/providers/UserProvider";
+import {
+  GET_AUDIO_LIST_QUERY_KEY,
+  GET_AUDIO_QUERY_KEY,
+  GET_USER_AUDIOS_QUERY_KEY,
+} from "~/lib/hooks/api/keys";
 
 export function useAddAudioPicture(
   audioId: ID
