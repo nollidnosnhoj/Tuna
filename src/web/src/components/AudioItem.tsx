@@ -16,6 +16,7 @@ import { AudioView } from "~/lib/types";
 
 export interface IAudioItemProps {
   audio: AudioView;
+  context?: string;
 }
 
 const AudioListItemContainer: React.FC = ({ children }) => {
@@ -40,7 +41,7 @@ const AudioListItemContainer: React.FC = ({ children }) => {
 };
 
 function AudioListItem(props: PropsWithChildren<IAudioItemProps>) {
-  const { audio, children } = props;
+  const { audio, context = "custom", children } = props;
   const validChildren = getValidChildren(children);
   const { currentAudioPlaying, setIsPlaying, setNewQueue } = useAudioPlayer(
     (state) => ({
@@ -62,8 +63,8 @@ function AudioListItem(props: PropsWithChildren<IAudioItemProps>) {
       setIsPlaying(!isPlaying);
       return;
     }
-    setNewQueue("custom", [audio], 0);
-  }, [audio, isPlaying, currentAudioPlaying?.queueId]);
+    setNewQueue(context, [audio], 0);
+  }, [audio, context, isPlaying, currentAudioPlaying?.queueId]);
 
   return (
     <AudioListItemContainer>
