@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "@chakra-ui/react";
 import { z } from "zod";
-import TextInput from "~/components/form-inputs/Text";
+import InputField from "~/components/form-inputs/InputField";
 import SETTINGS from "~/lib/config";
 import {
   usernameRule,
@@ -42,7 +42,7 @@ export default function UpdateUsernameForm({
 
   return (
     <form onSubmit={handleSubmit(handleUsernameSubmit)}>
-      <TextInput
+      <InputField
         {...register("username", {
           setValueAs: (val: string) => val.toLowerCase(),
         })}

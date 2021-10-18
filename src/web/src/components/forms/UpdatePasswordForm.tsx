@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "@chakra-ui/react";
 import { z } from "zod";
-import TextInput from "~/components/form-inputs/Text";
+import InputField from "~/components/form-inputs/InputField";
 import SETTINGS from "~/lib/config";
 import {
   passwordRule,
@@ -55,21 +55,21 @@ export default function UpdatePasswordForm({
 
   return (
     <form onSubmit={handleSubmit(handlePasswordChange)}>
-      <TextInput
+      <InputField
         {...register("currentPassword")}
         error={errors.currentPassword?.message}
         type="password"
         label="Current Password"
         isRequired
       />
-      <TextInput
+      <InputField
         {...register("newPassword")}
         type="password"
         error={errors.newPassword?.message}
         label="New Password"
         isRequired
       />
-      <TextInput
+      <InputField
         {...register("confirmPassword")}
         type="password"
         error={errors.confirmPassword?.message}

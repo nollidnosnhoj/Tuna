@@ -3,10 +3,11 @@ import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import TagInput from "~/components/form-inputs/Tags";
-import TextInput from "~/components/form-inputs/Text";
+import TagInput from "~/components/form-inputs/TagField";
+import InputField from "~/components/form-inputs/InputField";
 import { audioSchema } from "../../lib/validators/audio-schemas";
 import { AudioView } from "~/lib/types";
+import TextAreaField from "~/components/form-inputs/TextAreaField";
 
 interface AudioFormProps {
   audio: AudioView;
@@ -51,15 +52,14 @@ export default function EditForm({
   return (
     <form onSubmit={handleSubmit(handleSubmission)}>
       <Box marginBottom={8}>
-        <TextInput
+        <InputField
           {...register("title")}
           label="Title"
           error={errors.title?.message}
           isDisabled={isDisabled}
         />
-        <TextInput
+        <TextAreaField
           {...register("description")}
-          isTextArea
           label="Description"
           error={errors.description?.message}
           isDisabled={isDisabled}

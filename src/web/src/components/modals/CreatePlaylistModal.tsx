@@ -10,12 +10,13 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
-import TagInput from "~/components/form-inputs/Tags";
-import TextInput from "~/components/form-inputs/Text";
+import TagInput from "~/components/form-inputs/TagField";
+import InputField from "~/components/form-inputs/InputField";
 import { useAddToPlaylist } from "~/lib/stores";
 import { errorToast, toast } from "~/utils";
 import { PlaylistRequest } from "~/lib/types";
 import { useCreatePlaylist } from "~/lib/hooks/api";
+import TextAreaField from "~/components/form-inputs/TextAreaField";
 
 interface CreatePlaylistModalProps {
   isOpen: boolean;
@@ -64,16 +65,15 @@ export default function CreatePlaylistModal({
         <ModalCloseButton />
         <ModalBody>
           <form>
-            <TextInput
+            <InputField
               {...register("title")}
               label="Title"
               error={errors.title?.message}
             />
-            <TextInput
+            <TextAreaField
               {...register("description")}
               label="Description"
               error={errors.description?.message}
-              isTextArea
             />
             <Controller
               name="tags"

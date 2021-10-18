@@ -2,7 +2,7 @@ import React from "react";
 import { Button } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import TextInput from "~/components/form-inputs/Text";
+import InputField from "~/components/form-inputs/InputField";
 
 export const loginValidationSchema = z.object({
   login: z.string().min(1),
@@ -36,7 +36,7 @@ export default function LoginForm(props: LoginFormProps) {
 
   return (
     <form onSubmit={handleSubmit(handleLoginSubmit)}>
-      <TextInput
+      <InputField
         {...register("login", {
           required: true,
         })}
@@ -45,7 +45,7 @@ export default function LoginForm(props: LoginFormProps) {
         error={errors.login?.message}
         isRequired
       />
-      <TextInput
+      <InputField
         type="password"
         label="Password"
         error={errors.password?.message}

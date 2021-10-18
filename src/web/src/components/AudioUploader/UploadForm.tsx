@@ -3,10 +3,11 @@ import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import AudioDropzone from "./Dropzone";
-import TagInput from "~/components/form-inputs/Tags";
-import TextInput from "~/components/form-inputs/Text";
+import TagInput from "~/components/form-inputs/TagField";
+import InputField from "~/components/form-inputs/InputField";
 import { uploadAudioSchema } from "../../lib/validators/audio-schemas";
 import { Button, Spacer, Stack } from "@chakra-ui/react";
+import TextAreaField from "~/components/form-inputs/TextAreaField";
 
 interface UploadFormProps {
   onSubmit?: (values: UploadAudioFormValues) => Promise<void>;
@@ -53,15 +54,14 @@ export default function UploadForm({ onSubmit }: UploadFormProps) {
           setValue("uploadId", "");
         }}
       />
-      <TextInput
+      <InputField
         {...register("title")}
         label="Title"
         error={errors.title?.message}
         helperText="Note: When you change the audio's title, the url (slug) will also change to correspond with the title."
       />
-      <TextInput
+      <TextAreaField
         {...register("description")}
-        isTextArea
         label="Description"
         error={errors.description?.message}
       />

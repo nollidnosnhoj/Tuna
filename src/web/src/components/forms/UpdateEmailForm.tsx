@@ -1,7 +1,7 @@
 import { Button } from "@chakra-ui/react";
 import React from "react";
 import { z } from "zod";
-import TextInput from "~/components/form-inputs/Text";
+import InputField from "~/components/form-inputs/InputField";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -36,7 +36,7 @@ export default function UpdateEmailForm({ onSubmit }: UpdateEmailFormProps) {
 
   return (
     <form onSubmit={handleSubmit(handleEmailSubmit)}>
-      <TextInput
+      <InputField
         {...register("email")}
         error={errors.email?.message}
         label="Change Email"

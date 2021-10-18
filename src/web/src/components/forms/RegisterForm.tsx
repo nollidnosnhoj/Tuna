@@ -1,7 +1,7 @@
 import React from "react";
 import { Button, Flex, Text } from "@chakra-ui/react";
 import { z } from "zod";
-import TextInput from "~/components/form-inputs/Text";
+import InputField from "~/components/form-inputs/InputField";
 import { passwordRule, usernameRule } from "~/lib/validators/user-schemas";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -51,27 +51,27 @@ export default function RegisterForm(props: RegisterFormProps) {
 
   return (
     <form onSubmit={handleSubmit(handleRegisterSubmit)}>
-      <TextInput
+      <InputField
         {...register("username")}
         ref={props.initialRef}
         error={errors.username?.message}
         label="Username"
         isRequired
       />
-      <TextInput
+      <InputField
         {...register("email")}
         error={errors.email?.message}
         label="Email"
         isRequired
       />
-      <TextInput
+      <InputField
         type="password"
         error={errors.password?.message}
         label="Password"
         isRequired
         {...register("password")}
       />
-      <TextInput
+      <InputField
         type="password"
         error={errors.confirmPassword?.message}
         label="Confirm Password"
