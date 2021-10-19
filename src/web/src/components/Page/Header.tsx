@@ -1,67 +1,152 @@
-import { Button, Flex, IconButton, Stack } from "@chakra-ui/react";
-import { HamburgerIcon } from "@chakra-ui/icons";
-import SearchBar from "./SearchBar";
-import UserSection from "./UserSection";
-import ThemeModeButton from "./ThemeModeButton";
+import { useColorModeValue } from "@chakra-ui/color-mode";
+import { FiChevronDown, FiMenu } from "react-icons/fi";
 import React from "react";
+import {
+  Avatar,
+  Flex,
+  HStack,
+  IconButton,
+  Menu,
+  MenuButton,
+  VStack,
+  Text,
+  Box,
+  MenuList,
+  MenuItem,
+  MenuDivider,
+  FlexProps,
+  Button,
+  useColorMode,
+} from "@chakra-ui/react";
 import NextLink from "next/link";
-import { useRouter } from "next/router";
+import { CurrentUser } from "~/lib/types";
 import { useUser } from "~/components/providers/UserProvider";
+import { useRouter } from "next/router";
+import { MoonIcon, SunIcon } from "@chakra-ui/icons";
 
-interface HeaderProps {
-  onOpenMenu?: () => void;
+interface IHeaderProps extends FlexProps {
+  onOpen: () => void;
 }
 
-export default function Header({ onOpenMenu }: HeaderProps) {
-  const router = useRouter();
-  const { isLoggedIn } = useUser();
+interface IAuthenticatedHeaderSectionProps {
+  user: CurrentUser;
+}
 
+function AuthenticatedHeaderSection({
+  user,
+}: IAuthenticatedHeaderSectionProps) {
+  return (
+    <Flex alignItems={"center"}>
+      <Menu>
+        <MenuButton py={2} transition="all 0.3s" _focus={{ boxShadow: "none" }}>
+          <HStack>
+            <Avatar size={"sm"} name={user.userName} />
+            <VStack
+              display={{ base: "none", md: "flex" }}
+              alignItems="flex-start"
+              spacing="1px"
+              ml="2"
+            >
+              <Text fontSize="sm">{user.userName}</Text>
+            </VStack>
+            <Box display={{ base: "none", md: "flex" }}>
+              <FiChevronDown />
+            </Box>
+          </HStack>
+        </MenuButton>
+        <MenuList
+          bg={useColorModeValue("white", "gray.900")}
+          borderColor={useColorModeValue("gray.200", "gray.700")}
+        >
+          <NextLink href={`/users/${user.userName}`}>
+            <MenuItem>Profile</MenuItem>
+          </NextLink>
+          <NextLink href="/me/settings">
+            <MenuItem>Settings</MenuItem>
+          </NextLink>
+          <MenuDivider />
+          <NextLink href="/logout">
+            <MenuItem>Sign out</MenuItem>
+          </NextLink>
+        </MenuList>
+      </Menu>
+    </Flex>
+  );
+}
+
+export function Header({ onOpen, ...rest }: IHeaderProps) {
+  const router = useRouter();
+  const { user } = useUser();
+  const { toggleColorMode } = useColorMode();
+  const ColorModeIcon = useColorModeValue(SunIcon, MoonIcon);
   return (
     <Flex
-      as="header"
-      align="center"
-      justify="space-between"
-      width="full"
-      paddingX={4}
-      paddingY={5}
-      height={20}
+      as={"header"}
+      ml={{ base: 0, md: 60 }}
+      px={{ base: 4, md: 4 }}
+      height="20"
+      alignItems="center"
+      bg={useColorModeValue("white", "gray.900")}
+      borderBottomWidth="1px"
+      borderBottomColor={useColorModeValue("gray.200", "gray.700")}
+      justifyContent={{ base: "space-between", md: "flex-end" }}
+      {...rest}
     >
       <IconButton
-        aria-label="Navigation Menu"
-        display={{ base: "inline-flex", md: "none" }}
-        icon={<HamburgerIcon />}
-        onClick={onOpenMenu}
+        display={{ base: "flex", md: "none" }}
+        onClick={onOpen}
+        variant="outline"
+        aria-label="open menu"
+        icon={<FiMenu />}
       />
-      <SearchBar width="96" display={{ base: "none", md: "flex" }} />
-      <Stack direction="row" spacing={2}>
-        <ThemeModeButton />
-        {isLoggedIn ? (
-          <UserSection />
+
+      <Text
+        display={{ base: "flex", md: "none" }}
+        fontSize="2xl"
+        fontWeight="bold"
+      >
+        Audiochan
+      </Text>
+      <HStack spacing={{ base: "0", md: "6" }}>
+        <IconButton
+          aria-label={"Switch light/dark theme"}
+          icon={<ColorModeIcon />}
+          onClick={toggleColorMode}
+          variant={"ghost"}
+          isRound
+        />
+        {user ? (
+          <AuthenticatedHeaderSection user={user} />
         ) : (
-          <>
+          <React.Fragment>
             <NextLink href={`/login?redirecturl=${router.asPath}`}>
               <Button
-                size="md"
-                colorScheme="gray"
-                variant="ghost"
-                textTransform="uppercase"
+                as={"a"}
+                fontSize={"sm"}
+                fontWeight={400}
+                variant={"link"}
+                cursor={"pointer"}
               >
-                Login
+                Sign In
               </Button>
             </NextLink>
             <NextLink href="/register">
               <Button
-                size="md"
-                colorScheme="primary"
-                textTransform="uppercase"
-                display={{ base: "none", md: "flex" }}
+                display={{ base: "none", md: "inline-flex" }}
+                fontSize={"sm"}
+                fontWeight={600}
+                color={"white"}
+                bg={"pink.400"}
+                _hover={{
+                  bg: "pink.300",
+                }}
               >
-                Register
+                Sign Up
               </Button>
             </NextLink>
-          </>
+          </React.Fragment>
         )}
-      </Stack>
+      </HStack>
     </Flex>
   );
 }

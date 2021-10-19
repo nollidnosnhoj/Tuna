@@ -2,48 +2,10 @@ import React from "react";
 import dynamic from "next/dynamic";
 import Head from "next/head";
 import NextLink from "next/link";
-import {
-  Box,
-  BoxProps,
-  Button,
-  Drawer,
-  DrawerContent,
-  DrawerOverlay,
-  Flex,
-  Heading,
-  useDisclosure,
-} from "@chakra-ui/react";
-import Header from "./Header";
-import Sidebar from "./Sidebar";
+import { Box, Button, Flex, Heading } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useUser } from "~/components/providers/UserProvider";
-
-const AudioPlayer = dynamic(() => import("~/components/AudioPlayer"), {
-  ssr: false,
-});
-
-const PageContainer: React.FC<BoxProps> = ({ children, ...props }) => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-
-  return (
-    <Box as="section" minHeight="100vh">
-      <Sidebar display={{ base: "none", md: "unset" }} />
-      <Drawer isOpen={isOpen} onClose={onClose} placement="left">
-        <DrawerOverlay />
-        <DrawerContent>
-          <Sidebar width="full" borderRight="none" />
-        </DrawerContent>
-      </Drawer>
-      <Box marginLeft={{ base: 0, md: 60 }}>
-        <Header onOpenMenu={onOpen} />
-        <Box {...props} p={4} paddingBottom="120px" as="main">
-          {children}
-        </Box>
-      </Box>
-      <AudioPlayer />
-    </Box>
-  );
-};
+import { PageLayout } from "~/components/Page/Layout";
 
 interface PageProps {
   title?: string;
@@ -54,7 +16,6 @@ const Page: React.FC<PageProps> = ({
   title = "Audiochan",
   requiresAuth = false,
   children,
-  ...props
 }) => {
   const { isLoggedIn } = useUser();
   const router = useRouter();
@@ -65,7 +26,7 @@ const Page: React.FC<PageProps> = ({
         <Head>
           <title>Unauthorized</title>
         </Head>
-        <PageContainer {...props}>
+        <PageLayout>
           <Flex justify="center" align="center" height="50vh">
             <Box>
               <Heading as="h2">You are not authorized.</Heading>
@@ -76,7 +37,7 @@ const Page: React.FC<PageProps> = ({
               </Box>
             </Box>
           </Flex>
-        </PageContainer>
+        </PageLayout>
       </>
     );
   }
@@ -86,7 +47,7 @@ const Page: React.FC<PageProps> = ({
       <Head>
         <title>{title}</title>
       </Head>
-      <PageContainer {...props}>{children}</PageContainer>
+      <PageLayout>{children}</PageLayout>
     </>
   );
 };
