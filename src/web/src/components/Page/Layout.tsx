@@ -70,7 +70,13 @@ const SidebarContent = ({ onClose, ...rest }: ISidebarProps) => {
       h="full"
       {...rest}
     >
-      <Flex as={"header"} h="20" alignItems="center" mx="8" justifyContent="space-between">
+      <Flex
+        as={"header"}
+        h="20"
+        alignItems="center"
+        mx="8"
+        justifyContent="space-between"
+      >
         <Text fontSize="2xl" fontWeight="bold">
           Audiochan
         </Text>

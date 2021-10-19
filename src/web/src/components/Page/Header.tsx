@@ -1,5 +1,7 @@
 import { useColorModeValue } from "@chakra-ui/color-mode";
 import { FiChevronDown, FiMenu } from "react-icons/fi";
+import { MoonIcon, SunIcon } from "@chakra-ui/icons";
+import { MdCloudUpload } from "react-icons/md";
 import React from "react";
 import {
   Avatar,
@@ -19,10 +21,9 @@ import {
   useColorMode,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
+import { useRouter } from "next/router";
 import { CurrentUser } from "~/lib/types";
 import { useUser } from "~/components/providers/UserProvider";
-import { useRouter } from "next/router";
-import { MoonIcon, SunIcon } from "@chakra-ui/icons";
 
 interface IHeaderProps extends FlexProps {
   onOpen: () => void;
@@ -100,14 +101,19 @@ export function Header({ onOpen, ...rest }: IHeaderProps) {
         icon={<FiMenu />}
       />
 
-      <Text
-        display={{ base: "flex", md: "none" }}
-        fontSize="2xl"
-        fontWeight="bold"
-      >
-        Audiochan
-      </Text>
-      <HStack spacing={{ base: "0", md: "6" }}>
+      {/*<Text*/}
+      {/*  display={{ base: "flex", md: "none" }}*/}
+      {/*  fontSize="2xl"*/}
+      {/*  fontWeight="bold"*/}
+      {/*>*/}
+      {/*  Audiochan*/}
+      {/*</Text>*/}
+      <HStack spacing={{ base: "4", md: "6" }}>
+        <NextLink href={"/upload"}>
+          <Button leftIcon={<MdCloudUpload />} colorScheme={"primary"}>
+            Upload
+          </Button>
+        </NextLink>
         <IconButton
           aria-label={"Switch light/dark theme"}
           icon={<ColorModeIcon />}
