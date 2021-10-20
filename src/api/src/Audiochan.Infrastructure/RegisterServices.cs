@@ -1,5 +1,4 @@
 ﻿using Amazon.S3;
-using Audiochan.Core.Common;
 using Audiochan.Core.Common.Interfaces.Persistence;
 using Audiochan.Core.Common.Interfaces.Services;
 using Audiochan.Infrastructure.Persistence;
@@ -9,7 +8,6 @@ using Audiochan.Infrastructure.Search;
 using Audiochan.Infrastructure.Security;
 using Audiochan.Infrastructure.Shared;
 using Audiochan.Infrastructure.Storage.AmazonS3;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -34,18 +32,6 @@ namespace Audiochan.Infrastructure
             services.AddPersistence(configuration, environment);
             return services;
         }
-
-        // public static AuthenticationBuilder AddOAuthProviders(this AuthenticationBuilder builder,
-        //     AuthenticationSettings configuration)
-        // {
-        //     builder.AddDiscord(options =>
-        //     {
-        //         options.ClientId = configuration.DiscordClientId;
-        //         options.ClientSecret = configuration.DiscordClientSecret;
-        //     });
-        //
-        //     return builder;
-        // }
 
         private static IServiceCollection AddPersistence(this IServiceCollection services, 
             IConfiguration configuration, IHostEnvironment env)
