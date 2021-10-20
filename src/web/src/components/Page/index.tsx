@@ -1,5 +1,4 @@
 import React from "react";
-import dynamic from "next/dynamic";
 import Head from "next/head";
 import NextLink from "next/link";
 import { Box, Button, Flex, Heading } from "@chakra-ui/react";
