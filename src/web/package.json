@@ -27,7 +27,7 @@
     "slugify": "^1.6.1",
     "uuid": "^8.3.2",
     "zod": "^3.10.3",
-    "zustand": "^3.5.13"
+    "zustand": "^3.5.14"
   },
   "devDependencies": {
     "@testing-library/react": "12.1.2",
