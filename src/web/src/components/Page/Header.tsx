@@ -142,7 +142,7 @@ export function Header({ onOpen, ...rest }: IHeaderProps) {
                 fontSize={"sm"}
                 fontWeight={600}
                 color={"white"}
-                bg={"pink.400"}
+                bg={"primary.400"}
                 _hover={{
                   bg: "pink.300",
                 }}
