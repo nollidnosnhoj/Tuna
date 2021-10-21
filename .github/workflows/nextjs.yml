@@ -5,6 +5,8 @@ name: audiochan Frontend Build
 
 on:
   push:
+    branches:
+      - staging
     paths:
       - "src/web/**"
   pull_request:
