@@ -10,7 +10,7 @@
     "@emotion/react": "^11.5.0",
     "@emotion/styled": "^11.3.0",
     "@hookform/resolvers": "^2.8.2",
-    "axios": "^0.23.0",
+    "axios": "^0.24.0",
     "cross-env": "^7.0.3",
     "dayjs": "^1.10.7",
     "framer-motion": "^4.1.17",
