@@ -54,28 +54,6 @@ namespace Audiochan.Infrastructure.Persistence
             }
         }
 
-        public static async Task PlaylistSeedAsync(ApplicationDbContext context, long userId)
-        {
-            if (!await context.Playlists.AnyAsync(p => p.UserId == userId))
-            {
-                var audios = await context.Audios
-                    .Where(a => a.UserId == userId)
-                    .ToListAsync();
-
-                var playlist = new Playlist
-                {
-                    Title = "Test Playlist",
-                    Description = "Playlist composing of bensound.com audios",
-                    Created = DateTime.UtcNow,
-                    UserId = userId,
-                    Audios = audios
-                };
-
-                await context.Playlists.AddAsync(playlist);
-                await context.SaveChangesAsync();
-            }
-        }
-
         private static Audio CreateDemoAudio(int index, long userId, long duration, long fileSize)
         {
             return new Audio

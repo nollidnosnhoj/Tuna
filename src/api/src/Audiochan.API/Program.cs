@@ -44,7 +44,6 @@ namespace Audiochan.API
                         if (userId > 0)
                         {
                             await ApplicationDbSeeder.AudioSeedAsync(context, userId);
-                            await ApplicationDbSeeder.PlaylistSeedAsync(context, userId);
                         }
                     }
                 }

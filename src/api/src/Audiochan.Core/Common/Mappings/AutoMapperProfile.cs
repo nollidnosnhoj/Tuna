@@ -1,10 +1,7 @@
-﻿using System;
-using System.Linq;
-using System.Reflection;
+﻿using System.Linq;
 using Audiochan.Core.Audios;
 using Audiochan.Core.Auth.GetCurrentUser;
 using Audiochan.Core.Common.Helpers;
-using Audiochan.Core.Playlists;
 using Audiochan.Core.Users;
 using Audiochan.Core.Users.GetProfile;
 using Audiochan.Domain.Entities;
@@ -26,9 +23,6 @@ namespace Audiochan.Core.Common.Mappings
                     c.MapFrom(src => src.File))
                 .ForMember(dest => dest.IsFavorited, c =>
                     c.MapFrom(src => userId > 0 ? src.FavoriteAudios.Any(fa => fa.UserId == userId) : (bool?)null));
-            CreateStrictMap<Playlist, PlaylistDto>()
-                .ForMember(dest => dest.Description, c =>
-                    c.NullSubstitute(""));
             CreateStrictMap<User, ProfileDto>();
             CreateStrictMap<User, UserDto>();
             CreateStrictMap<User, CurrentUserDto>();

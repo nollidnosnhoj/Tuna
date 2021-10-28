@@ -8,10 +8,7 @@ namespace Audiochan.Core.Common.Interfaces.Persistence
     {
         IAudioRepository Audios { get; }
         IEntityRepository<FavoriteAudio> FavoriteAudios { get; }
-        IEntityRepository<FavoritePlaylist> FavoritePlaylists { get; }
         IEntityRepository<FollowedUser> FollowedUsers { get; }
-        IEntityRepository<PlaylistAudio> PlaylistAudios { get; }
-        IPlaylistRepository Playlists { get; }
         IUserRepository Users { get; }
 
         Task BeginTransactionAsync();

@@ -13,28 +13,19 @@ namespace Audiochan.Infrastructure.Persistence
         private IDbContextTransaction? _currentTransaction;
         public IAudioRepository Audios { get; }
         public IEntityRepository<FavoriteAudio> FavoriteAudios { get; }
-        public IEntityRepository<FavoritePlaylist> FavoritePlaylists { get; }
         public IEntityRepository<FollowedUser> FollowedUsers { get; }
-        public IEntityRepository<PlaylistAudio> PlaylistAudios { get; }
-        public IPlaylistRepository Playlists { get; }
         public IUserRepository Users { get; }
         
-        public UnitOfWork(IAudioRepository audios, 
-            IPlaylistRepository playlists, 
+        public UnitOfWork(IAudioRepository audios,
             IUserRepository users, 
             IEntityRepository<FavoriteAudio> favoriteAudios, 
-            IEntityRepository<FavoritePlaylist> favoritePlaylists, 
             IEntityRepository<FollowedUser> followedUsers, 
-            IEntityRepository<PlaylistAudio> playlistAudios, 
             ApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
             FavoriteAudios = favoriteAudios;
-            FavoritePlaylists = favoritePlaylists;
             FollowedUsers = followedUsers;
-            PlaylistAudios = playlistAudios;
             Audios = audios;
-            Playlists = playlists;
             Users = users;
         }
         

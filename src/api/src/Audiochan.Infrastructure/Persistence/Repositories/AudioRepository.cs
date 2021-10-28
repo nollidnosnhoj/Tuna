@@ -3,9 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Audios;
-using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Interfaces.Persistence;
-using Audiochan.Core.Playlists.GetPlaylistAudios;
 using Audiochan.Core.Users.GetUserFavoriteAudios;
 using Audiochan.Domain.Entities;
 using Audiochan.Infrastructure.Persistence.Repositories.Abstractions;
@@ -21,17 +19,7 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
         public AudioRepository(ApplicationDbContext dbContext, IMapper mapper) : base(dbContext, mapper)
         {
         }
-
-        public async Task<List<PlaylistAudioDto>> GetPlaylistAudios(GetPlaylistAudiosQuery query, CancellationToken cancellationToken = default)
-        {
-            return await DbContext.PlaylistAudios
-                .Where(p => p.PlaylistId == query.Id)
-                .AsNoTracking()
-                .OrderByDescending(a => a.AddedBy)
-                .ProjectTo<PlaylistAudioDto>(Mapper.ConfigurationProvider)
-                .CursorPaginateAsync(query.Cursor, query.Size, cancellationToken);
-        }
-
+        
         public async Task<List<AudioDto>> GetUserFavoriteAudios(GetUserFavoriteAudiosQuery query, CancellationToken cancellationToken = default)
         {
             return await DbContext.FavoriteAudios

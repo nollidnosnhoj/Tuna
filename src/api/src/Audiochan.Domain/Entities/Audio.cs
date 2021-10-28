@@ -11,7 +11,6 @@ namespace Audiochan.Domain.Entities
         {
             this.Tags = new List<string>();
             this.FavoriteAudios = new HashSet<FavoriteAudio>();
-            this.Playlists = new List<Playlist>();
         }
         
         public long Id { get; set; }
@@ -26,7 +25,6 @@ namespace Audiochan.Domain.Entities
         public string? Picture { get; set; }
         public long UserId { get; set; }
         public User User { get; set; } = null!;
-        public ICollection<Playlist> Playlists { get; set; }
         public ICollection<FavoriteAudio> FavoriteAudios { get; set; }
 
         public void Favorite(long userId, DateTime favoritedDateTime)
