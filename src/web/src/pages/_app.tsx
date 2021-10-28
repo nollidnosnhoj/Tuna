@@ -6,7 +6,6 @@ import { ReactQueryDevtools } from "react-query/devtools";
 import PageLoader from "~/components/Page/Loader";
 import theme from "~/lib/theme";
 import queryClient from "~/lib/query-client";
-import AddToPlaylistModal from "~/components/modals/AddToPlaylistModal";
 import { CurrentUser } from "~/lib/types";
 import { UserProvider } from "~/components/providers/UserProvider";
 
@@ -28,7 +27,6 @@ function App({ Component, user, pageProps }: AppProps) {
             <ReactQueryDevtools initialIsOpen={false} />
             <PageLoader color={theme.colors.primary[500]} />
             <Component {...pageProps} />
-            <AddToPlaylistModal />
           </UserProvider>
         </ChakraProvider>
       </QueryClientProvider>

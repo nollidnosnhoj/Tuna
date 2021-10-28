@@ -73,31 +73,6 @@ export interface CreateAudioRequest extends AudioRequest {
   duration: number;
 }
 
-export interface Playlist {
-  id: ID;
-  title: string;
-  description: string;
-  picture?: string;
-  tags: string[];
-  audios: AudioView[];
-  user: MetaAuthor;
-}
-
-export interface PlaylistAudio {
-  id: number;
-  audio: AudioView;
-}
-
-export interface PlaylistRequest {
-  title: string;
-  description?: string;
-  tags: string[];
-}
-
-export interface CreatePlaylistRequest extends PlaylistRequest {
-  audioIds: ID[];
-}
-
 export type CurrentUser = {
   id: ID;
   userName: string;

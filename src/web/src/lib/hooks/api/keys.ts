@@ -12,13 +12,6 @@ export const GET_AUDIO_QUERY_KEY = (audioId: ID): QueryKey => [
 export const GET_AUDIO_FEED_QUERY_KEY: QueryKey = "feed";
 export const GET_AUDIO_LIST_QUERY_KEY = "audios";
 export const ME_QUERY_KEY = "me";
-export const GET_PLAYLIST_KEY = (playlistId: ID): QueryKey => [
-  "playlist",
-  playlistId,
-];
-export const GET_PLAYLIST_AUDIOS_KEY = (
-  playlistId: ID | undefined
-): QueryKey => ["playlist_audios", playlistId];
 export const GET_PROFILE_QUERY_KEY = (username: string): QueryKey => [
   "profile",
   username,
@@ -37,4 +30,3 @@ export const SEARCH_AUDIO_QUERY_KEY = (
 ): QueryKey => ["searchAudios", { q: term, tags: tags }];
 export const GET_YOUR_AUDIOS_KEY = "your_audios";
 export const GET_YOUR_FAV_AUDIOS_KEY = "your_fav_audios";
-export const GET_YOUR_PLAYLISTS_KEY = "your_playlists";
