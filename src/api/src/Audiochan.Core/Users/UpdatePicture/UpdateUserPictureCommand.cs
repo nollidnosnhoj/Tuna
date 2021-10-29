@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common;
+using Audiochan.Core.Common.Attributes;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Interfaces.Persistence;
 using Audiochan.Core.Common.Interfaces.Services;
@@ -10,6 +11,7 @@ using MediatR;
 
 namespace Audiochan.Core.Users.UpdatePicture
 {
+    [Authorize]
     public record UpdateUserPictureCommand(long UserId, string Data = "") : IImageData,
         IRequest<Result<ImageUploadResponse>>;
 
@@ -35,10 +37,7 @@ namespace Audiochan.Core.Users.UpdatePicture
         {
             var user = await _unitOfWork.Users.FindAsync(command.UserId, cancellationToken);
 
-            if (user == null)
-                return Result<ImageUploadResponse>.NotFound<User>();
-
-            if (user.Id != _currentUserId)
+            if (user!.Id != _currentUserId)
                 return Result<ImageUploadResponse>.Forbidden();
         
             var blobName = string.Empty;

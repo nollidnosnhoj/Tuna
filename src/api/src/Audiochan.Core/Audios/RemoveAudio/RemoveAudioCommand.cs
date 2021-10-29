@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common;
+using Audiochan.Core.Common.Attributes;
 using Audiochan.Core.Common.Interfaces.Persistence;
 using Audiochan.Core.Common.Interfaces.Services;
 using Audiochan.Core.Common.Models;
@@ -11,6 +12,7 @@ using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Audios.RemoveAudio
 {
+    [Authorize]
     public record RemoveAudioCommand(long Id) : IRequest<Result<bool>>
     {
     }

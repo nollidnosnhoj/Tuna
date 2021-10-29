@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common;
+using Audiochan.Core.Common.Attributes;
 using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Interfaces.Persistence;
 using Audiochan.Core.Common.Interfaces.Services;
@@ -11,6 +12,7 @@ using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Users.UpdatePassword
 {
+    [Authorize]
     public record UpdatePasswordCommand : IRequest<Result>
     {
         public long UserId { get; init; }
@@ -55,8 +57,7 @@ namespace Audiochan.Core.Users.UpdatePassword
         public async Task<Result> Handle(UpdatePasswordCommand command, CancellationToken cancellationToken)
         {
             var user = await _unitOfWork.Users.FindAsync(command.UserId, cancellationToken);
-            if (user == null) return Result<bool>.Unauthorized();
-            if (user.Id != _currentUserId) return Result<bool>.Forbidden();
+            if (user!.Id != _currentUserId) return Result<bool>.Forbidden();
             if (!_passwordHasher.Verify(command.CurrentPassword, user.PasswordHash))
                 return Result.BadRequest("Current password does not match.");   // Maybe give a generic error
             var newHash = _passwordHasher.Hash(command.NewPassword);

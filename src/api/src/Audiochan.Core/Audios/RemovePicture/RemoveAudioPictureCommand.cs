@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Audiochan.Core.Audios.GetAudio;
 using Audiochan.Core.Common;
+using Audiochan.Core.Common.Attributes;
 using Audiochan.Core.Common.Interfaces.Persistence;
 using Audiochan.Core.Common.Interfaces.Services;
 using Audiochan.Core.Common.Models;
@@ -11,6 +12,7 @@ using Microsoft.Extensions.Caching.Distributed;
 
 namespace Audiochan.Core.Audios.RemovePicture
 {
+    [Authorize]
     public record RemoveAudioPictureCommand(long AudioId) : IRequest<Result>;
     
     public class RemoveAudioPictureCommandHandler : IRequestHandler<RemoveAudioPictureCommand, Result>

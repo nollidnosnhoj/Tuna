@@ -1,12 +1,14 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.Specification;
+using Audiochan.Core.Common.Attributes;
 using Audiochan.Core.Common.Interfaces.Persistence;
 using Audiochan.Domain.Entities;
 using MediatR;
 
 namespace Audiochan.Core.Auth.GetCurrentUser
 {
+    [Authorize]
     public record GetCurrentUserQuery(long UserId) : IRequest<CurrentUserDto?>
     {
     }
