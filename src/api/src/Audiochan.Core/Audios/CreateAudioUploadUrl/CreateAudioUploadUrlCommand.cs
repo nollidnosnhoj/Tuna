@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common;
+using Audiochan.Core.Common.Attributes;
 using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Interfaces.Services;
 using Audiochan.Core.Common.Models;
@@ -12,6 +13,7 @@ using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Audios.CreateAudioUploadUrl
 {
+    [Authorize]
     public record CreateAudioUploadUrlCommand : IRequest<Result<CreateAudioUploadUrlResponse>>
     {
         public string FileName { get; init; } = null!;
@@ -52,9 +54,7 @@ namespace Audiochan.Core.Audios.CreateAudioUploadUrl
         public async Task<Result<CreateAudioUploadUrlResponse>> Handle(CreateAudioUploadUrlCommand command, 
             CancellationToken cancellationToken)
         {
-            if (!_currentUserService.TryGetUserId(out var userId))
-                return Result<CreateAudioUploadUrlResponse>.Unauthorized();
-
+            var userId = _currentUserService.GetUserId();
             var (url, uploadId) = await CreateUploadUrl(command.FileName, userId);
             var response = new CreateAudioUploadUrlResponse { UploadId = uploadId, UploadUrl = url };
             return Result<CreateAudioUploadUrlResponse>.Success(response);

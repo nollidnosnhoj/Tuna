@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common;
+using Audiochan.Core.Common.Attributes;
 using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Interfaces.Persistence;
 using Audiochan.Core.Common.Interfaces.Services;
@@ -11,6 +12,7 @@ using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Users.UpdateUsername
 {
+    [Authorize]
     public record UpdateUsernameCommand : IRequest<Result>
     {
         public long UserId { get; init; }
@@ -46,8 +48,7 @@ namespace Audiochan.Core.Users.UpdateUsername
         public async Task<Result> Handle(UpdateUsernameCommand command, CancellationToken cancellationToken)
         {
             var user = await _unitOfWork.Users.FindAsync(command.UserId, cancellationToken);
-            if (user == null) return Result.Unauthorized();
-            if (user.Id != _currentUserId) return Result.Forbidden();
+            if (user!.Id != _currentUserId) return Result.Forbidden();
             
             // check if username already exists
             var usernameExists =

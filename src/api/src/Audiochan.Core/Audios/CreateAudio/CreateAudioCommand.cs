@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common;
+using Audiochan.Core.Common.Attributes;
 using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Interfaces.Persistence;
 using Audiochan.Core.Common.Interfaces.Services;
@@ -15,6 +16,7 @@ using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Audios.CreateAudio
 {
+    [Authorize]
     public class CreateAudioCommand : IRequest<Result<long>>
     {
         public string UploadId { get; init; } = null!;
@@ -93,10 +95,7 @@ namespace Audiochan.Core.Audios.CreateAudio
         public async Task<Result<long>> Handle(CreateAudioCommand command,
             CancellationToken cancellationToken)
         {
-            if (!_currentUserService.TryGetUserId(out var currentUserId))
-            {
-                return Result<long>.Unauthorized();
-            }
+            var currentUserId = _currentUserService.GetUserId();
 
             if (!await ExistsInTempStorage(command.BlobName, cancellationToken))
             {

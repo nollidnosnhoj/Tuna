@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Attributes;
 using Audiochan.Core.Common.Interfaces.Persistence;
 using Audiochan.Core.Common.Interfaces.Services;
 using Audiochan.Core.Common.Models;
@@ -8,6 +9,7 @@ using MediatR;
 
 namespace Audiochan.Core.Users.UpdateEmail
 {
+    [Authorize]
     public record UpdateEmailCommand : IRequest<Result>
     {
         public long UserId { get; init; }
@@ -44,8 +46,7 @@ namespace Audiochan.Core.Users.UpdateEmail
         public async Task<Result> Handle(UpdateEmailCommand command, CancellationToken cancellationToken)
         {
             var user = await _unitOfWork.Users.FindAsync(command.UserId, cancellationToken);
-            if (user == null) return Result.Unauthorized();
-            if (user.Id != _currentUserId) return Result.Forbidden();
+            if (user!.Id != _currentUserId) return Result.Forbidden();
 
             user.Email = command.NewEmail;
             await _unitOfWork.SaveChangesAsync(cancellationToken);

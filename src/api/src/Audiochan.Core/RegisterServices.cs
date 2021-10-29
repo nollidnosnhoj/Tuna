@@ -22,6 +22,7 @@ namespace Audiochan.Core
         private static IServiceCollection AddBehaviorPipelines(this IServiceCollection services)
         {
             return services
+                .AddTransient(typeof(IPipelineBehavior<,>), typeof(AuthorizationPipelineBehavior<,>))
                 .AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehavior<,>))
                 .AddTransient(typeof(IPipelineBehavior<,>), typeof(DbContextTransactionPipelineBehavior<,>));
         }

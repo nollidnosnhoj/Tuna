@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Audiochan.Core.Audios.GetAudio;
 using Audiochan.Core.Common;
+using Audiochan.Core.Common.Attributes;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Interfaces.Persistence;
 using Audiochan.Core.Common.Interfaces.Services;
@@ -12,6 +13,7 @@ using Microsoft.Extensions.Caching.Distributed;
 
 namespace Audiochan.Core.Audios.UpdatePicture
 {
+    [Authorize]
     public record UpdateAudioPictureCommand(long AudioId, string Data) : IImageData, IRequest<Result<ImageUploadResponse>>
     {
     }

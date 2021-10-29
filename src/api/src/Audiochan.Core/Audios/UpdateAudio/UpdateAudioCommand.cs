@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Ardalis.Specification;
 using Audiochan.Core.Audios.GetAudio;
 using Audiochan.Core.Common;
+using Audiochan.Core.Common.Attributes;
 using Audiochan.Core.Common.Interfaces.Persistence;
 using Audiochan.Core.Common.Interfaces.Services;
 using Audiochan.Core.Common.Models;
@@ -16,6 +17,7 @@ using Microsoft.Extensions.Caching.Distributed;
 
 namespace Audiochan.Core.Audios.UpdateAudio
 {
+    [Authorize]
     public class UpdateAudioCommand : IRequest<Result<AudioDto>>
     {
         public long AudioId { get; set; }

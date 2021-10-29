@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Attributes;
 using Audiochan.Core.Common.Interfaces.Persistence;
 using Audiochan.Core.Common.Interfaces.Services;
 using Audiochan.Core.Common.Models;
@@ -8,6 +9,7 @@ using MediatR;
 
 namespace Audiochan.Core.Users.UpdateProfile
 {
+    [Authorize]
     public record UpdateProfileCommand : IRequest<Result<bool>>
     {
         public long UserId { get; init; }
@@ -38,8 +40,7 @@ namespace Audiochan.Core.Users.UpdateProfile
         public async Task<Result<bool>> Handle(UpdateProfileCommand command, CancellationToken cancellationToken)
         {
             var user = await _unitOfWork.Users.FindAsync(command.UserId, cancellationToken);
-            if (user == null) return Result<bool>.NotFound<User>();
-            if (user.Id != _currentUserId)
+            if (user!.Id != _currentUserId)
                 return Result<bool>.Forbidden();
             
             // TODO: Update user stuff
