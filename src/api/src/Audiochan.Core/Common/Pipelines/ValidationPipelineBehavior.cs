@@ -2,14 +2,12 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Models;
 using FluentValidation;
 using MediatR;
 
 namespace Audiochan.Core.Common.Pipelines
 {
     public class ValidationPipelineBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
-        where TResponse : Result, new()
         where TRequest : notnull
     {
         private readonly IEnumerable<IValidator<TRequest>> _validators;
@@ -35,20 +33,8 @@ namespace Audiochan.Core.Common.Pipelines
                 .ToList();
             
             if (failures.Count == 0) return await next();
-            
-            var errors = new Dictionary<string, List<string>>();
-            
-            foreach (var validationFailure in failures)
-            {
-                if (!errors.ContainsKey(validationFailure.PropertyName))
-                {
-                    errors.Add(validationFailure.PropertyName, new List<string>());
-                }
-                        
-                errors[validationFailure.PropertyName].Add(validationFailure.ErrorMessage);
-            }
 
-            return (TResponse) Result.Invalid(errors: errors);
+            throw new ValidationException(failures);
         }
     }
 }

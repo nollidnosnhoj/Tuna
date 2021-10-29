@@ -2,6 +2,7 @@
 using System.Text.Json;
 using System.Threading.Tasks;
 using Audiochan.API.Models;
+using FluentValidation;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
@@ -45,12 +46,21 @@ namespace Audiochan.API.Middlewares
         private async Task HandleException(HttpContext context, Exception ex)
         {
             _logger.LogError(ex, ex.Message);
+            
+            ErrorApiResponse response;
 
-            var message = _env.IsDevelopment()
-                ? ex.Message
-                : "An unknown error has occurred. Please contact the administrators.";
-
-            var response = new ErrorApiResponse(StatusCodes.Status500InternalServerError, message, null);
+            switch (ex)
+            {
+                case ValidationException vex:
+                    response = ErrorApiResponse.Invalid(vex.Errors);
+                    break;
+                default:
+                    var message = _env.IsDevelopment()
+                        ? ex.Message
+                        : "An unexpected error has occurred.";
+                    response = new ErrorApiResponse(StatusCodes.Status500InternalServerError, message, null);
+                    break;
+            }
 
             context.Response.StatusCode = response.Code;
             context.Response.ContentType = "application/json";
