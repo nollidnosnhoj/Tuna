@@ -8,6 +8,7 @@ import theme from "~/lib/theme";
 import queryClient from "~/lib/query-client";
 import { CurrentUser } from "~/lib/types";
 import { UserProvider } from "~/components/providers/UserProvider";
+import AudioPlayer from "~/components/AudioPlayer";
 
 interface AppProps extends NextAppProps {
   user?: CurrentUser;
@@ -27,6 +28,7 @@ function App({ Component, user, pageProps }: AppProps) {
             <ReactQueryDevtools initialIsOpen={false} />
             <PageLoader color={theme.colors.primary[500]} />
             <Component {...pageProps} />
+            <AudioPlayer />
           </UserProvider>
         </ChakraProvider>
       </QueryClientProvider>
