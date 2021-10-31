@@ -2,9 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.API.Extensions;
-using Audiochan.Core.Auth.GetCurrentUser;
-using Audiochan.Core.Auth.Login;
-using Audiochan.Core.Auth.Register;
+using Audiochan.Core.Auth;
 using Audiochan.Core.Common.Interfaces.Services;
 using MediatR;
 using Microsoft.AspNetCore.Authentication;

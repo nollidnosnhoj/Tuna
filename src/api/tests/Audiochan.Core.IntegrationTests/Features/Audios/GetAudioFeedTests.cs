@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Audiochan.Core.Audios.GetAudioFeed;
+using Audiochan.Core.Audios;
 using Audiochan.Core.Common.Extensions;
 using Audiochan.Domain.Entities;
 using Audiochan.Tests.Common.Fakers.Audios;

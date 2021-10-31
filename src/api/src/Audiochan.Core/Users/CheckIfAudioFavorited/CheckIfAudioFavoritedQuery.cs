@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Audiochan.Core.Common.Interfaces.Persistence;
 using MediatR;
 
-namespace Audiochan.Core.Users.CheckIfAudioFavorited
+namespace Audiochan.Core.Users
 {
     public record CheckIfAudioFavoritedQuery(long AudioId, long UserId) : IRequest<bool>
     {

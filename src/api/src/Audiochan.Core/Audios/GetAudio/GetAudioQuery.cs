@@ -1,28 +1,16 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Ardalis.Specification;
 using Audiochan.Core.Common;
 using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Interfaces.Persistence;
-using Audiochan.Core.Common.Interfaces.Services;
-using Audiochan.Domain.Entities;
 using MediatR;
 using Microsoft.Extensions.Caching.Distributed;
 
-namespace Audiochan.Core.Audios.GetAudio
+namespace Audiochan.Core.Audios
 {
     public record GetAudioQuery(long Id) : IRequest<AudioDto?>
     {
-    }
-
-    public sealed class GetAudioSpecification : Specification<Audio>
-    {
-        public GetAudioSpecification(long id)
-        {
-            Query.AsNoTracking();
-            Query.Where(x => x.Id == id);
-        }
     }
 
     public class GetAudioQueryHandler : IRequestHandler<GetAudioQuery, AudioDto?>

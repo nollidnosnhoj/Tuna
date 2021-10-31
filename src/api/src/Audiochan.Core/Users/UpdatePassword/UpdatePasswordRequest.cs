@@ -1,4 +1,4 @@
-﻿namespace Audiochan.Core.Users.UpdatePassword
+﻿namespace Audiochan.Core.Users
 {
     public record UpdatePasswordRequest
     {

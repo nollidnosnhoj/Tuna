@@ -1,9 +1,8 @@
 ﻿using System.Linq;
 using Audiochan.Core.Audios;
-using Audiochan.Core.Auth.GetCurrentUser;
+using Audiochan.Core.Auth;
 using Audiochan.Core.Common.Helpers;
 using Audiochan.Core.Users;
-using Audiochan.Core.Users.GetProfile;
 using Audiochan.Domain.Entities;
 using AutoMapper;
 

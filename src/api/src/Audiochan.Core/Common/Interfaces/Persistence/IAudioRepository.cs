@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Audios;
-using Audiochan.Core.Users.GetUserFavoriteAudios;
+using Audiochan.Core.Users;
 using Audiochan.Domain.Entities;
 
 namespace Audiochan.Core.Common.Interfaces.Persistence

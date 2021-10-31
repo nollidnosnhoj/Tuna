@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Extensions;
-using Audiochan.Core.Users.GetUserFavoriteAudios;
+using Audiochan.Core.Users;
 using Audiochan.Domain.Entities;
 using Audiochan.Tests.Common.Fakers.Audios;
 using FluentAssertions;

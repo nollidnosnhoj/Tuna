@@ -2,8 +2,6 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Ardalis.Specification;
-using Audiochan.Core.Audios.GetAudio;
 using Audiochan.Core.Common;
 using Audiochan.Core.Common.Attributes;
 using Audiochan.Core.Common.Extensions;
@@ -12,11 +10,10 @@ using Audiochan.Core.Common.Interfaces.Services;
 using Audiochan.Core.Common.Models;
 using Audiochan.Domain.Entities;
 using AutoMapper;
-using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.Caching.Distributed;
 
-namespace Audiochan.Core.Audios.UpdateAudio
+namespace Audiochan.Core.Audios
 {
     [Authorize]
     public class UpdateAudioCommand : IRequest<Result<AudioDto>>
@@ -33,52 +30,6 @@ namespace Audiochan.Core.Audios.UpdateAudio
             Title = request.Title,
             Description = request.Description,
         };
-    }
-    
-    public class UpdateAudioCommandValidator : AbstractValidator<UpdateAudioCommand>
-    {
-        public UpdateAudioCommandValidator()
-        {
-            When(req => req.Title is not null, () =>
-            {
-                RuleFor(req => req.Title)
-                    .NotEmpty()
-                    .WithMessage("Title is required.")
-                    .MaximumLength(30)
-                    .WithMessage("Title cannot be no more than 30 characters long.");
-            });
-
-            When(req => req.Description is not null, () =>
-            {
-                RuleFor(req => req.Description)
-                    .MaximumLength(500)
-                    .WithMessage("Description cannot be more than 500 characters long.");
-            });
-
-            When(req => req.Tags is not null, () =>
-            {
-                RuleFor(req => req.Tags)
-                    .Must(u => u!.Count <= 10)
-                    .WithMessage("Can only have up to 10 tags per audio upload.")
-                    .ForEach(tagsRule =>
-                    {
-                        tagsRule
-                            .NotEmpty()
-                            .WithMessage("Each tag cannot be empty.")
-                            .Length(3, 15)
-                            .WithMessage("Each tag must be between 3 and 15 characters long.");
-                    });
-            });
-        }
-    }
-
-    public sealed class LoadAudioForUpdateSpecification : Specification<Audio>
-    {
-        public LoadAudioForUpdateSpecification(long audioId)
-        {
-            Query.Include(a => a.User);
-            Query.Where(a => a.Id == audioId);
-        }
     }
 
     public class UpdateAudioCommandHandler : IRequestHandler<UpdateAudioCommand, Result<AudioDto>>
@@ -106,7 +57,7 @@ namespace Audiochan.Core.Audios.UpdateAudio
             _currentUserService.User.TryGetUserId(out var currentUserId);
 
             var audio = await _unitOfWork.Audios
-                .GetFirstAsync(new LoadAudioForUpdateSpecification(command.AudioId), cancellationToken);
+                .GetFirstAsync(new LoadAudioWithOwnerSpecification(command.AudioId), cancellationToken);
 
             if (audio == null)
                 return Result<AudioDto>.NotFound<Audio>();

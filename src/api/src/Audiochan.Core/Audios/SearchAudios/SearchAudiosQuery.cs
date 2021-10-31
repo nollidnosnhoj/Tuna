@@ -5,7 +5,7 @@ using Audiochan.Core.Common.Interfaces.Services;
 using Audiochan.Core.Common.Models.Pagination;
 using MediatR;
 
-namespace Audiochan.Core.Audios.SearchAudios
+namespace Audiochan.Core.Audios
 {
     public record SearchAudiosQuery : IHasPage, IRequest<PagedListDto<AudioDto>>
     {

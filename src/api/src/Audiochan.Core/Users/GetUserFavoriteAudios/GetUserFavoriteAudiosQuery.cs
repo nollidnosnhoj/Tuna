@@ -3,11 +3,10 @@ using System.Threading.Tasks;
 using Audiochan.Core.Audios;
 using Audiochan.Core.Common.Interfaces.Pagination;
 using Audiochan.Core.Common.Interfaces.Persistence;
-using Audiochan.Core.Common.Interfaces.Services;
 using Audiochan.Core.Common.Models.Pagination;
 using MediatR;
 
-namespace Audiochan.Core.Users.GetUserFavoriteAudios
+namespace Audiochan.Core.Users
 {
     public record GetUserFavoriteAudiosQuery : IHasOffsetPage, IRequest<OffsetPagedListDto<AudioDto>>
     {

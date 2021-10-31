@@ -5,10 +5,9 @@ using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Interfaces.Persistence;
 using Audiochan.Core.Common.Interfaces.Services;
 using Audiochan.Core.Common.Models;
-using Audiochan.Domain.Entities;
 using MediatR;
 
-namespace Audiochan.Core.Users.UpdateProfile
+namespace Audiochan.Core.Users
 {
     [Authorize]
     public record UpdateProfileCommand : IRequest<Result<bool>>

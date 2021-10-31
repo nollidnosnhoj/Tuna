@@ -1,35 +1,15 @@
-﻿using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
-using Ardalis.Specification;
 using Audiochan.Core.Common.Interfaces.Persistence;
 using Audiochan.Core.Common.Interfaces.Services;
 using Audiochan.Core.Common.Models;
 using Audiochan.Domain.Entities;
 using MediatR;
 
-namespace Audiochan.Core.Users.SetFollow
+namespace Audiochan.Core.Users
 {
     public record SetFollowCommand(long ObserverId, long TargetId, bool IsFollowing) : IRequest<Result>
     {
-    }
-    
-    public sealed class LoadUserForFollowingSpecification : Specification<User>
-    {
-        public LoadUserForFollowingSpecification(long targetId, long observerId)
-        {
-            if (observerId > 0)
-            {
-                Query.Include(a =>
-                    a.Followers.Where(fa => fa.ObserverId == observerId));
-            }
-            else
-            {
-                Query.Include(a => a.Followers);
-            }
-
-            Query.Where(a => a.Id == targetId);
-        }
     }
 
     public class SetFollowCommandHandler : IRequestHandler<SetFollowCommand, Result>
@@ -46,7 +26,7 @@ namespace Audiochan.Core.Users.SetFollow
         public async Task<Result> Handle(SetFollowCommand command, CancellationToken cancellationToken)
         {
             var target = await _unitOfWork.Users
-                .GetFirstAsync(new LoadUserForFollowingSpecification(command.TargetId, command.ObserverId), cancellationToken);
+                .GetFirstAsync(new LoadUserWithFollowersSpecification(command.TargetId, command.ObserverId), cancellationToken);
 
             if (target == null)
                 return Result.NotFound<User>();

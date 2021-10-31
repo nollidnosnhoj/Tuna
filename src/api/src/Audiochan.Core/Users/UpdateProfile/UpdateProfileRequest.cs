@@ -1,4 +1,4 @@
-﻿namespace Audiochan.Core.Users.UpdateProfile
+﻿namespace Audiochan.Core.Users
 {
     public record UpdateProfileRequest
     {

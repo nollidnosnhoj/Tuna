@@ -1,4 +1,4 @@
-﻿namespace Audiochan.Core.Users.UpdateEmail
+﻿namespace Audiochan.Core.Users
 {
     public record UpdateEmailRequest
     {

@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Audiochan.Core.Common.Interfaces.Persistence;
 using MediatR;
 
-namespace Audiochan.Core.Users.CheckIfFollowing
+namespace Audiochan.Core.Users
 {
     public record CheckIfUserIsFollowingQuery(long ObserverId, long TargetId) : IRequest<bool>
     {

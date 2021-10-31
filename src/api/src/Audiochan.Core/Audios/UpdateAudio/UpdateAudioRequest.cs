@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Audiochan.Core.Audios.UpdateAudio
+namespace Audiochan.Core.Audios
 {
     public class UpdateAudioRequest
     {

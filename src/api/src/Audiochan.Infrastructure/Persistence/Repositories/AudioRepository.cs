@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Audios;
 using Audiochan.Core.Common.Interfaces.Persistence;
-using Audiochan.Core.Users.GetUserFavoriteAudios;
+using Audiochan.Core.Users;
 using Audiochan.Domain.Entities;
 using Audiochan.Infrastructure.Persistence.Repositories.Abstractions;
 using Audiochan.Infrastructure.Persistence.Repositories.Extensions;

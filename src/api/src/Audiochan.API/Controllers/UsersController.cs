@@ -2,14 +2,8 @@
 using System.Threading.Tasks;
 using Audiochan.API.Models;
 using Audiochan.Core.Audios;
-using Audiochan.Core.Common.Models;
 using Audiochan.Core.Common.Models.Pagination;
 using Audiochan.Core.Users;
-using Audiochan.Core.Users.GetFollowers;
-using Audiochan.Core.Users.GetFollowings;
-using Audiochan.Core.Users.GetProfile;
-using Audiochan.Core.Users.GetUserAudios;
-using Audiochan.Core.Users.GetUserFavoriteAudios;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;

@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.API.Extensions;
-using Audiochan.Core.Audios.CreateAudioUploadUrl;
+using Audiochan.Core.Audios;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -29,8 +29,8 @@ namespace Audiochan.API.Controllers
             OperationId = "RequestUploadUrl",
             Tags = new []{"upload"}
         )]
-        public async Task<ActionResult<CreateAudioUploadUrlResponse>> GetUploadUrl(
-            [FromBody] CreateAudioUploadUrlCommand command, 
+        public async Task<ActionResult<UploadResponse>> GetUploadUrl(
+            [FromBody] CreateUploadCommand command, 
             CancellationToken cancellationToken)
         {
             var response = await _mediator.Send(command, cancellationToken);

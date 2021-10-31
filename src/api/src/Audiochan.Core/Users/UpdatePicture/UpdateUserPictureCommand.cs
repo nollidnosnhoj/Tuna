@@ -7,10 +7,9 @@ using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Interfaces.Persistence;
 using Audiochan.Core.Common.Interfaces.Services;
 using Audiochan.Core.Common.Models;
-using Audiochan.Domain.Entities;
 using MediatR;
 
-namespace Audiochan.Core.Users.UpdatePicture
+namespace Audiochan.Core.Users
 {
     [Authorize]
     public record UpdateUserPictureCommand(long UserId, string Data = "") : IImageData,

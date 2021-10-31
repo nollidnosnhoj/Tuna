@@ -2,7 +2,7 @@
 using Audiochan.Domain.Abstractions;
 using Audiochan.Domain.Entities;
 
-namespace Audiochan.Core.Auth.GetCurrentUser
+namespace Audiochan.Core.Auth
 {
     public record CurrentUserDto : IHasId<long>, IMapFrom<User>
     {

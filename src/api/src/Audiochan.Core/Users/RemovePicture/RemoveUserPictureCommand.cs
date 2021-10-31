@@ -7,7 +7,7 @@ using Audiochan.Core.Common.Interfaces.Services;
 using Audiochan.Core.Common.Models;
 using MediatR;
 
-namespace Audiochan.Core.Users.RemovePicture
+namespace Audiochan.Core.Users
 {
     [Authorize]
     public record RemoveUserPictureCommand(long UserId) : IRequest<Result>;

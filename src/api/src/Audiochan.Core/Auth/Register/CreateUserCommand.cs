@@ -1,37 +1,18 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Common;
-using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Interfaces.Persistence;
 using Audiochan.Core.Common.Interfaces.Services;
 using Audiochan.Core.Common.Models;
 using Audiochan.Domain.Entities;
-using FluentValidation;
 using MediatR;
-using Microsoft.Extensions.Options;
 
-namespace Audiochan.Core.Auth.Register
+namespace Audiochan.Core.Auth
 {
     public class CreateUserCommand : IRequest<Result>
     {
         public string Username { get; init; } = string.Empty;
         public string Email { get; init; } = string.Empty;
         public string Password { get; init; } = string.Empty;
-    }
-
-    public class CreateUserCommandValidator : AbstractValidator<CreateUserCommand>
-    {
-        public CreateUserCommandValidator(IOptions<IdentitySettings> identitySettings)
-        {
-            RuleFor(req => req.Username)
-                .UsernameValidation(identitySettings.Value.UsernameSettings);
-            RuleFor(req => req.Email)
-                .NotEmpty().WithMessage("Email is required.")
-                .EmailAddress().WithMessage("Email is invalid.");
-            RuleFor(req => req.Password)
-                .NotEmpty().WithMessage("Password is required.")
-                .PasswordValidation(identitySettings.Value.PasswordSettings);
-        }
     }
 
     public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Result>

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Ardalis.Specification;
-using Audiochan.Core.Audios.SearchAudios;
+using Audiochan.Core.Audios;
 using Audiochan.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 

@@ -1,6 +1,5 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Audios.GetAudio;
 using Audiochan.Core.Common;
 using Audiochan.Core.Common.Attributes;
 using Audiochan.Core.Common.Extensions;
@@ -11,7 +10,7 @@ using Audiochan.Domain.Entities;
 using MediatR;
 using Microsoft.Extensions.Caching.Distributed;
 
-namespace Audiochan.Core.Audios.RemovePicture
+namespace Audiochan.Core.Audios
 {
     [Authorize]
     public record RemoveAudioPictureCommand(long AudioId) : IRequest<Result>;

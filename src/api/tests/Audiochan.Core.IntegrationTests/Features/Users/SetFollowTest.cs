@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Extensions;
-using Audiochan.Core.Users.SetFollow;
+using Audiochan.Core.Users;
 using Audiochan.Domain.Entities;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;

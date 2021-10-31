@@ -4,7 +4,7 @@ using Audiochan.Core.Common.Mappings;
 using Audiochan.Domain.Entities;
 using AutoMapper;
 
-namespace Audiochan.Core.Users.GetFollowings
+namespace Audiochan.Core.Users
 {
     public record FollowingViewModel : IMapFrom<FollowedUser>
     {

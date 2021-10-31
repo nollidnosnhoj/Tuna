@@ -5,10 +5,9 @@ using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Interfaces.Persistence;
 using Audiochan.Core.Common.Interfaces.Services;
 using Audiochan.Core.Common.Models;
-using FluentValidation;
 using MediatR;
 
-namespace Audiochan.Core.Users.UpdateEmail
+namespace Audiochan.Core.Users
 {
     [Authorize]
     public record UpdateEmailCommand : IRequest<Result>
@@ -21,16 +20,6 @@ namespace Audiochan.Core.Users.UpdateEmail
             UserId = userId,
             NewEmail = request.NewEmail
         };
-    }
-
-    public class UpdateEmailCommandValidator : AbstractValidator<UpdateEmailCommand>
-    {
-        public UpdateEmailCommandValidator()
-        {
-            RuleFor(req => req.NewEmail)
-                .NotEmpty().WithMessage("Email is required.")
-                .EmailAddress().WithMessage("Email is invalid.");
-        }
     }
 
     public class UpdateEmailCommandHandler : IRequestHandler<UpdateEmailCommand, Result>

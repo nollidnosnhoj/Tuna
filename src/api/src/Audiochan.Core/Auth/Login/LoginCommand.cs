@@ -1,38 +1,17 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Ardalis.Specification;
-using Audiochan.Core.Auth.GetCurrentUser;
 using Audiochan.Core.Common.Interfaces.Persistence;
 using Audiochan.Core.Common.Interfaces.Services;
 using Audiochan.Core.Common.Models;
-using Audiochan.Domain.Entities;
 using AutoMapper;
-using FluentValidation;
 using MediatR;
 
-namespace Audiochan.Core.Auth.Login
+namespace Audiochan.Core.Auth
 {
     public record LoginCommand : IRequest<Result<CurrentUserDto>>
     {
         public string Login { get; init; } = null!;
         public string Password { get; init; } = null!;
-    }
-
-    public class LoginCommandValidator : AbstractValidator<LoginCommand>
-    {
-        public LoginCommandValidator()
-        {
-            RuleFor(x => x.Login).NotEmpty();
-            RuleFor(x => x.Password).NotEmpty();
-        }
-    }
-
-    public sealed class LoadUserForLoginSpecification : Specification<User>
-    {
-        public LoadUserForLoginSpecification(string login)
-        {
-            Query.Where(u => u.UserName == login || u.Email == login);
-        }
     }
 
     public class LoginCommandHandler : IRequestHandler<LoginCommand, Result<CurrentUserDto>>
@@ -52,7 +31,7 @@ namespace Audiochan.Core.Auth.Login
             CancellationToken cancellationToken)
         {
             var user = await _dbContext.Users
-                .GetFirstAsync(new LoadUserForLoginSpecification(command.Login), cancellationToken);
+                .GetFirstAsync(new LoadUserByNameOrEmailSpecification(command.Login), cancellationToken);
 
             if (user == null || !_passwordHasher.Verify(command.Password, user.PasswordHash))
                 return Result<CurrentUserDto>.BadRequest("Invalid Username/Password");

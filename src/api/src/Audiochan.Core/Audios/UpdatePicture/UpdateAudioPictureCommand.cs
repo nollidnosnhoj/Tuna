@@ -1,6 +1,5 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Audios.GetAudio;
 using Audiochan.Core.Common;
 using Audiochan.Core.Common.Attributes;
 using Audiochan.Core.Common.Extensions;
@@ -12,14 +11,14 @@ using Audiochan.Domain.Entities;
 using MediatR;
 using Microsoft.Extensions.Caching.Distributed;
 
-namespace Audiochan.Core.Audios.UpdatePicture
+namespace Audiochan.Core.Audios
 {
     [Authorize]
     public record UpdateAudioPictureCommand(long AudioId, string Data) : IImageData, IRequest<Result<ImageUploadResponse>>
     {
     }
 
-    public class UpdateAudioCommandHandler : IRequestHandler<UpdateAudioPictureCommand, Result<ImageUploadResponse>>
+    public class UpdateAudioPictureCommandHandler : IRequestHandler<UpdateAudioPictureCommand, Result<ImageUploadResponse>>
     {
         private readonly IDistributedCache _cache;
         private readonly ICurrentUserService _currentUserService;
@@ -27,7 +26,7 @@ namespace Audiochan.Core.Audios.UpdatePicture
         private readonly IRandomIdGenerator _randomIdGenerator;
         private readonly IUnitOfWork _unitOfWork;
 
-        public UpdateAudioCommandHandler(ICurrentUserService currentUserService,
+        public UpdateAudioPictureCommandHandler(ICurrentUserService currentUserService,
             IImageService imageService,
             IRandomIdGenerator randomIdGenerator, IUnitOfWork unitOfWork, IDistributedCache cache)
         {

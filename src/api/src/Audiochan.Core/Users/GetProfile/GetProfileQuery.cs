@@ -1,23 +1,12 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Ardalis.Specification;
 using Audiochan.Core.Common.Interfaces.Persistence;
-using Audiochan.Domain.Entities;
 using MediatR;
 
-namespace Audiochan.Core.Users.GetProfile
+namespace Audiochan.Core.Users
 {
     public record GetProfileQuery(string Username) : IRequest<ProfileDto?>
     {
-    }
-
-    public sealed class GetProfileByUsernameSpecification : Specification<User>
-    {
-        public GetProfileByUsernameSpecification(string username)
-        {
-            Query.AsNoTracking();
-            Query.Where(u => u.UserName == username);
-        }
     }
 
     public class GetProfileQueryHandler : IRequestHandler<GetProfileQuery, ProfileDto?>
@@ -32,7 +21,7 @@ namespace Audiochan.Core.Users.GetProfile
         public async Task<ProfileDto?> Handle(GetProfileQuery query, CancellationToken cancellationToken)
         {
             return await _unitOfWork.Users
-                .GetFirstAsync<ProfileDto>(new GetProfileByUsernameSpecification(query.Username), cancellationToken);
+                .GetFirstAsync<ProfileDto>(new GetUserByUsernameSpecification(query.Username), cancellationToken);
         }
     }
 }

@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text.Json.Serialization;
-using Audiochan.Core.Common;
 using Audiochan.Core.Common.Converters.Json;
-using Audiochan.Core.Common.Helpers;
 using Audiochan.Core.Common.Mappings;
 using Audiochan.Core.Users;
 using Audiochan.Domain.Abstractions;
 using Audiochan.Domain.Entities;
-using AutoMapper;
 
 namespace Audiochan.Core.Audios
 {

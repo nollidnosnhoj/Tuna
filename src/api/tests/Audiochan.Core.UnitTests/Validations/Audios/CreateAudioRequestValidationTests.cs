@@ -1,4 +1,4 @@
-﻿using Audiochan.Core.Audios.CreateAudio;
+﻿using Audiochan.Core.Audios;
 using Audiochan.Core.Common;
 using Audiochan.Tests.Common.Builders;
 using Audiochan.Tests.Common.Fakers.Audios;

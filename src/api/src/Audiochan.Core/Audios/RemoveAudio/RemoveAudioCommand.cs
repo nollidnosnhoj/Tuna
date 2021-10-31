@@ -11,7 +11,7 @@ using Audiochan.Domain.Entities;
 using MediatR;
 using Microsoft.Extensions.Options;
 
-namespace Audiochan.Core.Audios.RemoveAudio
+namespace Audiochan.Core.Audios
 {
     [Authorize]
     public record RemoveAudioCommand(long Id) : IRequest<Result<bool>>
