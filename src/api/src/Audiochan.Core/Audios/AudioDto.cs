@@ -39,7 +39,7 @@ namespace Audiochan.Core.Audios
         public DateTime? LastModified { get; init; }
         
         [JsonConverter(typeof(AudioStreamLinkJsonConverter))]
-        public string Audio { get; init; } = null!;
+        public string Src { get; init; } = null!;
         
         public UserDto User { get; init; } = null!;
     }

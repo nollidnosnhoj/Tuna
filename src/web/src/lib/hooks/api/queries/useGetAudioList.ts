@@ -5,16 +5,16 @@ import {
   UseInfiniteCursorPaginationReturnType,
 } from "~/lib/hooks";
 import request from "~/lib/http";
-import { AudioView, CursorPagedList } from "~/lib/types";
+import { Audio, CursorPagedList } from "~/lib/types";
 import { GET_AUDIO_LIST_QUERY_KEY } from "~/lib/hooks/api/keys";
 
 export function useGetAudioList(
   params: Record<string, string | boolean | number> = {},
-  options: UseInfiniteCursorPaginationOptions<AudioView> = {}
-): UseInfiniteCursorPaginationReturnType<AudioView> {
+  options: UseInfiniteCursorPaginationOptions<Audio> = {}
+): UseInfiniteCursorPaginationReturnType<Audio> {
   const fetcher = useCallback(
     async (cursor: number) => {
-      const { data } = await request<CursorPagedList<AudioView>>({
+      const { data } = await request<CursorPagedList<Audio>>({
         method: "get",
         url: "audios",
         params: { ...params, cursor: cursor },
@@ -24,7 +24,7 @@ export function useGetAudioList(
     [params]
   );
 
-  return useInfiniteCursorPagination<AudioView>(
+  return useInfiniteCursorPagination<Audio>(
     GET_AUDIO_LIST_QUERY_KEY,
     fetcher,
     options

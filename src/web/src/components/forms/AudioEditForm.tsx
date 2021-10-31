@@ -6,11 +6,11 @@ import { z } from "zod";
 import TagInput from "~/components/form-inputs/TagField";
 import InputField from "~/components/form-inputs/InputField";
 import { audioSchema } from "../../lib/validators/audio-schemas";
-import { AudioView } from "~/lib/types";
+import { Audio } from "~/lib/types";
 import TextAreaField from "~/components/form-inputs/TextAreaField";
 
 interface AudioFormProps {
-  audio: AudioView;
+  audio: Audio;
   onSubmit: (values: UpdateAudioFormValues) => Promise<void>;
   removeButton: JSX.Element;
   isDisabled?: boolean;

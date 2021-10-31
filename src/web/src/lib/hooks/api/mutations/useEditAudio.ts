@@ -1,6 +1,6 @@
 import { useMutation, UseMutationResult, useQueryClient } from "react-query";
 import request from "~/lib/http";
-import { AudioRequest, AudioView, ID } from "~/lib/types";
+import { EditAudioRequest, Audio, ID } from "~/lib/types";
 import { useUser } from "~/components/providers/UserProvider";
 import {
   GET_AUDIO_LIST_QUERY_KEY,
@@ -9,11 +9,11 @@ import {
   GET_YOUR_AUDIOS_KEY,
 } from "~/lib/hooks/api/keys";
 
-export function useEditAudio(audioId: ID): UseMutationResult<AudioView> {
+export function useEditAudio(audioId: ID): UseMutationResult<Audio> {
   const queryClient = useQueryClient();
   const { user } = useUser();
-  const updateAudio = async (input: AudioRequest): Promise<AudioView> => {
-    const { data } = await request<AudioView>({
+  const updateAudio = async (input: EditAudioRequest): Promise<Audio> => {
+    const { data } = await request<Audio>({
       url: `audios/${audioId}`,
       method: "put",
       data: input,
@@ -23,7 +23,7 @@ export function useEditAudio(audioId: ID): UseMutationResult<AudioView> {
 
   return useMutation(updateAudio, {
     onSuccess: (data) => {
-      queryClient.setQueryData<AudioView>(GET_AUDIO_QUERY_KEY(audioId), data);
+      queryClient.setQueryData<Audio>(GET_AUDIO_QUERY_KEY(audioId), data);
       queryClient.invalidateQueries(GET_AUDIO_LIST_QUERY_KEY);
       if (user) {
         queryClient.invalidateQueries(GET_USER_AUDIOS_QUERY_KEY(user.userName));

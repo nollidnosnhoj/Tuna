@@ -1,5 +1,5 @@
 import { useMutation, UseMutationResult, useQueryClient } from "react-query";
-import { AudioView, ErrorResponse, ID, ImageUploadResponse } from "~/lib/types";
+import { Audio, ErrorResponse, ID, ImageUploadResponse } from "~/lib/types";
 import request from "~/lib/http";
 import { useUser } from "~/components/providers/UserProvider";
 import {
@@ -27,12 +27,12 @@ export function useAddAudioPicture(
 
   return useMutation(uploadArtwork, {
     onSuccess(data) {
-      const audio = queryClient.getQueryData<AudioView>(
+      const audio = queryClient.getQueryData<Audio>(
         GET_AUDIO_QUERY_KEY(audioId)
       );
 
       if (audio) {
-        queryClient.setQueryData<AudioView>(GET_AUDIO_QUERY_KEY(audioId), {
+        queryClient.setQueryData<Audio>(GET_AUDIO_QUERY_KEY(audioId), {
           ...audio,
           picture: data.url,
         });

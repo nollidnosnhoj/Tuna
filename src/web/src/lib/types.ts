@@ -44,7 +44,7 @@ export interface ImageUploadResponse {
   url: string;
 }
 
-export interface AudioView {
+export interface Audio {
   id: ID;
   title: string;
   slug: string;
@@ -56,17 +56,17 @@ export interface AudioView {
   isFavorited?: boolean;
   created: string;
   lastModified?: string;
-  audio: string;
+  src: string;
   user: MetaAuthor;
 }
 
-export interface AudioRequest {
+export interface EditAudioRequest {
   title: string;
   description?: string;
   tags: string[];
 }
 
-export interface CreateAudioRequest extends AudioRequest {
+export interface CreateAudioRequest extends EditAudioRequest {
   uploadId: string;
   fileName: string;
   fileSize: number;

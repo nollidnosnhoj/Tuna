@@ -12,10 +12,10 @@ import Link from "~/components/ui/Link";
 import { formatDuration } from "~/utils/format";
 import { useAudioPlayer } from "~/lib/stores";
 import { getValidChildren } from "@chakra-ui/react-utils";
-import { AudioView } from "~/lib/types";
+import { Audio } from "~/lib/types";
 
 export interface IAudioItemProps {
-  audio: AudioView;
+  audio: Audio;
   context?: string;
 }
 

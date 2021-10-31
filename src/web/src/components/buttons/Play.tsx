@@ -2,10 +2,10 @@ import { ButtonProps, IconButton } from "@chakra-ui/react";
 import React, { useCallback } from "react";
 import { FaPause, FaPlay } from "react-icons/fa";
 import { useAudioPlayer } from "~/lib/stores";
-import { AudioView } from "~/lib/types";
+import { Audio } from "~/lib/types";
 
 interface AudioPlayButtonProps extends ButtonProps {
-  audio: AudioView;
+  audio: Audio;
 }
 
 export default function AudioPlayButton({
