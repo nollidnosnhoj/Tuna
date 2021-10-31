@@ -19,7 +19,7 @@ namespace Audiochan.Core.Common.Mappings
                     c.NullSubstitute(""))
                 .ForMember(dest => dest.Slug, c =>
                     c.MapFrom(src => HashIdHelper.EncodeLong(src.Id)))
-                .ForMember(dest => dest.Audio, c =>
+                .ForMember(dest => dest.Src, c =>
                     c.MapFrom(src => src.File))
                 .ForMember(dest => dest.IsFavorited, c =>
                     c.MapFrom(src => userId > 0 ? src.FavoriteAudios.Any(fa => fa.UserId == userId) : (bool?)null));

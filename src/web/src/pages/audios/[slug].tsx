@@ -39,7 +39,7 @@ import { useRouter } from "next/router";
 import PictureController from "~/components/Picture";
 import NextLink from "next/link";
 import { FaHashtag } from "react-icons/fa";
-import { AudioView } from "~/lib/types";
+import { Audio } from "~/lib/types";
 import {
   useAddAudioPicture,
   useGetAudio,
@@ -47,11 +47,11 @@ import {
 } from "~/lib/hooks/api";
 
 interface AudioPageProps {
-  audio: AudioView;
+  audio: Audio;
   slug: string;
 }
 
-function AudioDetailPicture(props: { audio: AudioView }) {
+function AudioDetailPicture(props: { audio: Audio }) {
   const { audio } = props;
 
   const { user: currentUser } = useUser();
@@ -81,7 +81,7 @@ export const getServerSideProps: GetServerSideProps<AudioPageProps> = async (
   const slug = context.params?.slug as string;
   const { req, res } = context;
   try {
-    const { data } = await request<AudioView>({
+    const { data } = await request<Audio>({
       method: "get",
       url: `audios/${slug}`,
       req,

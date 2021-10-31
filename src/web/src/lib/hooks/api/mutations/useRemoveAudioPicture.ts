@@ -1,6 +1,6 @@
 import { useMutation, UseMutationResult, useQueryClient } from "react-query";
 import { useUser } from "~/components/providers/UserProvider";
-import { AudioView, ErrorResponse, ID, ImageUploadResponse } from "~/lib/types";
+import { Audio, ErrorResponse, ID, ImageUploadResponse } from "~/lib/types";
 import request from "~/lib/http";
 import {
   GET_AUDIO_LIST_QUERY_KEY,
@@ -22,11 +22,9 @@ export function useRemoveAudioPicture(
 
   return useMutation(uploadArtwork, {
     onSuccess() {
-      const audio = queryClient.getQueryData<AudioView>(
-        GET_AUDIO_QUERY_KEY(id)
-      );
+      const audio = queryClient.getQueryData<Audio>(GET_AUDIO_QUERY_KEY(id));
       if (audio) {
-        queryClient.setQueryData<AudioView>(GET_AUDIO_QUERY_KEY(id), {
+        queryClient.setQueryData<Audio>(GET_AUDIO_QUERY_KEY(id), {
           ...audio,
           picture: "",
         });

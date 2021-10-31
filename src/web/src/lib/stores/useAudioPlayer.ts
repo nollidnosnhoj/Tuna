@@ -1,6 +1,6 @@
 import create from "zustand";
 import { v4 as uuidv4 } from "uuid";
-import { AudioView, ID } from "../types";
+import { Audio, ID } from "../types";
 
 export enum REPEAT_MODE {
   DISABLE = "disable",
@@ -35,17 +35,13 @@ type IAudioPlayerSlice = {
   setIsPlaying: (isPlaying: boolean) => void;
   setVolume: (volume: number) => void;
   togglePlaying: () => void;
-  addToQueue: (context: string, audios: AudioView[]) => void;
+  addToQueue: (context: string, audios: Audio[]) => void;
   clearQueue: (context: string) => void;
   playNext: () => void;
   playPrevious: () => void;
   removeIndexFromQueue: (context: string, index: number) => void;
   removeAudioIdFromQueue: (audioId: ID) => void;
-  setNewQueue: (
-    context: string,
-    queue: AudioView[],
-    defaultIndex?: number
-  ) => void;
+  setNewQueue: (context: string, queue: Audio[], defaultIndex?: number) => void;
   setPlayIndex: (index: number) => void;
   setRepeatMode: (mode: REPEAT_MODE) => void;
 };
@@ -189,7 +185,7 @@ export const useAudioPlayer = create<IAudioPlayerSlice>((set, get) => ({
 }));
 
 function mapAudiosForAudioQueue(
-  audios: AudioView[],
+  audios: Audio[],
   isRelatedAudio = false
 ): AudioQueueItem[] {
   return audios.map((audio) => ({
@@ -200,7 +196,7 @@ function mapAudiosForAudioQueue(
     artistId: audio.user.id,
     cover: audio.picture ?? "",
     duration: audio.duration,
-    source: audio.audio,
+    source: audio.src,
     related: isRelatedAudio,
   }));
 }

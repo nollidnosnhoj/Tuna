@@ -14,7 +14,7 @@ import React, { PropsWithChildren } from "react";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { MdQueueMusic } from "react-icons/md";
 import { useAudioPlayer } from "~/lib/stores";
-import { AudioView } from "~/lib/types";
+import { Audio } from "~/lib/types";
 
 type ButtonSizeType = Pick<ButtonProps, "size">;
 type ButtonVariantType = Pick<ButtonProps, "variant">;
@@ -25,7 +25,7 @@ interface IAudioMiscMenuProps
     ButtonVariantType,
     MenuPlacementType {
   icon?: JSX.Element;
-  audio: AudioView;
+  audio: Audio;
 }
 
 export default function AudioMiscMenu({

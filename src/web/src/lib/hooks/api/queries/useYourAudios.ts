@@ -3,14 +3,12 @@ import {
   UseInfinitePaginationReturnType,
 } from "~/lib/hooks";
 import request from "~/lib/http";
-import { AudioView, OffsetPagedList } from "~/lib/types";
+import { Audio, OffsetPagedList } from "~/lib/types";
 import { GET_YOUR_AUDIOS_KEY } from "~/lib/hooks/api/keys";
 
-export function useYourAudios(): UseInfinitePaginationReturnType<AudioView> {
-  const fetcher = async (
-    offset: number
-  ): Promise<OffsetPagedList<AudioView>> => {
-    const { data } = await request<OffsetPagedList<AudioView>>({
+export function useYourAudios(): UseInfinitePaginationReturnType<Audio> {
+  const fetcher = async (offset: number): Promise<OffsetPagedList<Audio>> => {
+    const { data } = await request<OffsetPagedList<Audio>>({
       method: "get",
       url: "me/audios",
       params: {

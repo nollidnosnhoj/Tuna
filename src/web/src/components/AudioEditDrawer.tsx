@@ -11,11 +11,11 @@ import React, { useState } from "react";
 import { errorToast, toast } from "~/utils/toast";
 import EditForm, { UpdateAudioFormValues } from "./forms/AudioEditForm";
 import { useRouter } from "next/router";
-import { AudioView } from "~/lib/types";
+import { Audio } from "~/lib/types";
 import { useEditAudio, useRemoveAudio } from "~/lib/hooks/api";
 
 interface AudioEditDrawerProps {
-  audio: AudioView;
+  audio: Audio;
   isOpen: boolean;
   onClose: () => void;
   buttonRef?: React.RefObject<HTMLButtonElement>;

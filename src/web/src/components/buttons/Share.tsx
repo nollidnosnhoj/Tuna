@@ -3,10 +3,10 @@ import { useDisclosure } from "@chakra-ui/hooks";
 import React from "react";
 import { FaShare } from "react-icons/fa";
 import AudioShareModal from "../modals/AudioShareModal";
-import { AudioView } from "~/lib/types";
+import { Audio } from "~/lib/types";
 
 interface AudioShareButtonProps {
-  audio: AudioView;
+  audio: Audio;
 }
 
 export default function AudioShareButton({ audio }: AudioShareButtonProps) {
