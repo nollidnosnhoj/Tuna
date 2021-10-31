@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Attributes;
 using Audiochan.Core.Common.Exceptions;
+using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Interfaces.Services;
 using MediatR;
 
@@ -29,7 +30,7 @@ namespace Audiochan.Core.Common.Pipelines
                 return await next();
             }
 
-            if (_currentUserService.IsAuthenticated())
+            if (_currentUserService.User is not null)
             {
                 return await next();
             }

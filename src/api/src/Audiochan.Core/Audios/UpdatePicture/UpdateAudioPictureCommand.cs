@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Audiochan.Core.Audios.GetAudio;
 using Audiochan.Core.Common;
 using Audiochan.Core.Common.Attributes;
+using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Interfaces.Persistence;
 using Audiochan.Core.Common.Interfaces.Services;
@@ -40,7 +41,7 @@ namespace Audiochan.Core.Audios.UpdatePicture
         public async Task<Result<ImageUploadResponse>> Handle(UpdateAudioPictureCommand command,
             CancellationToken cancellationToken)
         {
-            var currentUserId = _currentUserService.GetUserId();
+            _currentUserService.User.TryGetUserId(out var currentUserId);
 
             var audio = await _unitOfWork.Audios.FindAsync(command.AudioId, cancellationToken);
 

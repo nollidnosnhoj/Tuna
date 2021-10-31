@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Users.SetFollow;
 using Audiochan.Domain.Entities;
 using FluentAssertions;
@@ -17,8 +18,10 @@ namespace Audiochan.Core.IntegrationTests.Features.Users
         public async Task AddFollowerTest()
         {
             // Assign
-            var (targetId, _) = await RunAsUserAsync();
-            var (observerId, _) = await RunAsUserAsync();
+            var target = await RunAsUserAsync();
+            target.TryGetUserId(out var targetId);
+            var observer = await RunAsUserAsync();
+            observer.TryGetUserId(out var observerId);
 
             // Act
             await SendAsync(new SetFollowCommand(observerId, targetId, true));
@@ -35,9 +38,11 @@ namespace Audiochan.Core.IntegrationTests.Features.Users
         public async Task RemoveFollowerTest()
         {
             // Assign
-            var (targetId, _) = await RunAsUserAsync();
-            var (observerId, _) = await RunAsUserAsync();
-
+            var target = await RunAsUserAsync();
+            target.TryGetUserId(out var targetId);
+            var observer = await RunAsUserAsync();
+            observer.TryGetUserId(out var observerId);
+            
             var user = GetUsersWithFollowers(targetId);
 
             user.Should().NotBeNull("Did not run as user");

@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Audiochan.Core.Audios.SearchAudios;
+using Audiochan.Core.Common.Extensions;
 using Audiochan.Domain.Entities;
 using Audiochan.Tests.Common.Fakers.Audios;
 using Bogus;
@@ -26,7 +27,8 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
 
 
             // create posts
-            var (userId, _) = await RunAsDefaultUserAsync();
+            var user = await RunAsDefaultUserAsync();
+            user.TryGetUserId(out var userId);
 
             var audioFaker = new AudioFaker(userId)
                 .FinishWith((f, a) =>

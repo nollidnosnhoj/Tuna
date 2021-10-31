@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Users.SetFavoriteAudio;
 using Audiochan.Domain.Entities;
 using Audiochan.Tests.Common.Fakers.Audios;
@@ -17,10 +18,14 @@ namespace Audiochan.Core.IntegrationTests.Features.Users
         public async Task AddFavoriteTest()
         {
             // Assign
-            var (targetId, _) = await RunAsDefaultUserAsync();
-            var (observerId, _) = await RunAsUserAsync();
-
+            var target = await RunAsDefaultUserAsync();
+            target.TryGetUserId(out var targetId);
+            
+            var observer = await RunAsUserAsync();
+            observer.TryGetUserId(out var observerId);
+            
             var audio = new AudioFaker(targetId).Generate();
+            
             InsertIntoDatabase(audio);
 
             // Act
@@ -44,12 +49,14 @@ namespace Audiochan.Core.IntegrationTests.Features.Users
         public async Task ShouldSuccessfullyUnfavoriteAudio()
         {
             // Assign
-            var (targetId, _) = await RunAsDefaultUserAsync();
+            var target = await RunAsDefaultUserAsync();
+            target.TryGetUserId(out var targetId);
             
             var audio = new AudioFaker(targetId).Generate();
             InsertIntoDatabase(audio);
             
-            var (observerId, _) = await RunAsUserAsync();
+            var observer = await RunAsUserAsync();
+            observer.TryGetUserId(out var observerId);
 
             var favoriteAudio = new FavoriteAudio
             {

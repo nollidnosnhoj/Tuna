@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Users.CheckIfAudioFavorited;
 using Audiochan.Domain.Entities;
 using Audiochan.Tests.Common.Fakers.Audios;
@@ -15,15 +16,22 @@ namespace Audiochan.Core.IntegrationTests.Features.Users
         public async Task ShouldReturnTrue_WhenUserFavoritedAudio()
         {
             // Assign
-            var (targetId, _) = await RunAsDefaultUserAsync();
+            var target = await RunAsDefaultUserAsync();
+            target.TryGetUserId(out var targetId);
+            
             var audio = new AudioFaker(targetId).Generate();
+            
             InsertIntoDatabase(audio);
-            var (observerId, _) = await RunAsUserAsync();
+            
+            var observer = await RunAsUserAsync();
+            observer.TryGetUserId(out var observerId);
+            
             var favoriteAudio = new FavoriteAudio
             {
                 AudioId = audio.Id,
                 UserId = observerId,
             };
+            
             InsertIntoDatabase(favoriteAudio);
 
             // Act
@@ -37,10 +45,15 @@ namespace Audiochan.Core.IntegrationTests.Features.Users
         public async Task ShouldReturnFalse_WhenUserDidNotFavorite()
         {
             // Assign
-            var (targetId, _) = await RunAsDefaultUserAsync();
+            var target = await RunAsDefaultUserAsync();
+            target.TryGetUserId(out var targetId);
+            
             var audio = new AudioFaker(targetId).Generate();
+            
             InsertIntoDatabase(audio);
-            var (observerId, _) = await RunAsUserAsync();
+            
+            var observer = await RunAsUserAsync();
+            observer.TryGetUserId(out var observerId);
 
             // Act
             var isFavorited = await SendAsync(new CheckIfAudioFavoritedQuery(audio.Id, observerId));

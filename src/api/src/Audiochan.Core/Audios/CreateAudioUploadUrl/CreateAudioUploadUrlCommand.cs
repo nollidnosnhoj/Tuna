@@ -54,7 +54,7 @@ namespace Audiochan.Core.Audios.CreateAudioUploadUrl
         public async Task<Result<CreateAudioUploadUrlResponse>> Handle(CreateAudioUploadUrlCommand command, 
             CancellationToken cancellationToken)
         {
-            var userId = _currentUserService.GetUserId();
+            _currentUserService.User.TryGetUserId(out var userId);
             var (url, uploadId) = await CreateUploadUrl(command.FileName, userId);
             var response = new CreateAudioUploadUrlResponse { UploadId = uploadId, UploadUrl = url };
             return Result<CreateAudioUploadUrlResponse>.Success(response);

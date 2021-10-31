@@ -30,12 +30,10 @@ namespace Audiochan.Core.Users.GetUserAudios
     public class GetUsersAudioQueryHandler : IRequestHandler<GetUsersAudioQuery, OffsetPagedListDto<AudioDto>>
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly long _currentUserId;
 
-        public GetUsersAudioQueryHandler(IUnitOfWork unitOfWork, ICurrentUserService currentUserService)
+        public GetUsersAudioQueryHandler(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            _currentUserId = currentUserService.GetUserId();
         }
 
         public async Task<OffsetPagedListDto<AudioDto>> Handle(GetUsersAudioQuery request,

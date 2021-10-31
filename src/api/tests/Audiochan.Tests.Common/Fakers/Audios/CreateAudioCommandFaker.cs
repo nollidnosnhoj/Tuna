@@ -4,9 +4,9 @@ using Bogus;
 
 namespace Audiochan.Tests.Common.Fakers.Audios
 {
-    public sealed class CreateAudioRequestFaker : Faker<CreateAudioCommand>
+    public sealed class CreateAudioCommandFaker : Faker<CreateAudioCommand>
     {
-        public CreateAudioRequestFaker()
+        public CreateAudioCommandFaker()
         {
             RuleFor(x => x.UploadId, Guid.NewGuid().ToString("N") + ".mp3");
             RuleFor(x => x.FileName, f => f.System.FileName("mp3"));

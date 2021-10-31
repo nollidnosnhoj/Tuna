@@ -1,5 +1,5 @@
-﻿using Audiochan.Core.Auth.GetCurrentUser;
-using Audiochan.Core.Common.Helpers;
+﻿using System.Collections.Generic;
+using System.Security.Claims;
 using Audiochan.Core.Common.Interfaces.Services;
 using Moq;
 
@@ -10,21 +10,22 @@ namespace Audiochan.Tests.Common.Mocks
         public const long MockUserId = 1996;
         public const string MockUserName = "testuser";
         
-        public static Mock<ICurrentUserService> Create(long userId = 0, string? username = null)
+        public static Mock<ICurrentUserService> Create(ClaimsPrincipal? principal = null)
         {
             var mock = new Mock<ICurrentUserService>();
-
-            userId = userId <= 0 ? MockUserId : userId;
-            username = string.IsNullOrWhiteSpace(username) ? MockUserName : username;
-            
-            mock.Setup(x => x.GetUserId()).Returns(userId);
-            mock.Setup(x => x.GetUsername()).Returns(username);
-            mock.Setup(x => x.IsAuthenticated()).Returns(true);
-            mock.Setup(x => x.TryGetUserId(out userId))
-                .Returns(true);
-            mock.Setup(x => x.TryGetUsername(out username))
-                .Returns(true);
+            mock.Setup(x => x.User).Returns(principal);
             return mock;
+        }
+
+        public static ClaimsPrincipal CreateMockPrincipal(long userId, string username)
+        {
+            var claims = new List<Claim>
+            {
+                new(ClaimTypes.NameIdentifier, userId.ToString()),
+                new(ClaimTypes.Name, username)
+            };
+
+            return new ClaimsPrincipal(new ClaimsIdentity(claims));
         }
     }
 }

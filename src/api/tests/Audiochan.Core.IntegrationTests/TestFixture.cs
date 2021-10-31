@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Audiochan.API;
 using Audiochan.Core.Common.Extensions;
@@ -32,8 +33,7 @@ namespace Audiochan.Core.IntegrationTests
         private static IServiceScopeFactory _scopeFactory;
         private static Checkpoint _checkpoint;
 
-        private static long _currentUserId;
-        private static string _currentUsername;
+        private static ClaimsPrincipal? _user;
 
         [OneTimeSetUp]
         public async Task RunBeforeAnyTests()
@@ -64,7 +64,7 @@ namespace Audiochan.Core.IntegrationTests
 
             var descriptorCurrentUserService = services.FirstOrDefault(d => d.ServiceType == typeof(ICurrentUserService));
             services.Remove(descriptorCurrentUserService!);
-            services.AddTransient(_ => CurrentUserServiceMock.Create(_currentUserId, _currentUsername).Object);
+            services.AddTransient(_ => CurrentUserServiceMock.Create(_user).Object);
                 
             // var descriptorDateTimeProvider = services.FirstOrDefault(d => d.ServiceType == typeof(IDateTimeProvider));
             // services.Remove(descriptorDateTimeProvider!);
@@ -219,12 +219,17 @@ namespace Audiochan.Core.IntegrationTests
             });
         }
 
-        public static async Task<(long, string)> RunAsDefaultUserAsync()
+        public static void ClearCurrentUser()
+        {
+            _user = null;
+        }
+
+        public static async Task<ClaimsPrincipal> RunAsDefaultUserAsync()
         {
             return await RunAsUserAsync("defaultuser", "Testing1234!");
         }
 
-        public static async Task<(long, string)> RunAsUserAsync(string userName = "", string password = "", UserRole role = UserRole.Regular)
+        public static async Task<ClaimsPrincipal> RunAsUserAsync(string userName = "", string password = "", UserRole role = UserRole.Regular)
         {
             using var scope =  _scopeFactory.CreateScope();
 
@@ -237,9 +242,7 @@ namespace Audiochan.Core.IntegrationTests
 
                 if (user != null)
                 {
-                    _currentUserId = user.Id;
-                    _currentUsername = user.UserName;
-                    return (_currentUserId, _currentUsername);
+                    return CurrentUserServiceMock.CreateMockPrincipal(user.Id, user.UserName);
                 }
             }
             else
@@ -259,11 +262,10 @@ namespace Audiochan.Core.IntegrationTests
 
             await dbContext.Users.AddAsync(newUser);
             await dbContext.SaveChangesAsync();
+
+            _user = CurrentUserServiceMock.CreateMockPrincipal(newUser.Id, newUser.UserName);
             
-            _currentUserId = newUser.Id;
-            _currentUsername = newUser.UserName;
-            
-            return (_currentUserId, _currentUsername);
+            return _user;
         }
 
         public static async Task ResetState()

@@ -95,14 +95,14 @@ namespace Audiochan.Core.Audios.CreateAudio
         public async Task<Result<long>> Handle(CreateAudioCommand command,
             CancellationToken cancellationToken)
         {
-            var currentUserId = _currentUserService.GetUserId();
+            _currentUserService.User.TryGetUserId(out var currentUserId);
 
             if (!await ExistsInTempStorage(command.BlobName, cancellationToken))
             {
                 return Result<long>.BadRequest("Cannot find upload. Please upload and try again.");
             }
             
-            Audio audio = new Audio
+            var audio = new Audio
             {
                 UserId = currentUserId,
                 Size = command.FileSize,

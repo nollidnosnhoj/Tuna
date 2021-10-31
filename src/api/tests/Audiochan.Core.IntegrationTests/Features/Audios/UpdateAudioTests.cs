@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Audiochan.Core.Audios;
 using Audiochan.Core.Audios.GetAudio;
 using Audiochan.Core.Common;
+using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Models;
 using Audiochan.Tests.Common.Fakers.Audios;
 using FluentAssertions;
@@ -19,7 +20,8 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
         public async Task ShouldNotUpdate_WhenUserCannotModify()
         {
             // Assign
-            var (ownerId, _) = await RunAsUserAsync("kopacetic");
+            var owner = await RunAsUserAsync("kopacetic");
+            owner.TryGetUserId(out var ownerId);
 
             var audio = new AudioFaker(ownerId).Generate();
 
@@ -28,7 +30,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             // Act
             await RunAsDefaultUserAsync();
 
-            var command = new UpdateAudioRequestFaker(audio.Id).Generate();
+            var command = new UpdateAudioCommandFaker(audio.Id).Generate();
 
             var result = await SendAsync(command);
 
@@ -42,14 +44,15 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
         public async Task ShouldUpdateSuccessfully()
         {
             // Assign
-            var (ownerId, _) = await RunAsUserAsync("kopacetic");
+            var owner = await RunAsUserAsync("kopacetic");
+            owner.TryGetUserId(out var ownerId);
 
             var audio = new AudioFaker(ownerId).Generate();
 
             InsertIntoDatabase(audio);
             
             // Act
-            var command = new UpdateAudioRequestFaker(audio.Id).Generate();
+            var command = new UpdateAudioCommandFaker(audio.Id).Generate();
 
             await SendAsync(command);
 
@@ -71,11 +74,12 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
         public async Task ShouldInvalidateCacheSuccessfully()
         {
             // Assign
-            var (userId, _) = await RunAsDefaultUserAsync();
+            var user = await RunAsDefaultUserAsync();
+            user.TryGetUserId(out var userId);
             var audio = new AudioFaker(userId).Generate();
             InsertIntoDatabase(audio);
             await SendAsync(new GetAudioQuery(audio.Id));
-            var command = new UpdateAudioRequestFaker(audio.Id).Generate();
+            var command = new UpdateAudioCommandFaker(audio.Id).Generate();
             await SendAsync(command);
             
             // Act

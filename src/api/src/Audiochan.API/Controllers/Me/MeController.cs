@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Audiochan.API.Extensions;
 using Audiochan.API.Models;
 using Audiochan.Core.Auth.GetCurrentUser;
+using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Interfaces.Services;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Users.RemovePicture;
@@ -30,7 +31,7 @@ namespace Audiochan.API.Controllers.Me
         public MeController(ICurrentUserService currentUserService, IMediator mediator)
         {
             _mediator = mediator;
-            _currentUserId = currentUserService.GetUserId();
+            currentUserService.User.TryGetUserId(out _currentUserId);
         }
 
         [HttpHead(Name = "IsAuthenticated")]
