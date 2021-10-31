@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Audios;
+using Audiochan.Core.Audios.Queries;
 using Audiochan.Core.Common.Models.Pagination;
 
 namespace Audiochan.Core.Common.Interfaces.Services

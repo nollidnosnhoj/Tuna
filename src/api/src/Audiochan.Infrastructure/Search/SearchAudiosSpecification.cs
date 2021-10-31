@@ -2,6 +2,7 @@
 using System.Linq;
 using Ardalis.Specification;
 using Audiochan.Core.Audios;
+using Audiochan.Core.Audios.Queries;
 using Audiochan.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 

@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Audiochan.Core.Audios;
+using Audiochan.Core.Audios.Queries;
 using Audiochan.Core.Common.Extensions;
 using Audiochan.Tests.Common.Fakers.Audios;
 using Bogus;

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Audiochan.Core.Audios;
 using Audiochan.Core.Common.Interfaces.Persistence;
 using Audiochan.Core.Users;
+using Audiochan.Core.Users.Queries;
 using Audiochan.Domain.Entities;
 using Audiochan.Infrastructure.Persistence.Repositories.Abstractions;
 using Audiochan.Infrastructure.Persistence.Repositories.Extensions;

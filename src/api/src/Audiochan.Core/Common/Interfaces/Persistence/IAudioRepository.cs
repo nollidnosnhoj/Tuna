@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Audios;
 using Audiochan.Core.Users;
+using Audiochan.Core.Users.Queries;
 using Audiochan.Domain.Entities;
 
 namespace Audiochan.Core.Common.Interfaces.Persistence

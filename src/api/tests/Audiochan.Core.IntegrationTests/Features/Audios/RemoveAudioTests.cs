@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Audiochan.Core.Audios;
+using Audiochan.Core.Audios.Commands;
 using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Models;
 using Audiochan.Tests.Common.Fakers.Audios;

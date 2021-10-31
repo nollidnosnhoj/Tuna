@@ -4,6 +4,8 @@ using Audiochan.API.Extensions;
 using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Interfaces.Services;
 using Audiochan.Core.Users;
+using Audiochan.Core.Users.Commands;
+using Audiochan.Core.Users.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

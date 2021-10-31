@@ -1,5 +1,6 @@
 ﻿using System;
 using Audiochan.Core.Audios;
+using Audiochan.Core.Audios.Commands;
 using Bogus;
 
 namespace Audiochan.Tests.Common.Fakers.Audios

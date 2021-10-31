@@ -2,10 +2,12 @@
 using System.Threading.Tasks;
 using Audiochan.API.Models;
 using Audiochan.Core.Audios;
+using Audiochan.Core.Audios.Queries;
 using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Interfaces.Services;
 using Audiochan.Core.Common.Models.Pagination;
 using Audiochan.Core.Users;
+using Audiochan.Core.Users.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using Audiochan.API.Extensions;
 using Audiochan.API.Models;
 using Audiochan.Core.Audios;
+using Audiochan.Core.Audios.Commands;
+using Audiochan.Core.Audios.Queries;
 using Audiochan.Core.Common.Helpers;
 using Audiochan.Core.Common.Models;
 using Audiochan.Core.Common.Models.Pagination;
