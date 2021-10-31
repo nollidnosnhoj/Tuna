@@ -28,7 +28,7 @@ namespace Audiochan.Core.UnitTests.Validations.Audios
         [Fact]
         public void ShouldSuccessfullyValidateRequest()
         {
-            var request = new CreateAudioRequestFaker().Generate();
+            var request = new CreateAudioCommandFaker().Generate();
             var result = _validator.TestValidate(request);
             result.IsValid.Should().BeTrue();
         }
@@ -36,7 +36,7 @@ namespace Audiochan.Core.UnitTests.Validations.Audios
         [Fact]
         public void ShouldBeInvalid_WhenUploadIdIsEmpty()
         {
-            var request = new CreateAudioRequestFaker()
+            var request = new CreateAudioCommandFaker()
                 .RuleFor(x => x.UploadId, string.Empty)
                 .Generate();
             var result = _validator.TestValidate(request);
@@ -46,7 +46,7 @@ namespace Audiochan.Core.UnitTests.Validations.Audios
         [Fact]
         public void ShouldBeInvalid_WhenDurationIsEmpty()
         {
-            var request = new CreateAudioRequestFaker()
+            var request = new CreateAudioCommandFaker()
                 .RuleFor(x => x.Duration, () => default)
                 .Generate();
             var result = _validator.TestValidate(request);
@@ -57,7 +57,7 @@ namespace Audiochan.Core.UnitTests.Validations.Audios
         public void ShouldBeInvalid_WhenFileSizeReachedOverLimit()
         {
             var maxSize = (int)_audioStorageSettings.MaximumFileSize;
-            var request = new CreateAudioRequestFaker()
+            var request = new CreateAudioCommandFaker()
                 .RuleFor(x => x.FileSize, maxSize + 100)
                 .Generate();
             var result = _validator.TestValidate(request);
@@ -67,7 +67,7 @@ namespace Audiochan.Core.UnitTests.Validations.Audios
         [Fact]
         public void ShouldBeInvalid_WhenFileNameDoesNotHaveFileExtension()
         {
-            var request = new CreateAudioRequestFaker()
+            var request = new CreateAudioCommandFaker()
                 .RuleFor(x => x.FileName, "test")
                 .Generate();
             var result = _validator.TestValidate(request);
@@ -77,7 +77,7 @@ namespace Audiochan.Core.UnitTests.Validations.Audios
         [Fact]
         public void ShouldBeInvalid_WhenFileNameHasInvalidFileExtension()
         {
-            var request = new CreateAudioRequestFaker()
+            var request = new CreateAudioCommandFaker()
                 .RuleFor(x => x.FileName, f => f.System.FileName("jpg"))
                 .Generate();
             var result = _validator.TestValidate(request);

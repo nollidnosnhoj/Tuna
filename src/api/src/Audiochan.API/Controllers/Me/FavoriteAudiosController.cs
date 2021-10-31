@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Audiochan.API.Extensions;
 using Audiochan.API.Models;
+using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Interfaces.Services;
 using Audiochan.Core.Users.CheckIfAudioFavorited;
 using Audiochan.Core.Users.GetUserFavoriteAudios;
@@ -26,8 +27,8 @@ namespace Audiochan.API.Controllers.Me
         public FavoriteAudiosController(ICurrentUserService currentUserService, IMediator mediator)
         {
             _mediator = mediator;
-            _currentUsername = currentUserService.GetUsername();
-            _currentUserId = currentUserService.GetUserId();
+            currentUserService.User.TryGetUserId(out _currentUserId);
+            currentUserService.User.TryGetUserName(out _currentUsername);
         }
         
         [HttpGet(Name = "YourFavoriteAudios")]

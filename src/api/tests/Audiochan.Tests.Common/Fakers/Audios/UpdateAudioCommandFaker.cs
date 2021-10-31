@@ -3,9 +3,9 @@ using Bogus;
 
 namespace Audiochan.Tests.Common.Fakers.Audios
 {
-    public sealed class UpdateAudioRequestFaker : Faker<UpdateAudioCommand>
+    public sealed class UpdateAudioCommandFaker : Faker<UpdateAudioCommand>
     {
-        public UpdateAudioRequestFaker(long audioId)
+        public UpdateAudioCommandFaker(long audioId)
         {
             RuleFor(x => x.AudioId, audioId);
             RuleFor(x => x.Title, f => f.Random.String2(3, 30));

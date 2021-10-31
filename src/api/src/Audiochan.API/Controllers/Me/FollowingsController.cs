@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.API.Extensions;
+using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Interfaces.Services;
 using Audiochan.Core.Users.CheckIfFollowing;
 using Audiochan.Core.Users.SetFollow;
@@ -23,7 +24,7 @@ namespace Audiochan.API.Controllers.Me
         public FollowingsController(ICurrentUserService currentUserService, IMediator mediator)
         {
             _mediator = mediator;
-            _currentUserId = currentUserService.GetUserId();
+            currentUserService.User.TryGetUserId(out _currentUserId);
         }
         
         [HttpHead(Name = "CheckIfUserFollowedUser")]

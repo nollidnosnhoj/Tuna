@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Audiochan.Core.Audios.RemoveAudio;
+using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Models;
 using Audiochan.Tests.Common.Fakers.Audios;
 using FluentAssertions;
@@ -15,7 +16,8 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
         [Test]
         public async Task ShouldRemoveAudio()
         {
-            var (ownerId, _) = await RunAsDefaultUserAsync();
+            var owner = await RunAsDefaultUserAsync();
+            owner.TryGetUserId(out var ownerId);
             var audio = new AudioFaker(ownerId).Generate();
             InsertIntoDatabase(audio);
 
@@ -33,7 +35,8 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
         [Test]
         public async Task ShouldNotRemoveAudio_WhenNotTheAuthor()
         {
-            var (ownerId, _) = await RunAsDefaultUserAsync();
+            var owner = await RunAsDefaultUserAsync();
+            owner.TryGetUserId(out var ownerId);
             var audio = new AudioFaker(ownerId).Generate();
             InsertIntoDatabase(audio);
             await RunAsUserAsync();

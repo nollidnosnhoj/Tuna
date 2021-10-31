@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Audiochan.Core.Audios.GetAudioFeed;
+using Audiochan.Core.Common.Extensions;
 using Audiochan.Domain.Entities;
 using Audiochan.Tests.Common.Fakers.Audios;
 using FluentAssertions;
@@ -14,23 +15,26 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
         [Test]
         public async Task SuccessfullyGetAudioFeed()
         {
-            var (oneId, _) = await RunAsUserAsync();
-            var oneAudios = new AudioFaker(oneId).Generate(5);
+            var user1 = await RunAsUserAsync();
+            user1.TryGetUserId(out var user1Id);
+            var oneAudios = new AudioFaker(user1Id).Generate(5);
             InsertRangeIntoDatabase(oneAudios);
             
-            var (twoId, _) = await RunAsUserAsync();
-            var twoAudios = new AudioFaker(twoId).Generate(5);
+            var user2 = await RunAsUserAsync();
+            user2.TryGetUserId(out var user2Id);
+            var twoAudios = new AudioFaker(user2Id).Generate(5);
             InsertRangeIntoDatabase(twoAudios);
             
-            var (userId, _) = await RunAsDefaultUserAsync();
+            var user = await RunAsDefaultUserAsync();
+            user.TryGetUserId(out var userId);
             InsertIntoDatabase(new FollowedUser
             {
                 ObserverId = userId,
-                TargetId = oneId
+                TargetId = user1Id
             }, new FollowedUser
             {
                 ObserverId = userId,
-                TargetId = twoId
+                TargetId = user2Id
             });
 
             var result = await SendAsync(new GetAudioFeedQuery(userId));

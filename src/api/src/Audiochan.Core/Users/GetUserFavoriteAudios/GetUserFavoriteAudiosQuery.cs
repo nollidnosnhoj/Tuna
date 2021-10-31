@@ -19,12 +19,10 @@ namespace Audiochan.Core.Users.GetUserFavoriteAudios
     public class GetUserFavoriteAudiosQueryHandler : IRequestHandler<GetUserFavoriteAudiosQuery, OffsetPagedListDto<AudioDto>>
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly long _currentUserId;
 
-        public GetUserFavoriteAudiosQueryHandler(IUnitOfWork unitOfWork, ICurrentUserService currentUserService)
+        public GetUserFavoriteAudiosQueryHandler(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            _currentUserId = currentUserService.GetUserId();
         }
 
         public async Task<OffsetPagedListDto<AudioDto>> Handle(GetUserFavoriteAudiosQuery query, CancellationToken cancellationToken)

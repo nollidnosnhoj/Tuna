@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Users.GetUserFavoriteAudios;
 using Audiochan.Domain.Entities;
 using Audiochan.Tests.Common.Fakers.Audios;
@@ -16,12 +17,19 @@ namespace Audiochan.Core.IntegrationTests.Features.Users
         public async Task ShouldReturnFavoriteAudioSuccessfully()
         {
             // Assign
-            var (targetId, _) = await RunAsDefaultUserAsync();
+            var target = await RunAsDefaultUserAsync();
+            target.TryGetUserId(out var targetId);    
+            
             var audioFaker = new AudioFaker(targetId);
             var audios = audioFaker
                 .Generate(3);
+            
             InsertIntoDatabase(audios.ToArray());
-            var (observerId, observerUsername) = await RunAsUserAsync();
+            
+            var observer = await RunAsUserAsync();
+            observer.TryGetUserId(out var observerId);
+            observer.TryGetUserName(out var observerUsername);
+            
             var favoriteAudios = new List<FavoriteAudio>();
             foreach (var audio in audios)
             {

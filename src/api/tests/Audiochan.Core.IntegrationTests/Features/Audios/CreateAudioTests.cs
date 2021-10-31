@@ -2,6 +2,8 @@
 using Audiochan.Core.Audios;
 using Audiochan.Core.Audios.GetAudio;
 using Audiochan.Core.Common;
+using Audiochan.Core.Common.Exceptions;
+using Audiochan.Core.Common.Extensions;
 using Audiochan.Tests.Common.Fakers.Audios;
 using FluentAssertions;
 using NUnit.Framework;
@@ -16,8 +18,10 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
         public async Task SuccessfullyCreateAudio()
         {
             // Assign
-            var (userId, userName) = await RunAsDefaultUserAsync();
-            var request = new CreateAudioRequestFaker().Generate();
+            var user = await RunAsDefaultUserAsync();
+            user.TryGetUserId(out var userId);
+            user.TryGetUserName(out var userName);
+            var request = new CreateAudioCommandFaker().Generate();
 
             // Act
             var response = await SendAsync(request);
@@ -35,13 +39,24 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             audio.User.Id.Should().Be(userId);
             audio.User.UserName.Should().Be(userName);
         }
-        
+
+        [Test]
+        public async Task ShouldNotCreate_WhenUnauthenticated()
+        {
+            ClearCurrentUser();
+            var command = new CreateAudioCommandFaker().Generate();
+            await FluentActions
+                .Awaiting(() => SendAsync(command))
+                .Should()
+                .ThrowExactlyAsync<UnauthorizedException>();
+        }
+
         [Test]
         public async Task ShouldCreateCacheSuccessfully()
         {
             // Assign
             await RunAsDefaultUserAsync();
-            var request = new CreateAudioRequestFaker()
+            var request = new CreateAudioCommandFaker()
                 .Generate();
             var response = await SendAsync(request);
             await SendAsync(new GetAudioQuery(response.Data)); // trigger the caching

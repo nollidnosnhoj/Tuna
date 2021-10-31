@@ -6,6 +6,7 @@ using Ardalis.Specification;
 using Audiochan.Core.Audios.GetAudio;
 using Audiochan.Core.Common;
 using Audiochan.Core.Common.Attributes;
+using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Interfaces.Persistence;
 using Audiochan.Core.Common.Interfaces.Services;
 using Audiochan.Core.Common.Models;
@@ -102,7 +103,7 @@ namespace Audiochan.Core.Audios.UpdateAudio
         public async Task<Result<AudioDto>> Handle(UpdateAudioCommand command,
             CancellationToken cancellationToken)
         {
-            var currentUserId = _currentUserService.GetUserId();
+            _currentUserService.User.TryGetUserId(out var currentUserId);
 
             var audio = await _unitOfWork.Audios
                 .GetFirstAsync(new LoadAudioForUpdateSpecification(command.AudioId), cancellationToken);

@@ -49,7 +49,7 @@ namespace Audiochan.Core.Users.UpdatePassword
         public UpdatePasswordCommandHandler(ICurrentUserService currentUserService, IUnitOfWork unitOfWork, 
             IPasswordHasher passwordHasher)
         {
-            _currentUserId = currentUserService.GetUserId();
+            currentUserService.User.TryGetUserId(out _currentUserId);
             _unitOfWork = unitOfWork;
             _passwordHasher = passwordHasher;
         }

@@ -41,7 +41,7 @@ namespace Audiochan.Core.Users.UpdateUsername
         public UpdateUsernameCommandHandler(ICurrentUserService currentUserService,
             IUnitOfWork unitOfWork)
         {
-            _currentUserId = currentUserService.GetUserId();
+            currentUserService.User.TryGetUserId(out _currentUserId);
             _unitOfWork = unitOfWork;
         }
 

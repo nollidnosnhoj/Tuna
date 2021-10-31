@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Audiochan.Core.Audios;
 using Audiochan.Core.Audios.GetAudio;
 using Audiochan.Core.Common;
+using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Users;
 using Audiochan.Tests.Common.Fakers.Audios;
 using FluentAssertions;
@@ -18,7 +19,8 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
         public async Task ShouldNotGetAudio_WhenAudioIdIsInvalid()
         {
             // Assign
-            var (ownerId, _) = await RunAsDefaultUserAsync();
+            var owner = await RunAsDefaultUserAsync();
+            owner.TryGetUserId(out var ownerId);
             var audio = new AudioFaker(ownerId).Generate();
             
             InsertIntoDatabase(audio);
@@ -34,7 +36,8 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
         public async Task ShouldSuccessfullyGetAudio()
         {
             // Assign
-            var (userId, _) = await RunAsDefaultUserAsync();
+            var user = await RunAsDefaultUserAsync();
+            user.TryGetUserId(out var userId);
 
             var audio = new AudioFaker(userId).Generate();
             InsertIntoDatabase(audio);
@@ -65,7 +68,8 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
         public async Task ShouldCacheSuccessfully()
         {
             // Assign
-            var (userId, _) = await RunAsDefaultUserAsync();
+            var user = await RunAsDefaultUserAsync();
+            user.TryGetUserId(out var userId);
 
             var audio = new AudioFaker(userId).Generate();
             InsertIntoDatabase(audio);

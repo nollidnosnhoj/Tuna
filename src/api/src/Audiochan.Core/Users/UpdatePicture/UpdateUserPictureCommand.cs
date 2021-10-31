@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Audiochan.Core.Common;
 using Audiochan.Core.Common.Attributes;
+using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Interfaces;
 using Audiochan.Core.Common.Interfaces.Persistence;
 using Audiochan.Core.Common.Interfaces.Services;
@@ -28,7 +29,7 @@ namespace Audiochan.Core.Users.UpdatePicture
             IRandomIdGenerator randomIdGenerator)
         {
             _imageService = imageService;
-            _currentUserId = currentUserService.GetUserId();
+            currentUserService.User.TryGetUserId(out _currentUserId);
             _unitOfWork = unitOfWork;
             _randomIdGenerator = randomIdGenerator;
         }
