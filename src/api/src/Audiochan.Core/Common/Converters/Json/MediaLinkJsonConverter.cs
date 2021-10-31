@@ -33,11 +33,6 @@ namespace Audiochan.Core.Common.Converters.Json
         protected override string BaseUrl => MediaLinkConstants.AUDIO_PICTURE;
     }
 
-    public class PlaylistPictureJsonConverter : MediaLinkJsonConverter
-    {
-        protected override string BaseUrl => MediaLinkConstants.PLAYLIST_PICTURE;
-    }
-
     public class UserPictureJsonConverter : MediaLinkJsonConverter
     {
         protected override string BaseUrl => MediaLinkConstants.USER_PICTURE;
