@@ -3,7 +3,7 @@ import React from "react";
 import { z } from "zod";
 import InputField from "~/components/form-inputs/InputField";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { zodResolver } from "@hookform/resolvers/zod/dist/zod";
 
 export const updateEmailValidationSchema = z.object({
   email: z
