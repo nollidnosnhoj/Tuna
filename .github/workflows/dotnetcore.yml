@@ -19,7 +19,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: 5.0.x
+          dotnet-version: 6.0.x
       - name: Restore dependencies with dotnet
         run: dotnet restore ./src/api/Audiochan.sln
       - name: Build with dotnet
