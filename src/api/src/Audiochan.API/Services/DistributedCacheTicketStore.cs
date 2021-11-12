@@ -36,11 +36,12 @@ namespace Audiochan.API.Services
             await _cache.SetAsync(key, bytes, options);
         }
 
-        public async Task<AuthenticationTicket> RetrieveAsync(string key)
+        public async Task<AuthenticationTicket?> RetrieveAsync(string key)
         {
             var bytes = await _cache.GetAsync(key);
-            if (bytes is null) return default!;
-            return TicketSerializer.Default.Deserialize(bytes)!;
+            return bytes is null 
+                ? null 
+                : TicketSerializer.Default.Deserialize(bytes)!;
         }
 
         public async Task RemoveAsync(string key)

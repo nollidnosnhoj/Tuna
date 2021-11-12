@@ -1,5 +1,4 @@
-﻿using System.Data;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Extensions;
@@ -8,7 +7,6 @@ using Audiochan.Domain.Abstractions;
 using Audiochan.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Audiochan.Infrastructure.Persistence
 {
@@ -54,7 +52,6 @@ namespace Audiochan.Infrastructure.Persistence
         {
             foreach (var entry in ChangeTracker.Entries<IAudited>())
             {
-                if (entry is null) continue;
                 var now = _dateTimeProvider.Now;
                 if (entry.State == EntityState.Added && entry.Entity.Created == default)
                 {
@@ -72,8 +69,6 @@ namespace Audiochan.Infrastructure.Persistence
         {
             foreach (var entry in ChangeTracker.Entries<ISoftDeletable>())
             {
-                if (entry is null) continue;
-                
                 if (entry.State != EntityState.Deleted) continue;
                 
                 entry.State = EntityState.Modified;
@@ -85,22 +80,22 @@ namespace Audiochan.Infrastructure.Persistence
         {
             foreach (var entity in modelBuilder.Model.GetEntityTypes())
             {
-                entity.SetTableName(entity.GetTableName().ToSnakeCase());
+                entity.SetTableName(entity.GetTableName()!.ToSnakeCase());
 
                 foreach (var property in entity.GetProperties())
                 {
-                    var storeObjectId = StoreObjectIdentifier.Table(entity.GetTableName(), entity.GetSchema());
-                    property.SetColumnName(property.GetColumnName(storeObjectId).ToSnakeCase());
+                    var storeObjectId = StoreObjectIdentifier.Table(entity.GetTableName()!, entity.GetSchema());
+                    property.SetColumnName(property.GetColumnName(storeObjectId)!.ToSnakeCase());
                 }
 
                 foreach (var property in entity.GetKeys())
                 {
-                    property.SetName(property.GetName().ToSnakeCase());
+                    property.SetName(property.GetName()!.ToSnakeCase());
                 }
 
                 foreach (var property in entity.GetForeignKeys())
                 {
-                    property.SetConstraintName(property.GetConstraintName().ToSnakeCase());
+                    property.SetConstraintName(property.GetConstraintName()!.ToSnakeCase());
                 }
 
                 foreach (var index in entity.GetIndexes())

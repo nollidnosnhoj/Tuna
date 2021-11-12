@@ -18,7 +18,7 @@ namespace Audiochan.API.Extensions.ConfigurationExtensions
                 })
                 .AddJsonOptions(configuration =>
                 {
-                    configuration.JsonSerializerOptions.IgnoreNullValues = jsonSerializerOptions.IgnoreNullValues;
+                    configuration.JsonSerializerOptions.DefaultIgnoreCondition = jsonSerializerOptions.DefaultIgnoreCondition;
                     configuration.JsonSerializerOptions.PropertyNameCaseInsensitive =
                         jsonSerializerOptions.PropertyNameCaseInsensitive;
                     configuration.JsonSerializerOptions.PropertyNamingPolicy =

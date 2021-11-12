@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Audiochan.API.Extensions.ConfigurationExtensions;
 using Audiochan.API.Middlewares;
 using Audiochan.API.Services;
@@ -34,7 +35,7 @@ namespace Audiochan.API
 
             var jsonSerializerOptions = new JsonSerializerOptions()
             {
-                IgnoreNullValues = false,
+                DefaultIgnoreCondition = JsonIgnoreCondition.Never,
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                 PropertyNameCaseInsensitive = false
             };
@@ -44,7 +45,7 @@ namespace Audiochan.API
             services.AddCore();
             services.Configure<JsonSerializerOptions>(options =>
             {
-                options.IgnoreNullValues = jsonSerializerOptions.IgnoreNullValues;
+                options.DefaultIgnoreCondition = jsonSerializerOptions.DefaultIgnoreCondition;
                 options.PropertyNamingPolicy = jsonSerializerOptions.PropertyNamingPolicy;
                 options.PropertyNameCaseInsensitive = jsonSerializerOptions.PropertyNameCaseInsensitive;
             });
