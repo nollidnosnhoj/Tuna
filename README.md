@@ -1,6 +1,6 @@
 # Audiochan [Name WIP]
 
-Audiochan is a platform for free and non-copyright music created by independent artists.
+**NOTE: I am rebuilding this project into a microservice for learning purposes. You can follow the project [here](https://github.com/nollidnosnhoj/Audiochan).**
 
 ## Story
 
