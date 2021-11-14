@@ -1,7 +1,5 @@
 # Audiochan [Name WIP]
 
-**NOTE: I am rebuilding this project into a microservice for learning purposes. You can follow the project [here](https://github.com/nollidnosnhoj/Audiochan).**
-
 ## Story
 
 This is a personal project I did during COVID to help me understand how to develop full-stack web applications.
