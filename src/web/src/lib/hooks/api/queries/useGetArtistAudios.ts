@@ -12,7 +12,7 @@ type UseGetUserAudiosParams = {
   size?: number;
 };
 
-export function useGetUserAudios(
+export function useGetArtistAudios(
   username: string,
   params: UseGetUserAudiosParams = {},
   options: UseInfinitePaginationOptions<Audio> = {}
@@ -21,7 +21,7 @@ export function useGetUserAudios(
     async (offset: number) => {
       const { data } = await request<OffsetPagedList<Audio>>({
         method: "get",
-        url: `users/${username}/audios`,
+        url: `artists/${username}/audios`,
         params: {
           ...params,
           offset,

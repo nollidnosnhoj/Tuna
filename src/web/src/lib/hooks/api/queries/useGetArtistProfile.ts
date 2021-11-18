@@ -4,14 +4,14 @@ import request from "~/lib/http";
 import { ErrorResponse, Profile } from "~/lib/types";
 import { GET_PROFILE_QUERY_KEY } from "~/lib/hooks/api/keys";
 
-export function useGetProfile(
+export function useGetArtistProfile(
   username: string,
   options: UseQueryOptions<Profile, ErrorResponse> = {}
 ): UseQueryResult<Profile, ErrorResponse> {
   const fetcher = useCallback(async () => {
     const { data } = await request<Profile>({
       method: "get",
-      url: `users/${username}`,
+      url: `artists/${username}`,
     });
 
     return data;

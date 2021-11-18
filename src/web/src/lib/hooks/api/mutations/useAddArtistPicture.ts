@@ -3,7 +3,7 @@ import request from "~/lib/http";
 import { ErrorResponse, ImageUploadResponse, Profile } from "~/lib/types";
 import { GET_PROFILE_QUERY_KEY, ME_QUERY_KEY } from "~/lib/hooks/api/keys";
 
-export function useAddUserPicture(
+export function useAddArtistPicture(
   username: string
 ): UseMutationResult<ImageUploadResponse, ErrorResponse, string> {
   const queryClient = useQueryClient();

@@ -17,12 +17,12 @@ import NextLink from "next/link";
 import React from "react";
 import Page from "~/components/Page";
 import {
-  useAddUserPicture,
+  useAddArtistPicture,
   useFollow,
-  useGetProfile,
-  useGetUserAudios,
+  useGetArtistProfile,
+  useGetArtistAudios,
   useGetUserFavoriteAudios,
-  useRemoveUserPicture,
+  useRemoveArtistProfile,
 } from "~/lib/hooks/api";
 import request from "~/lib/http";
 import { Profile } from "~/lib/types";
@@ -42,10 +42,10 @@ function ProfilePicture(props: { profile: Profile }) {
   const { user } = useUser();
 
   const { mutateAsync: addPictureAsync, isLoading: isAddingPicture } =
-    useAddUserPicture(profile.userName);
+    useAddArtistPicture(profile.userName);
 
   const { mutateAsync: removePictureAsync, isLoading: isRemovingPicture } =
-    useRemoveUserPicture(profile.userName);
+    useRemoveArtistProfile(profile.userName);
   return (
     <PictureController
       title={profile.userName}
@@ -88,14 +88,14 @@ export const getServerSideProps: GetServerSideProps<ProfilePageProps> = async (
 
 export default function UserProfileNextPage(props: ProfilePageProps) {
   const { user: currentUser } = useUser();
-  const { data: profile } = useGetProfile(props.username, {
+  const { data: profile } = useGetArtistProfile(props.username, {
     staleTime: 1000,
     initialData: props.profile,
   });
 
   const { isFollowing, follow } = useFollow(profile!.id);
 
-  const { items: latestAudios } = useGetUserAudios(
+  const { items: latestAudios } = useGetArtistAudios(
     profile?.userName ?? "",
     { size: 5 },
     { staleTime: 1000 * 60 * 5 }
