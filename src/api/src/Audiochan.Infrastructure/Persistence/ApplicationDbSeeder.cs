@@ -10,7 +10,7 @@ namespace Audiochan.Infrastructure.Persistence
 {
     public static class ApplicationDbSeeder
     {
-        public static async Task<long> UserSeedAsync(ApplicationDbContext dbContext, IPasswordHasher passwordHasher)
+        public static async Task SeedDefaultArtistAsync(ApplicationDbContext dbContext, IPasswordHasher passwordHasher)
         {
             var artistId = await dbContext.Artists
                 .Where(u => u.UserName == "superuser")
@@ -29,10 +29,29 @@ namespace Audiochan.Infrastructure.Persistence
                 artistId = superuser.Id;
             }
 
-            return artistId;
+            await AudioSeedAsync(dbContext, artistId);
+        }
+        
+        public static async Task SeedDefaultUserAsync(ApplicationDbContext dbContext, IPasswordHasher passwordHasher)
+        {
+            var userId = await dbContext.Users
+                .Where(u => u.UserName == "defaultuser")
+                .Select(u => u.Id)
+                .SingleOrDefaultAsync();
+            
+            if (userId == default)
+            {
+                // TODO: Do not hardcode superuser password when deploying into production haha
+                var passwordHash = passwordHasher.Hash("Password1");
+                
+                var user = new User("defaultuser", "default@localhost", passwordHash);
+
+                await dbContext.Users.AddAsync(user);
+                await dbContext.SaveChangesAsync();
+            }
         }
 
-        public static async Task AudioSeedAsync(ApplicationDbContext dbContext, long artistId)
+        private static async Task AudioSeedAsync(ApplicationDbContext dbContext, long artistId)
         {
             if (!await dbContext.Audios.AnyAsync(a => a.ArtistId == artistId))
             {

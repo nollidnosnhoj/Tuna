@@ -31,6 +31,20 @@ namespace Audiochan.Core.Common.Extensions
             userName = "";
             return false;
         }
+        
+        public static bool TryGetEmail(this ClaimsPrincipal? principal, out string email)
+        {
+            var claim = principal?.FindFirst(ClaimTypes.Email);
+
+            if (claim is not null && !string.IsNullOrWhiteSpace(claim.Value))
+            {
+                email = claim.Value;
+                return true;
+            }
+
+            email = "";
+            return false;
+        }
 
         public static bool TryGetIsArtist(this ClaimsPrincipal? principal, out bool isArtist)
         {
@@ -46,7 +60,7 @@ namespace Audiochan.Core.Common.Extensions
             return false;
         }
 
-        public static long GetUserId(this ClaimsPrincipal? principal)
+        public static long GetUserId(this ClaimsPrincipal principal)
         {
             if (!principal.TryGetUserId(out var userId))
             {
@@ -56,7 +70,7 @@ namespace Audiochan.Core.Common.Extensions
             return userId;
         }
 
-        public static string GetUserName(this ClaimsPrincipal? principal)
+        public static string GetUserName(this ClaimsPrincipal principal)
         {
             if (!principal.TryGetUserName(out var userName))
             {
@@ -65,8 +79,18 @@ namespace Audiochan.Core.Common.Extensions
 
             return userName;
         }
+        
+        public static string GetEmail(this ClaimsPrincipal principal)
+        {
+            if (!principal.TryGetEmail(out var email))
+            {
+                throw new UnauthorizedException();
+            }
 
-        public static bool GetIsArtist(this ClaimsPrincipal? principal)
+            return email;
+        }
+
+        public static bool GetIsArtist(this ClaimsPrincipal principal)
         {
             if (!principal.TryGetIsArtist(out var isArtist))
             {

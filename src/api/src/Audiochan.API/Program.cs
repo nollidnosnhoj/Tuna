@@ -40,11 +40,8 @@ namespace Audiochan.API
                     {
                         Log.Information("Seeding users and default audios.");
                         var pwHasher = services.GetRequiredService<IPasswordHasher>();
-                        var userId = await ApplicationDbSeeder.UserSeedAsync(context, pwHasher);
-                        if (userId > 0)
-                        {
-                            await ApplicationDbSeeder.AudioSeedAsync(context, userId);
-                        }
+                        await ApplicationDbSeeder.SeedDefaultUserAsync(context, pwHasher);
+                        await ApplicationDbSeeder.SeedDefaultArtistAsync(context, pwHasher);
                     }
                 }
 
