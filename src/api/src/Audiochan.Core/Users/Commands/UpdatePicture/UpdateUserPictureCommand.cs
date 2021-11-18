@@ -35,23 +35,23 @@ namespace Audiochan.Core.Users.Commands
 
         public async Task<Result<ImageUploadResponse>> Handle(UpdateUserPictureCommand command, CancellationToken cancellationToken)
         {
-            var user = await _unitOfWork.Users.FindAsync(command.UserId, cancellationToken);
+            var artist = await _unitOfWork.Artists.FindAsync(command.UserId, cancellationToken);
 
-            if (user!.Id != _currentUserId)
+            if (artist!.Id != _currentUserId)
                 return Result<ImageUploadResponse>.Forbidden();
         
             var blobName = string.Empty;
             if (string.IsNullOrEmpty(command.Data))
             {
-                await RemoveOriginalPicture(user.Picture, cancellationToken);
-                user.Picture = null;
+                await RemoveOriginalPicture(artist.Picture, cancellationToken);
+                artist.Picture = null;
             }
             else
             {
                 blobName = $"{await _randomIdGenerator.GenerateAsync(size: 15)}.jpg";
                 await _imageService.UploadImage(command.Data, AssetContainerConstants.USER_PICTURES, blobName, cancellationToken);
-                await RemoveOriginalPicture(user.Picture, cancellationToken);
-                user.Picture = blobName;
+                await RemoveOriginalPicture(artist.Picture, cancellationToken);
+                artist.Picture = blobName;
             }
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);

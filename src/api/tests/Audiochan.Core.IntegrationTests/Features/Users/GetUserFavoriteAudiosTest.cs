@@ -18,7 +18,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Users
         public async Task ShouldReturnFavoriteAudioSuccessfully()
         {
             // Assign
-            var target = await RunAsDefaultUserAsync();
+            var target = await RunAsDefaultUserAsync(true);
             target.TryGetUserId(out var targetId);    
             
             var audioFaker = new AudioFaker(targetId);

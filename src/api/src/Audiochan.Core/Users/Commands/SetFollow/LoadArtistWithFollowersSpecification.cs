@@ -4,9 +4,9 @@ using Audiochan.Domain.Entities;
 
 namespace Audiochan.Core.Users.Commands
 {
-    public sealed class LoadUserWithFollowersSpecification : Specification<User>
+    public sealed class LoadArtistWithFollowersSpecification : Specification<Artist>
     {
-        public LoadUserWithFollowersSpecification(long targetId, long observerId)
+        public LoadArtistWithFollowersSpecification(long targetId, long observerId)
         {
             if (observerId > 0)
             {

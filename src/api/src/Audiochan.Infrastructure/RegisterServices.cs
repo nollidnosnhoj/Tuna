@@ -45,10 +45,7 @@ namespace Audiochan.Infrastructure
                     o.EnableSensitiveDataLogging();
                 }
             });
-
-            services.AddScoped(typeof(IEntityRepository<>), typeof(EfRepository<>));
-            services.AddScoped<IAudioRepository, AudioRepository>();
-            services.AddScoped<IUserRepository, UserRepository>();
+            
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             
             return services;

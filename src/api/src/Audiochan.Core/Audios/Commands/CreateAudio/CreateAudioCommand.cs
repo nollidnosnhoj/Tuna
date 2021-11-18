@@ -15,7 +15,7 @@ using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Audios.Commands
 {
-    [Authorize]
+    [Authorize(RequiresArtist = true)]
     public class CreateAudioCommand : IRequest<Result<long>>
     {
         public string UploadId { get; init; } = null!;
@@ -27,7 +27,6 @@ namespace Audiochan.Core.Audios.Commands
         public List<string> Tags { get; init; } = new();
         public string BlobName => UploadId + Path.GetExtension(FileName);
     }
-
 
     public class CreateAudioCommandHandler : IRequestHandler<CreateAudioCommand, Result<long>>
     {
@@ -62,7 +61,7 @@ namespace Audiochan.Core.Audios.Commands
             
             var audio = new Audio
             {
-                UserId = currentUserId,
+                ArtistId = currentUserId,
                 Size = command.FileSize,
                 Duration = command.Duration,
                 Title = command.Title,

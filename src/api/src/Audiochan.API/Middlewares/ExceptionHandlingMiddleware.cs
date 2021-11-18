@@ -2,6 +2,7 @@
 using System.Text.Json;
 using System.Threading.Tasks;
 using Audiochan.API.Models;
+using Audiochan.Core.Common.Exceptions;
 using FluentValidation;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -53,6 +54,12 @@ namespace Audiochan.API.Middlewares
             {
                 case ValidationException vex:
                     response = ErrorApiResponse.Invalid(vex.Errors);
+                    break;
+                case UnauthorizedException:
+                    response = ErrorApiResponse.Unauthorized();
+                    break;
+                case ForbiddenAccessException:
+                    response = ErrorApiResponse.Forbidden();
                     break;
                 default:
                     var message = _env.IsDevelopment()

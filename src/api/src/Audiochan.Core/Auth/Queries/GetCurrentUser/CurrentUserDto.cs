@@ -9,5 +9,6 @@ namespace Audiochan.Core.Auth.Queries
         public long Id { get; init; }
         public string UserName { get; init; } = null!;
         public string Email { get; init; } = null!;
+        public bool IsArtist { get; init; }
     }
 }

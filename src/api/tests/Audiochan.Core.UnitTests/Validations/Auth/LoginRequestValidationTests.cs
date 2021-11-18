@@ -2,7 +2,7 @@
 using Audiochan.Core.Auth.Commands;
 using FluentValidation;
 using FluentValidation.TestHelper;
-using Xunit;
+using NUnit.Framework;
 
 namespace Audiochan.Core.UnitTests.Validations.Auth
 {
@@ -15,14 +15,14 @@ namespace Audiochan.Core.UnitTests.Validations.Auth
             _validator = new LoginCommandValidator();
         }
 
-        [Fact]
+        [Test]
         public void CheckIfUsernameIsEmpty()
         {
             var result = _validator.TestValidate(new LoginCommand());
             result.ShouldHaveValidationErrorFor(x => x.Login);
         }
 
-        [Fact]
+        [Test]
         public void CheckIfPasswordIsEmpty()
         {
             var result = _validator.TestValidate(new LoginCommand());

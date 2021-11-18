@@ -6,10 +6,10 @@ namespace Audiochan.Core.Audios.Queries
 {
     public sealed class GetAudioFeedSpecification : Specification<Audio>
     {
-        public GetAudioFeedSpecification(long[] userIds)
+        public GetAudioFeedSpecification(long[] artistIds)
         {
             Query.AsNoTracking();
-            Query.Where(a => userIds.Contains(a.UserId));
+            Query.Where(a => artistIds.Contains(a.ArtistId));
             Query.OrderByDescending(a => a.Created);
         }
     }

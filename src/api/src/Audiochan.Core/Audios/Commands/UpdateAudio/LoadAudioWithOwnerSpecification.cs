@@ -7,7 +7,7 @@ namespace Audiochan.Core.Audios.Commands
     {
         public LoadAudioWithOwnerSpecification(long audioId)
         {
-            Query.Include(a => a.User);
+            Query.Include(a => a.Artist);
             Query.Where(a => a.Id == audioId);
         }
     }

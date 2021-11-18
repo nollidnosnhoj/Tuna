@@ -35,8 +35,8 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
         public async Task ShouldSuccessfullyGetAudio()
         {
             // Assign
-            var user = await RunAsDefaultUserAsync();
-            user.TryGetUserId(out var userId);
+            var artist = await RunAsDefaultUserAsync(true);
+            artist.TryGetUserId(out var userId);
 
             var audio = new AudioFaker(userId).Generate();
             InsertIntoDatabase(audio);
@@ -58,17 +58,17 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             result.Src.Should().Be(audio.File);
             result.Size.Should().Be(audio.Size);
             result.LastModified.Should().BeNull();
-            result.User.Should().NotBeNull();
-            result.User.Should().BeOfType<UserDto>();
-            result.User.Id.Should().Be(userId);
+            result.Artist.Should().NotBeNull();
+            result.Artist.Should().BeOfType<ArtistDto>();
+            result.Artist.Id.Should().Be(userId);
         }
 
         [Test]
         public async Task ShouldCacheSuccessfully()
         {
             // Assign
-            var user = await RunAsDefaultUserAsync();
-            user.TryGetUserId(out var userId);
+            var artist = await RunAsDefaultUserAsync(true);
+            artist.TryGetUserId(out var userId);
 
             var audio = new AudioFaker(userId).Generate();
             InsertIntoDatabase(audio);
@@ -88,9 +88,9 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             cacheResult.Tags.Count.Should().Be(result!.Tags.Count);
             cacheResult.Size.Should().Be(result!.Size);
             result.LastModified.Should().BeNull();
-            result.User.Should().NotBeNull();
-            result.User.Should().BeOfType<UserDto>();
-            result.User.Id.Should().Be(userId);
+            result.Artist.Should().NotBeNull();
+            result.Artist.Should().BeOfType<ArtistDto>();
+            result.Artist.Id.Should().Be(userId);
         }
     }
 }

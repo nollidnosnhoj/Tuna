@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Audiochan.Core.Common.Attributes;
 using Audiochan.Core.Common.Exceptions;
 using Audiochan.Core.Common.Extensions;
+using Audiochan.Core.Common.Interfaces.Persistence;
 using Audiochan.Core.Common.Interfaces.Services;
 using MediatR;
 
@@ -14,28 +15,45 @@ namespace Audiochan.Core.Common.Pipelines
         where TRequest : notnull
     {
         private readonly ICurrentUserService _currentUserService;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public AuthorizationPipelineBehavior(ICurrentUserService currentUserService)
+        public AuthorizationPipelineBehavior(ICurrentUserService currentUserService, IUnitOfWork unitOfWork)
         {
             _currentUserService = currentUserService;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, 
             RequestHandlerDelegate<TResponse> next)
         {
-            var authorizationAttributes = request.GetType().GetCustomAttributes<AuthorizeAttribute>();
+            var authorizationAttributes = request.GetType()
+                .GetCustomAttributes<AuthorizeAttribute>().ToList();
 
-            if (!authorizationAttributes.Any())
+            // If a command requires authorization
+            if (authorizationAttributes.Any())
             {
-                return await next();
+                if (_currentUserService.User is null)
+                    throw new UnauthorizedException();
+                
+                _currentUserService.User.TryGetUserId(out var userId);
+
+                var artistAuthorizationAttributes = authorizationAttributes
+                    .Where(a => a.RequiresArtist);
+
+                // If a command requires artist authorization
+                if (artistAuthorizationAttributes.Any())
+                {
+                    var isArtist = await _unitOfWork.Artists
+                        .ExistsAsync(u => u.Id == userId, cancellationToken);
+                    
+                    if (!isArtist)
+                    {
+                        throw new ForbiddenAccessException();
+                    }
+                }
             }
 
-            if (_currentUserService.User is not null)
-            {
-                return await next();
-            }
-
-            throw new UnauthorizedException();
+            return await next();
         }
     }
 }

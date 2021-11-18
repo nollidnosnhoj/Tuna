@@ -18,7 +18,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
         public async Task SuccessfullyCreateAudio()
         {
             // Assign
-            var user = await RunAsDefaultUserAsync();
+            var user = await RunAsDefaultUserAsync(true);
             user.TryGetUserId(out var userId);
             user.TryGetUserName(out var userName);
             var request = new CreateAudioCommandFaker().Generate();
@@ -35,9 +35,9 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             audio.Description.Should().Be(request.Description);
             audio.Duration.Should().Be(request.Duration);
             audio.Size.Should().Be(request.FileSize);
-            audio.User.Should().NotBeNull();
-            audio.User.Id.Should().Be(userId);
-            audio.User.UserName.Should().Be(userName);
+            audio.Artist.Should().NotBeNull();
+            audio.Artist.Id.Should().Be(userId);
+            audio.Artist.UserName.Should().Be(userName);
         }
 
         [Test]
@@ -52,10 +52,21 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
         }
 
         [Test]
+        public async Task ShouldNotCreate_WhenRegularUser()
+        {
+            await RunAsDefaultUserAsync(false);
+            var request = new CreateAudioCommandFaker().Generate();
+            await FluentActions
+                .Awaiting(() => SendAsync(request))
+                .Should()
+                .ThrowExactlyAsync<ForbiddenAccessException>();
+        }
+
+        [Test]
         public async Task ShouldCreateCacheSuccessfully()
         {
             // Assign
-            await RunAsDefaultUserAsync();
+            await RunAsDefaultUserAsync(true);
             var request = new CreateAudioCommandFaker()
                 .Generate();
             var response = await SendAsync(request);

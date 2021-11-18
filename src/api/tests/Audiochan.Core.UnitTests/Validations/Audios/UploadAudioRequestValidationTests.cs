@@ -8,7 +8,7 @@ using FluentAssertions;
 using FluentValidation;
 using FluentValidation.TestHelper;
 using Microsoft.Extensions.Options;
-using Xunit;
+using NUnit.Framework;
 
 namespace Audiochan.Core.UnitTests.Validations.Audios
 {
@@ -27,7 +27,7 @@ namespace Audiochan.Core.UnitTests.Validations.Audios
             _randomizer = new Randomizer();
         }
 
-        [Fact]
+        [Test]
         public async Task ShouldValidateSuccessfully()
         {
             // Assign
@@ -44,7 +44,7 @@ namespace Audiochan.Core.UnitTests.Validations.Audios
             result.IsValid.Should().BeTrue();
         }
         
-        [Fact]
+        [Test]
         public async Task ShouldNotValidate_WhenRequiredFieldsAreMissing()
         {
             // Assign
@@ -59,7 +59,7 @@ namespace Audiochan.Core.UnitTests.Validations.Audios
             result.ShouldHaveValidationErrorFor(x => x.FileSize);
         }
 
-        [Fact]
+        [Test]
         public async Task ShouldNotValidate_WhenFileNameHasNoExtension()
         {
             // Assign
@@ -73,7 +73,7 @@ namespace Audiochan.Core.UnitTests.Validations.Audios
             result.ShouldHaveValidationErrorFor(x => x.FileName);
         }
         
-        [Fact]
+        [Test]
         public async Task ShouldNotValidate_WhenFileNameHaveInvalidContentType()
         {
             // Assign
@@ -87,7 +87,7 @@ namespace Audiochan.Core.UnitTests.Validations.Audios
             result.ShouldHaveValidationErrorFor(x => x.FileName);
         }
         
-        [Fact]
+        [Test]
         public async Task ShouldNotValidate_WhenFileSizeIsTooLarge()
         {
             // Assign

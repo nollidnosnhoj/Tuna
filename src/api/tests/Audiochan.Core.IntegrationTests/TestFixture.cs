@@ -224,12 +224,12 @@ namespace Audiochan.Core.IntegrationTests
             _user = null;
         }
 
-        public static async Task<ClaimsPrincipal> RunAsDefaultUserAsync()
+        public static async Task<ClaimsPrincipal> RunAsDefaultUserAsync(bool isArtist = false)
         {
-            return await RunAsUserAsync("defaultuser", "Testing1234!");
+            return await RunAsUserAsync("defaultuser", "Testing1234!", isArtist);
         }
 
-        public static async Task<ClaimsPrincipal> RunAsUserAsync(string userName = "", string password = "", UserRole role = UserRole.Regular)
+        public static async Task<ClaimsPrincipal> RunAsUserAsync(string userName = "", string password = "", bool isArtist = false)
         {
             using var scope =  _scopeFactory.CreateScope();
 
@@ -257,14 +257,20 @@ namespace Audiochan.Core.IntegrationTests
             
             var pwHasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
             password = pwHasher.Hash(password);
-            
-            var newUser = new User(userName, userName + "@localhost", password, role);
 
+            if (isArtist)
+            {
+                var newArtist = new Artist(userName, userName + "@localhost", password);
+                await dbContext.Artists.AddAsync(newArtist);
+                await dbContext.SaveChangesAsync();
+                _user = CurrentUserServiceMock.CreateMockPrincipal(newArtist.Id, newArtist.UserName);
+                return _user;
+            }
+            
+            var newUser = new User(userName, userName + "@localhost", password);
             await dbContext.Users.AddAsync(newUser);
             await dbContext.SaveChangesAsync();
-
             _user = CurrentUserServiceMock.CreateMockPrincipal(newUser.Id, newUser.UserName);
-            
             return _user;
         }
 

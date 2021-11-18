@@ -3,7 +3,7 @@ using Audiochan.Core.Users.Commands;
 using FluentAssertions;
 using FluentValidation;
 using FluentValidation.TestHelper;
-using Xunit;
+using NUnit.Framework;
 
 namespace Audiochan.Core.UnitTests.Validations.Users
 {
@@ -17,9 +17,9 @@ namespace Audiochan.Core.UnitTests.Validations.Users
         }
 
         [Theory]
-        [InlineData("applesauce@example.com")]
-        [InlineData("example@example.com")]
-        [InlineData("testuser123@example.com")]
+        [TestCase("applesauce@example.com")]
+        [TestCase("example@example.com")]
+        [TestCase("testuser123@example.com")]
         public void ShouldBeValid(string email)
         {
             var request = new UpdateEmailCommand {NewEmail = email};
@@ -27,7 +27,7 @@ namespace Audiochan.Core.UnitTests.Validations.Users
             testResults.IsValid.Should().BeTrue();
         }
         
-        [Fact]
+        [Test]
         public void ShouldNotBeValid_WhenEmailIsMissing()
         {
             var request = new UpdateEmailCommand {NewEmail = ""};
@@ -36,8 +36,8 @@ namespace Audiochan.Core.UnitTests.Validations.Users
         }
         
         [Theory]
-        [InlineData("testuser123")]
-        [InlineData("example123")]
+        [TestCase("testuser123")]
+        [TestCase("example123")]
         public void ShouldNotBeValid_WhenEmailIsInvalid(string email)
         {
             var request = new UpdateEmailCommand {NewEmail = email};

@@ -62,7 +62,7 @@ namespace Audiochan.Core.Audios.Commands
             if (audio == null)
                 return Result<AudioDto>.NotFound<Audio>();
 
-            if (audio.UserId != currentUserId)
+            if (audio.ArtistId != currentUserId)
                 return Result<AudioDto>.Forbidden();
             
             UpdateAudioFromCommandAsync(audio, command, cancellationToken);

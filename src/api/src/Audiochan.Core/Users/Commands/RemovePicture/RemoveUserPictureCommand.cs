@@ -25,16 +25,16 @@ namespace Audiochan.Core.Users.Commands
 
         public async Task<Result> Handle(RemoveUserPictureCommand command, CancellationToken cancellationToken)
         {
-            var user = await _unitOfWork.Users.FindAsync(command.UserId, cancellationToken);
+            var artist = await _unitOfWork.Artists.FindAsync(command.UserId, cancellationToken);
 
-            if (user!.Id != command.UserId)
+            if (artist!.Id != command.UserId)
                 return Result<ImageUploadResponse>.Forbidden();
 
-            if (string.IsNullOrEmpty(user.Picture)) return Result.Success();
+            if (string.IsNullOrEmpty(artist.Picture)) return Result.Success();
             
-            await _imageService.RemoveImage(AssetContainerConstants.USER_PICTURES, user.Picture, cancellationToken);
+            await _imageService.RemoveImage(AssetContainerConstants.USER_PICTURES, artist.Picture, cancellationToken);
 
-            user.Picture = null;
+            artist.Picture = null;
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 

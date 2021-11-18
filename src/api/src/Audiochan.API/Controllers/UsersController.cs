@@ -27,7 +27,7 @@ namespace Audiochan.API.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         [SwaggerOperation(Summary = "Return user's profile.", OperationId = "GetProfile", Tags = new[] {"users"})]
-        public async Task<ActionResult<ProfileDto>> GetUser(string username, CancellationToken cancellationToken)
+        public async Task<ActionResult<ArtistProfileDto>> GetUser(string username, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new GetProfileQuery(username), cancellationToken);
 

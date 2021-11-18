@@ -3,7 +3,7 @@ using Audiochan.Core.Audios;
 using Audiochan.Core.Audios.Commands;
 using FluentValidation;
 using FluentValidation.TestHelper;
-using Xunit;
+using NUnit.Framework;
 
 namespace Audiochan.Core.UnitTests.Validations.Audios
 {
@@ -16,7 +16,7 @@ namespace Audiochan.Core.UnitTests.Validations.Audios
             _validator = new UpdateAudioCommandValidator();
         }
 
-        [Fact]
+        [Test]
         public void CheckIfOverTenTagsIsInvalid()
         {
             var tags = new List<string>()
@@ -29,7 +29,7 @@ namespace Audiochan.Core.UnitTests.Validations.Audios
             result.ShouldHaveValidationErrorFor(x => x.Tags);
         }
 
-        [Fact]
+        [Test]
         public void CheckIfLessOrEqualToTenTagsIsValid()
         {
             var tags = new List<string>
@@ -42,7 +42,7 @@ namespace Audiochan.Core.UnitTests.Validations.Audios
             result.ShouldNotHaveValidationErrorFor(x => x.Tags);
         }
 
-        [Fact]
+        [Test]
         public void CheckIfNullTagsIsValid()
         {
             var dto = new UpdateAudioCommand();
@@ -50,7 +50,7 @@ namespace Audiochan.Core.UnitTests.Validations.Audios
             result.ShouldNotHaveValidationErrorFor(x => x.Tags);
         }
 
-        [Fact]
+        [Test]
         public void CheckIfEmptyTagsIsValid()
         {
             var dto = new UpdateAudioCommand {Tags = new List<string>()};

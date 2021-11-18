@@ -8,7 +8,7 @@ namespace Audiochan.Tests.Common.Fakers.Audios
     {
         public AudioFaker(long userId)
         {
-            RuleFor(x => x.UserId, userId);
+            RuleFor(x => x.ArtistId, userId);
             RuleFor(x => x.Title, f => f.Random.String2(3, 30));
             RuleFor(x => x.Description, f => f.Lorem.Sentences(2));
             RuleFor(x => x.Size, f => f.Random.Number(1, 20_000_000));

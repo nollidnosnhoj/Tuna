@@ -8,7 +8,7 @@ namespace Audiochan.Core.Users.Queries
         public GetUserAudiosSpecification(string username)
         {
             Query.AsNoTracking();
-            Query.Where(a => a.User.UserName == username);
+            Query.Where(a => a.Artist.UserName == username);
             Query.OrderByDescending(a => a.Id);
         }
     }

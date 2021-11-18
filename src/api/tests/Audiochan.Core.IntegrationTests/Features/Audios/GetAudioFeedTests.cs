@@ -16,26 +16,26 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
         [Test]
         public async Task SuccessfullyGetAudioFeed()
         {
-            var user1 = await RunAsUserAsync();
-            user1.TryGetUserId(out var user1Id);
-            var oneAudios = new AudioFaker(user1Id).Generate(5);
-            InsertRangeIntoDatabase(oneAudios);
+            var artist1 = await RunAsUserAsync(isArtist: true);
+            artist1.TryGetUserId(out var artist1Id);
+            var audio1 = new AudioFaker(artist1Id).Generate(5);
+            InsertRangeIntoDatabase(audio1);
             
-            var user2 = await RunAsUserAsync();
-            user2.TryGetUserId(out var user2Id);
-            var twoAudios = new AudioFaker(user2Id).Generate(5);
-            InsertRangeIntoDatabase(twoAudios);
+            var artist2 = await RunAsUserAsync(isArtist: true);
+            artist2.TryGetUserId(out var artistId2);
+            var audio2 = new AudioFaker(artistId2).Generate(5);
+            InsertRangeIntoDatabase(audio2);
             
             var user = await RunAsDefaultUserAsync();
             user.TryGetUserId(out var userId);
-            InsertIntoDatabase(new FollowedUser
+            InsertIntoDatabase(new FollowedArtist
             {
                 ObserverId = userId,
-                TargetId = user1Id
-            }, new FollowedUser
+                TargetId = artist1Id
+            }, new FollowedArtist
             {
                 ObserverId = userId,
-                TargetId = user2Id
+                TargetId = artistId2
             });
 
             var result = await SendAsync(new GetAudioFeedQuery(userId));

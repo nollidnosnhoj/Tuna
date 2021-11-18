@@ -37,6 +37,6 @@ namespace Audiochan.Core.Audios
         [JsonConverter(typeof(AudioStreamLinkJsonConverter))]
         public string Src { get; init; } = null!;
         
-        public UserDto User { get; init; } = null!;
+        public ArtistDto Artist { get; init; } = null!;
     }
 }

@@ -21,9 +21,10 @@ namespace Audiochan.Infrastructure.Persistence
             _dateTimeProvider = dateTimeProvider;
         }
 
+        public DbSet<Artist> Artists { get; set; } = null!;
         public DbSet<Audio> Audios { get; set; } = null!;
         public DbSet<FavoriteAudio> FavoriteAudios { get; set; } = null!;
-        public DbSet<FollowedUser> FollowedUsers { get; set; } = null!;
+        public DbSet<FollowedArtist> FollowedArtists { get; set; } = null!;
         public DbSet<User> Users { get; set; } = null!;
 
 

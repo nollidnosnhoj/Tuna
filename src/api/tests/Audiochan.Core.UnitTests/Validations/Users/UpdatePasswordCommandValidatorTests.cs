@@ -4,7 +4,7 @@ using Audiochan.Core.Users.Commands;
 using FluentValidation;
 using FluentValidation.TestHelper;
 using Microsoft.Extensions.Options;
-using Xunit;
+using NUnit.Framework;
 
 namespace Audiochan.Core.UnitTests.Validations.Users
 {
@@ -18,7 +18,7 @@ namespace Audiochan.Core.UnitTests.Validations.Users
             _validator = new UpdatePasswordCommandValidator(options);
         }
 
-        [Fact]
+        [Test]
         public void PasswordRequired()
         {
             var req = new UpdatePasswordCommand {NewPassword = ""};
@@ -28,7 +28,7 @@ namespace Audiochan.Core.UnitTests.Validations.Users
         }
 
         [Theory]
-        [InlineData("thisdoesnothavedigits")]
+        [TestCase("thisdoesnothavedigits")]
         public void PasswordRequireDigits(string password)
         {
             var req = new UpdatePasswordCommand {NewPassword = password};
@@ -41,7 +41,7 @@ namespace Audiochan.Core.UnitTests.Validations.Users
         }
 
         [Theory]
-        [InlineData("OMEGALUL4HEAD")]
+        [TestCase("OMEGALUL4HEAD")]
         public void PasswordRequireLowercase(string password)
         {
             var req = new UpdatePasswordCommand {NewPassword = password};
@@ -54,7 +54,7 @@ namespace Audiochan.Core.UnitTests.Validations.Users
         }
 
         [Theory]
-        [InlineData("omegalul4head")]
+        [TestCase("omegalul4head")]
         public void PasswordRequireUppercase(string password)
         {
             var req = new UpdatePasswordCommand {NewPassword = password};
@@ -67,7 +67,7 @@ namespace Audiochan.Core.UnitTests.Validations.Users
         }
 
         [Theory]
-        [InlineData("lkdsfhlksdjflksdjflks")]
+        [TestCase("lkdsfhlksdjflksdjflks")]
         public void PasswordRequireNonAlphanumeric(string password)
         {
             var req = new UpdatePasswordCommand {NewPassword = password};
@@ -80,7 +80,7 @@ namespace Audiochan.Core.UnitTests.Validations.Users
         }
 
         [Theory]
-        [InlineData("no")]
+        [TestCase("no")]
         public void PasswordRequireLength(string password)
         {
             var req = new UpdatePasswordCommand {NewPassword = password};

@@ -48,7 +48,7 @@ namespace Audiochan.Core.Audios.Commands
             if (audio == null)
                 return Result<bool>.NotFound<Audio>();
 
-            if (audio.UserId != currentUserId) 
+            if (audio.ArtistId != currentUserId) 
                 return Result<bool>.Forbidden();
             
             var afterDeletionTasks = GetTasksForAfterDeletion(audio, cancellationToken);

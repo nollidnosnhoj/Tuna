@@ -32,6 +32,20 @@ namespace Audiochan.Core.Common.Extensions
             return false;
         }
 
+        public static bool TryGetIsArtist(this ClaimsPrincipal? principal, out bool isArtist)
+        {
+            var claim = principal?.FindFirst(ClaimTypes.Role);
+
+            if (claim is not null && !string.IsNullOrWhiteSpace(claim.Value))
+            {
+                isArtist = claim.Value == UserTypes.ARTIST;
+                return true;
+            }
+
+            isArtist = false;
+            return false;
+        }
+
         public static long GetUserId(this ClaimsPrincipal? principal)
         {
             if (!principal.TryGetUserId(out var userId))
@@ -50,6 +64,16 @@ namespace Audiochan.Core.Common.Extensions
             }
 
             return userName;
+        }
+
+        public static bool GetIsArtist(this ClaimsPrincipal? principal)
+        {
+            if (!principal.TryGetIsArtist(out var isArtist))
+            {
+                throw new ForbiddenAccessException();
+            }
+
+            return isArtist;
         }
     }
 }

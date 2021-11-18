@@ -20,9 +20,9 @@ namespace Audiochan.Infrastructure.Persistence.Configurations
             builder.HasIndex(x => x.Tags).HasMethod("GIN");
             builder.HasIndex(x => x.Created);
 
-            builder.HasOne(x => x.User)
+            builder.HasOne(x => x.Artist)
                 .WithMany(x => x.Audios)
-                .HasForeignKey(x => x.UserId)
+                .HasForeignKey(x => x.ArtistId)
                 .OnDelete(DeleteBehavior.Cascade);
         }
     }

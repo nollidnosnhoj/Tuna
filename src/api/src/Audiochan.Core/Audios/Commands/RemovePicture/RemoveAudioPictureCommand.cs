@@ -40,7 +40,7 @@ namespace Audiochan.Core.Audios.Commands
             if (audio == null)
                 return Result<ImageUploadResponse>.NotFound<Audio>();
 
-            if (audio.UserId != currentUserId)
+            if (audio.ArtistId != currentUserId)
                 return Result<ImageUploadResponse>.Forbidden();
 
             if (string.IsNullOrEmpty(audio.Picture)) return Result.Success();

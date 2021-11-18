@@ -1,9 +1,18 @@
-﻿using Audiochan.Domain.Entities;
+﻿using Audiochan.Core.Common;
+using Audiochan.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Audiochan.Infrastructure.Persistence.Configurations
 {
+    public class ArtistConfiguration : IEntityTypeConfiguration<Artist>
+    {
+        public void Configure(EntityTypeBuilder<Artist> builder)
+        {
+            
+        }
+    }
+
     public class UserConfiguration : IEntityTypeConfiguration<User>
     {
         public void Configure(EntityTypeBuilder<User> builder)
@@ -14,14 +23,18 @@ namespace Audiochan.Infrastructure.Persistence.Configurations
             builder.Property(x => x.UserName).HasMaxLength(256).IsRequired();
             builder.Property(x => x.Email).HasMaxLength(256).IsRequired();
 
+            builder.HasDiscriminator(x => x.UserType)
+                .HasValue<User>(UserTypes.REGULAR)
+                .HasValue<Artist>(UserTypes.ARTIST);
+
             builder.HasIndex(x => x.UserName).IsUnique();
             builder.HasIndex(x => x.Email).IsUnique();
         }
     }
     
-    public class FollowedUserConfiguration : IEntityTypeConfiguration<FollowedUser>
+    public class FollowedUserConfiguration : IEntityTypeConfiguration<FollowedArtist>
     {
-        public void Configure(EntityTypeBuilder<FollowedUser> builder)
+        public void Configure(EntityTypeBuilder<FollowedArtist> builder)
         {
             builder.HasKey(fu => new {FollowerId = fu.ObserverId, FolloweeId = fu.TargetId});
 

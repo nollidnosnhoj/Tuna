@@ -5,6 +5,7 @@ using Audiochan.API.Extensions;
 using Audiochan.Core.Auth;
 using Audiochan.Core.Auth.Commands;
 using Audiochan.Core.Auth.Queries;
+using Audiochan.Core.Common;
 using Audiochan.Core.Common.Interfaces.Services;
 using MediatR;
 using Microsoft.AspNetCore.Authentication;
@@ -50,7 +51,8 @@ namespace Audiochan.API.Controllers
             Claim[] claims = {
                 new(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new(ClaimTypes.Name, user.UserName),
-                new(ClaimTypes.Email, user.Email)
+                new(ClaimTypes.Email, user.Email),
+                new(ClaimTypes.Role, user.IsArtist ? UserTypes.ARTIST : UserTypes.REGULAR)
             };
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var principal = new ClaimsPrincipal(identity);

@@ -1,5 +1,11 @@
 ﻿namespace Audiochan.Core.Common
 {
+    public static class UserTypes
+    {
+        public const string REGULAR = "Regular";
+        public const string ARTIST = "Artist";
+    }
+    
     public static class AssetContainerConstants
     {
         public const string AUDIO_PICTURES = "images/audios";

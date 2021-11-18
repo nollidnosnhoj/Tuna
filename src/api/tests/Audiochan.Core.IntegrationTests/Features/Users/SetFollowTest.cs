@@ -19,7 +19,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Users
         public async Task AddFollowerTest()
         {
             // Assign
-            var target = await RunAsUserAsync();
+            var target = await RunAsUserAsync(isArtist: true);
             target.TryGetUserId(out var targetId);
             var observer = await RunAsUserAsync();
             observer.TryGetUserId(out var observerId);
@@ -27,7 +27,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Users
             // Act
             await SendAsync(new SetFollowCommand(observerId, targetId, true));
 
-            var user = GetUsersWithFollowers(targetId);
+            var user = GetArtistWithFollowers(targetId);
 
             // Assert
             user.Should().NotBeNull();
@@ -39,39 +39,39 @@ namespace Audiochan.Core.IntegrationTests.Features.Users
         public async Task RemoveFollowerTest()
         {
             // Assign
-            var target = await RunAsUserAsync();
+            var target = await RunAsUserAsync(isArtist: true);
             target.TryGetUserId(out var targetId);
             var observer = await RunAsUserAsync();
             observer.TryGetUserId(out var observerId);
             
-            var user = GetUsersWithFollowers(targetId);
+            var user = GetArtistWithFollowers(targetId);
 
             user.Should().NotBeNull("Did not run as user");
 
-            UpdateUserWithNewFollower(user!, observerId);
+            UpdateArtistWithNewFollower(user!, observerId);
 
             // Act
             await SendAsync(new SetFollowCommand(observerId, targetId, false));
 
-            user = GetUsersWithFollowers(targetId);
+            user = GetArtistWithFollowers(targetId);
 
             // Assert
             user.Should().NotBeNull();
             user!.Followers.Should().BeEmpty();
         }
 
-        private User? GetUsersWithFollowers(long userId)
+        private Artist? GetArtistWithFollowers(long artistId)
         {
             return ExecuteDbContext(db =>
             {
-                return db.Users.Include(u => u.Followers)
-                    .SingleOrDefault(u => u.Id == userId);
+                return db.Artists.Include(u => u.Followers)
+                    .SingleOrDefault(u => u.Id == artistId);
             });
         }
 
-        private void UpdateUserWithNewFollower(User user, long observerId)
+        private void UpdateArtistWithNewFollower(Artist user, long observerId)
         {
-            user.Followers.Add(new FollowedUser
+            user.Followers.Add(new FollowedArtist
             {
                 ObserverId = observerId,
                 FollowedDate = new DateTime(2021, 1, 1)
@@ -79,7 +79,6 @@ namespace Audiochan.Core.IntegrationTests.Features.Users
             
             ExecuteDbContext(db =>
             {
-                db.Users.Update(user);
                 db.SaveChanges();
             });
         }

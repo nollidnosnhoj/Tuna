@@ -3,7 +3,7 @@ using Audiochan.Domain.Entities;
 
 namespace Audiochan.Core.Users.Queries
 {
-    public sealed class GetUserByUsernameSpecification : Specification<User>
+    public sealed class GetUserByUsernameSpecification : Specification<Artist>
     {
         public GetUserByUsernameSpecification(string username)
         {

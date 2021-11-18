@@ -7,7 +7,7 @@ using FluentAssertions;
 using FluentValidation;
 using FluentValidation.TestHelper;
 using Microsoft.Extensions.Options;
-using Xunit;
+using NUnit.Framework;
 
 namespace Audiochan.Core.UnitTests.Validations.Audios
 {
@@ -26,7 +26,7 @@ namespace Audiochan.Core.UnitTests.Validations.Audios
             _validator = new CreateAudioCommandValidator(options);
         }
 
-        [Fact]
+        [Test]
         public void ShouldSuccessfullyValidateRequest()
         {
             var request = new CreateAudioCommandFaker().Generate();
@@ -34,7 +34,7 @@ namespace Audiochan.Core.UnitTests.Validations.Audios
             result.IsValid.Should().BeTrue();
         }
 
-        [Fact]
+        [Test]
         public void ShouldBeInvalid_WhenUploadIdIsEmpty()
         {
             var request = new CreateAudioCommandFaker()
@@ -44,7 +44,7 @@ namespace Audiochan.Core.UnitTests.Validations.Audios
             result.ShouldHaveValidationErrorFor(x => x.UploadId);
         }
 
-        [Fact]
+        [Test]
         public void ShouldBeInvalid_WhenDurationIsEmpty()
         {
             var request = new CreateAudioCommandFaker()
@@ -54,7 +54,7 @@ namespace Audiochan.Core.UnitTests.Validations.Audios
             result.ShouldHaveValidationErrorFor(x => x.Duration);
         }
 
-        [Fact]
+        [Test]
         public void ShouldBeInvalid_WhenFileSizeReachedOverLimit()
         {
             var maxSize = (int)_audioStorageSettings.MaximumFileSize;
@@ -65,7 +65,7 @@ namespace Audiochan.Core.UnitTests.Validations.Audios
             result.ShouldHaveValidationErrorFor(x => x.FileSize);
         }
 
-        [Fact]
+        [Test]
         public void ShouldBeInvalid_WhenFileNameDoesNotHaveFileExtension()
         {
             var request = new CreateAudioCommandFaker()
@@ -75,7 +75,7 @@ namespace Audiochan.Core.UnitTests.Validations.Audios
             result.ShouldHaveValidationErrorFor(x => x.FileName);
         }
         
-        [Fact]
+        [Test]
         public void ShouldBeInvalid_WhenFileNameHasInvalidFileExtension()
         {
             var request = new CreateAudioCommandFaker()

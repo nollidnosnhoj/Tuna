@@ -6,7 +6,7 @@ using FluentAssertions;
 using FluentValidation;
 using FluentValidation.TestHelper;
 using Microsoft.Extensions.Options;
-using Xunit;
+using NUnit.Framework;
 
 namespace Audiochan.Core.UnitTests.Validations.Users
 {
@@ -21,8 +21,8 @@ namespace Audiochan.Core.UnitTests.Validations.Users
         }
 
         [Theory]
-        [InlineData("applesauce")]
-        [InlineData("testuser123")]
+        [TestCase("applesauce")]
+        [TestCase("testuser123")]
         public void ShouldBeValid(string username)
         {
             var request = new UpdateUsernameCommand {NewUsername = username};
@@ -30,7 +30,7 @@ namespace Audiochan.Core.UnitTests.Validations.Users
             testResults.IsValid.Should().BeTrue();
         }
         
-        [Fact]
+        [Test]
         public void ShouldNotBeValid_WhenUsernameIsMissing()
         {
             var request = new UpdateUsernameCommand{NewUsername = ""};
@@ -39,8 +39,8 @@ namespace Audiochan.Core.UnitTests.Validations.Users
         }
         
         [Theory]
-        [InlineData("a")]
-        [InlineData("ab")]
+        [TestCase("a")]
+        [TestCase("ab")]
         public void ShouldNotBeValid_WhenUsernameIsTooShort(string username)
         {
             var request = new UpdateUsernameCommand {NewUsername = username};
@@ -48,7 +48,7 @@ namespace Audiochan.Core.UnitTests.Validations.Users
             testResults.ShouldHaveValidationErrorFor(x => x.NewUsername);
         }
         
-        [Fact]
+        [Test]
         public void ShouldNotBeValid_WhenUsernameIsTooLong()
         {
             var faker = new Faker();
@@ -59,8 +59,8 @@ namespace Audiochan.Core.UnitTests.Validations.Users
         }
         
         [Theory]
-        [InlineData("username!")]
-        [InlineData("username@example.com")]
+        [TestCase("username!")]
+        [TestCase("username@example.com")]
         public void ShouldNotBeValid_WhenUsernameContainsIllegalCharacters(string username)
         {
             var request = new UpdateUsernameCommand {NewUsername = username};
@@ -69,8 +69,8 @@ namespace Audiochan.Core.UnitTests.Validations.Users
         }
         
         [Theory]
-        [InlineData("12345")]
-        [InlineData("0000000000000")]
+        [TestCase("12345")]
+        [TestCase("0000000000000")]
         public void ShouldNotBeValid_WhenUsernameOnlyContainDigits(string username)
         {
             var request = new UpdateUsernameCommand {NewUsername = username};

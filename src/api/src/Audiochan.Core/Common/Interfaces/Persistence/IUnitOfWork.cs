@@ -6,9 +6,10 @@ namespace Audiochan.Core.Common.Interfaces.Persistence
 {
     public interface IUnitOfWork
     {
+        IArtistRepository Artists { get; }
         IAudioRepository Audios { get; }
         IEntityRepository<FavoriteAudio> FavoriteAudios { get; }
-        IEntityRepository<FollowedUser> FollowedUsers { get; }
+        IEntityRepository<FollowedArtist> FollowedUsers { get; }
         IUserRepository Users { get; }
 
         Task BeginTransactionAsync();

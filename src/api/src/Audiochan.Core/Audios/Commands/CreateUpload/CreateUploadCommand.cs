@@ -12,7 +12,7 @@ using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Audios.Commands
 {
-    [Authorize]
+    [Authorize(RequiresArtist = true)]
     public record CreateUploadCommand : IRequest<Result<UploadResponse>>
     {
         public string FileName { get; init; } = null!;

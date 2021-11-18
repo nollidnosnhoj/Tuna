@@ -23,8 +23,8 @@ namespace Audiochan.Domain.Entities
         public string File { get; set; } = null!;
         public long Size { get; set; }
         public string? Picture { get; set; }
-        public long UserId { get; set; }
-        public User User { get; set; } = null!;
+        public long ArtistId { get; set; }
+        public Artist Artist { get; set; } = null!;
         public ICollection<FavoriteAudio> FavoriteAudios { get; set; }
 
         public void Favorite(long userId, DateTime favoritedDateTime)

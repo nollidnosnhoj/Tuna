@@ -1,6 +1,6 @@
 ﻿using Audiochan.Core.Common.Mappings;
 using AutoMapper;
-using Xunit;
+using NUnit.Framework;
 
 namespace Audiochan.Core.UnitTests.Mappings
 {
@@ -20,7 +20,7 @@ namespace Audiochan.Core.UnitTests.Mappings
             _mapper = _configuration.CreateMapper();
         }
 
-        [Fact]
+        [Test]
         public void ShouldHaveValidConfiguration()
         {
             _configuration.AssertConfigurationIsValid();

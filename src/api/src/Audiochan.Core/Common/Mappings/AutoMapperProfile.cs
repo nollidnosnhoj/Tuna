@@ -24,9 +24,11 @@ namespace Audiochan.Core.Common.Mappings
                     c.MapFrom(src => src.File))
                 .ForMember(dest => dest.IsFavorited, c =>
                     c.MapFrom(src => userId > 0 ? src.FavoriteAudios.Any(fa => fa.UserId == userId) : (bool?)null));
-            CreateStrictMap<User, ProfileDto>();
-            CreateStrictMap<User, UserDto>();
-            CreateStrictMap<User, CurrentUserDto>();
+            CreateStrictMap<Artist, ArtistProfileDto>();
+            CreateStrictMap<Artist, ArtistDto>();
+            CreateStrictMap<User, CurrentUserDto>()
+                .ForMember(dest => dest.IsArtist, opts =>
+                    opts.MapFrom(src => src.UserType == UserTypes.ARTIST));
         }
 
         private IMappingExpression<TSource, TDestination> CreateStrictMap<TSource, TDestination>()

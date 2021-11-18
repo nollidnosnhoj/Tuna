@@ -25,8 +25,8 @@ namespace Audiochan.Core.Users.Commands
 
         public async Task<Result> Handle(SetFollowCommand command, CancellationToken cancellationToken)
         {
-            var target = await _unitOfWork.Users
-                .GetFirstAsync(new LoadUserWithFollowersSpecification(command.TargetId, command.ObserverId), cancellationToken);
+            var target = await _unitOfWork.Artists
+                .GetFirstAsync(new LoadArtistWithFollowersSpecification(command.TargetId, command.ObserverId), cancellationToken);
 
             if (target == null)
                 return Result.NotFound<User>();

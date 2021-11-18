@@ -3,7 +3,7 @@ using Audiochan.Domain.Entities;
 
 namespace Audiochan.Core.Users.Queries
 {
-    public sealed class GetFollowerByTargetNameSpecification : Specification<FollowedUser>
+    public sealed class GetFollowerByTargetNameSpecification : Specification<FollowedArtist>
     {
         public GetFollowerByTargetNameSpecification(string username)
         {

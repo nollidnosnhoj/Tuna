@@ -8,65 +8,21 @@ namespace Audiochan.Domain.Entities
 {
     public class User : IAudited, IHasId<long>
     {
-        public User()
+        public User(string userName, string email, string passwordHash)
         {
-            Audios = new HashSet<Audio>();
-            FavoriteAudios = new HashSet<FavoriteAudio>();
-            Followings = new HashSet<FollowedUser>();
-            Followers = new HashSet<FollowedUser>();
-        }
-
-        public User(string username, string email, string passwordHash, UserRole userRole = UserRole.Regular) : this()
-        {
-            this.UserName = username;
+            this.UserName = userName;
             this.Email = email;
             this.PasswordHash = passwordHash;
-            this.Role = userRole;
         }
 
         public long Id { get; set; }
-        public string UserName { get; set; } = null!;
-        public string Email { get; set; } = null!;
-        public string PasswordHash { get; set; } = null!;
-        public UserRole Role { get; set; }
-        public string? Picture { get; set; }
+        public string UserName { get; set; }
+        public string Email { get; set; }
+        public string PasswordHash { get; set; }
+        public string UserType { get; set; }
         public DateTime Created { get; set; }
         public DateTime? LastModified { get; set; }
-        public ICollection<Audio> Audios { get; set; }
-        public ICollection<FavoriteAudio> FavoriteAudios { get; set; }
-        public ICollection<FollowedUser> Followings { get; set; }
-        public ICollection<FollowedUser> Followers { get; set; }
-
-        public void Follow(long observerId, DateTime followedDate)
-        {
-            var follower = this.Followers.FirstOrDefault(f => f.ObserverId == observerId);
-
-            if (follower is null)
-            {
-                follower = new FollowedUser
-                {
-                    TargetId = this.Id,
-                    ObserverId = observerId,
-                    FollowedDate = followedDate
-                };
-                
-                this.Followers.Add(follower);
-            }
-            else if (follower.UnfollowedDate is not null)
-            {
-                follower.FollowedDate = followedDate;
-                follower.UnfollowedDate = null;
-            }
-        }
-
-        public void UnFollow(long observerId, DateTime unfollowedDate)
-        {
-            var follower = this.Followers.FirstOrDefault(f => f.ObserverId == observerId);
-
-            if (follower is not null)
-            {
-                follower.UnfollowedDate = unfollowedDate;
-            }
-        }
+        public ICollection<FavoriteAudio> FavoriteAudios { get; set; } = new HashSet<FavoriteAudio>();
+        public ICollection<FollowedArtist> Followings { get; set; } = new HashSet<FollowedArtist>();
     }
 }

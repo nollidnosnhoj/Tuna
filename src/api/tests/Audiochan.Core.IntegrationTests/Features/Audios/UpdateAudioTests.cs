@@ -20,7 +20,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
         public async Task ShouldNotUpdate_WhenUserCannotModify()
         {
             // Assign
-            var owner = await RunAsUserAsync("kopacetic");
+            var owner = await RunAsUserAsync("kopacetic", isArtist: true);
             owner.TryGetUserId(out var ownerId);
 
             var audio = new AudioFaker(ownerId).Generate();
@@ -44,7 +44,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
         public async Task ShouldUpdateSuccessfully()
         {
             // Assign
-            var owner = await RunAsUserAsync("kopacetic");
+            var owner = await RunAsUserAsync("kopacetic", isArtist: true);
             owner.TryGetUserId(out var ownerId);
 
             var audio = new AudioFaker(ownerId).Generate();
@@ -59,7 +59,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             var created = ExecuteDbContext(database =>
             {
                 return database.Audios
-                    .Include(a => a.User)
+                    .Include(a => a.Artist)
                     .SingleOrDefault(a => a.Id == audio.Id);
             });
 
@@ -74,8 +74,8 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
         public async Task ShouldInvalidateCacheSuccessfully()
         {
             // Assign
-            var user = await RunAsDefaultUserAsync();
-            user.TryGetUserId(out var userId);
+            var artist = await RunAsDefaultUserAsync(true);
+            artist.TryGetUserId(out var userId);
             var audio = new AudioFaker(userId).Generate();
             InsertIntoDatabase(audio);
             await SendAsync(new GetAudioQuery(audio.Id));

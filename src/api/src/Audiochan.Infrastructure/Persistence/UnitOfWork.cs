@@ -3,6 +3,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Common.Interfaces.Persistence;
 using Audiochan.Domain.Entities;
+using Audiochan.Infrastructure.Persistence.Repositories;
+using Audiochan.Infrastructure.Persistence.Repositories.Abstractions;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Audiochan.Infrastructure.Persistence
@@ -11,22 +14,20 @@ namespace Audiochan.Infrastructure.Persistence
     {
         private readonly ApplicationDbContext _dbContext;
         private IDbContextTransaction? _currentTransaction;
+        public IArtistRepository Artists { get; }
         public IAudioRepository Audios { get; }
         public IEntityRepository<FavoriteAudio> FavoriteAudios { get; }
-        public IEntityRepository<FollowedUser> FollowedUsers { get; }
+        public IEntityRepository<FollowedArtist> FollowedUsers { get; }
         public IUserRepository Users { get; }
         
-        public UnitOfWork(IAudioRepository audios,
-            IUserRepository users, 
-            IEntityRepository<FavoriteAudio> favoriteAudios, 
-            IEntityRepository<FollowedUser> followedUsers, 
-            ApplicationDbContext dbContext)
+        public UnitOfWork(ApplicationDbContext dbContext, IMapper mapper)
         {
             _dbContext = dbContext;
-            FavoriteAudios = favoriteAudios;
-            FollowedUsers = followedUsers;
-            Audios = audios;
-            Users = users;
+            FavoriteAudios = new EfRepository<FavoriteAudio>(_dbContext, mapper);
+            FollowedUsers = new EfRepository<FollowedArtist>(_dbContext, mapper);
+            Artists = new ArtistRepository(_dbContext, mapper);
+            Audios = new AudioRepository(_dbContext, mapper);
+            Users = new UserRepository(_dbContext, mapper);
         }
         
         public Task BeginTransactionAsync()

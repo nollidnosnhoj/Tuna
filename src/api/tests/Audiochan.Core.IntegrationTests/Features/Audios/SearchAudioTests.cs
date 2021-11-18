@@ -27,8 +27,8 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
 
 
             // create posts
-            var user = await RunAsDefaultUserAsync();
-            user.TryGetUserId(out var userId);
+            var artist = await RunAsDefaultUserAsync(true);
+            artist.TryGetUserId(out var userId);
 
             var audioFaker = new AudioFaker(userId)
                 .FinishWith((f, a) =>

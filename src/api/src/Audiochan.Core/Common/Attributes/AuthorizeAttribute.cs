@@ -12,5 +12,7 @@ namespace Audiochan.Core.Common.Attributes
         {
             
         }
+        
+        public bool RequiresArtist { get; set; }
     }
 }

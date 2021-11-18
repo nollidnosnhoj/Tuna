@@ -5,11 +5,11 @@ using MediatR;
 
 namespace Audiochan.Core.Users.Queries
 {
-    public record GetProfileQuery(string Username) : IRequest<ProfileDto?>
+    public record GetProfileQuery(string Username) : IRequest<ArtistProfileDto?>
     {
     }
 
-    public class GetProfileQueryHandler : IRequestHandler<GetProfileQuery, ProfileDto?>
+    public class GetProfileQueryHandler : IRequestHandler<GetProfileQuery, ArtistProfileDto?>
     {
         private readonly IUnitOfWork _unitOfWork;
 
@@ -18,10 +18,10 @@ namespace Audiochan.Core.Users.Queries
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<ProfileDto?> Handle(GetProfileQuery query, CancellationToken cancellationToken)
+        public async Task<ArtistProfileDto?> Handle(GetProfileQuery query, CancellationToken cancellationToken)
         {
-            return await _unitOfWork.Users
-                .GetFirstAsync<ProfileDto>(new GetUserByUsernameSpecification(query.Username), cancellationToken);
+            return await _unitOfWork.Artists
+                .GetFirstAsync<ArtistProfileDto>(new GetUserByUsernameSpecification(query.Username), cancellationToken);
         }
     }
 }
