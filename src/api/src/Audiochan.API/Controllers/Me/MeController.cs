@@ -60,6 +60,27 @@ namespace Audiochan.API.Controllers.Me
                 : Unauthorized(ErrorApiResponse.Unauthorized());
         }
 
+        [HttpGet("claims", Name = "GetMyClaims")]
+        [ProducesResponseType(200)]
+        [Produces("application/json")]
+        [SwaggerOperation(
+            Summary = "Returns user claims",
+            Description = "Requires authentication",
+            OperationId = "GetMyClaims",
+            Tags = new[] {"me"})]
+        public IActionResult GetMyClaims()
+        {
+            var principal = User;
+
+            return Ok(new CurrentUserDto
+            {
+                Id = principal.GetUserId(),
+                UserName = principal.GetUserName(),
+                IsArtist = principal.GetIsArtist(),
+                Email = principal.GetEmail()
+            });
+        }
+
         [HttpPut(Name = "UpdateUser")]
         [ProducesResponseType(200)]
         [ProducesResponseType(403)]
