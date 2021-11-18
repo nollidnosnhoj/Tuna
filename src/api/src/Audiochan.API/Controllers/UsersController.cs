@@ -75,7 +75,7 @@ namespace Audiochan.API.Controllers
         [ProducesResponseType(200)]
         [SwaggerOperation(Summary = "Return a list of the user's followers.", OperationId = "GetUserFollowers",
             Tags = new[] {"users"})]
-        public async Task<ActionResult<PagedListDto<UserDto>>> GetFollowers(string username, 
+        public async Task<ActionResult<PagedListDto<FollowerViewModel>>> GetFollowers(string username, 
             [FromQuery] OffsetPaginationQueryParams paginationQueryParams, 
             CancellationToken cancellationToken)
         {
@@ -90,7 +90,7 @@ namespace Audiochan.API.Controllers
         [ProducesResponseType(200)]
         [SwaggerOperation(Summary = "Return a list of the user's followings.", OperationId = "GetUserFollowings",
             Tags = new[] {"users"})]
-        public async Task<ActionResult<PagedListDto<UserDto>>> GetFollowings(string username, 
+        public async Task<ActionResult<PagedListDto<FollowingViewModel>>> GetFollowings(string username, 
             [FromQuery] OffsetPaginationQueryParams paginationQueryParams, 
             CancellationToken cancellationToken)
         {
