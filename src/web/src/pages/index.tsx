@@ -17,7 +17,7 @@ const Index = () => {
     if (isLoggedIn) {
       router.push("/upload");
     } else {
-      router.push("/register");
+      router.push("/signup/user");
     }
   }, [isLoggedIn]);
   return (

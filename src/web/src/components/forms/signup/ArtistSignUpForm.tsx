@@ -10,6 +10,10 @@ export const artistSignUpValidationSchema = z
   .object({
     username: usernameRule("Username"),
     password: passwordRule("Password"),
+    displayName: usernameRule("Display Name", {
+      allowedCharacters:
+        " 0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    }).optional(),
     email: z.string().min(1).email(),
     confirmPassword: z.string().min(1),
   })
@@ -57,6 +61,13 @@ export default function ArtistSignUpForm(props: ArtistSignUpFormProps) {
         error={errors.username?.message}
         label="Username"
         isRequired
+      />
+      <InputField
+        {...register("displayName")}
+        ref={props.initialRef}
+        error={errors.displayName?.message}
+        label="Display Name"
+        helperText="If left blank, the display name will be your username."
       />
       <InputField
         {...register("email")}

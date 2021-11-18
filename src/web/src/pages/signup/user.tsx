@@ -1,5 +1,4 @@
-import { Button, Stack } from "@chakra-ui/react";
-import { chakra } from "@chakra-ui/system";
+import { Button } from "@chakra-ui/react";
 import { useToast } from "@chakra-ui/toast";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
@@ -47,12 +46,11 @@ export default function UserSignUpPage() {
         headingText="Sign Up As User"
         error={error}
         footer={
-          <Stack>
-            <chakra.p fontSize="small">Already have an account?</chakra.p>
-            <NextLink href="/login">
-              <Button>Login</Button>
-            </NextLink>
-          </Stack>
+          <NextLink href="/signup/artist">
+            <Button size="sm" width="full">
+              Sign up as an Artist
+            </Button>
+          </NextLink>
         }
       >
         <UserSignUpForm onSubmit={handleRegister} />

@@ -39,7 +39,7 @@ export default function LoginPage() {
         footer={
           <Stack>
             <chakra.p fontSize="small">New here?</chakra.p>
-            <NextLink href="/register">
+            <NextLink href="/signup/user">
               <Button>Create an account</Button>
             </NextLink>
           </Stack>

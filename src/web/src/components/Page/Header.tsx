@@ -136,7 +136,7 @@ export function Header({ onOpen, ...rest }: IHeaderProps) {
                 Sign In
               </Button>
             </NextLink>
-            <NextLink href="/register">
+            <NextLink href="/signup/user">
               <Button
                 display={{ base: "none", md: "inline-flex" }}
                 fontSize={"sm"}

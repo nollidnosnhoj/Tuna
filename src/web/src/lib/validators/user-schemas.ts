@@ -4,8 +4,8 @@ import SETTINGS from "~/lib/config";
 const DefaultUsernameRules = SETTINGS.IDENTITY.usernameRules;
 const DefaultPasswordRules = SETTINGS.IDENTITY.passwordRules;
 
-export type UsernameRulesType = typeof DefaultUsernameRules;
-export type PasswordRulesType = typeof DefaultPasswordRules;
+export type UsernameRulesType = Partial<typeof DefaultUsernameRules>;
+export type PasswordRulesType = Partial<typeof DefaultPasswordRules>;
 
 export const usernameRule = (
   label: string,
@@ -13,18 +13,20 @@ export const usernameRule = (
 ): ZodType<string> => {
   const { allowedCharacters, maxLength, minLength } = rules;
 
-  if (maxLength < 0) throw Error("maxLength cannot be negative.");
-  if (minLength < 0) throw Error("minLength cannot be negative.");
+  if (maxLength && maxLength < 0) throw Error("maxLength cannot be negative.");
+  if (minLength && minLength < 0) throw Error("minLength cannot be negative.");
 
   return z.string().superRefine((arg, ctx) => {
-    for (const char of arg) {
-      if (allowedCharacters.indexOf(char) == -1) {
-        ctx.addIssue({
-          code: "custom",
-          message:
-            "Username can only contain lowercase, numbers, hyphens, or underscores.",
-        });
-        break;
+    if (allowedCharacters) {
+      for (const char of arg) {
+        if (allowedCharacters.indexOf(char) == -1) {
+          ctx.addIssue({
+            code: "custom",
+            message:
+              "Username can only contain lowercase, numbers, hyphens, or underscores.",
+          });
+          break;
+        }
       }
     }
 
@@ -60,7 +62,7 @@ export const passwordRule = (
     requiresUppercase,
   } = rules;
 
-  if (minLength < 0) throw Error("minLength cannot be negative.");
+  if (minLength && minLength < 0) throw Error("minLength cannot be negative.");
 
   return z.string().superRefine((arg, ctx) => {
     if (minLength && arg.length < minLength) {
