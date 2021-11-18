@@ -11,6 +11,7 @@ namespace Audiochan.Core.Auth.Commands
     public class CreateUserCommand : IRequest<Result>
     {
         public string Username { get; init; } = string.Empty;
+        public string? DisplayName { get; init; }
         public string Email { get; init; } = string.Empty;
         public string Password { get; init; } = string.Empty;
         public bool IsArtist { get; init; }
@@ -40,7 +41,10 @@ namespace Audiochan.Core.Auth.Commands
 
             if (command.IsArtist)
             {
-                var artist = new Artist(trimmedUsername, command.Email, passwordHash);
+                var artist = string.IsNullOrWhiteSpace(command.DisplayName) 
+                    ? new Artist(trimmedUsername, command.Email, passwordHash) 
+                    : new Artist(trimmedUsername, command.DisplayName, command.Email, passwordHash);
+                
                 await _dbContext.Artists.AddAsync(artist, cancellationToken);
             }
             else

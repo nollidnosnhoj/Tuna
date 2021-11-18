@@ -6,9 +6,14 @@ namespace Audiochan.Domain.Entities;
 
 public sealed class Artist : User
 {
-    public Artist(string userName, string email, string passwordHash) : base(userName, email, passwordHash)
+    public Artist(string userName, string displayName, string email, string passwordHash)
+        : base(userName, email, passwordHash)
     {
-        DisplayName = userName;
+        DisplayName = displayName;
+    }
+    
+    public Artist(string userName, string email, string passwordHash) : this(userName, userName, email, passwordHash)
+    {
     }
     
     public string DisplayName { get; set; }
