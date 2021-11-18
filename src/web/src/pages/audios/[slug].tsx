@@ -118,7 +118,7 @@ export default function AudioPage({ audio: initAudio, slug }: AudioPageProps) {
 
   useEffect(() => {
     if (audio) {
-      router.prefetch(`/users/${audio.user.userName}`);
+      router.prefetch(`/artists/${audio.user.userName}`);
     }
   }, []);
 
@@ -144,7 +144,7 @@ export default function AudioPage({ audio: initAudio, slug }: AudioPageProps) {
               {audio.title}
             </Heading>
             <chakra.div display="flex">
-              <Link href={`/users/${audio.user.userName}`} fontWeight="500">
+              <Link href={`/artists/${audio.user.userName}`} fontWeight="500">
                 {audio.user.userName}
               </Link>
               <chakra.span

@@ -78,6 +78,7 @@ export type CurrentUser = {
   userName: string;
   email: string;
   role: string;
+  isArtist: boolean;
 };
 export type Profile = {
   id: ID;

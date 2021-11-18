@@ -169,7 +169,7 @@ export default function UserProfileNextPage(props: ProfilePageProps) {
                 </List>
               </Box>
               {latestAudios.length > 0 && (
-                <NextLink href={`/users/${profile.userName}/audios`}>
+                <NextLink href={`/artists/${profile.userName}/audios`}>
                   <Button width="100%">View More</Button>
                 </NextLink>
               )}
@@ -190,7 +190,7 @@ export default function UserProfileNextPage(props: ProfilePageProps) {
                 </List>
               </Box>
               {latestFavoriteAudios.length > 0 && (
-                <NextLink href={`/users/${profile.userName}/favorite/audios`}>
+                <NextLink href={`/artists/${profile.userName}/favorite/audios`}>
                   <Button width="100%">View More</Button>
                 </NextLink>
               )}

@@ -59,9 +59,11 @@ function AuthenticatedHeaderSection({
           bg={useColorModeValue("white", "gray.900")}
           borderColor={useColorModeValue("gray.200", "gray.700")}
         >
-          <NextLink href={`/users/${user.userName}`}>
-            <MenuItem>Profile</MenuItem>
-          </NextLink>
+          {user.isArtist && (
+            <NextLink href={`/artists/${user.userName}`}>
+              <MenuItem>Profile</MenuItem>
+            </NextLink>
+          )}
           <NextLink href="/me/settings">
             <MenuItem>Settings</MenuItem>
           </NextLink>

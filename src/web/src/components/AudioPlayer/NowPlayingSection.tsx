@@ -47,7 +47,7 @@ export default function NowPlayingSection() {
           </Link>
         </Box>
         <Box>
-          <Link href={`/users/${artist}`}>
+          <Link href={`/artists/${artist}`}>
             <chakra.span>{artist}</chakra.span>
           </Link>
         </Box>
