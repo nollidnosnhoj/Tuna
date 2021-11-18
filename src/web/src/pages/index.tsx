@@ -12,7 +12,7 @@ import { useUser } from "~/components/providers/UserProvider";
 
 const Index = () => {
   const router = useRouter();
-  const { isLoggedIn } = useUser();
+  const { isLoggedIn, user } = useUser();
   const handleUploadButton = useCallback(() => {
     if (isLoggedIn) {
       router.push("/upload");
@@ -75,20 +75,22 @@ const Index = () => {
                   spacing={{ base: 4, md: 2 }}
                   justifyContent="center"
                 >
-                  <Box>
-                    <Button
-                      fontSize={{ base: "md", md: "lg" }}
-                      rounded="md"
-                      color="white"
-                      bg="primary.600"
-                      _hover={{ bg: "primary.700" }}
-                      onClick={handleUploadButton}
-                      // px={{ base: 8, md: 10 }}
-                      // py={{ base: 3, md: 4 }}
-                    >
-                      Start Uploading
-                    </Button>
-                  </Box>
+                  {user?.isArtist && (
+                    <Box>
+                      <Button
+                        fontSize={{ base: "md", md: "lg" }}
+                        rounded="md"
+                        color="white"
+                        bg="primary.600"
+                        _hover={{ bg: "primary.700" }}
+                        onClick={handleUploadButton}
+                        // px={{ base: 8, md: 10 }}
+                        // py={{ base: 3, md: 4 }}
+                      >
+                        Start Uploading
+                      </Button>
+                    </Box>
+                  )}
                   <Box mt={[3, 0]} ml={[null, 3]}>
                     <Button
                       // px={{ base: 8, md: 10 }}

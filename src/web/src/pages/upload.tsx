@@ -5,7 +5,7 @@ import UploaderProvider from "~/components/AudioUploader/UploaderProvider";
 
 const AudioUploadNextPage: React.FC = () => {
   return (
-    <Page title="Upload" requiresAuth>
+    <Page title="Upload" requiresAuth requiresArtist>
       <UploaderProvider>
         <AudioUploader />
       </UploaderProvider>

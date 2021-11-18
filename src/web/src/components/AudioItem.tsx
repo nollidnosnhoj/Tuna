@@ -88,8 +88,8 @@ function AudioListItem(props: PropsWithChildren<IAudioItemProps>) {
           >
             <chakra.b fontSize="lg">{audio.title}</chakra.b>
           </Link>
-          <Link href={`/artists/${audio.user.userName}`}>
-            <chakra.div>{audio.user.userName}</chakra.div>
+          <Link href={`/artists/${audio.artist.userName}`}>
+            <chakra.div>{audio.artist.userName}</chakra.div>
           </Link>
         </Box>
       </Flex>

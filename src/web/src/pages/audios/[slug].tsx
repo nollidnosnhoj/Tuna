@@ -70,7 +70,7 @@ function AudioDetailPicture(props: { audio: Audio }) {
       }}
       onRemove={removePictureAsync}
       isMutating={isAddingPicture || isRemovingPicture}
-      canEdit={currentUser?.id === audio.user.id}
+      canEdit={currentUser?.id === audio.artist.id}
     />
   );
 }
@@ -118,7 +118,7 @@ export default function AudioPage({ audio: initAudio, slug }: AudioPageProps) {
 
   useEffect(() => {
     if (audio) {
-      router.prefetch(`/artists/${audio.user.userName}`);
+      router.prefetch(`/artists/${audio.artist.userName}`);
     }
   }, []);
 
@@ -144,8 +144,8 @@ export default function AudioPage({ audio: initAudio, slug }: AudioPageProps) {
               {audio.title}
             </Heading>
             <chakra.div display="flex">
-              <Link href={`/artists/${audio.user.userName}`} fontWeight="500">
-                {audio.user.userName}
+              <Link href={`/artists/${audio.artist.userName}`} fontWeight="500">
+                {audio.artist.userName}
               </Link>
               <chakra.span
                 color={secondaryColor}
@@ -159,7 +159,7 @@ export default function AudioPage({ audio: initAudio, slug }: AudioPageProps) {
             <AudioPlayButton audio={audio} size="lg" />
             <AudioFavoriteButton audioId={audio.id} size="lg" />
             <AudioMiscMenu audio={audio} size="lg">
-              {audio.user.id === currentUser?.id && (
+              {audio.artist.id === currentUser?.id && (
                 <MenuGroup>
                   <MenuItem icon={<EditIcon />} onClick={onEditOpen}>
                     Edit

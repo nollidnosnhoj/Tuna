@@ -111,11 +111,13 @@ export function Header({ onOpen, ...rest }: IHeaderProps) {
       {/*  Audiochan*/}
       {/*</Text>*/}
       <HStack spacing={{ base: "4", md: "6" }}>
-        <NextLink href={"/upload"}>
-          <Button leftIcon={<MdCloudUpload />} colorScheme={"primary"}>
-            Upload
-          </Button>
-        </NextLink>
+        {user?.isArtist && (
+          <NextLink href={"/upload"}>
+            <Button leftIcon={<MdCloudUpload />} colorScheme={"primary"}>
+              Upload
+            </Button>
+          </NextLink>
+        )}
         <IconButton
           aria-label={"Switch light/dark theme"}
           icon={<ColorModeIcon />}

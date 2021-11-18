@@ -69,7 +69,7 @@ export const getServerSideProps: GetServerSideProps<ProfilePageProps> = async (
   try {
     const { data } = await request<Profile>({
       method: "get",
-      url: `users/${username}`,
+      url: `artists/${username}`,
       req,
       res,
     });

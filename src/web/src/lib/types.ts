@@ -1,6 +1,6 @@
 export type ID = string | number;
 
-export type MetaAuthor = {
+export type Artist = {
   id: ID;
   userName: string;
   picture?: string;
@@ -57,7 +57,7 @@ export interface Audio {
   created: string;
   lastModified?: string;
   src: string;
-  user: MetaAuthor;
+  artist: Artist;
 }
 
 export interface EditAudioRequest {
@@ -77,7 +77,6 @@ export type CurrentUser = {
   id: ID;
   userName: string;
   email: string;
-  role: string;
   isArtist: boolean;
 };
 export type Profile = {
