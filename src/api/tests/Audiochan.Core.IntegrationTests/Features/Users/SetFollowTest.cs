@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Audiochan.Core.Artists.Commands;
 using Audiochan.Core.Common.Extensions;
-using Audiochan.Core.Users;
-using Audiochan.Core.Users.Commands;
 using Audiochan.Domain.Entities;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;

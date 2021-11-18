@@ -1,11 +1,14 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.Common;
 using Audiochan.Core.Common.Attributes;
 using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Interfaces.Persistence;
 using Audiochan.Core.Common.Interfaces.Services;
 using Audiochan.Core.Common.Models;
+using FluentValidation;
 using MediatR;
+using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Users.Commands
 {
@@ -20,6 +23,14 @@ namespace Audiochan.Core.Users.Commands
             UserId = userId,
             NewUsername = request.NewUsername
         };
+    }
+    
+    public class UpdateUsernameCommandValidator : AbstractValidator<UpdateUsernameCommand>
+    {
+        public UpdateUsernameCommandValidator(IOptions<IdentitySettings> options)
+        {
+            RuleFor(req => req.NewUsername).UsernameValidation(options.Value.UsernameSettings);
+        }
     }
 
     public class UpdateUsernameCommandHandler : IRequestHandler<UpdateUsernameCommand, Result>

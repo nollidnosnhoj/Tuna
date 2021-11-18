@@ -5,25 +5,31 @@ using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Interfaces.Persistence;
 using Audiochan.Core.Common.Interfaces.Services;
 using Audiochan.Core.Common.Models;
+using FluentValidation;
 using MediatR;
 
-namespace Audiochan.Core.Users.Commands
+namespace Audiochan.Core.Artists.Commands
 {
     [Authorize]
     public record UpdateProfileCommand : IRequest<Result<bool>>
     {
         public long UserId { get; init; }
         public string? DisplayName { get; init; }
-        public string? About { get; init; }
-        public string? Website { get; init; }
 
         public static UpdateProfileCommand FromRequest(long userId, UpdateProfileRequest request) => new()
         {
             UserId = userId,
-            About = request.About,
-            Website = request.Website,
             DisplayName = request.DisplayName
         };
+    }
+
+    public class UpdateProfileCommandValidator : AbstractValidator<UpdateProfileCommand>
+    {
+        public UpdateProfileCommandValidator()
+        {
+            RuleFor(x => x.DisplayName)
+                .NotEmpty();
+        }
     }
 
     public class UpdateProfileCommandHandler : IRequestHandler<UpdateProfileCommand, Result<bool>>
@@ -39,11 +45,14 @@ namespace Audiochan.Core.Users.Commands
 
         public async Task<Result<bool>> Handle(UpdateProfileCommand command, CancellationToken cancellationToken)
         {
-            var user = await _unitOfWork.Users.FindAsync(command.UserId, cancellationToken);
-            if (user!.Id != _currentUserId)
+            var user = await _unitOfWork.Artists.FindAsync(command.UserId, cancellationToken);
+            if (user is null) return Result<bool>.NotFound();
+            if (user.Id != _currentUserId)
                 return Result<bool>.Forbidden();
-            
-            // TODO: Update user stuff
+
+            user.DisplayName = string.IsNullOrWhiteSpace(command.DisplayName)
+                ? user.UserName
+                : command.DisplayName;
 
             return Result<bool>.Success(true);
         }

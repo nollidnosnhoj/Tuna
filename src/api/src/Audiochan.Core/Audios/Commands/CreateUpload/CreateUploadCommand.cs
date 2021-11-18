@@ -7,6 +7,7 @@ using Audiochan.Core.Common.Attributes;
 using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Interfaces.Services;
 using Audiochan.Core.Common.Models;
+using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.Options;
 
@@ -17,6 +18,18 @@ namespace Audiochan.Core.Audios.Commands
     {
         public string FileName { get; init; } = null!;
         public long FileSize { get; init; }
+    }
+    
+    public class CreateUploadCommandValidator : AbstractValidator<CreateUploadCommand>
+    {
+        public CreateUploadCommandValidator(IOptions<MediaStorageSettings> options)
+        {
+            var uploadOptions = options.Value.Audio;
+            RuleFor(req => req.FileSize)
+                .FileSizeValidation(uploadOptions.MaximumFileSize);
+            RuleFor(req => req.FileName)
+                .FileNameValidation(uploadOptions.ValidContentTypes);
+        }
     }
 
     public class CreateUploadCommandHandler 

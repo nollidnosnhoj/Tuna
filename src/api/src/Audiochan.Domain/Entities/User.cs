@@ -19,7 +19,7 @@ namespace Audiochan.Domain.Entities
         public string UserName { get; set; }
         public string Email { get; set; }
         public string PasswordHash { get; set; }
-        public string UserType { get; set; }
+        public string UserType { get; set; } = null!;
         public DateTime Created { get; set; }
         public DateTime? LastModified { get; set; }
         public ICollection<FavoriteAudio> FavoriteAudios { get; set; } = new HashSet<FavoriteAudio>();

@@ -4,7 +4,7 @@ using Audiochan.Core.Common.Mappings;
 using Audiochan.Domain.Abstractions;
 using Audiochan.Domain.Entities;
 
-namespace Audiochan.Core.Users.Queries
+namespace Audiochan.Core.Artists.Queries
 {
     public record ArtistProfileDto : IHasId<long>, IMapFrom<Artist>
     {

@@ -9,7 +9,7 @@ namespace Audiochan.Core.Common.Interfaces.Persistence
         IArtistRepository Artists { get; }
         IAudioRepository Audios { get; }
         IEntityRepository<FavoriteAudio> FavoriteAudios { get; }
-        IEntityRepository<FollowedArtist> FollowedUsers { get; }
+        IEntityRepository<FollowedArtist> FollowedArtists { get; }
         IUserRepository Users { get; }
 
         Task BeginTransactionAsync();

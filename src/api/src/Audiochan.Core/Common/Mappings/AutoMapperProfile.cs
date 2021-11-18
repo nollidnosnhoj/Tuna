@@ -1,10 +1,9 @@
 ﻿using System.Linq;
+using Audiochan.Core.Artists.Queries;
 using Audiochan.Core.Audios;
-using Audiochan.Core.Auth;
 using Audiochan.Core.Auth.Queries;
 using Audiochan.Core.Common.Helpers;
 using Audiochan.Core.Users;
-using Audiochan.Core.Users.Queries;
 using Audiochan.Domain.Entities;
 using AutoMapper;
 

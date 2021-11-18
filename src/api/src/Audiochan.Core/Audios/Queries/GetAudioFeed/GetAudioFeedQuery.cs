@@ -1,8 +1,11 @@
-﻿using System.Threading;
+﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using Ardalis.Specification;
 using Audiochan.Core.Common.Interfaces.Pagination;
 using Audiochan.Core.Common.Interfaces.Persistence;
 using Audiochan.Core.Common.Models.Pagination;
+using Audiochan.Domain.Entities;
 using MediatR;
 
 namespace Audiochan.Core.Audios.Queries
@@ -11,6 +14,16 @@ namespace Audiochan.Core.Audios.Queries
     {
         public int Offset { get; init; }
         public int Size { get; init; }
+    }
+    
+    public sealed class GetAudioFeedSpecification : Specification<Audio>
+    {
+        public GetAudioFeedSpecification(long[] artistIds)
+        {
+            Query.AsNoTracking();
+            Query.Where(a => artistIds.Contains(a.ArtistId));
+            Query.OrderByDescending(a => a.Created);
+        }
     }
 
     public class GetAudioFeedQueryHandler : IRequestHandler<GetAudioFeedQuery, OffsetPagedListDto<AudioDto>>

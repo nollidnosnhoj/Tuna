@@ -1,15 +1,35 @@
-﻿using System.Threading;
+﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using Ardalis.Specification;
 using Audiochan.Core.Common.Interfaces.Persistence;
 using Audiochan.Core.Common.Interfaces.Services;
 using Audiochan.Core.Common.Models;
 using Audiochan.Domain.Entities;
 using MediatR;
 
-namespace Audiochan.Core.Users.Commands
+namespace Audiochan.Core.Artists.Commands
 {
     public record SetFollowCommand(long ObserverId, long TargetId, bool IsFollowing) : IRequest<Result>
     {
+    }
+    
+    public sealed class LoadArtistWithFollowersSpecification : Specification<Artist>
+    {
+        public LoadArtistWithFollowersSpecification(long targetId, long observerId)
+        {
+            if (observerId > 0)
+            {
+                Query.Include(a =>
+                    a.Followers.Where(fa => fa.ObserverId == observerId));
+            }
+            else
+            {
+                Query.Include(a => a.Followers);
+            }
+
+            Query.Where(a => a.Id == targetId);
+        }
     }
 
     public class SetFollowCommandHandler : IRequestHandler<SetFollowCommand, Result>

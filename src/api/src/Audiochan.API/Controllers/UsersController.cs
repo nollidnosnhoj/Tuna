@@ -1,9 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.API.Models;
-using Audiochan.Core.Audios;
 using Audiochan.Core.Common.Models.Pagination;
-using Audiochan.Core.Users;
 using Audiochan.Core.Users.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -23,36 +21,6 @@ namespace Audiochan.API.Controllers
             _mediator = mediator;
         }
 
-        [HttpGet("{username}", Name = "GetProfile")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(404)]
-        [SwaggerOperation(Summary = "Return user's profile.", OperationId = "GetProfile", Tags = new[] {"users"})]
-        public async Task<ActionResult<ArtistProfileDto>> GetUser(string username, CancellationToken cancellationToken)
-        {
-            var result = await _mediator.Send(new GetProfileQuery(username), cancellationToken);
-
-            return result != null
-                ? Ok(result)
-                : NotFound(ErrorApiResponse.NotFound("User was not found."));
-        }
-
-        [HttpGet("{username}/audios", Name = "GetUserAudios")]
-        [ProducesResponseType(200)]
-        [SwaggerOperation(Summary = "Return a list of the user's audios.", OperationId = "GetUserAudios",
-            Tags = new[] {"users"})]
-        public async Task<ActionResult<PagedListDto<AudioDto>>> GetUserAudios(string username, 
-            [FromQuery] OffsetPaginationQueryParams paginationQueryParams,
-            CancellationToken cancellationToken)
-        {
-            var list = await _mediator.Send(new GetUsersAudioQuery(username)
-            {
-                Offset = paginationQueryParams.Offset,
-                Size = paginationQueryParams.Size
-            }, cancellationToken);
-
-            return Ok(list);
-        }
-
         [HttpGet("{username}/favorite/audios", Name = "GetUserFavoriteAudios")]
         [ProducesResponseType(200)]
         [SwaggerOperation(
@@ -69,21 +37,6 @@ namespace Audiochan.API.Controllers
                 Size = paginationQueryParams.Size
             }, cancellationToken);
             return Ok(list);
-        }
-
-        [HttpGet("{username}/followers", Name = "GetUserFollowers")]
-        [ProducesResponseType(200)]
-        [SwaggerOperation(Summary = "Return a list of the user's followers.", OperationId = "GetUserFollowers",
-            Tags = new[] {"users"})]
-        public async Task<ActionResult<PagedListDto<FollowerViewModel>>> GetFollowers(string username, 
-            [FromQuery] OffsetPaginationQueryParams paginationQueryParams, 
-            CancellationToken cancellationToken)
-        {
-            return Ok(await _mediator.Send(new GetUserFollowersQuery(username)
-            {
-                Offset = paginationQueryParams.Offset,
-                Size = paginationQueryParams.Size
-            }, cancellationToken));
         }
 
         [HttpGet("{username}/followings", Name = "GetUserFollowings")]

@@ -7,7 +7,7 @@ using Audiochan.Core.Common.Interfaces.Services;
 using Audiochan.Core.Common.Models;
 using MediatR;
 
-namespace Audiochan.Core.Users.Commands
+namespace Audiochan.Core.Artists.Commands
 {
     [Authorize]
     public record RemoveUserPictureCommand(long UserId) : IRequest<Result>;
@@ -27,7 +27,9 @@ namespace Audiochan.Core.Users.Commands
         {
             var artist = await _unitOfWork.Artists.FindAsync(command.UserId, cancellationToken);
 
-            if (artist!.Id != command.UserId)
+            if (artist is null) return Result<ImageUploadResponse>.NotFound();
+
+            if (artist.Id != command.UserId)
                 return Result<ImageUploadResponse>.Forbidden();
 
             if (string.IsNullOrEmpty(artist.Picture)) return Result.Success();

@@ -17,14 +17,14 @@ namespace Audiochan.Infrastructure.Persistence
         public IArtistRepository Artists { get; }
         public IAudioRepository Audios { get; }
         public IEntityRepository<FavoriteAudio> FavoriteAudios { get; }
-        public IEntityRepository<FollowedArtist> FollowedUsers { get; }
+        public IEntityRepository<FollowedArtist> FollowedArtists { get; }
         public IUserRepository Users { get; }
         
         public UnitOfWork(ApplicationDbContext dbContext, IMapper mapper)
         {
             _dbContext = dbContext;
             FavoriteAudios = new EfRepository<FavoriteAudio>(_dbContext, mapper);
-            FollowedUsers = new EfRepository<FollowedArtist>(_dbContext, mapper);
+            FollowedArtists = new EfRepository<FollowedArtist>(_dbContext, mapper);
             Artists = new ArtistRepository(_dbContext, mapper);
             Audios = new AudioRepository(_dbContext, mapper);
             Users = new UserRepository(_dbContext, mapper);

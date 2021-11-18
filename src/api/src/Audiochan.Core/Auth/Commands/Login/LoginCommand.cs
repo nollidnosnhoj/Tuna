@@ -1,10 +1,13 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Ardalis.Specification;
 using Audiochan.Core.Auth.Queries;
 using Audiochan.Core.Common.Interfaces.Persistence;
 using Audiochan.Core.Common.Interfaces.Services;
 using Audiochan.Core.Common.Models;
+using Audiochan.Domain.Entities;
 using AutoMapper;
+using FluentValidation;
 using MediatR;
 
 namespace Audiochan.Core.Auth.Commands
@@ -13,6 +16,23 @@ namespace Audiochan.Core.Auth.Commands
     {
         public string Login { get; init; } = null!;
         public string Password { get; init; } = null!;
+    }
+    
+    public class LoginCommandValidator : AbstractValidator<LoginCommand>
+    {
+        public LoginCommandValidator()
+        {
+            RuleFor(x => x.Login).NotEmpty();
+            RuleFor(x => x.Password).NotEmpty();
+        }
+    }
+    
+    public sealed class LoadUserByNameOrEmailSpecification : Specification<User>
+    {
+        public LoadUserByNameOrEmailSpecification(string login)
+        {
+            Query.Where(u => u.UserName == login || u.Email == login);
+        }
     }
 
     public class LoginCommandHandler : IRequestHandler<LoginCommand, Result<CurrentUserDto>>

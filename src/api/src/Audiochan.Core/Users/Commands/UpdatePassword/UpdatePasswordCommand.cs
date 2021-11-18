@@ -1,11 +1,14 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.Common;
 using Audiochan.Core.Common.Attributes;
 using Audiochan.Core.Common.Extensions;
 using Audiochan.Core.Common.Interfaces.Persistence;
 using Audiochan.Core.Common.Interfaces.Services;
 using Audiochan.Core.Common.Models;
+using FluentValidation;
 using MediatR;
+using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Users.Commands
 {
@@ -22,6 +25,19 @@ namespace Audiochan.Core.Users.Commands
             CurrentPassword = request.CurrentPassword,
             NewPassword = request.NewPassword
         };
+    }
+    
+    public class UpdatePasswordCommandValidator : AbstractValidator<UpdatePasswordCommand>
+    {
+        public UpdatePasswordCommandValidator(IOptions<IdentitySettings> options)
+        {
+            RuleFor(req => req.NewPassword)
+                .NotEmpty()
+                .WithMessage("New Password is required.")
+                .NotEqual(req => req.CurrentPassword)
+                .WithMessage("New password cannot be the same as the previous.")
+                .PasswordValidation(options.Value.PasswordSettings, "New Password");
+        }
     }
 
     public class UpdatePasswordCommandHandler : IRequestHandler<UpdatePasswordCommand, Result>

@@ -9,7 +9,7 @@ using Audiochan.Core.Common.Interfaces.Services;
 using Audiochan.Core.Common.Models;
 using MediatR;
 
-namespace Audiochan.Core.Users.Commands
+namespace Audiochan.Core.Artists.Commands
 {
     [Authorize]
     public record UpdateUserPictureCommand(long UserId, string Data = "") : IImageData,
@@ -36,6 +36,9 @@ namespace Audiochan.Core.Users.Commands
         public async Task<Result<ImageUploadResponse>> Handle(UpdateUserPictureCommand command, CancellationToken cancellationToken)
         {
             var artist = await _unitOfWork.Artists.FindAsync(command.UserId, cancellationToken);
+
+            if (artist is null)
+                return Result<ImageUploadResponse>.NotFound();
 
             if (artist!.Id != _currentUserId)
                 return Result<ImageUploadResponse>.Forbidden();

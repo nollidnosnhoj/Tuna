@@ -1,8 +1,10 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Ardalis.Specification;
 using Audiochan.Core.Common.Interfaces.Pagination;
 using Audiochan.Core.Common.Interfaces.Persistence;
 using Audiochan.Core.Common.Models.Pagination;
+using Audiochan.Domain.Entities;
 using MediatR;
 
 namespace Audiochan.Core.Users.Queries
@@ -12,6 +14,16 @@ namespace Audiochan.Core.Users.Queries
         public string Username { get; init; } = string.Empty;
         public int Offset { get; init; }
         public int Size { get; init; }
+    }
+    
+    public sealed class GetFollowerByObserverNameSpecification : Specification<FollowedArtist>
+    {
+        public GetFollowerByObserverNameSpecification(string username)
+        {
+            Query.AsNoTracking();
+            Query.Where(u => u.Observer.UserName == username);
+            Query.OrderByDescending(u => u.FollowedDate);
+        }
     }
 
     public class GetUserFollowingsQueryHandler : IRequestHandler<GetUserFollowingsQuery, OffsetPagedListDto<FollowingViewModel>>
@@ -26,8 +38,8 @@ namespace Audiochan.Core.Users.Queries
         public async Task<OffsetPagedListDto<FollowingViewModel>> Handle(GetUserFollowingsQuery query,
             CancellationToken cancellationToken)
         {
-            var spec = new GetFollowerByObserverName(query.Username);
-            var list = await _unitOfWork.FollowedUsers
+            var spec = new GetFollowerByObserverNameSpecification(query.Username);
+            var list = await _unitOfWork.FollowedArtists
                 .GetOffsetPagedListAsync<FollowingViewModel>(spec, query.Offset, query.Size, cancellationToken);
             return new OffsetPagedListDto<FollowingViewModel>(list, query.Offset, query.Size);
         }

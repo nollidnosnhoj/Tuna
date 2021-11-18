@@ -3,9 +3,9 @@ using System.Threading.Tasks;
 using Audiochan.Core.Common.Interfaces.Persistence;
 using MediatR;
 
-namespace Audiochan.Core.Users.Queries
+namespace Audiochan.Core.Artists.Queries
 {
-    public record CheckIfUserIsFollowingQuery(long ObserverId, long TargetId) : IRequest<bool>
+    public record CheckIfUserIsFollowingQuery(long UserId, long ArtistId) : IRequest<bool>
     {
     }
 
@@ -20,8 +20,8 @@ namespace Audiochan.Core.Users.Queries
 
         public async Task<bool> Handle(CheckIfUserIsFollowingQuery query, CancellationToken cancellationToken)
         {
-            return await _unitOfWork.FollowedUsers
-                .ExistsAsync(fu => fu.ObserverId == query.ObserverId && fu.TargetId == query.TargetId,
+            return await _unitOfWork.FollowedArtists
+                .ExistsAsync(fu => fu.ObserverId == query.UserId && fu.TargetId == query.ArtistId,
                     cancellationToken);
         }
     }

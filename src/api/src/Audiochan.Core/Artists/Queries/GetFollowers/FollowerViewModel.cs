@@ -1,10 +1,9 @@
 ﻿using System;
-using Audiochan.Core.Common;
 using Audiochan.Core.Common.Mappings;
 using Audiochan.Domain.Entities;
 using AutoMapper;
 
-namespace Audiochan.Core.Users.Queries
+namespace Audiochan.Core.Artists.Queries
 {
     public record FollowerViewModel : IMapFrom<FollowedArtist>
     {

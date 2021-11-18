@@ -1,5 +1,7 @@
-﻿using System.Threading;
+﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using Ardalis.Specification;
 using Audiochan.Core.Common.Interfaces.Persistence;
 using Audiochan.Core.Common.Interfaces.Services;
 using Audiochan.Core.Common.Models;
@@ -10,6 +12,24 @@ namespace Audiochan.Core.Users.Commands
 {
     public record SetFavoriteAudioCommand(long AudioId, long UserId, bool IsFavoriting) : IRequest<Result>
     {
+    }
+    
+    public sealed class LoadAudioWithFavoritedUsersSpecification : Specification<Audio>
+    {
+        public LoadAudioWithFavoritedUsersSpecification(long audioId, long observerId)
+        {
+            if (observerId > 0)
+            {
+                Query.Include(a =>
+                    a.FavoriteAudios.Where(fa => fa.UserId == observerId));
+            }
+            else
+            {
+                Query.Include(a => a.FavoriteAudios);
+            }
+
+            Query.Where(a => a.Id == audioId);
+        }
     }
 
     public class SetFavoriteAudioCommandHandler : IRequestHandler<SetFavoriteAudioCommand, Result>
