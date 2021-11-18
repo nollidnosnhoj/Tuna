@@ -6,7 +6,7 @@ import { passwordRule, usernameRule } from "~/lib/validators/user-schemas";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod/dist/zod";
 
-export const registrationValidationSchema = z
+export const artistSignUpValidationSchema = z
   .object({
     username: usernameRule("Username"),
     password: passwordRule("Password"),
@@ -22,16 +22,16 @@ export const registrationValidationSchema = z
     }
   });
 
-export type RegisterFormInputs = z.infer<typeof registrationValidationSchema>;
+export type ArtistSignUpInputs = z.infer<typeof artistSignUpValidationSchema>;
 
-interface RegisterFormProps {
+interface ArtistSignUpFormProps {
   initialRef?: React.RefObject<HTMLInputElement>;
-  onSubmit?: (values: RegisterFormInputs) => Promise<void>;
+  onSubmit?: (values: ArtistSignUpInputs) => Promise<void>;
 }
 
-export default function RegisterForm(props: RegisterFormProps) {
-  const formik = useForm<RegisterFormInputs>({
-    resolver: zodResolver(registrationValidationSchema),
+export default function ArtistSignUpForm(props: ArtistSignUpFormProps) {
+  const formik = useForm<ArtistSignUpInputs>({
+    resolver: zodResolver(artistSignUpValidationSchema),
   });
 
   const {
@@ -41,7 +41,7 @@ export default function RegisterForm(props: RegisterFormProps) {
     formState: { errors, isSubmitting },
   } = formik;
 
-  const handleRegisterSubmit = async (values: RegisterFormInputs) => {
+  const handleRegisterSubmit = async (values: ArtistSignUpInputs) => {
     try {
       await props.onSubmit?.(values);
     } catch {

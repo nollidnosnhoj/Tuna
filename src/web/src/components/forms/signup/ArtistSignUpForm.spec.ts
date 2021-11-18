@@ -1,8 +1,8 @@
-import { registrationValidationSchema } from "./RegisterForm";
+import { artistSignUpValidationSchema } from "./ArtistSignUpForm";
 
 describe("registration validation schema", () => {
   it("successfully validates", () => {
-    const result = registrationValidationSchema.safeParse({
+    const result = artistSignUpValidationSchema.safeParse({
       username: "testuser",
       password: "Password1!",
       confirmPassword: "Password1!",
