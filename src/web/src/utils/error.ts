@@ -4,6 +4,7 @@ import { ErrorResponse } from "~/lib/types";
 import { isAxiosError } from ".";
 
 export function checkIfErrorResponse(err: any): err is ErrorResponse {
+  if (!err) return false;
   return "code" in err && "message" in err;
 }
 
