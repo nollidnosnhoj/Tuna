@@ -9,8 +9,24 @@ import {
   useUpdatePassword,
   useUpdateUsername,
 } from "~/lib/hooks/api";
+import { CurrentUser } from "~/lib/types";
+import { authRoute } from "~/lib/server/authRoute";
+import { GetServerSideProps } from "next";
 
-const SettingPage: React.FC = () => {
+interface SettingPageProps {
+  user: CurrentUser;
+}
+
+export const getServerSideProps: GetServerSideProps =
+  authRoute<SettingPageProps>(async (_, user) => {
+    return {
+      props: {
+        user,
+      },
+    };
+  });
+
+const SettingPage: React.FC<SettingPageProps> = () => {
   const { mutateAsync: updateUsernameAsync } = useUpdateUsername();
   const { mutateAsync: updatePasswordAsync } = useUpdatePassword();
   const { mutateAsync: updateEmailAsync } = useUpdateEmail();

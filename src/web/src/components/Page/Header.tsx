@@ -19,6 +19,7 @@ import {
   FlexProps,
   Button,
   useColorMode,
+  MenuGroup,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
@@ -59,12 +60,23 @@ function AuthenticatedHeaderSection({
           bg={useColorModeValue("white", "gray.900")}
           borderColor={useColorModeValue("gray.200", "gray.700")}
         >
-          <NextLink href={`/users/${user.userName}`}>
-            <MenuItem>Profile</MenuItem>
-          </NextLink>
-          <NextLink href="/me/settings">
-            <MenuItem>Settings</MenuItem>
-          </NextLink>
+          <MenuGroup>
+            <NextLink href={`/artists/${user.userName}`}>
+              <MenuItem>Profile</MenuItem>
+            </NextLink>
+            <NextLink href="/me/audios">
+              <MenuItem>My Uploads</MenuItem>
+            </NextLink>
+          </MenuGroup>
+          <MenuDivider />
+          <MenuGroup>
+            <NextLink href="/me">
+              <MenuItem>Dashboard</MenuItem>
+            </NextLink>
+            <NextLink href="/me/settings">
+              <MenuItem>Settings</MenuItem>
+            </NextLink>
+          </MenuGroup>
           <MenuDivider />
           <NextLink href="/logout">
             <MenuItem>Sign out</MenuItem>
@@ -100,20 +112,14 @@ export function Header({ onOpen, ...rest }: IHeaderProps) {
         aria-label="open menu"
         icon={<FiMenu />}
       />
-
-      {/*<Text*/}
-      {/*  display={{ base: "flex", md: "none" }}*/}
-      {/*  fontSize="2xl"*/}
-      {/*  fontWeight="bold"*/}
-      {/*>*/}
-      {/*  Audiochan*/}
-      {/*</Text>*/}
       <HStack spacing={{ base: "4", md: "6" }}>
-        <NextLink href={"/upload"}>
-          <Button leftIcon={<MdCloudUpload />} colorScheme={"primary"}>
-            Upload
-          </Button>
-        </NextLink>
+        {user && (
+          <NextLink href={"/upload"}>
+            <Button leftIcon={<MdCloudUpload />} colorScheme={"primary"}>
+              Upload
+            </Button>
+          </NextLink>
+        )}
         <IconButton
           aria-label={"Switch light/dark theme"}
           icon={<ColorModeIcon />}
@@ -136,7 +142,7 @@ export function Header({ onOpen, ...rest }: IHeaderProps) {
                 Sign In
               </Button>
             </NextLink>
-            <NextLink href="/register">
+            <NextLink href="/signup/user">
               <Button
                 display={{ base: "none", md: "inline-flex" }}
                 fontSize={"sm"}
