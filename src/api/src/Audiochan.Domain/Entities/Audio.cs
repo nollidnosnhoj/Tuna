@@ -7,25 +7,19 @@ namespace Audiochan.Domain.Entities
 {
     public class Audio : IAudited, IHasId<long>
     {
-        public Audio()
-        {
-            this.Tags = new List<string>();
-            this.FavoriteAudios = new HashSet<FavoriteAudio>();
-        }
-        
         public long Id { get; set; }
         public DateTime Created { get; set; }
         public DateTime? LastModified { get; set; }
         public string Title { get; set; } = null!;
         public string? Description { get; set; }
-        public List<string> Tags { get; set; }
+        public List<string> Tags { get; set; } = new();
         public decimal Duration { get; set; }
         public string File { get; set; } = null!;
         public long Size { get; set; }
         public string? Picture { get; set; }
         public long UserId { get; set; }
         public User User { get; set; } = null!;
-        public ICollection<FavoriteAudio> FavoriteAudios { get; set; }
+        public ICollection<FavoriteAudio> FavoriteAudios { get; set; } = new HashSet<FavoriteAudio>();
 
         public void Favorite(long userId, DateTime favoritedDateTime)
         {

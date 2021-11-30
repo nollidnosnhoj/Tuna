@@ -8,15 +8,7 @@ namespace Audiochan.Domain.Entities
 {
     public class User : IAudited, IHasId<long>
     {
-        public User()
-        {
-            Audios = new HashSet<Audio>();
-            FavoriteAudios = new HashSet<FavoriteAudio>();
-            Followings = new HashSet<FollowedUser>();
-            Followers = new HashSet<FollowedUser>();
-        }
-
-        public User(string username, string email, string passwordHash, UserRole userRole = UserRole.Regular) : this()
+        public User(string username, string email, string passwordHash, UserRole userRole = UserRole.Regular)
         {
             this.UserName = username;
             this.Email = email;
@@ -32,10 +24,10 @@ namespace Audiochan.Domain.Entities
         public string? Picture { get; set; }
         public DateTime Created { get; set; }
         public DateTime? LastModified { get; set; }
-        public ICollection<Audio> Audios { get; set; }
-        public ICollection<FavoriteAudio> FavoriteAudios { get; set; }
-        public ICollection<FollowedUser> Followings { get; set; }
-        public ICollection<FollowedUser> Followers { get; set; }
+        public ICollection<Audio> Audios { get; set; } = new HashSet<Audio>();
+        public ICollection<FavoriteAudio> FavoriteAudios { get; set; } = new HashSet<FavoriteAudio>();
+        public ICollection<FollowedUser> Followings { get; set; } = new HashSet<FollowedUser>();
+        public ICollection<FollowedUser> Followers { get; set; } = new HashSet<FollowedUser>();
 
         public void Follow(long observerId, DateTime followedDate)
         {
