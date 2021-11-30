@@ -9,7 +9,6 @@
   <ItemGroup>
     <PackageReference Include="Ardalis.Specification" Version="5.2.0" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
-    <PackageReference Include="EFCore.NamingConventions" Version="5.0.2" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="10.3.4" />
     <PackageReference Include="Hashids.net" Version="1.4.1" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />
