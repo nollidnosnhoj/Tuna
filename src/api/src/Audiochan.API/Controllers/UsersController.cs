@@ -1,9 +1,8 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.API.Models;
-using Audiochan.Core.Audios;
-using Audiochan.Core.Common.Models.Pagination;
-using Audiochan.Core.Users;
+using Audiochan.Core.Dtos;
+using Audiochan.Core.Dtos.Wrappers;
 using Audiochan.Core.Users.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;

@@ -1,6 +1,4 @@
-﻿using Audiochan.Core.Common;
-using Audiochan.Core.Users;
-using Audiochan.Core.Users.Commands;
+﻿using Audiochan.Core.Users.Commands;
 using FluentValidation;
 using FluentValidation.TestHelper;
 using Microsoft.Extensions.Options;

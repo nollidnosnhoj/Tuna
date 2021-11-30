@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Extensions;
-using Audiochan.Core.Users;
+using Audiochan.Core.Extensions;
 using Audiochan.Core.Users.Commands;
 using Audiochan.Domain.Entities;
 using FluentAssertions;
@@ -74,7 +73,7 @@ namespace Audiochan.Core.IntegrationTests.Features.Users
             user.Followers.Add(new FollowedUser
             {
                 ObserverId = observerId,
-                FollowedDate = new DateTime(2021, 1, 1)
+                FollowedDate = new DateTime(2021, 1, 1, 0, 0, 0, DateTimeKind.Utc)
             });
             
             ExecuteDbContext(db =>

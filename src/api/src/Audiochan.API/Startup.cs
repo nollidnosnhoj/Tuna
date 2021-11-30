@@ -1,13 +1,16 @@
+using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Audiochan.API.Extensions.ConfigurationExtensions;
 using Audiochan.API.Middlewares;
+using Audiochan.API.Middlewares.Pipelines;
 using Audiochan.API.Services;
 using Audiochan.Core;
-using Audiochan.Core.Common;
-using Audiochan.Core.Common.Interfaces.Services;
+using Audiochan.Core.Services;
 using Audiochan.Infrastructure;
 using Audiochan.Infrastructure.Storage.AmazonS3;
+using FluentValidation;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -41,8 +44,13 @@ namespace Audiochan.API
             };
 
             services.AddMemoryCache();
+            services.AddAutoMapper(Assembly.GetExecutingAssembly());
+            services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+            services.AddMediatR(Assembly.GetExecutingAssembly());
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehavior<,>));
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(DbContextTransactionPipelineBehavior<,>));
+            services.AddDatabase(Configuration, Environment);
             services.AddInfrastructure(Configuration, Environment);
-            services.AddCore();
             services.Configure<JsonSerializerOptions>(options =>
             {
                 options.DefaultIgnoreCondition = jsonSerializerOptions.DefaultIgnoreCondition;
