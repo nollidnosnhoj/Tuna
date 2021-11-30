@@ -1,9 +1,9 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Common.Interfaces.Persistence;
+using Audiochan.Core.Persistence;
+using Audiochan.Core.Persistence.Repositories;
 using Audiochan.Domain.Entities;
-using Audiochan.Infrastructure.Persistence.Repositories.Abstractions;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,13 +15,21 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
         {
         }
 
-        public async Task<long[]> GetObserverFollowingIds(long observerId, CancellationToken ct = default)
+        public async Task<User?> LoadUserWithFollowers(long targetId, long observerId, CancellationToken cancellationToken = default)
         {
-            return await DbSet
-                .AsNoTracking()
-                .Where(user => user.Id == observerId)
-                .SelectMany(u => u.Followings.Select(f => f.TargetId))
-                .ToArrayAsync(ct);
+            IQueryable<User> queryable = Queryable;
+            
+            if (observerId > 0)
+            {
+                queryable = queryable.Include(a =>
+                    a.Followers.Where(fa => fa.ObserverId == observerId));
+            }
+            else
+            {
+                queryable = queryable.Include(a => a.Followers);
+            }
+
+            return await queryable.SingleOrDefaultAsync(a => a.Id == targetId, cancellationToken);
         }
     }
 }

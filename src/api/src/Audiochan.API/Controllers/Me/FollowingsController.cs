@@ -1,9 +1,8 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.API.Extensions;
-using Audiochan.Core.Common.Extensions;
-using Audiochan.Core.Common.Interfaces.Services;
-using Audiochan.Core.Users;
+using Audiochan.Core.Extensions;
+using Audiochan.Core.Services;
 using Audiochan.Core.Users.Commands;
 using Audiochan.Core.Users.Queries;
 using MediatR;

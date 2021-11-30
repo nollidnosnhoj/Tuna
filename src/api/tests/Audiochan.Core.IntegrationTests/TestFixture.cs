@@ -5,8 +5,9 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Audiochan.API;
-using Audiochan.Core.Common.Extensions;
-using Audiochan.Core.Common.Interfaces.Services;
+using Audiochan.Core.Extensions;
+using Audiochan.Core.Persistence;
+using Audiochan.Core.Services;
 using Audiochan.Domain.Entities;
 using Audiochan.Domain.Enums;
 using Audiochan.Infrastructure.Persistence;
@@ -66,9 +67,9 @@ namespace Audiochan.Core.IntegrationTests
             services.Remove(descriptorCurrentUserService!);
             services.AddTransient(_ => CurrentUserServiceMock.Create(_user).Object);
                 
-            // var descriptorDateTimeProvider = services.FirstOrDefault(d => d.ServiceType == typeof(IDateTimeProvider));
-            // services.Remove(descriptorDateTimeProvider!);
-            // services.AddTransient(_ => DateTimeProviderMock.Create(DateTime.UtcNow).Object);
+            var descriptorDateTimeProvider = services.FirstOrDefault(d => d.ServiceType == typeof(IDateTimeProvider));
+            services.Remove(descriptorDateTimeProvider!);
+            services.AddTransient(_ => DateTimeProviderMock.Create(DateTime.UtcNow).Object);
 
             var descriptorStorageService = services.FirstOrDefault(d => d.ServiceType == typeof(IStorageService));
             services.Remove(descriptorStorageService!);

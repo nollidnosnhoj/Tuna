@@ -1,9 +1,9 @@
 ﻿using Amazon.S3;
-using Audiochan.Core.Common.Interfaces.Persistence;
-using Audiochan.Core.Common.Interfaces.Services;
+using Audiochan.Core.Persistence;
+using Audiochan.Core.Persistence.Repositories;
+using Audiochan.Core.Services;
 using Audiochan.Infrastructure.Persistence;
 using Audiochan.Infrastructure.Persistence.Repositories;
-using Audiochan.Infrastructure.Persistence.Repositories.Abstractions;
 using Audiochan.Infrastructure.Search;
 using Audiochan.Infrastructure.Security;
 using Audiochan.Infrastructure.Shared;
@@ -29,23 +29,12 @@ namespace Audiochan.Infrastructure
             services.AddTransient<IDateTimeProvider, DateTimeProvider>();
             services.AddTransient<IRandomIdGenerator, NanoidGenerator>();
             services.AddTransient<IPasswordHasher, BCryptHasher>();
-            services.AddPersistence(configuration, environment);
+            services.AddPersistence();
             return services;
         }
 
-        private static IServiceCollection AddPersistence(this IServiceCollection services, 
-            IConfiguration configuration, IHostEnvironment env)
+        private static IServiceCollection AddPersistence(this IServiceCollection services)
         {
-            services.AddDbContext<ApplicationDbContext>(o =>
-            {
-                o.UseNpgsql(configuration.GetConnectionString("Database"));
-                o.UseSnakeCaseNamingConvention();
-                if (env.IsDevelopment())
-                {
-                    o.EnableSensitiveDataLogging();
-                }
-            });
-
             services.AddScoped(typeof(IEntityRepository<>), typeof(EfRepository<>));
             services.AddScoped<IAudioRepository, AudioRepository>();
             services.AddScoped<IUserRepository, UserRepository>();

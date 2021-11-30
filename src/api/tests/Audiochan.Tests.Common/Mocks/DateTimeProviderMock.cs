@@ -1,5 +1,5 @@
 ﻿using System;
-using Audiochan.Core.Common.Interfaces.Services;
+using Audiochan.Core.Services;
 using Moq;
 
 namespace Audiochan.Tests.Common.Mocks
