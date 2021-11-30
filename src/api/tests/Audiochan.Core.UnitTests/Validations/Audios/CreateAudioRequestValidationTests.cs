@@ -1,6 +1,4 @@
-﻿using Audiochan.Core.Audios;
-using Audiochan.Core.Audios.Commands;
-using Audiochan.Core.Common;
+﻿using Audiochan.Core.Audios.Commands;
 using Audiochan.Tests.Common.Builders;
 using Audiochan.Tests.Common.Fakers.Audios;
 using FluentAssertions;

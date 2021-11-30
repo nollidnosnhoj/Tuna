@@ -8,12 +8,12 @@ namespace Audiochan.Domain.Entities
 {
     public class User : IAudited, IHasId<long>
     {
-        public User(string username, string email, string passwordHash, UserRole userRole = UserRole.Regular)
+        public User(string userName, string email, string passwordHash, UserRole role = UserRole.Regular)
         {
-            this.UserName = username;
+            this.UserName = userName;
             this.Email = email;
             this.PasswordHash = passwordHash;
-            this.Role = userRole;
+            this.Role = role;
         }
 
         public long Id { get; set; }

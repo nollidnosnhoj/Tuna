@@ -1,5 +1,5 @@
 ﻿using System;
-using Audiochan.Core.Common.Interfaces.Pagination;
+using Audiochan.Core.Interfaces;
 
 namespace Audiochan.API.Models
 {

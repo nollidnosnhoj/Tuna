@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
 using Audiochan.Core.Audios;
 using Audiochan.Core.Audios.Queries;
-using Audiochan.Core.Common;
-using Audiochan.Core.Common.Exceptions;
-using Audiochan.Core.Common.Extensions;
+using Audiochan.Core.Dtos;
+using Audiochan.Core.Exceptions;
+using Audiochan.Core.Extensions;
 using Audiochan.Tests.Common.Fakers.Audios;
 using FluentAssertions;
 using NUnit.Framework;
@@ -38,17 +38,6 @@ namespace Audiochan.Core.IntegrationTests.Features.Audios
             audio.User.Should().NotBeNull();
             audio.User.Id.Should().Be(userId);
             audio.User.UserName.Should().Be(userName);
-        }
-
-        [Test]
-        public async Task ShouldNotCreate_WhenUnauthenticated()
-        {
-            ClearCurrentUser();
-            var command = new CreateAudioCommandFaker().Generate();
-            await FluentActions
-                .Awaiting(() => SendAsync(command))
-                .Should()
-                .ThrowExactlyAsync<UnauthorizedException>();
         }
 
         [Test]

@@ -1,10 +1,11 @@
-﻿using Audiochan.Core.Common.Mappings;
+﻿using Audiochan.API.Features.Audios.Mappings;
+using Audiochan.API.Features.Auth.Mappings;
+using Audiochan.API.Features.Users.Mappings;
 using AutoMapper;
 using Xunit;
 
 namespace Audiochan.Core.UnitTests.Mappings
 {
-    // https://github.com/jasontaylordev/CleanArchitecture/blob/main/tests/Application.UnitTests/Common/Mappings/MappingTests.cs
     public class MappingTests
     {
         private readonly IConfigurationProvider _configuration;
@@ -14,7 +15,10 @@ namespace Audiochan.Core.UnitTests.Mappings
         {
             _configuration = new MapperConfiguration(cfg =>
             {
-                cfg.AddProfile<AutoMapperProfile>();
+                cfg.AddProfile<AudioDtoMapping>();
+                cfg.AddProfile<CurrentUserDtoMapping>();
+                cfg.AddProfile<ProfileDtoMapping>();
+                cfg.AddProfile<UserDtoMapping>();
             });
 
             _mapper = _configuration.CreateMapper();

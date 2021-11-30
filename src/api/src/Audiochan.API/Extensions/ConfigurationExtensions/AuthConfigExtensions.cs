@@ -1,6 +1,6 @@
 ﻿using Audiochan.API.Models;
 using Audiochan.API.Services;
-using Audiochan.Core.Common.Interfaces.Services;
+using Audiochan.Core.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
