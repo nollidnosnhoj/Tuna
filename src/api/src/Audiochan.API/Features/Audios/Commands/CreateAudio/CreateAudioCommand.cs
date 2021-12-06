@@ -1,8 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.API.Middlewares.Pipelines.Attributes;
+using Audiochan.Core.CQRS;
 using Audiochan.Core.Extensions;
 using Audiochan.Core.Persistence;
 using Audiochan.Core.Services;
@@ -12,7 +15,8 @@ using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Audios.Commands
 {
-    public class CreateAudioCommand : IRequest<Result<long>>
+    [ExplicitTransaction]
+    public class CreateAudioCommand : ICommandRequest<Result<long>>
     {
         public string UploadId { get; init; } = null!;
         public string FileName { get; init; } = null!;
@@ -55,27 +59,45 @@ namespace Audiochan.Core.Audios.Commands
             {
                 return Result<long>.BadRequest("Cannot find upload. Please upload and try again.");
             }
-            
-            var audio = new Audio
-            {
-                UserId = currentUserId,
-                Size = command.FileSize,
-                Duration = command.Duration,
-                Title = command.Title,
-                Description = command.Description,
-                File = command.BlobName,
-            };
 
-            // Create tags
-            if (command.Tags.Count > 0)
+            Audio? audio = null;
+
+            try
             {
-                audio.Tags = _slugGenerator.GenerateSlugs(command.Tags).ToList();
+                await _unitOfWork.BeginTransactionAsync();
+
+                audio = new Audio
+                {
+                    UserId = currentUserId,
+                    Size = command.FileSize,
+                    Duration = command.Duration,
+                    Title = command.Title,
+                    Description = command.Description,
+                    File = command.BlobName,
+                };
+
+                // Create tags
+                if (command.Tags.Count > 0)
+                {
+                    audio.Tags = _slugGenerator.GenerateSlugs(command.Tags).ToList();
+                }
+
+                await _unitOfWork.Audios.AddAsync(audio, cancellationToken);
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+                await MoveTempAudioToPublic(audio.File, cancellationToken);
+
+                await _unitOfWork.CommitTransactionAsync(cancellationToken);
+                return Result<long>.Success(audio.Id);
             }
-
-            await _unitOfWork.Audios.AddAsync(audio, cancellationToken);
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
-            await MoveTempAudioToPublic(audio.File, cancellationToken);
-            return Result<long>.Success(audio.Id);
+            catch (Exception)
+            {
+                // Remove audio that was moved to public bucket
+                if (!string.IsNullOrEmpty(audio?.File))
+                    await _storageService.RemoveAsync(_audioStorageSettings.Bucket, audio.File, cancellationToken);
+                await _unitOfWork.RollbackTransactionAsync();
+                throw;
+            }
         }
         
         private async Task MoveTempAudioToPublic(string fileName, CancellationToken cancellationToken = default)

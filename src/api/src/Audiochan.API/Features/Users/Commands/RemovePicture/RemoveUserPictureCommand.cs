@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.CQRS;
 using Audiochan.Core.Dtos.Responses;
 using Audiochan.Core.Persistence;
 using Audiochan.Core.Services;
@@ -7,7 +8,7 @@ using MediatR;
 
 namespace Audiochan.Core.Users.Commands
 {
-    public record RemoveUserPictureCommand(long UserId) : IRequest<Result>;
+    public record RemoveUserPictureCommand(long UserId) : ICommandRequest<Result>;
     
     public class RemoveUserPictureCommandHandler : IRequestHandler<RemoveUserPictureCommand, Result>
     {

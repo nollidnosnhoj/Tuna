@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.CQRS;
 using Audiochan.Core.Dtos.Wrappers;
 using Audiochan.Core.Extensions;
 using Audiochan.Core.Interfaces;
@@ -11,7 +12,7 @@ using MediatR;
 
 namespace Audiochan.Core.Users.Queries
 {
-    public record GetUserFollowingsQuery : IHasOffsetPage, IRequest<OffsetPagedListDto<FollowingViewModel>>
+    public record GetUserFollowingsQuery : IHasOffsetPage, IQueryRequest<OffsetPagedListDto<FollowingViewModel>>
     {
         public string Username { get; init; } = string.Empty;
         public int Offset { get; init; }

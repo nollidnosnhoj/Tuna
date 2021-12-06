@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.CQRS;
 using Audiochan.Core.Dtos.Responses;
 using Audiochan.Core.Extensions;
 using Audiochan.Core.Interfaces;
@@ -10,7 +11,7 @@ using MediatR;
 namespace Audiochan.Core.Users.Commands
 {
     public record UpdateUserPictureCommand(long UserId, string Data = "") : IImageData,
-        IRequest<Result<ImageUploadResponse>>;
+        ICommandRequest<Result<ImageUploadResponse>>;
 
     public class UpdateUserPictureCommandHandler : IRequestHandler<UpdateUserPictureCommand, Result<ImageUploadResponse>>
     {

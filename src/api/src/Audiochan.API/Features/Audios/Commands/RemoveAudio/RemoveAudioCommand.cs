@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.CQRS;
 using Audiochan.Core.Extensions;
 using Audiochan.Core.Persistence;
 using Audiochan.Core.Services;
@@ -10,7 +11,7 @@ using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Audios.Commands
 {
-    public record RemoveAudioCommand(long Id) : IRequest<Result<bool>>
+    public record RemoveAudioCommand(long Id) : ICommandRequest<Result<bool>>
     {
     }
 

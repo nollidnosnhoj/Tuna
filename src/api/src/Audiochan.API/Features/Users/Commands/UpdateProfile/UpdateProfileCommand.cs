@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.CQRS;
 using Audiochan.Core.Extensions;
 using Audiochan.Core.Persistence;
 using Audiochan.Core.Services;
@@ -7,7 +8,7 @@ using MediatR;
 
 namespace Audiochan.Core.Users.Commands
 {
-    public record UpdateProfileCommand : IRequest<Result<bool>>
+    public record UpdateProfileCommand : ICommandRequest<Result<bool>>
     {
         public long UserId { get; init; }
         public string? DisplayName { get; init; }

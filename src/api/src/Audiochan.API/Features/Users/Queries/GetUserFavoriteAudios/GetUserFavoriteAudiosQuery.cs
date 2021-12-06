@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.CQRS;
 using Audiochan.Core.Dtos;
 using Audiochan.Core.Dtos.Wrappers;
 using Audiochan.Core.Extensions;
@@ -12,7 +13,7 @@ using MediatR;
 
 namespace Audiochan.Core.Users.Queries
 {
-    public record GetUserFavoriteAudiosQuery : IHasOffsetPage, IRequest<OffsetPagedListDto<AudioDto>>
+    public record GetUserFavoriteAudiosQuery : IHasOffsetPage, IQueryRequest<OffsetPagedListDto<AudioDto>>
     {
         public string? Username { get; set; }
         public int Offset { get; init; }

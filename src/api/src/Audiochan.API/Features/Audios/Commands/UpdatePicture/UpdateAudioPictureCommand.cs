@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.CQRS;
 using Audiochan.Core.Dtos.Responses;
 using Audiochan.Core.Extensions;
 using Audiochan.Core.Interfaces;
@@ -11,7 +12,7 @@ using Microsoft.Extensions.Caching.Distributed;
 
 namespace Audiochan.Core.Audios.Commands
 {
-    public record UpdateAudioPictureCommand(long AudioId, string Data) : IImageData, IRequest<Result<ImageUploadResponse>>
+    public record UpdateAudioPictureCommand(long AudioId, string Data) : IImageData, ICommandRequest<Result<ImageUploadResponse>>
     {
     }
 

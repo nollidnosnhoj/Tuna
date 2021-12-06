@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.CQRS;
 using Audiochan.Core.Persistence;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
@@ -9,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Users.Queries
 {
-    public record GetProfileQuery(string Username) : IRequest<ProfileDto?>
+    public record GetProfileQuery(string Username) : IQueryRequest<ProfileDto?>
     {
     }
 

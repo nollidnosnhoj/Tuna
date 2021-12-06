@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.CQRS;
 using Audiochan.Core.Dtos;
 using Audiochan.Core.Dtos.Wrappers;
 using Audiochan.Core.Extensions;
@@ -14,7 +15,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Audios.Queries
 {
-    public record GetAudioFeedQuery(long UserId) : IHasOffsetPage, IRequest<OffsetPagedListDto<AudioDto>>
+    public record GetAudioFeedQuery(long UserId) : IHasOffsetPage, IQueryRequest<OffsetPagedListDto<AudioDto>>
     {
         public int Offset { get; init; }
         public int Size { get; init; }

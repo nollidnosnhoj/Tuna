@@ -1,13 +1,17 @@
 ﻿using System;
+using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.API.Middlewares.Pipelines.Attributes;
+using Audiochan.Core.CQRS;
 using Audiochan.Core.Persistence;
 using MediatR;
 
 namespace Audiochan.API.Middlewares.Pipelines
 {
     public class DbContextTransactionPipelineBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
-        where TRequest : notnull
+        where TRequest : ICommandRequest<TResponse>
     {
         private readonly IUnitOfWork _unitOfWork;
 
@@ -19,6 +23,11 @@ namespace Audiochan.API.Middlewares.Pipelines
         public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
         {
             TResponse? result;
+
+            // If the command has an explicit transaction attribute, skip the transaction pipeline,
+            // as the command will handle the transaction explicitly.
+            var attrs = request.GetType().GetCustomAttributes<ExplicitTransactionAttribute>();
+            if (attrs.Any()) return await next();
 
             try
             {

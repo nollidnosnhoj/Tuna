@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.CQRS;
 using Audiochan.Core.Dtos.Responses;
 using Audiochan.Core.Extensions;
 using Audiochan.Core.Persistence;
@@ -10,7 +11,7 @@ using Microsoft.Extensions.Caching.Distributed;
 
 namespace Audiochan.Core.Audios.Commands
 {
-    public record RemoveAudioPictureCommand(long AudioId) : IRequest<Result>;
+    public record RemoveAudioPictureCommand(long AudioId) : ICommandRequest<Result>;
     
     public class RemoveAudioPictureCommandHandler : IRequestHandler<RemoveAudioPictureCommand, Result>
     {

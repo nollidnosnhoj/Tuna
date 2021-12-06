@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.CQRS;
 using Audiochan.Core.Persistence;
 using Audiochan.Core.Services;
 using Audiochan.Domain.Entities;
@@ -7,7 +8,7 @@ using MediatR;
 
 namespace Audiochan.Core.Users.Commands
 {
-    public record SetFavoriteAudioCommand(long AudioId, long UserId, bool IsFavoriting) : IRequest<Result>
+    public record SetFavoriteAudioCommand(long AudioId, long UserId, bool IsFavoriting) : ICommandRequest<Result>
     {
     }
 

@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.CQRS;
 using Audiochan.Core.Persistence;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
@@ -9,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Auth.Queries
 {
-    public record GetCurrentUserQuery(long UserId) : IRequest<CurrentUserDto?>
+    public record GetCurrentUserQuery(long UserId) : IQueryRequest<CurrentUserDto?>
     {
     }
 

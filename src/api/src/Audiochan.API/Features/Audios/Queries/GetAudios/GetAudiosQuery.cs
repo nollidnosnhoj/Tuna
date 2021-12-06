@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.CQRS;
 using Audiochan.Core.Dtos;
 using Audiochan.Core.Dtos.Wrappers;
 using Audiochan.Core.Extensions;
@@ -15,7 +16,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Audios.Queries
 {
-    public record GetAudiosQuery : IHasCursorPage<long>, IRequest<CursorPagedListDto<AudioDto, long>>
+    public record GetAudiosQuery : IHasCursorPage<long>, IQueryRequest<CursorPagedListDto<AudioDto, long>>
     {
         public List<string> Tags { get; init; } = new();
         public long Cursor { get; init; }

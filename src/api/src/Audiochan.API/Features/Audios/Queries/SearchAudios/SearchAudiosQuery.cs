@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.CQRS;
 using Audiochan.Core.Dtos;
 using Audiochan.Core.Dtos.Filters;
 using Audiochan.Core.Dtos.Wrappers;
@@ -9,7 +10,7 @@ using MediatR;
 
 namespace Audiochan.Core.Audios.Queries
 {
-    public record SearchAudiosQuery : IHasPage, IRequest<PagedListDto<AudioDto>>
+    public record SearchAudiosQuery : IHasPage, IQueryRequest<PagedListDto<AudioDto>>
     {
         public string Q { get; init; } = string.Empty;
         public string Tags { get; init; } = string.Empty;

@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.CQRS;
 using Audiochan.Core.Dtos;
 using Audiochan.Core.Persistence;
 using AutoMapper;
@@ -13,7 +14,7 @@ using DistributedCacheExtensions = Audiochan.Core.Extensions.DistributedCacheExt
 
 namespace Audiochan.Core.Audios.Queries
 {
-    public record GetAudioQuery(long Id) : IRequest<AudioDto?>
+    public record GetAudioQuery(long Id) : IQueryRequest<AudioDto?>
     {
     }
 

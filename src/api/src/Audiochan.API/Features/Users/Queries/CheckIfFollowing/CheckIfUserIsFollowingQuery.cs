@@ -1,12 +1,13 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.CQRS;
 using Audiochan.Core.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Users.Queries
 {
-    public record CheckIfUserIsFollowingQuery(long ObserverId, long TargetId) : IRequest<bool>
+    public record CheckIfUserIsFollowingQuery(long ObserverId, long TargetId) : IQueryRequest<bool>
     {
     }
 

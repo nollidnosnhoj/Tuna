@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.CQRS;
 using Audiochan.Core.Dtos;
 using Audiochan.Core.Extensions;
 using Audiochan.Core.Persistence;
@@ -13,7 +14,7 @@ using Microsoft.Extensions.Caching.Distributed;
 
 namespace Audiochan.Core.Audios.Commands
 {
-    public class UpdateAudioCommand : IRequest<Result<AudioDto>>
+    public class UpdateAudioCommand : ICommandRequest<Result<AudioDto>>
     {
         public long AudioId { get; set; }
         public string? Title { get; init; }

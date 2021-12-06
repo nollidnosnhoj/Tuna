@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.CQRS;
 using Audiochan.Core.Extensions;
 using Audiochan.Core.Persistence;
 using Audiochan.Core.Services;
@@ -8,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Users.Commands
 {
-    public record UpdateUsernameCommand : IRequest<Result>
+    public record UpdateUsernameCommand : ICommandRequest<Result>
     {
         public long UserId { get; init; }
         public string NewUsername { get; init; } = null!;

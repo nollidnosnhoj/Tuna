@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Auth.Queries;
+using Audiochan.Core.CQRS;
 using Audiochan.Core.Persistence;
 using Audiochan.Core.Services;
 using AutoMapper;
@@ -10,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Auth.Commands
 {
-    public record LoginCommand : IRequest<Result<CurrentUserDto>>
+    public record LoginCommand : ICommandRequest<Result<CurrentUserDto>>
     {
         public string Login { get; init; } = null!;
         public string Password { get; init; } = null!;

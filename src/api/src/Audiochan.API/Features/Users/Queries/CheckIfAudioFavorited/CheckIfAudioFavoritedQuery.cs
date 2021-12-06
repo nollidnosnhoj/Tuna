@@ -1,12 +1,13 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.CQRS;
 using Audiochan.Core.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Users.Queries
 {
-    public record CheckIfAudioFavoritedQuery(long AudioId, long UserId) : IRequest<bool>
+    public record CheckIfAudioFavoritedQuery(long AudioId, long UserId) : IQueryRequest<bool>
     {
     }
     

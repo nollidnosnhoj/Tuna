@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core;
+using Audiochan.Core.CQRS;
 using Audiochan.Core.Extensions;
 using Audiochan.Core.Services;
 using MediatR;
@@ -10,7 +11,7 @@ using Microsoft.Extensions.Options;
 
 namespace Audiochan.API.Features.Upload.Commands.CreateUpload
 {
-    public record GenerateUploadLinkCommand : IRequest<Result<GenerateUploadLinkResponse>>
+    public record GenerateUploadLinkCommand : ICommandRequest<Result<GenerateUploadLinkResponse>>
     {
         public string FileName { get; init; } = null!;
         public long FileSize { get; init; }
