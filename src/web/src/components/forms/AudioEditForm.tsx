@@ -1,7 +1,7 @@
 import { Box, Button, Spacer, Stack } from "@chakra-ui/react";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod/dist/zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import TagInput from "~/components/form-inputs/TagField";
 import InputField from "~/components/form-inputs/InputField";
