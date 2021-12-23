@@ -4,7 +4,7 @@ import { z } from "zod";
 import InputField from "~/components/form-inputs/InputField";
 import { passwordRule, usernameRule } from "~/lib/validators/user-schemas";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod/dist/zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 export const registrationValidationSchema = z
   .object({

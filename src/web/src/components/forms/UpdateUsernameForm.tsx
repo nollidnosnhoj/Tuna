@@ -8,7 +8,7 @@ import {
   UsernameRulesType,
 } from "../../lib/validators/user-schemas";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod/dist/zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 export const updateUsernameSchema = (
   rules: UsernameRulesType = SETTINGS.IDENTITY.usernameRules
