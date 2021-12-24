@@ -1,5 +1,5 @@
 ﻿
-using Audiochan.Core.Persistence;
+using Audiochan.Application.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

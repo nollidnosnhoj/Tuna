@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Audiochan.Core.Commons.Services;
+using Audiochan.Application.Commons.Services;
 using Slugify;
 
 namespace Audiochan.Infrastructure.Shared
