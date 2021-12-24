@@ -1,7 +1,8 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using Audiochan.Core.Audios.Commands;
-using Audiochan.Core.Extensions;
+using Audiochan.Core.Commons;
+using Audiochan.Core.Commons.Extensions;
+using Audiochan.Core.Features.Audios.Commands.RemoveAudio;
 using Audiochan.Tests.Common.Fakers.Audios;
 using FluentAssertions;
 using NUnit.Framework;

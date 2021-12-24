@@ -1,5 +1,5 @@
 ﻿using System;
-using Audiochan.Core.Interfaces;
+using Audiochan.Core.Commons.Interfaces;
 
 namespace Audiochan.API.Models
 {

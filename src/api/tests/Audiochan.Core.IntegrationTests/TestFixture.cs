@@ -5,9 +5,10 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Audiochan.API;
-using Audiochan.Core.Extensions;
+using Audiochan.Core.Commons.Extensions;
+
+using Audiochan.Core.Commons.Services;
 using Audiochan.Core.Persistence;
-using Audiochan.Core.Services;
 using Audiochan.Domain.Entities;
 using Audiochan.Domain.Enums;
 using Audiochan.Infrastructure.Persistence;

@@ -1,8 +1,8 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Audios.Queries;
-using Audiochan.Core.Dtos;
-using Audiochan.Core.Dtos.Wrappers;
+using Audiochan.Core.Commons.Dtos.Wrappers;
+using Audiochan.Core.Features.Audios.Models;
+using Audiochan.Core.Features.Audios.Queries.SearchAudios;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
