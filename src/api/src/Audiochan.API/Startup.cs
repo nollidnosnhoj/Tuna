@@ -44,12 +44,7 @@ namespace Audiochan.API
             };
 
             services.AddMemoryCache();
-            services.AddAutoMapper(Assembly.GetExecutingAssembly());
-            services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-            services.AddMediatR(Assembly.GetExecutingAssembly());
-            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehavior<,>));
-            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(DbContextTransactionPipelineBehavior<,>));
-            services.AddDatabase(Configuration, Environment);
+            services.AddApplication(Configuration, Environment);
             services.AddInfrastructure(Configuration, Environment);
             services.Configure<JsonSerializerOptions>(options =>
             {
