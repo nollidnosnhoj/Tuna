@@ -1,4 +1,4 @@
-﻿using Audiochan.Core.Users.Commands;
+﻿using Audiochan.Core.Features.Users.Commands.UpdateUsername;
 using Bogus;
 using FluentAssertions;
 using FluentValidation;

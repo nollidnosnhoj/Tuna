@@ -1,9 +1,9 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using Audiochan.Core.Audios;
-using Audiochan.Core.Audios.Queries;
-using Audiochan.Core.Dtos;
-using Audiochan.Core.Extensions;
+using Audiochan.Core.Commons;
+using Audiochan.Core.Commons.Extensions;
+using Audiochan.Core.Features.Audios.Models;
+using Audiochan.Core.Features.Audios.Queries.GetAudio;
 using Audiochan.Tests.Common.Fakers.Audios;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;

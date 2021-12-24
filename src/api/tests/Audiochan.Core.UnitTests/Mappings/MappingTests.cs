@@ -1,6 +1,6 @@
-﻿using Audiochan.API.Features.Audios.Mappings;
-using Audiochan.API.Features.Auth.Mappings;
-using Audiochan.API.Features.Users.Mappings;
+﻿using Audiochan.Core.Features.Audios.Mappings;
+using Audiochan.Core.Features.Auth.Mappings;
+using Audiochan.Core.Features.Users.Mappings;
 using AutoMapper;
 using Xunit;
 

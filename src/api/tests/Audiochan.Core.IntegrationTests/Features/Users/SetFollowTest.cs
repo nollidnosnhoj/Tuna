@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Audiochan.Core.Extensions;
-using Audiochan.Core.Users.Commands;
+using Audiochan.Core.Commons.Extensions;
+using Audiochan.Core.Features.Users.Commands.SetFollow;
 using Audiochan.Domain.Entities;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
