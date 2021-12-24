@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Commons.Services;
+using Audiochan.Application.Commons.Services;
 
 namespace Audiochan.Infrastructure.Storage.File
 {

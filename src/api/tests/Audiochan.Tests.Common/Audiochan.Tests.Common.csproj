@@ -13,7 +13,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\src\Audiochan.API\Audiochan.API.csproj" />
-      <ProjectReference Include="..\..\src\Audiochan.Core\Audiochan.Core.csproj" />
+      <ProjectReference Include="..\..\src\Audiochan.Application\Audiochan.Application.csproj" />
       <ProjectReference Include="..\..\src\Audiochan.Infrastructure\Audiochan.Infrastructure.csproj" />
     </ItemGroup>
 
