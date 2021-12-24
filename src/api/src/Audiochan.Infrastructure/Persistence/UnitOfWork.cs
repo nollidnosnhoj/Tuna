@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-
+using Audiochan.Application.Commons.Services;
 using Audiochan.Application.Persistence;
 using Audiochan.Application.Persistence.Repositories;
+using Audiochan.Domain.Abstractions;
 using Audiochan.Domain.Entities;
+using Audiochan.Infrastructure.Persistence.Repositories;
+using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Audiochan.Infrastructure.Persistence
@@ -12,23 +16,21 @@ namespace Audiochan.Infrastructure.Persistence
     public class UnitOfWork : IUnitOfWork
     {
         private readonly ApplicationDbContext _dbContext;
+        private readonly IDateTimeProvider _dateTimeProvider;
         private IDbContextTransaction? _currentTransaction;
         public IAudioRepository Audios { get; }
         public IEntityRepository<FavoriteAudio> FavoriteAudios { get; }
         public IEntityRepository<FollowedUser> FollowedUsers { get; }
         public IUserRepository Users { get; }
         
-        public UnitOfWork(IAudioRepository audios,
-            IUserRepository users, 
-            IEntityRepository<FavoriteAudio> favoriteAudios, 
-            IEntityRepository<FollowedUser> followedUsers, 
-            ApplicationDbContext dbContext)
+        public UnitOfWork(IDateTimeProvider dateTimeProvider, ApplicationDbContext dbContext, IMapper mapper)
         {
+            _dateTimeProvider = dateTimeProvider;
             _dbContext = dbContext;
-            FavoriteAudios = favoriteAudios;
-            FollowedUsers = followedUsers;
-            Audios = audios;
-            Users = users;
+            FavoriteAudios = new EfRepository<FavoriteAudio>(dbContext, mapper);
+            FollowedUsers = new EfRepository<FollowedUser>(dbContext, mapper);
+            Audios = new AudioRepository(dbContext, mapper);
+            Users = new UserRepository(dbContext, mapper);
         }
         
         public Task BeginTransactionAsync()
@@ -83,6 +85,20 @@ namespace Audiochan.Infrastructure.Persistence
 
         public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
         {
+            foreach (var entry in _dbContext.ChangeTracker.Entries<IAudited>())
+            {
+                var now = _dateTimeProvider.Now;
+                if (entry.State == EntityState.Added && entry.Entity.Created == default)
+                {
+                    entry.Property(nameof(IAudited.Created)).CurrentValue = now;
+                }
+
+                if (entry.State == EntityState.Modified && entry.Entity.LastModified == default)
+                {
+                    entry.Property(nameof(IAudited.LastModified)).CurrentValue = now;
+                }
+            }
+            
             await _dbContext.SaveChangesAsync(cancellationToken);
         }
     }
