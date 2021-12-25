@@ -9,8 +9,8 @@ public class AudioByIdDataLoader : BatchDataLoader<long, Audio>
     private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
 
     public AudioByIdDataLoader(IBatchScheduler batchScheduler, 
-        IDbContextFactory<ApplicationDbContext> dbContextFactory, 
-        DataLoaderOptions? options = null) : base(batchScheduler, options)
+        IDbContextFactory<ApplicationDbContext> dbContextFactory, DataLoaderOptions? options = null) 
+        : base(batchScheduler, options)
     {
         _dbContextFactory = dbContextFactory;
     }
