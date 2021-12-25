@@ -7,8 +7,7 @@ using Audiochan.Application.Commons.Services;
 using Audiochan.Application.Features.Auth.Queries.GetCurrentUser;
 using Audiochan.Application.Persistence;
 using AutoMapper;
-using KopaCore.Result;
-using KopaCore.Result.Errors;
+using Audiochan.Application.Commons.Results;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 

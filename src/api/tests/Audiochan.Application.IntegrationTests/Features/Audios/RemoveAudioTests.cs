@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using Audiochan.Application.Commons;
 using Audiochan.Application.Commons.Extensions;
+using Audiochan.Application.Commons.Results;
 using Audiochan.Application.Features.Audios.Commands.RemoveAudio;
 using Audiochan.Tests.Common.Fakers.Audios;
 using FluentAssertions;
@@ -28,7 +28,7 @@ namespace Audiochan.Application.IntegrationTests.Features.Audios
                 dbContext.Audios.SingleOrDefault(x => x.Id == audio.Id));
 
             result.Should().NotBeNull();
-            result.IsSuccess.Should().Be(true);
+            result.Succeeded.Should().Be(true);
             created.Should().BeNull();
         }
 
@@ -42,8 +42,8 @@ namespace Audiochan.Application.IntegrationTests.Features.Audios
             await RunAsUserAsync();
             var result = await SendAsync(new RemoveAudioCommand(audio.Id));
 
-            result.IsSuccess.Should().BeFalse();
-            result.ErrorCode.Should().Be(ResultError.Forbidden);
+            result.Succeeded.Should().BeFalse();
+            result.Should().BeOfType<ForbiddenErrorResult>();
         }
     }
 }

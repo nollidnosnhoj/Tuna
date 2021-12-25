@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using Audiochan.Application.Commons;
 using Audiochan.Application.Commons.Extensions;
+using Audiochan.Application.Commons.Results;
 using Audiochan.Application.Features.Audios.Models;
 using Audiochan.Application.Features.Audios.Queries.GetAudio;
 using Audiochan.Tests.Common.Fakers.Audios;
@@ -35,8 +35,8 @@ namespace Audiochan.Application.IntegrationTests.Features.Audios
 
             // Assert
             result.Should().NotBeNull();
-            result.IsSuccess.Should().Be(false);
-            result.ErrorCode.Should().Be(ResultError.Forbidden);
+            result.Succeeded.Should().Be(false);
+            result.Should().BeOfType<ForbiddenErrorResult>();
         }
 
         [Test]

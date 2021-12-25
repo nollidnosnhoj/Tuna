@@ -7,8 +7,7 @@ using Audiochan.Application.Commons.Interfaces;
 using Audiochan.Application.Commons.Services;
 using Audiochan.Application.Persistence;
 using Audiochan.Application.Commons.Extensions;
-using KopaCore.Result;
-using KopaCore.Result.Errors;
+using Audiochan.Application.Commons.Results;
 using MediatR;
 
 namespace Audiochan.Application.Features.Users.Commands.UpdatePicture
