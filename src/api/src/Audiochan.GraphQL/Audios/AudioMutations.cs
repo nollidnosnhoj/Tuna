@@ -22,10 +22,10 @@ public class AudioMutations
     {
         claimsPrincipal.TryGetUserId(out var userId);
         var command = input.ToCommand(userId);
-        var result = await mediator.Send(command, cancellationToken);
+        var audio = await mediator.Send(command, cancellationToken);
         
         // TODO: Handle result errors
 
-        return result.Data;
+        return audio;
     }
 }

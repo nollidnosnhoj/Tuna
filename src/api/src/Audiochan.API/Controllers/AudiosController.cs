@@ -1,13 +1,11 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.API.Extensions;
 using Audiochan.API.Models;
 using Audiochan.Application.Commons.Dtos.Requests;
 using Audiochan.Application.Commons.Dtos.Responses;
 using Audiochan.Application.Commons.Dtos.Wrappers;
 using Audiochan.Application.Commons.Extensions;
 using Audiochan.Application.Commons.Helpers;
-using Audiochan.Application.Commons.Interfaces;
 using Audiochan.Application.Features.Audios.Commands.CreateAudio;
 using Audiochan.Application.Features.Audios.Commands.RemoveAudio;
 using Audiochan.Application.Features.Audios.Commands.RemovePicture;
@@ -76,14 +74,8 @@ namespace Audiochan.API.Controllers
             CancellationToken cancellationToken)
         {
             var userId = User.GetUserId();
-            var result = await _mediator.Send(input.ToCommand(userId), cancellationToken);
-            if (!result.Succeeded)
-            {
-                return ((IErrorResult) result).ToErrorObjectResult();
-            }
-
-            var response = _mapper.Map<AudioDto>(result.Data);
-            
+            var audio = await _mediator.Send(input.ToCommand(userId), cancellationToken);
+            var response = _mapper.Map<AudioDto>(audio);
             return Created($"/audios/{response.Slug}", response);
         }
 
@@ -101,9 +93,8 @@ namespace Audiochan.API.Controllers
         public async Task<ActionResult<AudioDto>> Update(long audioId, [FromBody] UpdateAudioRequest request,
             CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(UpdateAudioCommand.FromRequest(audioId, request), cancellationToken);
-
-            return result.ToObjectResult(Ok);
+            var audio = await _mediator.Send(UpdateAudioCommand.FromRequest(audioId, request), cancellationToken);
+            return Ok(audio);
         }
 
         [HttpDelete("{audioId:long}", Name = "DeleteAudio")]
@@ -118,8 +109,8 @@ namespace Audiochan.API.Controllers
             Tags = new[] {"audios"})]
         public async Task<IActionResult> Destroy(long audioId, CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(new RemoveAudioCommand(audioId), cancellationToken);
-            return result.ToObjectResult(NoContent);
+            await _mediator.Send(new RemoveAudioCommand(audioId), cancellationToken);
+            return NoContent();
         }
 
         [HttpPatch("{audioId:long}/picture")]
@@ -136,8 +127,8 @@ namespace Audiochan.API.Controllers
             CancellationToken cancellationToken)
         {
             var command = new UpdateAudioPictureCommand(audioId, request.Data);
-            var result = await _mediator.Send(command, cancellationToken);
-            return result.ToObjectResult(Ok);
+            var response = await _mediator.Send(command, cancellationToken);
+            return Ok(response);
         }
         
         [HttpDelete("{audioId:long}/picture")]
@@ -153,8 +144,8 @@ namespace Audiochan.API.Controllers
         public async Task<IActionResult> RemovePicture(long audioId,
             CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(new RemoveAudioPictureCommand(audioId), cancellationToken);
-            return result.ToObjectResult(NoContent);
+            await _mediator.Send(new RemoveAudioPictureCommand(audioId), cancellationToken);
+            return NoContent();
         }
     }
 }

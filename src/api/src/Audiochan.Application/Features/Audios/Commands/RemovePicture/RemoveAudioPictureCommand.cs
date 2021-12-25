@@ -1,21 +1,19 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Application.Commons;
 using Audiochan.Application.Commons.CQRS;
-using Audiochan.Application.Commons.Dtos.Responses;
+using Audiochan.Application.Commons.Exceptions;
 using Audiochan.Application.Commons.Services;
 using Audiochan.Application.Persistence;
 using Audiochan.Application.Commons.Extensions;
 using Audiochan.Domain.Entities;
-using Audiochan.Application.Commons.Results;
 using MediatR;
 using Microsoft.Extensions.Caching.Distributed;
 
 namespace Audiochan.Application.Features.Audios.Commands.RemovePicture
 {
-    public record RemoveAudioPictureCommand(long AudioId) : ICommandRequest<Result>;
+    public record RemoveAudioPictureCommand(long AudioId) : ICommandRequest;
     
-    public class RemoveAudioPictureCommandHandler : IRequestHandler<RemoveAudioPictureCommand, Result>
+    public class RemoveAudioPictureCommandHandler : IRequestHandler<RemoveAudioPictureCommand>
     {
         private readonly IDistributedCache _cache;
         private readonly ICurrentUserService _currentUserService;
@@ -31,19 +29,19 @@ namespace Audiochan.Application.Features.Audios.Commands.RemovePicture
             _cache = cache;
         }
 
-        public async Task<Result> Handle(RemoveAudioPictureCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(RemoveAudioPictureCommand request, CancellationToken cancellationToken)
         {
             _currentUserService.User.TryGetUserId(out var currentUserId);
 
             var audio = await _unitOfWork.Audios.FindAsync(request.AudioId, cancellationToken);
 
             if (audio == null)
-                return new NotFoundErrorResult();
+                throw new NotFoundException<Audio>();
 
             if (audio.UserId != currentUserId)
-                return new ForbiddenErrorResult();
+                throw new ForbiddenException();
 
-            if (string.IsNullOrEmpty(audio.Picture)) return new SuccessResult();
+            if (string.IsNullOrEmpty(audio.Picture)) return Unit.Value;
             
             await _imageService.RemoveImage(AssetContainerConstants.AUDIO_PICTURES, audio.Picture, cancellationToken);
             audio.Picture = null;
@@ -51,7 +49,7 @@ namespace Audiochan.Application.Features.Audios.Commands.RemovePicture
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             await _cache.RemoveAsync(CacheKeys.Audio.GetAudio(request.AudioId), cancellationToken);
 
-            return new SuccessResult();        
+            return Unit.Value;
         }
     }
 }

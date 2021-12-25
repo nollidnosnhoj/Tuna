@@ -1,16 +1,15 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Application.Commons;
 using Audiochan.Application.Commons.CQRS;
+using Audiochan.Application.Commons.Exceptions;
 using Audiochan.Application.Commons.Services;
 using Audiochan.Application.Persistence;
 using Audiochan.Application.Commons.Extensions;
-using Audiochan.Application.Commons.Results;
 using MediatR;
 
 namespace Audiochan.Application.Features.Users.Commands.UpdateEmail
 {
-    public record UpdateEmailCommand : ICommandRequest<Result>
+    public record UpdateEmailCommand : ICommandRequest
     {
         public long UserId { get; init; }
         public string NewEmail { get; init; } = null!;
@@ -22,7 +21,7 @@ namespace Audiochan.Application.Features.Users.Commands.UpdateEmail
         };
     }
 
-    public class UpdateEmailCommandHandler : IRequestHandler<UpdateEmailCommand, Result>
+    public class UpdateEmailCommandHandler : IRequestHandler<UpdateEmailCommand>
     {
         private readonly ICurrentUserService _currentUserService;
         private readonly IUnitOfWork _unitOfWork;
@@ -33,17 +32,17 @@ namespace Audiochan.Application.Features.Users.Commands.UpdateEmail
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Result> Handle(UpdateEmailCommand command, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(UpdateEmailCommand command, CancellationToken cancellationToken)
         {
             _currentUserService.User.TryGetUserId(out var currentUserId);
 
             var user = await _unitOfWork.Users.FindAsync(command.UserId, cancellationToken);
-            if (user!.Id != currentUserId) return new ForbiddenErrorResult();
+            if (user!.Id != currentUserId) throw new ForbiddenException();
 
             user.Email = command.NewEmail;
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return new SuccessResult();
+            return Unit.Value;
         }
     }
 }

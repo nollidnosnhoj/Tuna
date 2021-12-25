@@ -1,21 +1,20 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Application.Commons;
 using Audiochan.Application.Commons.CQRS;
 using Audiochan.Application.Commons.Dtos.Responses;
+using Audiochan.Application.Commons.Exceptions;
 using Audiochan.Application.Commons.Interfaces;
 using Audiochan.Application.Commons.Services;
 using Audiochan.Application.Persistence;
 using Audiochan.Application.Commons.Extensions;
-using Audiochan.Application.Commons.Results;
 using MediatR;
 
 namespace Audiochan.Application.Features.Users.Commands.UpdatePicture
 {
     public record UpdateUserPictureCommand(long UserId, string Data = "") : IImageData,
-        ICommandRequest<Result<ImageUploadResponse>>;
+        ICommandRequest<ImageUploadResponse>;
 
-    public class UpdateUserPictureCommandHandler : IRequestHandler<UpdateUserPictureCommand, Result<ImageUploadResponse>>
+    public class UpdateUserPictureCommandHandler : IRequestHandler<UpdateUserPictureCommand, ImageUploadResponse>
     {
         private readonly IImageService _imageService;
         private readonly long _currentUserId;
@@ -33,12 +32,12 @@ namespace Audiochan.Application.Features.Users.Commands.UpdatePicture
             _randomIdGenerator = randomIdGenerator;
         }
 
-        public async Task<Result<ImageUploadResponse>> Handle(UpdateUserPictureCommand command, CancellationToken cancellationToken)
+        public async Task<ImageUploadResponse> Handle(UpdateUserPictureCommand command, CancellationToken cancellationToken)
         {
             var user = await _unitOfWork.Users.FindAsync(command.UserId, cancellationToken);
 
             if (user!.Id != _currentUserId)
-                return new ForbiddenErrorResult<ImageUploadResponse>();
+                throw new ForbiddenException();
         
             var blobName = string.Empty;
             if (string.IsNullOrEmpty(command.Data))

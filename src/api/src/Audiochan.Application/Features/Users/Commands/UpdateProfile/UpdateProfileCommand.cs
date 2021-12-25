@@ -1,17 +1,16 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Application.Commons;
 using Audiochan.Application.Commons.CQRS;
+using Audiochan.Application.Commons.Exceptions;
 using Audiochan.Application.Commons.Services;
 using Audiochan.Application.Persistence;
 using Audiochan.Application.Commons.Extensions;
 using Audiochan.Domain.Entities;
-using Audiochan.Application.Commons.Results;
 using MediatR;
 
 namespace Audiochan.Application.Features.Users.Commands.UpdateProfile
 {
-    public record UpdateProfileCommand : ICommandRequest<Result<User>>
+    public record UpdateProfileCommand : ICommandRequest<User>
     {
         public long UserId { get; init; }
         public string? DisplayName { get; init; }
@@ -27,7 +26,7 @@ namespace Audiochan.Application.Features.Users.Commands.UpdateProfile
         };
     }
 
-    public class UpdateProfileCommandHandler : IRequestHandler<UpdateProfileCommand, Result<User>>
+    public class UpdateProfileCommandHandler : IRequestHandler<UpdateProfileCommand, User>
     {
         private readonly long _currentUserId;
         private readonly IUnitOfWork _unitOfWork;
@@ -38,11 +37,11 @@ namespace Audiochan.Application.Features.Users.Commands.UpdateProfile
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Result<User>> Handle(UpdateProfileCommand command, CancellationToken cancellationToken)
+        public async Task<User> Handle(UpdateProfileCommand command, CancellationToken cancellationToken)
         {
             var user = await _unitOfWork.Users.FindAsync(command.UserId, cancellationToken);
             if (user!.Id != _currentUserId)
-                return new ForbiddenErrorResult<User>();
+                throw new ForbiddenException();
             
             // TODO: Update user stuff
 

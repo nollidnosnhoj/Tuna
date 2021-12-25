@@ -57,8 +57,8 @@ namespace Audiochan.API.Controllers.Me
         public async Task<IActionResult> Follow(long userId, CancellationToken cancellationToken)
         {
             var request = new SetFollowCommand(_currentUserId, userId, true);
-            var result = await _mediator.Send(request, cancellationToken);
-            return result.ToObjectResult(Ok);
+            await _mediator.Send(request, cancellationToken);
+            return Ok();
         }
 
         [HttpDelete(Name = "UnfollowUser")]
@@ -74,8 +74,8 @@ namespace Audiochan.API.Controllers.Me
         public async Task<IActionResult> Unfollow(long userId, CancellationToken cancellationToken)
         {
             var request = new SetFollowCommand(_currentUserId, userId, false);
-            var result = await _mediator.Send(request, cancellationToken);
-            return result.ToObjectResult(NoContent);
+            await _mediator.Send(request, cancellationToken);
+            return NoContent();
         }
     }
 }
