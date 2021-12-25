@@ -6,6 +6,7 @@ using Audiochan.Application.Commons;
 using Audiochan.Application.Commons.CQRS;
 using Audiochan.Application.Commons.Services;
 using Audiochan.Application.Commons.Extensions;
+using KopaCore.Result;
 using MediatR;
 using Microsoft.Extensions.Options;
 
@@ -42,7 +43,7 @@ namespace Audiochan.Application.Features.Upload.Commands.CreateUpload
             _currentUserService.User.TryGetUserId(out var userId);
             var (url, uploadId) = await CreateUploadUrl(command.FileName, userId);
             var response = new GenerateUploadLinkResponse { UploadId = uploadId, UploadUrl = url };
-            return Result<GenerateUploadLinkResponse>.Success(response);
+            return response;
         }
         
         private async Task<(string, string)> CreateUploadUrl(string fileName, long userId)

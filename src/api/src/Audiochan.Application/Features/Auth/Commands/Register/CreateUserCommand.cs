@@ -4,6 +4,8 @@ using Audiochan.Application.Commons;
 using Audiochan.Application.Commons.Services;
 using Audiochan.Application.Persistence;
 using Audiochan.Domain.Entities;
+using KopaCore.Result;
+using KopaCore.Result.Errors;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -34,14 +36,14 @@ namespace Audiochan.Application.Features.Auth.Commands.Register
         {
             var trimmedUsername = command.Username.Trim();
             if (await _dbContext.Users.AnyAsync(u => u.UserName == trimmedUsername, cancellationToken))
-                return Result.BadRequest("Username already taken."); // Maybe a generic error message
+                return new ErrorResult("Username already taken."); // Maybe a generic error message
             if (await _dbContext.Users.AnyAsync(u => u.Email == command.Email, cancellationToken))
-                return Result.BadRequest("Email already taken."); // Maybe a generic error message
+                return new ErrorResult("Email already taken."); // Maybe a generic error message
             var passwordHash = _passwordHasher.Hash(command.Password);
             var user = new User(trimmedUsername, command.Email, passwordHash);
             await _unitOfWork.Users.AddAsync(user, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
-            return Result.Success();
+            return new SuccessResult();
         }
     }
 }

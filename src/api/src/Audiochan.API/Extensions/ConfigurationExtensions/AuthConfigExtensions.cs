@@ -1,4 +1,5 @@
-﻿using Audiochan.API.Models;
+﻿using System.Threading.Tasks;
+using Audiochan.API.Models;
 using Audiochan.API.Services;
 using Audiochan.Application.Commons.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -30,20 +31,16 @@ namespace Audiochan.API.Extensions.ConfigurationExtensions
                         ? CookieSecurePolicy.Always
                         : CookieSecurePolicy.None;
 
-                    options.Events.OnRedirectToLogin = async context =>
+                    options.Events.OnRedirectToLogin = context =>
                     {
                         context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                        var response = ErrorApiResponse.Unauthorized();
-                        await context.Response.WriteAsJsonAsync(response);
-                        await context.Response.Body.FlushAsync();
+                        return Task.CompletedTask;
                     };
 
-                    options.Events.OnRedirectToAccessDenied = async context =>
+                    options.Events.OnRedirectToAccessDenied = context =>
                     {
                         context.Response.StatusCode = StatusCodes.Status403Forbidden;
-                        var response = ErrorApiResponse.Forbidden();
-                        await context.Response.WriteAsJsonAsync(response);
-                        await context.Response.Body.FlushAsync();
+                        return Task.CompletedTask;
                     };
                 });
             

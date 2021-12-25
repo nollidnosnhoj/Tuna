@@ -5,6 +5,8 @@ using Audiochan.Application.Commons.CQRS;
 using Audiochan.Application.Commons.Services;
 using Audiochan.Application.Persistence;
 using Audiochan.Domain.Entities;
+using KopaCore.Result;
+using KopaCore.Result.Errors;
 using MediatR;
 
 namespace Audiochan.Application.Features.Users.Commands.SetFollow
@@ -30,10 +32,10 @@ namespace Audiochan.Application.Features.Users.Commands.SetFollow
                 .LoadUserWithFollowers(command.TargetId, command.ObserverId, cancellationToken);
 
             if (target == null)
-                return Result.NotFound<User>();
+                return new NotFoundErrorResult();
 
             if (target.Id == command.ObserverId)
-                return Result.Forbidden();
+                return new ForbiddenErrorResult();
 
             if (command.IsFollowing)
             {
@@ -47,7 +49,7 @@ namespace Audiochan.Application.Features.Users.Commands.SetFollow
             _unitOfWork.Users.Update(target);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return Result.Success();
+            return new SuccessResult();
         }
     }
 }

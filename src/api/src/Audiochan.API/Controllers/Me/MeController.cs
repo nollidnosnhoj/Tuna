@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Audiochan.API.Extensions;
 using Audiochan.API.Models;
 using Audiochan.Application.Commons.Dtos.Requests;
+using Audiochan.Application.Commons.Dtos.Responses;
 using Audiochan.Application.Commons.Extensions;
 using Audiochan.Application.Commons.Services;
 using Audiochan.Application.Features.Auth.Queries.GetCurrentUser;
@@ -12,6 +13,9 @@ using Audiochan.Application.Features.Users.Commands.UpdatePassword;
 using Audiochan.Application.Features.Users.Commands.UpdatePicture;
 using Audiochan.Application.Features.Users.Commands.UpdateProfile;
 using Audiochan.Application.Features.Users.Commands.UpdateUsername;
+using Audiochan.Application.Features.Users.Queries.GetProfile;
+using AutoMapper;
+using KopaCore.Result.Errors;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -27,10 +31,12 @@ namespace Audiochan.API.Controllers.Me
     {
         private readonly IMediator _mediator;
         private readonly long _currentUserId;
+        private readonly IMapper _mapper;
 
-        public MeController(ICurrentUserService currentUserService, IMediator mediator)
+        public MeController(ICurrentUserService currentUserService, IMediator mediator, IMapper mapper)
         {
             _mediator = mediator;
+            _mapper = mapper;
             currentUserService.User.TryGetUserId(out _currentUserId);
         }
 
@@ -61,7 +67,7 @@ namespace Audiochan.API.Controllers.Me
             var result = await _mediator.Send(new GetCurrentUserQuery(_currentUserId), cancellationToken);
             return result != null
                 ? Ok(result)
-                : Unauthorized(ErrorApiResponse.Unauthorized());
+                : Unauthorized();
         }
 
         [HttpPut(Name = "UpdateUser")]
@@ -75,14 +81,13 @@ namespace Audiochan.API.Controllers.Me
             OperationId = "UpdateUser",
             Tags = new[] {"me"}
         )]
-        public async Task<IActionResult> UpdateUser([FromBody] UpdateProfileRequest request,
+        public async Task<ActionResult<ProfileDto>> UpdateUser([FromBody] UpdateProfileRequest request,
             CancellationToken cancellationToken)
         {
             var command = UpdateProfileCommand.FromRequest(_currentUserId, request);
             var result = await _mediator.Send(command, cancellationToken);
-            return result.IsSuccess
-                ? Ok()
-                : result.ReturnErrorResponse();
+            if (!result.Succeeded) return ((IErrorResult) result).ToErrorObjectResult();
+            return Ok(_mapper.Map<ProfileDto>(result.Data));
         }
 
         [HttpPatch("username", Name = "UpdateUsername")]
@@ -100,9 +105,7 @@ namespace Audiochan.API.Controllers.Me
         {
             var command = UpdateUsernameCommand.FromRequest(_currentUserId, request);
             var result = await _mediator.Send(command, cancellationToken);
-            return result.IsSuccess
-                ? Ok()
-                : result.ReturnErrorResponse();
+            return result.ToObjectResult(Ok);
         }
 
         [HttpPatch("email", Name = "UpdateEmail")]
@@ -120,9 +123,7 @@ namespace Audiochan.API.Controllers.Me
         {
             var command = UpdateEmailCommand.FromRequest(_currentUserId, request);
             var result = await _mediator.Send(command, cancellationToken);
-            return result.IsSuccess
-                ? Ok()
-                : result.ReturnErrorResponse();
+            return result.ToObjectResult(Ok);
         }
 
         [HttpPatch("password", Name = "UpdatePassword")]
@@ -140,9 +141,7 @@ namespace Audiochan.API.Controllers.Me
         {
             var command = UpdatePasswordCommand.FromRequest(_currentUserId, request);
             var result = await _mediator.Send(command, cancellationToken);
-            return result.IsSuccess
-                ? Ok()
-                : result.ReturnErrorResponse();
+            return result.ToObjectResult(Ok);
         }
 
         [HttpPatch("picture")]
@@ -156,14 +155,12 @@ namespace Audiochan.API.Controllers.Me
             OperationId = "AddUserPicture",
             Tags = new[] {"me"}
         )]
-        public async Task<IActionResult> AddPicture([FromBody] ImageUploadRequest request,
+        public async Task<ActionResult<ImageUploadResponse>> AddPicture([FromBody] ImageUploadRequest request,
             CancellationToken cancellationToken)
         {
             var command = new UpdateUserPictureCommand(_currentUserId, request.Data);
             var result = await _mediator.Send(command, cancellationToken);
-            return result.IsSuccess
-                ? Ok(result.Data)
-                : result.ReturnErrorResponse();
+            return result.ToObjectResult(Ok);
         }
         
         [HttpDelete("picture")]
@@ -180,10 +177,7 @@ namespace Audiochan.API.Controllers.Me
         public async Task<ActionResult> RemovePicture(CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new RemoveUserPictureCommand(_currentUserId), cancellationToken);
-            
-            return result.IsSuccess
-                ? NoContent()
-                : result.ReturnErrorResponse();
+            return result.ToObjectResult(NoContent);
         }
     }
 }

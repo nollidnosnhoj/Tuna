@@ -34,9 +34,7 @@ namespace Audiochan.API.Controllers
             CancellationToken cancellationToken)
         {
             var response = await _mediator.Send(command, cancellationToken);
-            return response.IsSuccess 
-                ? new JsonResult(response.Data) 
-                : response.ReturnErrorResponse();
+            return response.ToObjectResult((data) => new JsonResult(data));
         }
     }
 }

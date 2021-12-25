@@ -77,9 +77,7 @@ namespace Audiochan.API.Controllers.Me
         {
             var command = new SetFavoriteAudioCommand(audioId, _currentUserId, true);
             var result = await _mediator.Send(command, cancellationToken);
-            return result.IsSuccess
-                ? Ok()
-                : result.ReturnErrorResponse();
+            return result.ToObjectResult(Ok);
         }
 
         [HttpDelete("{audioId:long}", Name = "UnFavoriteAudio")]
@@ -93,10 +91,7 @@ namespace Audiochan.API.Controllers.Me
         {
             var command = new SetFavoriteAudioCommand(audioId, _currentUserId, false);
             var result = await _mediator.Send(command, cancellationToken);
-            return result.IsSuccess
-                ? NoContent()
-                : result.ReturnErrorResponse();
+            return result.ToObjectResult(NoContent);
         }
-
     }
 }

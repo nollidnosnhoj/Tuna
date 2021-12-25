@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Audiochan.API.Models;
@@ -46,23 +47,29 @@ namespace Audiochan.API.Middlewares
         private async Task HandleException(HttpContext context, Exception ex)
         {
             _logger.LogError(ex, ex.Message);
-            
-            ErrorApiResponse response;
+
+            int code;
+            object response;
 
             switch (ex)
             {
                 case ValidationException vex:
-                    response = ErrorApiResponse.Invalid(vex.Errors);
+                    code = StatusCodes.Status422UnprocessableEntity;
+                    var errors = vex.Errors
+                        .GroupBy(x => x.PropertyName, x => x.ErrorMessage)
+                        .ToDictionary(x => x.Key, x => x.ToArray());
+                    response = new ValidationErrorApiResponse("Invalid request.", errors);
                     break;
                 default:
+                    code = StatusCodes.Status500InternalServerError;
                     var message = _env.IsDevelopment()
                         ? ex.Message
                         : "An unexpected error has occurred.";
-                    response = new ErrorApiResponse(StatusCodes.Status500InternalServerError, message, null);
+                    response = new ErrorApiResponse(message, null);
                     break;
             }
 
-            context.Response.StatusCode = response.Code;
+            context.Response.StatusCode = code;
             context.Response.ContentType = "application/json";
             await context.Response.WriteAsync(JsonSerializer.Serialize(response, _jsonOptions));
         }

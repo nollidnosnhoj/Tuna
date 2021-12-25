@@ -58,9 +58,7 @@ namespace Audiochan.API.Controllers.Me
         {
             var request = new SetFollowCommand(_currentUserId, userId, true);
             var result = await _mediator.Send(request, cancellationToken);
-            return result.IsSuccess
-                ? Ok()
-                : result.ReturnErrorResponse();
+            return result.ToObjectResult(Ok);
         }
 
         [HttpDelete(Name = "UnfollowUser")]
@@ -77,9 +75,7 @@ namespace Audiochan.API.Controllers.Me
         {
             var request = new SetFollowCommand(_currentUserId, userId, false);
             var result = await _mediator.Send(request, cancellationToken);
-            return result.IsSuccess
-                ? NoContent()
-                : result.ReturnErrorResponse();
+            return result.ToObjectResult(NoContent);
         }
     }
 }

@@ -7,6 +7,8 @@ using Audiochan.Application.Commons.Services;
 using Audiochan.Application.Features.Auth.Queries.GetCurrentUser;
 using Audiochan.Application.Persistence;
 using AutoMapper;
+using KopaCore.Result;
+using KopaCore.Result.Errors;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -39,11 +41,9 @@ namespace Audiochan.Application.Features.Auth.Commands.Login
                 .SingleOrDefaultAsync(cancellationToken);
 
             if (user == null || !_passwordHasher.Verify(command.Password, user.PasswordHash))
-                return Result<CurrentUserDto>.BadRequest("Invalid Username/Password");
+                return new ErrorResult<CurrentUserDto>("Invalid Username/Password");
 
-            var currentUser = _mapper.Map<CurrentUserDto>(user);
-
-            return Result<CurrentUserDto>.Success(currentUser);
+            return _mapper.Map<CurrentUserDto>(user);
         }
     }
 }
