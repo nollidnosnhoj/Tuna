@@ -2,21 +2,21 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Application.Commons.CQRS;
+using Audiochan.Application.Commons.Exceptions;
 using Audiochan.Application.Commons.Services;
 using Audiochan.Application.Persistence;
 using Audiochan.Application.Commons.Extensions;
 using Audiochan.Domain.Entities;
-using Audiochan.Application.Commons.Results;
 using MediatR;
 using Microsoft.Extensions.Options;
 
 namespace Audiochan.Application.Features.Audios.Commands.RemoveAudio
 {
-    public record RemoveAudioCommand(long Id) : ICommandRequest<Result<bool>>
+    public record RemoveAudioCommand(long Id) : ICommandRequest<bool>
     {
     }
 
-    public class RemoveAudioCommandHandler : IRequestHandler<RemoveAudioCommand, Result<bool>>
+    public class RemoveAudioCommandHandler : IRequestHandler<RemoveAudioCommand, bool>
     {
         private readonly ICurrentUserService _currentUserService;
         private readonly IStorageService _storageService;
@@ -37,17 +37,17 @@ namespace Audiochan.Application.Features.Audios.Commands.RemoveAudio
             _audioStorageSettings = mediaStorageOptions.Value.Audio;
         }
 
-        public async Task<Result<bool>> Handle(RemoveAudioCommand command, CancellationToken cancellationToken)
+        public async Task<bool> Handle(RemoveAudioCommand command, CancellationToken cancellationToken)
         {
             _currentUserService.User.TryGetUserId(out var currentUserId);
 
             var audio = await _unitOfWork.Audios.FindAsync(command.Id, cancellationToken);
 
             if (audio == null)
-                return new NotFoundErrorResult<bool>();
+                throw new NotFoundException<Audio>();
 
             if (audio.UserId != currentUserId)
-                return new ForbiddenErrorResult<bool>();
+                throw new ForbiddenException();
             
             var afterDeletionTasks = GetTasksForAfterDeletion(audio, cancellationToken);
             _unitOfWork.Audios.Remove(audio);

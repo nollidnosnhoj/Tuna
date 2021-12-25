@@ -2,24 +2,22 @@
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Application.Commons;
 using Audiochan.Application.Commons.CQRS;
 using Audiochan.Application.Commons.Services;
 using Audiochan.Application.Commons.Extensions;
-using Audiochan.Application.Commons.Results;
 using MediatR;
 using Microsoft.Extensions.Options;
 
 namespace Audiochan.Application.Features.Upload.Commands.CreateUpload
 {
-    public record GenerateUploadLinkCommand : ICommandRequest<Result<GenerateUploadLinkResponse>>
+    public record GenerateUploadLinkCommand : ICommandRequest<GenerateUploadLinkResponse>
     {
         public string FileName { get; init; } = null!;
         public long FileSize { get; init; }
     }
 
     public class GenerateUploadLinkCommandHandler 
-        : IRequestHandler<GenerateUploadLinkCommand, Result<GenerateUploadLinkResponse>>
+        : IRequestHandler<GenerateUploadLinkCommand, GenerateUploadLinkResponse>
     {
         private readonly ICurrentUserService _currentUserService;
         private readonly IRandomIdGenerator _randomIdGenerator;
@@ -37,7 +35,7 @@ namespace Audiochan.Application.Features.Upload.Commands.CreateUpload
             _audioStorageSettings = mediaStorageSettings.Value.Audio;
         }
         
-        public async Task<Result<GenerateUploadLinkResponse>> Handle(GenerateUploadLinkCommand command, 
+        public async Task<GenerateUploadLinkResponse> Handle(GenerateUploadLinkCommand command, 
             CancellationToken cancellationToken)
         {
             _currentUserService.User.TryGetUserId(out var userId);

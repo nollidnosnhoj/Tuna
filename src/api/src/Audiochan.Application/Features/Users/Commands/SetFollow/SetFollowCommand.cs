@@ -1,20 +1,19 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Application.Commons;
 using Audiochan.Application.Commons.CQRS;
+using Audiochan.Application.Commons.Exceptions;
 using Audiochan.Application.Commons.Services;
 using Audiochan.Application.Persistence;
 using Audiochan.Domain.Entities;
-using Audiochan.Application.Commons.Results;
 using MediatR;
 
 namespace Audiochan.Application.Features.Users.Commands.SetFollow
 {
-    public record SetFollowCommand(long ObserverId, long TargetId, bool IsFollowing) : ICommandRequest<Result>
+    public record SetFollowCommand(long ObserverId, long TargetId, bool IsFollowing) : ICommandRequest
     {
     }
 
-    public class SetFollowCommandHandler : IRequestHandler<SetFollowCommand, Result>
+    public class SetFollowCommandHandler : IRequestHandler<SetFollowCommand>
     {
         private readonly IDateTimeProvider _dateTimeProvider;
         private readonly IUnitOfWork _unitOfWork;
@@ -25,16 +24,16 @@ namespace Audiochan.Application.Features.Users.Commands.SetFollow
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Result> Handle(SetFollowCommand command, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(SetFollowCommand command, CancellationToken cancellationToken)
         {
             var target = await _unitOfWork.Users
                 .LoadUserWithFollowers(command.TargetId, command.ObserverId, cancellationToken);
 
             if (target == null)
-                return new NotFoundErrorResult();
+                throw new NotFoundException<User>();
 
             if (target.Id == command.ObserverId)
-                return new ForbiddenErrorResult();
+                throw new ForbiddenException();
 
             if (command.IsFollowing)
             {
@@ -48,7 +47,7 @@ namespace Audiochan.Application.Features.Users.Commands.SetFollow
             _unitOfWork.Users.Update(target);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return new SuccessResult();
+            return Unit.Value;
         }
     }
 }
