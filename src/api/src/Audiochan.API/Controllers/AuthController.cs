@@ -6,6 +6,8 @@ using Audiochan.Application.Commons.Services;
 using Audiochan.Application.Features.Auth.Commands.Login;
 using Audiochan.Application.Features.Auth.Commands.Register;
 using Audiochan.Application.Features.Auth.Queries.GetCurrentUser;
+using KopaCore.Result;
+using KopaCore.Result.Errors;
 using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -39,26 +41,23 @@ namespace Audiochan.API.Controllers
             CancellationToken cancellationToken)
         {
             var loginResult = await _mediator.Send(command, cancellationToken);
-            
-            if (!loginResult.IsSuccess)
+
+            return await loginResult.ToObjectResult(async data =>
             {
-                return loginResult.ReturnErrorResponse();
-            }
+                Claim[] claims =
+                {
+                    new(ClaimTypes.NameIdentifier, data.Id.ToString()),
+                    new(ClaimTypes.Name, data.UserName),
+                    new(ClaimTypes.Email, data.Email)
+                };
+                var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var principal = new ClaimsPrincipal(identity);
+                var properties = new AuthenticationProperties {ExpiresUtc = _dateTime.Now.AddDays(14)};
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, properties);
+                HttpContext.User = principal;
 
-            var user = loginResult.Data!;
-
-            Claim[] claims = {
-                new(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new(ClaimTypes.Name, user.UserName),
-                new(ClaimTypes.Email, user.Email)
-            };
-            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            var principal = new ClaimsPrincipal(identity);
-            var properties = new AuthenticationProperties { ExpiresUtc = _dateTime.Now.AddDays(14) };
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, properties);
-            HttpContext.User = principal;
-
-            return Ok(user);
+                return Ok(data);
+            });
         }
 
         [HttpPost("register", Name = "CreateAccount")]
@@ -74,9 +73,7 @@ namespace Audiochan.API.Controllers
             CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(command, cancellationToken);
-            return result.IsSuccess
-                ? Ok()
-                : result.ReturnErrorResponse();
+            return result.ToObjectResult(Ok);
         }
 
         [HttpPost("logout")]

@@ -5,11 +5,14 @@ using Audiochan.Application.Commons.CQRS;
 using Audiochan.Application.Commons.Services;
 using Audiochan.Application.Persistence;
 using Audiochan.Application.Commons.Extensions;
+using Audiochan.Domain.Entities;
+using KopaCore.Result;
+using KopaCore.Result.Errors;
 using MediatR;
 
 namespace Audiochan.Application.Features.Users.Commands.UpdateProfile
 {
-    public record UpdateProfileCommand : ICommandRequest<Result<bool>>
+    public record UpdateProfileCommand : ICommandRequest<Result<User>>
     {
         public long UserId { get; init; }
         public string? DisplayName { get; init; }
@@ -25,7 +28,7 @@ namespace Audiochan.Application.Features.Users.Commands.UpdateProfile
         };
     }
 
-    public class UpdateProfileCommandHandler : IRequestHandler<UpdateProfileCommand, Result<bool>>
+    public class UpdateProfileCommandHandler : IRequestHandler<UpdateProfileCommand, Result<User>>
     {
         private readonly long _currentUserId;
         private readonly IUnitOfWork _unitOfWork;
@@ -36,15 +39,15 @@ namespace Audiochan.Application.Features.Users.Commands.UpdateProfile
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Result<bool>> Handle(UpdateProfileCommand command, CancellationToken cancellationToken)
+        public async Task<Result<User>> Handle(UpdateProfileCommand command, CancellationToken cancellationToken)
         {
             var user = await _unitOfWork.Users.FindAsync(command.UserId, cancellationToken);
             if (user!.Id != _currentUserId)
-                return Result<bool>.Forbidden();
+                return new ForbiddenErrorResult<User>();
             
             // TODO: Update user stuff
 
-            return Result<bool>.Success(true);
+            return user;
         }
     }
 }

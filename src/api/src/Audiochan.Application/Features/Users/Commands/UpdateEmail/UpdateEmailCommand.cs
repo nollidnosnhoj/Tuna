@@ -5,6 +5,8 @@ using Audiochan.Application.Commons.CQRS;
 using Audiochan.Application.Commons.Services;
 using Audiochan.Application.Persistence;
 using Audiochan.Application.Commons.Extensions;
+using KopaCore.Result;
+using KopaCore.Result.Errors;
 using MediatR;
 
 namespace Audiochan.Application.Features.Users.Commands.UpdateEmail
@@ -37,12 +39,12 @@ namespace Audiochan.Application.Features.Users.Commands.UpdateEmail
             _currentUserService.User.TryGetUserId(out var currentUserId);
 
             var user = await _unitOfWork.Users.FindAsync(command.UserId, cancellationToken);
-            if (user!.Id != currentUserId) return Result.Forbidden();
+            if (user!.Id != currentUserId) return new ForbiddenErrorResult();
 
             user.Email = command.NewEmail;
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return Result.Success();
+            return new SuccessResult();
         }
     }
 }

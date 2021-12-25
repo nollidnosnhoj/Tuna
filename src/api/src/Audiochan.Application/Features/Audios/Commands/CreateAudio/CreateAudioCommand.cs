@@ -4,61 +4,64 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Application.Commons;
 using Audiochan.Application.Commons.CQRS;
 using Audiochan.Application.Commons.Pipelines.Attributes;
 using Audiochan.Application.Commons.Services;
 using Audiochan.Application.Persistence;
-using Audiochan.Application.Commons.Extensions;
 using Audiochan.Domain.Entities;
+using KopaCore.Result;
+using KopaCore.Result.Errors;
 using MediatR;
 using Microsoft.Extensions.Options;
 
 namespace Audiochan.Application.Features.Audios.Commands.CreateAudio
 {
     [ExplicitTransaction]
-    public class CreateAudioCommand : ICommandRequest<Result<long>>
+    public record CreateAudioCommand(
+        string UploadId,
+        string Title,
+        string Description,
+        List<string> Tags,
+        string FileName,
+        long FileSize,
+        decimal Duration,
+        long UserId) : ICommandRequest<Result<Audio>>
     {
-        public string UploadId { get; init; } = null!;
-        public string FileName { get; init; } = null!;
-        public long FileSize { get; init; }
-        public decimal Duration { get; init; }
-        public string Title { get; init; } = null!;
-        public string Description { get; init; } = string.Empty;
-        public List<string> Tags { get; init; } = new();
         public string BlobName => UploadId + Path.GetExtension(FileName);
     }
 
 
-    public class CreateAudioCommandHandler : IRequestHandler<CreateAudioCommand, Result<long>>
+    public class CreateAudioCommandHandler : IRequestHandler<CreateAudioCommand, Result<Audio>>
     {
-        private readonly ICurrentUserService _currentUserService;
         private readonly ISlugGenerator _slugGenerator;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IStorageService _storageService;
         private readonly AudioStorageSettings _audioStorageSettings;
 
-        public CreateAudioCommandHandler(ICurrentUserService currentUserService, 
-            ISlugGenerator slugGenerator,
+        public CreateAudioCommandHandler(ISlugGenerator slugGenerator,
             IUnitOfWork unitOfWork, 
             IStorageService storageService,
             IOptions<MediaStorageSettings> mediaStorageOptions)
         {
-            _currentUserService = currentUserService;
             _slugGenerator = slugGenerator;
             _unitOfWork = unitOfWork;
             _storageService = storageService;
             _audioStorageSettings = mediaStorageOptions.Value.Audio;
         }
 
-        public async Task<Result<long>> Handle(CreateAudioCommand command,
+        public async Task<Result<Audio>> Handle(CreateAudioCommand command,
             CancellationToken cancellationToken)
         {
-            _currentUserService.User.TryGetUserId(out var currentUserId);
+            var user = await _unitOfWork.Users.FindAsync(command.UserId, cancellationToken);
+
+            if (user is null)
+            {
+                return new UnauthorizedErrorResult<Audio>();
+            }
 
             if (!await ExistsInTempStorage(command.BlobName, cancellationToken))
             {
-                return Result<long>.BadRequest("Cannot find upload. Please upload and try again.");
+                return new ErrorResult<Audio>("Cannot find upload. Please upload and try again.");
             }
 
             Audio? audio = null;
@@ -69,7 +72,7 @@ namespace Audiochan.Application.Features.Audios.Commands.CreateAudio
 
                 audio = new Audio
                 {
-                    UserId = currentUserId,
+                    User = user,
                     Size = command.FileSize,
                     Duration = command.Duration,
                     Title = command.Title,
@@ -89,7 +92,7 @@ namespace Audiochan.Application.Features.Audios.Commands.CreateAudio
                 await MoveTempAudioToPublic(audio.File, cancellationToken);
 
                 await _unitOfWork.CommitTransactionAsync(cancellationToken);
-                return Result<long>.Success(audio.Id);
+                return audio;
             }
             catch (Exception)
             {
