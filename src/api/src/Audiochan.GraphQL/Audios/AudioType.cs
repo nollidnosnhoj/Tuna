@@ -1,4 +1,6 @@
 ﻿using Audiochan.Application;
+using Audiochan.Application.Commons.Extensions;
+using Audiochan.Application.Features.Audios.Models;
 using Audiochan.Application.Persistence;
 using Audiochan.Domain.Entities;
 using Audiochan.GraphQL.Audios.DataLoaders;
@@ -26,10 +28,24 @@ public class AudioType : ObjectType<Audio>
             .Resolve(GetAudioPictureLink);
 
         descriptor.Field(x => x.UserId)
+            .Name("user")
             .Resolve(async (ctx, ct) =>
             {
                 var audio = ctx.Parent<Audio>();
                 return await ctx.DataLoader<UserByIdDataLoader>().LoadAsync(audio.UserId, ct);
+            });
+
+        descriptor.Field("isFavorited")
+            .Authorize()
+            .UseDbContext<ApplicationDbContext>()
+            .Resolve(async (ctx, ct) =>
+            {
+                var dbContext = ctx.DbContext<ApplicationDbContext>();
+                var parent = ctx.Parent<AudioDto>();
+                var claimsPrincipal = ctx.GetUser();
+                claimsPrincipal.TryGetUserId(out var userId);
+                return await dbContext.FavoriteAudios
+                    .AnyAsync(x => x.UserId == userId && x.AudioId == parent.Id, ct);
             });
 
         descriptor.Field(x => x.FavoriteAudios)

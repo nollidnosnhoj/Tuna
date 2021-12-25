@@ -1,4 +1,5 @@
 ﻿using Audiochan.Application;
+using Audiochan.Application.Commons.Extensions;
 using Audiochan.Application.Persistence;
 using Audiochan.Domain.Entities;
 using Audiochan.GraphQL.Audios.DataLoaders;
@@ -16,13 +17,26 @@ public class UserType : ObjectType<User>
             .IdField(x => x.Id)
             .ResolveNode(async (ctx, id) 
                 => await ctx.DataLoader<UserByIdDataLoader>().LoadAsync(id, ctx.RequestAborted));
-        
+
         descriptor.Ignore(x => x.Email);
         descriptor.Ignore(x => x.PasswordHash);
         descriptor.Ignore(x => x.Role);
+        descriptor.Ignore(x => x.LastModified);
 
         descriptor.Field(x => x.Picture)
             .Resolve(GetUserPicture);
+
+        descriptor.Field("isFollowed")
+            .Authorize()
+            .UseDbContext<ApplicationDbContext>()
+            .Resolve(async (ctx, ct) =>
+            {
+                var dbContext = ctx.DbContext<ApplicationDbContext>();
+                var parent = ctx.Parent<User>();
+                var userId = ctx.GetUser().GetUserId();
+                return await dbContext.FollowedUsers
+                    .AnyAsync(fu => fu.ObserverId == userId && fu.TargetId == parent.Id, ct);
+            });
 
         descriptor.Field(x => x.Audios)
             .UseDbContext<ApplicationDbContext>()
