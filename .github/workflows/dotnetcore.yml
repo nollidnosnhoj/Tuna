@@ -25,6 +25,6 @@ jobs:
       - name: Build with dotnet
         run: dotnet build ./src/api/Audiochan.sln --configuration Release
       - name: Test unit tests
-        run: dotnet test ./src/api/tests/Audiochan.Core.UnitTests/Audiochan.Core.UnitTests.csproj
+        run: dotnet test ./src/api/tests/Audiochan.Application.UnitTests/Audiochan.Application.UnitTests.csproj
       # - name: Test integration tests
       #   run: dotnet test ./src/api/tests/Audiochan.Core.IntegrationTests/Audiochan.Core.IntegrationTests.csproj
