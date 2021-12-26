@@ -9,8 +9,8 @@ public class AudioNotFound : GraphQlError
     public long AudioId { get; }
     
     public AudioNotFound(NotFoundException<Audio, long> exception) 
-        : base($"Resource is not found. Type: {exception.Type.Name}. Id: {exception.Id}")
+        : base($"Resource is not found. Type: {exception.Type.Name}. Id: {exception.ResourceId}")
     {
-        AudioId = exception.Id;
+        AudioId = exception.ResourceId;
     }
 }

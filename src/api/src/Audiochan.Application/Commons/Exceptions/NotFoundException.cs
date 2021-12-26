@@ -16,11 +16,11 @@ public class NotFoundException<T, TKey> : NotFoundException
     where TKey : IEquatable<TKey>, IComparable<TKey>
 {
     public Type Type { get; }
-    public TKey Id { get; }
+    public TKey ResourceId { get; }
 
-    public NotFoundException(TKey id)
+    public NotFoundException(TKey resourceId)
     {
         Type = typeof(T);
-        Id = id;
+        ResourceId = resourceId;
     }
 }
