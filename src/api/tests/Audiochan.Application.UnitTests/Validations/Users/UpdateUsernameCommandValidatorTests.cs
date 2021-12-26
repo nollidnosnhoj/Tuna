@@ -23,7 +23,7 @@ namespace Audiochan.Application.UnitTests.Validations.Users
         [InlineData("testuser123")]
         public void ShouldBeValid(string username)
         {
-            var request = new UpdateUsernameCommand {NewUsername = username};
+            var request = new UpdateUsernameCommand(1, username);
             var testResults = _validator.TestValidate(request);
             testResults.IsValid.Should().BeTrue();
         }
@@ -31,7 +31,7 @@ namespace Audiochan.Application.UnitTests.Validations.Users
         [Fact]
         public void ShouldNotBeValid_WhenUsernameIsMissing()
         {
-            var request = new UpdateUsernameCommand{NewUsername = ""};
+            var request = new UpdateUsernameCommand(1, "");
             var testResults = _validator.TestValidate(request);
             testResults.ShouldHaveValidationErrorFor(x => x.NewUsername);
         }
@@ -41,7 +41,7 @@ namespace Audiochan.Application.UnitTests.Validations.Users
         [InlineData("ab")]
         public void ShouldNotBeValid_WhenUsernameIsTooShort(string username)
         {
-            var request = new UpdateUsernameCommand {NewUsername = username};
+            var request = new UpdateUsernameCommand(1, username);
             var testResults = _validator.TestValidate(request);
             testResults.ShouldHaveValidationErrorFor(x => x.NewUsername);
         }
@@ -51,7 +51,7 @@ namespace Audiochan.Application.UnitTests.Validations.Users
         {
             var faker = new Faker();
             var username = faker.Random.String2(21);
-            var request = new UpdateUsernameCommand {NewUsername = username};
+            var request = new UpdateUsernameCommand(1, username);
             var testResults = _validator.TestValidate(request);
             testResults.ShouldHaveValidationErrorFor(x => x.NewUsername);
         }
@@ -61,7 +61,7 @@ namespace Audiochan.Application.UnitTests.Validations.Users
         [InlineData("username@example.com")]
         public void ShouldNotBeValid_WhenUsernameContainsIllegalCharacters(string username)
         {
-            var request = new UpdateUsernameCommand {NewUsername = username};
+            var request = new UpdateUsernameCommand(1, username);
             var testResults = _validator.TestValidate(request);
             testResults.ShouldHaveValidationErrorFor(x => x.NewUsername);
         }
@@ -71,7 +71,7 @@ namespace Audiochan.Application.UnitTests.Validations.Users
         [InlineData("0000000000000")]
         public void ShouldNotBeValid_WhenUsernameOnlyContainDigits(string username)
         {
-            var request = new UpdateUsernameCommand {NewUsername = username};
+            var request = new UpdateUsernameCommand(1, username);
             var testResults = _validator.TestValidate(request);
             testResults.ShouldHaveValidationErrorFor(x => x.NewUsername);
         }
