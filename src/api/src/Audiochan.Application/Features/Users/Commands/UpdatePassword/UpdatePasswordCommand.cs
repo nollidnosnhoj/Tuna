@@ -10,19 +10,7 @@ using MediatR;
 
 namespace Audiochan.Application.Features.Users.Commands.UpdatePassword
 {
-    public record UpdatePasswordCommand : ICommandRequest
-    {
-        public long UserId { get; init; }
-        public string CurrentPassword { get; init; } = "";
-        public string NewPassword { get; init; } = "";
-
-        public static UpdatePasswordCommand FromRequest(long userId, UpdatePasswordRequest request) => new()
-        {
-            UserId = userId,
-            CurrentPassword = request.CurrentPassword,
-            NewPassword = request.NewPassword
-        };
-    }
+    public record UpdatePasswordCommand(long UserId, string CurrentPassword, string NewPassword) : ICommandRequest;
 
     public class UpdatePasswordCommandHandler : IRequestHandler<UpdatePasswordCommand>
     {
@@ -43,7 +31,7 @@ namespace Audiochan.Application.Features.Users.Commands.UpdatePassword
             var user = await _unitOfWork.Users.FindAsync(command.UserId, cancellationToken);
             if (user!.Id != _currentUserId) throw new ForbiddenException();
             if (!_passwordHasher.Verify(command.CurrentPassword, user.PasswordHash))
-                throw new UnmatchPasswordException();
+                throw new UnmatchedPasswordException();
             var newHash = _passwordHasher.Hash(command.NewPassword);
             user.PasswordHash = newHash;
             await _unitOfWork.SaveChangesAsync(cancellationToken);

@@ -12,17 +12,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Application.Features.Users.Commands.UpdateUsername
 {
-    public record UpdateUsernameCommand : ICommandRequest
-    {
-        public long UserId { get; init; }
-        public string NewUsername { get; init; } = null!;
-
-        public static UpdateUsernameCommand FromRequest(long userId, UpdateUsernameRequest request) => new()
-        {
-            UserId = userId,
-            NewUsername = request.NewUsername
-        };
-    }
+    public record UpdateUsernameCommand(long UserId, string NewUsername) : ICommandRequest;
 
     public class UpdateUsernameCommandHandler : IRequestHandler<UpdateUsernameCommand>
     {
