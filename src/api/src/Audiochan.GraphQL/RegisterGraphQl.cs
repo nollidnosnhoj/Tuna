@@ -1,5 +1,7 @@
 ﻿using Audiochan.GraphQL.Audios;
 using Audiochan.GraphQL.Audios.DataLoaders;
+using Audiochan.GraphQL.Audios.Errors;
+using Audiochan.GraphQL.Common.Errors;
 using Audiochan.GraphQL.Users;
 using Audiochan.GraphQL.Users.DataLoaders;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,7 +13,13 @@ public static class RegisterGraphQl
     public static IServiceCollection AddGraphQl(this IServiceCollection services)
     {
         services.AddGraphQLServer()
-            .AddMutationConventions()
+            .InitializeOnStartup()
+            .AddMutationConventions(new MutationConventionOptions
+            {
+                InputTypeNamePattern = "{MutationName}Input",
+                PayloadTypeNamePattern = "{MutationName}Payload",
+                PayloadErrorTypeNamePattern = "{MutationName}Error"
+            })
             .AddAuthorization()
             .AddType<AudioType>()
             .AddType<UserType>()
@@ -23,7 +31,8 @@ public static class RegisterGraphQl
             .AddDataLoader<UserByIdDataLoader>()
             .AddFiltering()
             .AddSorting()
-            .AddGlobalObjectIdentification();
+            .AddGlobalObjectIdentification()
+            .AddErrorInterfaceType<IGraphQlError>();
 
         return services;
     }

@@ -1,17 +1,26 @@
-﻿namespace Audiochan.Application.Commons.Exceptions;
+﻿using System;
+using Audiochan.Domain.Abstractions;
+
+namespace Audiochan.Application.Commons.Exceptions;
 
 public class NotFoundException : BadRequestException
 {
-    public NotFoundException(string message) : base(message)
+    public NotFoundException() : base("Resource was not found.")
     {
         
     }
 }
 
-public class NotFoundException<T> : NotFoundException
+public class NotFoundException<T, TKey> : NotFoundException
+    where T : IHasId<TKey>
+    where TKey : IEquatable<TKey>, IComparable<TKey>
 {
-    public NotFoundException() : base($"{typeof(T).Name} was not found.")
+    public Type Type { get; }
+    public TKey Id { get; }
+
+    public NotFoundException(TKey id)
     {
-        
+        Type = typeof(T);
+        Id = id;
     }
 }
