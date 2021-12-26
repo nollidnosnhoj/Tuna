@@ -21,7 +21,7 @@ namespace Audiochan.Application.UnitTests.Validations.Users
         [InlineData("testuser123@example.com")]
         public void ShouldBeValid(string email)
         {
-            var request = new UpdateEmailCommand {NewEmail = email};
+            var request = new UpdateEmailCommand(1, email);
             var testResults = _validator.TestValidate(request);
             testResults.IsValid.Should().BeTrue();
         }
@@ -29,7 +29,7 @@ namespace Audiochan.Application.UnitTests.Validations.Users
         [Fact]
         public void ShouldNotBeValid_WhenEmailIsMissing()
         {
-            var request = new UpdateEmailCommand {NewEmail = ""};
+            var request = new UpdateEmailCommand(1, "");
             var testResults = _validator.TestValidate(request);
             testResults.ShouldHaveValidationErrorFor(x => x.NewEmail);
         }
@@ -39,7 +39,7 @@ namespace Audiochan.Application.UnitTests.Validations.Users
         [InlineData("example123")]
         public void ShouldNotBeValid_WhenEmailIsInvalid(string email)
         {
-            var request = new UpdateEmailCommand {NewEmail = email};
+            var request = new UpdateEmailCommand(1, email);
             var testResults = _validator.TestValidate(request);
             testResults.ShouldHaveValidationErrorFor(x => x.NewEmail);
         }
