@@ -30,7 +30,7 @@ namespace Audiochan.Application.Features.Users.Commands.SetFavoriteAudio
                 .LoadAudioWithFavorites(command.AudioId, command.UserId, cancellationToken);
 
             if (audio == null)
-                throw new NotFoundException<Audio>();
+                throw new NotFoundException<Audio, long>(command.AudioId);
 
             if (command.IsFavoriting)
                 audio.Favorite(command.UserId, _dateTimeProvider.Now);
