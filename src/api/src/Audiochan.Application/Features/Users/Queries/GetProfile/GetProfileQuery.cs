@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Application.Commons.CQRS;
+using Audiochan.Application.Features.Users.Models;
 using Audiochan.Application.Persistence;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;

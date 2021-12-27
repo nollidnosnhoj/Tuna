@@ -54,7 +54,7 @@ namespace Audiochan.Application.IntegrationTests.Features.Audios
             result.Duration.Should().Be(audio.Duration);
             result.Picture.Should().BeNullOrEmpty();
             result.Tags.Count.Should().Be(audio.Tags.Count);
-            result.Src.Should().Be(audio.File);
+            result.File.Should().Be(audio.File);
             result.Size.Should().Be(audio.Size);
             result.LastModified.Should().BeNull();
             result.User.Should().NotBeNull();
