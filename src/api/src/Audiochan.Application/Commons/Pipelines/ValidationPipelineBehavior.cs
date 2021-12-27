@@ -34,7 +34,7 @@ namespace Audiochan.Application.Commons.Pipelines
             
             if (failures.Count == 0) return await next();
 
-            throw new Exceptions.ValidationException(failures);
+            throw new ValidationException(failures);
         }
     }
 }
