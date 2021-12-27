@@ -2,10 +2,10 @@
 using System.Threading.Tasks;
 using Audiochan.Application.Commons.CQRS;
 using Audiochan.Application.Commons.Exceptions;
-using Audiochan.Application.Commons.Services;
 using Audiochan.Application.Persistence;
 using Audiochan.Application.Commons.Extensions;
 using Audiochan.Application.Features.Users.Exceptions;
+using Audiochan.Application.Services;
 using MediatR;
 
 namespace Audiochan.Application.Features.Users.Commands.UpdatePassword

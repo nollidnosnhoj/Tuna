@@ -3,8 +3,8 @@ using System.Threading.Tasks;
 using Audiochan.Application.Commons.CQRS;
 using Audiochan.Application.Commons.Dtos.Wrappers;
 using Audiochan.Application.Commons.Interfaces;
-using Audiochan.Application.Commons.Services;
 using Audiochan.Application.Features.Audios.Models;
+using Audiochan.Application.Services;
 using MediatR;
 
 namespace Audiochan.Application.Features.Audios.Queries.SearchAudios

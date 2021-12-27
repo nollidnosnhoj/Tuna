@@ -2,7 +2,7 @@
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Application.Commons.Services;
+using Audiochan.Application.Services;
 using Moq;
 
 namespace Audiochan.Tests.Common.Mocks

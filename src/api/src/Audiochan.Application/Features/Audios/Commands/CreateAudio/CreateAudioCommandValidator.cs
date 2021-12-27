@@ -10,37 +10,27 @@ namespace Audiochan.Application.Features.Audios.Commands.CreateAudio
         {
             var storageSettings = options.Value;
             RuleFor(req => req.UploadId)
-                .NotEmpty()
-                .WithMessage("UploadId is required.");
+                .NotEmpty();
             RuleFor(req => req.Duration)
-                .NotEmpty()
-                .WithMessage("Duration is required.");
+                .NotEmpty();
             RuleFor(req => req.FileSize)
                 .FileSizeValidation(storageSettings.Audio.MaximumFileSize);
             RuleFor(req => req.FileName)
                 .FileNameValidation(storageSettings.Audio.ValidContentTypes);
             RuleFor(req => req.Title)
                 .NotEmpty()
-                .WithMessage("Title is required.")
-                .MaximumLength(30)
-                .WithMessage("Title cannot be no more than 30 characters long.");
+                .MaximumLength(30);
             RuleFor(req => req.Description)
                 .NotNull()
-                .WithMessage("Description cannot be null.")
-                .MaximumLength(500)
-                .WithMessage("Description cannot be more than 500 characters long.");
+                .MaximumLength(500);
             RuleFor(req => req.Tags)
                 .NotNull()
-                .WithMessage("Tags cannot be null.")
                 .Must(u => u!.Length <= 10)
-                .WithMessage("Can only have up to 10 tags per audio upload.")
                 .ForEach(tagsRule =>
                 {
                     tagsRule
                         .NotEmpty()
-                        .WithMessage("Each tag cannot be empty.")
-                        .Length(3, 15)
-                        .WithMessage("Each tag must be between 3 and 15 characters long.");
+                        .Length(3, 15);
                 });
         }
     }

@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace Audiochan.Application.Commons.Services
+namespace Audiochan.Application.Services
 {
     public interface IImageService
     {
