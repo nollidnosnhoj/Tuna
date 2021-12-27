@@ -24,6 +24,7 @@ public static class RegisterGraphQl
             .AddType<AudioType>()
             .AddType<UserType>()
             .AddQueryType()
+            .AddTypeExtension<AudioQueries>()
             .AddTypeExtension<UserQueries>()
             .AddMutationType()
             .AddTypeExtension<AudioMutations>()
