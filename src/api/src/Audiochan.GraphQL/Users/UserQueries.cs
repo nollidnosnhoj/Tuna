@@ -1,13 +1,11 @@
 ﻿using System.Security.Claims;
 using Audiochan.Application.Commons.Extensions;
-using Audiochan.Application.Features.Audios.Models;
 using Audiochan.Application.Features.Users.Models;
 using Audiochan.Application.Persistence;
 using Audiochan.Domain.Entities;
 using Audiochan.GraphQL.Common.Attributes;
 using Audiochan.GraphQL.Users.DataLoaders;
 using HotChocolate.AspNetCore.Authorization;
-using HotChocolate.Data.Projections.Expressions;
 using HotChocolate.Resolvers;
 
 namespace Audiochan.GraphQL.Users;
@@ -24,10 +22,14 @@ public class UserQueries
     }
 
     [UseApplicationDbContext]
-    public IQueryable<UserDto> GetUsers(
+    [UseSingleOrDefault]
+    public IQueryable<UserDto> GetUserByName(
+        string userName,
         IResolverContext context,
         [ScopedService] ApplicationDbContext dbContext)
     {
-        return dbContext.Users.ProjectTo<User, UserDto>(context);
+        return dbContext.Users
+            .Where(u => u.UserName == userName)
+            .ProjectTo<User, UserDto>(context);
     }
 }
