@@ -12,7 +12,7 @@ namespace Audiochan.Domain.Entities
         public DateTime? LastModified { get; set; }
         public string Title { get; set; } = null!;
         public string? Description { get; set; }
-        public List<string> Tags { get; set; } = new();
+        public string[] Tags { get; set; } = Array.Empty<string>();
         public decimal Duration { get; set; }
         public string File { get; set; } = null!;
         public long Size { get; set; }

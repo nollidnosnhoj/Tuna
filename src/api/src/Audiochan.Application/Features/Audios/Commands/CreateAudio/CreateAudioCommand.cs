@@ -22,7 +22,7 @@ namespace Audiochan.Application.Features.Audios.Commands.CreateAudio
         string UploadId,
         string Title,
         string Description,
-        List<string> Tags,
+        string[] Tags,
         string FileName,
         long FileSize,
         decimal Duration) : ICommandRequest<Audio>
@@ -85,9 +85,9 @@ namespace Audiochan.Application.Features.Audios.Commands.CreateAudio
                 };
 
                 // Create tags
-                if (command.Tags.Count > 0)
+                if (command.Tags.Length > 0)
                 {
-                    audio.Tags = _slugGenerator.GenerateSlugs(command.Tags).ToList();
+                    audio.Tags = _slugGenerator.GenerateSlugs(command.Tags).ToArray();
                 }
 
                 await _unitOfWork.Audios.AddAsync(audio, cancellationToken);
