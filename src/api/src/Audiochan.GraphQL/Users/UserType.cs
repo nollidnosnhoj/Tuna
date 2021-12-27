@@ -1,8 +1,10 @@
 ﻿using Audiochan.Application;
 using Audiochan.Application.Commons.Extensions;
+using Audiochan.Application.Features.Audios.Models;
 using Audiochan.Application.Features.Users.Models;
 using Audiochan.Application.Persistence;
-using Audiochan.GraphQL.Audios.DataLoaders;
+using Audiochan.Domain.Entities;
+using Audiochan.GraphQL.Audios;
 using Audiochan.GraphQL.Users.DataLoaders;
 using HotChocolate.Resolvers;
 using Microsoft.EntityFrameworkCore;
@@ -37,61 +39,61 @@ public class UserType : ObjectType<UserDto>
 
         descriptor.Field("audios")
             .UseDbContext<ApplicationDbContext>()
-            .Resolve(async (ctx, ct) =>
+            .UsePaging<AudioType>()
+            .Resolve(ctx =>
             {
                 var dbContext = ctx.DbContext<ApplicationDbContext>();
-                var user = ctx.Parent<UserDto>();
-                var audioIds = await dbContext.Audios
-                    .Where(a => a.UserId == user.Id)
-                    .Select(a => a.Id)
-                    .ToArrayAsync(ct);
-                return await ctx.DataLoader<AudioByIdDataLoader>().LoadAsync(audioIds, ct);
+                var parent = ctx.Parent<UserDto>();
+                return dbContext.Audios
+                    .Where(a => a.UserId == parent.Id)
+                    .OrderByDescending(a => a.Id)
+                    .ProjectTo<Audio, AudioDto>(ctx);
             });
         
         descriptor.Field("favoriteAudios")
             .UseDbContext<ApplicationDbContext>()
-            .Resolve(async (ctx, ct) =>
+            .UsePaging<AudioType>()
+            .Resolve(ctx =>
             {
                 var dbContext = ctx.DbContext<ApplicationDbContext>();
-                var user = ctx.Parent<UserDto>();
-                var audioIds = await dbContext.FavoriteAudios
-                    .Where(a => a.UserId == user.Id)
-                    .Select(a => a.AudioId)
-                    .ToArrayAsync(ct);
-                return await ctx.DataLoader<AudioByIdDataLoader>().LoadAsync(audioIds, ct);
+                var parent = ctx.Parent<UserDto>();
+                return dbContext.FavoriteAudios
+                    .Where(a => a.UserId == parent.Id)
+                    .Select(a => a.Audio)
+                    .ProjectTo<Audio, AudioDto>(ctx);
             });
         
         descriptor.Field("followings")
             .UseDbContext<ApplicationDbContext>()
-            .Resolve(async (ctx, ct) =>
+            .UsePaging<UserType>()
+            .Resolve(ctx =>
             {
                 var dbContext = ctx.DbContext<ApplicationDbContext>();
-                var user = ctx.Parent<UserDto>();
-                var followingIds = await dbContext.FollowedUsers
-                    .Where(a => a.ObserverId == user.Id)
-                    .Select(a => a.TargetId)
-                    .ToArrayAsync(ct);
-                return await ctx.DataLoader<UserByIdDataLoader>().LoadAsync(followingIds, ct);
+                var parent = ctx.Parent<UserDto>();
+                return dbContext.FollowedUsers
+                    .Where(a => a.ObserverId == parent.Id)
+                    .Select(a => a.Target)
+                    .ProjectTo<User, UserDto>(ctx);
             });
         
         descriptor.Field("followers")
             .UseDbContext<ApplicationDbContext>()
-            .Resolve(async (ctx, ct) =>
+            .UsePaging<UserType>()
+            .Resolve(ctx =>
             {
                 var dbContext = ctx.DbContext<ApplicationDbContext>();
-                var user = ctx.Parent<UserDto>();
-                var followerIds = await dbContext.FollowedUsers
-                    .Where(a => a.TargetId == user.Id)
-                    .Select(a => a.ObserverId)
-                    .ToArrayAsync(ct);
-                return await ctx.DataLoader<UserByIdDataLoader>().LoadAsync(followerIds, ct);
+                var parent = ctx.Parent<UserDto>();
+                return dbContext.FollowedUsers
+                    .Where(a => a.TargetId == parent.Id)
+                    .Select(a => a.Observer)
+                    .ProjectTo<User, UserDto>(ctx);
             });
     }
     
     private static string? GetUserPicture(IResolverContext context)
     {
-        var user = context.Parent<UserDto>();
-        if (string.IsNullOrEmpty(user.Picture)) return null;
-        return MediaLinkConstants.USER_PICTURE + user.Picture;
+        var parent = context.Parent<UserDto>();
+        if (string.IsNullOrEmpty(parent.Picture)) return null;
+        return MediaLinkConstants.USER_PICTURE + parent.Picture;
     }
 }
