@@ -17,7 +17,6 @@ namespace Audiochan.Application.UnitTests.Mappings
             {
                 cfg.AddProfile<AudioDtoMapping>();
                 cfg.AddProfile<CurrentUserDtoMapping>();
-                cfg.AddProfile<ProfileDtoMapping>();
                 cfg.AddProfile<UserDtoMapping>();
             });
 

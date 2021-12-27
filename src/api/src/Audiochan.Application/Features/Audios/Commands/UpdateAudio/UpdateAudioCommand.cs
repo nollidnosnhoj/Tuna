@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,7 +7,9 @@ using Audiochan.Application.Commons.Exceptions;
 using Audiochan.Application.Commons.Services;
 using Audiochan.Application.Persistence;
 using Audiochan.Application.Commons.Extensions;
+using Audiochan.Application.Features.Audios.Models;
 using Audiochan.Domain.Entities;
+using AutoMapper;
 using MediatR;
 using Microsoft.Extensions.Caching.Distributed;
 
@@ -18,28 +19,30 @@ namespace Audiochan.Application.Features.Audios.Commands.UpdateAudio
         long AudioId,
         string? Title,
         string? Description,
-        string[]? Tags) : ICommandRequest<Audio>;
+        string[]? Tags) : ICommandRequest<AudioDto>;
 
-    public class UpdateAudioCommandHandler : IRequestHandler<UpdateAudioCommand, Audio>
+    public class UpdateAudioCommandHandler : IRequestHandler<UpdateAudioCommand, AudioDto>
     {
         private readonly IDistributedCache _cache;
         private readonly ISlugGenerator _slugGenerator;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICurrentUserService _currentUserService;
+        private readonly IMapper _mapper;
 
         public UpdateAudioCommandHandler(
             ISlugGenerator slugGenerator, 
             IUnitOfWork unitOfWork,
             IDistributedCache cache, 
-            ICurrentUserService currentUserService)
+            ICurrentUserService currentUserService, IMapper mapper)
         {
             _slugGenerator = slugGenerator;
             _unitOfWork = unitOfWork;
             _cache = cache;
             _currentUserService = currentUserService;
+            _mapper = mapper;
         }
 
-        public async Task<Audio> Handle(UpdateAudioCommand command,
+        public async Task<AudioDto> Handle(UpdateAudioCommand command,
             CancellationToken cancellationToken)
         {
             var userId = _currentUserService.User.GetUserId();
@@ -57,7 +60,7 @@ namespace Audiochan.Application.Features.Audios.Commands.UpdateAudio
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             await _cache.RemoveAsync(CacheKeys.Audio.GetAudio(command.AudioId), cancellationToken);
             
-            return audio;
+            return _mapper.Map<AudioDto>(audio);
         }
 
         private void UpdateAudioFromCommandAsync(Audio audio, UpdateAudioCommand command)
