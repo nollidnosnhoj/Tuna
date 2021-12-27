@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Audiochan.Application.Commons.Dtos.Wrappers;
 using Audiochan.Application.Features.Audios.Models;
 
-namespace Audiochan.Application.Commons.Services
+namespace Audiochan.Application.Services
 {
     public interface ISearchService
     {

@@ -1,5 +1,5 @@
 ﻿using Audiochan.Application.Commons.Interfaces;
-using Audiochan.Application.Commons.Services;
+using Audiochan.Application.Services;
 using FluentValidation;
 
 namespace Audiochan.Application.Commons.Validators

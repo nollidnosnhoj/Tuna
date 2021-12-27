@@ -1,7 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Audiochan.API.Models;
 using Audiochan.API.Services;
-using Audiochan.Application.Commons.Services;
+using Audiochan.Application.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -22,6 +23,7 @@ namespace Audiochan.API.Extensions.ConfigurationExtensions
                 .Configure<ITicketStore>((options, ticketStore) =>
                 {
                     options.Cookie.Name = "auth.cookie";
+                    options.ExpireTimeSpan = TimeSpan.FromDays(7);
                     options.SessionStore = ticketStore;
                     options.Cookie.SameSite = environment.IsProduction()
                         ? SameSiteMode.Lax
