@@ -17,6 +17,7 @@ namespace Audiochan.Application.Features.Audios.Models
         public string File { get; set; } = string.Empty;
         public long Size { get; set; }
         public string? Picture { get; set; }
+        public long UserId { get; set; }
         public UserDto User { get; set; } = null!;
     }
 }

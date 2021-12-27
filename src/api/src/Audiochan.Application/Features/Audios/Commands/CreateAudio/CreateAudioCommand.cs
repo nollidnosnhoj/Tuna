@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -10,8 +9,10 @@ using Audiochan.Application.Commons.Extensions;
 using Audiochan.Application.Commons.Pipelines.Attributes;
 using Audiochan.Application.Commons.Services;
 using Audiochan.Application.Features.Audios.Exceptions;
+using Audiochan.Application.Features.Audios.Models;
 using Audiochan.Application.Persistence;
 using Audiochan.Domain.Entities;
+using AutoMapper;
 using MediatR;
 using Microsoft.Extensions.Options;
 
@@ -25,34 +26,36 @@ namespace Audiochan.Application.Features.Audios.Commands.CreateAudio
         string[] Tags,
         string FileName,
         long FileSize,
-        decimal Duration) : ICommandRequest<Audio>
+        decimal Duration) : ICommandRequest<AudioDto>
     {
         public string GetBlobName() => UploadId + Path.GetExtension(FileName);
     }
 
 
-    public class CreateAudioCommandHandler : IRequestHandler<CreateAudioCommand, Audio>
+    public class CreateAudioCommandHandler : IRequestHandler<CreateAudioCommand, AudioDto>
     {
         private readonly ICurrentUserService _currentUserService;
         private readonly ISlugGenerator _slugGenerator;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IStorageService _storageService;
         private readonly AudioStorageSettings _audioStorageSettings;
+        private readonly IMapper _mapper;
 
         public CreateAudioCommandHandler(ISlugGenerator slugGenerator,
             IUnitOfWork unitOfWork, 
             IStorageService storageService,
             IOptions<MediaStorageSettings> mediaStorageOptions, 
-            ICurrentUserService currentUserService)
+            ICurrentUserService currentUserService, IMapper mapper)
         {
             _slugGenerator = slugGenerator;
             _unitOfWork = unitOfWork;
             _storageService = storageService;
             _currentUserService = currentUserService;
+            _mapper = mapper;
             _audioStorageSettings = mediaStorageOptions.Value.Audio;
         }
 
-        public async Task<Audio> Handle(CreateAudioCommand command,
+        public async Task<AudioDto> Handle(CreateAudioCommand command,
             CancellationToken cancellationToken)
         {
             var userId = _currentUserService.User.GetUserId();
@@ -96,7 +99,7 @@ namespace Audiochan.Application.Features.Audios.Commands.CreateAudio
                 await MoveTempAudioToPublic(audio.File, cancellationToken);
 
                 await _unitOfWork.CommitTransactionAsync(cancellationToken);
-                return audio;
+                return _mapper.Map<AudioDto>(audio);
             }
             catch (Exception)
             {

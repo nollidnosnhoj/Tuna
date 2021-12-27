@@ -7,6 +7,7 @@ using Audiochan.Application.Features.Audios.Commands.RemovePicture;
 using Audiochan.Application.Features.Audios.Commands.SetFavoriteAudio;
 using Audiochan.Application.Features.Audios.Commands.UpdateAudio;
 using Audiochan.Application.Features.Audios.Commands.UpdatePicture;
+using Audiochan.Application.Features.Audios.Models;
 using Audiochan.Application.Features.Upload.Commands.CreateUpload;
 using Audiochan.Domain.Entities;
 using Audiochan.GraphQL.Audios.Errors;
@@ -24,7 +25,7 @@ public class AudioMutations
     [Authorize]
     [Error(typeof(Unauthorized))]
     [Error(typeof(UploadDoesNotExist))]
-    public async Task<Audio?> CreateAudio(
+    public async Task<AudioDto?> CreateAudio(
         string uploadId,
         string title,
         string description,
@@ -43,8 +44,8 @@ public class AudioMutations
     [Authorize]
     [Error(typeof(AudioNotFound))]
     [Error(typeof(Forbidden))]
-    public async Task<Audio?> UpdateAudio(
-        [ID(nameof(Audio))] long id,
+    public async Task<AudioDto?> UpdateAudio(
+        [ID(nameof(AudioDto))] long id,
         string? title,
         string? description,
         string[]? tags,
@@ -60,7 +61,7 @@ public class AudioMutations
     [Error(typeof(AudioNotFound))]
     [Error(typeof(Forbidden))]
     public async Task<ImageUploadResponse> UpdateAudioPicture(
-        [ID(nameof(Audio))] long id,
+        [ID(nameof(AudioDto))] long id,
         string data,
         [Service] IMediator mediator,
         CancellationToken cancellationToken = default)
@@ -74,7 +75,7 @@ public class AudioMutations
     [Error(typeof(AudioNotFound))]
     [Error(typeof(Forbidden))]
     public async Task<bool> RemoveAudio(
-        [ID(nameof(Audio))] long id,
+        [ID(nameof(AudioDto))] long id,
         [Service] IMediator mediator,
         CancellationToken cancellationToken = default)
     {
@@ -88,7 +89,7 @@ public class AudioMutations
     [Error(typeof(AudioNotFound))]
     [Error(typeof(Forbidden))]
     public async Task<bool> RemoveAudioPicture(
-        [ID(nameof(Audio))] long id,
+        [ID(nameof(AudioDto))] long id,
         [Service] IMediator mediator,
         CancellationToken cancellationToken = default)
     {
@@ -113,7 +114,7 @@ public class AudioMutations
     [Authorize]
     [Error(typeof(AudioNotFound))]
     public async Task<bool> Favorite(
-        [ID(nameof(Audio))] long id,
+        [ID(nameof(AudioDto))] long id,
         ClaimsPrincipal claimsPrincipal,
         [Service] IMediator mediator,
         CancellationToken cancellationToken = default)
@@ -128,7 +129,7 @@ public class AudioMutations
     [Authorize]
     [Error(typeof(AudioNotFound))]
     public async Task<bool> Unfavorite(
-        [ID(nameof(Audio))] long id,
+        [ID(nameof(AudioDto))] long id,
         ClaimsPrincipal claimsPrincipal,
         [Service] IMediator mediator,
         CancellationToken cancellationToken = default)

@@ -2,7 +2,6 @@
 using Audiochan.Application.Commons.Extensions;
 using Audiochan.Application.Features.Audios.Models;
 using Audiochan.Application.Persistence;
-using Audiochan.Domain.Entities;
 using Audiochan.GraphQL.Audios.DataLoaders;
 using Audiochan.GraphQL.Users.DataLoaders;
 using HotChocolate.Resolvers;
@@ -10,10 +9,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.GraphQL.Audios;
 
-public class AudioType : ObjectType<Audio>
+public class AudioType : ObjectType<AudioDto>
 {
-    protected override void Configure(IObjectTypeDescriptor<Audio> descriptor)
+    protected override void Configure(IObjectTypeDescriptor<AudioDto> descriptor)
     {
+        descriptor.Name("Audio");
+        
         descriptor.ImplementsNode()
             .IdField(x => x.Id)
             .ResolveNode(async (ctx, id) 
@@ -21,17 +22,17 @@ public class AudioType : ObjectType<Audio>
                     .LoadAsync(id, ctx.RequestAborted));
 
         descriptor.Field(x => x.File)
-            .Name("audioLink")
+            .Name("mp3")
             .Resolve(GetAudioLink);
 
         descriptor.Field(x => x.Picture)
             .Resolve(GetAudioPictureLink);
 
-        descriptor.Field(x => x.UserId)
-            .Name("user")
+        descriptor.Ignore(x => x.UserId);
+        descriptor.Field(x => x.User)
             .Resolve(async (ctx, ct) =>
             {
-                var audio = ctx.Parent<Audio>();
+                var audio = ctx.Parent<AudioDto>();
                 return await ctx.DataLoader<UserByIdDataLoader>().LoadAsync(audio.UserId, ct);
             });
 
@@ -48,13 +49,12 @@ public class AudioType : ObjectType<Audio>
                     .AnyAsync(x => x.UserId == userId && x.AudioId == parent.Id, ct);
             });
 
-        descriptor.Field(x => x.FavoriteAudios)
-            .Name("favorited")
+        descriptor.Field("favorited")
             .UseDbContext<ApplicationDbContext>()
             .Resolve(async (ctx, ct) =>
             {
                 var dbContext = ctx.DbContext<ApplicationDbContext>();
-                var audio = ctx.Parent<Audio>();
+                var audio = ctx.Parent<AudioDto>();
                 var favoritedIds = await dbContext.FavoriteAudios
                     .Where(fa => fa.AudioId == audio.Id)
                     .Select(fa => fa.UserId)
@@ -65,14 +65,15 @@ public class AudioType : ObjectType<Audio>
 
     private static string GetAudioLink(IResolverContext context)
     {
-        var audio = context.Parent<Audio>();
+        var audio = context.Parent<AudioDto>();
         return MediaLinkConstants.AUDIO_STREAM + audio.File;
 
     }
 
-    private static string GetAudioPictureLink(IResolverContext context)
+    private static string? GetAudioPictureLink(IResolverContext context)
     {
-        var audio = context.Parent<Audio>();
+        var audio = context.Parent<AudioDto>();
+        if (string.IsNullOrEmpty(audio.Picture)) return null;
         return MediaLinkConstants.AUDIO_PICTURE + audio.Picture;
     }
 }

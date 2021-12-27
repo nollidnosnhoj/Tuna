@@ -11,11 +11,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Application.Features.Users.Queries.GetProfile
 {
-    public record GetProfileQuery(string Username) : IQueryRequest<ProfileDto?>
+    public record GetProfileQuery(string Username) : IQueryRequest<UserDto?>
     {
     }
 
-    public class GetProfileQueryHandler : IRequestHandler<GetProfileQuery, ProfileDto?>
+    public class GetProfileQueryHandler : IRequestHandler<GetProfileQuery, UserDto?>
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly IMapper _mapper;
@@ -26,11 +26,11 @@ namespace Audiochan.Application.Features.Users.Queries.GetProfile
             _mapper = mapper;
         }
 
-        public async Task<ProfileDto?> Handle(GetProfileQuery query, CancellationToken cancellationToken)
+        public async Task<UserDto?> Handle(GetProfileQuery query, CancellationToken cancellationToken)
         {
             return await _dbContext.Users
                 .Where(u => u.UserName == query.Username)
-                .ProjectTo<ProfileDto>(_mapper.ConfigurationProvider)
+                .ProjectTo<UserDto>(_mapper.ConfigurationProvider)
                 .SingleOrDefaultAsync(cancellationToken);
         }
     }

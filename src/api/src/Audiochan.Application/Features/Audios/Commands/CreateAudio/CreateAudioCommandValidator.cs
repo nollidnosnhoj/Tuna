@@ -32,7 +32,7 @@ namespace Audiochan.Application.Features.Audios.Commands.CreateAudio
             RuleFor(req => req.Tags)
                 .NotNull()
                 .WithMessage("Tags cannot be null.")
-                .Must(u => u!.Count <= 10)
+                .Must(u => u!.Length <= 10)
                 .WithMessage("Can only have up to 10 tags per audio upload.")
                 .ForEach(tagsRule =>
                 {

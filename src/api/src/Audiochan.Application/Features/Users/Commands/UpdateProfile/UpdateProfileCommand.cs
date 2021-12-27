@@ -5,26 +5,30 @@ using Audiochan.Application.Commons.Exceptions;
 using Audiochan.Application.Commons.Services;
 using Audiochan.Application.Persistence;
 using Audiochan.Application.Commons.Extensions;
+using Audiochan.Application.Features.Users.Models;
 using Audiochan.Domain.Entities;
+using AutoMapper;
 using MediatR;
 
 namespace Audiochan.Application.Features.Users.Commands.UpdateProfile
 {
     public record UpdateProfileCommand(long UserId, string? DisplayName, string? About, string? Website)
-        : ICommandRequest<User>;
+        : ICommandRequest<UserDto>;
 
-    public class UpdateProfileCommandHandler : IRequestHandler<UpdateProfileCommand, User>
+    public class UpdateProfileCommandHandler : IRequestHandler<UpdateProfileCommand, UserDto>
     {
         private readonly long _currentUserId;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public UpdateProfileCommandHandler(ICurrentUserService currentUserService, IUnitOfWork unitOfWork)
+        public UpdateProfileCommandHandler(ICurrentUserService currentUserService, IUnitOfWork unitOfWork, IMapper mapper)
         {
             currentUserService.User.TryGetUserId(out _currentUserId);
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
-        public async Task<User> Handle(UpdateProfileCommand command, CancellationToken cancellationToken)
+        public async Task<UserDto> Handle(UpdateProfileCommand command, CancellationToken cancellationToken)
         {
             var user = await _unitOfWork.Users.FindAsync(command.UserId, cancellationToken);
             if (user!.Id != _currentUserId)
@@ -32,7 +36,7 @@ namespace Audiochan.Application.Features.Users.Commands.UpdateProfile
             
             // TODO: Update user stuff
 
-            return user;
+            return _mapper.Map<UserDto>(user);
         }
     }
 }
