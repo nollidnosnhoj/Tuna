@@ -1,5 +1,9 @@
 ﻿using HashidsNet;
 
+/////////////////////////////////////
+/// DO NOT CHANGE ANYTHING HERE /////
+/////////////////////////////////////
+
 namespace Audiochan.Application.Commons.Helpers
 {
     public static class HashIdHelper
