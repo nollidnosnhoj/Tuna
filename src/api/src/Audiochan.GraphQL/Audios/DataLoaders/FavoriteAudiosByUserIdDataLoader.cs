@@ -4,7 +4,7 @@ using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 
-namespace Audiochan.GraphQL.Users.DataLoaders;
+namespace Audiochan.GraphQL.Audios.DataLoaders;
 
 public class FavoriteAudiosByUserIdDataLoader : GroupedDataLoader<long, AudioDto>
 {

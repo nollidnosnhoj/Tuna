@@ -5,6 +5,7 @@ using Audiochan.Application.Features.Users.Models;
 using Audiochan.Application.Persistence;
 using Audiochan.Domain.Entities;
 using Audiochan.GraphQL.Audios;
+using Audiochan.GraphQL.Audios.DataLoaders;
 using Audiochan.GraphQL.Users.DataLoaders;
 using HotChocolate.Resolvers;
 using Microsoft.EntityFrameworkCore;
@@ -51,7 +52,6 @@ public class UserType : ObjectType<UserDto>
             });
         
         descriptor.Field("favoriteAudios")
-            .Type<ListType<AudioType>>()
             .UseDataloader<FavoriteAudiosByUserIdDataLoader>()
             .Resolve(async (ctx, ct) =>
             {
@@ -60,7 +60,6 @@ public class UserType : ObjectType<UserDto>
             });
 
         descriptor.Field("followings")
-            .Type<ListType<UserType>>()
             .UseDataloader<FollowingByUserIdDataLoader>()
             .Resolve(async (ctx, ct) =>
             {
@@ -69,7 +68,6 @@ public class UserType : ObjectType<UserDto>
             });
         
         descriptor.Field("followers")
-            .Type<ListType<UserType>>()
             .UseDataloader<FollowerByUserIdDataLoader>()
             .Resolve(async (ctx, ct) =>
             {

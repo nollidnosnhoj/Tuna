@@ -53,7 +53,6 @@ public class AudioType : ObjectType<AudioDto>
             });
 
         descriptor.Field("favorited")
-            .Type<ListType<UserType>>()
             .UseDataloader<FavoritedByAudioIdDataLoader>()
             .Resolve(async (ctx, ct) =>
             {
