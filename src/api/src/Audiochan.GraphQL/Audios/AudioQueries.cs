@@ -3,6 +3,7 @@ using Audiochan.Application.Features.Audios.Models;
 using Audiochan.Application.Features.Users.Models;
 using Audiochan.Application.Persistence;
 using Audiochan.Domain.Entities;
+using Audiochan.GraphQL.Audios.DataLoaders;
 using Audiochan.GraphQL.Common.Attributes;
 using HotChocolate.Resolvers;
 
@@ -11,6 +12,22 @@ namespace Audiochan.GraphQL.Audios;
 [ExtendObjectType(OperationTypeNames.Query)]
 public class AudioQueries
 {
+    public async Task<AudioDto> GetAudioById(
+        [ID(nameof(AudioDto))] long id,
+        AudioByIdDataLoader audioById,
+        CancellationToken cancellationToken = default)
+    {
+        return await audioById.LoadAsync(id, cancellationToken);
+    }
+    
+    public async Task<IEnumerable<AudioDto>> GetAudioByIds(
+        [ID(nameof(AudioDto))] long[] ids,
+        AudioByIdDataLoader audioById,
+        CancellationToken cancellationToken = default)
+    {
+        return await audioById.LoadAsync(ids, cancellationToken);
+    }
+
     [UseApplicationDbContext]
     [UseSingleOrDefault]
     public IQueryable<AudioDto> GetAudioBySlug(
@@ -25,6 +42,7 @@ public class AudioQueries
     }
 
     [UseApplicationDbContext]
+    [UseSingleOrDefault]
     public IQueryable<AudioDto> GetAudiosByUserId(
         [ID(nameof(UserDto))] long userId,
         IResolverContext resolverContext,

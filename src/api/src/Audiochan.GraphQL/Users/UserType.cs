@@ -51,42 +51,30 @@ public class UserType : ObjectType<UserDto>
             });
         
         descriptor.Field("favoriteAudios")
-            .UseDbContext<ApplicationDbContext>()
-            .UsePaging<AudioType>()
-            .Resolve(ctx =>
+            .Type<ListType<AudioType>>()
+            .UseDataloader<FavoriteAudiosByUserIdDataLoader>()
+            .Resolve(async (ctx, ct) =>
             {
-                var dbContext = ctx.DbContext<ApplicationDbContext>();
                 var parent = ctx.Parent<UserDto>();
-                return dbContext.FavoriteAudios
-                    .Where(a => a.UserId == parent.Id)
-                    .Select(a => a.Audio)
-                    .ProjectTo<Audio, AudioDto>(ctx);
+                return await ctx.DataLoader<FavoriteAudiosByUserIdDataLoader>().LoadAsync(parent.Id, ct);
             });
-        
+
         descriptor.Field("followings")
-            .UseDbContext<ApplicationDbContext>()
-            .UsePaging<UserType>()
-            .Resolve(ctx =>
+            .Type<ListType<UserType>>()
+            .UseDataloader<FollowingByUserIdDataLoader>()
+            .Resolve(async (ctx, ct) =>
             {
-                var dbContext = ctx.DbContext<ApplicationDbContext>();
                 var parent = ctx.Parent<UserDto>();
-                return dbContext.FollowedUsers
-                    .Where(a => a.ObserverId == parent.Id)
-                    .Select(a => a.Target)
-                    .ProjectTo<User, UserDto>(ctx);
+                return await ctx.DataLoader<FollowingByUserIdDataLoader>().LoadAsync(parent.Id, ct);
             });
         
         descriptor.Field("followers")
-            .UseDbContext<ApplicationDbContext>()
-            .UsePaging<UserType>()
-            .Resolve(ctx =>
+            .Type<ListType<UserType>>()
+            .UseDataloader<FollowerByUserIdDataLoader>()
+            .Resolve(async (ctx, ct) =>
             {
-                var dbContext = ctx.DbContext<ApplicationDbContext>();
                 var parent = ctx.Parent<UserDto>();
-                return dbContext.FollowedUsers
-                    .Where(a => a.TargetId == parent.Id)
-                    .Select(a => a.Observer)
-                    .ProjectTo<User, UserDto>(ctx);
+                return await ctx.DataLoader<FollowerByUserIdDataLoader>().LoadAsync(parent.Id, ct);
             });
     }
     
