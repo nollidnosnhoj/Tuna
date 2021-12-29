@@ -1,10 +1,10 @@
 ﻿using AspNetCoreRateLimit;
-using Audiochan.API.Middlewares;
+using Audiochan.Server.Middlewares;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Audiochan.API.Extensions.ConfigurationExtensions
+namespace Audiochan.Server.Extensions.ConfigurationExtensions
 {
     public static class RateLimitConfigExtensions
     {

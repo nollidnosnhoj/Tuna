@@ -3,7 +3,7 @@ using System.Linq;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Http;
 
-namespace Audiochan.API.Models
+namespace Audiochan.Server.Models
 {
     public record ErrorApiResponse(string? Message, string[]? Errors);
     public record ValidationErrorApiResponse(string? Message, IDictionary<string, string[]>? Errors);
