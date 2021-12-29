@@ -8,13 +8,13 @@ public class UpdateUserCommandValidator : AbstractValidator<UpdateUserCommand>
 {
     public UpdateUserCommandValidator(IOptions<IdentitySettings> identitySettings)
     {
-        When(x => !string.IsNullOrEmpty(x.Username), () =>
+        When(x => x.Username is not null, () =>
         {
             RuleFor(x => x.Username)!
                 .UsernameValidation(identitySettings.Value.UsernameSettings);
         });
 
-        When(x => !string.IsNullOrEmpty(x.Email), () =>
+        When(x => x.Email is not null, () =>
         {
             RuleFor(x => x.Email)!
                 .NotEmpty().EmailAddress();
