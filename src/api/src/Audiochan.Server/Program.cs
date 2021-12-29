@@ -10,7 +10,7 @@ using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Events;
 
-namespace Audiochan.API
+namespace Audiochan.Server
 {
     public class Program
     {
