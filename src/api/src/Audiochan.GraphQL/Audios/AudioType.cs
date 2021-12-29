@@ -53,16 +53,12 @@ public class AudioType : ObjectType<AudioDto>
             });
 
         descriptor.Field("favorited")
-            .UseDbContext<ApplicationDbContext>()
-            .UsePaging<UserType>()
-            .Resolve(ctx =>
+            .Type<ListType<UserType>>()
+            .UseDataloader<FavoritedByAudioIdDataLoader>()
+            .Resolve(async (ctx, ct) =>
             {
-                var dbContext = ctx.DbContext<ApplicationDbContext>();
                 var parent = ctx.Parent<AudioDto>();
-                return dbContext.FavoriteAudios
-                    .Where(fa => fa.AudioId == parent.Id)
-                    .Select(fa => fa.User)
-                    .ProjectTo<User, UserDto>(ctx);
+                return await ctx.DataLoader<FavoritedByAudioIdDataLoader>().LoadAsync(parent.Id, ct);
             });
     }
 
