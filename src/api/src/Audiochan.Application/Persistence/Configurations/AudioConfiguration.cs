@@ -40,7 +40,7 @@ namespace Audiochan.Application.Persistence.Configurations
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasOne(fa => fa.Audio)
-                .WithMany()
+                .WithMany(a => a.FavoriteAudios)
                 .HasForeignKey(fa => fa.AudioId)
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Cascade);
