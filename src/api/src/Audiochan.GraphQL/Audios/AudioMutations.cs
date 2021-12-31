@@ -72,32 +72,32 @@ public class AudioMutations
         return await mediator.Send(command, cancellationToken);
     }
 
-    [UseMutationConvention(PayloadFieldName = "success")]
+    [UseMutationConvention(PayloadFieldName = "message")]
     [Authorize]
     [Error(typeof(AudioNotFound))]
     [Error(typeof(Forbidden))]
-    public async Task<bool> RemoveAudio(
+    public async Task<string> RemoveAudio(
         [ID(nameof(AudioDto))] long id,
         [Service] IMediator mediator,
         CancellationToken cancellationToken = default)
     {
         var command = new RemoveAudioCommand(id);
         await mediator.Send(command, cancellationToken);
-        return true;
+        return $"Successfully removed audio (id: {id}).";
     }
     
-    [UseMutationConvention(PayloadFieldName = "success")]
+    [UseMutationConvention(PayloadFieldName = "message")]
     [Authorize]
     [Error(typeof(AudioNotFound))]
     [Error(typeof(Forbidden))]
-    public async Task<bool> RemoveAudioPicture(
+    public async Task<string> RemoveAudioPicture(
         [ID(nameof(AudioDto))] long id,
         [Service] IMediator mediator,
         CancellationToken cancellationToken = default)
     {
         var command = new RemoveAudioPictureCommand(id);
         await mediator.Send(command, cancellationToken);
-        return true;
+        return "Successfully removed audio picture.";
     }
 
     [UseMutationConvention(PayloadFieldName = "response")]
@@ -113,10 +113,10 @@ public class AudioMutations
         return await mediator.Send(command, cancellationToken);
     }
 
-    [UseMutationConvention(PayloadFieldName = "success")]
+    [UseMutationConvention(PayloadFieldName = "message")]
     [Authorize]
     [Error(typeof(AudioNotFound))]
-    public async Task<bool> Favorite(
+    public async Task<string> Favorite(
         [ID(nameof(AudioDto))] long id,
         ClaimsPrincipal claimsPrincipal,
         [Service] IMediator mediator,
@@ -125,13 +125,13 @@ public class AudioMutations
         var userId = claimsPrincipal.GetUserId();
         var command = new SetFavoriteAudioCommand(id, userId, true);
         await mediator.Send(command, cancellationToken);
-        return true;
+        return $"Successfully favorited audio (id: {id}).";
     }
     
-    [UseMutationConvention(PayloadFieldName = "success")]
+    [UseMutationConvention(PayloadFieldName = "message")]
     [Authorize]
     [Error(typeof(AudioNotFound))]
-    public async Task<bool> Unfavorite(
+    public async Task<string> Unfavorite(
         [ID(nameof(AudioDto))] long id,
         ClaimsPrincipal claimsPrincipal,
         [Service] IMediator mediator,
@@ -140,6 +140,6 @@ public class AudioMutations
         var userId = claimsPrincipal.GetUserId();
         var command = new SetFavoriteAudioCommand(id, userId, false);
         await mediator.Send(command, cancellationToken);
-        return true;
+        return $"Successfully unfavorited audio (id: {id}).";
     }
 }

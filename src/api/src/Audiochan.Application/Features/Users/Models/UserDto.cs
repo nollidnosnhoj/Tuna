@@ -9,6 +9,8 @@ namespace Audiochan.Application.Features.Users.Models
         public long Id { get; init; }
         
         public string UserName { get; init; } = null!;
+
+        public string Email { get; init; } = null!;
         
         public string? Picture { get; init; }
     }

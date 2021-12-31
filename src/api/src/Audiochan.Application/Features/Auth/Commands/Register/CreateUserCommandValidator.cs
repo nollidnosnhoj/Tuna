@@ -8,7 +8,7 @@ namespace Audiochan.Application.Features.Auth.Commands.Register
     {
         public CreateUserCommandValidator(IOptions<IdentitySettings> identitySettings)
         {
-            RuleFor(req => req.Username)
+            RuleFor(req => req.UserName)
                 .UsernameValidation(identitySettings.Value.UsernameSettings);
             RuleFor(req => req.Email)
                 .NotEmpty().WithMessage("Email is required.")

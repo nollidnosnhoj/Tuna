@@ -1,4 +1,5 @@
-﻿using Audiochan.Application;
+﻿using System.Security.Claims;
+using Audiochan.Application;
 using Audiochan.Application.Commons.Extensions;
 using Audiochan.Application.Features.Audios.Models;
 using Audiochan.Application.Features.Users.Models;
@@ -25,6 +26,15 @@ public class UserType : ObjectType<UserDto>
 
         descriptor.Field(x => x.Picture)
             .Resolve(GetUserPicture);
+
+        descriptor.Field(x => x.Email)
+            .Authorize()
+            .Resolve(ctx =>
+            {
+                var parent = ctx.Parent<UserDto>();
+                var myEmail = ctx.GetUser().FindFirstValue(ClaimTypes.Email);
+                return myEmail == parent.Email ? parent.Email : null;
+            });
 
         descriptor.Field("isFollowed")
             .Authorize()
