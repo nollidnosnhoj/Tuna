@@ -48,7 +48,8 @@ namespace Audiochan.Server.Extensions.ConfigurationExtensions
             
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
 
-            services.AddTransient<ICurrentUserService, CurrentUserService>();
+            services.AddScoped<ICurrentUserService, CurrentUserService>();
+            services.AddScoped<IAuthService, CookieAuthService>();
 
             return services;
         }

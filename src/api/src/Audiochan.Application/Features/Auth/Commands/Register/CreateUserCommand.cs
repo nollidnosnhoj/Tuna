@@ -11,12 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Application.Features.Auth.Commands.Register
 {
-    public class CreateUserCommand : ICommandRequest
-    {
-        public string Username { get; init; } = string.Empty;
-        public string Email { get; init; } = string.Empty;
-        public string Password { get; init; } = string.Empty;
-    }
+    public record CreateUserCommand(string UserName, string Email, string Password) : ICommandRequest;
 
     public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand>
     {
@@ -34,9 +29,9 @@ namespace Audiochan.Application.Features.Auth.Commands.Register
 
         public async Task<Unit> Handle(CreateUserCommand command, CancellationToken cancellationToken)
         {
-            var trimmedUsername = command.Username.Trim();
+            var trimmedUsername = command.UserName.Trim();
             if (await _dbContext.Users.AnyAsync(u => u.UserName == trimmedUsername, cancellationToken))
-                throw new UsernameTakenException(command.Username);
+                throw new UsernameTakenException(command.UserName);
             if (await _dbContext.Users.AnyAsync(u => u.Email == command.Email, cancellationToken))
                 throw new EmailTakenException(command.Email);
             var passwordHash = _passwordHasher.Hash(command.Password);
