@@ -1,16 +1,17 @@
-﻿using Audiochan.Application.Commons.Exceptions;
-using Audiochan.Domain.Entities;
+﻿using Audiochan.Application.Features.Audios.Exceptions;
 using Audiochan.GraphQL.Common.Errors;
 
 namespace Audiochan.GraphQL.Audios.Errors;
 
 public class AudioNotFound : GraphQlError
 {
-    public long AudioId { get; }
+    public long? AudioId { get; }
+    public string? Slug { get; }
     
-    public AudioNotFound(NotFoundException<Audio, long> exception) 
-        : base($"Resource is not found. Type: {exception.Type.Name}. Id: {exception.ResourceId}")
+    public AudioNotFound(AudioNotFoundException exception) 
+        : base(exception.Message)
     {
-        AudioId = exception.ResourceId;
+        AudioId = exception.AudioId;
+        Slug = exception.Slug;
     }
 }

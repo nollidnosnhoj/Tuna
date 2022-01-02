@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Audiochan.Application.Commons.CQRS;
 using Audiochan.Application.Commons.Exceptions;
 using Audiochan.Application.Commons.Extensions;
+using Audiochan.Application.Features.Audios.Exceptions;
 using Audiochan.Application.Features.Audios.Models;
 using Audiochan.Application.Persistence;
 using Audiochan.Application.Services;
@@ -50,7 +51,7 @@ namespace Audiochan.Application.Features.Audios.Commands.UpdateAudio
             var audio = await _unitOfWork.Audios.FindAsync(command.AudioId, cancellationToken);
 
             if (audio == null)
-                throw new NotFoundException<Audio, long>(command.AudioId);
+                throw new AudioNotFoundException(command.AudioId);
 
             if (audio.UserId != userId)
                 throw new ForbiddenException();

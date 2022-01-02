@@ -39,7 +39,7 @@ public class AuthMutations
     [UseMutationConvention(PayloadFieldName = "message")]
     [Error(typeof(ValidationError))]
     [Error(typeof(EmailTaken))]
-    [Error(typeof(UsernameTaken))]
+    [Error(typeof(UserNameTaken))]
     public async Task<string> Register(
         string userName,
         string email,

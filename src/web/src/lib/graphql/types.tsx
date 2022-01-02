@@ -45,9 +45,10 @@ export type Audio = Node & {
 
 export type AudioNotFound = Error & {
   __typename?: 'AudioNotFound';
-  audioId: Scalars['Long'];
+  audioId?: Maybe<Scalars['Long']>;
   code: Scalars['String'];
   message: Scalars['String'];
+  slug?: Maybe<Scalars['String']>;
 };
 
 /** A connection to a list of items. */
@@ -489,7 +490,7 @@ export type QueryYourFollowingsArgs = {
   last?: InputMaybe<Scalars['Int']>;
 };
 
-export type RegisterError = EmailTaken | UsernameTaken | ValidationError;
+export type RegisterError = EmailTaken | UserNameTaken | ValidationError;
 
 export type RegisterInput = {
   email: Scalars['String'];
@@ -632,7 +633,7 @@ export type UpdateProfilePayload = {
   user?: Maybe<User>;
 };
 
-export type UpdateUserError = EmailTaken | Forbidden | UsernameTaken | ValidationError;
+export type UpdateUserError = EmailTaken | Forbidden | UserNameTaken | ValidationError;
 
 export type UpdateUserInput = {
   email?: InputMaybe<Scalars['String']>;
@@ -677,18 +678,19 @@ export type User = Node & {
   userName: Scalars['String'];
 };
 
+export type UserNameTaken = Error & {
+  __typename?: 'UserNameTaken';
+  code: Scalars['String'];
+  message: Scalars['String'];
+  userName: Scalars['String'];
+};
+
 export type UserNotFound = Error & {
   __typename?: 'UserNotFound';
   code: Scalars['String'];
   message: Scalars['String'];
-  userId: Scalars['Long'];
-};
-
-export type UsernameTaken = Error & {
-  __typename?: 'UsernameTaken';
-  code: Scalars['String'];
-  message: Scalars['String'];
-  username: Scalars['String'];
+  userId?: Maybe<Scalars['Long']>;
+  userName?: Maybe<Scalars['String']>;
 };
 
 export type ValidationError = Error & {
@@ -786,6 +788,28 @@ export type YourFollowingsEdge = {
 
 export type AudioFragment = { __typename?: 'Audio', id: string, slug: string, title: string, description?: string | null | undefined, created: any, tags: Array<string>, picture?: string | null | undefined, duration: any, size: any, mp3?: string | null | undefined, user?: { __typename?: 'User', id: string, userName: string, picture?: string | null | undefined } | null | undefined };
 
+type BaseError_AudioNotFound_Fragment = { __typename?: 'AudioNotFound', code: string, message: string };
+
+type BaseError_EmailTaken_Fragment = { __typename?: 'EmailTaken', code: string, message: string };
+
+type BaseError_Forbidden_Fragment = { __typename?: 'Forbidden', code: string, message: string };
+
+type BaseError_SignInError_Fragment = { __typename?: 'SignInError', code: string, message: string };
+
+type BaseError_Unauthorized_Fragment = { __typename?: 'Unauthorized', code: string, message: string };
+
+type BaseError_UnmatchedPassword_Fragment = { __typename?: 'UnmatchedPassword', code: string, message: string };
+
+type BaseError_UploadDoesNotExist_Fragment = { __typename?: 'UploadDoesNotExist', code: string, message: string };
+
+type BaseError_UserNameTaken_Fragment = { __typename?: 'UserNameTaken', code: string, message: string };
+
+type BaseError_UserNotFound_Fragment = { __typename?: 'UserNotFound', code: string, message: string };
+
+type BaseError_ValidationError_Fragment = { __typename?: 'ValidationError', code: string, message: string };
+
+export type BaseErrorFragment = BaseError_AudioNotFound_Fragment | BaseError_EmailTaken_Fragment | BaseError_Forbidden_Fragment | BaseError_SignInError_Fragment | BaseError_Unauthorized_Fragment | BaseError_UnmatchedPassword_Fragment | BaseError_UploadDoesNotExist_Fragment | BaseError_UserNameTaken_Fragment | BaseError_UserNotFound_Fragment | BaseError_ValidationError_Fragment;
+
 export type ProfileFragment = { __typename?: 'User', isFollowed?: boolean | null | undefined, id: string, userName: string, picture?: string | null | undefined };
 
 export type UserFragment = { __typename?: 'User', id: string, userName: string, picture?: string | null | undefined };
@@ -795,63 +819,63 @@ export type CreateAudioMutationVariables = Exact<{
 }>;
 
 
-export type CreateAudioMutation = { __typename?: 'Mutation', createAudio: { __typename?: 'CreateAudioPayload', audio?: { __typename?: 'Audio', id: string, slug: string, title: string, description?: string | null | undefined, created: any, tags: Array<string>, picture?: string | null | undefined, duration: any, size: any, mp3?: string | null | undefined, user?: { __typename?: 'User', id: string, userName: string, picture?: string | null | undefined } | null | undefined } | null | undefined } };
+export type CreateAudioMutation = { __typename?: 'Mutation', createAudio: { __typename?: 'CreateAudioPayload', audio?: { __typename?: 'Audio', id: string, slug: string, title: string, description?: string | null | undefined, created: any, tags: Array<string>, picture?: string | null | undefined, duration: any, size: any, mp3?: string | null | undefined, user?: { __typename?: 'User', id: string, userName: string, picture?: string | null | undefined } | null | undefined } | null | undefined, errors?: Array<{ __typename?: 'Unauthorized', code: string, message: string } | { __typename?: 'UploadDoesNotExist', uploadId: string, code: string, message: string } | { __typename?: 'ValidationError', code: string, message: string, failures: Array<{ __typename?: 'ValidationPropertyError', property: string, message: string }> }> | null | undefined } };
 
 export type UpdateAudioMutationVariables = Exact<{
   input: UpdateAudioInput;
 }>;
 
 
-export type UpdateAudioMutation = { __typename?: 'Mutation', updateAudio: { __typename?: 'UpdateAudioPayload', audio?: { __typename?: 'Audio', id: string, slug: string, title: string, description?: string | null | undefined, created: any, tags: Array<string>, picture?: string | null | undefined, duration: any, size: any, mp3?: string | null | undefined, user?: { __typename?: 'User', id: string, userName: string, picture?: string | null | undefined } | null | undefined } | null | undefined } };
+export type UpdateAudioMutation = { __typename?: 'Mutation', updateAudio: { __typename?: 'UpdateAudioPayload', audio?: { __typename?: 'Audio', id: string, slug: string, title: string, description?: string | null | undefined, created: any, tags: Array<string>, picture?: string | null | undefined, duration: any, size: any, mp3?: string | null | undefined, user?: { __typename?: 'User', id: string, userName: string, picture?: string | null | undefined } | null | undefined } | null | undefined, errors?: Array<{ __typename?: 'AudioNotFound', audioId?: any | null | undefined, code: string, message: string } | { __typename?: 'Forbidden', code: string, message: string } | { __typename?: 'ValidationError', code: string, message: string, failures: Array<{ __typename?: 'ValidationPropertyError', property: string, message: string }> }> | null | undefined } };
 
 export type UpdateAudioPictureMutationVariables = Exact<{
   input: UpdateAudioPictureInput;
 }>;
 
 
-export type UpdateAudioPictureMutation = { __typename?: 'Mutation', updateAudioPicture: { __typename?: 'UpdateAudioPicturePayload', response?: { __typename?: 'ImageUploadResponse', url: string } | null | undefined } };
+export type UpdateAudioPictureMutation = { __typename?: 'Mutation', updateAudioPicture: { __typename?: 'UpdateAudioPicturePayload', response?: { __typename?: 'ImageUploadResponse', url: string } | null | undefined, errors?: Array<{ __typename?: 'AudioNotFound', audioId?: any | null | undefined, code: string, message: string } | { __typename?: 'Forbidden', code: string, message: string } | { __typename?: 'ValidationError', code: string, message: string, failures: Array<{ __typename?: 'ValidationPropertyError', property: string, message: string }> }> | null | undefined } };
 
 export type RemoveAudioMutationVariables = Exact<{
   input: RemoveAudioInput;
 }>;
 
 
-export type RemoveAudioMutation = { __typename?: 'Mutation', removeAudio: { __typename?: 'RemoveAudioPayload', message?: string | null | undefined } };
+export type RemoveAudioMutation = { __typename?: 'Mutation', removeAudio: { __typename?: 'RemoveAudioPayload', errors?: Array<{ __typename?: 'AudioNotFound', audioId?: any | null | undefined, code: string, message: string } | { __typename?: 'Forbidden', code: string, message: string }> | null | undefined } };
 
 export type RemoveAudioPictureMutationVariables = Exact<{
   input: RemoveAudioPictureInput;
 }>;
 
 
-export type RemoveAudioPictureMutation = { __typename?: 'Mutation', removeAudioPicture: { __typename?: 'RemoveAudioPicturePayload', message?: string | null | undefined } };
+export type RemoveAudioPictureMutation = { __typename?: 'Mutation', removeAudioPicture: { __typename?: 'RemoveAudioPicturePayload', errors?: Array<{ __typename?: 'AudioNotFound', audioId?: any | null | undefined, code: string, message: string } | { __typename?: 'Forbidden', code: string, message: string }> | null | undefined } };
 
 export type GenerateUploadLinkMutationVariables = Exact<{
   input: GenerateUploadLinkInput;
 }>;
 
 
-export type GenerateUploadLinkMutation = { __typename?: 'Mutation', generateUploadLink: { __typename?: 'GenerateUploadLinkPayload', response?: { __typename?: 'GenerateUploadLinkResponse', uploadId: string, uploadUrl: string } | null | undefined } };
+export type GenerateUploadLinkMutation = { __typename?: 'Mutation', generateUploadLink: { __typename?: 'GenerateUploadLinkPayload', response?: { __typename?: 'GenerateUploadLinkResponse', uploadId: string, uploadUrl: string } | null | undefined, errors?: Array<{ __typename?: 'ValidationError', code: string, message: string, failures: Array<{ __typename?: 'ValidationPropertyError', property: string, message: string }> }> | null | undefined } };
 
 export type FavoriteAudioMutationVariables = Exact<{
   input: FavoriteAudioInput;
 }>;
 
 
-export type FavoriteAudioMutation = { __typename?: 'Mutation', favoriteAudio: { __typename?: 'FavoriteAudioPayload', message?: string | null | undefined } };
+export type FavoriteAudioMutation = { __typename?: 'Mutation', favoriteAudio: { __typename?: 'FavoriteAudioPayload', message?: string | null | undefined, errors?: Array<{ __typename?: 'AudioNotFound', audioId?: any | null | undefined, code: string, message: string }> | null | undefined } };
 
 export type UnfavoriteAudioMutationVariables = Exact<{
   input: UnfavoriteAudioInput;
 }>;
 
 
-export type UnfavoriteAudioMutation = { __typename?: 'Mutation', unfavoriteAudio: { __typename?: 'UnfavoriteAudioPayload', message?: string | null | undefined } };
+export type UnfavoriteAudioMutation = { __typename?: 'Mutation', unfavoriteAudio: { __typename?: 'UnfavoriteAudioPayload', message?: string | null | undefined, errors?: Array<{ __typename?: 'AudioNotFound', audioId?: any | null | undefined, code: string, message: string }> | null | undefined } };
 
 export type LoginMutationVariables = Exact<{
   input: LoginInput;
 }>;
 
 
-export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'LoginPayload', user?: { __typename?: 'User', id: string, userName: string, picture?: string | null | undefined } | null | undefined } };
+export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'LoginPayload', user?: { __typename?: 'User', id: string, userName: string, picture?: string | null | undefined } | null | undefined, errors?: Array<{ __typename?: 'SignInError', code: string, message: string }> | null | undefined } };
 
 export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -863,54 +887,54 @@ export type RegisterUserMutationVariables = Exact<{
 }>;
 
 
-export type RegisterUserMutation = { __typename?: 'Mutation', register: { __typename?: 'RegisterPayload', message?: string | null | undefined } };
+export type RegisterUserMutation = { __typename?: 'Mutation', register: { __typename?: 'RegisterPayload', errors?: Array<{ __typename?: 'EmailTaken', email: string, code: string, message: string } | { __typename?: 'UserNameTaken', userName: string, code: string, message: string } | { __typename?: 'ValidationError', code: string, message: string, failures: Array<{ __typename?: 'ValidationPropertyError', property: string, message: string }> }> | null | undefined } };
 
 export type UpdateProfileMutationVariables = Exact<{
   input: UpdateProfileInput;
 }>;
 
 
-export type UpdateProfileMutation = { __typename?: 'Mutation', updateProfile: { __typename?: 'UpdateProfilePayload', user?: { __typename?: 'User', id: string, userName: string, picture?: string | null | undefined } | null | undefined } };
+export type UpdateProfileMutation = { __typename?: 'Mutation', updateProfile: { __typename?: 'UpdateProfilePayload', user?: { __typename?: 'User', id: string, userName: string, picture?: string | null | undefined } | null | undefined, errors?: Array<{ __typename?: 'ValidationError', code: string, message: string, failures: Array<{ __typename?: 'ValidationPropertyError', property: string, message: string }> }> | null | undefined } };
 
 export type UpdateUserPictureMutationVariables = Exact<{
   input: UpdateUserPictureInput;
 }>;
 
 
-export type UpdateUserPictureMutation = { __typename?: 'Mutation', updateUserPicture: { __typename?: 'UpdateUserPicturePayload', response?: { __typename?: 'ImageUploadResponse', url: string } | null | undefined } };
+export type UpdateUserPictureMutation = { __typename?: 'Mutation', updateUserPicture: { __typename?: 'UpdateUserPicturePayload', response?: { __typename?: 'ImageUploadResponse', url: string } | null | undefined, errors?: Array<{ __typename?: 'Forbidden', code: string, message: string } | { __typename?: 'ValidationError', code: string, message: string, failures: Array<{ __typename?: 'ValidationPropertyError', property: string, message: string }> }> | null | undefined } };
 
 export type RemoveUserPictureMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type RemoveUserPictureMutation = { __typename?: 'Mutation', removeUserPicture: { __typename?: 'RemoveUserPicturePayload', message?: string | null | undefined } };
+export type RemoveUserPictureMutation = { __typename?: 'Mutation', removeUserPicture: { __typename?: 'RemoveUserPicturePayload', errors?: Array<{ __typename?: 'Forbidden', code: string, message: string }> | null | undefined } };
 
 export type UpdateUserMutationVariables = Exact<{
   input: UpdateUserInput;
 }>;
 
 
-export type UpdateUserMutation = { __typename?: 'Mutation', updateUser: { __typename?: 'UpdateUserPayload', user?: { __typename?: 'User', id: string, userName: string, picture?: string | null | undefined } | null | undefined } };
+export type UpdateUserMutation = { __typename?: 'Mutation', updateUser: { __typename?: 'UpdateUserPayload', user?: { __typename?: 'User', id: string, userName: string, picture?: string | null | undefined } | null | undefined, errors?: Array<{ __typename?: 'EmailTaken', email: string, code: string, message: string } | { __typename?: 'Forbidden', code: string, message: string } | { __typename?: 'UserNameTaken', userName: string, code: string, message: string } | { __typename?: 'ValidationError', code: string, message: string, failures: Array<{ __typename?: 'ValidationPropertyError', property: string, message: string }> }> | null | undefined } };
 
 export type UpdatePasswordMutationVariables = Exact<{
   input: UpdatePasswordInput;
 }>;
 
 
-export type UpdatePasswordMutation = { __typename?: 'Mutation', updatePassword: { __typename?: 'UpdatePasswordPayload', message?: string | null | undefined } };
+export type UpdatePasswordMutation = { __typename?: 'Mutation', updatePassword: { __typename?: 'UpdatePasswordPayload', errors?: Array<{ __typename?: 'Forbidden', code: string, message: string } | { __typename?: 'UnmatchedPassword', code: string, message: string } | { __typename?: 'ValidationError', code: string, message: string, failures: Array<{ __typename?: 'ValidationPropertyError', property: string, message: string }> }> | null | undefined } };
 
 export type FollowUserMutationVariables = Exact<{
   input: FollowUserInput;
 }>;
 
 
-export type FollowUserMutation = { __typename?: 'Mutation', followUser: { __typename?: 'FollowUserPayload', message?: string | null | undefined } };
+export type FollowUserMutation = { __typename?: 'Mutation', followUser: { __typename?: 'FollowUserPayload', errors?: Array<{ __typename?: 'Forbidden', code: string, message: string } | { __typename?: 'UserNotFound', userId?: any | null | undefined, code: string, message: string }> | null | undefined } };
 
 export type UnfollowUserMutationVariables = Exact<{
   input: UnfollowUserInput;
 }>;
 
 
-export type UnfollowUserMutation = { __typename?: 'Mutation', unfollowUser: { __typename?: 'UnfollowUserPayload', message?: string | null | undefined } };
+export type UnfollowUserMutation = { __typename?: 'Mutation', unfollowUser: { __typename?: 'UnfollowUserPayload', errors?: Array<{ __typename?: 'Forbidden', code: string, message: string } | { __typename?: 'UserNotFound', userId?: any | null | undefined, code: string, message: string }> | null | undefined } };
 
 export type GetAudioBySlugQueryVariables = Exact<{
   slug: Scalars['String'];
@@ -1032,6 +1056,12 @@ export const AudioFragmentDoc = gql`
   }
 }
     ${UserFragmentDoc}`;
+export const BaseErrorFragmentDoc = gql`
+    fragment BaseError on Error {
+  code
+  message
+}
+    `;
 export const ProfileFragmentDoc = gql`
     fragment Profile on User {
   ...User
@@ -1044,9 +1074,26 @@ export const CreateAudioDocument = gql`
     audio {
       ...Audio
     }
+    errors {
+      ... on ValidationError {
+        ...BaseError
+        failures {
+          property
+          message
+        }
+      }
+      ... on Unauthorized {
+        ...BaseError
+      }
+      ... on UploadDoesNotExist {
+        uploadId
+        ...BaseError
+      }
+    }
   }
 }
-    ${AudioFragmentDoc}`;
+    ${AudioFragmentDoc}
+${BaseErrorFragmentDoc}`;
 export type CreateAudioMutationFn = Apollo.MutationFunction<CreateAudioMutation, CreateAudioMutationVariables>;
 
 /**
@@ -1079,9 +1126,26 @@ export const UpdateAudioDocument = gql`
     audio {
       ...Audio
     }
+    errors {
+      ... on ValidationError {
+        ...BaseError
+        failures {
+          property
+          message
+        }
+      }
+      ... on AudioNotFound {
+        audioId
+        ...BaseError
+      }
+      ... on Forbidden {
+        ...BaseError
+      }
+    }
   }
 }
-    ${AudioFragmentDoc}`;
+    ${AudioFragmentDoc}
+${BaseErrorFragmentDoc}`;
 export type UpdateAudioMutationFn = Apollo.MutationFunction<UpdateAudioMutation, UpdateAudioMutationVariables>;
 
 /**
@@ -1114,9 +1178,25 @@ export const UpdateAudioPictureDocument = gql`
     response {
       url
     }
+    errors {
+      ... on ValidationError {
+        ...BaseError
+        failures {
+          property
+          message
+        }
+      }
+      ... on AudioNotFound {
+        audioId
+        ...BaseError
+      }
+      ... on Forbidden {
+        ...BaseError
+      }
+    }
   }
 }
-    `;
+    ${BaseErrorFragmentDoc}`;
 export type UpdateAudioPictureMutationFn = Apollo.MutationFunction<UpdateAudioPictureMutation, UpdateAudioPictureMutationVariables>;
 
 /**
@@ -1146,10 +1226,18 @@ export type UpdateAudioPictureMutationOptions = Apollo.BaseMutationOptions<Updat
 export const RemoveAudioDocument = gql`
     mutation RemoveAudio($input: RemoveAudioInput!) {
   removeAudio(input: $input) {
-    message
+    errors {
+      ... on AudioNotFound {
+        audioId
+        ...BaseError
+      }
+      ... on Forbidden {
+        ...BaseError
+      }
+    }
   }
 }
-    `;
+    ${BaseErrorFragmentDoc}`;
 export type RemoveAudioMutationFn = Apollo.MutationFunction<RemoveAudioMutation, RemoveAudioMutationVariables>;
 
 /**
@@ -1179,10 +1267,18 @@ export type RemoveAudioMutationOptions = Apollo.BaseMutationOptions<RemoveAudioM
 export const RemoveAudioPictureDocument = gql`
     mutation RemoveAudioPicture($input: RemoveAudioPictureInput!) {
   removeAudioPicture(input: $input) {
-    message
+    errors {
+      ... on AudioNotFound {
+        audioId
+        ...BaseError
+      }
+      ... on Forbidden {
+        ...BaseError
+      }
+    }
   }
 }
-    `;
+    ${BaseErrorFragmentDoc}`;
 export type RemoveAudioPictureMutationFn = Apollo.MutationFunction<RemoveAudioPictureMutation, RemoveAudioPictureMutationVariables>;
 
 /**
@@ -1216,9 +1312,18 @@ export const GenerateUploadLinkDocument = gql`
       uploadId
       uploadUrl
     }
+    errors {
+      ... on ValidationError {
+        ...BaseError
+        failures {
+          property
+          message
+        }
+      }
+    }
   }
 }
-    `;
+    ${BaseErrorFragmentDoc}`;
 export type GenerateUploadLinkMutationFn = Apollo.MutationFunction<GenerateUploadLinkMutation, GenerateUploadLinkMutationVariables>;
 
 /**
@@ -1249,9 +1354,15 @@ export const FavoriteAudioDocument = gql`
     mutation FavoriteAudio($input: FavoriteAudioInput!) {
   favoriteAudio(input: $input) {
     message
+    errors {
+      ... on AudioNotFound {
+        audioId
+        ...BaseError
+      }
+    }
   }
 }
-    `;
+    ${BaseErrorFragmentDoc}`;
 export type FavoriteAudioMutationFn = Apollo.MutationFunction<FavoriteAudioMutation, FavoriteAudioMutationVariables>;
 
 /**
@@ -1282,9 +1393,15 @@ export const UnfavoriteAudioDocument = gql`
     mutation UnfavoriteAudio($input: UnfavoriteAudioInput!) {
   unfavoriteAudio(input: $input) {
     message
+    errors {
+      ... on AudioNotFound {
+        audioId
+        ...BaseError
+      }
+    }
   }
 }
-    `;
+    ${BaseErrorFragmentDoc}`;
 export type UnfavoriteAudioMutationFn = Apollo.MutationFunction<UnfavoriteAudioMutation, UnfavoriteAudioMutationVariables>;
 
 /**
@@ -1317,9 +1434,15 @@ export const LoginDocument = gql`
     user {
       ...User
     }
+    errors {
+      ... on SignInError {
+        ...BaseError
+      }
+    }
   }
 }
-    ${UserFragmentDoc}`;
+    ${UserFragmentDoc}
+${BaseErrorFragmentDoc}`;
 export type LoginMutationFn = Apollo.MutationFunction<LoginMutation, LoginMutationVariables>;
 
 /**
@@ -1381,10 +1504,26 @@ export type LogoutMutationOptions = Apollo.BaseMutationOptions<LogoutMutation, L
 export const RegisterUserDocument = gql`
     mutation RegisterUser($input: RegisterInput!) {
   register(input: $input) {
-    message
+    errors {
+      ... on ValidationError {
+        ...BaseError
+        failures {
+          property
+          message
+        }
+      }
+      ... on EmailTaken {
+        email
+        ...BaseError
+      }
+      ... on UserNameTaken {
+        userName
+        ...BaseError
+      }
+    }
   }
 }
-    `;
+    ${BaseErrorFragmentDoc}`;
 export type RegisterUserMutationFn = Apollo.MutationFunction<RegisterUserMutation, RegisterUserMutationVariables>;
 
 /**
@@ -1417,9 +1556,19 @@ export const UpdateProfileDocument = gql`
     user {
       ...User
     }
+    errors {
+      ... on ValidationError {
+        ...BaseError
+        failures {
+          property
+          message
+        }
+      }
+    }
   }
 }
-    ${UserFragmentDoc}`;
+    ${UserFragmentDoc}
+${BaseErrorFragmentDoc}`;
 export type UpdateProfileMutationFn = Apollo.MutationFunction<UpdateProfileMutation, UpdateProfileMutationVariables>;
 
 /**
@@ -1452,9 +1601,21 @@ export const UpdateUserPictureDocument = gql`
     response {
       url
     }
+    errors {
+      ... on ValidationError {
+        ...BaseError
+        failures {
+          property
+          message
+        }
+      }
+      ... on Forbidden {
+        ...BaseError
+      }
+    }
   }
 }
-    `;
+    ${BaseErrorFragmentDoc}`;
 export type UpdateUserPictureMutationFn = Apollo.MutationFunction<UpdateUserPictureMutation, UpdateUserPictureMutationVariables>;
 
 /**
@@ -1484,10 +1645,14 @@ export type UpdateUserPictureMutationOptions = Apollo.BaseMutationOptions<Update
 export const RemoveUserPictureDocument = gql`
     mutation RemoveUserPicture {
   removeUserPicture {
-    message
+    errors {
+      ... on Forbidden {
+        ...BaseError
+      }
+    }
   }
 }
-    `;
+    ${BaseErrorFragmentDoc}`;
 export type RemoveUserPictureMutationFn = Apollo.MutationFunction<RemoveUserPictureMutation, RemoveUserPictureMutationVariables>;
 
 /**
@@ -1519,9 +1684,30 @@ export const UpdateUserDocument = gql`
     user {
       ...User
     }
+    errors {
+      ... on ValidationError {
+        ...BaseError
+        failures {
+          property
+          message
+        }
+      }
+      ... on Forbidden {
+        ...BaseError
+      }
+      ... on EmailTaken {
+        email
+        ...BaseError
+      }
+      ... on UserNameTaken {
+        userName
+        ...BaseError
+      }
+    }
   }
 }
-    ${UserFragmentDoc}`;
+    ${UserFragmentDoc}
+${BaseErrorFragmentDoc}`;
 export type UpdateUserMutationFn = Apollo.MutationFunction<UpdateUserMutation, UpdateUserMutationVariables>;
 
 /**
@@ -1551,10 +1737,24 @@ export type UpdateUserMutationOptions = Apollo.BaseMutationOptions<UpdateUserMut
 export const UpdatePasswordDocument = gql`
     mutation UpdatePassword($input: UpdatePasswordInput!) {
   updatePassword(input: $input) {
-    message
+    errors {
+      ... on ValidationError {
+        ...BaseError
+        failures {
+          property
+          message
+        }
+      }
+      ... on Forbidden {
+        ...BaseError
+      }
+      ... on UnmatchedPassword {
+        ...BaseError
+      }
+    }
   }
 }
-    `;
+    ${BaseErrorFragmentDoc}`;
 export type UpdatePasswordMutationFn = Apollo.MutationFunction<UpdatePasswordMutation, UpdatePasswordMutationVariables>;
 
 /**
@@ -1584,10 +1784,18 @@ export type UpdatePasswordMutationOptions = Apollo.BaseMutationOptions<UpdatePas
 export const FollowUserDocument = gql`
     mutation FollowUser($input: FollowUserInput!) {
   followUser(input: $input) {
-    message
+    errors {
+      ... on UserNotFound {
+        userId
+        ...BaseError
+      }
+      ... on Forbidden {
+        ...BaseError
+      }
+    }
   }
 }
-    `;
+    ${BaseErrorFragmentDoc}`;
 export type FollowUserMutationFn = Apollo.MutationFunction<FollowUserMutation, FollowUserMutationVariables>;
 
 /**
@@ -1617,10 +1825,18 @@ export type FollowUserMutationOptions = Apollo.BaseMutationOptions<FollowUserMut
 export const UnfollowUserDocument = gql`
     mutation UnfollowUser($input: UnfollowUserInput!) {
   unfollowUser(input: $input) {
-    message
+    errors {
+      ... on UserNotFound {
+        userId
+        ...BaseError
+      }
+      ... on Forbidden {
+        ...BaseError
+      }
+    }
   }
 }
-    `;
+    ${BaseErrorFragmentDoc}`;
 export type UnfollowUserMutationFn = Apollo.MutationFunction<UnfollowUserMutation, UnfollowUserMutationVariables>;
 
 /**
