@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Audiochan.Application.Commons.Extensions;
 using Audiochan.Application.Features.Audios.Queries.SearchAudios;

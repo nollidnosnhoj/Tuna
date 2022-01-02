@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using FluentValidation;
 
 namespace Audiochan.Application.Commons.Extensions

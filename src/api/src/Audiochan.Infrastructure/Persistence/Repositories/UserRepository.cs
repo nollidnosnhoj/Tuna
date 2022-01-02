@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-
 using Audiochan.Application.Persistence;
 using Audiochan.Application.Persistence.Repositories;
 using Audiochan.Domain.Entities;

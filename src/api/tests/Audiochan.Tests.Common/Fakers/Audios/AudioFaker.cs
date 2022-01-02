@@ -1,6 +1,5 @@
 ﻿using Audiochan.Domain.Entities;
 using Bogus;
-using Slugify;
 
 namespace Audiochan.Tests.Common.Fakers.Audios
 {

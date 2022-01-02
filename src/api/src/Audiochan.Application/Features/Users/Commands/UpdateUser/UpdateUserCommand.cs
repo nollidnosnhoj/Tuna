@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Application.Commons.CQRS;
 using Audiochan.Application.Commons.Exceptions;

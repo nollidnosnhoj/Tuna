@@ -1,6 +1,5 @@
 ﻿using Audiochan.Application.Features.Audios.Models;
 using Audiochan.Application.Persistence;
-using Audiochan.Domain.Entities;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;

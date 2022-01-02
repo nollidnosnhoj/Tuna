@@ -13,6 +13,7 @@ using Audiochan.GraphQL.Audios.Errors;
 using Audiochan.GraphQL.Common.Errors;
 using HotChocolate.AspNetCore.Authorization;
 using MediatR;
+
 // ReSharper disable UnusedMember.Global
 
 namespace Audiochan.GraphQL.Audios;

@@ -1,8 +1,5 @@
 ﻿using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
 using Audiochan.Application.Commons.Extensions;
-using Audiochan.Domain.Abstractions;
 using Audiochan.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
