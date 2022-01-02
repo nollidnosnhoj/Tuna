@@ -6,12 +6,13 @@ module.exports = {
     es6: true,
   },
   parserOptions: { ecmaVersion: 8 }, // to enable features such as async/await
-  ignorePatterns: ["node_modules/*", ".next/*", ".out/*", "!.prettierrc.js"], // We don't want to lint generated files nor node_modules, but we want to lint .prettierrc.js (ignored by default by eslint)
+  ignorePatterns: ["node_modules/*", ".next/*", ".out/*", "!.prettierrc.js", "./src/lib/graphql/types.tsx"], // We don't want to lint generated files nor node_modules, but we want to lint .prettierrc.js (ignored by default by eslint)
   extends: ["eslint:recommended"],
   overrides: [
     // This configuration will apply only to TypeScript files
     {
       files: ["**/*.ts", "**/*.tsx"],
+      ignorePatterns: ["./src/lib/graphql/types.tsx"],
       parser: "@typescript-eslint/parser",
       settings: { react: { version: "detect" } },
       env: {

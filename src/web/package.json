@@ -32,7 +32,10 @@
     "zustand": "^3.6.7"
   },
   "devDependencies": {
-    "@graphql-codegen/cli": "^2.3.1",
+    "@graphql-codegen/cli": "2.3.1",
+    "@graphql-codegen/typescript": "^2.4.2",
+    "@graphql-codegen/typescript-operations": "2.2.2",
+    "@graphql-codegen/typescript-react-apollo": "^3.2.3",
     "@testing-library/react": "12.1.2",
     "@types/cookie": "0.4.1",
     "@types/jest": "27.0.3",
@@ -77,6 +80,7 @@
     "lint": "eslint --ext js,jsx,ts,tsx --fix",
     "start": "next start",
     "test": "jest",
-    "typecheck": "tsc --project tsconfig.json --pretty --noEmit"
+    "typecheck": "tsc --project tsconfig.json --pretty --noEmit",
+    "generate": "graphql-codegen --config codegen.yml"
   }
 }
