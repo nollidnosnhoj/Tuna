@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Audiochan.Application.Features.Audios.Commands.CreateUpload;
+using Audiochan.Application.Features.Upload.Commands.CreateUpload;
 using Audiochan.Tests.Common.Builders;
 using Bogus;
 using FluentAssertions;

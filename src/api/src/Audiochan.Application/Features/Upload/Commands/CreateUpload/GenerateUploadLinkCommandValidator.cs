@@ -2,7 +2,7 @@
 using FluentValidation;
 using Microsoft.Extensions.Options;
 
-namespace Audiochan.Application.Features.Audios.Commands.CreateUpload
+namespace Audiochan.Application.Features.Upload.Commands.CreateUpload
 {
     public class GenerateUploadLinkCommandValidator : AbstractValidator<GenerateUploadLinkCommand>
     {

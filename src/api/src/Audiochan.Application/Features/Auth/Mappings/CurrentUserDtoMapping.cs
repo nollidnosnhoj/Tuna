@@ -1,9 +1,9 @@
 ﻿using Audiochan.Application.Commons.Extensions;
-using Audiochan.Application.Features.Users.Models;
+using Audiochan.Application.Features.Auth.Queries.GetCurrentUser;
 using Audiochan.Domain.Entities;
 using AutoMapper;
 
-namespace Audiochan.Application.Features.Users.Mappings;
+namespace Audiochan.Application.Features.Auth.Mappings;
 
 public class CurrentUserDtoMapping : Profile
 {

@@ -8,7 +8,7 @@ using Audiochan.Application.Services;
 using MediatR;
 using Microsoft.Extensions.Options;
 
-namespace Audiochan.Application.Features.Audios.Commands.CreateUpload
+namespace Audiochan.Application.Features.Upload.Commands.CreateUpload
 {
     public record GenerateUploadLinkCommand(string FileName, long FileSize)
         : ICommandRequest<GenerateUploadLinkResponse>;
