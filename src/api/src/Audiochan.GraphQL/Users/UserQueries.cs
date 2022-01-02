@@ -20,33 +20,13 @@ public class UserQueries
         claimsPrincipal.TryGetUserId(out var userId);
         return await userById.LoadAsync(userId, cancellationToken);
     }
-    
-    public async Task<UserDto> GetUserById(
-        [ID(nameof(UserDto))] long id,
-        UserByIdDataLoader userById,
-        CancellationToken cancellationToken = default)
-    {
-        return await userById.LoadAsync(id, cancellationToken);
-    }
-    
-    public async Task<IEnumerable<UserDto>> GetUsersByIds(
-        [ID(nameof(UserDto))] long[] ids,
-        UserByIdDataLoader userById,
-        CancellationToken cancellationToken = default)
-    {
-        return await userById.LoadAsync(ids, cancellationToken);
-    }
 
-    [UseApplicationDbContext]
-    [UseSingleOrDefault]
-    public IQueryable<UserDto> GetUserByName(
+    public async Task<UserDto> GetUserByName(
         string userName,
-        IResolverContext context,
-        [ScopedService] ApplicationDbContext dbContext)
+        UserByNameDataLoader userByName,
+        CancellationToken cancellationToken = default)
     {
-        return dbContext.Users
-            .Where(u => u.UserName == userName)
-            .ProjectTo<User, UserDto>(context);
+        return await userByName.LoadAsync(userName, cancellationToken);
     }
 
     [UseApplicationDbContext]
@@ -73,6 +53,40 @@ public class UserQueries
     {
         return dbContext.Users
             .Where(u => u.UserName == userName)
+            .SelectMany(u => u.Followers)
+            .OrderByDescending(fu => fu.FollowedDate)
+            .Select(fu => fu.Observer)
+            .ProjectTo<User, UserDto>(context);
+    }
+    
+    [Authorize]
+    [UseApplicationDbContext]
+    [UsePaging]
+    public IQueryable<UserDto> GetYourFollowings(
+        ClaimsPrincipal claimsPrincipal,
+        IResolverContext context,
+        [ScopedService] ApplicationDbContext dbContext)
+    {
+        var userId = claimsPrincipal.GetUserId();
+        return dbContext.Users
+            .Where(u => u.Id == userId)
+            .SelectMany(u => u.Followings)
+            .OrderByDescending(fu => fu.FollowedDate)
+            .Select(fu => fu.Target)
+            .ProjectTo<User, UserDto>(context);
+    }
+    
+    [Authorize]
+    [UseApplicationDbContext]
+    [UsePaging]
+    public IQueryable<UserDto> GetYourFollowers(
+        ClaimsPrincipal claimsPrincipal,
+        IResolverContext context,
+        [ScopedService] ApplicationDbContext dbContext)
+    {
+        var userId = claimsPrincipal.GetUserId();
+        return dbContext.Users
+            .Where(u => u.Id == userId)
             .SelectMany(u => u.Followers)
             .OrderByDescending(fu => fu.FollowedDate)
             .Select(fu => fu.Observer)
