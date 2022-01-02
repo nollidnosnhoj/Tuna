@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Audiochan.Application.Commons.CQRS;
 using Audiochan.Application.Commons.Exceptions;
+using Audiochan.Application.Features.Users.Exceptions;
 using Audiochan.Application.Persistence;
 using Audiochan.Application.Services;
 using Audiochan.Domain.Entities;
@@ -30,7 +31,7 @@ namespace Audiochan.Application.Features.Users.Commands.SetFollow
                 .LoadUserWithFollowers(command.TargetId, command.ObserverId, cancellationToken);
 
             if (target == null)
-                throw new NotFoundException<User, long>(command.TargetId);
+                throw new UserNotFoundException(command.TargetId);
 
             if (target.Id == command.ObserverId)
                 throw new ForbiddenException();

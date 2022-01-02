@@ -5,6 +5,7 @@ using Audiochan.Application.Commons.Dtos.Responses;
 using Audiochan.Application.Commons.Exceptions;
 using Audiochan.Application.Commons.Extensions;
 using Audiochan.Application.Commons.Interfaces;
+using Audiochan.Application.Features.Audios.Exceptions;
 using Audiochan.Application.Persistence;
 using Audiochan.Application.Services;
 using Audiochan.Domain.Entities;
@@ -44,7 +45,7 @@ namespace Audiochan.Application.Features.Audios.Commands.UpdatePicture
             var audio = await _unitOfWork.Audios.FindAsync(command.AudioId, cancellationToken);
 
             if (audio == null)
-                throw new NotFoundException<Audio, long>(command.AudioId);
+                throw new AudioNotFoundException(command.AudioId);
 
             if (audio.UserId != currentUserId)
                 throw new ForbiddenException();

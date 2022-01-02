@@ -3,6 +3,22 @@ mutation CreateAudio($input: CreateAudioInput!) {
     audio {
       ... Audio
     }
+    errors {
+      ... on ValidationError {
+        ... BaseError
+        failures {
+          property
+          message
+        }
+      }
+      ... on Unauthorized {
+        ... BaseError
+      }
+      ... on UploadDoesNotExist {
+        uploadId
+        ... BaseError
+      }
+    }
   }
 }
 
@@ -10,6 +26,22 @@ mutation UpdateAudio($input: UpdateAudioInput!) {
   updateAudio(input: $input) {
     audio {
       ... Audio
+    }
+    errors {
+      ... on ValidationError {
+        ... BaseError
+        failures {
+          property
+          message
+        }
+      }
+      ... on AudioNotFound {
+        audioId
+        ... BaseError
+      }
+      ... on Forbidden {
+        ... BaseError
+      }
     }
   }
 }
@@ -19,18 +51,50 @@ mutation UpdateAudioPicture($input: UpdateAudioPictureInput!) {
     response {
       url
     }
+    errors {
+      ... on ValidationError {
+        ... BaseError
+        failures {
+          property
+          message
+        }
+      }
+      ... on AudioNotFound {
+        audioId
+        ... BaseError
+      }
+      ... on Forbidden {
+        ... BaseError
+      }
+    }
   }
 }
 
 mutation RemoveAudio($input: RemoveAudioInput!) {
   removeAudio(input: $input) {
-    message
+    errors {
+      ... on AudioNotFound {
+        audioId
+        ... BaseError
+      }
+      ... on Forbidden {
+        ... BaseError
+      }
+    }
   }
 }
 
 mutation RemoveAudioPicture($input: RemoveAudioPictureInput!) {
   removeAudioPicture(input: $input) {
-    message
+    errors {
+      ... on AudioNotFound {
+        audioId
+        ... BaseError
+      }
+      ... on Forbidden {
+        ... BaseError
+      }
+    }
   }
 }
 
@@ -40,17 +104,38 @@ mutation GenerateUploadLink($input: GenerateUploadLinkInput!) {
       uploadId
       uploadUrl
     }
+    errors {
+      ... on ValidationError {
+        ... BaseError
+        failures {
+          property
+          message
+        }
+      }
+    }
   }
 }
 
 mutation FavoriteAudio($input: FavoriteAudioInput!) {
   favoriteAudio(input: $input) {
     message
+    errors {
+      ... on AudioNotFound {
+        audioId
+        ... BaseError
+      }
+    }
   }
 }
 
 mutation UnfavoriteAudio($input: UnfavoriteAudioInput!) {
   unfavoriteAudio(input: $input) {
     message
+    errors {
+      ... on AudioNotFound {
+        audioId
+        ... BaseError
+      }
+    }
   }
 }

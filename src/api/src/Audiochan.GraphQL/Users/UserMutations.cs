@@ -68,7 +68,7 @@ public class UserMutations
     [Authorize]
     [Error(typeof(ValidationError))]
     [Error(typeof(Forbidden))]
-    [Error(typeof(UsernameTaken))]
+    [Error(typeof(UserNameTaken))]
     [Error(typeof(EmailTaken))]
     public async Task<UserDto> UpdateUser(
         string? username,
