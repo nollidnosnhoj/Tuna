@@ -43,8 +43,9 @@ public class AudioType : ObjectType<AudioDto>
             });
 
         descriptor.Field("isFavorited")
+            .Type<BooleanType>()
             .Authorize()
-            .UseDataloader<FavoritedByAudioIdDataLoader>()
+            // .UseDataloader<FavoritedByAudioIdDataLoader>()
             .Resolve(async (ctx, ct) =>
             {
                 var currentUserId = ctx.GetUser().GetUserId();
