@@ -36,8 +36,9 @@ public class UserType : ObjectType<UserDto>
             });
 
         descriptor.Field("isFollowed")
+            .Type<BooleanType>()
             .Authorize()
-            .UseDataloader<FollowerByUserIdDataLoader>()
+            // .UseDataloader<FollowerByUserIdDataLoader>()
             .Resolve(async (ctx, ct) =>
             {
                 var userId = ctx.GetUser().GetUserId();

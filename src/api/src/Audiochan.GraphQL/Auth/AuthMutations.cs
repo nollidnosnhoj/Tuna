@@ -27,6 +27,7 @@ public class AuthMutations
         return user;
     }
 
+    [UseMutationConvention(PayloadFieldName = "message")]
     public async Task<string> Logout(
         [Service] IAuthService authService,
         CancellationToken cancellationToken = default)
