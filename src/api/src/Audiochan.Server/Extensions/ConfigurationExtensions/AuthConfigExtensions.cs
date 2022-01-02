@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Audiochan.Server.Models;
 using Audiochan.Application.Services;
 using Audiochan.Server.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;

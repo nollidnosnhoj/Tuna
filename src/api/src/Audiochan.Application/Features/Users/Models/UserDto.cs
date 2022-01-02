@@ -1,6 +1,5 @@
 ﻿using Audiochan.Application.Commons.Interfaces;
 using Audiochan.Domain.Entities;
-using AutoMapper;
 
 namespace Audiochan.Application.Features.Users.Models
 {

@@ -4,13 +4,12 @@ using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Audiochan.Server;
 using Audiochan.Application.Commons.Extensions;
 using Audiochan.Application.Persistence;
 using Audiochan.Application.Services;
 using Audiochan.Domain.Entities;
 using Audiochan.Domain.Enums;
-using Audiochan.Infrastructure.Persistence;
+using Audiochan.Server;
 using Audiochan.Tests.Common.Mocks;
 using MediatR;
 using Microsoft.AspNetCore.Hosting;
@@ -22,6 +21,7 @@ using Moq;
 using Npgsql;
 using NUnit.Framework;
 using Respawn;
+
 #pragma warning disable 8618
 
 namespace Audiochan.Application.IntegrationTests
