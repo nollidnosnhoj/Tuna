@@ -1,0 +1,15 @@
+fragment Audio on Audio {
+  id
+  slug
+  title
+  description
+  created
+  tags
+  picture
+  duration
+  size
+  mp3
+  user {
+    ... User
+  }
+}

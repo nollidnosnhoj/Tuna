@@ -1,0 +1,71 @@
+query GetCurrentUser {
+  me {
+    ... User
+  }
+}
+
+query GetProfile($userName: String!) {
+  userByName(userName: $userName) {
+    ... Profile
+  }
+}
+
+query GetUserFollowings($userName: String!, $pageSize: Int, $cursor: String) {
+  followings(userName: $userName, first: $pageSize, after: $cursor) {
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+    edges {
+      cursor
+      node {
+        ... User
+      }
+    }
+  }
+}
+
+query GetUserFollowers($userName: String!, $pageSize: Int, $cursor: String) {
+  followers(userName: $userName, first: $pageSize, after: $cursor) {
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+    edges {
+      cursor
+      node {
+        ... User
+      }
+    }
+  }
+}
+
+query GetYourFollowings($pageSize: Int, $cursor: String) {
+  yourFollowings(first: $pageSize, after: $cursor) {
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+    edges {
+      cursor
+      node {
+        ... User
+      }
+    }
+  }
+}
+
+query GetYourFollowers($pageSize: Int, $cursor: String) {
+  yourFollowers(first: $pageSize, after: $cursor) {
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+    edges {
+      cursor
+      node {
+        ... User
+      }
+    }
+  }
+}
