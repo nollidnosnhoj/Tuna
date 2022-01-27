@@ -13,7 +13,7 @@
     <ItemGroup>
       <PackageReference Include="HotChocolate" Version="12.5.0-preview.4" />
       <PackageReference Include="HotChocolate.AspNetCore" Version="12.5.0-preview.4" />
-      <PackageReference Include="HotChocolate.AspNetCore.Authorization" Version="12.5.0-preview.4" />
+      <PackageReference Include="HotChocolate.AspNetCore.Authorization" Version="12.6.0" />
       <PackageReference Include="HotChocolate.Data" Version="12.5.0-preview.4" />
       <PackageReference Include="HotChocolate.Data.AutoMapper" Version="12.5.0-preview.4" />
       <PackageReference Include="HotChocolate.Data.EntityFramework" Version="12.5.0-preview.4" />
