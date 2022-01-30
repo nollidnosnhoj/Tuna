@@ -30,7 +30,17 @@ namespace Audiochan.Infrastructure
             services.AddTransient<IDateTimeProvider, DateTimeProvider>();
             services.AddTransient<IRandomIdGenerator, NanoidGenerator>();
             services.AddTransient<IPasswordHasher, BCryptHasher>();
+            services.AddPersistence();
+            return services;
+        }
+
+        private static IServiceCollection AddPersistence(this IServiceCollection services)
+        {
+            services.AddScoped(typeof(IEntityRepository<>), typeof(EfRepository<>));
+            services.AddScoped<IAudioRepository, AudioRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            
             return services;
         }
 
