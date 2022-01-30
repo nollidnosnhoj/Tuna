@@ -28,7 +28,7 @@ public class AudioMutations
         string uploadId,
         string title,
         string description,
-        string[] tags,
+        List<string> tags,
         string fileName,
         long fileSize,
         decimal duration,
@@ -47,7 +47,7 @@ public class AudioMutations
         [ID(nameof(Audio))] long id,
         string? title,
         string? description,
-        string[]? tags,
+        List<string>? tags,
         [Service] IMediator mediator,
         CancellationToken cancellationToken = default)
     {

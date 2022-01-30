@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,7 +17,7 @@ namespace Audiochan.Application.Features.Audios.Commands.UpdateAudio
         long AudioId,
         string? Title,
         string? Description,
-        string[]? Tags) : ICommandRequest<Audio>;
+        List<string>? Tags) : ICommandRequest<Audio>;
 
     public class UpdateAudioCommandHandler : IRequestHandler<UpdateAudioCommand, Audio>
     {
@@ -64,9 +63,14 @@ namespace Audiochan.Application.Features.Audios.Commands.UpdateAudio
         {
             if (command.Tags is not null)
             {
-                audio.Tags = command.Tags.Length == 0 
-                    ? Array.Empty<string>() 
-                    : _slugGenerator.GenerateSlugs(command.Tags).ToArray();
+                if (command.Tags.Count == 0)
+                {
+                    audio.Tags.Clear();
+                }
+                else
+                {
+                    audio.Tags = _slugGenerator.GenerateSlugs(command.Tags).ToList();
+                }
             }
 
             if (command.Title is not null && !string.IsNullOrWhiteSpace(command.Title))
