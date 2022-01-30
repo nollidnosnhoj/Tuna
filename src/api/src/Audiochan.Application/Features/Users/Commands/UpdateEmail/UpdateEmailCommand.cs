@@ -9,7 +9,17 @@ using MediatR;
 
 namespace Audiochan.Application.Features.Users.Commands.UpdateEmail
 {
-    public record UpdateEmailCommand(long UserId, string NewEmail) : ICommandRequest;
+    public record UpdateEmailCommand : ICommandRequest
+    {
+        public long UserId { get; init; }
+        public string NewEmail { get; init; } = null!;
+
+        public static UpdateEmailCommand FromRequest(long userId, UpdateEmailRequest request) => new()
+        {
+            UserId = userId,
+            NewEmail = request.NewEmail
+        };
+    }
 
     public class UpdateEmailCommandHandler : IRequestHandler<UpdateEmailCommand>
     {

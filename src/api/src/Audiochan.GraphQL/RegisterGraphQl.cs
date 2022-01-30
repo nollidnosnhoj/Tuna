@@ -27,7 +27,6 @@ public static class RegisterGraphQl
             .AddTypeExtension<UserQueries>()
             .AddMutationType()
             .AddTypeExtension<AudioMutations>()
-            .AddTypeExtension<UserMutations>()
             .AddDataLoader<AudioByIdDataLoader>()
             .AddDataLoader<UserByIdDataLoader>()
             .AddFiltering()

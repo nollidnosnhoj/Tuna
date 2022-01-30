@@ -10,8 +10,21 @@ using MediatR;
 
 namespace Audiochan.Application.Features.Users.Commands.UpdateProfile
 {
-    public record UpdateProfileCommand(long UserId, string? DisplayName, string? About, string? Website)
-        : ICommandRequest<User>;
+    public record UpdateProfileCommand : ICommandRequest<User>
+    {
+        public long UserId { get; init; }
+        public string? DisplayName { get; init; }
+        public string? About { get; init; }
+        public string? Website { get; init; }
+
+        public static UpdateProfileCommand FromRequest(long userId, UpdateProfileRequest request) => new()
+        {
+            UserId = userId,
+            About = request.About,
+            Website = request.Website,
+            DisplayName = request.DisplayName
+        };
+    }
 
     public class UpdateProfileCommandHandler : IRequestHandler<UpdateProfileCommand, User>
     {

@@ -11,13 +11,9 @@ public abstract class GraphQlError : IGraphQlError
 {
     public string Code => GetType().Name;
     public string Message { get; }
-    
+
     protected GraphQlError(string message)
     {
         Message = message;
-    }
-
-    protected GraphQlError(Exception exception) : this(exception.Message)
-    {
     }
 }
