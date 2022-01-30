@@ -50,30 +50,28 @@ public class UserQueries
     }
 
     [UseApplicationDbContext]
-    [UsePaging]
+    [UseOffsetPaging]
     public IQueryable<UserDto> GetFollowings(
-        string userName,
+        [ID(nameof(UserDto))] long id,
         IResolverContext context,
         [ScopedService] ApplicationDbContext dbContext)
     {
-        return dbContext.Users
-            .Where(u => u.UserName == userName)
-            .SelectMany(u => u.Followings)
+        return dbContext.FollowedUsers
+            .Where(fu => fu.ObserverId == id)
             .OrderByDescending(fu => fu.FollowedDate)
             .Select(fu => fu.Target)
             .ProjectTo<User, UserDto>(context);
     }
     
     [UseApplicationDbContext]
-    [UsePaging]
+    [UseOffsetPaging]
     public IQueryable<UserDto> GetFollowers(
-        string userName,
+        [ID(nameof(UserDto))] long id,
         IResolverContext context,
         [ScopedService] ApplicationDbContext dbContext)
     {
-        return dbContext.Users
-            .Where(u => u.UserName == userName)
-            .SelectMany(u => u.Followers)
+        return dbContext.FollowedUsers
+            .Where(fu => fu.TargetId == id)
             .OrderByDescending(fu => fu.FollowedDate)
             .Select(fu => fu.Observer)
             .ProjectTo<User, UserDto>(context);

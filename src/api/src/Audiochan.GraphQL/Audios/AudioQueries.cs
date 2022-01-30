@@ -55,7 +55,6 @@ public class AudioQueries
     }
     
     [UseApplicationDbContext]
-    [UsePaging]
     public IQueryable<AudioDto> GetAudiosByUsername(
         string userName,
         IResolverContext resolverContext,
@@ -67,17 +66,15 @@ public class AudioQueries
             .OrderByDescending(a => a.Id)
             .ProjectTo<Audio, AudioDto>(resolverContext);
     }
-    
+
     [UseApplicationDbContext]
-    [UsePaging]
-    public IQueryable<AudioDto> GetFavoriteAudiosByUserName(
-        string userName,
+    public IQueryable<AudioDto> GetFavoriteAudiosByUserId(
+        [ID(nameof(UserDto))] long userId,
         IResolverContext resolverContext,
         [ScopedService] ApplicationDbContext dbContext)
     {
-        return dbContext.Users
-            .Where(u => u.UserName == userName)
-            .SelectMany(u => u.FavoriteAudios)
+        return dbContext.FavoriteAudios
+            .Where(fa => fa.UserId == userId)
             .OrderByDescending(fa => fa.Favorited)
             .Select(fa => fa.Audio)
             .ProjectTo<Audio, AudioDto>(resolverContext);
