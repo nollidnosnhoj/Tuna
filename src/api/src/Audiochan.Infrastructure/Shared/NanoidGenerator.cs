@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Audiochan.Application.Commons.Services;
+using Audiochan.Core.Commons.Services;
 
 namespace Audiochan.Infrastructure.Shared
 {

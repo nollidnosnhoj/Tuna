@@ -1,4 +1,4 @@
-﻿using Audiochan.Application.Commons.Interfaces;
+﻿using Audiochan.Core.Commons.Interfaces;
 
 namespace Audiochan.API.Models
 {

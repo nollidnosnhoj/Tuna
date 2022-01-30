@@ -1,4 +1,4 @@
-﻿using Audiochan.Application.Features.Audios.Commands.UpdateAudio;
+﻿using Audiochan.Core.Features.Audios.Commands.UpdateAudio;
 using Bogus;
 
 namespace Audiochan.Tests.Common.Fakers.Audios

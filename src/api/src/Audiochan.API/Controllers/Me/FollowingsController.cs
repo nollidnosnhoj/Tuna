@@ -1,10 +1,10 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.API.Extensions;
-using Audiochan.Application.Commons.Extensions;
-using Audiochan.Application.Commons.Services;
-using Audiochan.Application.Features.Users.Commands.SetFollow;
-using Audiochan.Application.Features.Users.Queries.CheckIfFollowing;
+using Audiochan.Core.Commons.Extensions;
+using Audiochan.Core.Commons.Services;
+using Audiochan.Core.Features.Users.Commands.SetFollow;
+using Audiochan.Core.Features.Users.Queries.CheckIfFollowing;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

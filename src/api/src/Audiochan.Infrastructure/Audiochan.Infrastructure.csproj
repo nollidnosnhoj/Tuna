@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Audiochan.Application\Audiochan.Application.csproj" />
+    <ProjectReference Include="..\Audiochan.Core\Audiochan.Core.csproj" />
   </ItemGroup>
 
 </Project>

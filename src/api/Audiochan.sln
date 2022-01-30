@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.30413.136
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Audiochan.API", "src\Audiochan.API\Audiochan.API.csproj", "{E7198337-9D92-46A3-979C-B541FC210E3E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Audiochan.Application", "src\Audiochan.Application\Audiochan.Application.csproj", "{2D7AD308-3DBC-473E-AF99-387B1BA7FAF4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Audiochan.Core", "src\Audiochan.Core\Audiochan.Core.csproj", "{2D7AD308-3DBC-473E-AF99-387B1BA7FAF4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Audiochan.Infrastructure", "src\Audiochan.Infrastructure\Audiochan.Infrastructure.csproj", "{6FEDD65D-7AAE-43C2-BEBF-71ED77064561}"
 EndProject
@@ -13,13 +13,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{1E1DB829-84B
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{6320CE6D-E22C-46E3-ACA4-32207BEDEC13}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Audiochan.Application.UnitTests", "tests\Audiochan.Application.UnitTests\Audiochan.Application.UnitTests.csproj", "{014554AE-524E-43D5-85C6-33A3C3626B4E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Audiochan.Core.UnitTests", "tests\Audiochan.Core.UnitTests\Audiochan.Core.UnitTests.csproj", "{014554AE-524E-43D5-85C6-33A3C3626B4E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Audiochan.Tests.Common", "tests\Audiochan.Tests.Common\Audiochan.Tests.Common.csproj", "{1BF782FC-034F-4F17-B25C-B98B33FA5038}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Audiochan.Domain", "src\Audiochan.Domain\Audiochan.Domain.csproj", "{FCA66A89-2C69-4710-A545-EA43ED7F5B36}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Audiochan.Application.IntegrationTests", "tests\Audiochan.Application.IntegrationTests\Audiochan.Application.IntegrationTests.csproj", "{18E0E3C6-CD42-486D-80F7-800CDDCF058F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Audiochan.Core.IntegrationTests", "tests\Audiochan.Core.IntegrationTests\Audiochan.Core.IntegrationTests.csproj", "{18E0E3C6-CD42-486D-80F7-800CDDCF058F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Audiochan.GraphQL", "src\Audiochan.GraphQL\Audiochan.GraphQL.csproj", "{13896F36-E12F-4D03-880D-579F2DF1093C}"
 EndProject

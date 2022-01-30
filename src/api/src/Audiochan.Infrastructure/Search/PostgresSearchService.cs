@@ -2,12 +2,12 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Application.Commons.Dtos.Wrappers;
-using Audiochan.Application.Commons.Extensions;
+using Audiochan.Core.Commons.Dtos.Wrappers;
+using Audiochan.Core.Commons.Extensions;
 
-using Audiochan.Application.Commons.Services;
-using Audiochan.Application.Features.Audios.Models;
-using Audiochan.Application.Persistence;
+using Audiochan.Core.Commons.Services;
+using Audiochan.Core.Features.Audios.Models;
+using Audiochan.Core.Persistence;
 using Audiochan.Domain.Entities;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;

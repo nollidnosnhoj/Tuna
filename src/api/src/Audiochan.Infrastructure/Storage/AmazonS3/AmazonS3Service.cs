@@ -9,8 +9,8 @@ using Amazon.Runtime;
 using Amazon.S3;
 using Amazon.S3.Model;
 using Amazon.S3.Transfer;
-using Audiochan.Application.Commons.Extensions;
-using Audiochan.Application.Commons.Services;
+using Audiochan.Core.Commons.Extensions;
+using Audiochan.Core.Commons.Services;
 using Microsoft.Extensions.Options;
 
 namespace Audiochan.Infrastructure.Storage.AmazonS3
