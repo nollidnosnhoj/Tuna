@@ -76,8 +76,8 @@ namespace Audiochan.API.Controllers.Me
         public async Task<IActionResult> FavoriteAudio(long audioId, CancellationToken cancellationToken)
         {
             var command = new SetFavoriteAudioCommand(audioId, _currentUserId, true);
-            await _mediator.Send(command, cancellationToken);
-            return Ok();
+            var result = await _mediator.Send(command, cancellationToken);
+            return result.ToObjectResult(Ok);
         }
 
         [HttpDelete("{audioId:long}", Name = "UnFavoriteAudio")]
@@ -90,8 +90,8 @@ namespace Audiochan.API.Controllers.Me
         public async Task<IActionResult> UnFavoriteAudio(long audioId, CancellationToken cancellationToken)
         {
             var command = new SetFavoriteAudioCommand(audioId, _currentUserId, false);
-            await _mediator.Send(command, cancellationToken);
-            return NoContent();
+            var result = await _mediator.Send(command, cancellationToken);
+            return result.ToObjectResult(NoContent);
         }
     }
 }

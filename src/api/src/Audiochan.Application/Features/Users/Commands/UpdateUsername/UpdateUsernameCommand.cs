@@ -1,18 +1,17 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Application.Commons;
 using Audiochan.Application.Commons.CQRS;
-using Audiochan.Application.Commons.Exceptions;
 using Audiochan.Application.Commons.Services;
 using Audiochan.Application.Persistence;
 using Audiochan.Application.Commons.Extensions;
-using Audiochan.Application.Features.Auth.Exceptions;
-using Audiochan.Application.Features.Users.Exceptions;
+using Audiochan.Application.Commons.Results;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Application.Features.Users.Commands.UpdateUsername
 {
-    public record UpdateUsernameCommand : ICommandRequest
+    public record UpdateUsernameCommand : ICommandRequest<Result>
     {
         public long UserId { get; init; }
         public string NewUsername { get; init; } = null!;
@@ -24,7 +23,7 @@ namespace Audiochan.Application.Features.Users.Commands.UpdateUsername
         };
     }
 
-    public class UpdateUsernameCommandHandler : IRequestHandler<UpdateUsernameCommand>
+    public class UpdateUsernameCommandHandler : IRequestHandler<UpdateUsernameCommand, Result>
     {
         private readonly long _currentUserId;
         private readonly IUnitOfWork _unitOfWork;
@@ -38,22 +37,22 @@ namespace Audiochan.Application.Features.Users.Commands.UpdateUsername
             _dbContext = dbContext;
         }
 
-        public async Task<Unit> Handle(UpdateUsernameCommand command, CancellationToken cancellationToken)
+        public async Task<Result> Handle(UpdateUsernameCommand command, CancellationToken cancellationToken)
         {
             var user = await _unitOfWork.Users.FindAsync(command.UserId, cancellationToken);
-            if (user!.Id != _currentUserId) throw new ForbiddenException();
+            if (user!.Id != _currentUserId) return new ForbiddenErrorResult();
             
             // check if username already exists
             var usernameExists =
                 await _dbContext.Users.AnyAsync(u => u.UserName == command.NewUsername, cancellationToken);
             if (usernameExists)
-                throw new UsernameTakenException(command.NewUsername);
+                return new ErrorResult("Username already exists");
 
             // update username
             user.UserName = command.NewUsername;
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
-            return Unit.Value;
+            return new SuccessResult();
         }
     }
 }

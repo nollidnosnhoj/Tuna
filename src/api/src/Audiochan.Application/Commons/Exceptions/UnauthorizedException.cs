@@ -1,8 +1,9 @@
-﻿namespace Audiochan.Application.Commons.Exceptions;
+﻿using System;
 
-public class UnauthorizedException : BadRequestException
+namespace Audiochan.Application.Commons.Exceptions
 {
-    public UnauthorizedException() : base("You are unauthorized.")
+    public class UnauthorizedException : Exception
     {
+        
     }
 }

@@ -1,23 +1,24 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Application.Commons;
 using Audiochan.Application.Commons.CQRS;
 using Audiochan.Application.Commons.Dtos.Responses;
-using Audiochan.Application.Commons.Exceptions;
 using Audiochan.Application.Commons.Interfaces;
 using Audiochan.Application.Commons.Services;
 using Audiochan.Application.Persistence;
 using Audiochan.Application.Commons.Extensions;
 using Audiochan.Domain.Entities;
+using Audiochan.Application.Commons.Results;
 using MediatR;
 using Microsoft.Extensions.Caching.Distributed;
 
 namespace Audiochan.Application.Features.Audios.Commands.UpdatePicture
 {
-    public record UpdateAudioPictureCommand(long AudioId, string Data) : IImageData, ICommandRequest<ImageUploadResponse>
+    public record UpdateAudioPictureCommand(long AudioId, string Data) : IImageData, ICommandRequest<Result<ImageUploadResponse>>
     {
     }
 
-    public class UpdateAudioPictureCommandHandler : IRequestHandler<UpdateAudioPictureCommand, ImageUploadResponse>
+    public class UpdateAudioPictureCommandHandler : IRequestHandler<UpdateAudioPictureCommand, Result<ImageUploadResponse>>
     {
         private readonly IDistributedCache _cache;
         private readonly ICurrentUserService _currentUserService;
@@ -36,7 +37,7 @@ namespace Audiochan.Application.Features.Audios.Commands.UpdatePicture
             _cache = cache;
         }
 
-        public async Task<ImageUploadResponse> Handle(UpdateAudioPictureCommand command,
+        public async Task<Result<ImageUploadResponse>> Handle(UpdateAudioPictureCommand command,
             CancellationToken cancellationToken)
         {
             _currentUserService.User.TryGetUserId(out var currentUserId);
@@ -44,10 +45,10 @@ namespace Audiochan.Application.Features.Audios.Commands.UpdatePicture
             var audio = await _unitOfWork.Audios.FindAsync(command.AudioId, cancellationToken);
 
             if (audio == null)
-                throw new NotFoundException<Audio>();
+                return new NotFoundErrorResult<ImageUploadResponse>();
 
             if (audio.UserId != currentUserId)
-                throw new ForbiddenException();
+                return new ForbiddenErrorResult<ImageUploadResponse>();
 
             var blobName = string.Empty;
             if (string.IsNullOrEmpty(command.Data))

@@ -1,5 +1,5 @@
-﻿using System;
-using System.Security.Claims;
+﻿using System.Security.Claims;
+using Audiochan.Application.Commons.Exceptions;
 
 namespace Audiochan.Application.Commons.Extensions
 {
@@ -34,11 +34,9 @@ namespace Audiochan.Application.Commons.Extensions
 
         public static long GetUserId(this ClaimsPrincipal? principal)
         {
-            if (principal is null) throw new ArgumentNullException(nameof(principal));
-            
             if (!principal.TryGetUserId(out var userId))
             {
-                throw new ArgumentException("ClaimsPrincipal does not contain userId", nameof(principal));
+                throw new UnauthorizedException();
             }
 
             return userId;
@@ -46,11 +44,9 @@ namespace Audiochan.Application.Commons.Extensions
 
         public static string GetUserName(this ClaimsPrincipal? principal)
         {
-            if (principal is null) throw new ArgumentNullException(nameof(principal));
-
             if (!principal.TryGetUserName(out var userName))
             {
-                throw new ArgumentException("ClaimsPrincipal does not contain username", nameof(principal));
+                throw new UnauthorizedException();
             }
 
             return userName;

@@ -1,24 +1,25 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Application.Commons;
 using Audiochan.Application.Commons.CQRS;
 using Audiochan.Application.Commons.Services;
 using Audiochan.Application.Features.Auth.Queries.GetCurrentUser;
 using Audiochan.Application.Persistence;
 using AutoMapper;
-using Audiochan.Application.Features.Auth.Exceptions;
+using Audiochan.Application.Commons.Results;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Application.Features.Auth.Commands.Login
 {
-    public record LoginCommand : ICommandRequest<CurrentUserDto>
+    public record LoginCommand : ICommandRequest<Result<CurrentUserDto>>
     {
         public string Login { get; init; } = null!;
         public string Password { get; init; } = null!;
     }
 
-    public class LoginCommandHandler : IRequestHandler<LoginCommand, CurrentUserDto>
+    public class LoginCommandHandler : IRequestHandler<LoginCommand, Result<CurrentUserDto>>
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly IPasswordHasher _passwordHasher;
@@ -31,7 +32,7 @@ namespace Audiochan.Application.Features.Auth.Commands.Login
             _mapper = mapper;
         }
 
-        public async Task<CurrentUserDto> Handle(LoginCommand command,
+        public async Task<Result<CurrentUserDto>> Handle(LoginCommand command,
             CancellationToken cancellationToken)
         {
             var user = await _dbContext.Users
@@ -39,7 +40,7 @@ namespace Audiochan.Application.Features.Auth.Commands.Login
                 .SingleOrDefaultAsync(cancellationToken);
 
             if (user == null || !_passwordHasher.Verify(command.Password, user.PasswordHash))
-                throw new LoginException();
+                return new ErrorResult<CurrentUserDto>("Invalid Username/Password");
 
             return _mapper.Map<CurrentUserDto>(user);
         }

@@ -1,7 +1,9 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using Audiochan.Application.Commons.Exceptions;
 using Audiochan.Application.Commons.Extensions;
+using Audiochan.Application.Commons.Results;
+using Audiochan.Application.Features.Audios.Models;
+using Audiochan.Application.Features.Audios.Queries.GetAudio;
 using Audiochan.Tests.Common.Fakers.Audios;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
@@ -29,8 +31,12 @@ namespace Audiochan.Application.IntegrationTests.Features.Audios
 
             var command = new UpdateAudioCommandFaker(audio.Id).Generate();
 
-            await FluentActions.Awaiting(() => SendAsync(command))
-                .Should().ThrowAsync<ForbiddenException>();
+            var result = await SendAsync(command);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Succeeded.Should().Be(false);
+            result.Should().BeOfType<ForbiddenErrorResult>();
         }
 
         [Test]
@@ -61,6 +67,25 @@ namespace Audiochan.Application.IntegrationTests.Features.Audios
             created!.Title.Should().Be(command.Title);
             created.Description.Should().Be(command.Description);
             created.Tags.Count.Should().Be(command.Tags!.Count);
+        }
+
+        [Test]
+        public async Task ShouldInvalidateCacheSuccessfully()
+        {
+            // Assign
+            var user = await RunAsDefaultUserAsync();
+            user.TryGetUserId(out var userId);
+            var audio = new AudioFaker(userId).Generate();
+            InsertIntoDatabase(audio);
+            await SendAsync(new GetAudioQuery(audio.Id));
+            var command = new UpdateAudioCommandFaker(audio.Id).Generate();
+            await SendAsync(command);
+            
+            // Act
+            var cacheResult = await GetCache<AudioDto>(CacheKeys.Audio.GetAudio(audio.Id));
+            
+            // Assert
+            cacheResult.Should().BeNull();
         }
     }
 }

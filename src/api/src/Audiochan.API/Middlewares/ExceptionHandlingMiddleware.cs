@@ -3,13 +3,11 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Audiochan.API.Models;
-using Audiochan.Application.Commons.Exceptions;
 using FluentValidation;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using ValidationException = Audiochan.Application.Commons.Exceptions.ValidationException;
 
 namespace Audiochan.API.Middlewares
 {
@@ -53,27 +51,22 @@ namespace Audiochan.API.Middlewares
             int code;
             object response;
 
-            if (ex is BadRequestException bex)
+            switch (ex)
             {
-                switch (ex)
-                {
-                    case ValidationException vex:
-                        code = StatusCodes.Status422UnprocessableEntity;
-                        response = new ValidationErrorApiResponse(vex.Message, vex.ValidationErrors);
-                        break;
-                    default:
-                        code = StatusCodes.Status400BadRequest;
-                        response = new ErrorApiResponse(bex.Message, bex.Errors);
-                        break;
-                }
-            }
-            else
-            {
-                code = StatusCodes.Status500InternalServerError;
-                var message = _env.IsDevelopment()
-                    ? ex.Message
-                    : "An unexpected error has occurred.";
-                response = new ErrorApiResponse(message, null);
+                case ValidationException vex:
+                    code = StatusCodes.Status422UnprocessableEntity;
+                    var errors = vex.Errors
+                        .GroupBy(x => x.PropertyName, x => x.ErrorMessage)
+                        .ToDictionary(x => x.Key, x => x.ToArray());
+                    response = new ValidationErrorApiResponse("Invalid request.", errors);
+                    break;
+                default:
+                    code = StatusCodes.Status500InternalServerError;
+                    var message = _env.IsDevelopment()
+                        ? ex.Message
+                        : "An unexpected error has occurred.";
+                    response = new ErrorApiResponse(message, null);
+                    break;
             }
 
             context.Response.StatusCode = code;

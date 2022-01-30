@@ -1,8 +1,10 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.API.Extensions;
 using Audiochan.Application.Commons.Dtos.Requests;
 using Audiochan.Application.Commons.Dtos.Responses;
 using Audiochan.Application.Commons.Extensions;
+using Audiochan.Application.Commons.Interfaces;
 using Audiochan.Application.Commons.Services;
 using Audiochan.Application.Features.Auth.Queries.GetCurrentUser;
 using Audiochan.Application.Features.Users.Commands.RemovePicture;
@@ -82,8 +84,9 @@ namespace Audiochan.API.Controllers.Me
             CancellationToken cancellationToken)
         {
             var command = UpdateProfileCommand.FromRequest(_currentUserId, request);
-            var user = await _mediator.Send(command, cancellationToken);
-            return Ok(_mapper.Map<ProfileDto>(user));
+            var result = await _mediator.Send(command, cancellationToken);
+            if (!result.Succeeded) return ((IErrorResult) result).ToErrorObjectResult();
+            return Ok(_mapper.Map<ProfileDto>(result.Data));
         }
 
         [HttpPatch("username", Name = "UpdateUsername")]
@@ -100,8 +103,8 @@ namespace Audiochan.API.Controllers.Me
             CancellationToken cancellationToken)
         {
             var command = UpdateUsernameCommand.FromRequest(_currentUserId, request);
-            await _mediator.Send(command, cancellationToken);
-            return Ok();
+            var result = await _mediator.Send(command, cancellationToken);
+            return result.ToObjectResult(Ok);
         }
 
         [HttpPatch("email", Name = "UpdateEmail")]
@@ -118,8 +121,8 @@ namespace Audiochan.API.Controllers.Me
             CancellationToken cancellationToken)
         {
             var command = UpdateEmailCommand.FromRequest(_currentUserId, request);
-            await _mediator.Send(command, cancellationToken);
-            return Ok();
+            var result = await _mediator.Send(command, cancellationToken);
+            return result.ToObjectResult(Ok);
         }
 
         [HttpPatch("password", Name = "UpdatePassword")]
@@ -136,8 +139,8 @@ namespace Audiochan.API.Controllers.Me
             CancellationToken cancellationToken)
         {
             var command = UpdatePasswordCommand.FromRequest(_currentUserId, request);
-            await _mediator.Send(command, cancellationToken);
-            return Ok();
+            var result = await _mediator.Send(command, cancellationToken);
+            return result.ToObjectResult(Ok);
         }
 
         [HttpPatch("picture")]
@@ -155,8 +158,8 @@ namespace Audiochan.API.Controllers.Me
             CancellationToken cancellationToken)
         {
             var command = new UpdateUserPictureCommand(_currentUserId, request.Data);
-            var response = await _mediator.Send(command, cancellationToken);
-            return Ok(response);
+            var result = await _mediator.Send(command, cancellationToken);
+            return result.ToObjectResult(Ok);
         }
         
         [HttpDelete("picture")]
@@ -172,8 +175,8 @@ namespace Audiochan.API.Controllers.Me
         )]
         public async Task<ActionResult> RemovePicture(CancellationToken cancellationToken)
         {
-            await _mediator.Send(new RemoveUserPictureCommand(_currentUserId), cancellationToken);
-            return NoContent();
+            var result = await _mediator.Send(new RemoveUserPictureCommand(_currentUserId), cancellationToken);
+            return result.ToObjectResult(NoContent);
         }
     }
 }

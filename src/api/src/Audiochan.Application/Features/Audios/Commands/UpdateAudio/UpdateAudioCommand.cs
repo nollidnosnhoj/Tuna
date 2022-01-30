@@ -2,20 +2,21 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Application.Commons;
 using Audiochan.Application.Commons.CQRS;
-using Audiochan.Application.Commons.Exceptions;
 using Audiochan.Application.Commons.Services;
 using Audiochan.Application.Features.Audios.Models;
 using Audiochan.Application.Persistence;
 using Audiochan.Application.Commons.Extensions;
 using Audiochan.Domain.Entities;
 using AutoMapper;
+using Audiochan.Application.Commons.Results;
 using MediatR;
 using Microsoft.Extensions.Caching.Distributed;
 
 namespace Audiochan.Application.Features.Audios.Commands.UpdateAudio
 {
-    public class UpdateAudioCommand : ICommandRequest<AudioDto>
+    public class UpdateAudioCommand : ICommandRequest<Result<AudioDto>>
     {
         public long AudioId { get; set; }
         public string? Title { get; init; }
@@ -31,7 +32,7 @@ namespace Audiochan.Application.Features.Audios.Commands.UpdateAudio
         };
     }
 
-    public class UpdateAudioCommandHandler : IRequestHandler<UpdateAudioCommand, AudioDto>
+    public class UpdateAudioCommandHandler : IRequestHandler<UpdateAudioCommand, Result<AudioDto>>
     {
         private readonly IDistributedCache _cache;
         private readonly ICurrentUserService _currentUserService;
@@ -50,7 +51,7 @@ namespace Audiochan.Application.Features.Audios.Commands.UpdateAudio
             _cache = cache;
         }
 
-        public async Task<AudioDto> Handle(UpdateAudioCommand command,
+        public async Task<Result<AudioDto>> Handle(UpdateAudioCommand command,
             CancellationToken cancellationToken)
         {
             _currentUserService.User.TryGetUserId(out var currentUserId);
@@ -58,10 +59,10 @@ namespace Audiochan.Application.Features.Audios.Commands.UpdateAudio
             var audio = await _unitOfWork.Audios.FindAsync(command.AudioId, cancellationToken);
 
             if (audio == null)
-                throw new NotFoundException<Audio>();
+                return new NotFoundErrorResult<AudioDto>();
 
             if (audio.UserId != currentUserId)
-                throw new ForbiddenException();
+                return new ForbiddenErrorResult<AudioDto>();
             
             UpdateAudioFromCommandAsync(audio, command);
             _unitOfWork.Audios.Update(audio);

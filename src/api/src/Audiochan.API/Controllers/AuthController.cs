@@ -1,10 +1,12 @@
 ﻿using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.API.Extensions;
 using Audiochan.Application.Commons.Services;
 using Audiochan.Application.Features.Auth.Commands.Login;
 using Audiochan.Application.Features.Auth.Commands.Register;
 using Audiochan.Application.Features.Auth.Queries.GetCurrentUser;
+using Audiochan.Application.Commons.Results;
 using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -37,21 +39,24 @@ namespace Audiochan.API.Controllers
         public async Task<ActionResult<CurrentUserDto>> Login([FromBody] LoginCommand command,
             CancellationToken cancellationToken)
         {
-            var user = await _mediator.Send(command, cancellationToken);
+            var loginResult = await _mediator.Send(command, cancellationToken);
 
-            Claim[] claims =
+            return await loginResult.ToObjectResult(async data =>
             {
-                new(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new(ClaimTypes.Name, user.UserName),
-                new(ClaimTypes.Email, user.Email)
-            };
-            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            var principal = new ClaimsPrincipal(identity);
-            var properties = new AuthenticationProperties {ExpiresUtc = _dateTime.Now.AddDays(14)};
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, properties);
-            HttpContext.User = principal;
+                Claim[] claims =
+                {
+                    new(ClaimTypes.NameIdentifier, data.Id.ToString()),
+                    new(ClaimTypes.Name, data.UserName),
+                    new(ClaimTypes.Email, data.Email)
+                };
+                var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var principal = new ClaimsPrincipal(identity);
+                var properties = new AuthenticationProperties {ExpiresUtc = _dateTime.Now.AddDays(14)};
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, properties);
+                HttpContext.User = principal;
 
-            return Ok(user);
+                return Ok(data);
+            });
         }
 
         [HttpPost("register", Name = "CreateAccount")]
@@ -66,8 +71,8 @@ namespace Audiochan.API.Controllers
         public async Task<IActionResult> Register([FromBody] CreateUserCommand command,
             CancellationToken cancellationToken)
         {
-            await _mediator.Send(command, cancellationToken);
-            return Ok();
+            var result = await _mediator.Send(command, cancellationToken);
+            return result.ToObjectResult(Ok);
         }
 
         [HttpPost("logout")]

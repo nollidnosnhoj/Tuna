@@ -25,14 +25,32 @@ namespace Audiochan.Application.IntegrationTests.Features.Audios
             var response = await SendAsync(request);
 
             // Assert
-            response.Should().NotBeNull();
-            response.Title.Should().Be(request.Title);
-            response.Description.Should().Be(request.Description);
-            response.Duration.Should().Be(request.Duration);
-            response.Size.Should().Be(request.FileSize);
-            response.User.Should().NotBeNull();
-            response.User.Id.Should().Be(userId);
-            response.User.UserName.Should().Be(userName);
+            response.Succeeded.Should().BeTrue();
+            response.Data.Should().NotBeNull();
+            response.Data!.Title.Should().Be(request.Title);
+            response.Data.Description.Should().Be(request.Description);
+            response.Data.Duration.Should().Be(request.Duration);
+            response.Data.Size.Should().Be(request.FileSize);
+            response.Data.User.Should().NotBeNull();
+            response.Data.User.Id.Should().Be(userId);
+            response.Data.User.UserName.Should().Be(userName);
         }
+
+        // [Test]
+        // public async Task ShouldCreateCacheSuccessfully()
+        // {
+        //     // Assign
+        //     await RunAsDefaultUserAsync();
+        //     var request = new CreateAudioCommandFaker()
+        //         .Generate();
+        //     var response = await SendAsync(request);
+        //     
+        //     // Act
+        //     var audio = await GetCache<AudioDto>(CacheKeys.Audio.GetAudio(response.Data));
+        //
+        //     // Assert
+        //     audio.Should().NotBeNull();
+        //     audio.Should().BeOfType<AudioDto>();
+        // }
     }
 }

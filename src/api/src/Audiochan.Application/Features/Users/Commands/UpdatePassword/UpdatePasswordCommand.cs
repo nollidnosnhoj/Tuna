@@ -1,16 +1,16 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Application.Commons;
 using Audiochan.Application.Commons.CQRS;
-using Audiochan.Application.Commons.Exceptions;
 using Audiochan.Application.Commons.Services;
 using Audiochan.Application.Persistence;
 using Audiochan.Application.Commons.Extensions;
-using Audiochan.Application.Features.Users.Exceptions;
+using Audiochan.Application.Commons.Results;
 using MediatR;
 
 namespace Audiochan.Application.Features.Users.Commands.UpdatePassword
 {
-    public record UpdatePasswordCommand : ICommandRequest
+    public record UpdatePasswordCommand : ICommandRequest<Result>
     {
         public long UserId { get; init; }
         public string CurrentPassword { get; init; } = "";
@@ -24,7 +24,7 @@ namespace Audiochan.Application.Features.Users.Commands.UpdatePassword
         };
     }
 
-    public class UpdatePasswordCommandHandler : IRequestHandler<UpdatePasswordCommand>
+    public class UpdatePasswordCommandHandler : IRequestHandler<UpdatePasswordCommand, Result>
     {
         private readonly long _currentUserId;
         private readonly IUnitOfWork _unitOfWork;
@@ -38,16 +38,16 @@ namespace Audiochan.Application.Features.Users.Commands.UpdatePassword
             _passwordHasher = passwordHasher;
         }
 
-        public async Task<Unit> Handle(UpdatePasswordCommand command, CancellationToken cancellationToken)
+        public async Task<Result> Handle(UpdatePasswordCommand command, CancellationToken cancellationToken)
         {
             var user = await _unitOfWork.Users.FindAsync(command.UserId, cancellationToken);
-            if (user!.Id != _currentUserId) throw new ForbiddenException();
+            if (user!.Id != _currentUserId) return new ForbiddenErrorResult();
             if (!_passwordHasher.Verify(command.CurrentPassword, user.PasswordHash))
-                throw new UnmatchPasswordException();
+                return new ErrorResult("Current password does not match.");   // Maybe give a generic error;
             var newHash = _passwordHasher.Hash(command.NewPassword);
             user.PasswordHash = newHash;
             await _unitOfWork.SaveChangesAsync(cancellationToken);
-            return Unit.Value;
+            return new SuccessResult();
         }
     }
 }

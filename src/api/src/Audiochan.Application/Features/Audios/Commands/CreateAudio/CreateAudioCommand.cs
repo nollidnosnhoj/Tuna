@@ -5,10 +5,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Application.Commons.CQRS;
-using Audiochan.Application.Commons.Exceptions;
 using Audiochan.Application.Commons.Pipelines.Attributes;
+using Audiochan.Application.Commons.Results;
 using Audiochan.Application.Commons.Services;
-using Audiochan.Application.Features.Audios.Exceptions;
 using Audiochan.Application.Persistence;
 using Audiochan.Domain.Entities;
 using MediatR;
@@ -25,13 +24,13 @@ namespace Audiochan.Application.Features.Audios.Commands.CreateAudio
         string FileName,
         long FileSize,
         decimal Duration,
-        long UserId) : ICommandRequest<Audio>
+        long UserId) : ICommandRequest<Result<Audio>>
     {
         public string BlobName => UploadId + Path.GetExtension(FileName);
     }
 
 
-    public class CreateAudioCommandHandler : IRequestHandler<CreateAudioCommand, Audio>
+    public class CreateAudioCommandHandler : IRequestHandler<CreateAudioCommand, Result<Audio>>
     {
         private readonly ISlugGenerator _slugGenerator;
         private readonly IUnitOfWork _unitOfWork;
@@ -49,19 +48,19 @@ namespace Audiochan.Application.Features.Audios.Commands.CreateAudio
             _audioStorageSettings = mediaStorageOptions.Value.Audio;
         }
 
-        public async Task<Audio> Handle(CreateAudioCommand command,
+        public async Task<Result<Audio>> Handle(CreateAudioCommand command,
             CancellationToken cancellationToken)
         {
             var user = await _unitOfWork.Users.FindAsync(command.UserId, cancellationToken);
 
             if (user is null)
             {
-                throw new UnauthorizedException();
+                return new UnauthorizedErrorResult<Audio>();
             }
 
             if (!await ExistsInTempStorage(command.BlobName, cancellationToken))
             {
-                throw new UploadDoesNotExistException();
+                return new ErrorResult<Audio>("Cannot find upload. Please upload and try again.");
             }
 
             Audio? audio = null;
