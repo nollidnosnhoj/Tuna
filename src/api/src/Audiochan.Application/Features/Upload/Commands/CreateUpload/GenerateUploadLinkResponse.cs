@@ -1,4 +1,4 @@
-﻿namespace Audiochan.Application.Features.Audios.Commands.CreateUpload
+﻿namespace Audiochan.Application.Features.Upload.Commands.CreateUpload
 {
     public record GenerateUploadLinkResponse
     {

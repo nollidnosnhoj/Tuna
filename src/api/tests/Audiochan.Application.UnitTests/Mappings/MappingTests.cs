@@ -1,4 +1,5 @@
 ﻿using Audiochan.Application.Features.Audios.Mappings;
+using Audiochan.Application.Features.Auth.Mappings;
 using Audiochan.Application.Features.Users.Mappings;
 using AutoMapper;
 using Xunit;
