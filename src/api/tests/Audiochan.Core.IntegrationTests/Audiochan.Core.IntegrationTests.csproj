@@ -21,7 +21,7 @@
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Respawn" Version="4.0.0" />
+        <PackageReference Include="Respawn" Version="5.0.1" />
     </ItemGroup>
 
     <ItemGroup>
