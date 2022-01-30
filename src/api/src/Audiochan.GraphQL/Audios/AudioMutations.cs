@@ -9,6 +9,7 @@ using Audiochan.Application.Features.Audios.Commands.UpdateAudio;
 using Audiochan.Application.Features.Audios.Commands.UpdatePicture;
 using Audiochan.Application.Features.Audios.Models;
 using Audiochan.Application.Features.Upload.Commands.CreateUpload;
+using Audiochan.Domain.Entities;
 using Audiochan.GraphQL.Audios.Errors;
 using Audiochan.GraphQL.Common.Errors;
 using HotChocolate.AspNetCore.Authorization;
@@ -22,7 +23,6 @@ public class AudioMutations
 {
     [UseMutationConvention]
     [Authorize]
-    [Error(typeof(ValidationError))]
     [Error(typeof(Unauthorized))]
     [Error(typeof(UploadDoesNotExist))]
     public async Task<AudioDto?> CreateAudio(
@@ -42,7 +42,6 @@ public class AudioMutations
 
     [UseMutationConvention]
     [Authorize]
-    [Error(typeof(ValidationError))]
     [Error(typeof(AudioNotFound))]
     [Error(typeof(Forbidden))]
     public async Task<AudioDto?> UpdateAudio(
@@ -59,7 +58,6 @@ public class AudioMutations
     
     [UseMutationConvention(PayloadFieldName = "response")]
     [Authorize]
-    [Error(typeof(ValidationError))]
     [Error(typeof(AudioNotFound))]
     [Error(typeof(Forbidden))]
     public async Task<ImageUploadResponse> UpdateAudioPicture(
@@ -102,7 +100,6 @@ public class AudioMutations
 
     [UseMutationConvention(PayloadFieldName = "response")]
     [Authorize]
-    [Error(typeof(ValidationError))]
     public async Task<GenerateUploadLinkResponse?> GenerateUploadLink(
         string fileName,
         long filesize,

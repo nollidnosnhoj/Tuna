@@ -22,7 +22,6 @@ public class UserMutations
 {
     [UseMutationConvention]
     [Authorize]
-    [Error(typeof(ValidationError))]
     public async Task<UserDto> UpdateProfile(
         string? displayName,
         string? about,
@@ -38,7 +37,6 @@ public class UserMutations
 
     [UseMutationConvention(PayloadFieldName = "response")]
     [Authorize]
-    [Error(typeof(ValidationError))]
     [Error(typeof(Forbidden))]
     public async Task<ImageUploadResponse> UpdateUserPicture(
         string data,
@@ -67,7 +65,6 @@ public class UserMutations
 
     [UseMutationConvention(PayloadFieldName = "success")]
     [Authorize]
-    [Error(typeof(ValidationError))]
     [Error(typeof(Forbidden))]
     [Error(typeof(UsernameTaken))]
     public async Task<bool> UpdateUsername(
@@ -84,7 +81,6 @@ public class UserMutations
     
     [UseMutationConvention(PayloadFieldName = "success")]
     [Authorize]
-    [Error(typeof(ValidationError))]
     [Error(typeof(Forbidden))]
     [Error(typeof(EmailTaken))]
     public async Task<bool> UpdateEmail(
@@ -101,7 +97,6 @@ public class UserMutations
     
     [UseMutationConvention(PayloadFieldName = "success")]
     [Authorize]
-    [Error(typeof(ValidationError))]
     [Error(typeof(Forbidden))]
     [Error(typeof(UnmatchedPassword))]
     public async Task<bool> UpdatePassword(
