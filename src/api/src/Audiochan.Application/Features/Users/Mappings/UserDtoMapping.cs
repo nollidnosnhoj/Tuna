@@ -12,11 +12,3 @@ public class UserDtoMapping : Profile
         this.CreateStrictMap<User, UserDto>();
     }
 }
-
-public class FollowedUserDtoMapping : Profile
-{
-    public FollowedUserDtoMapping()
-    {
-        this.CreateStrictMap<FollowedUser, FollowedUserDto>();
-    }
-}

@@ -20,22 +20,6 @@ public class UserQueries
         claimsPrincipal.TryGetUserId(out var userId);
         return await userById.LoadAsync(userId, cancellationToken);
     }
-    
-    public async Task<UserDto> GetUserById(
-        [ID(nameof(UserDto))] long id,
-        UserByIdDataLoader userById,
-        CancellationToken cancellationToken = default)
-    {
-        return await userById.LoadAsync(id, cancellationToken);
-    }
-    
-    public async Task<IEnumerable<UserDto>> GetUsersByIds(
-        [ID(nameof(UserDto))] long[] ids,
-        UserByIdDataLoader userById,
-        CancellationToken cancellationToken = default)
-    {
-        return await userById.LoadAsync(ids, cancellationToken);
-    }
 
     [UseApplicationDbContext]
     [UseSingleOrDefault]
@@ -46,34 +30,6 @@ public class UserQueries
     {
         return dbContext.Users
             .Where(u => u.UserName == userName)
-            .ProjectTo<User, UserDto>(context);
-    }
-
-    [UseApplicationDbContext]
-    [UseOffsetPaging]
-    public IQueryable<UserDto> GetFollowings(
-        [ID(nameof(UserDto))] long id,
-        IResolverContext context,
-        [ScopedService] ApplicationDbContext dbContext)
-    {
-        return dbContext.FollowedUsers
-            .Where(fu => fu.ObserverId == id)
-            .OrderByDescending(fu => fu.FollowedDate)
-            .Select(fu => fu.Target)
-            .ProjectTo<User, UserDto>(context);
-    }
-    
-    [UseApplicationDbContext]
-    [UseOffsetPaging]
-    public IQueryable<UserDto> GetFollowers(
-        [ID(nameof(UserDto))] long id,
-        IResolverContext context,
-        [ScopedService] ApplicationDbContext dbContext)
-    {
-        return dbContext.FollowedUsers
-            .Where(fu => fu.TargetId == id)
-            .OrderByDescending(fu => fu.FollowedDate)
-            .Select(fu => fu.Observer)
             .ProjectTo<User, UserDto>(context);
     }
 }
