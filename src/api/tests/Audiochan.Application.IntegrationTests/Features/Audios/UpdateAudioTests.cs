@@ -60,7 +60,7 @@ namespace Audiochan.Application.IntegrationTests.Features.Audios
             created.Should().NotBeNull();
             created!.Title.Should().Be(command.Title);
             created.Description.Should().Be(command.Description);
-            created.Tags.Length.Should().Be(command.Tags!.Length);
+            created.Tags.Count.Should().Be(command.Tags!.Count);
         }
     }
 }

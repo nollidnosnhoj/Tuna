@@ -53,9 +53,10 @@ namespace Audiochan.Application.IntegrationTests.Features.Audios
             result.Created.Should().Be(audio.Created);
             result.Duration.Should().Be(audio.Duration);
             result.Picture.Should().BeNullOrEmpty();
-            result.Tags.Length.Should().Be(audio.Tags.Length);
+            result.Tags.Count.Should().Be(audio.Tags.Count);
             result.File.Should().Be(audio.File);
             result.Size.Should().Be(audio.Size);
+            result.LastModified.Should().BeNull();
             result.User.Should().NotBeNull();
             result.User.Should().BeOfType<UserDto>();
             result.User.Id.Should().Be(userId);
@@ -83,8 +84,9 @@ namespace Audiochan.Application.IntegrationTests.Features.Audios
             cacheResult.Created.Should().Be(result!.Created);
             cacheResult.Duration.Should().Be(result!.Duration);
             cacheResult.Picture.Should().BeNullOrEmpty();
-            cacheResult.Tags.Length.Should().Be(result!.Tags.Length);
+            cacheResult.Tags.Count.Should().Be(result!.Tags.Count);
             cacheResult.Size.Should().Be(result!.Size);
+            result.LastModified.Should().BeNull();
             result.User.Should().NotBeNull();
             result.User.Should().BeOfType<UserDto>();
             result.User.Id.Should().Be(userId);
