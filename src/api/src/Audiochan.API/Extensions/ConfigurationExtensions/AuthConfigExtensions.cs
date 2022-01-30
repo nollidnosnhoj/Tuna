@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Audiochan.Server.Models;
+using Audiochan.API.Models;
+using Audiochan.API.Services;
 using Audiochan.Application.Services;
-using Audiochan.Server.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -10,7 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace Audiochan.Server.Extensions.ConfigurationExtensions
+namespace Audiochan.API.Extensions.ConfigurationExtensions
 {
     public static class AuthConfigExtensions
     {

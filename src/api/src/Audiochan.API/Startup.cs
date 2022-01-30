@@ -1,15 +1,15 @@
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Audiochan.Server.Extensions.ConfigurationExtensions;
+using Audiochan.API.Extensions.ConfigurationExtensions;
+using Audiochan.API.Middlewares;
+using Audiochan.API.Services;
 using Audiochan.Application;
 using Audiochan.Application.Commons.Pipelines;
 using Audiochan.Application.Services;
 using Audiochan.GraphQL;
 using Audiochan.Infrastructure;
 using Audiochan.Infrastructure.Storage.AmazonS3;
-using Audiochan.Server.Middlewares;
-using Audiochan.Server.Services;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
@@ -18,7 +18,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 
-namespace Audiochan.Server
+namespace Audiochan.API
 {
     public class Startup
     {

@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Audiochan.Server;
+using Audiochan.API;
 using Audiochan.Application.Commons.Extensions;
 using Audiochan.Application.Persistence;
 using Audiochan.Application.Services;

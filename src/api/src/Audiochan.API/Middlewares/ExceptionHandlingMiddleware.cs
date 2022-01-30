@@ -2,15 +2,15 @@
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Audiochan.API.Models;
 using Audiochan.Application.Commons.Exceptions;
-using Audiochan.Server.Models;
 using FluentValidation;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace Audiochan.Server.Middlewares
+namespace Audiochan.API.Middlewares
 {
     public class ExceptionHandlingMiddleware
     {

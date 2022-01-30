@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
-namespace Audiochan.Server.Controllers
+namespace Audiochan.API.Controllers
 {
     [Route("auth")]
     public class AuthController : ControllerBase

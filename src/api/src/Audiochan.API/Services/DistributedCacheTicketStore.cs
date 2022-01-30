@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Caching.Distributed;
 
-namespace Audiochan.Server.Services
+namespace Audiochan.API.Services
 {
     public class DistributedCacheTicketStore : ITicketStore
     {
