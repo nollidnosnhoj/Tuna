@@ -7,7 +7,6 @@ using Audiochan.API.Services;
 using Audiochan.Application;
 using Audiochan.Application.Commons.Pipelines;
 using Audiochan.Application.Commons.Services;
-using Audiochan.GraphQL;
 using Audiochan.Infrastructure;
 using Audiochan.Infrastructure.Storage.AmazonS3;
 using FluentValidation;
@@ -47,7 +46,6 @@ namespace Audiochan.API
             services.AddMemoryCache();
             services.AddApplication(Configuration, Environment);
             services.AddInfrastructure(Configuration, Environment);
-            services.AddGraphQl();
             services.Configure<JsonSerializerOptions>(options =>
             {
                 options.DefaultIgnoreCondition = jsonSerializerOptions.DefaultIgnoreCondition;
@@ -76,11 +74,7 @@ namespace Audiochan.API
             app.UseAuthentication();
             app.UseRouting();
             app.UseAuthorization();
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapGraphQL();
-                endpoints.MapControllers();
-            });
+            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
             app.UseSwaggerConfig();
         }

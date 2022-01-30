@@ -9,8 +9,8 @@ public class UserByIdDataLoader : BatchDataLoader<long, User>
     private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
 
     public UserByIdDataLoader(IBatchScheduler batchScheduler, 
-        IDbContextFactory<ApplicationDbContext> dbContextFactory, DataLoaderOptions? options = null) 
-        : base(batchScheduler, options)
+        IDbContextFactory<ApplicationDbContext> dbContextFactory, 
+        DataLoaderOptions? options = null) : base(batchScheduler, options)
     {
         _dbContextFactory = dbContextFactory;
     }

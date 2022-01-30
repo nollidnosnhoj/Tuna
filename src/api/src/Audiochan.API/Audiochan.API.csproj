@@ -26,7 +26,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Audiochan.Application\Audiochan.Application.csproj" />
-    <ProjectReference Include="..\Audiochan.GraphQL\Audiochan.GraphQL.csproj" />
     <ProjectReference Include="..\Audiochan.Infrastructure\Audiochan.Infrastructure.csproj" />
   </ItemGroup>
 
