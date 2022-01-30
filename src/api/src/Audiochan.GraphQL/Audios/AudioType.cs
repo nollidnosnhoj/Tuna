@@ -1,12 +1,8 @@
 ﻿using Audiochan.Application;
 using Audiochan.Application.Commons.Extensions;
-using Audiochan.Application.Commons.Helpers;
 using Audiochan.Application.Features.Audios.Models;
-using Audiochan.Application.Features.Users.Models;
 using Audiochan.Application.Persistence;
-using Audiochan.Domain.Entities;
 using Audiochan.GraphQL.Audios.DataLoaders;
-using Audiochan.GraphQL.Users;
 using Audiochan.GraphQL.Users.DataLoaders;
 using HotChocolate.Resolvers;
 using Microsoft.EntityFrameworkCore;
@@ -25,13 +21,6 @@ public class AudioType : ObjectType<AudioDto>
                 => await ctx.DataLoader<AudioByIdDataLoader>()
                     .LoadAsync(id, ctx.RequestAborted));
 
-        descriptor.Field("slug")
-            .Resolve(ctx =>
-            {
-                var parent = ctx.Parent<AudioDto>();
-                return HashIdHelper.EncodeLong(parent.Id);
-            });
-
         descriptor.Field(x => x.File)
             .Name("mp3")
             .Resolve(GetAudioLink);
@@ -43,8 +32,8 @@ public class AudioType : ObjectType<AudioDto>
         descriptor.Field(x => x.User)
             .Resolve(async (ctx, ct) =>
             {
-                var parent = ctx.Parent<AudioDto>();
-                return await ctx.DataLoader<UserByIdDataLoader>().LoadAsync(parent.UserId, ct);
+                var audio = ctx.Parent<AudioDto>();
+                return await ctx.DataLoader<UserByIdDataLoader>().LoadAsync(audio.UserId, ct);
             });
 
         descriptor.Field("isFavorited")
@@ -62,29 +51,29 @@ public class AudioType : ObjectType<AudioDto>
 
         descriptor.Field("favorited")
             .UseDbContext<ApplicationDbContext>()
-            .UsePaging<UserType>()
-            .Resolve(ctx =>
+            .Resolve(async (ctx, ct) =>
             {
                 var dbContext = ctx.DbContext<ApplicationDbContext>();
-                var parent = ctx.Parent<AudioDto>();
-                return dbContext.FavoriteAudios
-                    .Where(fa => fa.AudioId == parent.Id)
-                    .Select(fa => fa.User)
-                    .ProjectTo<User, UserDto>(ctx);
+                var audio = ctx.Parent<AudioDto>();
+                var favoritedIds = await dbContext.FavoriteAudios
+                    .Where(fa => fa.AudioId == audio.Id)
+                    .Select(fa => fa.UserId)
+                    .ToArrayAsync(ct);
+                return await ctx.DataLoader<UserByIdDataLoader>().LoadAsync(favoritedIds, ct);
             });
     }
 
     private static string GetAudioLink(IResolverContext context)
     {
-        var parent = context.Parent<AudioDto>();
-        return MediaLinkConstants.AUDIO_STREAM + parent.File;
+        var audio = context.Parent<AudioDto>();
+        return MediaLinkConstants.AUDIO_STREAM + audio.File;
 
     }
 
     private static string? GetAudioPictureLink(IResolverContext context)
     {
-        var parent = context.Parent<AudioDto>();
-        if (string.IsNullOrEmpty(parent.Picture)) return null;
-        return MediaLinkConstants.AUDIO_PICTURE + parent.Picture;
+        var audio = context.Parent<AudioDto>();
+        if (string.IsNullOrEmpty(audio.Picture)) return null;
+        return MediaLinkConstants.AUDIO_PICTURE + audio.Picture;
     }
 }
