@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Audiochan.Application.Commons.CQRS;
 using Audiochan.Application.Commons.Exceptions;
 using Audiochan.Application.Commons.Extensions;
-using Audiochan.Application.Features.Audios.Exceptions;
 using Audiochan.Application.Persistence;
 using Audiochan.Application.Services;
 using Audiochan.Domain.Entities;
@@ -37,7 +36,7 @@ namespace Audiochan.Application.Features.Audios.Commands.RemovePicture
             var audio = await _unitOfWork.Audios.FindAsync(request.AudioId, cancellationToken);
 
             if (audio == null)
-                throw new AudioNotFoundException(request.AudioId);
+                throw new NotFoundException<Audio, long>(request.AudioId);
 
             if (audio.UserId != currentUserId)
                 throw new ForbiddenException();

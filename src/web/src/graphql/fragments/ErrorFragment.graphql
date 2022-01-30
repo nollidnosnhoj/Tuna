@@ -1,4 +1,0 @@
-fragment BaseError on Error {
-  code
-  message
-}

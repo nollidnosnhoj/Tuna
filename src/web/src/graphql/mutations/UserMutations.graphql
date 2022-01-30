@@ -3,11 +3,6 @@ mutation Login($input: LoginInput!) {
     user {
       ... User
     }
-    errors {
-      ... on SignInError {
-        ... BaseError
-      }
-    }
   }
 }
 
@@ -19,23 +14,7 @@ mutation Logout {
 
 mutation RegisterUser($input: RegisterInput!) {
   register(input: $input) {
-    errors {
-      ... on ValidationError {
-        ... BaseError
-        failures {
-          property
-          message
-        }
-      }
-      ... on EmailTaken {
-        email
-        ... BaseError
-      }
-      ... on UserNameTaken {
-        userName
-        ... BaseError
-      }
-    }
+    message
   }
 }
 
@@ -43,15 +22,6 @@ mutation UpdateProfile($input: UpdateProfileInput!) {
   updateProfile(input: $input) {
     user {
       ... User
-    }
-    errors {
-      ... on ValidationError {
-        ... BaseError
-        failures {
-          property
-          message
-        }
-      }
     }
   }
 }
@@ -61,28 +31,12 @@ mutation UpdateUserPicture($input: UpdateUserPictureInput!) {
     response {
       url
     }
-    errors {
-      ... on ValidationError {
-        ... BaseError
-        failures {
-          property
-          message
-        }
-      }
-      ... on Forbidden {
-        ... BaseError
-      }
-    }
   }
 }
 
 mutation RemoveUserPicture {
   removeUserPicture {
-    errors {
-      ... on Forbidden {
-        ... BaseError
-      }
-    }
+    message
   }
 }
 
@@ -91,73 +45,23 @@ mutation UpdateUser($input: UpdateUserInput!) {
     user {
       ... User
     }
-    errors {
-      ... on ValidationError {
-        ... BaseError
-        failures {
-          property
-          message
-        }
-      }
-      ... on Forbidden {
-        ... BaseError
-      }
-      ... on EmailTaken {
-        email
-        ... BaseError
-      }
-      ... on UserNameTaken {
-        userName
-        ... BaseError
-      }
-    }
   }
 }
 
 mutation UpdatePassword($input: UpdatePasswordInput!) {
   updatePassword(input: $input) {
-    errors {
-      ... on ValidationError {
-        ... BaseError
-        failures {
-          property
-          message
-        }
-      }
-      ... on Forbidden {
-        ... BaseError
-      }
-      ... on UnmatchedPassword {
-        ... BaseError
-      }
-    }
+    message
   }
 }
 
 mutation FollowUser($input: FollowUserInput!) {
   followUser(input: $input) {
-    errors {
-      ... on UserNotFound {
-        userId
-        ... BaseError
-      }
-      ... on Forbidden {
-        ... BaseError
-      }
-    }
+    message
   }
 }
 
 mutation UnfollowUser($input: UnfollowUserInput!) {
   unfollowUser(input: $input) {
-    errors {
-      ... on UserNotFound {
-        userId
-        ... BaseError
-      }
-      ... on Forbidden {
-        ... BaseError
-      }
-    }
+    message
   }
 }

@@ -9,9 +9,18 @@ public class NotFoundException : BadRequestException
     {
         
     }
+}
 
-    public NotFoundException(string message) : base(message)
+public class NotFoundException<T, TKey> : NotFoundException
+    where T : IHasId<TKey>
+    where TKey : IEquatable<TKey>, IComparable<TKey>
+{
+    public Type Type { get; }
+    public TKey ResourceId { get; }
+
+    public NotFoundException(TKey resourceId)
     {
-        
+        Type = typeof(T);
+        ResourceId = resourceId;
     }
 }

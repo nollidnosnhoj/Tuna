@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Audiochan.Application.Commons.CQRS;
 using Audiochan.Application.Commons.Exceptions;
-using Audiochan.Application.Features.Audios.Exceptions;
 using Audiochan.Application.Persistence;
 using Audiochan.Application.Services;
 using Audiochan.Domain.Entities;
@@ -31,7 +30,7 @@ namespace Audiochan.Application.Features.Audios.Commands.SetFavoriteAudio
                 .LoadAudioWithFavorites(command.AudioId, command.UserId, cancellationToken);
 
             if (audio == null)
-                throw new AudioNotFoundException(command.AudioId);
+                throw new NotFoundException<Audio, long>(command.AudioId);
 
             if (command.IsFavoriting)
                 audio.Favorite(command.UserId, _dateTimeProvider.Now);
