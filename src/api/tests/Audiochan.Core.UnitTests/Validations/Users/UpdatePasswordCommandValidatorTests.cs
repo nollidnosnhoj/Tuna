@@ -1,4 +1,4 @@
-﻿using Audiochan.Core.Features.Users.Commands.UpdatePassword;
+﻿using Audiochan.Core.Users.Commands;
 using FluentValidation;
 using FluentValidation.TestHelper;
 using Microsoft.Extensions.Options;

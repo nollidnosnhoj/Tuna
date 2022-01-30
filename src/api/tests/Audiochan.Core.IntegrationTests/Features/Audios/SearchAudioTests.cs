@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Audiochan.Core.Commons.Extensions;
-using Audiochan.Core.Features.Audios.Queries.SearchAudios;
+using Audiochan.Core.Audios.Queries;
+using Audiochan.Core.Extensions;
 using Audiochan.Tests.Common.Fakers.Audios;
 using Bogus;
 using FluentAssertions;

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-
 using Audiochan.Core.Persistence;
 using Audiochan.Core.Persistence.Repositories;
 using AutoMapper;

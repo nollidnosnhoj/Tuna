@@ -1,4 +1,4 @@
-﻿using Audiochan.Core.Features.Users.Commands.UpdateEmail;
+﻿using Audiochan.Core.Users.Commands;
 using FluentAssertions;
 using FluentValidation;
 using FluentValidation.TestHelper;
