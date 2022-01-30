@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using FluentValidation.Results;
 
 namespace Audiochan.Application.Commons.Exceptions;
 
@@ -13,9 +12,9 @@ public class ValidationException : BadRequestException
         ValidationErrors = errors;
     }
 
-    public ValidationException(IEnumerable<ValidationFailure> failures) : base("Invalid request.")
+    public ValidationException(FluentValidation.ValidationException validationException) : base("Invalid request.")
     {
-        ValidationErrors = failures
+        ValidationErrors = validationException.Errors
             .GroupBy(x => x.PropertyName, x => x.ErrorMessage)
             .ToDictionary(x => x.Key, x => x.ToArray());
     }
