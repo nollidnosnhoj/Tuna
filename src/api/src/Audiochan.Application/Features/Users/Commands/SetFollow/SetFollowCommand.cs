@@ -30,7 +30,7 @@ namespace Audiochan.Application.Features.Users.Commands.SetFollow
                 .LoadUserWithFollowers(command.TargetId, command.ObserverId, cancellationToken);
 
             if (target == null)
-                throw new NotFoundException<User, long>(command.TargetId);
+                throw new NotFoundException<User>();
 
             if (target.Id == command.ObserverId)
                 throw new ForbiddenException();

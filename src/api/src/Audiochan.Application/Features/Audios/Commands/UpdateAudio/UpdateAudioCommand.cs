@@ -5,50 +5,62 @@ using System.Threading.Tasks;
 using Audiochan.Application.Commons.CQRS;
 using Audiochan.Application.Commons.Exceptions;
 using Audiochan.Application.Commons.Services;
+using Audiochan.Application.Features.Audios.Models;
 using Audiochan.Application.Persistence;
 using Audiochan.Application.Commons.Extensions;
 using Audiochan.Domain.Entities;
+using AutoMapper;
 using MediatR;
 using Microsoft.Extensions.Caching.Distributed;
 
 namespace Audiochan.Application.Features.Audios.Commands.UpdateAudio
 {
-    public record UpdateAudioCommand(
-        long AudioId,
-        string? Title,
-        string? Description,
-        List<string>? Tags) : ICommandRequest<Audio>;
+    public class UpdateAudioCommand : ICommandRequest<AudioDto>
+    {
+        public long AudioId { get; set; }
+        public string? Title { get; init; }
+        public string? Description { get; init; }
+        public List<string>? Tags { get; init; }
 
-    public class UpdateAudioCommandHandler : IRequestHandler<UpdateAudioCommand, Audio>
+        public static UpdateAudioCommand FromRequest(long audioId, UpdateAudioRequest request) => new()
+        {
+            AudioId = audioId,
+            Tags = request.Tags,
+            Title = request.Title,
+            Description = request.Description,
+        };
+    }
+
+    public class UpdateAudioCommandHandler : IRequestHandler<UpdateAudioCommand, AudioDto>
     {
         private readonly IDistributedCache _cache;
+        private readonly ICurrentUserService _currentUserService;
         private readonly ISlugGenerator _slugGenerator;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly ICurrentUserService _currentUserService;
+        private readonly IMapper _mapper;
 
-        public UpdateAudioCommandHandler(
+        public UpdateAudioCommandHandler(ICurrentUserService currentUserService, 
             ISlugGenerator slugGenerator, 
-            IUnitOfWork unitOfWork,
-            IDistributedCache cache, 
-            ICurrentUserService currentUserService)
+            IUnitOfWork unitOfWork, IMapper mapper, IDistributedCache cache)
         {
+            _currentUserService = currentUserService;
             _slugGenerator = slugGenerator;
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
             _cache = cache;
-            _currentUserService = currentUserService;
         }
 
-        public async Task<Audio> Handle(UpdateAudioCommand command,
+        public async Task<AudioDto> Handle(UpdateAudioCommand command,
             CancellationToken cancellationToken)
         {
-            var userId = _currentUserService.User.GetUserId();
-            
+            _currentUserService.User.TryGetUserId(out var currentUserId);
+
             var audio = await _unitOfWork.Audios.FindAsync(command.AudioId, cancellationToken);
 
             if (audio == null)
-                throw new NotFoundException<Audio, long>(command.AudioId);
+                throw new NotFoundException<Audio>();
 
-            if (audio.UserId != userId)
+            if (audio.UserId != currentUserId)
                 throw new ForbiddenException();
             
             UpdateAudioFromCommandAsync(audio, command);
@@ -56,7 +68,7 @@ namespace Audiochan.Application.Features.Audios.Commands.UpdateAudio
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             await _cache.RemoveAsync(CacheKeys.Audio.GetAudio(command.AudioId), cancellationToken);
             
-            return audio;
+            return _mapper.Map<AudioDto>(audio);
         }
 
         private void UpdateAudioFromCommandAsync(Audio audio, UpdateAudioCommand command)

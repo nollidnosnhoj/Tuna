@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Application.Commons.CQRS;
 using Audiochan.Application.Commons.Exceptions;
-using Audiochan.Application.Commons.Extensions;
 using Audiochan.Application.Commons.Pipelines.Attributes;
 using Audiochan.Application.Commons.Services;
 using Audiochan.Application.Features.Audios.Exceptions;
@@ -25,15 +24,15 @@ namespace Audiochan.Application.Features.Audios.Commands.CreateAudio
         List<string> Tags,
         string FileName,
         long FileSize,
-        decimal Duration) : ICommandRequest<Audio>
+        decimal Duration,
+        long UserId) : ICommandRequest<Audio>
     {
-        public string GetBlobName() => UploadId + Path.GetExtension(FileName);
+        public string BlobName => UploadId + Path.GetExtension(FileName);
     }
 
 
     public class CreateAudioCommandHandler : IRequestHandler<CreateAudioCommand, Audio>
     {
-        private readonly ICurrentUserService _currentUserService;
         private readonly ISlugGenerator _slugGenerator;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IStorageService _storageService;
@@ -42,30 +41,27 @@ namespace Audiochan.Application.Features.Audios.Commands.CreateAudio
         public CreateAudioCommandHandler(ISlugGenerator slugGenerator,
             IUnitOfWork unitOfWork, 
             IStorageService storageService,
-            IOptions<MediaStorageSettings> mediaStorageOptions, 
-            ICurrentUserService currentUserService)
+            IOptions<MediaStorageSettings> mediaStorageOptions)
         {
             _slugGenerator = slugGenerator;
             _unitOfWork = unitOfWork;
             _storageService = storageService;
-            _currentUserService = currentUserService;
             _audioStorageSettings = mediaStorageOptions.Value.Audio;
         }
 
         public async Task<Audio> Handle(CreateAudioCommand command,
             CancellationToken cancellationToken)
         {
-            var userId = _currentUserService.User.GetUserId();
-            var user = await _unitOfWork.Users.FindAsync(userId, cancellationToken);
+            var user = await _unitOfWork.Users.FindAsync(command.UserId, cancellationToken);
 
             if (user is null)
             {
                 throw new UnauthorizedException();
             }
 
-            if (!await ExistsInTempStorage(command.GetBlobName(), cancellationToken))
+            if (!await ExistsInTempStorage(command.BlobName, cancellationToken))
             {
-                throw new UploadDoesNotExistException(command.UploadId);
+                throw new UploadDoesNotExistException();
             }
 
             Audio? audio = null;
@@ -81,7 +77,7 @@ namespace Audiochan.Application.Features.Audios.Commands.CreateAudio
                     Duration = command.Duration,
                     Title = command.Title,
                     Description = command.Description,
-                    File = command.GetBlobName(),
+                    File = command.BlobName,
                 };
 
                 // Create tags

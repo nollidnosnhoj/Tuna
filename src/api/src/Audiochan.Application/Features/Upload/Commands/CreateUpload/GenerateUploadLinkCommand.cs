@@ -3,38 +3,42 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Application.Commons.CQRS;
-using Audiochan.Application.Commons.Extensions;
 using Audiochan.Application.Commons.Services;
+using Audiochan.Application.Commons.Extensions;
 using MediatR;
 using Microsoft.Extensions.Options;
 
 namespace Audiochan.Application.Features.Upload.Commands.CreateUpload
 {
-    public record GenerateUploadLinkCommand(string FileName, long FileSize)
-        : ICommandRequest<GenerateUploadLinkResponse>;
+    public record GenerateUploadLinkCommand : ICommandRequest<GenerateUploadLinkResponse>
+    {
+        public string FileName { get; init; } = null!;
+        public long FileSize { get; init; }
+    }
 
     public class GenerateUploadLinkCommandHandler 
         : IRequestHandler<GenerateUploadLinkCommand, GenerateUploadLinkResponse>
     {
+        private readonly ICurrentUserService _currentUserService;
         private readonly IRandomIdGenerator _randomIdGenerator;
         private readonly IStorageService _storageService;
         private readonly AudioStorageSettings _audioStorageSettings;
-        private readonly ICurrentUserService _currentUserService;
         
-        public GenerateUploadLinkCommandHandler(IRandomIdGenerator randomIdGenerator,
+        public GenerateUploadLinkCommandHandler(ICurrentUserService currentUserService,
+            IRandomIdGenerator randomIdGenerator,
             IStorageService storageService,
-            IOptions<MediaStorageSettings> mediaStorageSettings, ICurrentUserService currentUserService)
+            IOptions<MediaStorageSettings> mediaStorageSettings)
         {
+            _currentUserService = currentUserService;
             _randomIdGenerator = randomIdGenerator;
             _storageService = storageService;
-            _currentUserService = currentUserService;
             _audioStorageSettings = mediaStorageSettings.Value.Audio;
         }
         
         public async Task<GenerateUploadLinkResponse> Handle(GenerateUploadLinkCommand command, 
             CancellationToken cancellationToken)
         {
-            var userId = _currentUserService.User.GetUserId();
+            _currentUserService.User.TryGetUserId(out var userId);
             var (url, uploadId) = await CreateUploadUrl(command.FileName, userId);
             var response = new GenerateUploadLinkResponse { UploadId = uploadId, UploadUrl = url };
             return response;

@@ -44,7 +44,7 @@ namespace Audiochan.Application.Features.Audios.Commands.UpdatePicture
             var audio = await _unitOfWork.Audios.FindAsync(command.AudioId, cancellationToken);
 
             if (audio == null)
-                throw new NotFoundException<Audio, long>(command.AudioId);
+                throw new NotFoundException<Audio>();
 
             if (audio.UserId != currentUserId)
                 throw new ForbiddenException();
