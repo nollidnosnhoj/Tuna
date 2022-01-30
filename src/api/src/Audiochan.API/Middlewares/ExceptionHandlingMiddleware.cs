@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using ValidationException = Audiochan.Application.Commons.Exceptions.ValidationException;
 
 namespace Audiochan.API.Middlewares
 {
@@ -58,10 +59,7 @@ namespace Audiochan.API.Middlewares
                 {
                     case ValidationException vex:
                         code = StatusCodes.Status422UnprocessableEntity;
-                        var errors = vex.Errors
-                            .GroupBy(e => e.PropertyName, e => e.ErrorMessage)
-                            .ToDictionary(eg => eg.Key, eg => eg.ToArray());
-                        response = new ValidationErrorApiResponse(vex.Message, errors);
+                        response = new ValidationErrorApiResponse(vex.Message, vex.ValidationErrors);
                         break;
                     default:
                         code = StatusCodes.Status400BadRequest;
