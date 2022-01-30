@@ -6,16 +6,19 @@ using Audiochan.Application.Features.Auth.Queries.GetCurrentUser;
 using Audiochan.Application.Persistence;
 using AutoMapper;
 using Audiochan.Application.Features.Auth.Exceptions;
-using Audiochan.Application.Features.Users.Models;
 using Audiochan.Application.Services;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Application.Features.Auth.Commands.Login
 {
-    public record LoginCommand(string Login, string Password) : ICommandRequest<UserDto>;
+    public record LoginCommand : ICommandRequest<CurrentUserDto>
+    {
+        public string Login { get; init; } = null!;
+        public string Password { get; init; } = null!;
+    }
 
-    public class LoginCommandHandler : IRequestHandler<LoginCommand, UserDto>
+    public class LoginCommandHandler : IRequestHandler<LoginCommand, CurrentUserDto>
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly IPasswordHasher _passwordHasher;
@@ -28,7 +31,7 @@ namespace Audiochan.Application.Features.Auth.Commands.Login
             _mapper = mapper;
         }
 
-        public async Task<UserDto> Handle(LoginCommand command,
+        public async Task<CurrentUserDto> Handle(LoginCommand command,
             CancellationToken cancellationToken)
         {
             var user = await _dbContext.Users
@@ -38,7 +41,7 @@ namespace Audiochan.Application.Features.Auth.Commands.Login
             if (user == null || !_passwordHasher.Verify(command.Password, user.PasswordHash))
                 throw new LoginException();
 
-            return _mapper.Map<UserDto>(user);
+            return _mapper.Map<CurrentUserDto>(user);
         }
     }
 }

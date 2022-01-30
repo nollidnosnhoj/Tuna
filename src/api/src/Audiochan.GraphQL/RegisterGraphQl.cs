@@ -1,7 +1,6 @@
 ﻿using Audiochan.GraphQL.Audios;
 using Audiochan.GraphQL.Audios.DataLoaders;
 using Audiochan.GraphQL.Audios.Errors;
-using Audiochan.GraphQL.Auth;
 using Audiochan.GraphQL.Common.Errors;
 using Audiochan.GraphQL.Users;
 using Audiochan.GraphQL.Users.DataLoaders;
@@ -29,7 +28,6 @@ public static class RegisterGraphQl
             .AddTypeExtension<UserQueries>()
             .AddMutationType()
             .AddTypeExtension<AudioMutations>()
-            .AddTypeExtension<AuthMutations>()
             .AddTypeExtension<UserMutations>()
             .AddDataLoader<AudioByIdDataLoader>()
             .AddDataLoader<UserByIdDataLoader>()

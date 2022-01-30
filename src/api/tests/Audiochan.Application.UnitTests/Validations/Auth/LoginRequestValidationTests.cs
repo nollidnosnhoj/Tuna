@@ -17,14 +17,14 @@ namespace Audiochan.Application.UnitTests.Validations.Auth
         [Fact]
         public void CheckIfUsernameIsEmpty()
         {
-            var result = _validator.TestValidate(new LoginCommand("", "testpassword123"));
+            var result = _validator.TestValidate(new LoginCommand());
             result.ShouldHaveValidationErrorFor(x => x.Login);
         }
 
         [Fact]
         public void CheckIfPasswordIsEmpty()
         {
-            var result = _validator.TestValidate(new LoginCommand("testuser", ""));
+            var result = _validator.TestValidate(new LoginCommand());
             result.ShouldHaveValidationErrorFor(x => x.Password);
         }
     }

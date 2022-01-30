@@ -5,7 +5,6 @@ using Audiochan.Application.Features.Auth.Commands.Login;
 using Audiochan.Application.Features.Auth.Commands.Register;
 using Audiochan.Application.Features.Auth.Queries.GetCurrentUser;
 using Audiochan.Application.Services;
-using Audiochan.Server.Services;
 using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -19,12 +18,12 @@ namespace Audiochan.Server.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IMediator _mediator;
-        private readonly IAuthService _authService;
+        private readonly IDateTimeProvider _dateTime;
 
-        public AuthController(IMediator mediator, IAuthService authService)
+        public AuthController(IMediator mediator, IDateTimeProvider dateTime)
         {
             _mediator = mediator;
-            _authService = authService;
+            _dateTime = dateTime;
         }
 
         [HttpPost("login", Name = "Login")]
@@ -40,7 +39,17 @@ namespace Audiochan.Server.Controllers
         {
             var user = await _mediator.Send(command, cancellationToken);
 
-            await _authService.LoginAsync(user, cancellationToken);
+            Claim[] claims =
+            {
+                new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new(ClaimTypes.Name, user.UserName),
+                new(ClaimTypes.Email, user.Email)
+            };
+            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var principal = new ClaimsPrincipal(identity);
+            var properties = new AuthenticationProperties {ExpiresUtc = _dateTime.Now.AddDays(14)};
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, properties);
+            HttpContext.User = principal;
 
             return Ok(user);
         }
@@ -66,9 +75,9 @@ namespace Audiochan.Server.Controllers
         [ProducesResponseType(401)]
         [Authorize]
         [SwaggerOperation(Summary = "Logout user", OperationId = "Logout", Tags = new[]{"auth"})]
-        public async Task<IActionResult> Logout(CancellationToken cancellationToken)
+        public async Task<IActionResult> Logout()
         {
-            await _authService.LogoutAsync(cancellationToken);
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return Ok();
         }
     }

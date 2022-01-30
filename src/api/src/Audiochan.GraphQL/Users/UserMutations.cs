@@ -50,10 +50,10 @@ public class UserMutations
         return await mediator.Send(command, cancellationToken);
     }
     
-    [UseMutationConvention(PayloadFieldName = "message")]
+    [UseMutationConvention(PayloadFieldName = "success")]
     [Authorize]
     [Error(typeof(Forbidden))]
-    public async Task<string> RemoveUserPicture(
+    public async Task<bool> RemoveUserPicture(
         ClaimsPrincipal claimsPrincipal,
         [Service] IMediator mediator,
         CancellationToken cancellationToken = default)
@@ -61,7 +61,7 @@ public class UserMutations
         var userId = claimsPrincipal.GetUserId();
         var command = new RemoveUserPictureCommand(userId);
         await mediator.Send(command, cancellationToken);
-        return "Successfully removed picture.";
+        return true;
     }
     
     [UseMutationConvention]
@@ -82,12 +82,12 @@ public class UserMutations
         return await mediator.Send(command, cancellationToken);
     }
 
-    [UseMutationConvention(PayloadFieldName = "message")]
+    [UseMutationConvention(PayloadFieldName = "success")]
     [Authorize]
     [Error(typeof(ValidationError))]
     [Error(typeof(Forbidden))]
     [Error(typeof(UnmatchedPassword))]
-    public async Task<string> UpdatePassword(
+    public async Task<bool> UpdatePassword(
         string currentPassword,
         string newPassword,
         ClaimsPrincipal claimsPrincipal,
@@ -97,14 +97,14 @@ public class UserMutations
         var userId = claimsPrincipal.GetUserId();
         var command = new UpdatePasswordCommand(userId, currentPassword, newPassword);
         await mediator.Send(command, cancellationToken);
-        return "Successfully updated your password.";
+        return true;
     }
 
-    [UseMutationConvention(PayloadFieldName = "message")]
+    [UseMutationConvention(PayloadFieldName = "success")]
     [Authorize]
     [Error(typeof(UserNotFound))]
     [Error(typeof(Forbidden))]
-    public async Task<string> Follow(
+    public async Task<bool> Follow(
         [ID(nameof(User))] long targetUserId,
         ClaimsPrincipal claimsPrincipal,
         [Service] IMediator mediator,
@@ -113,14 +113,14 @@ public class UserMutations
         var observerUserId = claimsPrincipal.GetUserId();
         var command = new SetFollowCommand(observerUserId, targetUserId, true);
         await mediator.Send(command, cancellationToken);
-        return $"Successfully followed user (id: {targetUserId}).";
+        return true;
     }
     
-    [UseMutationConvention(PayloadFieldName = "message")]
+    [UseMutationConvention(PayloadFieldName = "success")]
     [Authorize]
     [Error(typeof(UserNotFound))]
     [Error(typeof(Forbidden))]
-    public async Task<string> Unfollow(
+    public async Task<bool> Unfollow(
         [ID(nameof(User))] long targetUserId,
         ClaimsPrincipal claimsPrincipal,
         [Service] IMediator mediator,
@@ -129,6 +129,6 @@ public class UserMutations
         var observerUserId = claimsPrincipal.GetUserId();
         var command = new SetFollowCommand(observerUserId, targetUserId, false);
         await mediator.Send(command, cancellationToken);
-        return $"Successfully unfollowed user (id: {targetUserId}).";
+        return true;
     }
 }
