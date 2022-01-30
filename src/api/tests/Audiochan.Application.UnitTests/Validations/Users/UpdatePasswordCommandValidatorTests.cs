@@ -19,7 +19,7 @@ namespace Audiochan.Application.UnitTests.Validations.Users
         [Fact]
         public void PasswordRequired()
         {
-            var req = new UpdatePasswordCommand(1, "", "");
+            var req = new UpdatePasswordCommand {NewPassword = ""};
             var validationResult = _validator.TestValidate(req);
             validationResult
                 .ShouldHaveValidationErrorFor(x => x.NewPassword);
@@ -29,7 +29,7 @@ namespace Audiochan.Application.UnitTests.Validations.Users
         [InlineData("thisdoesnothavedigits")]
         public void PasswordRequireDigits(string password)
         {
-            var req = new UpdatePasswordCommand(1, "", password);
+            var req = new UpdatePasswordCommand {NewPassword = password};
 
             var validationResult = _validator.TestValidate(req);
 
@@ -42,7 +42,7 @@ namespace Audiochan.Application.UnitTests.Validations.Users
         [InlineData("OMEGALUL4HEAD")]
         public void PasswordRequireLowercase(string password)
         {
-            var req = new UpdatePasswordCommand(1, "", password);
+            var req = new UpdatePasswordCommand {NewPassword = password};
 
             var validationResult = _validator.TestValidate(req);
 
@@ -55,7 +55,7 @@ namespace Audiochan.Application.UnitTests.Validations.Users
         [InlineData("omegalul4head")]
         public void PasswordRequireUppercase(string password)
         {
-            var req = new UpdatePasswordCommand(1, "", password);
+            var req = new UpdatePasswordCommand {NewPassword = password};
 
             var validationResult = _validator.TestValidate(req);
 
@@ -68,7 +68,7 @@ namespace Audiochan.Application.UnitTests.Validations.Users
         [InlineData("lkdsfhlksdjflksdjflks")]
         public void PasswordRequireNonAlphanumeric(string password)
         {
-            var req = new UpdatePasswordCommand(1, "", password);
+            var req = new UpdatePasswordCommand {NewPassword = password};
 
             var validationResult = _validator.TestValidate(req);
 
@@ -81,7 +81,7 @@ namespace Audiochan.Application.UnitTests.Validations.Users
         [InlineData("no")]
         public void PasswordRequireLength(string password)
         {
-            var req = new UpdatePasswordCommand(1, "", password);
+            var req = new UpdatePasswordCommand {NewPassword = password};
 
             var validationResult = _validator.TestValidate(req);
 
