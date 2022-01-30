@@ -25,7 +25,7 @@ namespace Audiochan.Application.IntegrationTests.Features.Audios
             var response = await SendAsync(request);
 
             // Assert
-            response.Succeeded.Should().BeTrue();
+            response.IsSuccess.Should().BeTrue();
             response.Data.Should().NotBeNull();
             response.Data!.Title.Should().Be(request.Title);
             response.Data.Description.Should().Be(request.Description);

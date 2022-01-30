@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Audiochan.API.Models;
-using Audiochan.Application.Commons.Interfaces;
-using Audiochan.Application.Commons.Results;
+using KopaCore.Result;
+using KopaCore.Result.Errors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Audiochan.API.Extensions

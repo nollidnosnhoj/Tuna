@@ -6,7 +6,8 @@ using Audiochan.Application.Commons.Services;
 using Audiochan.Application.Persistence;
 using Audiochan.Application.Commons.Extensions;
 using Audiochan.Domain.Entities;
-using Audiochan.Application.Commons.Results;
+using KopaCore.Result;
+using KopaCore.Result.Errors;
 using MediatR;
 
 namespace Audiochan.Application.Features.Users.Commands.UpdateProfile

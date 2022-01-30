@@ -6,7 +6,7 @@ using Audiochan.Application.Commons;
 using Audiochan.Application.Commons.CQRS;
 using Audiochan.Application.Commons.Services;
 using Audiochan.Application.Commons.Extensions;
-using Audiochan.Application.Commons.Results;
+using KopaCore.Result;
 using MediatR;
 using Microsoft.Extensions.Options;
 

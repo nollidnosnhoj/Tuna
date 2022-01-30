@@ -6,10 +6,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Application.Commons.CQRS;
 using Audiochan.Application.Commons.Pipelines.Attributes;
-using Audiochan.Application.Commons.Results;
 using Audiochan.Application.Commons.Services;
 using Audiochan.Application.Persistence;
 using Audiochan.Domain.Entities;
+using KopaCore.Result;
+using KopaCore.Result.Errors;
 using MediatR;
 using Microsoft.Extensions.Options;
 
