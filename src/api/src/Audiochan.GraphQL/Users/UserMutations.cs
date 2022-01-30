@@ -8,7 +8,6 @@ using Audiochan.Application.Features.Users.Commands.UpdatePassword;
 using Audiochan.Application.Features.Users.Commands.UpdatePicture;
 using Audiochan.Application.Features.Users.Commands.UpdateProfile;
 using Audiochan.Application.Features.Users.Commands.UpdateUsername;
-using Audiochan.Application.Features.Users.Models;
 using Audiochan.Domain.Entities;
 using Audiochan.GraphQL.Common.Errors;
 using Audiochan.GraphQL.Users.Errors;
@@ -22,7 +21,7 @@ public class UserMutations
 {
     [UseMutationConvention]
     [Authorize]
-    public async Task<UserDto> UpdateProfile(
+    public async Task<User> UpdateProfile(
         string? displayName,
         string? about,
         string? website,

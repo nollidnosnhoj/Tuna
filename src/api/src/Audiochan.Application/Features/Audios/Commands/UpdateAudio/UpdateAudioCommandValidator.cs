@@ -25,7 +25,7 @@ namespace Audiochan.Application.Features.Audios.Commands.UpdateAudio
             When(req => req.Tags is not null, () =>
             {
                 RuleFor(req => req.Tags)
-                    .Must(u => u!.Length <= 10)
+                    .Must(u => u!.Count <= 10)
                     .WithMessage("Can only have up to 10 tags per audio upload.")
                     .ForEach(tagsRule =>
                     {
