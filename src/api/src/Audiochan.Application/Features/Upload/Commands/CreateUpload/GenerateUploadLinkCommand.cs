@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Application.Commons.CQRS;
 using Audiochan.Application.Commons.Extensions;
-using Audiochan.Application.Services;
+using Audiochan.Application.Commons.Services;
 using MediatR;
 using Microsoft.Extensions.Options;
 

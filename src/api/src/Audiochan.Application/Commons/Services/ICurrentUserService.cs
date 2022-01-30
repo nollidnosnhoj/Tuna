@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace Audiochan.Application.Services
+namespace Audiochan.Application.Commons.Services
 {
     public interface ICurrentUserService
     {

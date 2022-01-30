@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Security.Claims;
-using Audiochan.Application.Services;
+using Audiochan.Application.Commons.Services;
 using Moq;
 
 namespace Audiochan.Tests.Common.Mocks

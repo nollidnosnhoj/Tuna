@@ -3,7 +3,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Audiochan.Application.Services
+namespace Audiochan.Application.Commons.Services
 {
     public interface IStorageService
     {

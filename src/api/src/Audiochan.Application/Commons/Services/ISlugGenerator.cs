@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Audiochan.Application.Services
+namespace Audiochan.Application.Commons.Services
 {
     public interface ISlugGenerator
     {

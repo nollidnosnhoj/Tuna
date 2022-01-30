@@ -1,10 +1,10 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Application.Commons.CQRS;
+using Audiochan.Application.Commons.Services;
 using Audiochan.Application.Features.Auth.Exceptions;
 using Audiochan.Application.Features.Users.Exceptions;
 using Audiochan.Application.Persistence;
-using Audiochan.Application.Services;
 using Audiochan.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;

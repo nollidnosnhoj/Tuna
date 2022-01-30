@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Audiochan.Application.Services
+namespace Audiochan.Application.Commons.Services
 {
     public interface IDateTimeProvider
     {

@@ -6,7 +6,7 @@ using Audiochan.API.Middlewares;
 using Audiochan.API.Services;
 using Audiochan.Application;
 using Audiochan.Application.Commons.Pipelines;
-using Audiochan.Application.Services;
+using Audiochan.Application.Commons.Services;
 using Audiochan.GraphQL;
 using Audiochan.Infrastructure;
 using Audiochan.Infrastructure.Storage.AmazonS3;

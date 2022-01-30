@@ -4,9 +4,9 @@ using Audiochan.Application.Commons.CQRS;
 using Audiochan.Application.Commons.Dtos.Responses;
 using Audiochan.Application.Commons.Exceptions;
 using Audiochan.Application.Commons.Interfaces;
+using Audiochan.Application.Commons.Services;
 using Audiochan.Application.Persistence;
 using Audiochan.Application.Commons.Extensions;
-using Audiochan.Application.Services;
 using MediatR;
 
 namespace Audiochan.Application.Features.Users.Commands.UpdatePicture

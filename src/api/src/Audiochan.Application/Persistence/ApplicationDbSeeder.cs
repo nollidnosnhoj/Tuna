@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Audiochan.Application.Services;
+using Audiochan.Application.Commons.Services;
 using Audiochan.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
