@@ -1,10 +1,7 @@
-﻿using System.Security.Claims;
-using Audiochan.Application.Commons.Dtos.Responses;
-using Audiochan.Application.Commons.Extensions;
+﻿using Audiochan.Application.Commons.Dtos.Responses;
 using Audiochan.Application.Features.Audios.Commands.CreateAudio;
 using Audiochan.Application.Features.Audios.Commands.RemoveAudio;
 using Audiochan.Application.Features.Audios.Commands.RemovePicture;
-using Audiochan.Application.Features.Audios.Commands.SetFavoriteAudio;
 using Audiochan.Application.Features.Audios.Commands.UpdateAudio;
 using Audiochan.Application.Features.Audios.Commands.UpdatePicture;
 using Audiochan.Application.Features.Upload.Commands.CreateUpload;
@@ -107,35 +104,5 @@ public class AudioMutations
     {
         var command = new GenerateUploadLinkCommand(fileName, filesize);
         return await mediator.Send(command, cancellationToken);
-    }
-
-    [UseMutationConvention(PayloadFieldName = "success")]
-    [Authorize]
-    [Error(typeof(AudioNotFound))]
-    public async Task<bool> Favorite(
-        [ID(nameof(Audio))] long id,
-        ClaimsPrincipal claimsPrincipal,
-        [Service] IMediator mediator,
-        CancellationToken cancellationToken = default)
-    {
-        var userId = claimsPrincipal.GetUserId();
-        var command = new SetFavoriteAudioCommand(id, userId, true);
-        await mediator.Send(command, cancellationToken);
-        return true;
-    }
-    
-    [UseMutationConvention(PayloadFieldName = "success")]
-    [Authorize]
-    [Error(typeof(AudioNotFound))]
-    public async Task<bool> Unfavorite(
-        [ID(nameof(Audio))] long id,
-        ClaimsPrincipal claimsPrincipal,
-        [Service] IMediator mediator,
-        CancellationToken cancellationToken = default)
-    {
-        var userId = claimsPrincipal.GetUserId();
-        var command = new SetFavoriteAudioCommand(id, userId, false);
-        await mediator.Send(command, cancellationToken);
-        return true;
     }
 }

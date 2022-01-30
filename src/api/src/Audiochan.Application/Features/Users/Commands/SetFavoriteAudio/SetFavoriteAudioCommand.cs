@@ -7,7 +7,7 @@ using Audiochan.Application.Persistence;
 using Audiochan.Domain.Entities;
 using MediatR;
 
-namespace Audiochan.Application.Features.Audios.Commands.SetFavoriteAudio
+namespace Audiochan.Application.Features.Users.Commands.SetFavoriteAudio
 {
     public record SetFavoriteAudioCommand(long AudioId, long UserId, bool IsFavoriting) : ICommandRequest
     {
