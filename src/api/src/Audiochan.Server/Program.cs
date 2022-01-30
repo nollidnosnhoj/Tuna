@@ -1,6 +1,8 @@
 using System;
 using System.Threading.Tasks;
 using Audiochan.Application.Persistence;
+using Audiochan.Application.Services;
+using Audiochan.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Application.Commons.CQRS;
@@ -8,6 +9,8 @@ using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
+using DistributedCacheExtensions = Audiochan.Application.Commons.Extensions.DistributedCacheExtensions;
 
 namespace Audiochan.Application.Features.Audios.Queries.GetAudio
 {

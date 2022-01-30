@@ -1,5 +1,5 @@
-﻿using Audiochan.Application.Commons.Extensions;
-using Audiochan.Application.Features.Audios.Models;
+﻿using Audiochan.Application.Features.Audios.Models;
+using Audiochan.Application.Commons.Extensions;
 using Audiochan.Domain.Entities;
 using AutoMapper;
 

@@ -2,11 +2,12 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Application.Commons.CQRS;
+using Audiochan.Application.Features.Auth.Queries.GetCurrentUser;
+using Audiochan.Application.Persistence;
+using AutoMapper;
 using Audiochan.Application.Features.Auth.Exceptions;
 using Audiochan.Application.Features.Users.Models;
-using Audiochan.Application.Persistence;
 using Audiochan.Application.Services;
-using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 

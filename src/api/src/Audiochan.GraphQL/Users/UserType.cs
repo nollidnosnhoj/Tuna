@@ -1,9 +1,15 @@
 ﻿using System.Security.Claims;
 using Audiochan.Application;
 using Audiochan.Application.Commons.Extensions;
+using Audiochan.Application.Features.Audios.Models;
 using Audiochan.Application.Features.Users.Models;
+using Audiochan.Application.Persistence;
+using Audiochan.Domain.Entities;
+using Audiochan.GraphQL.Audios;
 using Audiochan.GraphQL.Audios.DataLoaders;
 using Audiochan.GraphQL.Users.DataLoaders;
+using HotChocolate.Resolvers;
+using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.GraphQL.Users;
 

@@ -1,5 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Audiochan.Application.Commons.Extensions;
+using Audiochan.Application.Features.Audios.Models;
+using Audiochan.Application.Features.Audios.Queries.GetAudio;
 using Audiochan.Tests.Common.Fakers.Audios;
 using FluentAssertions;
 using NUnit.Framework;

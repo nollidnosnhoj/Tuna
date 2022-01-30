@@ -1,10 +1,14 @@
-﻿using System.Threading;
+﻿using System.Security.Claims;
+using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Application.Features.Auth.Commands.Login;
 using Audiochan.Application.Features.Auth.Commands.Register;
 using Audiochan.Application.Features.Auth.Queries.GetCurrentUser;
 using Audiochan.Application.Services;
+using Audiochan.Server.Services;
 using MediatR;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;

@@ -1,5 +1,6 @@
 ﻿using Audiochan.GraphQL.Audios;
 using Audiochan.GraphQL.Audios.DataLoaders;
+using Audiochan.GraphQL.Audios.Errors;
 using Audiochan.GraphQL.Auth;
 using Audiochan.GraphQL.Common.Errors;
 using Audiochan.GraphQL.Users;
