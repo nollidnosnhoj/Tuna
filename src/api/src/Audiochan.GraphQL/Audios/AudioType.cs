@@ -26,19 +26,10 @@ public class AudioType : ObjectType<AudioDto>
 
         descriptor.Field(x => x.File)
             .Name("mp3")
-            .Resolve(context =>
-            {
-                var parent = context.Parent<AudioDto>();
-                return MediaLinkConstants.AUDIO_STREAM + parent.File;
-            });
+            .Resolve(GetAudioLink);
 
         descriptor.Field(x => x.Picture)
-            .Resolve(context =>
-            {
-                var parent = context.Parent<AudioDto>();
-                if (string.IsNullOrEmpty(parent.Picture)) return null;
-                return MediaLinkConstants.AUDIO_PICTURE + parent.Picture;
-            });
+            .Resolve(GetAudioPictureLink);
 
         descriptor.Ignore(x => x.UserId);
         descriptor.Field(x => x.User)
@@ -50,13 +41,15 @@ public class AudioType : ObjectType<AudioDto>
 
         descriptor.Field("isFavorited")
             .Authorize()
-            .UseDataloader<FavoritedByAudioIdDataLoader>()
+            .UseDbContext<ApplicationDbContext>()
             .Resolve(async (ctx, ct) =>
             {
-                var currentUserId = ctx.GetUser().GetUserId();
+                var dbContext = ctx.DbContext<ApplicationDbContext>();
                 var parent = ctx.Parent<AudioDto>();
-                var favorited = await ctx.DataLoader<FavoritedByAudioIdDataLoader>().LoadAsync(parent.Id, ct);
-                return favorited.Any(u => u.Id == currentUserId);
+                var claimsPrincipal = ctx.GetUser();
+                claimsPrincipal.TryGetUserId(out var userId);
+                return await dbContext.FavoriteAudios
+                    .AnyAsync(x => x.UserId == userId && x.AudioId == parent.Id, ct);
             });
 
         descriptor.Field("favorited")
@@ -66,5 +59,19 @@ public class AudioType : ObjectType<AudioDto>
                 var parent = ctx.Parent<AudioDto>();
                 return await ctx.DataLoader<FavoritedByAudioIdDataLoader>().LoadAsync(parent.Id, ct);
             });
+    }
+
+    private static string GetAudioLink(IResolverContext context)
+    {
+        var parent = context.Parent<AudioDto>();
+        return MediaLinkConstants.AUDIO_STREAM + parent.File;
+
+    }
+
+    private static string? GetAudioPictureLink(IResolverContext context)
+    {
+        var parent = context.Parent<AudioDto>();
+        if (string.IsNullOrEmpty(parent.Picture)) return null;
+        return MediaLinkConstants.AUDIO_PICTURE + parent.Picture;
     }
 }

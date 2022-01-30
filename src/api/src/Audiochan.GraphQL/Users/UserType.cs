@@ -25,12 +25,7 @@ public class UserType : ObjectType<UserDto>
                 => await ctx.DataLoader<UserByIdDataLoader>().LoadAsync(id, ctx.RequestAborted));
 
         descriptor.Field(x => x.Picture)
-            .Resolve(context =>
-            {
-                var parent = context.Parent<UserDto>();
-                if (string.IsNullOrEmpty(parent.Picture)) return null;
-                return MediaLinkConstants.USER_PICTURE + parent.Picture;
-            });
+            .Resolve(GetUserPicture);
 
         descriptor.Field(x => x.Email)
             .Authorize()
@@ -43,21 +38,27 @@ public class UserType : ObjectType<UserDto>
 
         descriptor.Field("isFollowed")
             .Authorize()
-            .UseDataloader<FollowerByUserIdDataLoader>()
+            .UseDbContext<ApplicationDbContext>()
             .Resolve(async (ctx, ct) =>
             {
-                var userId = ctx.GetUser().GetUserId();
+                var dbContext = ctx.DbContext<ApplicationDbContext>();
                 var parent = ctx.Parent<UserDto>();
-                var followers = await ctx.DataLoader<FollowerByUserIdDataLoader>().LoadAsync(parent.Id, ct);
-                return followers.Any(u => u.Id == userId);
+                var userId = ctx.GetUser().GetUserId();
+                return await dbContext.FollowedUsers
+                    .AnyAsync(fu => fu.ObserverId == userId && fu.TargetId == parent.Id, ct);
             });
 
         descriptor.Field("audios")
-            .UseDataloader<AudiosByUserIdDataLoader>()
-            .Resolve(async (ctx, ct) =>
+            .UseDbContext<ApplicationDbContext>()
+            .UsePaging<AudioType>()
+            .Resolve(ctx =>
             {
+                var dbContext = ctx.DbContext<ApplicationDbContext>();
                 var parent = ctx.Parent<UserDto>();
-                return await ctx.DataLoader<AudiosByUserIdDataLoader>().LoadAsync(parent.Id, ct);
+                return dbContext.Audios
+                    .Where(a => a.UserId == parent.Id)
+                    .OrderByDescending(a => a.Id)
+                    .ProjectTo<Audio, AudioDto>(ctx);
             });
         
         descriptor.Field("favoriteAudios")
@@ -83,5 +84,12 @@ public class UserType : ObjectType<UserDto>
                 var parent = ctx.Parent<UserDto>();
                 return await ctx.DataLoader<FollowerByUserIdDataLoader>().LoadAsync(parent.Id, ct);
             });
+    }
+    
+    private static string? GetUserPicture(IResolverContext context)
+    {
+        var parent = context.Parent<UserDto>();
+        if (string.IsNullOrEmpty(parent.Picture)) return null;
+        return MediaLinkConstants.USER_PICTURE + parent.Picture;
     }
 }

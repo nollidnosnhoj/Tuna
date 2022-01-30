@@ -8,7 +8,7 @@ namespace Audiochan.GraphQL.Users.DataLoaders;
 
 public class FollowingByUserIdDataLoader : GroupedDataLoader<long, UserDto>
 {
-    private static readonly string CacheKey = GetCacheKeyType<FollowingByUserIdDataLoader>();
+    private static readonly string FollowerCacheKey = GetCacheKeyType<FollowingByUserIdDataLoader>();
     private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
     private readonly IMapper _mapper;
     
@@ -33,7 +33,7 @@ public class FollowingByUserIdDataLoader : GroupedDataLoader<long, UserDto>
             .ProjectTo<FollowedUserDto>(_mapper.ConfigurationProvider)
             .ToListAsync(cancellationToken);
         
-        TryAddToCache(CacheKey, 
+        TryAddToCache(FollowerCacheKey, 
             list, 
             item => item.TargetId, 
             item => item.Target);

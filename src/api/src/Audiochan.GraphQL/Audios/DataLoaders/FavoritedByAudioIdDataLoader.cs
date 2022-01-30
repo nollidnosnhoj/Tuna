@@ -9,7 +9,7 @@ namespace Audiochan.GraphQL.Audios.DataLoaders;
 
 public class FavoritedByAudioIdDataLoader : GroupedDataLoader<long, UserDto>
 {
-    private static readonly string CacheKey = GetCacheKeyType<FavoritedByAudioIdDataLoader>();
+    private static readonly string FollowerCacheKey = GetCacheKeyType<FavoritedByAudioIdDataLoader>();
     private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
     private readonly IMapper _mapper;
     
@@ -34,7 +34,7 @@ public class FavoritedByAudioIdDataLoader : GroupedDataLoader<long, UserDto>
             .ProjectTo<FavoriteAudioDto>(_mapper.ConfigurationProvider)
             .ToListAsync(cancellationToken);
         
-        TryAddToCache(CacheKey, 
+        TryAddToCache(FollowerCacheKey, 
             list, 
             item => item.UserId, 
             item => item.User);
