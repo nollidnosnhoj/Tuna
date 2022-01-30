@@ -104,7 +104,7 @@ public class UserMutations
     [Authorize]
     [Error(typeof(UserNotFound))]
     [Error(typeof(Forbidden))]
-    public async Task<string> FollowUser(
+    public async Task<string> Follow(
         [ID(nameof(User))] long targetUserId,
         ClaimsPrincipal claimsPrincipal,
         [Service] IMediator mediator,
@@ -120,7 +120,7 @@ public class UserMutations
     [Authorize]
     [Error(typeof(UserNotFound))]
     [Error(typeof(Forbidden))]
-    public async Task<string> UnfollowUser(
+    public async Task<string> Unfollow(
         [ID(nameof(User))] long targetUserId,
         ClaimsPrincipal claimsPrincipal,
         [Service] IMediator mediator,

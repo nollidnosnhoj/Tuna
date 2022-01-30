@@ -117,7 +117,7 @@ public class AudioMutations
     [UseMutationConvention(PayloadFieldName = "message")]
     [Authorize]
     [Error(typeof(AudioNotFound))]
-    public async Task<string> FavoriteAudio(
+    public async Task<string> Favorite(
         [ID(nameof(AudioDto))] long id,
         ClaimsPrincipal claimsPrincipal,
         [Service] IMediator mediator,
@@ -132,7 +132,7 @@ public class AudioMutations
     [UseMutationConvention(PayloadFieldName = "message")]
     [Authorize]
     [Error(typeof(AudioNotFound))]
-    public async Task<string> UnfavoriteAudio(
+    public async Task<string> Unfavorite(
         [ID(nameof(AudioDto))] long id,
         ClaimsPrincipal claimsPrincipal,
         [Service] IMediator mediator,
