@@ -1,5 +1,6 @@
 ﻿using Audiochan.Application;
 using Audiochan.Application.Commons.Extensions;
+using Audiochan.Application.Commons.Helpers;
 using Audiochan.Application.Features.Audios.Models;
 using Audiochan.Application.Features.Users.Models;
 using Audiochan.Application.Persistence;
@@ -23,6 +24,13 @@ public class AudioType : ObjectType<AudioDto>
             .ResolveNode(async (ctx, id) 
                 => await ctx.DataLoader<AudioByIdDataLoader>()
                     .LoadAsync(id, ctx.RequestAborted));
+
+        descriptor.Field("slug")
+            .Resolve(ctx =>
+            {
+                var parent = ctx.Parent<AudioDto>();
+                return HashIdHelper.EncodeLong(parent.Id);
+            });
 
         descriptor.Field(x => x.File)
             .Name("mp3")
