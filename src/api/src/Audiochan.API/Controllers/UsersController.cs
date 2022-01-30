@@ -36,7 +36,7 @@ namespace Audiochan.API.Controllers
 
             return result != null
                 ? Ok(result)
-                : NotFound(new ErrorApiResponse("User was not found.", null));
+                : NotFound(ErrorApiResponse.NotFound("User was not found."));
         }
 
         [HttpGet("{username}/audios", Name = "GetUserAudios")]

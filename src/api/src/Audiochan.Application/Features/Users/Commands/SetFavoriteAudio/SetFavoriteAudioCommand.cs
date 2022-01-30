@@ -5,8 +5,6 @@ using Audiochan.Application.Commons.CQRS;
 using Audiochan.Application.Commons.Services;
 using Audiochan.Application.Persistence;
 using Audiochan.Domain.Entities;
-using KopaCore.Result;
-using KopaCore.Result.Errors;
 using MediatR;
 
 namespace Audiochan.Application.Features.Users.Commands.SetFavoriteAudio
@@ -32,7 +30,7 @@ namespace Audiochan.Application.Features.Users.Commands.SetFavoriteAudio
                 .LoadAudioWithFavorites(command.AudioId, command.UserId, cancellationToken);
 
             if (audio == null)
-                return new NotFoundErrorResult();
+                return Result.NotFound<Audio>();
 
             if (command.IsFavoriting)
                 audio.Favorite(command.UserId, _dateTimeProvider.Now);
@@ -41,7 +39,7 @@ namespace Audiochan.Application.Features.Users.Commands.SetFavoriteAudio
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return new SuccessResult();
+            return Result.Success();
         }
     }
 }

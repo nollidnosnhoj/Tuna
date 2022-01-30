@@ -10,8 +10,6 @@ using Audiochan.Application.Persistence;
 using Audiochan.Application.Commons.Extensions;
 using Audiochan.Domain.Entities;
 using AutoMapper;
-using KopaCore.Result;
-using KopaCore.Result.Errors;
 using MediatR;
 using Microsoft.Extensions.Caching.Distributed;
 
@@ -60,17 +58,17 @@ namespace Audiochan.Application.Features.Audios.Commands.UpdateAudio
             var audio = await _unitOfWork.Audios.FindAsync(command.AudioId, cancellationToken);
 
             if (audio == null)
-                return new NotFoundErrorResult<AudioDto>();
+                return Result<AudioDto>.NotFound<Audio>();
 
             if (audio.UserId != currentUserId)
-                return new ForbiddenErrorResult<AudioDto>();
+                return Result<AudioDto>.Forbidden();
             
             UpdateAudioFromCommandAsync(audio, command);
             _unitOfWork.Audios.Update(audio);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             await _cache.RemoveAsync(CacheKeys.Audio.GetAudio(command.AudioId), cancellationToken);
             
-            return _mapper.Map<AudioDto>(audio);
+            return Result<AudioDto>.Success(_mapper.Map<AudioDto>(audio));
         }
 
         private void UpdateAudioFromCommandAsync(Audio audio, UpdateAudioCommand command)

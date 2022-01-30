@@ -23,34 +23,37 @@ namespace Audiochan.Application.IntegrationTests.Features.Audios
 
             // Act
             var response = await SendAsync(request);
+            var audio = await SendAsync(new GetAudioQuery(response.Data));
 
             // Assert
             response.IsSuccess.Should().BeTrue();
-            response.Data.Should().NotBeNull();
-            response.Data!.Title.Should().Be(request.Title);
-            response.Data.Description.Should().Be(request.Description);
-            response.Data.Duration.Should().Be(request.Duration);
-            response.Data.Size.Should().Be(request.FileSize);
-            response.Data.User.Should().NotBeNull();
-            response.Data.User.Id.Should().Be(userId);
-            response.Data.User.UserName.Should().Be(userName);
+            response.Data.Should().BeGreaterThan(0);
+            audio.Should().NotBeNull();
+            audio!.Title.Should().Be(request.Title);
+            audio.Description.Should().Be(request.Description);
+            audio.Duration.Should().Be(request.Duration);
+            audio.Size.Should().Be(request.FileSize);
+            audio.User.Should().NotBeNull();
+            audio.User.Id.Should().Be(userId);
+            audio.User.UserName.Should().Be(userName);
         }
 
-        // [Test]
-        // public async Task ShouldCreateCacheSuccessfully()
-        // {
-        //     // Assign
-        //     await RunAsDefaultUserAsync();
-        //     var request = new CreateAudioCommandFaker()
-        //         .Generate();
-        //     var response = await SendAsync(request);
-        //     
-        //     // Act
-        //     var audio = await GetCache<AudioDto>(CacheKeys.Audio.GetAudio(response.Data));
-        //
-        //     // Assert
-        //     audio.Should().NotBeNull();
-        //     audio.Should().BeOfType<AudioDto>();
-        // }
+        [Test]
+        public async Task ShouldCreateCacheSuccessfully()
+        {
+            // Assign
+            await RunAsDefaultUserAsync();
+            var request = new CreateAudioCommandFaker()
+                .Generate();
+            var response = await SendAsync(request);
+            await SendAsync(new GetAudioQuery(response.Data)); // trigger the caching
+            
+            // Act
+            var audio = await GetCache<AudioDto>(CacheKeys.Audio.GetAudio(response.Data));
+
+            // Assert
+            audio.Should().NotBeNull();
+            audio.Should().BeOfType<AudioDto>();
+        }
     }
 }

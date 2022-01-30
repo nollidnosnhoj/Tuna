@@ -5,8 +5,6 @@ using Audiochan.Application.Commons.CQRS;
 using Audiochan.Application.Commons.Services;
 using Audiochan.Application.Persistence;
 using Audiochan.Application.Commons.Extensions;
-using KopaCore.Result;
-using KopaCore.Result.Errors;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -41,19 +39,19 @@ namespace Audiochan.Application.Features.Users.Commands.UpdateUsername
         public async Task<Result> Handle(UpdateUsernameCommand command, CancellationToken cancellationToken)
         {
             var user = await _unitOfWork.Users.FindAsync(command.UserId, cancellationToken);
-            if (user!.Id != _currentUserId) return new ForbiddenErrorResult();
+            if (user!.Id != _currentUserId) return Result.Forbidden();
             
             // check if username already exists
             var usernameExists =
                 await _dbContext.Users.AnyAsync(u => u.UserName == command.NewUsername, cancellationToken);
             if (usernameExists)
-                return new ErrorResult("Username already exists");
+                return Result.BadRequest("Username already exists");
 
             // update username
             user.UserName = command.NewUsername;
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
-            return new SuccessResult();
+            return Result.Success();
         }
     }
 }

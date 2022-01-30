@@ -8,8 +8,6 @@ using Audiochan.Application.Commons.Services;
 using Audiochan.Application.Persistence;
 using Audiochan.Application.Commons.Extensions;
 using Audiochan.Domain.Entities;
-using KopaCore.Result;
-using KopaCore.Result.Errors;
 using MediatR;
 using Microsoft.Extensions.Caching.Distributed;
 
@@ -46,10 +44,10 @@ namespace Audiochan.Application.Features.Audios.Commands.UpdatePicture
             var audio = await _unitOfWork.Audios.FindAsync(command.AudioId, cancellationToken);
 
             if (audio == null)
-                return new NotFoundErrorResult<ImageUploadResponse>();
+                return Result<ImageUploadResponse>.NotFound<Audio>();
 
             if (audio.UserId != currentUserId)
-                return new ForbiddenErrorResult<ImageUploadResponse>();
+                return Result<ImageUploadResponse>.Forbidden();
 
             var blobName = string.Empty;
             if (string.IsNullOrEmpty(command.Data))
@@ -68,10 +66,10 @@ namespace Audiochan.Application.Features.Audios.Commands.UpdatePicture
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             await _cache.RemoveAsync(CacheKeys.Audio.GetAudio(command.AudioId), cancellationToken);
                 
-            return new ImageUploadResponse
+            return Result<ImageUploadResponse>.Success(new ImageUploadResponse
             {
                 Url = MediaLinkConstants.AUDIO_PICTURE + blobName
-            };
+            });
         }
 
         private async Task RemoveOriginalPicture(string? picture, CancellationToken cancellationToken = default)

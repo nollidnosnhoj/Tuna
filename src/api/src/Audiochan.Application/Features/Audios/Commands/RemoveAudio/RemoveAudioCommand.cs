@@ -7,8 +7,6 @@ using Audiochan.Application.Commons.Services;
 using Audiochan.Application.Persistence;
 using Audiochan.Application.Commons.Extensions;
 using Audiochan.Domain.Entities;
-using KopaCore.Result;
-using KopaCore.Result.Errors;
 using MediatR;
 using Microsoft.Extensions.Options;
 
@@ -46,16 +44,16 @@ namespace Audiochan.Application.Features.Audios.Commands.RemoveAudio
             var audio = await _unitOfWork.Audios.FindAsync(command.Id, cancellationToken);
 
             if (audio == null)
-                return new NotFoundErrorResult<bool>();
+                return Result<bool>.NotFound<Audio>();
 
-            if (audio.UserId != currentUserId)
-                return new ForbiddenErrorResult<bool>();
+            if (audio.UserId != currentUserId) 
+                return Result<bool>.Forbidden();
             
             var afterDeletionTasks = GetTasksForAfterDeletion(audio, cancellationToken);
             _unitOfWork.Audios.Remove(audio);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             await Task.WhenAll(afterDeletionTasks);
-            return true;
+            return Result<bool>.Success(true);
         }
 
         private IEnumerable<Task> GetTasksForAfterDeletion(Audio audio, CancellationToken cancellationToken = default)

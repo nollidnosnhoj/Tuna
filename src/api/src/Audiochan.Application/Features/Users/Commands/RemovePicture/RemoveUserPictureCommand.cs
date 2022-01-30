@@ -5,8 +5,6 @@ using Audiochan.Application.Commons.CQRS;
 using Audiochan.Application.Commons.Dtos.Responses;
 using Audiochan.Application.Commons.Services;
 using Audiochan.Application.Persistence;
-using KopaCore.Result;
-using KopaCore.Result.Errors;
 using MediatR;
 
 namespace Audiochan.Application.Features.Users.Commands.RemovePicture
@@ -29,9 +27,9 @@ namespace Audiochan.Application.Features.Users.Commands.RemovePicture
             var user = await _unitOfWork.Users.FindAsync(command.UserId, cancellationToken);
 
             if (user!.Id != command.UserId)
-                return new ForbiddenErrorResult();
+                return Result<ImageUploadResponse>.Forbidden();
 
-            if (string.IsNullOrEmpty(user.Picture)) return new SuccessResult();
+            if (string.IsNullOrEmpty(user.Picture)) return Result.Success();
             
             await _imageService.RemoveImage(AssetContainerConstants.USER_PICTURES, user.Picture, cancellationToken);
 
@@ -39,7 +37,7 @@ namespace Audiochan.Application.Features.Users.Commands.RemovePicture
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return new SuccessResult();
+            return Result.Success();
         }
     }
 }

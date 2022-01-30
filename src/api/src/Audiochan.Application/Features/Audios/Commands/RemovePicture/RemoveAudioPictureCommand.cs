@@ -7,8 +7,6 @@ using Audiochan.Application.Commons.Services;
 using Audiochan.Application.Persistence;
 using Audiochan.Application.Commons.Extensions;
 using Audiochan.Domain.Entities;
-using KopaCore.Result;
-using KopaCore.Result.Errors;
 using MediatR;
 using Microsoft.Extensions.Caching.Distributed;
 
@@ -39,12 +37,12 @@ namespace Audiochan.Application.Features.Audios.Commands.RemovePicture
             var audio = await _unitOfWork.Audios.FindAsync(request.AudioId, cancellationToken);
 
             if (audio == null)
-                return new NotFoundErrorResult();
+                return Result<ImageUploadResponse>.NotFound<Audio>();
 
             if (audio.UserId != currentUserId)
-                return new ForbiddenErrorResult();
+                return Result<ImageUploadResponse>.Forbidden();
 
-            if (string.IsNullOrEmpty(audio.Picture)) return new SuccessResult();
+            if (string.IsNullOrEmpty(audio.Picture)) return Result.Success();
             
             await _imageService.RemoveImage(AssetContainerConstants.AUDIO_PICTURES, audio.Picture, cancellationToken);
             audio.Picture = null;
@@ -52,7 +50,7 @@ namespace Audiochan.Application.Features.Audios.Commands.RemovePicture
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             await _cache.RemoveAsync(CacheKeys.Audio.GetAudio(request.AudioId), cancellationToken);
 
-            return new SuccessResult();        
+            return Result.Success();
         }
     }
 }
