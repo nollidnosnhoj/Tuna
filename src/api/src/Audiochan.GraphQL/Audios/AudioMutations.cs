@@ -2,13 +2,13 @@
 using Audiochan.Application.Commons.Dtos.Responses;
 using Audiochan.Application.Commons.Extensions;
 using Audiochan.Application.Features.Audios.Commands.CreateAudio;
+using Audiochan.Application.Features.Audios.Commands.CreateUpload;
 using Audiochan.Application.Features.Audios.Commands.RemoveAudio;
 using Audiochan.Application.Features.Audios.Commands.RemovePicture;
 using Audiochan.Application.Features.Audios.Commands.SetFavoriteAudio;
 using Audiochan.Application.Features.Audios.Commands.UpdateAudio;
 using Audiochan.Application.Features.Audios.Commands.UpdatePicture;
 using Audiochan.Application.Features.Audios.Models;
-using Audiochan.Application.Features.Upload.Commands.CreateUpload;
 using Audiochan.GraphQL.Audios.Errors;
 using Audiochan.GraphQL.Common.Errors;
 using HotChocolate.AspNetCore.Authorization;
