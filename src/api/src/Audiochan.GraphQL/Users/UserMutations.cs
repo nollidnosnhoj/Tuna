@@ -3,10 +3,11 @@ using Audiochan.Application.Commons.Dtos.Responses;
 using Audiochan.Application.Commons.Extensions;
 using Audiochan.Application.Features.Users.Commands.RemovePicture;
 using Audiochan.Application.Features.Users.Commands.SetFollow;
+using Audiochan.Application.Features.Users.Commands.UpdateEmail;
 using Audiochan.Application.Features.Users.Commands.UpdatePassword;
 using Audiochan.Application.Features.Users.Commands.UpdatePicture;
 using Audiochan.Application.Features.Users.Commands.UpdateProfile;
-using Audiochan.Application.Features.Users.Commands.UpdateUser;
+using Audiochan.Application.Features.Users.Commands.UpdateUsername;
 using Audiochan.Application.Features.Users.Models;
 using Audiochan.Domain.Entities;
 using Audiochan.GraphQL.Common.Errors;
@@ -63,25 +64,41 @@ public class UserMutations
         await mediator.Send(command, cancellationToken);
         return true;
     }
-    
-    [UseMutationConvention]
+
+    [UseMutationConvention(PayloadFieldName = "success")]
     [Authorize]
     [Error(typeof(ValidationError))]
     [Error(typeof(Forbidden))]
     [Error(typeof(UsernameTaken))]
-    [Error(typeof(EmailTaken))]
-    public async Task<UserDto> UpdateUser(
-        string? username,
-        string? email,
+    public async Task<bool> UpdateUsername(
+        string username,
         ClaimsPrincipal claimsPrincipal,
         [Service] IMediator mediator,
         CancellationToken cancellationToken = default)
     {
         var userId = claimsPrincipal.GetUserId();
-        var command = new UpdateUserCommand(userId, username, email);
-        return await mediator.Send(command, cancellationToken);
+        var command = new UpdateUsernameCommand(userId, username);
+        await mediator.Send(command, cancellationToken);
+        return true;
     }
-
+    
+    [UseMutationConvention(PayloadFieldName = "success")]
+    [Authorize]
+    [Error(typeof(ValidationError))]
+    [Error(typeof(Forbidden))]
+    [Error(typeof(EmailTaken))]
+    public async Task<bool> UpdateEmail(
+        string email,
+        ClaimsPrincipal claimsPrincipal,
+        [Service] IMediator mediator,
+        CancellationToken cancellationToken = default)
+    {
+        var userId = claimsPrincipal.GetUserId();
+        var command = new UpdateEmailCommand(userId, email);
+        await mediator.Send(command, cancellationToken);
+        return true;
+    }
+    
     [UseMutationConvention(PayloadFieldName = "success")]
     [Authorize]
     [Error(typeof(ValidationError))]
