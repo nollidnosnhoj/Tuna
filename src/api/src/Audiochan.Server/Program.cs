@@ -32,17 +32,19 @@ namespace Audiochan.Server
                     var services = scope.ServiceProvider;
 
                     var env = services.GetRequiredService<IWebHostEnvironment>();
-                    var dbContextFactory = services.GetRequiredService<IDbContextFactory<ApplicationDbContext>>();
+                    var context = services.GetRequiredService<ApplicationDbContext>();
 
-                    await using (var dbContext = await dbContextFactory.CreateDbContextAsync())
+                    Log.Information("Migrating database...");
+                    await context.Database.MigrateAsync();
+
+                    if (env.IsDevelopment())
                     {
-                        Log.Information("Migrating database...");
-                        await dbContext.Database.MigrateAsync();
-                        
-                        if (env.IsDevelopment())
+                        Log.Information("Seeding users and default audios.");
+                        var pwHasher = services.GetRequiredService<IPasswordHasher>();
+                        var userId = await ApplicationDbSeeder.UserSeedAsync(context, pwHasher);
+                        if (userId > 0)
                         {
-                            Log.Information("Seeding demo data.");
-                            await ApplicationDbSeeder.SeedDataAsync(dbContext, services);
+                            await ApplicationDbSeeder.AudioSeedAsync(context, userId);
                         }
                     }
                 }
