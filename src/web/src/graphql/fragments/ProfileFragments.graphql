@@ -1,4 +1,0 @@
-fragment Profile on User {
-  ... User
-  isFollowed @authorize
-}
