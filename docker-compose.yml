@@ -18,7 +18,7 @@ services:
     restart: on-failure:1
     container_name: backend
     build:
-      context: src/api
+      context: api
       dockerfile: Dockerfile
     environment:
       - "ConnectionStrings__Database=Server=localhost;Port=5432;Database=${POSTGRES_DB};UserId=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
@@ -34,7 +34,7 @@ services:
     restart: on-failure:1
     container_name: frontend
     build:
-      context: src/web
+      context: web
     environment:
       - "NEXT_PUBLIC_IS_PRODUCTION=true"
       - "NEXT_PUBLIC_BACKEND_API=http://backend/"
