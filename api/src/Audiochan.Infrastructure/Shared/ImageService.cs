@@ -74,7 +74,7 @@ namespace Audiochan.Infrastructure.Shared
             return imageStream;
         }
 
-        private static Image<Rgba32> ModifyImage(Image<Rgba32> imageContext)
+        private static Image ModifyImage(Image imageContext)
         {
             // Resize to 500x500
             var resizedImage = imageContext.Clone(x => x.Resize(500, 500));

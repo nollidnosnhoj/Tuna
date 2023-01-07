@@ -63,7 +63,7 @@ namespace Audiochan.API
             services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.ConfigureControllers(jsonSerializerOptions);
             services.ConfigureRouting();
-            services.ConfigureRateLimiting(Configuration);
+            services.ConfigureRateLimiting();
             services.ConfigureCors();
             services.ConfigureSwagger();
         }
@@ -72,7 +72,7 @@ namespace Audiochan.API
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseCorsConfig();
-            app.UseRateLimiting();
+            app.UseRateLimiter();
             app.UseMiddleware<ExceptionHandlingMiddleware>();
             app.UseSerilogRequestLogging();
             app.UseRouting();
