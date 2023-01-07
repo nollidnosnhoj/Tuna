@@ -1,8 +1,6 @@
 ﻿using System.Threading.Tasks;
-using Audiochan.Core.Audios;
 using Audiochan.Core.Audios.Queries;
 using Audiochan.Core.Dtos;
-using Audiochan.Core.Exceptions;
 using Audiochan.Core.Extensions;
 using Audiochan.Tests.Common.Fakers.Audios;
 using FluentAssertions;

@@ -1,30 +1,32 @@
-﻿using AspNetCoreRateLimit;
-using Audiochan.API.Middlewares;
+﻿using System;
+using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Audiochan.API.Extensions.ConfigurationExtensions
 {
     public static class RateLimitConfigExtensions
     {
-        public static IServiceCollection ConfigureRateLimiting(this IServiceCollection services,
-            IConfiguration configuration)
+        public static IServiceCollection ConfigureRateLimiting(this IServiceCollection services)
         {
-            services
-                .AddInMemoryRateLimiting()
-                .Configure<IpRateLimitOptions>(configuration.GetSection("RateLimitingOptions"))
-                .Configure<IpRateLimitPolicies>(configuration.GetSection("RateLimitPolicies"))
-                .AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>()
-                .AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>()
-                .AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+            services.AddRateLimiter(options =>
+            {
+                options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
+                {
+                    return RateLimitPartition.GetFixedWindowLimiter(
+                        context.User.Identity?.Name ?? context.Request.Headers.Host.ToString(),
+                        _ => new FixedWindowRateLimiterOptions
+                        {
+                            AutoReplenishment = true,
+                            PermitLimit = 50,
+                            QueueLimit = 0,
+                            Window = TimeSpan.FromMinutes(1)
+                        });
+                });
+            });
 
             return services;
-        }
-
-        public static void UseRateLimiting(this IApplicationBuilder app)
-        {
-            app.UseMiddleware<CustomRateLimitingMiddleware>();
         }
     }
 }

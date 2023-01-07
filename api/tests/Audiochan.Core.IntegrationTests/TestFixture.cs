@@ -10,7 +10,6 @@ using Audiochan.Core.Persistence;
 using Audiochan.Core.Services;
 using Audiochan.Domain.Entities;
 using Audiochan.Domain.Enums;
-using Audiochan.Infrastructure.Persistence;
 using Audiochan.Tests.Common.Mocks;
 using MediatR;
 using Microsoft.AspNetCore.Hosting;
@@ -22,6 +21,8 @@ using Moq;
 using Npgsql;
 using NUnit.Framework;
 using Respawn;
+using Respawn.Graph;
+
 #pragma warning disable 8618
 
 namespace Audiochan.Core.IntegrationTests
@@ -32,7 +33,7 @@ namespace Audiochan.Core.IntegrationTests
         private static IConfigurationRoot _configuration;
         private static IWebHostEnvironment _env;
         private static IServiceScopeFactory _scopeFactory;
-        private static Checkpoint _checkpoint;
+        private static Respawner _checkpoint;
 
         private static ClaimsPrincipal? _user;
 
@@ -47,10 +48,7 @@ namespace Audiochan.Core.IntegrationTests
             var builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", false, true)
-                .AddInMemoryCollection(new Dictionary<string, string>
-                {
-                    { "ConnectionStrings:Database", dockerConnectionString }
-                })
+                .AddInMemoryCollection(new []{new KeyValuePair<string, string?>("ConnectionStrings:Database", dockerConnectionString)})
                 .AddEnvironmentVariables();
 
             _configuration = builder.Build();
@@ -79,12 +77,20 @@ namespace Audiochan.Core.IntegrationTests
             
             _scopeFactory = services.BuildServiceProvider().GetService<IServiceScopeFactory>() 
                             ?? throw new InvalidOperationException();
-            
-            _checkpoint = new Checkpoint
+
+            await using var conn = new NpgsqlConnection(_configuration.GetConnectionString(dockerConnectionString));
+            _checkpoint = await Respawner.CreateAsync(conn, new RespawnerOptions
             {
-                TablesToIgnore = new[] { "__EFMigrationsHistory" },
-                DbAdapter = DbAdapter.Postgres
-            };
+                TablesToIgnore = new Table[] { new("__EFMigrationsHistory") },
+                DbAdapter = DbAdapter.Postgres,
+                SchemasToInclude = new[] { "public" }
+            });
+            
+            // _checkpoint = new Checkpoint
+            // {
+            //     TablesToIgnore = new[] { "__EFMigrationsHistory" },
+            //     DbAdapter = DbAdapter.Postgres
+            // };
             
             EnsureDatabase();
         }
@@ -273,7 +279,7 @@ namespace Audiochan.Core.IntegrationTests
         {
             await using var conn = new NpgsqlConnection(_configuration.GetConnectionString("Database"));
             await conn.OpenAsync();
-            await _checkpoint.Reset(conn);
+            await _checkpoint.ResetAsync(conn);
         }
 
         private static void EnsureDatabase()

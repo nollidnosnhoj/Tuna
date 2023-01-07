@@ -20,7 +20,7 @@ namespace Audiochan.API.Middlewares.Pipelines
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
+        public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
         {
             TResponse? result;
 
