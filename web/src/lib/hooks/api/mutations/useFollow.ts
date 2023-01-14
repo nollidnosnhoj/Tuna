@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { QueryKey, useMutation, useQuery, useQueryClient } from "react-query";
+import { QueryKey, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import request from "~/lib/http";
 import { ID } from "~/lib/types";
 import { useUser } from "~/components/providers/UserProvider";

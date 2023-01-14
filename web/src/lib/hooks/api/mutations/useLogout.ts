@@ -1,4 +1,4 @@
-import { useMutation, UseMutationResult, useQueryClient } from "react-query";
+import { useMutation, UseMutationResult, useQueryClient } from "@tanstack/react-query";
 import { useUser } from "~/components/providers/UserProvider";
 import request from "~/lib/http";
 import { CurrentUser } from "~/lib/types";

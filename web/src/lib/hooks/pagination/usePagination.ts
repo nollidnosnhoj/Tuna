@@ -4,7 +4,7 @@ import {
   useQuery,
   UseQueryOptions,
   UseQueryResult,
-} from "react-query";
+} from "@tanstack/react-query";
 import { ErrorResponse, PagedList } from "../../types";
 
 type PaginationQueryFunction<TItem> = (

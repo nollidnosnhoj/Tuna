@@ -26,6 +26,7 @@ export default function NowPlayingSection() {
         >
           {cover && (
             <NextImage
+              alt={title}
               src={cover}
               layout="fill"
               objectFit="cover"

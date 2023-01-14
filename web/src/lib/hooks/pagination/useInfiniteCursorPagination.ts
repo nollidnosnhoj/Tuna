@@ -4,7 +4,7 @@ import {
   useInfiniteQuery,
   UseInfiniteQueryOptions,
   UseInfiniteQueryResult,
-} from "react-query";
+} from "@tanstack/react-query";
 import { CursorPagedList } from "../../types";
 
 type InfiniteCursorPaginationQueryFunction<TItem> = (

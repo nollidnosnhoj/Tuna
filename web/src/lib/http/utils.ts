@@ -30,7 +30,9 @@ export function createApiAxiosInstance(): AxiosInstance {
   return axios.create({
     baseURL: SETTINGS.BACKEND_API,
     withCredentials: true,
-    paramsSerializer: (params) => stringifyQueryObject(params),
+    paramsSerializer: {
+      serialize: (params) => stringifyQueryObject(params),
+    },
     headers: {
       "X-Requested-With": "XMLHttpRequest",
     },

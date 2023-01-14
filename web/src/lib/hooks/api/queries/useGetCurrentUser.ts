@@ -1,4 +1,4 @@
-import { useQuery, UseQueryOptions, UseQueryResult } from "react-query";
+import { useQuery, UseQueryOptions, UseQueryResult } from "@tanstack/react-query";
 import request from "~/lib/http";
 import { CurrentUser } from "~/lib/types";
 import { ME_QUERY_KEY } from "~/lib/hooks/api/keys";

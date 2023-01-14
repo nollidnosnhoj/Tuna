@@ -17,11 +17,16 @@ export const uploadAudioSchema = audioSchema.extend({
       return;
     }
 
-    if (!SETTINGS.UPLOAD.AUDIO.accept.includes(arg.type)) {
-      ctx.addIssue({
-        code: "custom",
-        message: "File is not a valid audio type.",
-      });
+    if (!SETTINGS.UPLOAD.AUDIO.accept[arg.type]) {
+      const fileExts = Object.values(SETTINGS.UPLOAD.AUDIO.accept).flatMap(
+        (x) => x
+      );
+      if (!fileExts.some((x) => arg.name.endsWith(x))) {
+        ctx.addIssue({
+          code: "custom",
+          message: "File is not a valid audio type.",
+        });
+      }
     }
 
     if (SETTINGS.UPLOAD.AUDIO.maxSize <= arg.size) {

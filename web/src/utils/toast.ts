@@ -4,7 +4,9 @@ import { createStandaloneToast, UseToastOptions } from "@chakra-ui/react";
 import theme from "~/lib/theme";
 import { getErrorMessage } from "./error";
 
-const chakraToast = createStandaloneToast({ theme: theme });
+const { ToastContainer, toast: chakraToast } = createStandaloneToast({
+  theme: theme,
+});
 
 type ToastStatus = "info" | "warning" | "success" | "error";
 
@@ -38,3 +40,5 @@ export function errorToast(
     description: getErrorMessage(err),
   });
 }
+
+export default ToastContainer;

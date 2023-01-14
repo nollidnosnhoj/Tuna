@@ -4,7 +4,7 @@ import {
   useInfiniteQuery,
   UseInfiniteQueryOptions,
   UseInfiniteQueryResult,
-} from "react-query";
+} from "@tanstack/react-query";
 import { OffsetPagedList } from "../../types";
 
 type InfinitePaginationQueryFunction<TItem> = (
