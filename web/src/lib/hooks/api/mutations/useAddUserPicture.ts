@@ -1,4 +1,4 @@
-import { useMutation, UseMutationResult, useQueryClient } from "react-query";
+import { useMutation, UseMutationResult, useQueryClient } from "@tanstack/react-query";
 import request from "~/lib/http";
 import { ErrorResponse, ImageUploadResponse, Profile } from "~/lib/types";
 import { GET_PROFILE_QUERY_KEY, ME_QUERY_KEY } from "~/lib/hooks/api/keys";

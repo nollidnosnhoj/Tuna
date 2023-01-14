@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useQuery, UseQueryOptions, UseQueryResult } from "react-query";
+import { useQuery, UseQueryOptions, UseQueryResult } from "@tanstack/react-query";
 import request from "~/lib/http";
 import { ErrorResponse, Profile } from "~/lib/types";
 import { GET_PROFILE_QUERY_KEY } from "~/lib/hooks/api/keys";

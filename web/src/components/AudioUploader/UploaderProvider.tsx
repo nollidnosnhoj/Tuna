@@ -55,7 +55,7 @@ export default function UploaderProvider({
           "x-amz-meta-userId": `${user?.id}`,
         },
         onUploadProgress: (evt) => {
-          const currentProgress = (evt.loaded / evt.total) * 100;
+          const currentProgress = (evt.loaded / (evt.total ?? evt.bytes)) * 100;
           setProgress(currentProgress);
         },
       });

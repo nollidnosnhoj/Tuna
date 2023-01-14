@@ -19,7 +19,9 @@ export interface IAudioItemProps {
   context?: string;
 }
 
-const AudioListItemContainer: React.FC = ({ children }) => {
+const AudioListItemContainer: React.FC<PropsWithChildren<object>> = ({
+  children,
+}) => {
   const [hoverItem, setHoverItem] = useState(false);
   const hoverBg = useColorModeValue("inherit", "whiteAlpha.200");
   return (
