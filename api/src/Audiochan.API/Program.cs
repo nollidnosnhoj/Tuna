@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 using Audiochan.API.Extensions.ConfigurationExtensions;
 using Audiochan.API.Middlewares;
 using Audiochan.API.Services;
-using Audiochan.Common.CQRS.Pipelines;
+using Audiochan.Common.Mediatr.Pipelines;
 using Audiochan.Core;
 using Audiochan.Core.Persistence;
 using Audiochan.Core.Persistence.Pipelines;

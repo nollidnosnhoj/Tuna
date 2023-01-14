@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Common.CQRS;
+using Audiochan.Common.Mediatr;
 using Audiochan.Common.Dtos;
 using Audiochan.Common.Extensions;
 using Audiochan.Common.Helpers;

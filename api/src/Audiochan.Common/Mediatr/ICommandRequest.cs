@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace Audiochan.Common.CQRS;
+namespace Audiochan.Common.Mediatr;
 
 public interface ICommandRequest : IRequest
 {

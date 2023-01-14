@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Common.CQRS;
+using Audiochan.Common.Mediatr;
 using Audiochan.Common.Dtos;
 using Audiochan.Common.Interfaces;
 using Audiochan.Core.Features.Audios.Dtos;
