@@ -1,17 +1,14 @@
 ﻿using System;
 using Audiochan.Core.Services;
-using Moq;
 
-namespace Audiochan.Tests.Common.Mocks
+namespace Audiochan.Tests.Common.Mocks;
+
+public class MockDateTimeProvider : IDateTimeProvider
 {
-    public static class DateTimeProviderMock
+    public MockDateTimeProvider(DateTime now)
     {
-        public static Mock<IDateTimeProvider> Create(DateTime dateTime)
-        {
-            var mock = new Mock<IDateTimeProvider>();
-            mock.Setup(x => x.Now)
-                .Returns(dateTime);
-            return mock;
-        }
+        Now = now;
     }
+        
+    public DateTime Now { get; }
 }

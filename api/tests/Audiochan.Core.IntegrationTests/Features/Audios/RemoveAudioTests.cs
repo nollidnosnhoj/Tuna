@@ -1,48 +1,72 @@
-﻿using System.Linq;
+﻿using System.Net;
 using System.Threading.Tasks;
-using Audiochan.Core.Audios.Commands;
-using Audiochan.Core.Extensions;
+using Audiochan.Core.IntegrationTests.Extensions;
+using Audiochan.Core.Persistence;
 using Audiochan.Tests.Common.Fakers.Audios;
+using Audiochan.Tests.Common.Fakers.Users;
 using FluentAssertions;
-using NUnit.Framework;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Xunit;
 
 namespace Audiochan.Core.IntegrationTests.Features.Audios
 {
-    using static TestFixture;
-
-    public class RemoveAudioTests : TestBase
+    
+    [Collection(nameof(SharedTestCollection))]
+    public class RemoveAudioTests
     {
-        [Test]
+        private readonly AudiochanApiFactory _factory;
+
+        public RemoveAudioTests(AudiochanApiFactory factory)
+        {
+            _factory = factory;
+        }
+        
+        [Fact]
         public async Task ShouldRemoveAudio()
         {
-            var owner = await RunAsDefaultUserAsync();
-            owner.TryGetUserId(out var ownerId);
-            var audio = new AudioFaker(ownerId).Generate();
-            InsertIntoDatabase(audio);
+            using var scope = _factory.Services.CreateScope();
+            await using var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        
+            var user = new UserFaker().Generate();
+            await dbContext.Users.AddAsync(user);
+            await dbContext.SaveChangesAsync();
+            
+            var audio = new AudioFaker(user.Id).Generate();
+            await dbContext.Audios.AddAsync(audio);
+            await dbContext.SaveChangesAsync();
 
-            var command = new RemoveAudioCommand(audio.Id);
-            var result = await SendAsync(command);
+            using var client = _factory.CreateClientWithTestAuth()
+                .AddUserIdToAuthorization(user.Id);
 
-            var created = ExecuteDbContext(dbContext => 
-                dbContext.Audios.SingleOrDefault(x => x.Id == audio.Id));
+            using var response = await client.DeleteAsync($"audios/{audio.Id}");
+            response.StatusCode.Should().Be(HttpStatusCode.NoContent);
 
-            result.Should().NotBeNull();
-            result.IsSuccess.Should().Be(true);
-            created.Should().BeNull();
+            var result = await dbContext.Audios
+                .SingleOrDefaultAsync(x => x.Id == audio.Id);
+
+            result.Should().BeNull();
         }
 
-        [Test]
+        [Fact]
         public async Task ShouldNotRemoveAudio_WhenNotTheAuthor()
         {
-            var owner = await RunAsDefaultUserAsync();
-            owner.TryGetUserId(out var ownerId);
-            var audio = new AudioFaker(ownerId).Generate();
-            InsertIntoDatabase(audio);
-            await RunAsUserAsync();
-            var result = await SendAsync(new RemoveAudioCommand(audio.Id));
+            using var scope = _factory.Services.CreateScope();
+            await using var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        
+            var user = new UserFaker().Generate();
+            await dbContext.Users.AddAsync(user);
+            await dbContext.SaveChangesAsync();
+            
+            var audio = new AudioFaker(user.Id).Generate();
+            await dbContext.Audios.AddAsync(audio);
+            await dbContext.SaveChangesAsync();
+            
+            using var client = _factory.CreateClientWithTestAuth()
+                .AddUserIdToAuthorization(11111);
 
-            result.IsSuccess.Should().BeFalse();
-            result.ErrorCode.Should().Be(ResultError.Forbidden);
+            using var response = await client.DeleteAsync($"audios/{audio.Id}");
+            response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
         }
     }
 }

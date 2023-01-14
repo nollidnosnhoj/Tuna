@@ -8,15 +8,15 @@ namespace Audiochan.API.Extensions.ConfigurationExtensions;
 
 public static class DatabaseConfigExtensions
 {
-    public static IServiceCollection AddDatabase(this IServiceCollection services, IConfiguration configuration,
-        IHostEnvironment env)
+    public static IServiceCollection ConfigureDatabase(this IServiceCollection services, IConfiguration configuration,
+        bool isDevelopment)
     {
         services.AddDbContext<ApplicationDbContext>(o =>
         {
             o.UseNpgsql(configuration.GetConnectionString("Database"));
             o.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
             o.UseSnakeCaseNamingConvention();
-            if (env.IsDevelopment())
+            if (isDevelopment)
             {
                 o.EnableSensitiveDataLogging();
             }

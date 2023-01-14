@@ -3,29 +3,25 @@ using System.Security.Claims;
 using Audiochan.Core.Services;
 using Moq;
 
-namespace Audiochan.Tests.Common.Mocks
+namespace Audiochan.Tests.Common.Mocks;
+
+public class MockCurrentService : ICurrentUserService
 {
-    public static class CurrentUserServiceMock
+    public MockCurrentService(long userId, string userName)
     {
-        public const long MockUserId = 1996;
-        public const string MockUserName = "testuser";
-        
-        public static Mock<ICurrentUserService> Create(ClaimsPrincipal? principal = null)
+        var claims = new List<Claim>
         {
-            var mock = new Mock<ICurrentUserService>();
-            mock.Setup(x => x.User).Returns(principal);
-            return mock;
-        }
+            new(ClaimTypes.NameIdentifier, userId.ToString()),
+            new(ClaimTypes.Name, userName)
+        };
 
-        public static ClaimsPrincipal CreateMockPrincipal(long userId, string username)
-        {
-            var claims = new List<Claim>
-            {
-                new(ClaimTypes.NameIdentifier, userId.ToString()),
-                new(ClaimTypes.Name, username)
-            };
-
-            return new ClaimsPrincipal(new ClaimsIdentity(claims));
-        }
+        User = new ClaimsPrincipal(new ClaimsIdentity(claims));
     }
+
+    public MockCurrentService(ClaimsPrincipal? user)
+    {
+        User = user;
+    }
+        
+    public ClaimsPrincipal? User { get; }
 }
