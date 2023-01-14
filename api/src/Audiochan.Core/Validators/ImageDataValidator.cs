@@ -1,4 +1,4 @@
-﻿using Audiochan.Core.Interfaces;
+﻿using Audiochan.Common.Interfaces;
 using Audiochan.Core.Services;
 using FluentValidation;
 

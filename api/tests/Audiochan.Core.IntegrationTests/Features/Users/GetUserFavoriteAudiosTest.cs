@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
-using Audiochan.Core.Dtos;
-using Audiochan.Core.Dtos.Wrappers;
+using Audiochan.Common.Dtos;
+using Audiochan.Core.Features.Audios.Dtos;
 using Audiochan.Core.IntegrationTests.Extensions;
 using Audiochan.Core.Persistence;
 using Audiochan.Domain.Entities;

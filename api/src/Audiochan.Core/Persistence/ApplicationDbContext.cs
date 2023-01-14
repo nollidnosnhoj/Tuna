@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Extensions;
+using Audiochan.Common.Extensions;
 using Audiochan.Core.Services;
 using Audiochan.Domain.Abstractions;
 using Audiochan.Domain.Entities;

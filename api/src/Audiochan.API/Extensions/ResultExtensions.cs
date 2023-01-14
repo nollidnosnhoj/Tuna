@@ -1,4 +1,5 @@
 ﻿using Audiochan.API.Models;
+using Audiochan.Common.Dtos;
 using Audiochan.Core;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

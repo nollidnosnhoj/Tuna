@@ -1,12 +1,11 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.API.Models;
-using Audiochan.Core.Audios.Queries;
-using Audiochan.Core.Dtos;
-using Audiochan.Core.Dtos.Wrappers;
-using Audiochan.Core.Extensions;
+using Audiochan.Common.Dtos;
+using Audiochan.Common.Extensions;
+using Audiochan.Core.Features.Audios.Dtos;
+using Audiochan.Core.Features.Users.Queries.GetUserAudios;
 using Audiochan.Core.Services;
-using Audiochan.Core.Users.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

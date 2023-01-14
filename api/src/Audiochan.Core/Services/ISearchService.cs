@@ -1,8 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Dtos;
-using Audiochan.Core.Dtos.Filters;
-using Audiochan.Core.Dtos.Wrappers;
+using Audiochan.Common.Dtos;
+using Audiochan.Core.Features.Audios.Dtos;
 
 namespace Audiochan.Core.Services
 {
