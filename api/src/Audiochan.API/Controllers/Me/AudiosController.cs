@@ -1,12 +1,11 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.API.Models;
-using Audiochan.Core.Audios.Queries;
-using Audiochan.Core.Dtos;
-using Audiochan.Core.Dtos.Wrappers;
-using Audiochan.Core.Extensions;
+using Audiochan.Common.Dtos;
+using Audiochan.Common.Extensions;
+using Audiochan.Core.Features.Audios.Dtos;
+using Audiochan.Core.Features.Users.Queries.GetUserAudios;
 using Audiochan.Core.Services;
-using Audiochan.Core.Users.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -48,27 +47,6 @@ namespace Audiochan.API.Controllers.Me
             {
                 Offset = queryParams.Offset,
                 Size = queryParams.Size,
-            }, cancellationToken);
-            return Ok(result);
-        }
-        
-        [HttpGet("feed", Name = "YourAudioFeed")]
-        [Produces("application/json")]
-        [ProducesResponseType(200)]
-        [SwaggerOperation(
-            Summary = "Returns a list of tracks uploaded by authenticated user's followings.",
-            Description = "Requires authentication.",
-            OperationId = "YourAudioFeed",
-            Tags = new[] {"me"}
-        )]
-        public async Task<ActionResult<PagedListDto<AudioDto>>> GetYourFeed(
-            [FromQuery] OffsetPaginationQueryParams queryParams, 
-            CancellationToken cancellationToken)
-        {
-            var result = await _mediator.Send(new GetAudioFeedQuery(_currentUserId)
-            {
-                Offset = queryParams.Offset,
-                Size = queryParams.Size
             }, cancellationToken);
             return Ok(result);
         }

@@ -1,91 +1,76 @@
-﻿using System.Linq;
+﻿using System.Net;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
-using Audiochan.Core.Audios;
-using Audiochan.Core.Audios.Queries;
-using Audiochan.Core.Dtos;
-using Audiochan.Core.Extensions;
+using Audiochan.Core.Features.Audios.Dtos;
+using Audiochan.Core.IntegrationTests.Extensions;
+using Audiochan.Core.Persistence;
 using Audiochan.Tests.Common.Fakers.Audios;
+using Audiochan.Tests.Common.Fakers.Users;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
-using NUnit.Framework;
+using Microsoft.Extensions.DependencyInjection;
+using Xunit;
 
 namespace Audiochan.Core.IntegrationTests.Features.Audios
 {
-    using static TestFixture;
 
-    public class UpdateAudioTests : TestBase
+    [Collection(nameof(SharedTestCollection))]
+    public class UpdateAudioTests
     {
-        [Test]
+        private readonly AudiochanApiFactory _factory;
+
+        public UpdateAudioTests(AudiochanApiFactory factory)
+        {
+            _factory = factory;
+        }
+        
+        [Fact]
         public async Task ShouldNotUpdate_WhenUserCannotModify()
         {
-            // Assign
-            var owner = await RunAsUserAsync("kopacetic");
-            owner.TryGetUserId(out var ownerId);
+            using var scope = _factory.Services.CreateScope();
+            await using var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        
+            var user = new UserFaker().Generate();
+            await dbContext.Users.AddAsync(user);
+            await dbContext.SaveChangesAsync();
+            
+            var audio = new AudioFaker(user.Id).Generate();
+            await dbContext.Audios.AddAsync(audio);
+            await dbContext.SaveChangesAsync();
 
-            var audio = new AudioFaker(ownerId).Generate();
+            var request = new UpdateAudioCommandFaker(audio.Id).Generate();
+            using var client = _factory.CreateClientWithTestAuth().AddUserIdToAuthorization(11111111);
+            using var response = await client.PutAsJsonAsync($"audios/${audio.Id}", request);
 
-            InsertIntoDatabase(audio);
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+        }
 
-            // Act
-            await RunAsDefaultUserAsync();
+        [Fact]
+        public async Task ShouldUpdateSuccessfully()
+        {
+            using var scope = _factory.Services.CreateScope();
+            await using var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        
+            var user = new UserFaker().Generate();
+            await dbContext.Users.AddAsync(user);
+            await dbContext.SaveChangesAsync();
+            
+            var audio = new AudioFaker(user.Id).Generate();
+            await dbContext.Audios.AddAsync(audio);
+            await dbContext.SaveChangesAsync();
 
-            var command = new UpdateAudioCommandFaker(audio.Id).Generate();
+            var request = new UpdateAudioCommandFaker(audio.Id).Generate();
+            using var client = _factory.CreateClientWithTestAuth().AddUserIdToAuthorization(user.Id);
+            using var response = await client.PutAsJsonAsync($"audios/${audio.Id}", request);
+            var result = await response.Content.ReadFromJsonAsync<AudioDto>();
 
-            var result = await SendAsync(command);
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
 
             // Assert
             result.Should().NotBeNull();
-            result.IsSuccess.Should().Be(false);
-            result.ErrorCode.Should().Be(ResultError.Forbidden);
-        }
-
-        [Test]
-        public async Task ShouldUpdateSuccessfully()
-        {
-            // Assign
-            var owner = await RunAsUserAsync("kopacetic");
-            owner.TryGetUserId(out var ownerId);
-
-            var audio = new AudioFaker(ownerId).Generate();
-
-            InsertIntoDatabase(audio);
-            
-            // Act
-            var command = new UpdateAudioCommandFaker(audio.Id).Generate();
-
-            await SendAsync(command);
-
-            var created = ExecuteDbContext(database =>
-            {
-                return database.Audios
-                    .Include(a => a.User)
-                    .SingleOrDefault(a => a.Id == audio.Id);
-            });
-
-            // Assert
-            created.Should().NotBeNull();
-            created!.Title.Should().Be(command.Title);
-            created.Description.Should().Be(command.Description);
-            created.Tags.Count.Should().Be(command.Tags!.Count);
-        }
-
-        [Test]
-        public async Task ShouldInvalidateCacheSuccessfully()
-        {
-            // Assign
-            var user = await RunAsDefaultUserAsync();
-            user.TryGetUserId(out var userId);
-            var audio = new AudioFaker(userId).Generate();
-            InsertIntoDatabase(audio);
-            await SendAsync(new GetAudioQuery(audio.Id));
-            var command = new UpdateAudioCommandFaker(audio.Id).Generate();
-            await SendAsync(command);
-            
-            // Act
-            var cacheResult = await GetCache<AudioDto>(CacheKeys.Audio.GetAudio(audio.Id));
-            
-            // Assert
-            cacheResult.Should().BeNull();
+            result!.Title.Should().Be(request.Title);
+            result.Description.Should().Be(request.Description);
+            result.Tags.Count.Should().Be(request.Tags!.Count);
         }
     }
 }

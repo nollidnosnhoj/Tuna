@@ -1,57 +1,69 @@
 ﻿using System.Collections.Generic;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
-using Audiochan.Core.Extensions;
-using Audiochan.Core.Users.Queries;
+using Audiochan.Common.Dtos;
+using Audiochan.Core.Features.Audios.Dtos;
+using Audiochan.Core.IntegrationTests.Extensions;
+using Audiochan.Core.Persistence;
 using Audiochan.Domain.Entities;
 using Audiochan.Tests.Common.Fakers.Audios;
+using Audiochan.Tests.Common.Fakers.Users;
 using FluentAssertions;
-using NUnit.Framework;
+using Microsoft.Extensions.DependencyInjection;
+using Xunit;
 
 namespace Audiochan.Core.IntegrationTests.Features.Users
 {
-    using static TestFixture;
-
-    public class GetUserFavoriteAudiosTest : TestBase
+    public class GetUserFavoriteAudiosTest
     {
-        [Test]
+        private readonly AudiochanApiFactory _factory;
+        public GetUserFavoriteAudiosTest(AudiochanApiFactory factory)
+        {
+            _factory = factory;
+        }
+        
+        [Fact]
         public async Task ShouldReturnFavoriteAudioSuccessfully()
         {
             // Assign
-            var target = await RunAsDefaultUserAsync();
-            target.TryGetUserId(out var targetId);    
+            using var scope = _factory.Services.CreateScope();
+            await using var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
             
-            var audioFaker = new AudioFaker(targetId);
-            var audios = audioFaker
-                .Generate(3);
+            var users = new UserFaker().Generate(2);
+            var target = users[0];
+            var observer = users[1];
+
+            await dbContext.Users.AddRangeAsync(target, observer);
+            await dbContext.SaveChangesAsync();
             
-            InsertIntoDatabase(audios.ToArray());
-            
-            var observer = await RunAsUserAsync();
-            observer.TryGetUserId(out var observerId);
-            observer.TryGetUserName(out var observerUsername);
-            
+            var audios = new AudioFaker(target.Id).Generate(3);
+            await dbContext.Audios.AddRangeAsync(audios);
+            await dbContext.SaveChangesAsync();
+
             var favoriteAudios = new List<FavoriteAudio>();
             foreach (var audio in audios)
             {
                 var favoriteAudio = new FavoriteAudio
                 {
                     AudioId = audio.Id,
-                    UserId = observerId,
+                    UserId = observer.Id,
                 };
                 
                 favoriteAudios.Add(favoriteAudio);
             }
-            InsertIntoDatabase(favoriteAudios.ToArray());
+
+            await dbContext.FavoriteAudios.AddRangeAsync(favoriteAudios);
+            await dbContext.SaveChangesAsync();
 
             // Act
-            var response = await SendAsync(new GetUserFavoriteAudiosQuery
-            {
-                Username = observerUsername
-            });
+            using var client = _factory.CreateClientWithTestAuth()
+                .AddUserIdToAuthorization(observer.Id);
+            using var response = await client.GetAsync("me/favorites/audios/");
+            var result = await response.Content.ReadFromJsonAsync<OffsetPagedListDto<AudioDto>>();
 
             // Assert
-            response.Should().NotBeNull();
-            response.Items.Count.Should().Be(3);
+            result.Should().NotBeNull();
+            result!.Items.Count.Should().Be(3);
         }
     }
 }

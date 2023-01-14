@@ -2,15 +2,13 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Dtos;
-using Audiochan.Core.Dtos.Filters;
-using Audiochan.Core.Dtos.Wrappers;
-using Audiochan.Core.Extensions;
+using Audiochan.Common.Dtos;
+using Audiochan.Common.Extensions;
+using Audiochan.Core.Features.Audios.Dtos;
+using Audiochan.Core.Features.Audios.Mappings;
 using Audiochan.Core.Persistence;
 using Audiochan.Core.Services;
 using Audiochan.Domain.Entities;
-using AutoMapper;
-using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Infrastructure.Search
@@ -18,20 +16,22 @@ namespace Audiochan.Infrastructure.Search
     public class PostgresSearchService : ISearchService
     {
         private readonly ApplicationDbContext _dbContext;
-        private readonly IMapper _mapper;
+        private readonly ICurrentUserService _currentUserService;
 
-        public PostgresSearchService(ApplicationDbContext dbContext, IMapper mapper)
+        public PostgresSearchService(ApplicationDbContext dbContext, ICurrentUserService currentUserService)
         {
             _dbContext = dbContext;
-            _mapper = mapper;
+            _currentUserService = currentUserService;
         }
 
         public async Task<PagedListDto<AudioDto>> SearchAudiosAsync(SearchAudioFilter filter, CancellationToken ct = default)
         {
+            _currentUserService.User.TryGetUserId(out var userId);
             var count = await GetQueryable(filter).CountAsync(ct);
             var results = await GetQueryable(filter)
-                .ProjectTo<AudioDto>(_mapper.ConfigurationProvider)
-                .PaginateAsync(filter.Page, filter.Size, ct);
+                .Project(userId)
+                .Paginate(filter.Page, filter.Size)
+                .ToListAsync(ct);
             return new PagedListDto<AudioDto>(results, count, filter.Page, filter.Size);
         }
 

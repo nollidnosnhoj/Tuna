@@ -1,9 +1,13 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.API.Models;
-using Audiochan.Core.Dtos;
-using Audiochan.Core.Dtos.Wrappers;
-using Audiochan.Core.Users.Queries;
+using Audiochan.Common.Dtos;
+using Audiochan.Core.Features.Audios.Dtos;
+using Audiochan.Core.Features.Users.Queries.GetFollowers;
+using Audiochan.Core.Features.Users.Queries.GetFollowings;
+using Audiochan.Core.Features.Users.Queries.GetProfile;
+using Audiochan.Core.Features.Users.Queries.GetUserAudios;
+using Audiochan.Core.Features.Users.Queries.GetUserFavoriteAudios;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;

@@ -1,65 +1,87 @@
-﻿using System.Threading.Tasks;
-using Audiochan.Core.Extensions;
-using Audiochan.Core.Users.Queries;
+﻿using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
+using Audiochan.Core.IntegrationTests.Extensions;
+using Audiochan.Core.Persistence;
 using Audiochan.Domain.Entities;
 using Audiochan.Tests.Common.Fakers.Audios;
+using Audiochan.Tests.Common.Fakers.Users;
 using FluentAssertions;
-using NUnit.Framework;
+using Microsoft.Extensions.DependencyInjection;
+using Xunit;
 
 namespace Audiochan.Core.IntegrationTests.Features.Users
 {
-    using static TestFixture;
-
-    public class CheckIfUserFavoritedAudioTests : TestBase
+    public class CheckIfUserFavoritedAudioTests
     {
-        [Test]
+        private readonly AudiochanApiFactory _factory;
+        public CheckIfUserFavoritedAudioTests(AudiochanApiFactory factory)
+        {
+            _factory = factory;
+        }
+        
+        [Fact]
         public async Task ShouldReturnTrue_WhenUserFavoritedAudio()
         {
             // Assign
-            var target = await RunAsDefaultUserAsync();
-            target.TryGetUserId(out var targetId);
+            using var scope = _factory.Services.CreateScope();
+            await using var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
             
-            var audio = new AudioFaker(targetId).Generate();
+            var users = new UserFaker().Generate(2);
+            var target = users[0];
+            var observer = users[1];
+
+            await dbContext.Users.AddRangeAsync(target, observer);
+            await dbContext.SaveChangesAsync();
             
-            InsertIntoDatabase(audio);
-            
-            var observer = await RunAsUserAsync();
-            observer.TryGetUserId(out var observerId);
-            
+            var audio = new AudioFaker(target.Id).Generate();
+            await dbContext.Audios.AddAsync(audio);
+            await dbContext.SaveChangesAsync();
+
             var favoriteAudio = new FavoriteAudio
             {
                 AudioId = audio.Id,
-                UserId = observerId,
+                UserId = observer.Id,
             };
-            
-            InsertIntoDatabase(favoriteAudio);
+            await dbContext.FavoriteAudios.AddAsync(favoriteAudio);
+            await dbContext.SaveChangesAsync();
 
             // Act
-            var isFavorited = await SendAsync(new CheckIfAudioFavoritedQuery(audio.Id, observerId));
-
+            using var client = _factory.CreateClientWithTestAuth()
+                .AddUserIdToAuthorization(observer.Id);
+            using var request = new HttpRequestMessage(HttpMethod.Head, $"me/favorites/audios/{audio.Id}");
+            using var response = await client.SendAsync(request);
+            
             // Assert
-            isFavorited.Should().BeTrue();
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
         
-        [Test]
+        [Fact]
         public async Task ShouldReturnFalse_WhenUserDidNotFavorite()
         {
             // Assign
-            var target = await RunAsDefaultUserAsync();
-            target.TryGetUserId(out var targetId);
+            using var scope = _factory.Services.CreateScope();
+            await using var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
             
-            var audio = new AudioFaker(targetId).Generate();
+            var users = new UserFaker().Generate(2);
+            var target = users[0];
+            var observer = users[1];
+
+            await dbContext.Users.AddRangeAsync(target, observer);
+            await dbContext.SaveChangesAsync();
             
-            InsertIntoDatabase(audio);
-            
-            var observer = await RunAsUserAsync();
-            observer.TryGetUserId(out var observerId);
+            var audio = new AudioFaker(target.Id).Generate();
+            await dbContext.Audios.AddAsync(audio);
+            await dbContext.SaveChangesAsync();
 
             // Act
-            var isFavorited = await SendAsync(new CheckIfAudioFavoritedQuery(audio.Id, observerId));
-
+            using var client = _factory.CreateClientWithTestAuth()
+                .AddUserIdToAuthorization(observer.Id);
+            using var request = new HttpRequestMessage(HttpMethod.Head, $"me/favorites/audios/{audio.Id}");
+            using var response = await client.SendAsync(request);
+            
             // Assert
-            isFavorited.Should().BeFalse();
+            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
         }
     }
 }

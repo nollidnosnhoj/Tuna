@@ -1,6 +1,6 @@
 using System;
 using System.IO;
-using Audiochan.Core.Extensions;
+using Audiochan.Common.Extensions;
 using FluentAssertions;
 using Xunit;
 

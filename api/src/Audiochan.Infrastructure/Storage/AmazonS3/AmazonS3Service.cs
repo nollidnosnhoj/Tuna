@@ -9,7 +9,7 @@ using Amazon.Runtime;
 using Amazon.S3;
 using Amazon.S3.Model;
 using Amazon.S3.Transfer;
-using Audiochan.Core.Extensions;
+using Audiochan.Common.Extensions;
 using Audiochan.Core.Services;
 using Microsoft.Extensions.Options;
 
