@@ -1,13 +1,12 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.API.Features.Users.Mappings;
 using Audiochan.Core.CQRS;
 using Audiochan.Core.Dtos.Wrappers;
 using Audiochan.Core.Extensions;
 using Audiochan.Core.Interfaces;
 using Audiochan.Core.Persistence;
-using AutoMapper;
-using AutoMapper.QueryableExtensions;
 using MediatR;
 
 namespace Audiochan.Core.Users.Queries
@@ -22,12 +21,10 @@ namespace Audiochan.Core.Users.Queries
     public class GetUserFollowingsQueryHandler : IRequestHandler<GetUserFollowingsQuery, OffsetPagedListDto<FollowingViewModel>>
     {
         private readonly ApplicationDbContext _dbContext;
-        private readonly IMapper _mapper;
 
-        public GetUserFollowingsQueryHandler(ApplicationDbContext dbContext, IMapper mapper)
+        public GetUserFollowingsQueryHandler(ApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
-            _mapper = mapper;
         }
 
         public async Task<OffsetPagedListDto<FollowingViewModel>> Handle(GetUserFollowingsQuery query,
@@ -36,7 +33,7 @@ namespace Audiochan.Core.Users.Queries
             var list = await _dbContext.FollowedUsers
                 .Where(fu => fu.Observer.UserName == query.Username)
                 .OrderByDescending(fu => fu.FollowedDate)
-                .ProjectTo<FollowingViewModel>(_mapper.ConfigurationProvider)
+                .ProjectToFollowing()
                 .OffsetPaginateAsync(query.Offset, query.Size, cancellationToken);
             return new OffsetPagedListDto<FollowingViewModel>(list, query.Offset, query.Size);
         }

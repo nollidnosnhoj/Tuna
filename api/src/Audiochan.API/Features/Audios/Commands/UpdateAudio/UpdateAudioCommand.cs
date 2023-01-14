@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 using Audiochan.Core.CQRS;
 using Audiochan.Core.Dtos;
 using Audiochan.Core.Extensions;
+using Audiochan.Core.Helpers;
 using Audiochan.Core.Persistence;
 using Audiochan.Core.Services;
 using Audiochan.Domain.Entities;
-using AutoMapper;
 using MediatR;
 using Microsoft.Extensions.Caching.Distributed;
 
@@ -36,16 +36,14 @@ namespace Audiochan.Core.Audios.Commands
         private readonly ICurrentUserService _currentUserService;
         private readonly ISlugGenerator _slugGenerator;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
 
         public UpdateAudioCommandHandler(ICurrentUserService currentUserService, 
             ISlugGenerator slugGenerator, 
-            IUnitOfWork unitOfWork, IMapper mapper, IDistributedCache cache)
+            IUnitOfWork unitOfWork, IDistributedCache cache)
         {
             _currentUserService = currentUserService;
             _slugGenerator = slugGenerator;
             _unitOfWork = unitOfWork;
-            _mapper = mapper;
             _cache = cache;
         }
 
@@ -67,7 +65,28 @@ namespace Audiochan.Core.Audios.Commands
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             await _cache.RemoveAsync(CacheKeys.Audio.GetAudio(command.AudioId), cancellationToken);
             
-            return Result<AudioDto>.Success(_mapper.Map<AudioDto>(audio));
+            return Result<AudioDto>.Success(new AudioDto
+            {
+                Id = audio.Id,
+                Description = audio.Description ?? "",
+                Src = audio.File,
+                IsFavorited = currentUserId > 0
+                    ? audio.FavoriteAudios.Any(fa => fa.UserId == currentUserId)
+                    : null,
+                Slug = HashIdHelper.EncodeLong(audio.Id),
+                Created = audio.Created,
+                Duration = audio.Duration,
+                Picture = audio.Picture,
+                Size = audio.Size,
+                Tags = audio.Tags,
+                Title = audio.Title,
+                User = new UserDto
+                {
+                    Id = audio.UserId,
+                    Picture = audio.User.Picture,
+                    UserName = audio.User.UserName
+                }
+            });
         }
 
         private void UpdateAudioFromCommandAsync(Audio audio, UpdateAudioCommand command)

@@ -10,32 +10,32 @@ namespace Audiochan.Core.Dtos
 {
     public record AudioDto : IHasId<long>, IMapFrom<Audio>
     {
-        public long Id { get; init; }
+        public long Id { get; set; }
         
-        public string Title { get; init; } = null!;
+        public string Title { get; set; } = null!;
         
-        public string Slug { get; init; } = null!;
+        public string Slug { get; set; } = null!;
         
-        public string Description { get; init; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
         
-        public List<string> Tags { get; init; } = new();
+        public List<string> Tags { get; set; } = new();
         
-        public decimal Duration { get; init; }
+        public decimal Duration { get; set; }
         
-        public long Size { get; init; }
+        public long Size { get; set; }
         
         [JsonConverter(typeof(AudioPictureJsonConverter))]
-        public string? Picture { get; init; }
+        public string? Picture { get; set; }
         
-        public bool? IsFavorited { get; init; }
+        public bool? IsFavorited { get; set; }
         
-        public DateTime Created { get; init; }
+        public DateTime Created { get; set; }
         
-        public DateTime? LastModified { get; init; }
+        public DateTime? LastModified { get; set; }
         
         [JsonConverter(typeof(AudioStreamLinkJsonConverter))]
-        public string Src { get; init; } = null!;
+        public string Src { get; set; } = null!;
         
-        public UserDto User { get; init; } = null!;
+        public UserDto User { get; set; } = null!;
     }
 }

@@ -18,19 +18,20 @@ namespace Audiochan.Infrastructure.Search
     public class PostgresSearchService : ISearchService
     {
         private readonly ApplicationDbContext _dbContext;
-        private readonly IMapper _mapper;
+        private readonly ICurrentUserService _currentUserService;
 
-        public PostgresSearchService(ApplicationDbContext dbContext, IMapper mapper)
+        public PostgresSearchService(ApplicationDbContext dbContext, ICurrentUserService currentUserService)
         {
             _dbContext = dbContext;
-            _mapper = mapper;
+            _currentUserService = currentUserService;
         }
 
         public async Task<PagedListDto<AudioDto>> SearchAudiosAsync(SearchAudioFilter filter, CancellationToken ct = default)
         {
+            _currentUserService.User.TryGetUserId(out var userId);
             var count = await GetQueryable(filter).CountAsync(ct);
             var results = await GetQueryable(filter)
-                .ProjectTo<AudioDto>(_mapper.ConfigurationProvider)
+                // .Project(userId)
                 .PaginateAsync(filter.Page, filter.Size, ct);
             return new PagedListDto<AudioDto>(results, count, filter.Page, filter.Size);
         }

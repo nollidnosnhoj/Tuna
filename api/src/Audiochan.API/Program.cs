@@ -37,7 +37,6 @@ try
     builder.Services.Configure<MediaStorageSettings>(builder.Configuration.GetSection(nameof(MediaStorageSettings)));
     builder.Services.Configure<IdentitySettings>(builder.Configuration.GetSection(nameof(IdentitySettings)));
     
-    builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
     builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
     builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
     builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehavior<,>));

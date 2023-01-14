@@ -1,16 +1,14 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.API.Features.Audios.Mappings;
 using Audiochan.Core.CQRS;
 using Audiochan.Core.Dtos;
+using Audiochan.Core.Extensions;
 using Audiochan.Core.Persistence;
-using AutoMapper;
-using AutoMapper.QueryableExtensions;
+using Audiochan.Core.Services;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Distributed;
-using DistributedCacheExtensions = Audiochan.Core.Extensions.DistributedCacheExtensions;
 
 namespace Audiochan.Core.Audios.Queries
 {
@@ -20,36 +18,23 @@ namespace Audiochan.Core.Audios.Queries
 
     public class GetAudioQueryHandler : IRequestHandler<GetAudioQuery, AudioDto?>
     {
-        private readonly IDistributedCache _cache;
         private readonly ApplicationDbContext _dbContext;
-        private readonly IMapper _mapper;
+        private readonly ICurrentUserService _currentUserService;
 
-        public GetAudioQueryHandler(IDistributedCache cache, ApplicationDbContext dbContext, IMapper mapper)
+        public GetAudioQueryHandler(ApplicationDbContext dbContext, ICurrentUserService currentUserService)
         {
-            _cache = cache;
             _dbContext = dbContext;
-            _mapper = mapper;
+            _currentUserService = currentUserService;
         }
 
         public async Task<AudioDto?> Handle(GetAudioQuery query, CancellationToken cancellationToken)
         {
-            var key = CacheKeys.Audio.GetAudio(query.Id);
-            return await DistributedCacheExtensions.GetOrCreateAsync(_cache, key: key,
-                factory: async () => await GetAudioFromDatabase(query.Id, cancellationToken), 
-                cachingOptions: new DistributedCacheEntryOptions
-                {
-                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30)
-                }, 
-                cancellationToken: cancellationToken);
-        }
-
-        private async Task<AudioDto?> GetAudioFromDatabase(long audioId, CancellationToken cancellationToken = default)
-        {
-            return await _dbContext.Audios
-                .AsNoTracking()
-                .Where(a => a.Id == audioId)
-                .ProjectTo<AudioDto>(_mapper.ConfigurationProvider)
+            _currentUserService.User.TryGetUserId(out var userId);
+            var user = await _dbContext.Audios
+                .Where(a => a.Id == query.Id)
+                .Project(userId)
                 .SingleOrDefaultAsync(cancellationToken);
+            return user?.Map();
         }
     }
 }

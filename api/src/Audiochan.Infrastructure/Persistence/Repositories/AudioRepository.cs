@@ -4,14 +4,13 @@ using System.Threading.Tasks;
 using Audiochan.Core.Persistence;
 using Audiochan.Core.Persistence.Repositories;
 using Audiochan.Domain.Entities;
-using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Infrastructure.Persistence.Repositories
 {
     public class AudioRepository : EfRepository<Audio>, IAudioRepository
     {
-        public AudioRepository(ApplicationDbContext dbContext, IMapper mapper) : base(dbContext, mapper)
+        public AudioRepository(ApplicationDbContext dbContext) : base(dbContext)
         {
         }
 

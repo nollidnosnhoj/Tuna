@@ -1,14 +1,18 @@
-﻿using Audiochan.Core.Extensions;
+﻿using System.Linq;
 using Audiochan.Core.Users.Queries;
 using Audiochan.Domain.Entities;
-using AutoMapper;
 
 namespace Audiochan.API.Features.Users.Mappings;
 
-public class ProfileDtoMapping : Profile
+public static partial class DtoMappings
 {
-    public ProfileDtoMapping()
+    public static IQueryable<ProfileDto> ProjectToProfile(this IQueryable<User> queryable)
     {
-        this.CreateStrictMap<User, ProfileDto>();
+        return queryable.Select(x => new ProfileDto
+        {
+            Id = x.Id,
+            Picture = x.Picture,
+            UserName = x.UserName
+        });
     }
 }

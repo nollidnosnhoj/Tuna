@@ -5,7 +5,6 @@ using Audiochan.Core.Auth.Queries;
 using Audiochan.Core.CQRS;
 using Audiochan.Core.Persistence;
 using Audiochan.Core.Services;
-using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,13 +20,11 @@ namespace Audiochan.Core.Auth.Commands
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly IPasswordHasher _passwordHasher;
-        private readonly IMapper _mapper;
 
-        public LoginCommandHandler(ApplicationDbContext dbContext, IPasswordHasher passwordHasher, IMapper mapper)
+        public LoginCommandHandler(ApplicationDbContext dbContext, IPasswordHasher passwordHasher)
         {
             _dbContext = dbContext;
             _passwordHasher = passwordHasher;
-            _mapper = mapper;
         }
 
         public async Task<Result<CurrentUserDto>> Handle(LoginCommand command,
@@ -40,7 +37,12 @@ namespace Audiochan.Core.Auth.Commands
             if (user == null || !_passwordHasher.Verify(command.Password, user.PasswordHash))
                 return Result<CurrentUserDto>.BadRequest("Invalid Username/Password");
 
-            var currentUser = _mapper.Map<CurrentUserDto>(user);
+            var currentUser = new CurrentUserDto
+            {
+                Id = user.Id,
+                UserName = user.UserName,
+                Email = user.Email
+            };
 
             return Result<CurrentUserDto>.Success(currentUser);
         }

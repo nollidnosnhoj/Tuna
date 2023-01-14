@@ -5,7 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Persistence;
 using Audiochan.Core.Persistence.Repositories;
-using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Infrastructure.Persistence.Repositories
@@ -14,16 +13,14 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
     {
         protected readonly ApplicationDbContext DbContext;
         protected IQueryable<TEntity> Queryable;
-        protected readonly IMapper Mapper;
         private readonly DbSet<TEntity> _dbSet;
 
         // ReSharper disable once MemberCanBeProtected.Global
-        public EfRepository(ApplicationDbContext dbContext, IMapper mapper)
+        public EfRepository(ApplicationDbContext dbContext)
         {
             DbContext = dbContext;
             _dbSet = DbContext.Set<TEntity>();
             Queryable = _dbSet.AsTracking();
-            Mapper = mapper;
         }
 
         public async Task<TEntity?> FindAsync<TKey>(TKey id, CancellationToken cancellationToken = default)

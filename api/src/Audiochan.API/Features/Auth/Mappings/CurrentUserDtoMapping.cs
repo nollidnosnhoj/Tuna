@@ -1,14 +1,18 @@
-﻿using Audiochan.Core.Auth.Queries;
-using Audiochan.Core.Extensions;
+﻿using System.Linq;
+using Audiochan.Core.Auth.Queries;
 using Audiochan.Domain.Entities;
-using AutoMapper;
 
 namespace Audiochan.API.Features.Auth.Mappings;
 
-public class CurrentUserDtoMapping : Profile
+public static partial class DtoMappings
 {
-    public CurrentUserDtoMapping()
+    public static IQueryable<CurrentUserDto> Project(this IQueryable<User> queryable)
     {
-        this.CreateStrictMap<User, CurrentUserDto>();
+        return queryable.Select(x => new CurrentUserDto
+        {
+            Id = x.Id,
+            Email = x.Email,
+            UserName = x.UserName
+        });
     }
 }

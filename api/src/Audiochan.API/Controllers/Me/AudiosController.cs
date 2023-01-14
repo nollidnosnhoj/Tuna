@@ -51,26 +51,5 @@ namespace Audiochan.API.Controllers.Me
             }, cancellationToken);
             return Ok(result);
         }
-        
-        [HttpGet("feed", Name = "YourAudioFeed")]
-        [Produces("application/json")]
-        [ProducesResponseType(200)]
-        [SwaggerOperation(
-            Summary = "Returns a list of tracks uploaded by authenticated user's followings.",
-            Description = "Requires authentication.",
-            OperationId = "YourAudioFeed",
-            Tags = new[] {"me"}
-        )]
-        public async Task<ActionResult<PagedListDto<AudioDto>>> GetYourFeed(
-            [FromQuery] OffsetPaginationQueryParams queryParams, 
-            CancellationToken cancellationToken)
-        {
-            var result = await _mediator.Send(new GetAudioFeedQuery(_currentUserId)
-            {
-                Offset = queryParams.Offset,
-                Size = queryParams.Size
-            }, cancellationToken);
-            return Ok(result);
-        }
     }
 }

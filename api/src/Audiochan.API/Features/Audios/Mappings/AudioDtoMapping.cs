@@ -1,25 +1,44 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Audiochan.Core;
 using Audiochan.Core.Dtos;
-using Audiochan.Core.Extensions;
 using Audiochan.Core.Helpers;
 using Audiochan.Domain.Entities;
-using AutoMapper;
 
 namespace Audiochan.API.Features.Audios.Mappings;
 
-public class AudioDtoMapping : Profile
+public static partial class DtoMappings
 {
-    public AudioDtoMapping()
+    public static IQueryable<AudioDto> Project(this IQueryable<Audio> queryable, long? userId)
     {
-        long? userId = null;
-        this.CreateStrictMap<Audio, AudioDto>()
-            .ForMember(dest => dest.Description, c =>
-                c.NullSubstitute(""))
-            .ForMember(dest => dest.Slug, c =>
-                c.MapFrom(src => HashIdHelper.EncodeLong(src.Id)))
-            .ForMember(dest => dest.Src, c =>
-                c.MapFrom(src => src.File))
-            .ForMember(dest => dest.IsFavorited, c =>
-                c.MapFrom(src => userId > 0 ? src.FavoriteAudios.Any(fa => fa.UserId == userId) : (bool?)null));
+        return queryable.Select(x => new AudioDto
+        {
+            Id = x.Id,
+            Description = x.Description ?? "",
+            Src = x.File,
+            IsFavorited = userId > 0
+                ? x.FavoriteAudios.Any(fa => fa.UserId == userId)
+                : null,
+            Slug = HashIdHelper.EncodeLong(x.Id),
+            Created = x.Created,
+            Duration = x.Duration,
+            Picture = x.Picture,
+            Size = x.Size,
+            Tags = x.Tags,
+            Title = x.Title,
+            User = new UserDto
+            {
+                Id = x.UserId,
+                Picture = x.User.Picture,
+                UserName = x.User.UserName
+            }
+        });
+    }
+
+    public static AudioDto Map(this AudioDto audio)
+    {
+        audio.Src = MediaLinkConstants.AUDIO_STREAM + audio.Src;
+        audio.Picture = MediaLinkConstants.AUDIO_PICTURE + audio.Picture;
+        return audio;
     }
 }

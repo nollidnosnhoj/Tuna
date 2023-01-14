@@ -1,15 +1,13 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Audios;
+using Audiochan.API.Features.Audios.Mappings;
 using Audiochan.Core.CQRS;
 using Audiochan.Core.Dtos;
 using Audiochan.Core.Dtos.Wrappers;
 using Audiochan.Core.Extensions;
-using Audiochan.Core.Interfaces;
 using Audiochan.Core.Persistence;
-using AutoMapper;
-using AutoMapper.QueryableExtensions;
+using Audiochan.Core.Services;
 using MediatR;
 
 namespace Audiochan.Core.Users.Queries
@@ -23,22 +21,23 @@ namespace Audiochan.Core.Users.Queries
     public class GetUsersAudioQueryHandler : IRequestHandler<GetUsersAudioQuery, OffsetPagedListDto<AudioDto>>
     {
         private readonly ApplicationDbContext _dbContext;
-        private readonly IMapper _mapper;
+        private readonly ICurrentUserService _currentUserService;
 
-        public GetUsersAudioQueryHandler(ApplicationDbContext dbContext, IMapper mapper)
+        public GetUsersAudioQueryHandler(ApplicationDbContext dbContext, ICurrentUserService currentUserService)
         {
             _dbContext = dbContext;
-            _mapper = mapper;
+            _currentUserService = currentUserService;
         }
 
         public async Task<OffsetPagedListDto<AudioDto>> Handle(GetUsersAudioQuery request,
             CancellationToken cancellationToken)
         {
+            _currentUserService.User.TryGetUserId(out var userId);
             var list = await _dbContext.Users
                 .Where(u => u.UserName == request.Username)
                 .SelectMany(u => u.Audios)
                 .OrderByDescending(a => a.Id)
-                .ProjectTo<AudioDto>(_mapper.ConfigurationProvider)
+                .Project(userId)
                 .OffsetPaginateAsync(request.Offset, request.Size, cancellationToken);
             return new OffsetPagedListDto<AudioDto>(list, request.Offset, request.Size);
         }
