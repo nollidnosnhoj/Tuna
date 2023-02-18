@@ -11,7 +11,7 @@ import { CurrentUser } from "../types";
 import SETTINGS from "~/lib/config";
 
 type AuthGetServerSideProps<
-  P extends { [key: string]: any } = { [key: string]: any },
+  P extends Record<string, any> = Record<string, any>,
   Q extends ParsedUrlQuery = ParsedUrlQuery,
   D extends PreviewData = PreviewData
 > = (
@@ -19,7 +19,9 @@ type AuthGetServerSideProps<
   user: CurrentUser
 ) => Promise<GetServerSidePropsResult<P>>;
 
-export const authRoute = <T>(getServerSideProps: AuthGetServerSideProps<T>) =>
+export const authRoute = <T extends Record<string, any> = Record<string, any>>(
+  getServerSideProps: AuthGetServerSideProps<T>
+) =>
   async function (
     context: GetServerSidePropsContext
   ): Promise<GetServerSidePropsResult<T>> {

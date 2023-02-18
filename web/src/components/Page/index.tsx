@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { PropsWithChildren, useEffect } from "react";
 import Head from "next/head";
 import NextLink from "next/link";
 import { Box, Button, Flex, Heading, useToast } from "@chakra-ui/react";
@@ -53,7 +53,7 @@ const UnauthorizedPage = () => {
 //   );
 // };
 
-const Page: React.FC<PageProps> = ({
+const Page: React.FC<PropsWithChildren<PageProps>> = ({
   title = "Audiochan",
   requiresAuth = false,
   removeContainer = false,

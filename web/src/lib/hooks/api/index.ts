@@ -6,7 +6,6 @@ export { useGetAudio } from "./queries/useGetAudio";
 export { useGetAudioList } from "./queries/useGetAudioList";
 export { useGetTagAudioList } from "./queries/useGetTagAudios";
 export { useSearchAudio } from "./queries/useSearchAudio";
-export { useGetAudioFeed } from "./queries/useGetAudioFeed";
 export { useFavoriteAudio } from "./mutations/useFavoriteAudio";
 export { useRemoveAudioPicture } from "./mutations/useRemoveAudioPicture";
 export { useYourAudios } from "./queries/useYourAudios";

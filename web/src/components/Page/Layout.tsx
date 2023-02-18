@@ -8,7 +8,7 @@ import {
   FlexProps,
   Text,
 } from "@chakra-ui/react";
-import React, { ReactText } from "react";
+import React, { PropsWithChildren, ReactText } from "react";
 import { useColorModeValue } from "@chakra-ui/color-mode";
 import { IconType } from "react-icons";
 import ChakraLink from "~/components/ui/Link";
@@ -91,7 +91,7 @@ const SidebarContent = ({ onClose, ...rest }: ISidebarProps) => {
   );
 };
 
-const PageLayout: React.FC = ({ children }) => {
+const PageLayout: React.FC<PropsWithChildren<object>> = ({ children }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (

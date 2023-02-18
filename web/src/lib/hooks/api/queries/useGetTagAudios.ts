@@ -26,7 +26,7 @@ export function useGetTagAudioList(
   );
 
   return useInfiniteCursorPagination<Audio>(
-    GET_TAG_AUDIO_LIST_QUERY_KEY,
+    GET_TAG_AUDIO_LIST_QUERY_KEY(tag),
     fetcher,
     options
   );

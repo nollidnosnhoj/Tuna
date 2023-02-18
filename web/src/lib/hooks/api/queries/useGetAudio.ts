@@ -4,7 +4,7 @@ import {
   useQueryClient,
   UseQueryOptions,
   UseQueryResult,
-} from "react-query";
+} from "@tanstack/react-query";
 import request from "~/lib/http";
 import { Audio, ErrorResponse } from "~/lib/types";
 import {

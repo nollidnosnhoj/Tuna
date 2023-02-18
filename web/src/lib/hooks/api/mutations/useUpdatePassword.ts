@@ -1,6 +1,6 @@
 import { useToast } from "@chakra-ui/toast";
 import { useRouter } from "next/router";
-import { useMutation, UseMutationResult, useQueryClient } from "react-query";
+import { useMutation, UseMutationResult, useQueryClient } from "@tanstack/react-query";
 import request from "~/lib/http";
 import { CurrentUser, ErrorResponse } from "~/lib/types";
 import { errorToast } from "~/utils";

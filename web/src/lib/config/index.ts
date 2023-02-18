@@ -17,11 +17,15 @@ export default {
   },
   UPLOAD: {
     AUDIO: {
-      accept: ["audio/mp3", "audio/mpeg"],
+      accept: {
+        "audio/*": [".mp3"],
+      },
       maxSize: 262144000,
     },
     IMAGE: {
-      accept: ["image/jpeg", "image/png", "image/gif"],
+      accept: {
+        "image/*": [".jpg", ".png", ".gif"],
+      },
       maxSize: 2097152,
     },
   },
