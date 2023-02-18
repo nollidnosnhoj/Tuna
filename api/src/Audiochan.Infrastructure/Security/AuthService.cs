@@ -1,24 +1,15 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Common.Extensions;
 using Audiochan.Common.Services;
+using Audiochan.Core.Features.Auth;
 using Audiochan.Core.Features.Auth.Dtos;
-using Audiochan.Core.Features.Auth.Exception;
-using Audiochan.Core.Features.Auth.Validators;
 using Audiochan.Core.Features.Users.Dtos;
-using Audiochan.Core.Features.Users.Exceptions;
 using Audiochan.Core.Persistence;
-using Audiochan.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
-namespace Audiochan.Core.Features.Auth;
-
-public interface IAuthService
-{
-    Task<UserDto?> LoginAsync(LoginRequest request, CancellationToken cancellationToken = default);
-}
+namespace Audiochan.Infrastructure.Security;
 
 public class AuthService : IAuthService, IAsyncDisposable
 {

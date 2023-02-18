@@ -8,8 +8,6 @@
 
   <ItemGroup>
     <PackageReference Include="EFCore.NamingConventions" Version="7.0.2" />
-    <PackageReference Include="HotChocolate.Data" Version="13.0.2" />
-    <PackageReference Include="HotChocolate.Data.EntityFramework" Version="13.0.2" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.2" />
     <PackageReference Include="MR.EntityFrameworkCore.KeysetPagination" Version="1.2.0" />

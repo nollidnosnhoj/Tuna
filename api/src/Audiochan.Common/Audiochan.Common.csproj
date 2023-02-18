@@ -8,8 +8,11 @@
 
     <ItemGroup>
       <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.4.0" />
+      <PackageReference Include="GreenDonut" Version="13.0.2" />
       <PackageReference Include="Hashids.net" Version="1.6.1" />
-      <PackageReference Include="HotChocolate" Version="13.0.2" />
+      <PackageReference Include="HotChocolate.Types" Version="13.0.2" />
+      <PackageReference Include="HotChocolate.Types.CursorPagination" Version="13.0.2" />
+      <PackageReference Include="HotChocolate.Types.OffsetPagination" Version="13.0.2" />
       <PackageReference Include="MediatR" Version="11.1.0" />
       <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.2.0" />
       <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="7.0.0" />
