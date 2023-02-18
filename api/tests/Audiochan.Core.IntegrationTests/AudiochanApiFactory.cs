@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Audiochan.API;
 using Audiochan.API.Extensions.ConfigurationExtensions;
+using Audiochan.Common.Services;
 using Audiochan.Core.Persistence;
 using Audiochan.Core.Services;
 using Audiochan.Tests.Common.Extensions;

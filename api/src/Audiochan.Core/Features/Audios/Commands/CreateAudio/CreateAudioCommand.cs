@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Common.Mediatr;
-using Audiochan.Common.Dtos;
-using Audiochan.Common.Extensions;
+using Audiochan.Common.Services;
+using Audiochan.Core.Features.Audios.Exceptions;
 using Audiochan.Core.Persistence;
 using Audiochan.Core.Persistence.Pipelines.Attributes;
 using Audiochan.Core.Services;
@@ -17,48 +16,59 @@ using Microsoft.Extensions.Options;
 namespace Audiochan.Core.Features.Audios.Commands.CreateAudio
 {
     [ExplicitTransaction]
-    public class CreateAudioCommand : ICommandRequest<Result<long>>
+    public class CreateAudioCommand : AuthCommandRequest<long>
     {
-        public string UploadId { get; init; } = null!;
-        public string FileName { get; init; } = null!;
-        public long FileSize { get; init; }
-        public decimal Duration { get; init; }
-        public string Title { get; init; } = null!;
-        public string Description { get; init; } = string.Empty;
-        public List<string> Tags { get; init; } = new();
-        public string BlobName => UploadId + Path.GetExtension(FileName);
+        public CreateAudioCommand(
+            string uploadId,
+            string fileName,
+            long fileSize,
+            decimal duration,
+            string title,
+            string description,
+            ClaimsPrincipal user) : base(user)
+        {
+            UploadId = uploadId;
+            FileName = fileName;
+            FileSize = fileSize;
+            Duration = duration;
+            Title = title;
+            Description = description;
+            BlobName = UploadId + Path.GetExtension(FileName);
+        }
+        
+        public string UploadId { get; }
+        public string FileName { get; }
+        public long FileSize { get; }
+        public decimal Duration { get; }
+        public string Title { get; }
+        public string Description { get; }
+        public string BlobName { get; }
     }
 
 
-    public class CreateAudioCommandHandler : IRequestHandler<CreateAudioCommand, Result<long>>
+    public class CreateAudioCommandHandler : IRequestHandler<CreateAudioCommand, long>
     {
-        private readonly ICurrentUserService _currentUserService;
-        private readonly ISlugGenerator _slugGenerator;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IStorageService _storageService;
         private readonly AudioStorageSettings _audioStorageSettings;
 
-        public CreateAudioCommandHandler(ICurrentUserService currentUserService, 
-            ISlugGenerator slugGenerator,
-            IUnitOfWork unitOfWork, 
+        public CreateAudioCommandHandler(IUnitOfWork unitOfWork,
             IStorageService storageService,
             IOptions<MediaStorageSettings> mediaStorageOptions)
         {
-            _currentUserService = currentUserService;
-            _slugGenerator = slugGenerator;
             _unitOfWork = unitOfWork;
             _storageService = storageService;
             _audioStorageSettings = mediaStorageOptions.Value.Audio;
         }
 
-        public async Task<Result<long>> Handle(CreateAudioCommand command,
+        public async Task<long> Handle(CreateAudioCommand command,
             CancellationToken cancellationToken)
         {
-            _currentUserService.User.TryGetUserId(out var currentUserId);
+            var currentUserId = command.GetUserId();
 
             if (!await ExistsInTempStorage(command.BlobName, cancellationToken))
             {
-                return Result<long>.BadRequest("Cannot find upload. Please upload and try again.");
+                throw new AudioNotUploadedException();
             }
 
             Audio? audio = null;
@@ -74,28 +84,22 @@ namespace Audiochan.Core.Features.Audios.Commands.CreateAudio
                     Duration = command.Duration,
                     Title = command.Title,
                     Description = command.Description,
-                    File = command.BlobName,
+                    ObjectKey = command.BlobName,
                 };
-
-                // Create tags
-                if (command.Tags.Count > 0)
-                {
-                    audio.Tags = _slugGenerator.GenerateSlugs(command.Tags).ToList();
-                }
 
                 await _unitOfWork.Audios.AddAsync(audio, cancellationToken);
                 await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-                await MoveTempAudioToPublic(audio.File, cancellationToken);
+                await MoveTempAudioToPublic(audio.ObjectKey, cancellationToken);
 
                 await _unitOfWork.CommitTransactionAsync(cancellationToken);
-                return Result<long>.Success(audio.Id);
+                return audio.Id;
             }
             catch (Exception)
             {
                 // Remove audio that was moved to public bucket
-                if (!string.IsNullOrEmpty(audio?.File))
-                    await _storageService.RemoveAsync(_audioStorageSettings.Bucket, audio.File, cancellationToken);
+                if (!string.IsNullOrEmpty(audio?.ObjectKey))
+                    await _storageService.RemoveAsync(_audioStorageSettings.Bucket, audio.ObjectKey, cancellationToken);
                 await _unitOfWork.RollbackTransactionAsync();
                 throw;
             }

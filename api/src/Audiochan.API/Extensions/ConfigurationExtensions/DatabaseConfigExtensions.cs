@@ -11,7 +11,7 @@ public static class DatabaseConfigExtensions
     public static IServiceCollection ConfigureDatabase(this IServiceCollection services, IConfiguration configuration,
         bool isDevelopment)
     {
-        services.AddDbContext<ApplicationDbContext>(o =>
+        services.AddPooledDbContextFactory<ApplicationDbContext>(o =>
         {
             o.UseNpgsql(configuration.GetConnectionString("Database"));
             o.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);

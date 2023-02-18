@@ -1,12 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Common.Mediatr;
 using Audiochan.Common.Dtos;
+using Audiochan.Common.Exceptions;
 using Audiochan.Common.Extensions;
 using Audiochan.Common.Helpers;
 using Audiochan.Core.Features.Audios.Dtos;
+using Audiochan.Core.Features.Audios.Exceptions;
 using Audiochan.Core.Features.Users.Dtos;
 using Audiochan.Core.Persistence;
 using Audiochan.Core.Services;
@@ -16,71 +19,60 @@ using Microsoft.Extensions.Caching.Distributed;
 
 namespace Audiochan.Core.Features.Audios.Commands.UpdateAudio
 {
-    public class UpdateAudioCommand : ICommandRequest<Result<AudioDto>>
+    public class UpdateAudioCommand : AuthCommandRequest<AudioDto>
     {
-        public long AudioId { get; set; }
-        public string? Title { get; init; }
-        public string? Description { get; init; }
-        public List<string>? Tags { get; init; }
-
-        public static UpdateAudioCommand FromRequest(long audioId, UpdateAudioRequest request) => new()
+        public UpdateAudioCommand(long id, string? title, string? description, ClaimsPrincipal user) : base(user)
         {
-            AudioId = audioId,
-            Tags = request.Tags,
-            Title = request.Title,
-            Description = request.Description,
-        };
+            Id = id;
+            Title = title;
+            Description = description;
+        }
+        
+        public long Id { get; }
+        public string? Title { get; }
+        public string? Description { get; }
     }
 
-    public class UpdateAudioCommandHandler : IRequestHandler<UpdateAudioCommand, Result<AudioDto>>
+    public class UpdateAudioCommandHandler : IRequestHandler<UpdateAudioCommand, AudioDto>
     {
         private readonly IDistributedCache _cache;
-        private readonly ICurrentUserService _currentUserService;
-        private readonly ISlugGenerator _slugGenerator;
         private readonly IUnitOfWork _unitOfWork;
 
-        public UpdateAudioCommandHandler(ICurrentUserService currentUserService, 
-            ISlugGenerator slugGenerator, 
-            IUnitOfWork unitOfWork, IDistributedCache cache)
+        public UpdateAudioCommandHandler(
+            IUnitOfWork unitOfWork, 
+            IDistributedCache cache)
         {
-            _currentUserService = currentUserService;
-            _slugGenerator = slugGenerator;
             _unitOfWork = unitOfWork;
             _cache = cache;
         }
 
-        public async Task<Result<AudioDto>> Handle(UpdateAudioCommand command,
+        public async Task<AudioDto> Handle(UpdateAudioCommand command,
             CancellationToken cancellationToken)
         {
-            _currentUserService.User.TryGetUserId(out var currentUserId);
+            var currentUserId = command.GetUserId();
 
-            var audio = await _unitOfWork.Audios.FindAsync(command.AudioId, cancellationToken);
+            var audio = await _unitOfWork.Audios.FindAsync(command.Id, cancellationToken);
 
             if (audio == null)
-                return Result<AudioDto>.NotFound<Audio>();
+                throw new AudioNotFoundException(command.Id);
 
             if (audio.UserId != currentUserId)
-                return Result<AudioDto>.Forbidden();
+                throw new AudioNotFoundException(command.Id);
             
             UpdateAudioFromCommandAsync(audio, command);
             _unitOfWork.Audios.Update(audio);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
-            await _cache.RemoveAsync(CacheKeys.Audio.GetAudio(command.AudioId), cancellationToken);
-            
-            return Result<AudioDto>.Success(new AudioDto
+            await _cache.RemoveAsync(CacheKeys.Audio.GetAudio(command.Id), cancellationToken);
+
+            return new AudioDto
             {
                 Id = audio.Id,
                 Description = audio.Description ?? "",
-                Src = audio.File,
-                IsFavorited = currentUserId > 0
-                    ? audio.FavoriteAudios.Any(fa => fa.UserId == currentUserId)
-                    : null,
-                Slug = HashIdHelper.EncodeLong(audio.Id),
+                ObjectKey = audio.ObjectKey,
                 Created = audio.Created,
                 Duration = audio.Duration,
                 Picture = audio.Picture,
                 Size = audio.Size,
-                Tags = audio.Tags,
                 Title = audio.Title,
                 User = new UserDto
                 {
@@ -88,23 +80,11 @@ namespace Audiochan.Core.Features.Audios.Commands.UpdateAudio
                     Picture = audio.User.Picture,
                     UserName = audio.User.UserName
                 }
-            });
+            };
         }
 
         private void UpdateAudioFromCommandAsync(Audio audio, UpdateAudioCommand command)
         {
-            if (command.Tags is not null)
-            {
-                if (command.Tags.Count == 0)
-                {
-                    audio.Tags.Clear();
-                }
-                else
-                {
-                    audio.Tags = _slugGenerator.GenerateSlugs(command.Tags).ToList();
-                }
-            }
-
             if (command.Title is not null && !string.IsNullOrWhiteSpace(command.Title))
             {
                 audio.Title = command.Title;

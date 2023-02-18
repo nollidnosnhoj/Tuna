@@ -22,20 +22,20 @@ namespace Audiochan.Core.Features.Audios.Commands.UpdateAudio
                     .WithMessage("Description cannot be more than 500 characters long.");
             });
 
-            When(req => req.Tags is not null, () =>
-            {
-                RuleFor(req => req.Tags)
-                    .Must(u => u!.Count <= 10)
-                    .WithMessage("Can only have up to 10 tags per audio upload.")
-                    .ForEach(tagsRule =>
-                    {
-                        tagsRule
-                            .NotEmpty()
-                            .WithMessage("Each tag cannot be empty.")
-                            .Length(3, 15)
-                            .WithMessage("Each tag must be between 3 and 15 characters long.");
-                    });
-            });
+            // When(req => req.Tags is not null, () =>
+            // {
+            //     RuleFor(req => req.Tags)
+            //         .Must(u => u!.Count <= 10)
+            //         .WithMessage("Can only have up to 10 tags per audio upload.")
+            //         .ForEach(tagsRule =>
+            //         {
+            //             tagsRule
+            //                 .NotEmpty()
+            //                 .WithMessage("Each tag cannot be empty.")
+            //                 .Length(3, 15)
+            //                 .WithMessage("Each tag must be between 3 and 15 characters long.");
+            //         });
+            // });
         }
     }
 }

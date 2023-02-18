@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Common.Extensions;
+using Audiochan.Common.Services;
 using Audiochan.Core.Services;
 using Audiochan.Domain.Abstractions;
 using Audiochan.Domain.Entities;
@@ -100,7 +101,7 @@ namespace Audiochan.Core.Persistence
 
                 foreach (var index in entity.GetIndexes())
                 {
-                    index.SetDatabaseName(index.GetDatabaseName().ToSnakeCase());
+                    index.SetDatabaseName(index.GetDatabaseName()?.ToSnakeCase());
                 }
             }
         }

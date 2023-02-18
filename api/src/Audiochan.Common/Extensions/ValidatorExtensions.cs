@@ -1,26 +1,18 @@
 using FluentValidation;
+using FluentValidation.Results;
 
 namespace Audiochan.Common.Extensions
 {
-    
-    public class UsernameRules
-    {
-        public int MinimumLength { get; init; } = 3;
-        public int MaximumLength { get; init; } = 20;
-        public string AllowedCharacters { get; init; } = "abcdefghijklmnopqrstuvwxyz0123456789-_";
-    }
-
-    public class PasswordRules
-    {
-        public bool RequiresUppercase { get; init; } = true;
-        public bool RequiresLowercase { get; init; } = true;
-        public bool RequiresNonAlphanumeric { get; init; } = true;
-        public bool RequiresDigit { get; init; } = true;
-        public int MinimumLength { get; init; } = 6;
-    }
-    
     public static class ValidatorExtensions
     {
+        public static void ThrowIfValidationFailed(this ValidationResult result)
+        {
+            if (!result.IsValid)
+            {
+                throw new ValidationException(result.Errors);
+            }
+        }
+        
         public static IRuleBuilder<T, string> FileNameValidation<T>(this IRuleBuilder<T, string> ruleBuilder,
             IEnumerable<string> validContentTypes)
         {
@@ -45,44 +37,37 @@ namespace Audiochan.Common.Extensions
                 .WithMessage($"File size is over {fileSizeLimit / 1000000} MB");
         }
 
-        public static IRuleBuilder<T, string> PasswordValidation<T>(this IRuleBuilder<T, string> ruleBuilder,
-            PasswordRules passwordRules, string field = "Password")
+        public static IRuleBuilder<T, string> PasswordValidation<T>(this IRuleBuilder<T, string> ruleBuilder, string field = "Password")
         {
-            if (passwordRules.RequiresDigit)
-                ruleBuilder.Matches(@"[0-9]+")
+            ruleBuilder.Matches(@"[0-9]+")
                     .WithErrorCode(ValidationErrorCodes.Password.DIGITS)
-                    .WithMessage($"{field} must contain one digit.");
-            if (passwordRules.RequiresLowercase)
-                ruleBuilder.Matches(@"[a-z]+")
+                    .WithMessage($"{field} must contain one digit.")
+                    .Matches(@"[a-z]+")
                     .WithErrorCode(ValidationErrorCodes.Password.LOWERCASE)
-                    .WithMessage($"{field} must contain one lowercase character.");
-            if (passwordRules.RequiresUppercase)
-                ruleBuilder.Matches(@"[A-Z]+")
+                    .WithMessage($"{field} must contain one lowercase character.")
+                    .Matches(@"[A-Z]+")
                     .WithErrorCode(ValidationErrorCodes.Password.UPPERCASE)
-                    .WithMessage($"{field} must contain one uppercase character.");
-            if (passwordRules.RequiresNonAlphanumeric)
-                ruleBuilder.Matches(@"[^a-zA-Z\d]+")
+                    .WithMessage($"{field} must contain one uppercase character.")
+                    .Matches(@"[^a-zA-Z\d]+")
                     .WithErrorCode(ValidationErrorCodes.Password.NON_ALPHANUMERIC)
-                    .WithMessage($"{field} must contain one non-alphanumeric character.");
-            if (passwordRules.MinimumLength > 0)
-                ruleBuilder.MinimumLength(passwordRules.MinimumLength)
+                    .WithMessage($"{field} must contain one non-alphanumeric character.")
+                    .MinimumLength(6)
                     .WithErrorCode(ValidationErrorCodes.Password.LENGTH)
-                    .WithMessage($"{field} must be at least {passwordRules.MinimumLength} characters long.");
+                    .WithMessage($"{field} must be at least 6 characters long.");
 
             return ruleBuilder;
         }
 
-        public static IRuleBuilder<T, string> UsernameValidation<T>(this IRuleBuilder<T, string> ruleBuilder,
-            UsernameRules identitySettings)
+        public static IRuleBuilder<T, string> UsernameValidation<T>(this IRuleBuilder<T, string> ruleBuilder)
         {
             return ruleBuilder
                 .NotEmpty()
                 .WithMessage("Username is required.")
-                .MinimumLength(identitySettings.MinimumLength)
+                .MinimumLength(3)
                 .WithMessage("Username must be at least 3 characters long.")
-                .MaximumLength(identitySettings.MaximumLength)
+                .MaximumLength(20)
                 .WithMessage("Username must be at most 20 characters long.")
-                .Must(username => username.All(x => identitySettings.AllowedCharacters.Contains(x)))
+                .Must(username => username.All(x => "abcdefghijklmnopqrstuvwxyz0123456789-_".Contains(x)))
                 .WithErrorCode(ValidationErrorCodes.Username.CHARACTERS)
                 .WithMessage("Username is invalid.")
                 .Must(username => !username.All(char.IsDigit))

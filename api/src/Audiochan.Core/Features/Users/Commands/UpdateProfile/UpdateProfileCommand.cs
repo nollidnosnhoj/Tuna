@@ -1,50 +1,57 @@
-﻿using System.Threading;
+﻿using System.Security.Claims;
+using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Common.Mediatr;
-using Audiochan.Common.Dtos;
-using Audiochan.Common.Extensions;
+using Audiochan.Common.Exceptions;
+using Audiochan.Core.Features.Users.Dtos;
 using Audiochan.Core.Persistence;
-using Audiochan.Core.Services;
 using MediatR;
 
 namespace Audiochan.Core.Features.Users.Commands.UpdateProfile
 {
-    public record UpdateProfileCommand : ICommandRequest<Result<bool>>
+    public class UpdateProfileCommand : AuthCommandRequest<UserDto>
     {
-        public long UserId { get; init; }
-        public string? DisplayName { get; init; }
-        public string? About { get; init; }
-        public string? Website { get; init; }
+        public string? DisplayName { get; }
 
-        public static UpdateProfileCommand FromRequest(long userId, UpdateProfileRequest request) => new()
+        public UpdateProfileCommand(string? displayName, ClaimsPrincipal user) : base(user)
         {
-            UserId = userId,
-            About = request.About,
-            Website = request.Website,
-            DisplayName = request.DisplayName
-        };
+            DisplayName = displayName;
+        }
     }
 
-    public class UpdateProfileCommandHandler : IRequestHandler<UpdateProfileCommand, Result<bool>>
+    public class UpdateProfileCommandHandler : IRequestHandler<UpdateProfileCommand, UserDto>
     {
-        private readonly long _currentUserId;
         private readonly IUnitOfWork _unitOfWork;
 
-        public UpdateProfileCommandHandler(ICurrentUserService currentUserService, IUnitOfWork unitOfWork)
+        public UpdateProfileCommandHandler(IUnitOfWork unitOfWork)
         {
-            currentUserService.User.TryGetUserId(out _currentUserId);
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Result<bool>> Handle(UpdateProfileCommand command, CancellationToken cancellationToken)
+        public async Task<UserDto> Handle(UpdateProfileCommand command, CancellationToken cancellationToken)
         {
-            var user = await _unitOfWork.Users.FindAsync(command.UserId, cancellationToken);
-            if (user!.Id != _currentUserId)
-                return Result<bool>.Forbidden();
+            var userId = command.GetUserId();
+            
+            var user = await _unitOfWork.Users.FindAsync(userId, cancellationToken);
+            
+            if (user is null)
+            {
+                throw new UnauthorizedException();
+            }
+
+            if (user.Id != userId)
+            {
+                throw new UnauthorizedException();
+            }
             
             // TODO: Update user stuff
 
-            return Result<bool>.Success(true);
+            return new UserDto
+            {
+                Id = userId,
+                Picture = user.Picture,
+                UserName = user.UserName
+            };
         }
     }
 }

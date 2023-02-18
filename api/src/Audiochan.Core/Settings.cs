@@ -8,13 +8,6 @@ namespace Audiochan.Core
         public string DiscordClientId { get; set; } = null!;
         public string DiscordClientSecret { get; set; } = null!;
     }
-    
-    public record IdentitySettings
-    {
-
-        public UsernameRules UsernameSettings { get; init; } = new();
-        public PasswordRules PasswordSettings { get; init; } = new();
-    }
 
     public record MediaStorageSettings
     {

@@ -4,11 +4,13 @@ using System.Threading.Tasks;
 using Audiochan.Core.Persistence;
 using Audiochan.Core.Persistence.Repositories;
 using Audiochan.Domain.Entities;
+using Audiochan.Infrastructure.Persistence.Repositories;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Audiochan.Infrastructure.Persistence
 {
-    public class UnitOfWork : IUnitOfWork
+    public class UnitOfWork : IUnitOfWork, IAsyncDisposable
     {
         private readonly ApplicationDbContext _dbContext;
         private IDbContextTransaction? _currentTransaction;
@@ -17,17 +19,13 @@ namespace Audiochan.Infrastructure.Persistence
         public IEntityRepository<FollowedUser> FollowedUsers { get; }
         public IUserRepository Users { get; }
         
-        public UnitOfWork(IAudioRepository audios,
-            IUserRepository users, 
-            IEntityRepository<FavoriteAudio> favoriteAudios, 
-            IEntityRepository<FollowedUser> followedUsers, 
-            ApplicationDbContext dbContext)
+        public UnitOfWork(IDbContextFactory<ApplicationDbContext> dbContextFactory)
         {
-            _dbContext = dbContext;
-            FavoriteAudios = favoriteAudios;
-            FollowedUsers = followedUsers;
-            Audios = audios;
-            Users = users;
+            _dbContext = dbContextFactory.CreateDbContext();
+            FavoriteAudios = new EfRepository<FavoriteAudio>(_dbContext);
+            FollowedUsers = new EfRepository<FollowedUser>(_dbContext);
+            Audios = new AudioRepository(_dbContext);
+            Users = new UserRepository(_dbContext);
         }
         
         public Task BeginTransactionAsync()
@@ -83,6 +81,11 @@ namespace Audiochan.Infrastructure.Persistence
         public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             await _dbContext.SaveChangesAsync(cancellationToken);
+        }
+
+        public ValueTask DisposeAsync()
+        {
+            return _dbContext.DisposeAsync();
         }
     }
 }

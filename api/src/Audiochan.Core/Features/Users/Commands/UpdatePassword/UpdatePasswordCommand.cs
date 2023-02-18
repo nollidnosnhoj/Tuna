@@ -1,52 +1,62 @@
-﻿using System.Threading;
+﻿using System.Security.Claims;
+using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Common.Mediatr;
-using Audiochan.Common.Dtos;
-using Audiochan.Common.Extensions;
+using Audiochan.Common.Exceptions;
+using Audiochan.Common.Services;
+using Audiochan.Core.Features.Users.Exceptions;
 using Audiochan.Core.Persistence;
-using Audiochan.Core.Services;
 using MediatR;
 
 namespace Audiochan.Core.Features.Users.Commands.UpdatePassword
 {
-    public record UpdatePasswordCommand : ICommandRequest<Result>
+    public class UpdatePasswordCommand : AuthCommandRequest<bool>
     {
-        public long UserId { get; init; }
-        public string CurrentPassword { get; init; } = "";
-        public string NewPassword { get; init; } = "";
+        public string CurrentPassword { get;  }
+        public string NewPassword { get; }
 
-        public static UpdatePasswordCommand FromRequest(long userId, UpdatePasswordRequest request) => new()
+        public UpdatePasswordCommand(string newPassword, string currentPassword, ClaimsPrincipal user) : base(user)
         {
-            UserId = userId,
-            CurrentPassword = request.CurrentPassword,
-            NewPassword = request.NewPassword
-        };
+            CurrentPassword = currentPassword;
+            NewPassword = newPassword;
+        }
     }
 
-    public class UpdatePasswordCommandHandler : IRequestHandler<UpdatePasswordCommand, Result>
+    public class UpdatePasswordCommandHandler : IRequestHandler<UpdatePasswordCommand, bool>
     {
-        private readonly long _currentUserId;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IPasswordHasher _passwordHasher;
 
-        public UpdatePasswordCommandHandler(ICurrentUserService currentUserService, IUnitOfWork unitOfWork, 
-            IPasswordHasher passwordHasher)
+        public UpdatePasswordCommandHandler(IUnitOfWork unitOfWork, IPasswordHasher passwordHasher)
         {
-            currentUserService.User.TryGetUserId(out _currentUserId);
             _unitOfWork = unitOfWork;
             _passwordHasher = passwordHasher;
         }
 
-        public async Task<Result> Handle(UpdatePasswordCommand command, CancellationToken cancellationToken)
+        public async Task<bool> Handle(UpdatePasswordCommand command, CancellationToken cancellationToken)
         {
-            var user = await _unitOfWork.Users.FindAsync(command.UserId, cancellationToken);
-            if (user!.Id != _currentUserId) return Result<bool>.Forbidden();
+            var userId = command.GetUserId();
+            var user = await _unitOfWork.Users.FindAsync(userId, cancellationToken);
+
+            if (user is null)
+            {
+                throw new UnauthorizedException();
+            }
+
+            if (user.Id != userId)
+            {
+                throw new UnauthorizedException();
+            }
+
             if (!_passwordHasher.Verify(command.CurrentPassword, user.PasswordHash))
-                return Result.BadRequest("Current password does not match.");   // Maybe give a generic error
+            {
+                throw new PasswordDoesNotMatchException();
+            }
+            
             var newHash = _passwordHasher.Hash(command.NewPassword);
             user.PasswordHash = newHash;
             await _unitOfWork.SaveChangesAsync(cancellationToken);
-            return Result.Success();
+            return true;
         }
     }
 }

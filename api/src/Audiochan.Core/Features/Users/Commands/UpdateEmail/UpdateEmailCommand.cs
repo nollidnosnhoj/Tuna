@@ -1,48 +1,51 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Common.Mediatr;
-using Audiochan.Common.Dtos;
-using Audiochan.Common.Extensions;
+using Audiochan.Common.Exceptions;
+using Audiochan.Core.Features.Users.Exceptions;
 using Audiochan.Core.Persistence;
-using Audiochan.Core.Services;
 using MediatR;
 
 namespace Audiochan.Core.Features.Users.Commands.UpdateEmail
 {
-    public record UpdateEmailCommand : ICommandRequest<Result>
+    public class UpdateEmailCommand : ICommandRequest<bool>
     {
-        public long UserId { get; init; }
-        public string NewEmail { get; init; } = null!;
+        public long UserId { get; set; }
+        public string NewEmail { get; }
 
-        public static UpdateEmailCommand FromRequest(long userId, UpdateEmailRequest request) => new()
+        public UpdateEmailCommand(long userId, string newEmail)
         {
-            UserId = userId,
-            NewEmail = request.NewEmail
-        };
+            NewEmail = newEmail;
+        }
     }
 
-    public class UpdateEmailCommandHandler : IRequestHandler<UpdateEmailCommand, Result>
+    public class UpdateEmailCommandHandler : IRequestHandler<UpdateEmailCommand, bool>
     {
-        private readonly ICurrentUserService _currentUserService;
         private readonly IUnitOfWork _unitOfWork;
 
-        public UpdateEmailCommandHandler(ICurrentUserService currentUserService, IUnitOfWork unitOfWork)
+        public UpdateEmailCommandHandler(IUnitOfWork unitOfWork)
         {
-            _currentUserService = currentUserService;
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Result> Handle(UpdateEmailCommand command, CancellationToken cancellationToken)
+        public async Task<bool> Handle(UpdateEmailCommand command, CancellationToken cancellationToken)
         {
-            _currentUserService.User.TryGetUserId(out var currentUserId);
-
             var user = await _unitOfWork.Users.FindAsync(command.UserId, cancellationToken);
-            if (user!.Id != currentUserId) return Result.Forbidden();
+
+            if (user is null)
+            {
+                throw new UnauthorizedException();
+            }
+
+            if (await _unitOfWork.Users.CheckIfEmailExists(command.NewEmail, cancellationToken))
+            {
+                throw new DuplicateEmailException(command.NewEmail);
+            }
 
             user.Email = command.NewEmail;
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return Result.Success();
+            return true;
         }
     }
 }

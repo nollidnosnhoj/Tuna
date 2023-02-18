@@ -1,19 +1,28 @@
-﻿using System.Threading;
+﻿using System.Security.Claims;
+using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Common.Mediatr;
-using Audiochan.Common.Dtos;
+using Audiochan.Common.Services;
+using Audiochan.Core.Features.Audios.Exceptions;
 using Audiochan.Core.Persistence;
-using Audiochan.Core.Services;
-using Audiochan.Domain.Entities;
 using MediatR;
 
 namespace Audiochan.Core.Features.Users.Commands.SetFavoriteAudio
 {
-    public record SetFavoriteAudioCommand(long AudioId, long UserId, bool IsFavoriting) : ICommandRequest<Result>
+    public class SetFavoriteAudioCommand : ICommandRequest<bool>
     {
+        public long AudioId { get; }
+        public long UserId { get; }
+        public bool IsFavoriting { get; }
+        public SetFavoriteAudioCommand(long audioId, long userId, bool isFavoriting)
+        {
+            AudioId = audioId;
+            UserId = userId;
+            IsFavoriting = isFavoriting;
+        }
     }
 
-    public class SetFavoriteAudioCommandHandler : IRequestHandler<SetFavoriteAudioCommand, Result>
+    public class SetFavoriteAudioCommandHandler : IRequestHandler<SetFavoriteAudioCommand, bool>
     {
         private readonly IDateTimeProvider _dateTimeProvider;
         private readonly IUnitOfWork _unitOfWork;
@@ -24,13 +33,15 @@ namespace Audiochan.Core.Features.Users.Commands.SetFavoriteAudio
             _dateTimeProvider = dateTimeProvider;
         }
 
-        public async Task<Result> Handle(SetFavoriteAudioCommand command, CancellationToken cancellationToken)
+        public async Task<bool> Handle(SetFavoriteAudioCommand command, CancellationToken cancellationToken)
         {
             var audio = await _unitOfWork.Audios
                 .LoadAudioWithFavorites(command.AudioId, command.UserId, cancellationToken);
 
             if (audio == null)
-                return Result.NotFound<Audio>();
+            {
+                throw new AudioNotFoundException(command.AudioId);
+            }
 
             if (command.IsFavoriting)
                 audio.Favorite(command.UserId, _dateTimeProvider.Now);
@@ -39,7 +50,7 @@ namespace Audiochan.Core.Features.Users.Commands.SetFavoriteAudio
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return Result.Success();
+            return command.IsFavoriting;
         }
     }
 }

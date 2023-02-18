@@ -8,22 +8,17 @@ namespace Audiochan.Core.Features.Audios.Mappings;
 
 public static partial class DtoMappings
 {
-    public static IQueryable<AudioDto> Project(this IQueryable<Audio> queryable, long? userId)
+    public static IQueryable<AudioDto> Project(this IQueryable<Audio> queryable)
     {
         return queryable.Select(x => new AudioDto
         {
             Id = x.Id,
             Description = x.Description ?? "",
-            Src = x.File,
-            IsFavorited = userId > 0
-                ? x.FavoriteAudios.Any(fa => fa.UserId == userId)
-                : null,
-            Slug = HashIdHelper.EncodeLong(x.Id),
+            ObjectKey = x.ObjectKey,
             Created = x.Created,
             Duration = x.Duration,
             Picture = x.Picture,
             Size = x.Size,
-            Tags = x.Tags,
             Title = x.Title,
             User = new UserDto
             {
@@ -32,12 +27,5 @@ public static partial class DtoMappings
                 UserName = x.User.UserName
             }
         });
-    }
-
-    public static AudioDto Map(this AudioDto audio)
-    {
-        audio.Src = MediaLinkConstants.AUDIO_STREAM + audio.Src;
-        audio.Picture = MediaLinkConstants.AUDIO_PICTURE + audio.Picture;
-        return audio;
     }
 }

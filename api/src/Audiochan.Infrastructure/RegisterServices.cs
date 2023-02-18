@@ -1,14 +1,13 @@
 ﻿using Amazon.S3;
+using Audiochan.Common.Services;
 using Audiochan.Core.Persistence;
 using Audiochan.Core.Persistence.Repositories;
 using Audiochan.Core.Services;
 using Audiochan.Infrastructure.Persistence;
 using Audiochan.Infrastructure.Persistence.Repositories;
-using Audiochan.Infrastructure.Search;
 using Audiochan.Infrastructure.Security;
 using Audiochan.Infrastructure.Shared;
 using Audiochan.Infrastructure.Storage.AmazonS3;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -23,23 +22,10 @@ namespace Audiochan.Infrastructure
         {
             services.AddCaching(configuration, environment);
             services.AddStorage();
-            services.AddSearch();
-            services.AddTransient<ISlugGenerator, SlugGenerator>();
-            services.AddTransient<IImageService, ImageService>();
             services.AddTransient<IDateTimeProvider, DateTimeProvider>();
             services.AddTransient<IRandomIdGenerator, NanoidGenerator>();
             services.AddTransient<IPasswordHasher, BCryptHasher>();
-            services.AddPersistence();
-            return services;
-        }
-
-        private static IServiceCollection AddPersistence(this IServiceCollection services)
-        {
-            services.AddScoped(typeof(IEntityRepository<>), typeof(EfRepository<>));
-            services.AddScoped<IAudioRepository, AudioRepository>();
-            services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
-            
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
             return services;
         }
 
@@ -65,12 +51,6 @@ namespace Audiochan.Infrastructure
         {
             services.AddAWSService<IAmazonS3>();
             services.AddTransient<IStorageService, AmazonS3Service>();
-            return services;
-        }
-
-        private static IServiceCollection AddSearch(this IServiceCollection services)
-        {
-            services.AddTransient<ISearchService, PostgresSearchService>();
             return services;
         }
     }

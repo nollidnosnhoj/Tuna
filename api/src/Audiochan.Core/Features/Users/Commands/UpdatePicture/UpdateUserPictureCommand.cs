@@ -1,42 +1,53 @@
-﻿using System.Threading;
+﻿using System.Security.Claims;
+using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Common.Mediatr;
 using Audiochan.Common.Dtos;
+using Audiochan.Common.Exceptions;
 using Audiochan.Common.Extensions;
 using Audiochan.Common.Interfaces;
+using Audiochan.Common.Services;
 using Audiochan.Core.Persistence;
 using Audiochan.Core.Services;
 using MediatR;
 
 namespace Audiochan.Core.Features.Users.Commands.UpdatePicture
 {
-    public record UpdateUserPictureCommand(long UserId, string Data = "") : IImageData,
-        ICommandRequest<Result<ImageUploadResponse>>;
+    public class UpdateUserPictureCommand : ICommandRequest<ImageUploadResponse>, IImageData
+    {
+        public long UserId { get; }
+        public string? Data { get; }
 
-    public class UpdateUserPictureCommandHandler : IRequestHandler<UpdateUserPictureCommand, Result<ImageUploadResponse>>
+        public UpdateUserPictureCommand(long userId, string? data)
+        {
+            UserId = userId;
+            Data = data;
+        }
+    }
+
+    public class UpdateUserPictureCommandHandler : IRequestHandler<UpdateUserPictureCommand, ImageUploadResponse>
     {
         private readonly IImageService _imageService;
-        private readonly long _currentUserId;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IRandomIdGenerator _randomIdGenerator;
 
         public UpdateUserPictureCommandHandler(IImageService imageService,
-            ICurrentUserService currentUserService, 
             IUnitOfWork unitOfWork, 
             IRandomIdGenerator randomIdGenerator)
         {
             _imageService = imageService;
-            currentUserService.User.TryGetUserId(out _currentUserId);
             _unitOfWork = unitOfWork;
             _randomIdGenerator = randomIdGenerator;
         }
 
-        public async Task<Result<ImageUploadResponse>> Handle(UpdateUserPictureCommand command, CancellationToken cancellationToken)
+        public async Task<ImageUploadResponse> Handle(UpdateUserPictureCommand command, CancellationToken cancellationToken)
         {
             var user = await _unitOfWork.Users.FindAsync(command.UserId, cancellationToken);
 
-            if (user!.Id != _currentUserId)
-                return Result<ImageUploadResponse>.Forbidden();
+            if (user is null)
+            {
+                throw new UnauthorizedException();
+            }
         
             var blobName = string.Empty;
             if (string.IsNullOrEmpty(command.Data))
@@ -54,10 +65,10 @@ namespace Audiochan.Core.Features.Users.Commands.UpdatePicture
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return Result<ImageUploadResponse>.Success(new ImageUploadResponse
+            return new ImageUploadResponse
             {
                 Url = MediaLinkConstants.USER_PICTURE + blobName
-            });
+            };
         }
         
         private async Task RemoveOriginalPicture(string? picture, CancellationToken cancellationToken = default)

@@ -14,7 +14,7 @@ namespace Audiochan.Domain.Entities
         public string? Description { get; set; }
         public List<string> Tags { get; set; } = new();
         public decimal Duration { get; set; }
-        public string File { get; set; } = null!;
+        public string ObjectKey { get; set; } = null!;
         public long Size { get; set; }
         public string? Picture { get; set; }
         public long UserId { get; set; }

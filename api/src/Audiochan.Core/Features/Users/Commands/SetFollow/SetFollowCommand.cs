@@ -2,6 +2,8 @@
 using System.Threading.Tasks;
 using Audiochan.Common.Mediatr;
 using Audiochan.Common.Dtos;
+using Audiochan.Common.Services;
+using Audiochan.Core.Features.Users.Exceptions;
 using Audiochan.Core.Persistence;
 using Audiochan.Core.Services;
 using Audiochan.Domain.Entities;
@@ -9,11 +11,11 @@ using MediatR;
 
 namespace Audiochan.Core.Features.Users.Commands.SetFollow
 {
-    public record SetFollowCommand(long ObserverId, long TargetId, bool IsFollowing) : ICommandRequest<Result>
+    public record SetFollowCommand(long TargetId, long ObserverId, bool IsFollowing) : ICommandRequest<bool>
     {
     }
 
-    public class SetFollowCommandHandler : IRequestHandler<SetFollowCommand, Result>
+    public class SetFollowCommandHandler : IRequestHandler<SetFollowCommand, bool>
     {
         private readonly IDateTimeProvider _dateTimeProvider;
         private readonly IUnitOfWork _unitOfWork;
@@ -24,16 +26,20 @@ namespace Audiochan.Core.Features.Users.Commands.SetFollow
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Result> Handle(SetFollowCommand command, CancellationToken cancellationToken)
+        public async Task<bool> Handle(SetFollowCommand command, CancellationToken cancellationToken)
         {
             var target = await _unitOfWork.Users
                 .LoadUserWithFollowers(command.TargetId, command.ObserverId, cancellationToken);
 
             if (target == null)
-                return Result.NotFound<User>();
+            {
+                throw new UserNotFoundException(command.TargetId);
+            }
 
             if (target.Id == command.ObserverId)
-                return Result.Forbidden();
+            {
+                throw new CannotFollowYourselfException();
+            }
 
             if (command.IsFollowing)
             {
@@ -47,7 +53,7 @@ namespace Audiochan.Core.Features.Users.Commands.SetFollow
             _unitOfWork.Users.Update(target);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return Result.Success();
+            return command.IsFollowing;
         }
     }
 }

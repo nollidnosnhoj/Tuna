@@ -13,7 +13,7 @@ namespace Audiochan.Core.Persistence.Configurations
             builder.Property(x => x.Id).ValueGeneratedOnAdd();
 
             builder.Property(x => x.Title).HasMaxLength(100);
-            builder.Property(x => x.File).HasMaxLength(256);
+            builder.Property(x => x.ObjectKey).HasMaxLength(256);
             builder.Property(x => x.Picture).HasMaxLength(256);
 
             builder.HasIndex(x => x.Title);

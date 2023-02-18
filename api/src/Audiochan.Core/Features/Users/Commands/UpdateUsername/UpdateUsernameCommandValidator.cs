@@ -6,9 +6,9 @@ namespace Audiochan.Core.Features.Users.Commands.UpdateUsername
 {
     public class UpdateUsernameCommandValidator : AbstractValidator<UpdateUsernameCommand>
     {
-        public UpdateUsernameCommandValidator(IOptions<IdentitySettings> options)
+        public UpdateUsernameCommandValidator()
         {
-            RuleFor(req => req.NewUsername).UsernameValidation(options.Value.UsernameSettings);
+            RuleFor(req => req.NewUserName).UsernameValidation();
         }
     }
 }

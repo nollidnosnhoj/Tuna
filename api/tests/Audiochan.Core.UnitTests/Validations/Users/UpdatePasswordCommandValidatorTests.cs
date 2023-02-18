@@ -1,5 +1,6 @@
 ﻿using Audiochan.Common;
 using Audiochan.Core.Features.Users.Commands.UpdatePassword;
+using Audiochan.Tests.Common.Mocks;
 using FluentValidation;
 using FluentValidation.TestHelper;
 using Microsoft.Extensions.Options;
@@ -13,14 +14,13 @@ namespace Audiochan.Core.UnitTests.Validations.Users
 
         public UpdatePasswordCommandValidatorTests()
         {
-            var options = Options.Create(new IdentitySettings());
-            _validator = new UpdatePasswordCommandValidator(options);
+            _validator = new UpdatePasswordCommandValidator();
         }
 
         [Fact]
         public void PasswordRequired()
         {
-            var req = new UpdatePasswordCommand {NewPassword = ""};
+            var req = new UpdatePasswordCommand("", "", ClaimsPrincipalMock.CreateFakeUser());
             var validationResult = _validator.TestValidate(req);
             validationResult
                 .ShouldHaveValidationErrorFor(x => x.NewPassword);
@@ -30,7 +30,7 @@ namespace Audiochan.Core.UnitTests.Validations.Users
         [InlineData("thisdoesnothavedigits")]
         public void PasswordRequireDigits(string password)
         {
-            var req = new UpdatePasswordCommand {NewPassword = password};
+            var req = new UpdatePasswordCommand(password, "", ClaimsPrincipalMock.CreateFakeUser());
 
             var validationResult = _validator.TestValidate(req);
 
@@ -43,7 +43,7 @@ namespace Audiochan.Core.UnitTests.Validations.Users
         [InlineData("OMEGALUL4HEAD")]
         public void PasswordRequireLowercase(string password)
         {
-            var req = new UpdatePasswordCommand {NewPassword = password};
+            var req = new UpdatePasswordCommand(password, "", ClaimsPrincipalMock.CreateFakeUser());
 
             var validationResult = _validator.TestValidate(req);
 
@@ -56,7 +56,7 @@ namespace Audiochan.Core.UnitTests.Validations.Users
         [InlineData("omegalul4head")]
         public void PasswordRequireUppercase(string password)
         {
-            var req = new UpdatePasswordCommand {NewPassword = password};
+            var req = new UpdatePasswordCommand(password, "", ClaimsPrincipalMock.CreateFakeUser());
 
             var validationResult = _validator.TestValidate(req);
 
@@ -69,7 +69,7 @@ namespace Audiochan.Core.UnitTests.Validations.Users
         [InlineData("lkdsfhlksdjflksdjflks")]
         public void PasswordRequireNonAlphanumeric(string password)
         {
-            var req = new UpdatePasswordCommand {NewPassword = password};
+            var req = new UpdatePasswordCommand(password, "", ClaimsPrincipalMock.CreateFakeUser());
 
             var validationResult = _validator.TestValidate(req);
 
@@ -82,7 +82,7 @@ namespace Audiochan.Core.UnitTests.Validations.Users
         [InlineData("no")]
         public void PasswordRequireLength(string password)
         {
-            var req = new UpdatePasswordCommand {NewPassword = password};
+            var req = new UpdatePasswordCommand(password, "", ClaimsPrincipalMock.CreateFakeUser());
 
             var validationResult = _validator.TestValidate(req);
 

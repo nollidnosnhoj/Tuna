@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Audiochan.Common.Services;
 using Audiochan.Core.Services;
 using Audiochan.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -63,7 +64,7 @@ namespace Audiochan.Core.Persistence
                 Description = "This audio is created by bensound.com, used for demo purposes only.",
                 Duration = duration,
                 Created = DateTime.UtcNow,
-                File = $"test0{index}.mp3",
+                ObjectKey = $"test0{index}.mp3",
                 Size = fileSize,
             };
         }
