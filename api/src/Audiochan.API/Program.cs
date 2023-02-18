@@ -1,10 +1,6 @@
 using System;
 using System.Reflection;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using Audiochan.API.Extensions.ConfigurationExtensions;
-using Audiochan.API.Middlewares;
-using Audiochan.API.Services;
 using Audiochan.Common.Mediatr.Pipelines;
 using Audiochan.Common.Services;
 using Audiochan.Core;
@@ -64,13 +60,13 @@ try
 
     app.UseCorsConfig();
     app.UseRateLimiter();
-    app.UseMiddleware<ExceptionHandlingMiddleware>();
     app.UseSerilogRequestLogging();
     app.UseRouting();
     app.UseAuthentication();
     app.UseRouting();
     app.UseAuthorization();
     app.MapControllers();
+    app.MapGraphQL();
     app.UseSwaggerConfig();
 
     using (var scope = app.Services.CreateScope())

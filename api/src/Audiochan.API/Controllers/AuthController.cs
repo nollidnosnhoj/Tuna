@@ -17,10 +17,10 @@ namespace Audiochan.API.Controllers
     [Route("auth")]
     public class AuthController : ControllerBase
     {
-        private readonly AuthService _authService;
+        private readonly IAuthService _authService;
         private readonly IDateTimeProvider _dateTime;
 
-        public AuthController(IDateTimeProvider dateTime, AuthService authService)
+        public AuthController(IDateTimeProvider dateTime, IAuthService authService)
         {
             _dateTime = dateTime;
             _authService = authService;

@@ -1,4 +1,5 @@
-﻿using Audiochan.API.Queries;
+﻿using Audiochan.API.Mutations;
+using Audiochan.API.Queries;
 using Audiochan.API.Types;
 using Audiochan.Core.Features.Audios;
 using Audiochan.Core.Features.Users;
@@ -15,6 +16,7 @@ public static class GraphQLConfigExtensions
     public static IServiceCollection ConfigureGraphQL(this IServiceCollection services)
     {
         services.AddGraphQLServer()
+            .AddAuthorization()
             .RegisterDbContext<ApplicationDbContext>(DbContextKind.Pooled)
             .RegisterService<AudioQueryService>()
             .RegisterService<UserQueryService>()
@@ -25,7 +27,9 @@ public static class GraphQLConfigExtensions
             .AddTypeExtension<AudioNode>()
             .AddTypeExtension<UserNode>()
             .AddTypeExtension<AudioQueries>()
-            .AddTypeExtension<UserQueries>();
+            .AddTypeExtension<UserQueries>()
+            .AddTypeExtension<AudioMutations>()
+            .AddTypeExtension<UserMutations>();
 
         return services;
     }
