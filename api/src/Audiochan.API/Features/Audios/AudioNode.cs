@@ -4,7 +4,7 @@ using HashidsNet;
 using HotChocolate;
 using HotChocolate.Types;
 
-namespace Audiochan.API.Types;
+namespace Audiochan.API.Features.Audios;
 
 [ExtendObjectType<AudioDto>]
 public class AudioNode

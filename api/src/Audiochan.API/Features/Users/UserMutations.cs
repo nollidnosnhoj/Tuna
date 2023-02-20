@@ -18,7 +18,7 @@ using HotChocolate.Language;
 using HotChocolate.Types;
 using MediatR;
 
-namespace Audiochan.API.Mutations;
+namespace Audiochan.API.Features.Users;
 
 [ExtendObjectType(OperationType.Mutation)]
 public class UserMutations

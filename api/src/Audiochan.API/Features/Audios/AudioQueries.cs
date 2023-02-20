@@ -7,9 +7,8 @@ using HotChocolate.Language;
 using HotChocolate.Resolvers;
 using HotChocolate.Types;
 using HotChocolate.Types.Pagination;
-using MediatR;
 
-namespace Audiochan.API.Queries;
+namespace Audiochan.API.Features.Audios;
 
 [ExtendObjectType(OperationType.Query)]
 public class AudioQueries

@@ -9,9 +9,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace Audiochan.API.Extensions.ConfigurationExtensions
+namespace Audiochan.API.Configurations
 {
-    public static class AuthConfigExtensions
+    public static class AuthConfiguration
     {
         public static IServiceCollection ConfigureAuthentication(this IServiceCollection services, IConfiguration configuration, 
             IWebHostEnvironment environment)

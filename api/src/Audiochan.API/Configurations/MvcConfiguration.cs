@@ -1,11 +1,9 @@
-﻿using System.Text.Json;
-using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Audiochan.API.Extensions.ConfigurationExtensions
+namespace Audiochan.API.Configurations
 {
-    public static class MvcConfigExtensions
+    public static class MvcConfiguration
     {
         public static IServiceCollection ConfigureControllers(this IServiceCollection services)
         {

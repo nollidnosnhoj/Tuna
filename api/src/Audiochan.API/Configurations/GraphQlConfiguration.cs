@@ -1,6 +1,5 @@
-﻿using Audiochan.API.Mutations;
-using Audiochan.API.Queries;
-using Audiochan.API.Types;
+﻿using Audiochan.API.Features.Audios;
+using Audiochan.API.Features.Users;
 using Audiochan.Core.Features.Audios;
 using Audiochan.Core.Features.Users;
 using Audiochan.Core.Persistence;
@@ -9,9 +8,9 @@ using HotChocolate.Data;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Audiochan.API.Extensions.ConfigurationExtensions;
+namespace Audiochan.API.Configurations;
 
-public static class GraphQLConfigExtensions
+public static class GraphQlConfiguration
 {
     public static IServiceCollection ConfigureGraphQL(this IServiceCollection services)
     {

@@ -4,9 +4,9 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Audiochan.API.Extensions.ConfigurationExtensions
+namespace Audiochan.API.Configurations
 {
-    public static class RateLimitConfigExtensions
+    public static class RateLimitConfiguration
     {
         public static IServiceCollection ConfigureRateLimiting(this IServiceCollection services)
         {

@@ -19,7 +19,7 @@ using HotChocolate.Language;
 using HotChocolate.Types;
 using MediatR;
 
-namespace Audiochan.API.Mutations;
+namespace Audiochan.API.Features.Audios;
 
 [ExtendObjectType(OperationType.Mutation)]
 public class AudioMutations

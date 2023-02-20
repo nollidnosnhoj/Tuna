@@ -11,7 +11,7 @@ using HotChocolate.Language;
 using HotChocolate.Types;
 using MediatR;
 
-namespace Audiochan.API.Mutations;
+namespace Audiochan.API.Features.Upload;
 
 [ExtendObjectType(OperationType.Mutation)]
 public class UploadMutations

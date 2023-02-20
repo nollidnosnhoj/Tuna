@@ -1,11 +1,10 @@
-﻿using System.Collections.Generic;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 
-namespace Audiochan.API.Extensions.ConfigurationExtensions
+namespace Audiochan.API.Configurations
 {
-    public static class SwaggerConfigExtensions
+    public static class SwaggerConfiguration
     {
         public static void ConfigureSwagger(this IServiceCollection services)
         {

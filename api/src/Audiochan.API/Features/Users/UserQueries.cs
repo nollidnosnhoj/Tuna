@@ -7,7 +7,7 @@ using HotChocolate.Resolvers;
 using HotChocolate.Types;
 using HotChocolate.Types.Pagination;
 
-namespace Audiochan.API.Queries;
+namespace Audiochan.API.Features.Users;
 
 [ExtendObjectType(OperationType.Mutation)]
 public class UserQueries

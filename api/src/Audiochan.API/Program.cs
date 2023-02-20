@@ -1,5 +1,5 @@
 using System;
-using Audiochan.API.Extensions.ConfigurationExtensions;
+using Audiochan.API.Configurations;
 using Audiochan.Core;
 using Audiochan.Core.Persistence;
 using Audiochan.Core.Services;

@@ -3,7 +3,7 @@ using Audiochan.Core.Features.Users.Dtos;
 using HotChocolate;
 using HotChocolate.Types;
 
-namespace Audiochan.API.Types;
+namespace Audiochan.API.Features.Users;
 
 [ExtendObjectType<UserDto>]
 public class UserNode
