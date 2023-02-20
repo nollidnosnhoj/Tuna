@@ -69,7 +69,7 @@ namespace Audiochan.Core.Features.Audios.Commands.UpdateAudio
                 Id = audio.Id,
                 Description = audio.Description ?? "",
                 ObjectKey = audio.ObjectKey,
-                Created = audio.Created,
+                Created = audio.CreatedAt,
                 Duration = audio.Duration,
                 Picture = audio.Picture,
                 Size = audio.Size,

@@ -15,7 +15,7 @@ public static partial class DtoMappings
             Id = x.Id,
             Description = x.Description ?? "",
             ObjectKey = x.ObjectKey,
-            Created = x.Created,
+            Created = x.CreatedAt,
             Duration = x.Duration,
             Picture = x.Picture,
             Size = x.Size,

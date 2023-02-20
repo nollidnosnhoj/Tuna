@@ -2,7 +2,7 @@
 
 namespace Audiochan.Core.Features.Users.Dtos
 {
-    public record ProfileDto : IHasId<long>
+    public record ProfileDto
     {
         public long Id { get; init; }
         public string UserName { get; init; } = null!;

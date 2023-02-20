@@ -31,7 +31,7 @@ public class AudioQueryService : IAsyncDisposable
     {
         return await _dbContext.Audios
             .Where(x => x.UserId == userId)
-            .OrderByDescending(x => x.Created)
+            .OrderByDescending(x => x.CreatedAt)
             .Project()
             .ApplyOffsetPaginationAsync(skip, take, cancellationToken);
     }
@@ -41,7 +41,7 @@ public class AudioQueryService : IAsyncDisposable
         return await _dbContext.FavoriteAudios
             .Where(x => x.UserId == userId)
             .Select(x => x.Audio)
-            .OrderByDescending(x => x.Created)
+            .OrderByDescending(x => x.CreatedAt)
             .Project()
             .ApplyOffsetPaginationAsync(skip, take, cancellationToken);
     }

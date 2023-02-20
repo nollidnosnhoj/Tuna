@@ -56,8 +56,8 @@ public class AudiochanApiFactory : WebApplicationFactory<IApiMaker>, IAsyncLifet
         builder.UseConfiguration(_configuration);
         builder.ConfigureTestServices(services =>
         {
-            services.RemoveAll(typeof(DbContextOptions<ApplicationDbContext>));
-            services.ConfigureDatabase(_configuration, true);
+            // services.RemoveAll(typeof(DbContextOptions<ApplicationDbContext>));
+            // services.ConfigureDatabase(_configuration, true);
 
             services.ReplaceService(typeof(IDateTimeProvider), 
                 _ => new MockDateTimeProvider(DateTime.UtcNow));

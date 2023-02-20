@@ -5,7 +5,7 @@ using Audiochan.Domain.Abstractions;
 
 namespace Audiochan.Core.Features.Audios.Dtos
 {
-    public record AudioDto : IHasId<long>
+    public record AudioDto
     {
         public long Id { get; set; }
         public string Title { get; set; } = null!;

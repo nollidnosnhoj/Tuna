@@ -63,7 +63,7 @@ namespace Audiochan.Core.Persistence
                 Title = $"Test0{index}",
                 Description = "This audio is created by bensound.com, used for demo purposes only.",
                 Duration = duration,
-                Created = DateTime.UtcNow,
+                CreatedAt = DateTime.UtcNow,
                 ObjectKey = $"test0{index}.mp3",
                 Size = fileSize,
             };

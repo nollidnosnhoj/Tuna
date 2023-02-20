@@ -1,17 +1,10 @@
 using System;
-using System.Reflection;
 using Audiochan.API.Extensions.ConfigurationExtensions;
-using Audiochan.Common.Mediatr.Pipelines;
 using Audiochan.Common.Services;
 using Audiochan.Core;
 using Audiochan.Core.Persistence;
-using Audiochan.Core.Persistence.Pipelines;
-using Audiochan.Core.Services;
 using Audiochan.Infrastructure;
 using Audiochan.Infrastructure.Storage.AmazonS3;
-using FluentValidation;
-using HashidsNet;
-using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -35,19 +28,13 @@ try
     builder.Services.Configure<AmazonS3Settings>(builder.Configuration.GetSection(nameof(AmazonS3Settings)));
     builder.Services.Configure<MediaStorageSettings>(builder.Configuration.GetSection(nameof(MediaStorageSettings)));
     
-    builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-    builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
-    builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehavior<,>));
-    builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(DbContextTransactionPipelineBehavior<,>));
-    builder.Services.AddTransient<IImageService, ImageService>();
-    builder.Services.AddSingleton<IHashids>(_ => new Hashids(salt: "audiochan", minHashLength: 7));
+    builder.Services.AddApplication(builder.Configuration, builder.Environment);
     builder.Services.AddInfrastructure(builder.Configuration, builder.Environment);
     builder.Services.ConfigureAuthentication(builder.Configuration, builder.Environment);
     builder.Services.ConfigureAuthorization();
     builder.Services.AddHttpContextAccessor();
     builder.Services.ConfigureControllers();
     builder.Services.ConfigureGraphQL();
-    builder.Services.ConfigureDatabase(builder.Configuration, builder.Environment.IsDevelopment());
     builder.Services.ConfigureRouting();
     builder.Services.ConfigureRateLimiting();
     builder.Services.ConfigureCors();

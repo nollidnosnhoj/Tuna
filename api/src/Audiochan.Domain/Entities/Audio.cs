@@ -5,14 +5,10 @@ using Audiochan.Domain.Abstractions;
 
 namespace Audiochan.Domain.Entities
 {
-    public class Audio : IAudited, IHasId<long>
+    public class Audio : AuditableEntity<long>
     {
-        public long Id { get; set; }
-        public DateTime Created { get; set; }
-        public DateTime? LastModified { get; set; }
         public string Title { get; set; } = null!;
         public string? Description { get; set; }
-        public List<string> Tags { get; set; } = new();
         public decimal Duration { get; set; }
         public string ObjectKey { get; set; } = null!;
         public long Size { get; set; }
