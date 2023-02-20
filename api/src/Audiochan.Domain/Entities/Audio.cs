@@ -12,7 +12,7 @@ namespace Audiochan.Domain.Entities
         public decimal Duration { get; set; }
         public string ObjectKey { get; set; } = null!;
         public long Size { get; set; }
-        public string? Picture { get; set; }
+        public string? ImageId { get; set; }
         public long UserId { get; set; }
         public User User { get; set; } = null!;
         public ICollection<FavoriteAudio> FavoriteAudios { get; set; } = new HashSet<FavoriteAudio>();

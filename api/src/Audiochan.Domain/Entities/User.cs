@@ -25,7 +25,7 @@ namespace Audiochan.Domain.Entities
         public string Email { get; set; } = null!;
         public string PasswordHash { get; set; } = null!;
         public UserRole Role { get; set; }
-        public string? Picture { get; set; }
+        public string? ImageId { get; set; }
         public ICollection<Audio> Audios { get; set; } = new HashSet<Audio>();
         public ICollection<FavoriteAudio> FavoriteAudios { get; set; } = new HashSet<FavoriteAudio>();
         public ICollection<FollowedUser> Followings { get; set; } = new HashSet<FollowedUser>();

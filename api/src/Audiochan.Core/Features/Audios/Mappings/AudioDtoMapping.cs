@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using Audiochan.Common.Helpers;
 using Audiochan.Core.Features.Audios.Dtos;
 using Audiochan.Core.Features.Users.Dtos;
 using Audiochan.Domain.Entities;
@@ -17,13 +16,13 @@ public static partial class DtoMappings
             ObjectKey = x.ObjectKey,
             Created = x.CreatedAt,
             Duration = x.Duration,
-            Picture = x.Picture,
+            Picture = x.ImageId,
             Size = x.Size,
             Title = x.Title,
             User = new UserDto
             {
                 Id = x.UserId,
-                Picture = x.User.Picture,
+                Picture = x.User.ImageId,
                 UserName = x.User.UserName
             }
         });

@@ -49,7 +49,7 @@ namespace Audiochan.Core.Features.Users.Commands.UpdateProfile
             return new UserDto
             {
                 Id = userId,
-                Picture = user.Picture,
+                Picture = user.ImageId,
                 UserName = user.UserName
             };
         }

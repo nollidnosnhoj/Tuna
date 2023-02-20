@@ -11,7 +11,7 @@ public static partial class DtoMappings
         return queryable.Select(x => new UserDto
         {
             Id = x.Id,
-            Picture = x.Picture,
+            Picture = x.ImageId,
             UserName = x.UserName
         });
     }

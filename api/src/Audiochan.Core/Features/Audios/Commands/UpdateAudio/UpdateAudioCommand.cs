@@ -1,18 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Common.Mediatr;
-using Audiochan.Common.Dtos;
-using Audiochan.Common.Exceptions;
-using Audiochan.Common.Extensions;
-using Audiochan.Common.Helpers;
 using Audiochan.Core.Features.Audios.Dtos;
 using Audiochan.Core.Features.Audios.Exceptions;
 using Audiochan.Core.Features.Users.Dtos;
 using Audiochan.Core.Persistence;
-using Audiochan.Core.Services;
 using Audiochan.Domain.Entities;
 using MediatR;
 using Microsoft.Extensions.Caching.Distributed;
@@ -71,13 +64,13 @@ namespace Audiochan.Core.Features.Audios.Commands.UpdateAudio
                 ObjectKey = audio.ObjectKey,
                 Created = audio.CreatedAt,
                 Duration = audio.Duration,
-                Picture = audio.Picture,
+                Picture = audio.ImageId,
                 Size = audio.Size,
                 Title = audio.Title,
                 User = new UserDto
                 {
                     Id = audio.UserId,
-                    Picture = audio.User.Picture,
+                    Picture = audio.User.ImageId,
                     UserName = audio.User.UserName
                 }
             };

@@ -1,9 +1,9 @@
 ﻿using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Common.Dtos;
 using Audiochan.Common.Exceptions;
 using Audiochan.Common.Extensions;
+using Audiochan.Core.Features.Upload.Dtos;
 using Audiochan.Core.Features.Users.Commands.SetFollow;
 using Audiochan.Core.Features.Users.Commands.UpdateEmail;
 using Audiochan.Core.Features.Users.Commands.UpdatePassword;

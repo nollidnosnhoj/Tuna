@@ -1,7 +1,6 @@
 ﻿using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Common.Dtos;
 using Audiochan.Common.Extensions;
 using Audiochan.Core.Features.Audios.Commands.CreateAudio;
 using Audiochan.Core.Features.Audios.Commands.RemoveAudio;

@@ -1,8 +1,8 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Common.Mediatr;
-using Audiochan.Common.Dtos;
 using Audiochan.Common.Exceptions;
+using Audiochan.Core.Features.Upload.Dtos;
 using Audiochan.Core.Persistence;
 using Audiochan.Core.Services;
 using MediatR;
@@ -43,20 +43,17 @@ namespace Audiochan.Core.Features.Users.Commands.UpdatePicture
         
             if (string.IsNullOrEmpty(command.UploadId))
             {
-                await RemoveOriginalPicture(user.Picture, cancellationToken);
-                user.Picture = null;
+                await RemoveOriginalPicture(user.ImageId, cancellationToken);
+                user.ImageId = null;
             }
             else
             {
-                user.Picture = command.UploadId;
+                user.ImageId = command.UploadId;
             }
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return new ImageUploadResponse
-            {
-                Url = MediaLinkConstants.USER_PICTURE + command.UploadId
-            };
+            return ImageUploadResponse.ToUserImage(user.ImageId);
         }
         
         private async Task RemoveOriginalPicture(string? picture, CancellationToken cancellationToken = default)

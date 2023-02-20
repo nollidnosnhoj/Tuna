@@ -63,11 +63,11 @@ namespace Audiochan.Core.Features.Audios.Commands.RemoveAudio
                 RemoveAudioFromStorage(audio, cancellationToken)
             };
         
-            if (!string.IsNullOrEmpty(audio.Picture))
+            if (!string.IsNullOrEmpty(audio.ImageId))
             {
                 tasks.Add(_storageService.RemoveAsync(
                     "audiochan",     // TODO: add bucket to configuration
-                    $"{AssetContainerConstants.AUDIO_PICTURES}/{audio.Picture}", 
+                    $"{AssetContainerConstants.AUDIO_PICTURES}/{audio.ImageId}", 
                     cancellationToken));
             }
         

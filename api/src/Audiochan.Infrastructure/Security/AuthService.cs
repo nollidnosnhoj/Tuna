@@ -37,7 +37,7 @@ public class AuthService : IAuthService, IAsyncDisposable
         {
             Id = user.Id,
             UserName = user.UserName,
-            Picture = user.Picture
+            Picture = user.ImageId
         };
 
         return currentUser;
