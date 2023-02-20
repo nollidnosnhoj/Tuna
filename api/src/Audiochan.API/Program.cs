@@ -1,8 +1,8 @@
 using System;
 using Audiochan.API.Extensions.ConfigurationExtensions;
-using Audiochan.Common.Services;
 using Audiochan.Core;
 using Audiochan.Core.Persistence;
+using Audiochan.Core.Services;
 using Audiochan.Infrastructure;
 using Audiochan.Infrastructure.Storage.AmazonS3;
 using Microsoft.AspNetCore.Builder;

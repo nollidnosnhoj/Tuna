@@ -3,9 +3,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Common.Mediatr;
 using Audiochan.Common.Exceptions;
-using Audiochan.Common.Services;
 using Audiochan.Core.Features.Users.Exceptions;
 using Audiochan.Core.Persistence;
+using Audiochan.Core.Services;
 using MediatR;
 
 namespace Audiochan.Core.Features.Users.Commands.UpdatePassword

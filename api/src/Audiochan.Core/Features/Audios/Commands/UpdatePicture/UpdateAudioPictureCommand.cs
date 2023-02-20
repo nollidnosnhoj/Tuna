@@ -3,42 +3,34 @@ using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Common.Mediatr;
 using Audiochan.Common.Dtos;
-using Audiochan.Common.Interfaces;
-using Audiochan.Common.Services;
 using Audiochan.Core.Features.Audios.Exceptions;
 using Audiochan.Core.Persistence;
 using Audiochan.Core.Services;
 using MediatR;
-using Microsoft.Extensions.Caching.Distributed;
 
 namespace Audiochan.Core.Features.Audios.Commands.UpdatePicture
 {
-    public class UpdateAudioPictureCommand : AuthCommandRequest<ImageUploadResponse>, IImageData
+    public class UpdateAudioPictureCommand : AuthCommandRequest<ImageUploadResponse>
     {
-        public UpdateAudioPictureCommand(long audioId, string? data, ClaimsPrincipal user) : base(user)
+        public UpdateAudioPictureCommand(long audioId, string? uploadId, ClaimsPrincipal user) : base(user)
         {
             AudioId = audioId;
-            Data = data;
+            UploadId = uploadId;
         }
 
         public long AudioId { get; }
-        public string? Data { get; }
+        public string? UploadId { get; }
     }
 
     public class UpdateAudioPictureCommandHandler : IRequestHandler<UpdateAudioPictureCommand, ImageUploadResponse>
     {
-        private readonly IDistributedCache _cache;
-        private readonly IImageService _imageService;
-        private readonly IRandomIdGenerator _randomIdGenerator;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IStorageService _storageService;
 
-        public UpdateAudioPictureCommandHandler(IImageService imageService,
-            IRandomIdGenerator randomIdGenerator, IUnitOfWork unitOfWork, IDistributedCache cache)
+        public UpdateAudioPictureCommandHandler(IUnitOfWork unitOfWork, IStorageService storageService)
         {
-            _imageService = imageService;
-            _randomIdGenerator = randomIdGenerator;
             _unitOfWork = unitOfWork;
-            _cache = cache;
+            _storageService = storageService;
         }
 
         public async Task<ImageUploadResponse> Handle(UpdateAudioPictureCommand command,
@@ -54,26 +46,21 @@ namespace Audiochan.Core.Features.Audios.Commands.UpdatePicture
             if (audio.UserId != currentUserId)
                 throw new AudioNotFoundException(command.AudioId);
 
-            var blobName = string.Empty;
-            if (string.IsNullOrEmpty(command.Data))
+            if (string.IsNullOrEmpty(command.UploadId))
             {
                 await RemoveOriginalPicture(audio.Picture, cancellationToken);
                 audio.Picture = null;
             }
             else
             {
-                blobName = $"{await _randomIdGenerator.GenerateAsync(size: 15)}.jpg";
-                await _imageService.UploadImage(command.Data, AssetContainerConstants.AUDIO_PICTURES, blobName, cancellationToken);
-                await RemoveOriginalPicture(audio.Picture, cancellationToken);
-                audio.Picture = blobName;
+                audio.Picture = command.UploadId;
             }
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
-            await _cache.RemoveAsync(CacheKeys.Audio.GetAudio(command.AudioId), cancellationToken);
                 
             return new ImageUploadResponse
             {
-                Url = MediaLinkConstants.AUDIO_PICTURE + blobName
+                Url = MediaLinkConstants.AUDIO_PICTURE + command.UploadId   // TODO: Change this
             };
         }
 
@@ -81,7 +68,9 @@ namespace Audiochan.Core.Features.Audios.Commands.UpdatePicture
         {
             if (!string.IsNullOrEmpty(picture))
             {
-                await _imageService.RemoveImage(AssetContainerConstants.AUDIO_PICTURES, picture, cancellationToken);
+                var blobName = $"images/audios/{picture}";
+                await _storageService.RemoveAsync("audiochan", blobName, cancellationToken);
+                // TODO: Add bucket to configuration
             }
         }
     }

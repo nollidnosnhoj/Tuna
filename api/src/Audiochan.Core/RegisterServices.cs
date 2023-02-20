@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 using Audiochan.Common.Mediatr.Pipelines;
-using Audiochan.Common.Services;
 using Audiochan.Core.Persistence;
 using Audiochan.Core.Persistence.Pipelines;
 using Audiochan.Core.Services;
@@ -22,7 +21,6 @@ public static class RegisterServices
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehavior<,>));
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(DbContextTransactionPipelineBehavior<,>));
-        services.AddTransient<IImageService, ImageService>();
         services.AddSingleton<IHashids>(_ => new Hashids(salt: "audiochan", minHashLength: 7));
         services.AddPersistence(configuration, environment);
         return services;

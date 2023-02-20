@@ -1,17 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Common.Mediatr;
-using Audiochan.Common.Dtos;
-using Audiochan.Common.Extensions;
-using Audiochan.Common.Services;
 using Audiochan.Core.Features.Audios.Exceptions;
 using Audiochan.Core.Persistence;
 using Audiochan.Core.Services;
 using Audiochan.Domain.Entities;
 using MediatR;
-using Microsoft.Extensions.Options;
 
 namespace Audiochan.Core.Features.Audios.Commands.RemoveAudio
 {
@@ -28,20 +26,14 @@ namespace Audiochan.Core.Features.Audios.Commands.RemoveAudio
     public class RemoveAudioCommandHandler : IRequestHandler<RemoveAudioCommand, bool>
     {
         private readonly IStorageService _storageService;
-        private readonly AudioStorageSettings _audioStorageSettings;
-        private readonly IImageService _imageService;
         private readonly IUnitOfWork _unitOfWork;
 
         public RemoveAudioCommandHandler(
-            IImageService imageService, 
             IUnitOfWork unitOfWork, 
-            IStorageService storageService, 
-            IOptions<MediaStorageSettings> mediaStorageOptions)
+            IStorageService storageService)
         {
-            _imageService = imageService;
             _unitOfWork = unitOfWork;
             _storageService = storageService;
-            _audioStorageSettings = mediaStorageOptions.Value.Audio;
         }
 
         public async Task<bool> Handle(RemoveAudioCommand command, CancellationToken cancellationToken)
@@ -56,6 +48,7 @@ namespace Audiochan.Core.Features.Audios.Commands.RemoveAudio
             if (audio.UserId != currentUserId) 
                 throw new AudioNotFoundException(command.Id);
             
+            // TODO: Make this a job
             var afterDeletionTasks = GetTasksForAfterDeletion(audio, cancellationToken);
             _unitOfWork.Audios.Remove(audio);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
@@ -67,24 +60,30 @@ namespace Audiochan.Core.Features.Audios.Commands.RemoveAudio
         {
             var tasks = new List<Task>
             {
-                RemoveAudioFromStorage(audio.ObjectKey, cancellationToken)
+                RemoveAudioFromStorage(audio, cancellationToken)
             };
-
+        
             if (!string.IsNullOrEmpty(audio.Picture))
             {
-                tasks.Add(_imageService.RemoveImage(AssetContainerConstants.AUDIO_PICTURES, 
-                    audio.Picture, 
+                tasks.Add(_storageService.RemoveAsync(
+                    "audiochan",     // TODO: add bucket to configuration
+                    $"{AssetContainerConstants.AUDIO_PICTURES}/{audio.Picture}", 
                     cancellationToken));
             }
-
+        
             return tasks;
         }
         
-        private async Task RemoveAudioFromStorage(string fileName, CancellationToken cancellationToken = default)
+        private async Task RemoveAudioFromStorage(Audio audio, CancellationToken cancellationToken = default)
         {
+            var uploadId = audio.ObjectKey.Split('.').FirstOrDefault();
+            if (uploadId is null)
+            {
+                throw new ArgumentException("Audio object key needs to have a file extension");
+            }
             await _storageService.RemoveAsync(
-                _audioStorageSettings.Bucket,
-                $"audios/{fileName}",
+                "audiochan",    // TODO: add bucket to configuration
+                $"audios/{uploadId}/{audio.ObjectKey}",
                 cancellationToken);
         }
     }

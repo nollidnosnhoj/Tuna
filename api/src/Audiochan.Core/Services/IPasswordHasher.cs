@@ -1,4 +1,4 @@
-﻿namespace Audiochan.Common.Services
+﻿namespace Audiochan.Core.Services
 {
     public interface IPasswordHasher
     {

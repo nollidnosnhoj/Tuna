@@ -2,6 +2,7 @@
 {
     public static class AssetContainerConstants
     {
+        public const string AUDIO_STREAM = "audios";
         public const string AUDIO_PICTURES = "images/audios";
         public const string PLAYLIST_PICTURES = "images/playlists";
         public const string USER_PICTURES = "images/users";

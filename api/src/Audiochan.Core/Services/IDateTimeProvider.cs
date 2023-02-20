@@ -1,4 +1,6 @@
-﻿namespace Audiochan.Common.Services
+﻿using System;
+
+namespace Audiochan.Core.Services
 {
     public interface IDateTimeProvider
     {

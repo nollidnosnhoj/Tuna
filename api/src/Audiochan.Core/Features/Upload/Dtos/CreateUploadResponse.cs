@@ -1,6 +1,6 @@
-﻿namespace Audiochan.Core.Features.Upload.Commands.CreateUpload
+﻿namespace Audiochan.Core.Features.Upload.Dtos
 {
-    public record GenerateUploadLinkResponse
+    public record CreateUploadResponse
     {
         public string UploadId { get; init; } = null!;
         public string UploadUrl { get; init; } = null!;

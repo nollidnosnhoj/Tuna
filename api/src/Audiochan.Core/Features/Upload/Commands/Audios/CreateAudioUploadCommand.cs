@@ -1,38 +1,32 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Common.Mediatr;
-using Audiochan.Common.Dtos;
-using Audiochan.Common.Extensions;
-using Audiochan.Common.Services;
+using Audiochan.Core.Features.Upload.Common;
+using Audiochan.Core.Features.Upload.Dtos;
 using Audiochan.Core.Services;
 using MediatR;
 using Microsoft.Extensions.Options;
 
-namespace Audiochan.Core.Features.Upload.Commands.CreateUpload
+namespace Audiochan.Core.Features.Upload.Commands.Audios
 {
-    public class GenerateUploadLinkCommand : AuthCommandRequest<GenerateUploadLinkResponse>
+    public class CreateAudioUploadCommand : CreateUploadCommand
     {
-        public string FileName { get; init; }
-        public long FileSize { get; init; }
-
-        public GenerateUploadLinkCommand(string fileName, long fileSize, ClaimsPrincipal user) : base(user)
+        public CreateAudioUploadCommand(string fileName, long fileSize, long userId)
+            : base(fileName, fileSize, userId)
         {
-            FileName = fileName;
-            FileSize = fileSize;
         }
     }
 
-    public class GenerateUploadLinkCommandHandler 
-        : IRequestHandler<GenerateUploadLinkCommand, GenerateUploadLinkResponse>
+    public class CreateAudioUploadCommandHandler 
+        : IRequestHandler<CreateAudioUploadCommand, CreateUploadResponse>
     {
         private readonly IRandomIdGenerator _randomIdGenerator;
         private readonly IStorageService _storageService;
         private readonly AudioStorageSettings _audioStorageSettings;
         
-        public GenerateUploadLinkCommandHandler(
+        public CreateAudioUploadCommandHandler(
             IRandomIdGenerator randomIdGenerator,
             IStorageService storageService,
             IOptions<MediaStorageSettings> mediaStorageSettings)
@@ -42,12 +36,11 @@ namespace Audiochan.Core.Features.Upload.Commands.CreateUpload
             _audioStorageSettings = mediaStorageSettings.Value.Audio;
         }
         
-        public async Task<GenerateUploadLinkResponse> Handle(GenerateUploadLinkCommand command, 
+        public async Task<CreateUploadResponse> Handle(CreateAudioUploadCommand command, 
             CancellationToken cancellationToken)
         {
-            var userId = command.GetUserId();
-            var (url, uploadId) = await CreateUploadUrl(command.FileName, userId);
-            var response = new GenerateUploadLinkResponse { UploadId = uploadId, UploadUrl = url };
+            var (url, uploadId) = await CreateUploadUrl(command.FileName, command.UserId);
+            var response = new CreateUploadResponse { UploadId = uploadId, UploadUrl = url };
             return response;
         }
         
@@ -55,10 +48,10 @@ namespace Audiochan.Core.Features.Upload.Commands.CreateUpload
         {
             var fileExt = Path.GetExtension(fileName);
             var uploadId = await _randomIdGenerator.GenerateAsync(size: 21);
-            var blobName = uploadId + fileExt;
+            var blobName = $"{AssetContainerConstants.AUDIO_STREAM}/{uploadId}/${uploadId + fileExt}";
             var metadata = new Dictionary<string, string> {{"UserId", userId.ToString()}};
             var url = _storageService.CreatePutPreSignedUrl(
-                _audioStorageSettings.TempBucket,
+                "audiochan", // TODO: add to configuration
                 blobName,
                 5,
                 metadata);

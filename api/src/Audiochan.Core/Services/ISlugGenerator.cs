@@ -1,4 +1,6 @@
-﻿namespace Audiochan.Common.Services
+﻿using System.Collections.Generic;
+
+namespace Audiochan.Core.Services
 {
     public interface ISlugGenerator
     {

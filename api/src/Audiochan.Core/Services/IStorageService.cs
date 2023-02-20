@@ -1,4 +1,9 @@
-﻿namespace Audiochan.Common.Services
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace Audiochan.Core.Services
 {
     public interface IStorageService
     {

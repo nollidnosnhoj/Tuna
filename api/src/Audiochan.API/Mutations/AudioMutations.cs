@@ -10,7 +10,8 @@ using Audiochan.Core.Features.Audios.Commands.UpdatePicture;
 using Audiochan.Core.Features.Audios.DataLoaders;
 using Audiochan.Core.Features.Audios.Dtos;
 using Audiochan.Core.Features.Audios.Exceptions;
-using Audiochan.Core.Features.Upload.Commands.CreateUpload;
+using Audiochan.Core.Features.Upload.Commands.Audios;
+using Audiochan.Core.Features.Upload.Dtos;
 using Audiochan.Core.Features.Users.Commands.SetFavoriteAudio;
 using FluentValidation;
 using HotChocolate.Authorization;
@@ -25,14 +26,15 @@ public class AudioMutations
 {
     [Authorize]
     [Error<ValidationException>]
-    public async Task<GenerateUploadLinkResponse> CreateUploadLinkAsync(
+    public async Task<CreateUploadResponse> CreateUploadLinkAsync(
         string fileName,
         long fileSize,
         IMediator mediator,
         ClaimsPrincipal claimsPrincipal,
         CancellationToken cancellationToken)
     {
-        var command = new GenerateUploadLinkCommand(fileName, fileSize, claimsPrincipal);
+        var userId = claimsPrincipal.GetUserId();
+        var command = new CreateAudioUploadCommand(fileName, fileSize, userId);
         return await mediator.Send(command, cancellationToken);
     }
 

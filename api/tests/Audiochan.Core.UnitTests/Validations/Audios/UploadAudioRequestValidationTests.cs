@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Audiochan.Core.Features.Upload.Commands.CreateUpload;
+using Audiochan.Core.Features.Upload.Commands.Audios;
 using Audiochan.Tests.Common.Builders;
 using Audiochan.Tests.Common.Mocks;
 using Bogus;
@@ -13,7 +13,7 @@ namespace Audiochan.Core.UnitTests.Validations.Audios
 {
     public class UploadAudioRequestValidationTests
     {
-        private readonly IValidator<GenerateUploadLinkCommand> _validator;
+        private readonly IValidator<CreateAudioUploadCommand> _validator;
         private readonly Randomizer _randomizer;
 
         public UploadAudioRequestValidationTests()
@@ -22,7 +22,7 @@ namespace Audiochan.Core.UnitTests.Validations.Audios
             {
                 Audio = MediaStorageSettingBuilder.BuildAudioDefault()
             });
-            _validator = new GenerateUploadLinkCommandValidator(options);
+            _validator = new CreateAudioUploadCommandValidator();
             _randomizer = new Randomizer();
         }
 
@@ -30,10 +30,10 @@ namespace Audiochan.Core.UnitTests.Validations.Audios
         public async Task ShouldValidateSuccessfully()
         {
             // Assign
-            var request = new GenerateUploadLinkCommand(
+            var request = new CreateAudioUploadCommand(
                 _randomizer.Word() + ".mp3",
                 _randomizer.Number(1, (int)MediaStorageSettingBuilder.MaxAudioSize),
-                ClaimsPrincipalMock.CreateFakeUser(_randomizer));
+                1);
 
             // Act
             var result = await _validator.TestValidateAsync(request);
@@ -46,10 +46,10 @@ namespace Audiochan.Core.UnitTests.Validations.Audios
         public async Task ShouldNotValidate_WhenFileNameHasNoExtension()
         {
             // Assign
-            var request = new GenerateUploadLinkCommand(
+            var request = new CreateAudioUploadCommand(
                 _randomizer.Word(), 
                 _randomizer.Number(1, (int)MediaStorageSettingBuilder.MaxAudioSize), 
-                ClaimsPrincipalMock.CreateFakeUser(_randomizer));
+                1);
             
             // Act
             var result = await _validator.TestValidateAsync(request);
@@ -63,10 +63,10 @@ namespace Audiochan.Core.UnitTests.Validations.Audios
         public async Task ShouldNotValidate_WhenFileNameHaveInvalidContentType()
         {
             // Assign
-            var request = new GenerateUploadLinkCommand(
+            var request = new CreateAudioUploadCommand(
                 _randomizer.Word() + ".jpg",
                 _randomizer.Number(1, (int)MediaStorageSettingBuilder.MaxAudioSize),
-                ClaimsPrincipalMock.CreateFakeUser(_randomizer));
+                1);
             
             // Act
             var result = await _validator.TestValidateAsync(request);
@@ -80,10 +80,10 @@ namespace Audiochan.Core.UnitTests.Validations.Audios
         public async Task ShouldNotValidate_WhenFileSizeIsTooLarge()
         {
             // Assign
-            var request = new GenerateUploadLinkCommand(
+            var request = new CreateAudioUploadCommand(
                 _randomizer.Word() + ".mp3",
                 MediaStorageSettingBuilder.MaxAudioSize + 1,
-                ClaimsPrincipalMock.CreateFakeUser(_randomizer));
+                1);
             
             // Act
             var result = await _validator.TestValidateAsync(request);

@@ -1,4 +1,6 @@
-﻿namespace Audiochan.Common.Services
+﻿using System.Threading.Tasks;
+
+namespace Audiochan.Core.Services
 {
     public interface IRandomIdGenerator
     {
