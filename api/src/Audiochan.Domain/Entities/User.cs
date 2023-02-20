@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Audiochan.Domain.Abstractions;
-using Audiochan.Domain.Enums;
 
 namespace Audiochan.Domain.Entities
 {
@@ -13,18 +12,16 @@ namespace Audiochan.Domain.Entities
             
         }
         
-        public User(string userName, string email, string passwordHash, UserRole role = UserRole.Regular)
+        public User(string userName, string email, string passwordHash)
         {
             this.UserName = userName;
             this.Email = email;
             this.PasswordHash = passwordHash;
-            this.Role = role;
         }
 
         public string UserName { get; set; } = null!;
         public string Email { get; set; } = null!;
         public string PasswordHash { get; set; } = null!;
-        public UserRole Role { get; set; }
         public string? ImageId { get; set; }
         public ICollection<Audio> Audios { get; set; } = new HashSet<Audio>();
         public ICollection<FavoriteAudio> FavoriteAudios { get; set; } = new HashSet<FavoriteAudio>();
