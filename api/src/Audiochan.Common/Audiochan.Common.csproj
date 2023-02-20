@@ -7,17 +7,17 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.4.0" />
+      <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.5.1" />
       <PackageReference Include="GreenDonut" Version="13.0.2" />
       <PackageReference Include="Hashids.net" Version="1.6.1" />
       <PackageReference Include="HotChocolate.Types" Version="13.0.2" />
       <PackageReference Include="HotChocolate.Types.CursorPagination" Version="13.0.2" />
       <PackageReference Include="HotChocolate.Types.OffsetPagination" Version="13.0.2" />
-      <PackageReference Include="MediatR" Version="11.1.0" />
+      <PackageReference Include="MediatR" Version="12.0.0" />
       <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.2.0" />
       <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="7.0.0" />
       <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="7.0.0" />
-      <PackageReference Include="Microsoft.Extensions.Options" Version="7.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Options" Version="7.0.1" />
       <PackageReference Include="SixLabors.ImageSharp" Version="2.1.3" />
     </ItemGroup>
 
