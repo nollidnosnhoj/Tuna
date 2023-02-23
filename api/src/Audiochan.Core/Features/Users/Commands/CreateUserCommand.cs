@@ -24,20 +24,12 @@ public class CreateUserCommand : ICommandRequest<long>
     public string Password { get; }
 }
 
-public class CreateUserCommandValidator : AbstractValidator<CreateUserCommand>
-{
-    public CreateUserCommandValidator()
-    {
-        RuleFor(req => req.Username)
-            .UsernameValidation();
-        RuleFor(req => req.Email)
-            .NotEmpty().WithMessage("Email is required.")
-            .EmailAddress().WithMessage("Email is invalid.");
-        RuleFor(req => req.Password)
-            .NotEmpty().WithMessage("Password is required.")
-            .PasswordValidation();
-    }
-}
+// public class CreateUserCommandValidator : AbstractValidator<CreateUserCommand>
+// {
+//     public CreateUserCommandValidator()
+//     {
+//     }
+// }
 
 public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, long>
 {
