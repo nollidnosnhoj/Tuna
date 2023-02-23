@@ -1,12 +1,9 @@
 ﻿using System.Threading.Tasks;
-using Audiochan.Core.Features.Upload.Commands.Audios;
-using Audiochan.Tests.Common.Builders;
-using Audiochan.Tests.Common.Mocks;
+using Audiochan.Core.Features.Upload.Commands;
 using Bogus;
 using FluentAssertions;
 using FluentValidation;
 using FluentValidation.TestHelper;
-using Microsoft.Extensions.Options;
 using Xunit;
 
 namespace Audiochan.Core.UnitTests.Validations.Audios
@@ -18,10 +15,6 @@ namespace Audiochan.Core.UnitTests.Validations.Audios
 
         public UploadAudioRequestValidationTests()
         {
-            var options = Options.Create(new MediaStorageSettings
-            {
-                Audio = MediaStorageSettingBuilder.BuildAudioDefault()
-            });
             _validator = new CreateAudioUploadCommandValidator();
             _randomizer = new Randomizer();
         }
@@ -32,7 +25,7 @@ namespace Audiochan.Core.UnitTests.Validations.Audios
             // Assign
             var request = new CreateAudioUploadCommand(
                 _randomizer.Word() + ".mp3",
-                _randomizer.Number(1, (int)MediaStorageSettingBuilder.MaxAudioSize),
+                _randomizer.Number(1, MediaConfigurationConstants.AUDIO_MAX_FILE_SIZE),
                 1);
 
             // Act
@@ -48,7 +41,7 @@ namespace Audiochan.Core.UnitTests.Validations.Audios
             // Assign
             var request = new CreateAudioUploadCommand(
                 _randomizer.Word(), 
-                _randomizer.Number(1, (int)MediaStorageSettingBuilder.MaxAudioSize), 
+                _randomizer.Number(1, MediaConfigurationConstants.AUDIO_MAX_FILE_SIZE), 
                 1);
             
             // Act
@@ -65,7 +58,7 @@ namespace Audiochan.Core.UnitTests.Validations.Audios
             // Assign
             var request = new CreateAudioUploadCommand(
                 _randomizer.Word() + ".jpg",
-                _randomizer.Number(1, (int)MediaStorageSettingBuilder.MaxAudioSize),
+                _randomizer.Number(1, MediaConfigurationConstants.AUDIO_MAX_FILE_SIZE),
                 1);
             
             // Act
@@ -82,7 +75,7 @@ namespace Audiochan.Core.UnitTests.Validations.Audios
             // Assign
             var request = new CreateAudioUploadCommand(
                 _randomizer.Word() + ".mp3",
-                MediaStorageSettingBuilder.MaxAudioSize + 1,
+                MediaConfigurationConstants.AUDIO_MAX_FILE_SIZE + 1,
                 1);
             
             // Act

@@ -1,5 +1,13 @@
 ﻿namespace Audiochan.Core
 {
+    public static class MediaConfigurationConstants
+    {
+        public const int AUDIO_MAX_FILE_SIZE = 262144000;
+        public static string[] AUDIO_VALID_TYPES = { "audio/mp3", "audio/mpeg" };
+        public const int IMAGE_MAX_FILE_SIZE = 2097152;
+        public static string[] IMAGE_VALID_TYPES = { "image/jpeg", "image/png", "image/gif" };
+    }
+    
     public static class AssetContainerConstants
     {
         public const string AUDIO_STREAM = "audios";
@@ -7,15 +15,7 @@
         public const string PLAYLIST_PICTURES = "images/playlists";
         public const string USER_PICTURES = "images/users";
     }
-    
-    public static class CacheKeys
-    {
-        public static class Audio
-        {
-            public static string GetAudio(long audioId) => $"audio_id_{audioId}";
-        }
-    }
-    
+
     public static class MediaLinkConstants
     {
         public const string AUDIO_PICTURE = "https://audiochan.s3.amazonaws.com/images/audios/";

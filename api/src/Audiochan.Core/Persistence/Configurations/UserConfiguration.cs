@@ -10,12 +10,9 @@ namespace Audiochan.Core.Persistence.Configurations
         {
             builder.HasKey(x => x.Id);
             builder.Property(x => x.Id).ValueGeneratedOnAdd();
-            
             builder.Property(x => x.UserName).HasMaxLength(256).IsRequired();
-            builder.Property(x => x.Email).HasMaxLength(256).IsRequired();
 
             builder.HasIndex(x => x.UserName).IsUnique();
-            builder.HasIndex(x => x.Email).IsUnique();
         }
     }
     

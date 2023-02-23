@@ -12,16 +12,14 @@ namespace Audiochan.Domain.Entities
             
         }
         
-        public User(string userName, string email, string passwordHash)
+        public User(string identity, string userName)
         {
+            this.IdentityId = identity;
             this.UserName = userName;
-            this.Email = email;
-            this.PasswordHash = passwordHash;
         }
 
+        public string IdentityId { get; set; } = null!;
         public string UserName { get; set; } = null!;
-        public string Email { get; set; } = null!;
-        public string PasswordHash { get; set; } = null!;
         public string? ImageId { get; set; }
         public ICollection<Audio> Audios { get; set; } = new HashSet<Audio>();
         public ICollection<FavoriteAudio> FavoriteAudios { get; set; } = new HashSet<FavoriteAudio>();

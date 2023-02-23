@@ -1,10 +1,7 @@
-﻿using System.Security.Claims;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Features.Auth;
+using Audiochan.Common.Dtos;
 using Audiochan.Core.Features.Auth.Dtos;
-using Audiochan.Core.Features.Auth.Validators;
-using Audiochan.Core.Features.Users.Dtos;
 using Audiochan.Core.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -34,34 +31,11 @@ namespace Audiochan.API.Controllers
             OperationId = "Login",
             Tags = new[] {"auth"}
         )]
-        public async Task<ActionResult<UserDto>> Login([FromBody] LoginRequest request,
-            CancellationToken cancellationToken)
+        public async Task<ActionResult<LoginResult>> Login([FromBody] LoginRequest request, CancellationToken cancellationToken)
         {
-            var validateResult = await new LoginRequestValidator().ValidateAsync(request, cancellationToken);
+            var result = await _authService.LoginWithPasswordAsync(request.Login, request.Password, cancellationToken);
 
-            if (!validateResult.IsValid)
-            {
-                return BadRequest(new { Message = "Login invalid.", Errors = validateResult.Errors });
-            }
-            
-            var user = await _authService.LoginAsync(request, cancellationToken);
-
-            if (user is null)
-            {
-                return BadRequest(new { Message = "Login invalid." });
-            }
-
-            Claim[] claims = {
-                new(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new(ClaimTypes.Name, user.UserName),
-            };
-            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            var principal = new ClaimsPrincipal(identity);
-            var properties = new AuthenticationProperties { ExpiresUtc = _dateTime.Now.AddDays(14) };
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, properties);
-            HttpContext.User = principal;
-
-            return Ok(user);
+            return Ok(result);
         }
 
         [HttpPost("logout")]

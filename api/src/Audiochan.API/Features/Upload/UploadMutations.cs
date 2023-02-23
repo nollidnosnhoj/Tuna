@@ -2,8 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Common.Extensions;
-using Audiochan.Core.Features.Upload.Commands.Audios;
-using Audiochan.Core.Features.Upload.Commands.Images;
+using Audiochan.Core.Features.Upload.Commands;
 using Audiochan.Core.Features.Upload.Dtos;
 using FluentValidation;
 using HotChocolate.Authorization;

@@ -1,50 +1,54 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Features.Auth;
-using Audiochan.Core.Features.Auth.Dtos;
-using Audiochan.Core.Features.Users.Dtos;
-using Audiochan.Core.Persistence;
+using Audiochan.Common.Dtos;
+using Audiochan.Common.Exceptions;
 using Audiochan.Core.Services;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
+using Audiochan.Infrastructure.Security.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace Audiochan.Infrastructure.Security;
 
-public class AuthService : IAuthService, IAsyncDisposable
+public class AuthService : IAuthService
 {
-    private readonly IPasswordHasher _passwordHasher;
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly ApplicationDbContext _dbContext;
-    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly UserManager<IdUser> _userManager;
 
-    public AuthService(IPasswordHasher passwordHasher, IUnitOfWork unitOfWork, IDbContextFactory<ApplicationDbContext> dbContextFactory, IHttpContextAccessor httpContextAccessor)
+    public AuthService(UserManager<IdUser> userManager)
     {
-        _passwordHasher = passwordHasher;
-        _unitOfWork = unitOfWork;
-        _httpContextAccessor = httpContextAccessor;
-        _dbContext = dbContextFactory.CreateDbContext();
+        _userManager = userManager;
     }
 
-    public async Task<UserDto?> LoginAsync(LoginRequest request, CancellationToken cancellationToken = default)
+    public async Task<LoginResult> LoginWithPasswordAsync(string login, string password, CancellationToken cancellationToken = default)
     {
-        var user = await _unitOfWork.Users.GetUserWithLogin(request.Login, cancellationToken);
+        var user = await _userManager.FindByNameAsync(login);
 
-        if (user == null || !_passwordHasher.Verify(request.Password, user.PasswordHash))
-            return null;
-
-        var currentUser = new UserDto
+        if (user is null)
         {
-            Id = user.Id,
-            UserName = user.UserName,
-            Picture = user.ImageId
-        };
+            // TODO: Create custom exception for invalid login.
+            throw new UnauthorizedException();
+        }
 
-        return currentUser;
+        await EnsurePasswordIsValidAsync(user, password);
+
+        var token = await GenerateTokenAsync(user, cancellationToken);
+
+        return new LoginResult(token);
     }
 
-    public ValueTask DisposeAsync()
+    private Task<string> GenerateTokenAsync(IdUser user, CancellationToken cancellationToken = default)
     {
-        return _dbContext.DisposeAsync();
+        // TODO: Generate JWT
+        var token = string.Empty;
+        return Task.FromResult(token);
+    }
+
+    private async Task EnsurePasswordIsValidAsync(IdUser user, string password)
+    {
+        var isPasswordValid = await _userManager.CheckPasswordAsync(user, password);
+
+        if (!isPasswordValid)
+        {
+            // TODO: Create custom exception for invalid login.
+            throw new UnauthorizedException();
+        }
     }
 }

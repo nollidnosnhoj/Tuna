@@ -31,7 +31,6 @@ public static class RegisterServices
         services.AddPooledDbContextFactory<ApplicationDbContext>(o =>
         {
             o.UseNpgsql(configuration.GetConnectionString("Database"));
-            o.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
             o.UseSnakeCaseNamingConvention();
             if (environment.IsDevelopment())
             {

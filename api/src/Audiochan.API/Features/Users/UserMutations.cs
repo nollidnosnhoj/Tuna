@@ -4,12 +4,7 @@ using System.Threading.Tasks;
 using Audiochan.Common.Exceptions;
 using Audiochan.Common.Extensions;
 using Audiochan.Core.Features.Upload.Dtos;
-using Audiochan.Core.Features.Users.Commands.SetFollow;
-using Audiochan.Core.Features.Users.Commands.UpdateEmail;
-using Audiochan.Core.Features.Users.Commands.UpdatePassword;
-using Audiochan.Core.Features.Users.Commands.UpdatePicture;
-using Audiochan.Core.Features.Users.Commands.UpdateProfile;
-using Audiochan.Core.Features.Users.Commands.UpdateUsername;
+using Audiochan.Core.Features.Users.Commands;
 using Audiochan.Core.Features.Users.Dtos;
 using Audiochan.Core.Features.Users.Exceptions;
 using FluentValidation;
@@ -75,8 +70,7 @@ public class UserMutations
     
     [Authorize]
     [Error(typeof(UnauthorizedException))]
-    [Error(typeof(DuplicateUserNameException))]
-    [Error(typeof(ValidationException))]
+    [Error(typeof(IdentityException))]
     public async Task<bool> UpdateUserNameAsync(
         long userId,
         string userName,
@@ -95,8 +89,7 @@ public class UserMutations
     
     [Authorize]
     [Error(typeof(UnauthorizedException))]
-    [Error(typeof(PasswordDoesNotMatchException))]
-    [Error(typeof(ValidationException))]
+    [Error(typeof(IdentityException))]
     public async Task<bool> UpdatePasswordAsync(
         string currentPassword,
         string newPassword,
@@ -110,6 +103,7 @@ public class UserMutations
     
     [Authorize]
     [Error(typeof(UnauthorizedException))]
+    [Error(typeof(IdentityException))]
     public async Task<bool> UpdateEmailAsync(
         long userId,
         string email,
