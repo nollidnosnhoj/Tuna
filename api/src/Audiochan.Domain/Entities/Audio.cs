@@ -5,18 +5,35 @@ using Audiochan.Domain.Abstractions;
 
 namespace Audiochan.Domain.Entities
 {
-    public class Audio : IAudited, IHasId<long>
+    public class Audio : AuditableEntity<long>
     {
-        public long Id { get; set; }
-        public DateTime Created { get; set; }
-        public DateTime? LastModified { get; set; }
+        private Audio()
+        {
+            
+        }
+
+        public Audio(
+            string title,
+            string? description,
+            decimal duration,
+            string objectKey,
+            long size,
+            long userId)
+        {
+            Title = title;
+            Description = description;
+            Duration = duration;
+            ObjectKey = objectKey;
+            Size = size;
+            UserId = userId;
+        }
+        
         public string Title { get; set; } = null!;
         public string? Description { get; set; }
-        public List<string> Tags { get; set; } = new();
         public decimal Duration { get; set; }
-        public string File { get; set; } = null!;
+        public string ObjectKey { get; set; } = null!;
         public long Size { get; set; }
-        public string? Picture { get; set; }
+        public string? ImageId { get; set; }
         public long UserId { get; set; }
         public User User { get; set; } = null!;
         public ICollection<FavoriteAudio> FavoriteAudios { get; set; } = new HashSet<FavoriteAudio>();

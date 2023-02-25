@@ -2,28 +2,25 @@
 using System.Collections.Generic;
 using System.Linq;
 using Audiochan.Domain.Abstractions;
-using Audiochan.Domain.Enums;
 
 namespace Audiochan.Domain.Entities
 {
-    public class User : IAudited, IHasId<long>
+    public class User : AuditableEntity<long>
     {
-        public User(string userName, string email, string passwordHash, UserRole role = UserRole.Regular)
+        private User()
         {
+            
+        }
+        
+        public User(string identityId, string userName)
+        {
+            this.IdentityId = identityId;
             this.UserName = userName;
-            this.Email = email;
-            this.PasswordHash = passwordHash;
-            this.Role = role;
         }
 
-        public long Id { get; set; }
+        public string IdentityId { get; set; } = null!;
         public string UserName { get; set; } = null!;
-        public string Email { get; set; } = null!;
-        public string PasswordHash { get; set; } = null!;
-        public UserRole Role { get; set; }
-        public string? Picture { get; set; }
-        public DateTime Created { get; set; }
-        public DateTime? LastModified { get; set; }
+        public string? ImageId { get; set; }
         public ICollection<Audio> Audios { get; set; } = new HashSet<Audio>();
         public ICollection<FavoriteAudio> FavoriteAudios { get; set; } = new HashSet<FavoriteAudio>();
         public ICollection<FollowedUser> Followings { get; set; } = new HashSet<FollowedUser>();

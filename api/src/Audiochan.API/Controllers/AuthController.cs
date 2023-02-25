@@ -1,12 +1,8 @@
-﻿using System.Security.Claims;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.API.Extensions;
-using Audiochan.Core.Features.Auth.Commands.Login;
-using Audiochan.Core.Features.Auth.Commands.Register;
-using Audiochan.Core.Features.Auth.Queries.GetCurrentUser;
+using Audiochan.Core.Features.Auth;
+using Audiochan.Core.Features.Auth.Models;
 using Audiochan.Core.Services;
-using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -18,13 +14,13 @@ namespace Audiochan.API.Controllers
     [Route("auth")]
     public class AuthController : ControllerBase
     {
-        private readonly IMediator _mediator;
+        private readonly IAuthService _authService;
         private readonly IDateTimeProvider _dateTime;
 
-        public AuthController(IMediator mediator, IDateTimeProvider dateTime)
+        public AuthController(IDateTimeProvider dateTime, IAuthService authService)
         {
-            _mediator = mediator;
             _dateTime = dateTime;
+            _authService = authService;
         }
 
         [HttpPost("login", Name = "Login")]
@@ -35,48 +31,11 @@ namespace Audiochan.API.Controllers
             OperationId = "Login",
             Tags = new[] {"auth"}
         )]
-        public async Task<ActionResult<CurrentUserDto>> Login([FromBody] LoginCommand command,
-            CancellationToken cancellationToken)
+        public async Task<ActionResult<LoginResult>> Login([FromBody] LoginRequest request, CancellationToken cancellationToken)
         {
-            var loginResult = await _mediator.Send(command, cancellationToken);
-            
-            if (!loginResult.IsSuccess)
-            {
-                return loginResult.ReturnErrorResponse();
-            }
+            var result = await _authService.LoginWithPasswordAsync(request.Login, request.Password, cancellationToken);
 
-            var user = loginResult.Data!;
-
-            Claim[] claims = {
-                new(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new(ClaimTypes.Name, user.UserName),
-                new(ClaimTypes.Email, user.Email)
-            };
-            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            var principal = new ClaimsPrincipal(identity);
-            var properties = new AuthenticationProperties { ExpiresUtc = _dateTime.Now.AddDays(14) };
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, properties);
-            HttpContext.User = principal;
-
-            return Ok(user);
-        }
-
-        [HttpPost("register", Name = "CreateAccount")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(422)]
-        [SwaggerOperation(
-            Summary = "Create an account.",
-            Description = "Once successful, you can use the login endpoint to obtain access and refresh tokens.",
-            OperationId = "CreateAccount",
-            Tags = new[] {"auth"}
-        )]
-        public async Task<IActionResult> Register([FromBody] CreateUserCommand command,
-            CancellationToken cancellationToken)
-        {
-            var result = await _mediator.Send(command, cancellationToken);
-            return result.IsSuccess
-                ? Ok()
-                : result.ReturnErrorResponse();
+            return Ok(result);
         }
 
         [HttpPost("logout")]

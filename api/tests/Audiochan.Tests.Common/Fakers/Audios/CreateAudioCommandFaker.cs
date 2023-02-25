@@ -1,5 +1,6 @@
 ﻿using System;
-using Audiochan.Core.Features.Audios.Commands.CreateAudio;
+using Audiochan.Core.Features.Audios;
+using Audiochan.Core.Features.Audios.Commands;
 using Bogus;
 
 namespace Audiochan.Tests.Common.Fakers.Audios
@@ -14,8 +15,8 @@ namespace Audiochan.Tests.Common.Fakers.Audios
             RuleFor(x => x.Duration, f => f.Random.Number(1, 300));
             RuleFor(x => x.Title, f => f.Random.String2(3, 30));
             RuleFor(x => x.Description, f => f.Lorem.Sentences(2));
-            RuleFor(x => x.Tags, f => 
-                f.Make<string>(5, _ => f.Random.String2(5, 10)));
+            // RuleFor(x => x.Tags, f => 
+            //     f.Make<string>(5, _ => f.Random.String2(5, 10)));
         }
     }
 }

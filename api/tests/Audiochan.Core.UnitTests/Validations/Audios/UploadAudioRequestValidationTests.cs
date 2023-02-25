@@ -1,27 +1,22 @@
 ﻿using System.Threading.Tasks;
-using Audiochan.Core.Features.Upload.Commands.CreateUpload;
-using Audiochan.Tests.Common.Builders;
+using Audiochan.Core.Features.Upload;
+using Audiochan.Core.Features.Upload.Commands;
 using Bogus;
 using FluentAssertions;
 using FluentValidation;
 using FluentValidation.TestHelper;
-using Microsoft.Extensions.Options;
 using Xunit;
 
 namespace Audiochan.Core.UnitTests.Validations.Audios
 {
     public class UploadAudioRequestValidationTests
     {
-        private readonly IValidator<GenerateUploadLinkCommand> _validator;
+        private readonly IValidator<CreateAudioUploadCommand> _validator;
         private readonly Randomizer _randomizer;
 
         public UploadAudioRequestValidationTests()
         {
-            var options = Options.Create(new MediaStorageSettings
-            {
-                Audio = MediaStorageSettingBuilder.BuildAudioDefault()
-            });
-            _validator = new GenerateUploadLinkCommandValidator(options);
+            _validator = new CreateAudioUploadCommandValidator();
             _randomizer = new Randomizer();
         }
 
@@ -29,11 +24,10 @@ namespace Audiochan.Core.UnitTests.Validations.Audios
         public async Task ShouldValidateSuccessfully()
         {
             // Assign
-            var request = new GenerateUploadLinkCommand
-            {
-                FileSize = _randomizer.Number(1, (int)MediaStorageSettingBuilder.MaxAudioSize),
-                FileName = _randomizer.Word() + ".mp3"
-            };
+            var request = new CreateAudioUploadCommand(
+                _randomizer.Word() + ".mp3",
+                _randomizer.Number(1, MediaConfigurationConstants.AUDIO_MAX_FILE_SIZE),
+                1);
 
             // Act
             var result = await _validator.TestValidateAsync(request);
@@ -41,27 +35,15 @@ namespace Audiochan.Core.UnitTests.Validations.Audios
             // Assert
             result.IsValid.Should().BeTrue();
         }
-        
-        [Fact]
-        public async Task ShouldNotValidate_WhenRequiredFieldsAreMissing()
-        {
-            // Assign
-            var request = new GenerateUploadLinkCommand();
-
-            // Act
-            var result = await _validator.TestValidateAsync(request);
-
-            // Assert
-            result.IsValid.Should().BeFalse();
-            result.ShouldHaveValidationErrorFor(x => x.FileName);
-            result.ShouldHaveValidationErrorFor(x => x.FileSize);
-        }
 
         [Fact]
         public async Task ShouldNotValidate_WhenFileNameHasNoExtension()
         {
             // Assign
-            var request = new GenerateUploadLinkCommand {FileName = _randomizer.Word()};
+            var request = new CreateAudioUploadCommand(
+                _randomizer.Word(), 
+                _randomizer.Number(1, MediaConfigurationConstants.AUDIO_MAX_FILE_SIZE), 
+                1);
             
             // Act
             var result = await _validator.TestValidateAsync(request);
@@ -75,7 +57,10 @@ namespace Audiochan.Core.UnitTests.Validations.Audios
         public async Task ShouldNotValidate_WhenFileNameHaveInvalidContentType()
         {
             // Assign
-            var request = new GenerateUploadLinkCommand {FileName = _randomizer.Word() + ".jpg"};
+            var request = new CreateAudioUploadCommand(
+                _randomizer.Word() + ".jpg",
+                _randomizer.Number(1, MediaConfigurationConstants.AUDIO_MAX_FILE_SIZE),
+                1);
             
             // Act
             var result = await _validator.TestValidateAsync(request);
@@ -89,7 +74,10 @@ namespace Audiochan.Core.UnitTests.Validations.Audios
         public async Task ShouldNotValidate_WhenFileSizeIsTooLarge()
         {
             // Assign
-            var request = new GenerateUploadLinkCommand {FileSize = MediaStorageSettingBuilder.MaxAudioSize + 1};
+            var request = new CreateAudioUploadCommand(
+                _randomizer.Word() + ".mp3",
+                MediaConfigurationConstants.AUDIO_MAX_FILE_SIZE + 1,
+                1);
             
             // Act
             var result = await _validator.TestValidateAsync(request);

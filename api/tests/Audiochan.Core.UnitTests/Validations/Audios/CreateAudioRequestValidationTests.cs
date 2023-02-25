@@ -1,27 +1,20 @@
-﻿using Audiochan.Core.Features.Audios.Commands.CreateAudio;
-using Audiochan.Tests.Common.Builders;
+﻿using Audiochan.Core.Features.Audios;
+using Audiochan.Core.Features.Audios.Commands;
 using Audiochan.Tests.Common.Fakers.Audios;
 using FluentAssertions;
 using FluentValidation;
 using FluentValidation.TestHelper;
-using Microsoft.Extensions.Options;
 using Xunit;
 
 namespace Audiochan.Core.UnitTests.Validations.Audios
 {
     public class CreateAudioRequestValidationTests
     {
-        private readonly AudioStorageSettings _audioStorageSettings;
         private readonly IValidator<CreateAudioCommand> _validator;
 
         public CreateAudioRequestValidationTests()
         {
-            var options = Options.Create(new MediaStorageSettings
-            {
-                Audio = MediaStorageSettingBuilder.BuildAudioDefault()
-            });
-            _audioStorageSettings = options.Value.Audio;
-            _validator = new CreateAudioCommandValidator(options);
+            _validator = new CreateAudioCommandValidator();
         }
 
         [Fact]
@@ -55,9 +48,8 @@ namespace Audiochan.Core.UnitTests.Validations.Audios
         [Fact]
         public void ShouldBeInvalid_WhenFileSizeReachedOverLimit()
         {
-            var maxSize = (int)_audioStorageSettings.MaximumFileSize;
             var request = new CreateAudioCommandFaker()
-                .RuleFor(x => x.FileSize, maxSize + 100)
+                .RuleFor(x => x.FileSize, MediaConfigurationConstants.AUDIO_MAX_FILE_SIZE + 100)
                 .Generate();
             var result = _validator.TestValidate(request);
             result.ShouldHaveValidationErrorFor(x => x.FileSize);

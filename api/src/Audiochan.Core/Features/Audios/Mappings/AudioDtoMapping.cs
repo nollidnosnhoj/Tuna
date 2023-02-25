@@ -1,43 +1,30 @@
 ﻿using System.Linq;
-using Audiochan.Common.Helpers;
-using Audiochan.Core.Features.Audios.Dtos;
-using Audiochan.Core.Features.Users.Dtos;
+using Audiochan.Core.Features.Audios.Models;
+using Audiochan.Core.Features.Users.Models;
 using Audiochan.Domain.Entities;
 
 namespace Audiochan.Core.Features.Audios.Mappings;
 
 public static partial class DtoMappings
 {
-    public static IQueryable<AudioDto> Project(this IQueryable<Audio> queryable, long? userId)
+    public static IQueryable<AudioViewModel> Project(this IQueryable<Audio> queryable)
     {
-        return queryable.Select(x => new AudioDto
+        return queryable.Select(x => new AudioViewModel
         {
             Id = x.Id,
             Description = x.Description ?? "",
-            Src = x.File,
-            IsFavorited = userId > 0
-                ? x.FavoriteAudios.Any(fa => fa.UserId == userId)
-                : null,
-            Slug = HashIdHelper.EncodeLong(x.Id),
-            Created = x.Created,
+            ObjectKey = x.ObjectKey,
+            Created = x.CreatedAt,
             Duration = x.Duration,
-            Picture = x.Picture,
+            Picture = x.ImageId,
             Size = x.Size,
-            Tags = x.Tags,
             Title = x.Title,
-            User = new UserDto
+            User = new UserViewModel
             {
                 Id = x.UserId,
-                Picture = x.User.Picture,
+                Picture = x.User.ImageId,
                 UserName = x.User.UserName
             }
         });
-    }
-
-    public static AudioDto Map(this AudioDto audio)
-    {
-        audio.Src = MediaLinkConstants.AUDIO_STREAM + audio.Src;
-        audio.Picture = MediaLinkConstants.AUDIO_PICTURE + audio.Picture;
-        return audio;
     }
 }

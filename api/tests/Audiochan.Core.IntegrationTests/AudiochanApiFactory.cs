@@ -5,9 +5,9 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Audiochan.API;
-using Audiochan.API.Extensions.ConfigurationExtensions;
 using Audiochan.Core.Persistence;
 using Audiochan.Core.Services;
+using Audiochan.Core.Storage;
 using Audiochan.Tests.Common.Extensions;
 using Audiochan.Tests.Common.Mocks;
 using DotNet.Testcontainers.Builders;
@@ -55,8 +55,8 @@ public class AudiochanApiFactory : WebApplicationFactory<IApiMaker>, IAsyncLifet
         builder.UseConfiguration(_configuration);
         builder.ConfigureTestServices(services =>
         {
-            services.RemoveAll(typeof(DbContextOptions<ApplicationDbContext>));
-            services.ConfigureDatabase(_configuration, true);
+            // services.RemoveAll(typeof(DbContextOptions<ApplicationDbContext>));
+            // services.ConfigureDatabase(_configuration, true);
 
             services.ReplaceService(typeof(IDateTimeProvider), 
                 _ => new MockDateTimeProvider(DateTime.UtcNow));

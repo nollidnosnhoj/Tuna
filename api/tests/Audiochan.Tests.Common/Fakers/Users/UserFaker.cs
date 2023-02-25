@@ -7,6 +7,6 @@ public sealed class UserFaker : Faker<User>
 {
     public UserFaker()
     {
-        CustomInstantiator(faker => new User(faker.Internet.UserName(), faker.Internet.ExampleEmail(), faker.Internet.Password()));
+        CustomInstantiator(faker => new User(faker.Random.Guid().ToString(), faker.Internet.UserName()));
     }
 }
