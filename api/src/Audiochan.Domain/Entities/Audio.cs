@@ -7,6 +7,27 @@ namespace Audiochan.Domain.Entities
 {
     public class Audio : AuditableEntity<long>
     {
+        private Audio()
+        {
+            
+        }
+
+        public Audio(
+            string title,
+            string? description,
+            decimal duration,
+            string objectKey,
+            long size,
+            long userId)
+        {
+            Title = title;
+            Description = description;
+            Duration = duration;
+            ObjectKey = objectKey;
+            Size = size;
+            UserId = userId;
+        }
+        
         public string Title { get; set; } = null!;
         public string? Description { get; set; }
         public decimal Duration { get; set; }

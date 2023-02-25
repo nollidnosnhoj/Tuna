@@ -1,15 +1,15 @@
 ﻿using System.Linq;
-using Audiochan.Core.Features.Audios.Dtos;
-using Audiochan.Core.Features.Users.Dtos;
+using Audiochan.Core.Features.Audios.Models;
+using Audiochan.Core.Features.Users.Models;
 using Audiochan.Domain.Entities;
 
 namespace Audiochan.Core.Features.Audios.Mappings;
 
 public static partial class DtoMappings
 {
-    public static IQueryable<AudioDto> Project(this IQueryable<Audio> queryable)
+    public static IQueryable<AudioViewModel> Project(this IQueryable<Audio> queryable)
     {
-        return queryable.Select(x => new AudioDto
+        return queryable.Select(x => new AudioViewModel
         {
             Id = x.Id,
             Description = x.Description ?? "",
@@ -19,7 +19,7 @@ public static partial class DtoMappings
             Picture = x.ImageId,
             Size = x.Size,
             Title = x.Title,
-            User = new UserDto
+            User = new UserViewModel
             {
                 Id = x.UserId,
                 Picture = x.User.ImageId,

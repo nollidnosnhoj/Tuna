@@ -2,8 +2,8 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Common.Extensions;
-using Audiochan.Core.Features.Upload.Commands;
-using Audiochan.Core.Features.Upload.Dtos;
+using Audiochan.Core.Features.Upload;
+using Audiochan.Core.Features.Upload.Models;
 using FluentValidation;
 using HotChocolate.Authorization;
 using HotChocolate.Language;
@@ -17,7 +17,7 @@ public class UploadMutations
 {
     [Authorize]
     [Error<ValidationException>]
-    public async Task<CreateUploadResponse> CreateAudioUpload(
+    public async Task<CreateUploadResult> CreateAudioUpload(
         string fileName,
         long fileSize,
         IMediator mediator,
@@ -31,7 +31,7 @@ public class UploadMutations
     
     [Authorize]
     [Error<ValidationException>]
-    public async Task<CreateUploadResponse> CreateAudioImageUpload(
+    public async Task<CreateUploadResult> CreateAudioImageUpload(
         string fileName,
         long fileSize,
         IMediator mediator,
@@ -45,7 +45,7 @@ public class UploadMutations
     
     [Authorize]
     [Error<ValidationException>]
-    public async Task<CreateUploadResponse> CreateUserImageUpload(
+    public async Task<CreateUploadResult> CreateUserImageUpload(
         string fileName,
         long fileSize,
         IMediator mediator,

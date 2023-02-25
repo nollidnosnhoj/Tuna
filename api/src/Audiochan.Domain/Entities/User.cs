@@ -12,9 +12,9 @@ namespace Audiochan.Domain.Entities
             
         }
         
-        public User(string identity, string userName)
+        public User(string identityId, string userName)
         {
-            this.IdentityId = identity;
+            this.IdentityId = identityId;
             this.UserName = userName;
         }
 

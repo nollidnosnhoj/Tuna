@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Audiochan.Core.Features.Audios.Commands;
+using Audiochan.Core.Features.Audios;
 using FluentValidation;
 using FluentValidation.TestHelper;
 using Xunit;

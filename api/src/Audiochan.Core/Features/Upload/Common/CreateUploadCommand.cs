@@ -1,9 +1,9 @@
 ﻿using Audiochan.Common.Mediatr;
-using Audiochan.Core.Features.Upload.Dtos;
+using Audiochan.Core.Features.Upload.Models;
 
 namespace Audiochan.Core.Features.Upload.Common;
 
-public abstract class CreateUploadCommand : ICommandRequest<CreateUploadResponse>
+public abstract class CreateUploadCommand : ICommandRequest<CreateUploadResult>
 {
     public string FileName { get; }
     public long FileSize { get; }

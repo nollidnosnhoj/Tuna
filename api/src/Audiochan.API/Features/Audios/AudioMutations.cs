@@ -2,13 +2,13 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Common.Extensions;
-using Audiochan.Core.Features.Audios.Commands;
+using Audiochan.Core.Features.Audios;
 using Audiochan.Core.Features.Audios.DataLoaders;
-using Audiochan.Core.Features.Audios.Dtos;
+using Audiochan.Core.Features.Audios.Models;
 using Audiochan.Core.Features.Audios.Exceptions;
-using Audiochan.Core.Features.Upload.Commands;
-using Audiochan.Core.Features.Upload.Dtos;
-using Audiochan.Core.Features.Users.Commands;
+using Audiochan.Core.Features.Upload;
+using Audiochan.Core.Features.Upload.Models;
+using Audiochan.Core.Features.Users;
 using FluentValidation;
 using HotChocolate.Authorization;
 using HotChocolate.Language;
@@ -22,7 +22,7 @@ public class AudioMutations
 {
     [Authorize]
     [Error<ValidationException>]
-    public async Task<CreateUploadResponse> CreateUploadLinkAsync(
+    public async Task<CreateUploadResult> CreateUploadLinkAsync(
         string fileName,
         long fileSize,
         IMediator mediator,
@@ -37,7 +37,7 @@ public class AudioMutations
     [Authorize]
     [Error<AudioNotUploadedException>]
     [Error<ValidationException>]
-    public async Task<AudioDto?> CreateAudioAsync(
+    public async Task<AudioViewModel?> CreateAudioAsync(
         string uploadId,
         string fileName,
         long fileSize,
@@ -58,7 +58,7 @@ public class AudioMutations
     [Authorize]
     [Error<AudioNotFoundException>]
     [Error<ValidationException>]
-    public async Task<AudioDto> UpdateAudioAsync(
+    public async Task<AudioViewModel> UpdateAudioAsync(
         long id,
         string? title,
         string? description,
@@ -73,7 +73,7 @@ public class AudioMutations
     [Authorize]
     [Error<AudioNotFoundException>]
     [Error<ValidationException>]
-    public async Task<ImageUploadResponse> UpdateAudioPictureAsync(
+    public async Task<ImageUploadResult> UpdateAudioPictureAsync(
         long id,
         string data,
         IMediator mediator,
@@ -99,7 +99,7 @@ public class AudioMutations
     [Authorize]
     [Error<AudioNotFoundException>]
     [Error<ValidationException>]
-    public async Task<ImageUploadResponse> RemoveAudioPictureAsync(
+    public async Task<ImageUploadResult> RemoveAudioPictureAsync(
         long id,
         IMediator mediator,
         ClaimsPrincipal claimsPrincipal,

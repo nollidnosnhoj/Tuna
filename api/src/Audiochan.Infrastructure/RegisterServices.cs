@@ -1,11 +1,13 @@
 ﻿using Amazon.S3;
+using Audiochan.Core.Features.Auth;
 using Audiochan.Core.Persistence;
-using Audiochan.Core.Persistence.Repositories;
+using Audiochan.Core.Security;
 using Audiochan.Core.Services;
+using Audiochan.Core.Storage;
 using Audiochan.Infrastructure.Persistence;
-using Audiochan.Infrastructure.Persistence.Repositories;
+using Audiochan.Infrastructure.Identity;
+using Audiochan.Infrastructure.Identity.Models;
 using Audiochan.Infrastructure.Security;
-using Audiochan.Infrastructure.Security.Models;
 using Audiochan.Infrastructure.Shared;
 using Audiochan.Infrastructure.Storage.AmazonS3;
 using Microsoft.AspNetCore.Identity;
@@ -25,9 +27,9 @@ namespace Audiochan.Infrastructure
             services.AddCaching(configuration, environment);
             services.AddStorage();
             services.AddTransient<IDateTimeProvider, DateTimeProvider>();
-            services.AddTransient<IRandomIdGenerator, NanoidGenerator>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddIdentity(configuration);
+            services.AddScoped<ITokenService, JsonWebTokenService>();
             return services;
         }
 
@@ -75,6 +77,8 @@ namespace Audiochan.Infrastructure
                     options.Password.RequireNonAlphanumeric = false;
                 })
                 .AddEntityFrameworkStores<IdentityDbContext>();
+            services.AddScoped<IAuthService, IdentityAuthService>();
+            services.AddScoped<IIdentityService, IdentityUserService>();
             return services;
         }
     }

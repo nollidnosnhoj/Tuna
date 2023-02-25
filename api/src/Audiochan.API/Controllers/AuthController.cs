@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Common.Dtos;
-using Audiochan.Core.Features.Auth.Dtos;
+using Audiochan.Core.Features.Auth;
+using Audiochan.Core.Features.Auth.Models;
 using Audiochan.Core.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;

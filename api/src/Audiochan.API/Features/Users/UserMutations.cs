@@ -3,9 +3,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Common.Exceptions;
 using Audiochan.Common.Extensions;
-using Audiochan.Core.Features.Upload.Dtos;
-using Audiochan.Core.Features.Users.Commands;
-using Audiochan.Core.Features.Users.Dtos;
+using Audiochan.Core.Features.Auth.Exceptions;
+using Audiochan.Core.Features.Upload.Models;
+using Audiochan.Core.Features.Users;
+using Audiochan.Core.Features.Users.Models;
 using Audiochan.Core.Features.Users.Exceptions;
 using FluentValidation;
 using HotChocolate.Authorization;
@@ -20,7 +21,7 @@ public class UserMutations
 {
     [Authorize]
     [Error(typeof(UnauthorizedException))]
-    public async Task<UserDto> UpdateUserAsync(
+    public async Task<UserViewModel> UpdateUserAsync(
         string? displayName,
         IMediator mediator,
         ClaimsPrincipal claimsPrincipal,
@@ -33,7 +34,7 @@ public class UserMutations
     [Authorize]
     [Error(typeof(UnauthorizedException))]
     [Error(typeof(ValidationException))]
-    public async Task<ImageUploadResponse> UpdateUserPictureAsync(
+    public async Task<ImageUploadResult> UpdateUserPictureAsync(
         long userId,
         string data,
         IMediator mediator,
@@ -52,7 +53,7 @@ public class UserMutations
     [Authorize]
     [Error(typeof(UnauthorizedException))]
     [Error(typeof(ValidationException))]
-    public async Task<ImageUploadResponse> RemoveUserPictureAsync(
+    public async Task<ImageUploadResult> RemoveUserPictureAsync(
         long userId,
         string data,
         IMediator mediator,

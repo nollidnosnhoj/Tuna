@@ -17,8 +17,6 @@ public static class GraphQlConfiguration
         services.AddGraphQLServer()
             .AddAuthorization()
             .RegisterDbContext<ApplicationDbContext>(DbContextKind.Pooled)
-            .RegisterService<AudioQueryService>()
-            .RegisterService<UserQueryService>()
             .RegisterService<IHashids>()
             .RegisterService<IMediator>()
             .AddQueryType()

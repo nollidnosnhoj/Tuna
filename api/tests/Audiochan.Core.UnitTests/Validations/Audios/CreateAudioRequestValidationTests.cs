@@ -1,4 +1,4 @@
-﻿using Audiochan.Core.Features.Audios.Commands;
+﻿using Audiochan.Core.Features.Audios;
 using Audiochan.Tests.Common.Fakers.Audios;
 using FluentAssertions;
 using FluentValidation;

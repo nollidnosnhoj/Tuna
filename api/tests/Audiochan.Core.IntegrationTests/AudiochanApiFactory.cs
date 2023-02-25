@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Audiochan.API;
 using Audiochan.Core.Persistence;
 using Audiochan.Core.Services;
+using Audiochan.Core.Storage;
 using Audiochan.Tests.Common.Extensions;
 using Audiochan.Tests.Common.Mocks;
 using DotNet.Testcontainers.Builders;
