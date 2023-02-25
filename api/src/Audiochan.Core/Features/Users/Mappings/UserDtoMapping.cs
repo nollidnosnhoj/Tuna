@@ -4,7 +4,7 @@ using Audiochan.Domain.Entities;
 
 namespace Audiochan.Core.Features.Users.Mappings;
 
-public static partial class DtoMappings
+public static class Mappings
 {
     public static IQueryable<UserViewModel> ProjectToUser(this IQueryable<User> queryable)
     {

@@ -5,7 +5,7 @@ using Audiochan.Domain.Entities;
 
 namespace Audiochan.Core.Features.Audios.Mappings;
 
-public static partial class DtoMappings
+public static class Mappings
 {
     public static IQueryable<AudioViewModel> Project(this IQueryable<Audio> queryable)
     {
