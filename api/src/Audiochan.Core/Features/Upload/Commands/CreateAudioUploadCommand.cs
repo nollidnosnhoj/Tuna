@@ -3,15 +3,13 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Features.Audios.Extensions;
-using Audiochan.Core.Features.Upload.Common;
 using Audiochan.Core.Features.Upload.Models;
-using Audiochan.Core.Services;
 using Audiochan.Core.Storage;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.Options;
 
-namespace Audiochan.Core.Features.Upload;
+namespace Audiochan.Core.Features.Upload.Commands;
 
 public class CreateAudioUploadCommand : CreateUploadCommand
 {

@@ -2,13 +2,13 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Common.Mediatr;
-using Audiochan.Core.Features.Users.Models;
 using Audiochan.Core.Features.Users.Mappings;
+using Audiochan.Core.Features.Users.Models;
 using Audiochan.Core.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace Audiochan.Core.Features.Users;
+namespace Audiochan.Core.Features.Users.Queries;
 
 public record GetUserQuery(long UserId) : IQueryRequest<UserViewModel?>;
 

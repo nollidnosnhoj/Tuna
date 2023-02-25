@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Audiochan.Core.Features.Users;
 using Audiochan.Core.Features.Users.Models;
+using Audiochan.Core.Features.Users.Queries;
 using HotChocolate.Language;
 using HotChocolate.Resolvers;
 using HotChocolate.Types;

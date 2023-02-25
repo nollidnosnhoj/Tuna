@@ -7,7 +7,7 @@ using Audiochan.Core.Features.Users.Models;
 using Audiochan.Core.Persistence;
 using MediatR;
 
-namespace Audiochan.Core.Features.Users
+namespace Audiochan.Core.Features.Users.Commands
 {
     public class UpdateProfileCommand : AuthCommandRequest<UserViewModel>
     {

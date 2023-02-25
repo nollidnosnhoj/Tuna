@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Common.Extensions;
 using Audiochan.Core.Features.Upload;
+using Audiochan.Core.Features.Upload.Commands;
 using Audiochan.Core.Features.Upload.Models;
 using FluentValidation;
 using HotChocolate.Authorization;

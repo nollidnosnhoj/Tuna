@@ -6,7 +6,7 @@ using Audiochan.Core.Persistence;
 using Audiochan.Core.Services;
 using MediatR;
 
-namespace Audiochan.Core.Features.Users
+namespace Audiochan.Core.Features.Users.Commands
 {
     public record SetFollowCommand(long TargetId, long ObserverId, bool IsFollowing) : ICommandRequest<bool>
     {

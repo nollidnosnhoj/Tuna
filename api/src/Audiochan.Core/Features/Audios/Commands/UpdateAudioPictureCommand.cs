@@ -5,12 +5,11 @@ using Audiochan.Common.Mediatr;
 using Audiochan.Core.Features.Audios.Exceptions;
 using Audiochan.Core.Features.Upload.Models;
 using Audiochan.Core.Persistence;
-using Audiochan.Core.Services;
 using Audiochan.Core.Storage;
 using MediatR;
 using Microsoft.Extensions.Options;
 
-namespace Audiochan.Core.Features.Audios
+namespace Audiochan.Core.Features.Audios.Commands
 {
     public class UpdateAudioPictureCommand : AuthCommandRequest<ImageUploadResult>
     {

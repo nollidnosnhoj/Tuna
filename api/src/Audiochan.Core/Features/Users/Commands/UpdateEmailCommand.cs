@@ -4,10 +4,9 @@ using Audiochan.Common.Exceptions;
 using Audiochan.Common.Mediatr;
 using Audiochan.Core.Features.Auth;
 using Audiochan.Core.Persistence;
-using Audiochan.Core.Services;
 using MediatR;
 
-namespace Audiochan.Core.Features.Users
+namespace Audiochan.Core.Features.Users.Commands
 {
     public class UpdateEmailCommand : ICommandRequest<bool>
     {

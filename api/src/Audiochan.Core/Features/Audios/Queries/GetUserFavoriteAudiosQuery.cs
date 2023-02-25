@@ -10,7 +10,7 @@ using HotChocolate.Types.Pagination;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace Audiochan.Core.Features.Audios;
+namespace Audiochan.Core.Features.Audios.Queries;
 
 public record GetUserFavoriteAudiosQuery(long UserId, int? Skip, int? Take) 
     : OffsetPagedQuery(Skip, Take), IQueryRequest<CollectionSegment<AudioViewModel>>;

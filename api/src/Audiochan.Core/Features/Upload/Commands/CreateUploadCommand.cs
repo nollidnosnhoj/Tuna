@@ -1,7 +1,7 @@
 ﻿using Audiochan.Common.Mediatr;
 using Audiochan.Core.Features.Upload.Models;
 
-namespace Audiochan.Core.Features.Upload.Common;
+namespace Audiochan.Core.Features.Upload.Commands;
 
 public abstract class CreateUploadCommand : ICommandRequest<CreateUploadResult>
 {

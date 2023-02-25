@@ -2,8 +2,8 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Common.Mediatr;
-using Audiochan.Core.Features.Audios.Models;
 using Audiochan.Core.Features.Audios.Exceptions;
+using Audiochan.Core.Features.Audios.Models;
 using Audiochan.Core.Features.Users.Models;
 using Audiochan.Core.Persistence;
 using Audiochan.Domain.Entities;
@@ -11,7 +11,7 @@ using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.Caching.Distributed;
 
-namespace Audiochan.Core.Features.Audios;
+namespace Audiochan.Core.Features.Audios.Commands;
 
 public class UpdateAudioCommand : AuthCommandRequest<AudioViewModel>
 {

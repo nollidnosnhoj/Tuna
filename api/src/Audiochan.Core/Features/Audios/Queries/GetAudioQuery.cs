@@ -5,7 +5,7 @@ using Audiochan.Core.Features.Audios.DataLoaders;
 using Audiochan.Core.Features.Audios.Models;
 using MediatR;
 
-namespace Audiochan.Core.Features.Audios;
+namespace Audiochan.Core.Features.Audios.Queries;
 
 public record GetAudioQuery(long AudioId) : IQueryRequest<AudioViewModel?>;
 

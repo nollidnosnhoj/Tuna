@@ -6,6 +6,7 @@ using Audiochan.Common.Extensions;
 using Audiochan.Core.Features.Auth.Exceptions;
 using Audiochan.Core.Features.Upload.Models;
 using Audiochan.Core.Features.Users;
+using Audiochan.Core.Features.Users.Commands;
 using Audiochan.Core.Features.Users.Models;
 using Audiochan.Core.Features.Users.Exceptions;
 using FluentValidation;
