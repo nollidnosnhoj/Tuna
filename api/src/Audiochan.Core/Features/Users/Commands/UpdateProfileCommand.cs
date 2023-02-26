@@ -5,6 +5,7 @@ using Audiochan.Common.Exceptions;
 using Audiochan.Common.Mediatr;
 using Audiochan.Core.Features.Users.Models;
 using Audiochan.Core.Persistence;
+using Audiochan.Domain.Entities;
 using MediatR;
 
 namespace Audiochan.Core.Features.Users.Commands
@@ -36,12 +37,12 @@ namespace Audiochan.Core.Features.Users.Commands
             
             if (user is null)
             {
-                throw new UnauthorizedException();
+                throw new ResourceIdInvalidException<long>(typeof(User), userId);
             }
 
             if (user.Id != userId)
             {
-                throw new UnauthorizedException();
+                throw new ResourceOwnershipException<long>(typeof(User), user.Id, userId);
             }
             
             // TODO: Update user stuff

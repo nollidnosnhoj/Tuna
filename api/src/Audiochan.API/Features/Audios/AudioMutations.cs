@@ -1,18 +1,14 @@
 ﻿using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.API.Errors;
+using Audiochan.API.Features.Audios.Errors;
 using Audiochan.Common.Extensions;
-using Audiochan.Core.Features.Audios;
 using Audiochan.Core.Features.Audios.Commands;
 using Audiochan.Core.Features.Audios.DataLoaders;
 using Audiochan.Core.Features.Audios.Models;
-using Audiochan.Core.Features.Audios.Exceptions;
-using Audiochan.Core.Features.Upload;
 using Audiochan.Core.Features.Upload.Commands;
 using Audiochan.Core.Features.Upload.Models;
-using Audiochan.Core.Features.Users;
-using Audiochan.Core.Features.Users.Commands;
-using FluentValidation;
 using HotChocolate.Authorization;
 using HotChocolate.Language;
 using HotChocolate.Types;
@@ -24,7 +20,7 @@ namespace Audiochan.API.Features.Audios;
 public class AudioMutations
 {
     [Authorize]
-    [Error<ValidationException>]
+    [Error<ValidationError>]
     public async Task<CreateUploadResult> CreateUploadLinkAsync(
         string fileName,
         long fileSize,
@@ -38,8 +34,8 @@ public class AudioMutations
     }
 
     [Authorize]
-    [Error<AudioNotUploadedException>]
-    [Error<ValidationException>]
+    [Error<AudioNotUploadedError>]
+    [Error<ValidationError>]
     public async Task<AudioViewModel?> CreateAudioAsync(
         string uploadId,
         string fileName,
@@ -59,8 +55,8 @@ public class AudioMutations
     }
 
     [Authorize]
-    [Error<AudioNotFoundException>]
-    [Error<ValidationException>]
+    [Error<AudioNotFoundError>]
+    [Error<ValidationError>]
     public async Task<AudioViewModel> UpdateAudioAsync(
         long id,
         string? title,
@@ -74,8 +70,8 @@ public class AudioMutations
     }
     
     [Authorize]
-    [Error<AudioNotFoundException>]
-    [Error<ValidationException>]
+    [Error<AudioNotFoundError>]
+    [Error<ValidationError>]
     public async Task<ImageUploadResult> UpdateAudioPictureAsync(
         long id,
         string data,
@@ -88,7 +84,7 @@ public class AudioMutations
     }
 
     [Authorize]
-    [Error<AudioNotFoundException>]
+    [Error<AudioNotFoundError>]
     public async Task<bool> RemoveAudioAsync(
         long id,
         IMediator mediator,
@@ -100,8 +96,8 @@ public class AudioMutations
     }
 
     [Authorize]
-    [Error<AudioNotFoundException>]
-    [Error<ValidationException>]
+    [Error<AudioNotFoundError>]
+    [Error<ValidationError>]
     public async Task<ImageUploadResult> RemoveAudioPictureAsync(
         long id,
         IMediator mediator,
@@ -113,7 +109,7 @@ public class AudioMutations
     }
 
     [Authorize]
-    [Error<AudioNotFoundException>]
+    [Error<AudioNotFoundError>]
     public async Task<bool> FavoriteAudioAsync(long audioId, 
         IMediator mediator, 
         ClaimsPrincipal claimsPrincipal,
@@ -125,7 +121,7 @@ public class AudioMutations
     }
     
     [Authorize]
-    [Error<AudioNotFoundException>]
+    [Error<AudioNotFoundError>]
     public async Task<bool> UnfavoriteAudioAsync(long audioId, 
         IMediator mediator, 
         ClaimsPrincipal claimsPrincipal,

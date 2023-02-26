@@ -36,7 +36,7 @@ namespace Audiochan.Common.Extensions
         {
             if (!principal.TryGetUserId(out var userId))
             {
-                throw new UnauthorizedException();
+                throw new UnauthorizedAccessException();
             }
 
             return userId;
@@ -46,7 +46,7 @@ namespace Audiochan.Common.Extensions
         {
             if (!principal.TryGetUserName(out var userName))
             {
-                throw new UnauthorizedException();
+                throw new UnauthorizedAccessException();
             }
 
             return userName;

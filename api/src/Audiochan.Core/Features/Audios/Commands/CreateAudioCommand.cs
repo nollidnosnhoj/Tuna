@@ -101,7 +101,7 @@ public class CreateAudioCommandHandler : IRequestHandler<CreateAudioCommand, lon
 
         if (!await ExistsInTempStorage(command.BlobName, cancellationToken))
         {
-            throw new AudioNotUploadedException();
+            throw new AudioNotUploadedException(command.UploadId, command.BlobName);
         }
 
         var audio = new Audio(

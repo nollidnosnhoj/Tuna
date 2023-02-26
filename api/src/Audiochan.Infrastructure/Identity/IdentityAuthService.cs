@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
@@ -36,7 +37,7 @@ public class IdentityAuthService : IAuthService
         if (user is null)
         {
             // TODO: Create custom exception for invalid login.
-            throw new UnauthorizedException();
+            throw new UnauthorizedAccessException();
         }
 
         var appUser = await dbContext.Users.FirstOrDefaultAsync(x => x.IdentityId == user.Id, cancellationToken);
@@ -73,7 +74,7 @@ public class IdentityAuthService : IAuthService
         if (!isPasswordValid)
         {
             // TODO: Create custom exception for invalid login.
-            throw new UnauthorizedException();
+            throw new UnauthorizedAccessException();
         }
     }
 }

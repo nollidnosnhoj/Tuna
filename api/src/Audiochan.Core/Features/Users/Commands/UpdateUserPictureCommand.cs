@@ -5,6 +5,7 @@ using Audiochan.Common.Mediatr;
 using Audiochan.Core.Features.Upload.Models;
 using Audiochan.Core.Persistence;
 using Audiochan.Core.Storage;
+using Audiochan.Domain.Entities;
 using MediatR;
 using Microsoft.Extensions.Options;
 
@@ -44,7 +45,7 @@ namespace Audiochan.Core.Features.Users.Commands
 
             if (user is null)
             {
-                throw new UnauthorizedException();
+                throw new ResourceIdInvalidException<long>(typeof(User), command.UserId);
             }
         
             if (string.IsNullOrEmpty(command.UploadId))

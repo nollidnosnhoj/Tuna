@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Audiochan.Core.Features.Auth.Models;
 
 namespace Audiochan.Core.Features.Auth.Exceptions;
 
-public record IdentityError(string Code, string Message);
-
 public class IdentityException : Exception
 {
-    public List<IdentityError> Errors { get; }
-    public IdentityException(IEnumerable<IdentityError> errors)
+    public IdentityResult Result { get; }
+    public IdentityException(IdentityResult result)
         : base("An identity error has occurred.")
     {
-        Errors = errors.ToList();
+        Result = result;
     }
 }

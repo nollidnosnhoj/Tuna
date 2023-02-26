@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Common.Exceptions;
 using Audiochan.Core.Features.Auth;
@@ -53,7 +54,7 @@ public class IdentityUserService : IIdentityService
             
         if (user is null)
         {
-            throw new UnauthorizedException();
+            throw new UnauthorizedAccessException();
         }
         
         var identityResult = await _userManager.SetUserNameAsync(user, userName);
@@ -67,7 +68,7 @@ public class IdentityUserService : IIdentityService
         
         if (user is null)
         {
-            throw new UnauthorizedException();
+            throw new UnauthorizedAccessException();
         }
         
         var identityResult = await _userManager.SetEmailAsync(user, email);
@@ -81,7 +82,7 @@ public class IdentityUserService : IIdentityService
         
         if (user is null)
         {
-            throw new UnauthorizedException();
+            throw new UnauthorizedAccessException();
         }
 
         var identityResult = await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);

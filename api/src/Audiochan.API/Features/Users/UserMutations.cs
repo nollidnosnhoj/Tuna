@@ -1,15 +1,13 @@
-﻿using System.Security.Claims;
+﻿using System;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Common.Exceptions;
+using Audiochan.API.Errors;
+using Audiochan.API.Features.Users.Errors;
 using Audiochan.Common.Extensions;
-using Audiochan.Core.Features.Auth.Exceptions;
 using Audiochan.Core.Features.Upload.Models;
-using Audiochan.Core.Features.Users;
 using Audiochan.Core.Features.Users.Commands;
 using Audiochan.Core.Features.Users.Models;
-using Audiochan.Core.Features.Users.Exceptions;
-using FluentValidation;
 using HotChocolate.Authorization;
 using HotChocolate.Language;
 using HotChocolate.Types;
@@ -21,7 +19,7 @@ namespace Audiochan.API.Features.Users;
 public class UserMutations
 {
     [Authorize]
-    [Error(typeof(UnauthorizedException))]
+    [Error(typeof(UnauthorizedError))]
     public async Task<UserViewModel> UpdateUserAsync(
         string? displayName,
         IMediator mediator,
@@ -33,8 +31,8 @@ public class UserMutations
     }
     
     [Authorize]
-    [Error(typeof(UnauthorizedException))]
-    [Error(typeof(ValidationException))]
+    [Error(typeof(UnauthorizedError))]
+    [Error(typeof(ValidationError))]
     public async Task<ImageUploadResult> UpdateUserPictureAsync(
         long userId,
         string data,
@@ -45,15 +43,15 @@ public class UserMutations
         var currentUserId = claimsPrincipal.GetUserId();
         if (userId != currentUserId)
         {
-            throw new UnauthorizedException();
+            throw new UnauthorizedAccessException();
         }
         var command = new UpdateUserPictureCommand(userId, data);
         return await mediator.Send(command, cancellationToken);
     }
     
     [Authorize]
-    [Error(typeof(UnauthorizedException))]
-    [Error(typeof(ValidationException))]
+    [Error(typeof(UnauthorizedError))]
+    [Error(typeof(ValidationError))]
     public async Task<ImageUploadResult> RemoveUserPictureAsync(
         long userId,
         string data,
@@ -64,15 +62,15 @@ public class UserMutations
         var currentUserId = claimsPrincipal.GetUserId();
         if (userId != currentUserId)
         {
-            throw new UnauthorizedException();
+            throw new UnauthorizedAccessException();
         }
         var command = new UpdateUserPictureCommand(userId, null);
         return await mediator.Send(command, cancellationToken);
     }
     
     [Authorize]
-    [Error(typeof(UnauthorizedException))]
-    [Error(typeof(IdentityException))]
+    [Error(typeof(UnauthorizedError))]
+    [Error(typeof(UserIdentityError))]
     public async Task<bool> UpdateUserNameAsync(
         long userId,
         string userName,
@@ -83,15 +81,15 @@ public class UserMutations
         var currentUserId = claimsPrincipal.GetUserId();
         if (userId != currentUserId)
         {
-            throw new UnauthorizedException();
+            throw new UnauthorizedAccessException();
         }
         var command = new UpdateUsernameCommand(userId, userName);
         return await mediator.Send(command, cancellationToken);
     }
     
     [Authorize]
-    [Error(typeof(UnauthorizedException))]
-    [Error(typeof(IdentityException))]
+    [Error(typeof(UnauthorizedError))]
+    [Error(typeof(UserIdentityError))]
     public async Task<bool> UpdatePasswordAsync(
         string currentPassword,
         string newPassword,
@@ -104,8 +102,8 @@ public class UserMutations
     }
     
     [Authorize]
-    [Error(typeof(UnauthorizedException))]
-    [Error(typeof(IdentityException))]
+    [Error(typeof(UnauthorizedError))]
+    [Error(typeof(UserIdentityError))]
     public async Task<bool> UpdateEmailAsync(
         long userId,
         string email,
@@ -116,7 +114,7 @@ public class UserMutations
         var currentUserId = claimsPrincipal.GetUserId();
         if (userId != currentUserId)
         {
-            throw new UnauthorizedException();
+            throw new UnauthorizedAccessException();
         }
         var command = new UpdateEmailCommand(userId, email);
         return await mediator.Send(command, cancellationToken);
@@ -125,8 +123,8 @@ public class UserMutations
     
 
     [Authorize]
-    [Error<UserNotFoundException>]
-    [Error<CannotFollowYourselfException>]
+    [Error<UserNotFoundError>]
+    [Error<FollowError>]
     public async Task<bool> FollowUserAsync(long userId, 
         IMediator mediator, 
         ClaimsPrincipal claimsPrincipal,
@@ -138,8 +136,8 @@ public class UserMutations
     }
     
     [Authorize]
-    [Error<UserNotFoundException>]
-    [Error<CannotFollowYourselfException>]
+    [Error<UserNotFoundError>]
+    [Error<FollowError>]
     public async Task<bool> UnfollowUserAsync(long userId, 
         IMediator mediator, 
         ClaimsPrincipal claimsPrincipal,

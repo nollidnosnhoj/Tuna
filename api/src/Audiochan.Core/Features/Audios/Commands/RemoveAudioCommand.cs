@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Common.Exceptions;
 using Audiochan.Common.Mediatr;
 using Audiochan.Core.Features.Audios.Exceptions;
 using Audiochan.Core.Persistence;
@@ -47,10 +48,10 @@ namespace Audiochan.Core.Features.Audios.Commands
             var audio = await _unitOfWork.Audios.FindAsync(command.Id, cancellationToken);
 
             if (audio == null)
-                throw new AudioNotFoundException(command.Id);
+                throw new ResourceIdInvalidException<long>(typeof(Audio), command.Id);
 
-            if (audio.UserId != currentUserId) 
-                throw new AudioNotFoundException(command.Id);
+            if (audio.UserId != currentUserId)
+                throw new ResourceOwnershipException<long>(typeof(Audio), command.Id, currentUserId);
             
             // TODO: Make this a job
             var afterDeletionTasks = GetTasksForAfterDeletion(audio, cancellationToken);

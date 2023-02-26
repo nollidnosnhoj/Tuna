@@ -1,9 +1,11 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Common.Exceptions;
 using Audiochan.Common.Mediatr;
 using Audiochan.Core.Features.Auth;
 using Audiochan.Core.Persistence;
+using Audiochan.Domain.Entities;
 using MediatR;
 
 namespace Audiochan.Core.Features.Users.Commands
@@ -36,7 +38,7 @@ namespace Audiochan.Core.Features.Users.Commands
 
             if (user is null)
             {
-                throw new UnauthorizedException();
+                throw new ResourceIdInvalidException<long>(typeof(User), command.UserId);
             }
 
             var result = await _identityService.UpdateEmailAsync(user.IdentityId, command.NewEmail, cancellationToken);

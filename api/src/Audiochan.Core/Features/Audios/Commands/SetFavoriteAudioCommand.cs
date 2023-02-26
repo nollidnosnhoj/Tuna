@@ -1,12 +1,13 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Common.Exceptions;
 using Audiochan.Common.Mediatr;
-using Audiochan.Core.Features.Audios.Exceptions;
 using Audiochan.Core.Persistence;
 using Audiochan.Core.Services;
+using Audiochan.Domain.Entities;
 using MediatR;
 
-namespace Audiochan.Core.Features.Users.Commands
+namespace Audiochan.Core.Features.Audios.Commands
 {
     public class SetFavoriteAudioCommand : ICommandRequest<bool>
     {
@@ -39,7 +40,7 @@ namespace Audiochan.Core.Features.Users.Commands
 
             if (audio == null)
             {
-                throw new AudioNotFoundException(command.AudioId);
+                throw new ResourceIdInvalidException<long>(typeof(Audio), command.AudioId);
             }
 
             if (command.IsFavoriting)

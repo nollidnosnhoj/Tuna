@@ -8,7 +8,7 @@ public interface IAuditable
     DateTime? UpdatedAt { get; set; }
 }
 
-public abstract class AuditableEntity<TKey> : IAuditable
+public abstract class AuditableEntity<TKey> : IAuditable, IEntity<TKey>
     where TKey : IComparable<TKey>, IEquatable<TKey>
 {
     public TKey Id { get; set; } = default!;

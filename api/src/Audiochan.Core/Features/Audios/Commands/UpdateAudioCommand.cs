@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Common.Exceptions;
 using Audiochan.Common.Mediatr;
 using Audiochan.Core.Features.Audios.Exceptions;
 using Audiochan.Core.Features.Audios.Models;
@@ -85,10 +86,10 @@ public class UpdateAudioCommandHandler : IRequestHandler<UpdateAudioCommand, Aud
         var audio = await _unitOfWork.Audios.FindAsync(command.Id, cancellationToken);
 
         if (audio == null)
-            throw new AudioNotFoundException(command.Id);
+            throw new ResourceIdInvalidException<long>(typeof(Audio), command.Id);
 
         if (audio.UserId != currentUserId)
-            throw new AudioNotFoundException(command.Id);
+            throw new ResourceOwnershipException<long>(typeof(Audio), command.Id, currentUserId);
             
         UpdateAudioFromCommandAsync(audio, command);
         _unitOfWork.Audios.Update(audio);

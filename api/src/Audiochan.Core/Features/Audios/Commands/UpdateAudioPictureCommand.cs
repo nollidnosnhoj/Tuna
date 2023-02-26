@@ -1,11 +1,13 @@
 ﻿using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Common.Exceptions;
 using Audiochan.Common.Mediatr;
 using Audiochan.Core.Features.Audios.Exceptions;
 using Audiochan.Core.Features.Upload.Models;
 using Audiochan.Core.Persistence;
 using Audiochan.Core.Storage;
+using Audiochan.Domain.Entities;
 using MediatR;
 using Microsoft.Extensions.Options;
 
@@ -47,10 +49,10 @@ namespace Audiochan.Core.Features.Audios.Commands
             var audio = await _unitOfWork.Audios.FindAsync(command.AudioId, cancellationToken);
 
             if (audio == null)
-                throw new AudioNotFoundException(command.AudioId);
+                throw new ResourceIdInvalidException<long>(typeof(Audio), command.AudioId);
 
             if (audio.UserId != currentUserId)
-                throw new AudioNotFoundException(command.AudioId);
+                throw new ResourceOwnershipException<long>(typeof(Audio), command.AudioId, currentUserId);
 
             if (string.IsNullOrEmpty(command.UploadId))
             {
