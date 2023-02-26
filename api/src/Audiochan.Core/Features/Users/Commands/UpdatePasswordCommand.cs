@@ -1,17 +1,15 @@
-﻿using System;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Common.Exceptions;
 using Audiochan.Common.Mediatr;
-using Audiochan.Core.Features.Auth;
-using Audiochan.Core.Persistence;
-using Audiochan.Domain.Entities;
+using Audiochan.Core.Entities;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 
 namespace Audiochan.Core.Features.Users.Commands
 {
-    public class UpdatePasswordCommand : AuthCommandRequest<bool>
+    public class UpdatePasswordCommand : AuthCommandRequest<IdentityResult>
     {
         public string CurrentPassword { get;  }
         public string NewPassword { get; }
@@ -23,21 +21,19 @@ namespace Audiochan.Core.Features.Users.Commands
         }
     }
 
-    public class UpdatePasswordCommandHandler : IRequestHandler<UpdatePasswordCommand, bool>
+    public class UpdatePasswordCommandHandler : IRequestHandler<UpdatePasswordCommand, IdentityResult>
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IIdentityService _identityService;
+        private readonly UserManager<User> _userManager;
 
-        public UpdatePasswordCommandHandler(IUnitOfWork unitOfWork, IIdentityService identityService)
+        public UpdatePasswordCommandHandler(UserManager<User> userManager)
         {
-            _unitOfWork = unitOfWork;
-            _identityService = identityService;
+            _userManager = userManager;
         }
 
-        public async Task<bool> Handle(UpdatePasswordCommand command, CancellationToken cancellationToken)
+        public async Task<IdentityResult> Handle(UpdatePasswordCommand command, CancellationToken cancellationToken)
         {
             var userId = command.GetUserId();
-            var user = await _unitOfWork.Users.FindAsync(userId, cancellationToken);
+            var user = await _userManager.FindByIdAsync(userId.ToString());
 
             if (user is null)
             {
@@ -49,17 +45,7 @@ namespace Audiochan.Core.Features.Users.Commands
                 throw new ResourceOwnershipException<long>(typeof(User), user.Id, userId);
             }
 
-            var result = await _identityService.UpdatePasswordAsync(
-                user.IdentityId, 
-                command.CurrentPassword,
-                command.NewPassword, 
-                cancellationToken);
-            
-            result.EnsureSuccessfulResult();
-            
-            // TODO: Remove session
-
-            return result.IsSuccess;
+            return await _userManager.ChangePasswordAsync(user, command.CurrentPassword, command.NewPassword);
         }
     }
 }

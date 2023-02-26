@@ -1,8 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Audiochan.API.Services;
-using Audiochan.Core.Features.Auth;
-using Audiochan.Core.Services;
-using Audiochan.Infrastructure.Identity;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -18,7 +15,6 @@ namespace Audiochan.API.Configurations
             IWebHostEnvironment environment)
         {
             services.AddSingleton<ITicketStore, DistributedCacheTicketStore>();
-            services.AddTransient<IAuthService, IdentityAuthService>();
 
             services.AddOptions<CookieAuthenticationOptions>(CookieAuthenticationDefaults.AuthenticationScheme)
                 .Configure<ITicketStore>((options, ticketStore) =>

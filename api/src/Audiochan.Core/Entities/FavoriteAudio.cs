@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Audiochan.Domain.Entities
+namespace Audiochan.Core.Entities
 {
     public class FavoriteAudio
     {

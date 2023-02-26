@@ -1,8 +1,10 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Features.Auth;
+using Audiochan.Core.Features.Auth.Commands;
 using Audiochan.Core.Features.Auth.Models;
 using Audiochan.Core.Services;
+using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -14,13 +16,11 @@ namespace Audiochan.API.Controllers
     [Route("auth")]
     public class AuthController : ControllerBase
     {
-        private readonly IAuthService _authService;
-        private readonly IDateTimeProvider _dateTime;
+        private readonly IMediator _mediator;
 
-        public AuthController(IDateTimeProvider dateTime, IAuthService authService)
+        public AuthController(IMediator mediator)
         {
-            _dateTime = dateTime;
-            _authService = authService;
+            _mediator = mediator;
         }
 
         [HttpPost("login", Name = "Login")]
@@ -33,9 +33,22 @@ namespace Audiochan.API.Controllers
         )]
         public async Task<ActionResult<LoginResult>> Login([FromBody] LoginRequest request, CancellationToken cancellationToken)
         {
-            var result = await _authService.LoginWithPasswordAsync(request.Login, request.Password, cancellationToken);
+            var result = await _mediator.Send(
+                new LoginWithPasswordCommand(request.Login, request.Password), cancellationToken);
 
-            return Ok(result);
+            if (!result.Succeeded)
+            {
+                return BadRequest(new
+                {
+                    Message = "Invalid username/password."
+                });
+            }
+            
+            // TODO: Create token
+
+            var loginResult = new LoginResult("token");
+
+            return Ok(loginResult);
         }
 
         [HttpPost("logout")]

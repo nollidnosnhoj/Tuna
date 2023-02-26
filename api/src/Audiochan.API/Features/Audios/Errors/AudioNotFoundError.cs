@@ -1,7 +1,7 @@
 ﻿using System;
 using Audiochan.Common.Exceptions;
 using Audiochan.Common.Models;
-using Audiochan.Domain.Entities;
+using Audiochan.Core.Entities;
 using HotChocolate.Types.Relay;
 using HotChocolate.Utilities;
 

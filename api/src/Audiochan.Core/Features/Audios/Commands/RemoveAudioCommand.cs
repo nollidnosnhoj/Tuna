@@ -6,10 +6,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Common.Exceptions;
 using Audiochan.Common.Mediatr;
+using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Audios.Exceptions;
 using Audiochan.Core.Persistence;
 using Audiochan.Core.Storage;
-using Audiochan.Domain.Entities;
 using MediatR;
 using Microsoft.Extensions.Options;
 

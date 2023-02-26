@@ -1,4 +1,4 @@
-﻿using Audiochan.Domain.Entities;
+﻿using Audiochan.Core.Entities;
 using Bogus;
 
 namespace Audiochan.Tests.Common.Fakers.Users;

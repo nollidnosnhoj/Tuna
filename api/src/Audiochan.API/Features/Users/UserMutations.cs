@@ -7,6 +7,7 @@ using Audiochan.API.Features.Users.Errors;
 using Audiochan.Common.Extensions;
 using Audiochan.Core.Features.Upload.Models;
 using Audiochan.Core.Features.Users.Commands;
+using Audiochan.Core.Features.Users.Extensions;
 using Audiochan.Core.Features.Users.Models;
 using HotChocolate.Authorization;
 using HotChocolate.Language;
@@ -84,7 +85,9 @@ public class UserMutations
             throw new UnauthorizedAccessException();
         }
         var command = new UpdateUsernameCommand(userId, userName);
-        return await mediator.Send(command, cancellationToken);
+        var result = await mediator.Send(command, cancellationToken);
+        result.EnsureSuccessful();
+        return result.Succeeded;
     }
     
     [Authorize]
@@ -98,7 +101,9 @@ public class UserMutations
         CancellationToken cancellationToken)
     {
         var command = new UpdatePasswordCommand(newPassword, currentPassword, claimsPrincipal);
-        return await mediator.Send(command, cancellationToken);
+        var result = await mediator.Send(command, cancellationToken);
+        result.EnsureSuccessful();
+        return result.Succeeded;
     }
     
     [Authorize]
@@ -117,7 +122,9 @@ public class UserMutations
             throw new UnauthorizedAccessException();
         }
         var command = new UpdateEmailCommand(userId, email);
-        return await mediator.Send(command, cancellationToken);
+        var result = await mediator.Send(command, cancellationToken);
+        result.EnsureSuccessful();
+        return result.Succeeded;
     }
     
     

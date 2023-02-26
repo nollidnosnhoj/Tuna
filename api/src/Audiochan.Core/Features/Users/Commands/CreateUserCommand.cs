@@ -1,14 +1,15 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Common.Mediatr;
+using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Auth;
 using Audiochan.Core.Persistence;
-using Audiochan.Domain.Entities;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 
 namespace Audiochan.Core.Features.Users.Commands;
 
-public class CreateUserCommand : ICommandRequest<long>
+public class CreateUserCommand : ICommandRequest<IdentityResult>
 {
     public CreateUserCommand(string username, string email, string password)
     {
@@ -29,34 +30,19 @@ public class CreateUserCommand : ICommandRequest<long>
 //     }
 // }
 
-public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, long>
+public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, IdentityResult>
 {
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly IIdentityService _identityService;
+    private readonly UserManager<User> _userManager;
 
-    public CreateUserCommandHandler(IUnitOfWork unitOfWork, IIdentityService identityService)
+    public CreateUserCommandHandler(UserManager<User> userManager)
     {
-        _unitOfWork = unitOfWork;
-        _identityService = identityService;
+        _userManager = userManager;
     }
 
-    public async Task<long> Handle(CreateUserCommand request, CancellationToken cancellationToken)
+    public async Task<IdentityResult> Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
         var trimmedUsername = request.Username.Trim();
-
-        var identityResult = await _identityService.CreateUserAsync(
-            trimmedUsername,
-            request.Email,
-            request.Password,
-            cancellationToken);
-        
-        identityResult.EnsureSuccessfulResult();
-
-        var user = new User(identityResult.IdentityId, trimmedUsername);
-
-        await _unitOfWork.Users.AddAsync(user, cancellationToken);
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
-        
-        return user.Id;
+        var user = new User(trimmedUsername, request.Email);
+        return await _userManager.CreateAsync(user, request.Password);
     }
 }
