@@ -2,7 +2,7 @@
 using Audiochan.API.Features.Audios.Errors;
 using Audiochan.Common.Exceptions;
 using Audiochan.Common.Models;
-using Audiochan.Core.Entities;
+using Audiochan.Domain.Entities;
 using HotChocolate.Types.Relay;
 using HotChocolate.Utilities;
 

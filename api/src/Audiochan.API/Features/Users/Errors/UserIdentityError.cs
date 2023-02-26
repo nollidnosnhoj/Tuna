@@ -2,7 +2,7 @@
 using System.Linq;
 using Audiochan.Common.Models;
 using Audiochan.Core.Features.Auth.Exceptions;
-using Microsoft.AspNetCore.Identity;
+using Audiochan.Core.Features.Auth.Models;
 
 namespace Audiochan.API.Features.Users.Errors;
 
@@ -15,7 +15,7 @@ public class UserIdentityError : IUserError
     
     public static UserIdentityError CreateErrorFrom(IdentityException exception)
     {
-        return new UserIdentityError(exception.Result.Errors);
+        return new UserIdentityError(exception.Result.Errors.Select(x => new IdentityError(x.Code, x.Message)));
     }
 
     public IReadOnlyCollection<IdentityError> Errors { get; }

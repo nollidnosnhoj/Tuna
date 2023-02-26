@@ -1,4 +1,4 @@
-﻿using Audiochan.Core.Entities;
+﻿using Audiochan.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

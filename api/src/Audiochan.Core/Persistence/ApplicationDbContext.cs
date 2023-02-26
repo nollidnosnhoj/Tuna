@@ -1,15 +1,13 @@
 ﻿using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Entities;
 using Audiochan.Core.Persistence.Interceptors;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Audiochan.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Persistence
 {
-    public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<long>, long>
+    public class ApplicationDbContext : DbContext
     {
         public ApplicationDbContext(DbContextOptions options) : base(options)
         {
@@ -18,6 +16,8 @@ namespace Audiochan.Core.Persistence
         public DbSet<Audio> Audios { get; set; } = null!;
         public DbSet<FavoriteAudio> FavoriteAudios { get; set; } = null!;
         public DbSet<FollowedUser> FollowedUsers { get; set; } = null!;
+        public DbSet<User> Users { get; set; } = null!;
+
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new())
         {

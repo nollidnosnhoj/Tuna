@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Audiochan.Core.Features.Users.Models;
+using Audiochan.Domain.Abstractions;
 
 namespace Audiochan.Core.Features.Audios.Models;
 
