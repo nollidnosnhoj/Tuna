@@ -1,4 +1,6 @@
-﻿namespace Audiochan.Common.Abstractions
+﻿using System;
+
+namespace Audiochan.Domain.Abstractions
 {
     public interface ISoftDeletable
     {

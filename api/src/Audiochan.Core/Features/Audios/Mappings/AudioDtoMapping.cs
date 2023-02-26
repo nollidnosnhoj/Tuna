@@ -1,7 +1,7 @@
 ﻿using System.Linq;
-using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Audios.Models;
 using Audiochan.Core.Features.Users.Models;
+using Audiochan.Domain.Entities;
 
 namespace Audiochan.Core.Features.Audios.Mappings;
 

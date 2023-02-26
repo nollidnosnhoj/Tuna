@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Audiochan.Common.Abstractions;
+using Audiochan.Domain.Abstractions;
 
-namespace Audiochan.Core.Entities
+namespace Audiochan.Domain.Entities
 {
     public class Audio : AuditableEntity<long>
     {

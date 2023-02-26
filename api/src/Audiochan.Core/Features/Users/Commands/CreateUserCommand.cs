@@ -1,15 +1,14 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Common.Mediatr;
-using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Auth;
 using Audiochan.Core.Persistence;
+using Audiochan.Domain.Entities;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
 
 namespace Audiochan.Core.Features.Users.Commands;
 
-public class CreateUserCommand : ICommandRequest<IdentityResult>
+public class CreateUserCommand : ICommandRequest<long>
 {
     public CreateUserCommand(string username, string email, string password)
     {
@@ -30,19 +29,34 @@ public class CreateUserCommand : ICommandRequest<IdentityResult>
 //     }
 // }
 
-public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, IdentityResult>
+public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, long>
 {
-    private readonly UserManager<User> _userManager;
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly IIdentityService _identityService;
 
-    public CreateUserCommandHandler(UserManager<User> userManager)
+    public CreateUserCommandHandler(IUnitOfWork unitOfWork, IIdentityService identityService)
     {
-        _userManager = userManager;
+        _unitOfWork = unitOfWork;
+        _identityService = identityService;
     }
 
-    public async Task<IdentityResult> Handle(CreateUserCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
         var trimmedUsername = request.Username.Trim();
-        var user = new User(trimmedUsername, request.Email);
-        return await _userManager.CreateAsync(user, request.Password);
+
+        var identityResult = await _identityService.CreateUserAsync(
+            trimmedUsername,
+            request.Email,
+            request.Password,
+            cancellationToken);
+        
+        identityResult.EnsureSuccessfulResult();
+
+        var user = new User(identityResult.IdentityId, trimmedUsername);
+
+        await _unitOfWork.Users.AddAsync(user, cancellationToken);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        
+        return user.Id;
     }
 }

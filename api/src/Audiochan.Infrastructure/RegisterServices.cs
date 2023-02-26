@@ -1,12 +1,17 @@
 ﻿using Amazon.S3;
+using Audiochan.Core.Features.Auth;
 using Audiochan.Core.Persistence;
 using Audiochan.Core.Security;
 using Audiochan.Core.Services;
 using Audiochan.Core.Storage;
 using Audiochan.Infrastructure.Persistence;
+using Audiochan.Infrastructure.Identity;
+using Audiochan.Infrastructure.Identity.Models;
 using Audiochan.Infrastructure.Security;
 using Audiochan.Infrastructure.Shared;
 using Audiochan.Infrastructure.Storage.AmazonS3;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -23,6 +28,7 @@ namespace Audiochan.Infrastructure
             services.AddStorage();
             services.AddTransient<IDateTimeProvider, DateTimeProvider>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
+            services.AddIdentity(configuration);
             services.AddScoped<ITokenService, JsonWebTokenService>();
             return services;
         }
@@ -49,6 +55,30 @@ namespace Audiochan.Infrastructure
         {
             services.AddAWSService<IAmazonS3>();
             services.AddTransient<IStorageService, AmazonS3Service>();
+            return services;
+        }
+
+        private static IServiceCollection AddIdentity(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddDbContext<IdentityDbContext>(options =>
+            {
+                options.UseNpgsql(configuration.GetConnectionString("IdentityDb"));
+            });
+            services.AddIdentity<IdUser, IdentityRole>(options =>
+                {
+                    options.User.AllowedUserNameCharacters =
+                        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-_";
+                    options.User.RequireUniqueEmail = true;
+                    options.Password.RequireDigit = false;
+                    options.Password.RequiredLength = 6;
+                    options.Password.RequireLowercase = true;
+                    options.Password.RequiredUniqueChars = 1;
+                    options.Password.RequireUppercase = true;
+                    options.Password.RequireNonAlphanumeric = false;
+                })
+                .AddEntityFrameworkStores<IdentityDbContext>();
+            services.AddScoped<IAuthService, IdentityAuthService>();
+            services.AddScoped<IIdentityService, IdentityUserService>();
             return services;
         }
     }

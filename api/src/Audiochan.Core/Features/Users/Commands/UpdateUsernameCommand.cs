@@ -2,15 +2,14 @@
 using System.Threading.Tasks;
 using Audiochan.Common.Exceptions;
 using Audiochan.Common.Mediatr;
-using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Auth;
 using Audiochan.Core.Persistence;
+using Audiochan.Domain.Entities;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
 
 namespace Audiochan.Core.Features.Users.Commands
 {
-    public class UpdateUsernameCommand : ICommandRequest<IdentityResult>
+    public class UpdateUsernameCommand : ICommandRequest<bool>
     {
         public long UserId { get; }
         public string NewUserName { get; }
@@ -22,25 +21,34 @@ namespace Audiochan.Core.Features.Users.Commands
         }
     }
 
-    public class UpdateUsernameCommandHandler : IRequestHandler<UpdateUsernameCommand, IdentityResult>
+    public class UpdateUsernameCommandHandler : IRequestHandler<UpdateUsernameCommand, bool>
     {
-        private readonly UserManager<User> _userManager;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IIdentityService _identityService;
 
-        public UpdateUsernameCommandHandler(UserManager<User> userManager)
+        public UpdateUsernameCommandHandler(IUnitOfWork unitOfWork, IIdentityService identityService)
         {
-            _userManager = userManager;
+            _unitOfWork = unitOfWork;
+            _identityService = identityService;
         }
 
-        public async Task<IdentityResult> Handle(UpdateUsernameCommand command, CancellationToken cancellationToken)
+        public async Task<bool> Handle(UpdateUsernameCommand command, CancellationToken cancellationToken)
         {
-            var user = await _userManager.FindByIdAsync(command.UserId.ToString());
+            var user = await _unitOfWork.Users.FindAsync(command.UserId, cancellationToken);
             
             if (user is null)
             {
                 throw new ResourceIdInvalidException<long>(typeof(User), command.UserId);
             }
 
-            return await _userManager.SetUserNameAsync(user, command.NewUserName);
+            var result = await _identityService.UpdateUserNameAsync(
+                user.IdentityId,
+                command.NewUserName,
+                cancellationToken);
+            
+            result.EnsureSuccessfulResult();
+
+            return result.IsSuccess;
         }
     }
 }

@@ -1,14 +1,16 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Common.Exceptions;
 using Audiochan.Common.Mediatr;
-using Audiochan.Core.Entities;
+using Audiochan.Core.Features.Auth;
+using Audiochan.Core.Persistence;
+using Audiochan.Domain.Entities;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
 
 namespace Audiochan.Core.Features.Users.Commands
 {
-    public class UpdateEmailCommand : ICommandRequest<IdentityResult>
+    public class UpdateEmailCommand : ICommandRequest<bool>
     {
         public long UserId { get; set; }
         public string NewEmail { get; }
@@ -19,25 +21,31 @@ namespace Audiochan.Core.Features.Users.Commands
         }
     }
 
-    public class UpdateEmailCommandHandler : IRequestHandler<UpdateEmailCommand, IdentityResult>
+    public class UpdateEmailCommandHandler : IRequestHandler<UpdateEmailCommand, bool>
     {
-        private readonly UserManager<User> _userManager;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IIdentityService _identityService;
 
-        public UpdateEmailCommandHandler(UserManager<User> userManager)
+        public UpdateEmailCommandHandler(IUnitOfWork unitOfWork, IIdentityService identityService)
         {
-            _userManager = userManager;
+            _unitOfWork = unitOfWork;
+            _identityService = identityService;
         }
 
-        public async Task<IdentityResult> Handle(UpdateEmailCommand command, CancellationToken cancellationToken)
+        public async Task<bool> Handle(UpdateEmailCommand command, CancellationToken cancellationToken)
         {
-            var user = await _userManager.FindByIdAsync(command.UserId.ToString());
+            var user = await _unitOfWork.Users.FindAsync(command.UserId, cancellationToken);
 
             if (user is null)
             {
                 throw new ResourceIdInvalidException<long>(typeof(User), command.UserId);
             }
 
-            return await _userManager.SetEmailAsync(user, command.NewEmail);
+            var result = await _identityService.UpdateEmailAsync(user.IdentityId, command.NewEmail, cancellationToken);
+            
+            result.EnsureSuccessfulResult();
+
+            return result.IsSuccess;
         }
     }
 }

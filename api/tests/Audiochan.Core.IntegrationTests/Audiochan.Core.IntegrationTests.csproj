@@ -30,6 +30,7 @@
     <ItemGroup>
       <ProjectReference Include="..\..\src\Audiochan.API\Audiochan.API.csproj" />
       <ProjectReference Include="..\..\src\Audiochan.Core\Audiochan.Core.csproj" />
+      <ProjectReference Include="..\..\src\Audiochan.Domain\Audiochan.Domain.csproj" />
       <ProjectReference Include="..\..\src\Audiochan.Infrastructure\Audiochan.Infrastructure.csproj" />
       <ProjectReference Include="..\Audiochan.Tests.Common\Audiochan.Tests.Common.csproj" />
     </ItemGroup>

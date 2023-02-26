@@ -1,29 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Audiochan.Common.Abstractions;
-using Microsoft.AspNetCore.Identity;
+using Audiochan.Domain.Abstractions;
 
-namespace Audiochan.Core.Entities
+namespace Audiochan.Domain.Entities
 {
-    public sealed class User : IdentityUser<long>, IAuditable
+    public class User : AuditableEntity<long>
     {
         private User()
         {
             
         }
         
-        public User(string userName, string email)
+        public User(string identityId, string userName)
         {
+            this.IdentityId = identityId;
             this.UserName = userName;
-            this.Email = email;
         }
-        
+
+        public string IdentityId { get; set; } = null!;
+        public string UserName { get; set; } = null!;
         public string? ImageId { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }
-        
-        // navigational properties
         public ICollection<Audio> Audios { get; set; } = new HashSet<Audio>();
         public ICollection<FavoriteAudio> FavoriteAudios { get; set; } = new HashSet<FavoriteAudio>();
         public ICollection<FollowedUser> Followings { get; set; } = new HashSet<FollowedUser>();
