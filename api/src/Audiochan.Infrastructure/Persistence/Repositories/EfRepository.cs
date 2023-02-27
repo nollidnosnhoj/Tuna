@@ -30,15 +30,16 @@ namespace Audiochan.Infrastructure.Persistence.Repositories
             return await _dbSet.FindAsync(ids, cancellationToken);
         }
         
-        public void Add(TEntity entity) => _dbSet.Add(entity);
-        
-        public void AddRange(IEnumerable<TEntity> entities) => _dbSet.AddRange(entities);
-        
-        public void AddRange(params TEntity[] entities) => _dbSet.AddRange(entities);
-        
         public async Task AddAsync(TEntity entity, CancellationToken ct = default) =>
             await _dbSet.AddAsync(entity, ct);
-        
+
+        public async Task<TEntity> AddAndSaveChangesAsync(TEntity entity, CancellationToken ct = default)
+        {
+            var entityState = await _dbSet.AddAsync(entity, ct);
+            await DbContext.SaveChangesAsync(ct);
+            return entityState.Entity;
+        }
+
         public async Task AddRangeAsync(IEnumerable<TEntity> entities, CancellationToken ct = default) =>
             await _dbSet.AddRangeAsync(entities, ct);
         

@@ -2,13 +2,16 @@
 using System.Threading.Tasks;
 using Audiochan.Common.Mediatr;
 using Audiochan.Core.Features.Auth;
+using Audiochan.Core.Features.Users.Errors;
+using Audiochan.Core.Features.Users.Models;
 using Audiochan.Core.Persistence;
 using Audiochan.Domain.Entities;
 using MediatR;
+using OneOf;
 
 namespace Audiochan.Core.Features.Users.Commands;
 
-public class CreateUserCommand : ICommandRequest<long>
+public class CreateUserCommand : ICommandRequest<CreateUserCommandResult>
 {
     public CreateUserCommand(string username, string email, string password)
     {
@@ -22,6 +25,12 @@ public class CreateUserCommand : ICommandRequest<long>
     public string Password { get; }
 }
 
+[GenerateOneOf]
+public partial class CreateUserCommandResult : OneOfBase<UserViewModel, UserIdentityError>
+{
+    
+}
+
 // public class CreateUserCommandValidator : AbstractValidator<CreateUserCommand>
 // {
 //     public CreateUserCommandValidator()
@@ -29,7 +38,7 @@ public class CreateUserCommand : ICommandRequest<long>
 //     }
 // }
 
-public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, long>
+public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, CreateUserCommandResult>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IIdentityService _identityService;
@@ -40,7 +49,7 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, long>
         _identityService = identityService;
     }
 
-    public async Task<long> Handle(CreateUserCommand request, CancellationToken cancellationToken)
+    public async Task<CreateUserCommandResult> Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
         var trimmedUsername = request.Username.Trim();
 
@@ -49,14 +58,22 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, long>
             request.Email,
             request.Password,
             cancellationToken);
-        
-        identityResult.EnsureSuccessfulResult();
+
+        if (!identityResult.IsSuccess)
+        {
+            return new UserIdentityError(identityResult.Errors);
+        }
 
         var user = new User(identityResult.IdentityId, trimmedUsername);
 
         await _unitOfWork.Users.AddAsync(user, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
-        
-        return user.Id;
+
+        return new UserViewModel
+        {
+            Id = user.Id,
+            Picture = user.ImageId,
+            UserName = user.UserName
+        };
     }
 }

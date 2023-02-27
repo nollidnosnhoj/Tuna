@@ -1,54 +1,63 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Common.Exceptions;
 using Audiochan.Common.Mediatr;
 using Audiochan.Core.Features.Auth;
+using Audiochan.Core.Features.Users.Errors;
 using Audiochan.Core.Persistence;
-using Audiochan.Domain.Entities;
 using MediatR;
+using OneOf;
+using OneOf.Types;
 
-namespace Audiochan.Core.Features.Users.Commands
+namespace Audiochan.Core.Features.Users.Commands;
+
+public class UpdateUsernameCommand : ICommandRequest<UpdateUsernameResult>
 {
-    public class UpdateUsernameCommand : ICommandRequest<bool>
-    {
-        public long UserId { get; }
-        public string NewUserName { get; }
+    public long UserId { get; }
+    public string NewUserName { get; }
 
-        public UpdateUsernameCommand(long userId, string newUserName)
-        {
-            UserId = userId;
-            NewUserName = newUserName;
-        }
+    public UpdateUsernameCommand(long userId, string newUserName)
+    {
+        UserId = userId;
+        NewUserName = newUserName;
+    }
+}
+
+[GenerateOneOf]
+public partial class UpdateUsernameResult : OneOfBase<Unit, NotFound, UserIdentityError>
+{
+    
+}
+
+public class UpdateUsernameCommandHandler : IRequestHandler<UpdateUsernameCommand, UpdateUsernameResult>
+{
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly IIdentityService _identityService;
+
+    public UpdateUsernameCommandHandler(IUnitOfWork unitOfWork, IIdentityService identityService)
+    {
+        _unitOfWork = unitOfWork;
+        _identityService = identityService;
     }
 
-    public class UpdateUsernameCommandHandler : IRequestHandler<UpdateUsernameCommand, bool>
+    public async Task<UpdateUsernameResult> Handle(UpdateUsernameCommand command, CancellationToken cancellationToken)
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IIdentityService _identityService;
-
-        public UpdateUsernameCommandHandler(IUnitOfWork unitOfWork, IIdentityService identityService)
+        var user = await _unitOfWork.Users.FindAsync(command.UserId, cancellationToken);
+            
+        if (user is null)
         {
-            _unitOfWork = unitOfWork;
-            _identityService = identityService;
+            return new NotFound();
         }
 
-        public async Task<bool> Handle(UpdateUsernameCommand command, CancellationToken cancellationToken)
+        var result = await _identityService.UpdateUserNameAsync(
+            user.IdentityId,
+            command.NewUserName,
+            cancellationToken);
+
+        if (!result.IsSuccess)
         {
-            var user = await _unitOfWork.Users.FindAsync(command.UserId, cancellationToken);
-            
-            if (user is null)
-            {
-                throw new ResourceIdInvalidException<long>(typeof(User), command.UserId);
-            }
-
-            var result = await _identityService.UpdateUserNameAsync(
-                user.IdentityId,
-                command.NewUserName,
-                cancellationToken);
-            
-            result.EnsureSuccessfulResult();
-
-            return result.IsSuccess;
+            return new UserIdentityError(result.Errors);
         }
+
+        return Unit.Value;
     }
 }

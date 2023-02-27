@@ -1,65 +1,65 @@
-﻿using System;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Common.Exceptions;
+using Audiochan.Common.Errors;
 using Audiochan.Common.Mediatr;
 using Audiochan.Core.Features.Auth;
+using Audiochan.Core.Features.Users.Errors;
 using Audiochan.Core.Persistence;
-using Audiochan.Domain.Entities;
 using MediatR;
+using OneOf;
 
-namespace Audiochan.Core.Features.Users.Commands
+namespace Audiochan.Core.Features.Users.Commands;
+
+public class UpdatePasswordCommand : AuthCommandRequest<UpdatePasswordCommandResult>
 {
-    public class UpdatePasswordCommand : AuthCommandRequest<bool>
-    {
-        public string CurrentPassword { get;  }
-        public string NewPassword { get; }
+    public string CurrentPassword { get;  }
+    public string NewPassword { get; }
 
-        public UpdatePasswordCommand(string newPassword, string currentPassword, ClaimsPrincipal user) : base(user)
-        {
-            CurrentPassword = currentPassword;
-            NewPassword = newPassword;
-        }
+    public UpdatePasswordCommand(string newPassword, string currentPassword, ClaimsPrincipal user) : base(user)
+    {
+        CurrentPassword = currentPassword;
+        NewPassword = newPassword;
+    }
+}
+
+[GenerateOneOf]
+public partial class UpdatePasswordCommandResult : OneOfBase<Unit, Unauthorized, UserIdentityError>
+{
+    
+}
+
+public class UpdatePasswordCommandHandler : IRequestHandler<UpdatePasswordCommand, UpdatePasswordCommandResult>
+{
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly IIdentityService _identityService;
+
+    public UpdatePasswordCommandHandler(IUnitOfWork unitOfWork, IIdentityService identityService)
+    {
+        _unitOfWork = unitOfWork;
+        _identityService = identityService;
     }
 
-    public class UpdatePasswordCommandHandler : IRequestHandler<UpdatePasswordCommand, bool>
+    public async Task<UpdatePasswordCommandResult> Handle(UpdatePasswordCommand command, CancellationToken cancellationToken)
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IIdentityService _identityService;
+        var userId = command.GetUserId();
+        var user = await _unitOfWork.Users.FindAsync(userId, cancellationToken);
 
-        public UpdatePasswordCommandHandler(IUnitOfWork unitOfWork, IIdentityService identityService)
+        if (user is null) return new Unauthorized();
+
+        var result = await _identityService.UpdatePasswordAsync(
+            user.IdentityId, 
+            command.CurrentPassword,
+            command.NewPassword, 
+            cancellationToken);
+
+        if (!result.IsSuccess)
         {
-            _unitOfWork = unitOfWork;
-            _identityService = identityService;
+            return new UserIdentityError(result.Errors);
         }
-
-        public async Task<bool> Handle(UpdatePasswordCommand command, CancellationToken cancellationToken)
-        {
-            var userId = command.GetUserId();
-            var user = await _unitOfWork.Users.FindAsync(userId, cancellationToken);
-
-            if (user is null)
-            {
-                throw new ResourceIdInvalidException<long>(typeof(User), userId);
-            }
-
-            if (user.Id != userId)
-            {
-                throw new ResourceOwnershipException<long>(typeof(User), user.Id, userId);
-            }
-
-            var result = await _identityService.UpdatePasswordAsync(
-                user.IdentityId, 
-                command.CurrentPassword,
-                command.NewPassword, 
-                cancellationToken);
             
-            result.EnsureSuccessfulResult();
-            
-            // TODO: Remove session
+        // TODO: Remove session
 
-            return result.IsSuccess;
-        }
+        return Unit.Value;
     }
 }

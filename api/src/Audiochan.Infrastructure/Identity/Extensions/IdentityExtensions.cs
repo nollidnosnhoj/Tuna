@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Audiochan.Common.Exceptions;
-using Audiochan.Core.Features.Auth.Exceptions;
 using Audiochan.Core.Features.Auth.Models;
 
 namespace Audiochan.Infrastructure.Identity.Extensions;

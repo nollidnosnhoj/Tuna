@@ -4,92 +4,96 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Common.Exceptions;
+using Audiochan.Common.Errors;
 using Audiochan.Common.Mediatr;
-using Audiochan.Core.Features.Audios.Exceptions;
 using Audiochan.Core.Persistence;
 using Audiochan.Core.Storage;
 using Audiochan.Domain.Entities;
 using MediatR;
 using Microsoft.Extensions.Options;
+using OneOf;
+using OneOf.Types;
 
-namespace Audiochan.Core.Features.Audios.Commands
+namespace Audiochan.Core.Features.Audios.Commands;
+
+public class RemoveAudioCommand : AuthCommandRequest<RemoveAudioResult>
 {
-    public class RemoveAudioCommand : AuthCommandRequest<bool>
+    public RemoveAudioCommand(long id, ClaimsPrincipal user) : base(user)
     {
-        public RemoveAudioCommand(long id, ClaimsPrincipal user) : base(user)
-        {
-            Id = id;
-        }
+        Id = id;
+    }
         
-        public long Id { get; }
+    public long Id { get; }
+}
+
+[GenerateOneOf]
+public partial class RemoveAudioResult : OneOfBase<Unit, NotFound, Forbidden>
+{
+    
+}
+
+public class RemoveAudioCommandHandler : IRequestHandler<RemoveAudioCommand, RemoveAudioResult>
+{
+    private readonly IStorageService _storageService;
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly ApplicationSettings _appSettings;
+
+    public RemoveAudioCommandHandler(
+        IUnitOfWork unitOfWork, 
+        IStorageService storageService, 
+        IOptions<ApplicationSettings> appSettings)
+    {
+        _unitOfWork = unitOfWork;
+        _storageService = storageService;
+        _appSettings = appSettings.Value;
     }
 
-    public class RemoveAudioCommandHandler : IRequestHandler<RemoveAudioCommand, bool>
+    public async Task<RemoveAudioResult> Handle(RemoveAudioCommand command, CancellationToken cancellationToken)
     {
-        private readonly IStorageService _storageService;
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly ApplicationSettings _appSettings;
+        var currentUserId = command.GetUserId();
 
-        public RemoveAudioCommandHandler(
-            IUnitOfWork unitOfWork, 
-            IStorageService storageService, 
-            IOptions<ApplicationSettings> appSettings)
-        {
-            _unitOfWork = unitOfWork;
-            _storageService = storageService;
-            _appSettings = appSettings.Value;
-        }
+        var audio = await _unitOfWork.Audios.FindAsync(command.Id, cancellationToken);
 
-        public async Task<bool> Handle(RemoveAudioCommand command, CancellationToken cancellationToken)
-        {
-            var currentUserId = command.GetUserId();
+        if (audio == null) return new NotFound();
 
-            var audio = await _unitOfWork.Audios.FindAsync(command.Id, cancellationToken);
-
-            if (audio == null)
-                throw new ResourceIdInvalidException<long>(typeof(Audio), command.Id);
-
-            if (audio.UserId != currentUserId)
-                throw new ResourceOwnershipException<long>(typeof(Audio), command.Id, currentUserId);
+        if (audio.UserId != currentUserId) return new Forbidden();
             
-            // TODO: Make this a job
-            var afterDeletionTasks = GetTasksForAfterDeletion(audio, cancellationToken);
-            _unitOfWork.Audios.Remove(audio);
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
-            await Task.WhenAll(afterDeletionTasks);
-            return true;
-        }
+        // TODO: Make this a job
+        var afterDeletionTasks = GetTasksForAfterDeletion(audio, cancellationToken);
+        _unitOfWork.Audios.Remove(audio);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        await Task.WhenAll(afterDeletionTasks);
+        return Unit.Value;
+    }
 
-        private IEnumerable<Task> GetTasksForAfterDeletion(Audio audio, CancellationToken cancellationToken = default)
+    private IEnumerable<Task> GetTasksForAfterDeletion(Audio audio, CancellationToken cancellationToken = default)
+    {
+        var tasks = new List<Task>
         {
-            var tasks = new List<Task>
-            {
-                RemoveAudioFromStorage(audio, cancellationToken)
-            };
+            RemoveAudioFromStorage(audio, cancellationToken)
+        };
         
-            if (!string.IsNullOrEmpty(audio.ImageId))
-            {
-                tasks.Add(_storageService.RemoveAsync(
-                    bucket: _appSettings.UploadBucket,
-                    blobName: $"{AssetContainerConstants.AUDIO_PICTURES}/{audio.ImageId}", 
-                    cancellationToken));
-            }
-        
-            return tasks;
-        }
-        
-        private async Task RemoveAudioFromStorage(Audio audio, CancellationToken cancellationToken = default)
+        if (!string.IsNullOrEmpty(audio.ImageId))
         {
-            var uploadId = audio.ObjectKey.Split('.').FirstOrDefault();
-            if (uploadId is null)
-            {
-                throw new ArgumentException("Audio object key needs to have a file extension");
-            }
-            await _storageService.RemoveAsync(
+            tasks.Add(_storageService.RemoveAsync(
                 bucket: _appSettings.UploadBucket,
-                blobName: $"audios/{uploadId}/{audio.ObjectKey}",
-                cancellationToken);
+                blobName: $"{AssetContainerConstants.AUDIO_PICTURES}/{audio.ImageId}", 
+                cancellationToken));
         }
+        
+        return tasks;
+    }
+        
+    private async Task RemoveAudioFromStorage(Audio audio, CancellationToken cancellationToken = default)
+    {
+        var uploadId = audio.ObjectKey.Split('.').FirstOrDefault();
+        if (uploadId is null)
+        {
+            throw new ArgumentException("Audio object key needs to have a file extension");
+        }
+        await _storageService.RemoveAsync(
+            bucket: _appSettings.UploadBucket,
+            blobName: $"audios/{uploadId}/{audio.ObjectKey}",
+            cancellationToken);
     }
 }

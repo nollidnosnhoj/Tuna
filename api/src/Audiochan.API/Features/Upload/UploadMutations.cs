@@ -16,7 +16,7 @@ namespace Audiochan.API.Features.Upload;
 public class UploadMutations
 {
     [Authorize]
-    [Error<ValidationError>]
+    [UseValidationError]
     public async Task<CreateUploadResult> CreateAudioUpload(
         string fileName,
         long fileSize,
@@ -30,7 +30,7 @@ public class UploadMutations
     }
     
     [Authorize]
-    [Error<ValidationError>]
+    [UseValidationError]
     public async Task<CreateUploadResult> CreateAudioImageUpload(
         string fileName,
         long fileSize,
@@ -44,7 +44,7 @@ public class UploadMutations
     }
     
     [Authorize]
-    [Error<ValidationError>]
+    [UseValidationError]
     public async Task<CreateUploadResult> CreateUserImageUpload(
         string fileName,
         long fileSize,

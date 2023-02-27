@@ -1,20 +1,19 @@
 ﻿using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Common.Exceptions;
+using Audiochan.Common.Errors;
 using Audiochan.Common.Mediatr;
-using Audiochan.Core.Features.Audios.Exceptions;
 using Audiochan.Core.Features.Audios.Models;
-using Audiochan.Core.Features.Users.Models;
 using Audiochan.Core.Persistence;
 using Audiochan.Domain.Entities;
 using FluentValidation;
 using MediatR;
-using Microsoft.Extensions.Caching.Distributed;
+using OneOf;
+using OneOf.Types;
 
 namespace Audiochan.Core.Features.Audios.Commands;
 
-public class UpdateAudioCommand : AuthCommandRequest<AudioViewModel>
+public class UpdateAudioCommand : AuthCommandRequest<UpdateAudioResult>
 {
     public UpdateAudioCommand(long id, string? title, string? description, ClaimsPrincipal user) : base(user)
     {
@@ -27,7 +26,13 @@ public class UpdateAudioCommand : AuthCommandRequest<AudioViewModel>
     public string? Title { get; }
     public string? Description { get; }
 }
+
+[GenerateOneOf]
+public partial class UpdateAudioResult : OneOfBase<AudioViewModel, NotFound, Forbidden>
+{
     
+}
+
 public class UpdateAudioCommandValidator : AbstractValidator<UpdateAudioCommand>
 {
     public UpdateAudioCommandValidator()
@@ -65,31 +70,24 @@ public class UpdateAudioCommandValidator : AbstractValidator<UpdateAudioCommand>
     }
 }
 
-public class UpdateAudioCommandHandler : IRequestHandler<UpdateAudioCommand, AudioViewModel>
+public class UpdateAudioCommandHandler : IRequestHandler<UpdateAudioCommand, UpdateAudioResult>
 {
-    private readonly IDistributedCache _cache;
     private readonly IUnitOfWork _unitOfWork;
 
-    public UpdateAudioCommandHandler(
-        IUnitOfWork unitOfWork, 
-        IDistributedCache cache)
+    public UpdateAudioCommandHandler(IUnitOfWork unitOfWork)
     {
         _unitOfWork = unitOfWork;
-        _cache = cache;
     }
 
-    public async Task<AudioViewModel> Handle(UpdateAudioCommand command,
+    public async Task<UpdateAudioResult> Handle(UpdateAudioCommand command,
         CancellationToken cancellationToken)
     {
         var currentUserId = command.GetUserId();
 
         var audio = await _unitOfWork.Audios.FindAsync(command.Id, cancellationToken);
 
-        if (audio == null)
-            throw new ResourceIdInvalidException<long>(typeof(Audio), command.Id);
-
-        if (audio.UserId != currentUserId)
-            throw new ResourceOwnershipException<long>(typeof(Audio), command.Id, currentUserId);
+        if (audio == null) return new NotFound();
+        if (audio.UserId != currentUserId) return new Forbidden();
             
         UpdateAudioFromCommandAsync(audio, command);
         _unitOfWork.Audios.Update(audio);
@@ -104,13 +102,7 @@ public class UpdateAudioCommandHandler : IRequestHandler<UpdateAudioCommand, Aud
             Duration = audio.Duration,
             Picture = audio.ImageId,
             Size = audio.Size,
-            Title = audio.Title,
-            User = new UserViewModel
-            {
-                Id = audio.UserId,
-                Picture = audio.User.ImageId,
-                UserName = audio.User.UserName
-            }
+            Title = audio.Title
         };
     }
 
