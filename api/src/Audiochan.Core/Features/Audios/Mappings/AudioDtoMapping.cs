@@ -18,13 +18,7 @@ public static class Mappings
             Duration = x.Duration,
             Picture = x.ImageId,
             Size = x.Size,
-            Title = x.Title,
-            User = new UserViewModel
-            {
-                Id = x.UserId,
-                Picture = x.User.ImageId,
-                UserName = x.User.UserName
-            }
+            Title = x.Title
         });
     }
 }

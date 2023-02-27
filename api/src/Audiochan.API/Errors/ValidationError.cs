@@ -2,6 +2,7 @@
 using System.Linq;
 using Audiochan.Common.Models;
 using FluentValidation;
+using HotChocolate.Types;
 
 namespace Audiochan.API.Errors;
 
@@ -24,4 +25,11 @@ public class ValidationError : IUserError
 
     public string Code => GetType().Name;
     public string Message => "Validation errors has occurred.";
+}
+
+public class UseValidationError : ErrorAttribute
+{
+    public UseValidationError() : base(typeof(ValidationError))
+    {
+    }
 }

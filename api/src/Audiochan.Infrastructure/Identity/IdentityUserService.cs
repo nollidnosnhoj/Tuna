@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Common.Exceptions;
 using Audiochan.Core.Features.Auth;
 using Audiochan.Core.Features.Auth.Models;
-using Audiochan.Core.Services;
 using Audiochan.Infrastructure.Identity.Models;
 using Audiochan.Infrastructure.Identity.Extensions;
 using Microsoft.AspNetCore.Identity;

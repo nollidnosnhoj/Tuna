@@ -1,56 +1,58 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Common.Exceptions;
 using Audiochan.Common.Mediatr;
 using Audiochan.Core.Persistence;
 using Audiochan.Core.Services;
-using Audiochan.Domain.Entities;
 using MediatR;
+using OneOf;
+using OneOf.Types;
 
-namespace Audiochan.Core.Features.Audios.Commands
+namespace Audiochan.Core.Features.Audios.Commands;
+
+public class SetFavoriteAudioCommand : ICommandRequest<SetFavoriteAudioResult>
 {
-    public class SetFavoriteAudioCommand : ICommandRequest<bool>
+    public long AudioId { get; }
+    public long UserId { get; }
+    public bool IsFavoriting { get; }
+    public SetFavoriteAudioCommand(long audioId, long userId, bool isFavoriting)
     {
-        public long AudioId { get; }
-        public long UserId { get; }
-        public bool IsFavoriting { get; }
-        public SetFavoriteAudioCommand(long audioId, long userId, bool isFavoriting)
-        {
-            AudioId = audioId;
-            UserId = userId;
-            IsFavoriting = isFavoriting;
-        }
+        AudioId = audioId;
+        UserId = userId;
+        IsFavoriting = isFavoriting;
+    }
+}
+
+[GenerateOneOf]
+public partial class SetFavoriteAudioResult : OneOfBase<bool, NotFound>
+{
+    
+}
+
+public class SetFavoriteAudioCommandHandler : IRequestHandler<SetFavoriteAudioCommand, SetFavoriteAudioResult>
+{
+    private readonly IDateTimeProvider _dateTimeProvider;
+    private readonly IUnitOfWork _unitOfWork;
+
+    public SetFavoriteAudioCommandHandler(IUnitOfWork unitOfWork, IDateTimeProvider dateTimeProvider)
+    {
+        _unitOfWork = unitOfWork;
+        _dateTimeProvider = dateTimeProvider;
     }
 
-    public class SetFavoriteAudioCommandHandler : IRequestHandler<SetFavoriteAudioCommand, bool>
+    public async Task<SetFavoriteAudioResult> Handle(SetFavoriteAudioCommand command, CancellationToken cancellationToken)
     {
-        private readonly IDateTimeProvider _dateTimeProvider;
-        private readonly IUnitOfWork _unitOfWork;
+        var audio = await _unitOfWork.Audios
+            .LoadAudioWithFavorites(command.AudioId, command.UserId, cancellationToken);
 
-        public SetFavoriteAudioCommandHandler(IUnitOfWork unitOfWork, IDateTimeProvider dateTimeProvider)
-        {
-            _unitOfWork = unitOfWork;
-            _dateTimeProvider = dateTimeProvider;
-        }
+        if (audio == null) return new NotFound();
 
-        public async Task<bool> Handle(SetFavoriteAudioCommand command, CancellationToken cancellationToken)
-        {
-            var audio = await _unitOfWork.Audios
-                .LoadAudioWithFavorites(command.AudioId, command.UserId, cancellationToken);
+        if (command.IsFavoriting)
+            audio.Favorite(command.UserId, _dateTimeProvider.Now);
+        else
+            audio.UnFavorite(command.UserId);
 
-            if (audio == null)
-            {
-                throw new ResourceIdInvalidException<long>(typeof(Audio), command.AudioId);
-            }
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            if (command.IsFavoriting)
-                audio.Favorite(command.UserId, _dateTimeProvider.Now);
-            else
-                audio.UnFavorite(command.UserId);
-
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-            return command.IsFavoriting;
-        }
+        return command.IsFavoriting;
     }
 }

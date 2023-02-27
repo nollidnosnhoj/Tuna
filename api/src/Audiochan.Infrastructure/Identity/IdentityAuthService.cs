@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Common.Exceptions;
 using Audiochan.Core.Features.Auth;
 using Audiochan.Core.Features.Auth.Models;
 using Audiochan.Core.Persistence;

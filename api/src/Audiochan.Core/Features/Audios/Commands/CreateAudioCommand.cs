@@ -1,20 +1,21 @@
 ﻿using System.IO;
-using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Common.Mediatr;
-using Audiochan.Core.Features.Audios.Exceptions;
+using Audiochan.Core.Features.Audios.Errors;
 using Audiochan.Core.Features.Audios.Extensions;
+using Audiochan.Core.Features.Audios.Models;
 using Audiochan.Core.Persistence;
 using Audiochan.Core.Storage;
 using Audiochan.Domain.Entities;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.Options;
+using OneOf;
 
 namespace Audiochan.Core.Features.Audios.Commands;
 
-public class CreateAudioCommand : AuthCommandRequest<long>
+public class CreateAudioCommand : ICommandRequest<CreateAudioResult>
 {
     public CreateAudioCommand(
         string uploadId,
@@ -22,8 +23,7 @@ public class CreateAudioCommand : AuthCommandRequest<long>
         long fileSize,
         decimal duration,
         string title,
-        string description,
-        ClaimsPrincipal user) : base(user)
+        string description, long userId)
     {
         UploadId = uploadId;
         FileName = fileName;
@@ -31,6 +31,7 @@ public class CreateAudioCommand : AuthCommandRequest<long>
         Duration = duration;
         Title = title;
         Description = description;
+        UserId = userId;
         BlobName = UploadId + Path.GetExtension(FileName);
     }
         
@@ -40,7 +41,14 @@ public class CreateAudioCommand : AuthCommandRequest<long>
     public decimal Duration { get; }
     public string Title { get; }
     public string Description { get; }
+    public long UserId { get; }
     public string BlobName { get; }
+}
+
+[GenerateOneOf]
+public partial class CreateAudioResult : OneOfBase<AudioViewModel, AudioNotUploaded>
+{
+    
 }
     
 public class CreateAudioCommandValidator : AbstractValidator<CreateAudioCommand>
@@ -81,7 +89,7 @@ public class CreateAudioCommandValidator : AbstractValidator<CreateAudioCommand>
     }
 }
     
-public class CreateAudioCommandHandler : IRequestHandler<CreateAudioCommand, long>
+public class CreateAudioCommandHandler : IRequestHandler<CreateAudioCommand, CreateAudioResult>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IStorageService _storageService;
@@ -94,14 +102,12 @@ public class CreateAudioCommandHandler : IRequestHandler<CreateAudioCommand, lon
         _appSettings = appSettings.Value;
     }
 
-    public async Task<long> Handle(CreateAudioCommand command,
+    public async Task<CreateAudioResult> Handle(CreateAudioCommand command,
         CancellationToken cancellationToken)
     {
-        var currentUserId = command.GetUserId();
-
         if (!await ExistsInTempStorage(command.BlobName, cancellationToken))
         {
-            throw new AudioNotUploadedException(command.UploadId, command.BlobName);
+            return new AudioNotUploaded(command.UploadId);
         }
 
         var audio = new Audio(
@@ -110,11 +116,21 @@ public class CreateAudioCommandHandler : IRequestHandler<CreateAudioCommand, lon
             command.Duration,
             command.BlobName,
             command.FileSize,
-            currentUserId);
+            command.UserId);
 
         await _unitOfWork.Audios.AddAsync(audio, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
-        return audio.Id;
+        return new AudioViewModel
+        {
+            Id = audio.Id,
+            Description = audio.Description ?? "",
+            ObjectKey = audio.ObjectKey,
+            Created = audio.CreatedAt,
+            Duration = audio.Duration,
+            Picture = audio.ImageId,
+            Size = audio.Size,
+            Title = audio.Title
+        };
     }
         
     private async Task<bool> ExistsInTempStorage(string fileName, CancellationToken cancellationToken = default)
