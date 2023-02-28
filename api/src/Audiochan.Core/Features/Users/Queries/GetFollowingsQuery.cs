@@ -30,7 +30,7 @@ public class GetFollowingsQueryHandler : IRequestHandler<GetFollowingsQuery, Col
             .Where(x => x.ObserverId == request.UserId)
             .OrderByDescending(x => x.FollowedDate)
             .Select(x => x.Target)
-            .ProjectToUser()
+            .ProjectToDto()
             .ApplyOffsetPaginationAsync(request.Skip, request.Take, cancellationToken);
     }
 }

@@ -2,7 +2,7 @@
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Features.Audios.Extensions;
+using Audiochan.Common.Extensions;
 using Audiochan.Core.Features.Upload.Models;
 using Audiochan.Core.Storage;
 using FluentValidation;
@@ -23,8 +23,10 @@ public class CreateAudioUploadCommandValidator : AbstractValidator<CreateAudioUp
 {
     public CreateAudioUploadCommandValidator()
     {
-        RuleFor(req => req.FileSize).AudioFileSizeValidation();
-        RuleFor(req => req.FileName).AudioFileNameValidation();
+        RuleFor(req => req.FileSize)
+            .FileSizeValidation(MediaConfigurationConstants.AUDIO_MAX_FILE_SIZE);
+        RuleFor(req => req.FileName)
+            .FileNameValidation(MediaConfigurationConstants.AUDIO_VALID_TYPES);
     }
 }
 

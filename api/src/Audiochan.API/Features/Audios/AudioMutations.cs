@@ -37,8 +37,7 @@ public class AudioMutations
         var result = await mediator.Send(command, cancellationToken);
         return result.Match(
             audio => new AudioPayload(audio),
-            error => 
-                new AudioPayload(new UserError("Audio has not been uploaded.", error.GetType().Name)));
+            error => new AudioPayload(new AudioNotUploadedError(error.UploadId)));
     }
 
     [Authorize]

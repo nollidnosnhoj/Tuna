@@ -24,7 +24,7 @@ public class UpdatePasswordCommand : AuthCommandRequest<UpdatePasswordCommandRes
 }
 
 [GenerateOneOf]
-public partial class UpdatePasswordCommandResult : OneOfBase<Unit, Unauthorized, UserIdentityError>
+public partial class UpdatePasswordCommandResult : OneOfBase<Unit, Unauthorized, IdentityServiceError>
 {
     
 }
@@ -55,7 +55,7 @@ public class UpdatePasswordCommandHandler : IRequestHandler<UpdatePasswordComman
 
         if (!result.IsSuccess)
         {
-            return new UserIdentityError(result.Errors);
+            return new IdentityServiceError(result.Errors);
         }
             
         // TODO: Remove session

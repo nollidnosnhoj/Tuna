@@ -26,7 +26,7 @@ public class GetUserQueryHandler : IRequestHandler<GetUserQuery, UserViewModel?>
         await using var dbContext = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
         return await dbContext.Users
             .Where(x => x.Id == request.UserId)
-            .ProjectToUser()
+            .ProjectToDto()
             .SingleOrDefaultAsync(cancellationToken);
     }
 }

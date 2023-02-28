@@ -22,7 +22,7 @@ public class UpdateEmailCommand : ICommandRequest<UpdateEmailCommandResult>
 }
 
 [GenerateOneOf]
-public partial class UpdateEmailCommandResult : OneOfBase<Unit, NotFound, UserIdentityError>
+public partial class UpdateEmailCommandResult : OneOfBase<Unit, NotFound, IdentityServiceError>
 {
     
 }
@@ -48,7 +48,7 @@ public class UpdateEmailCommandHandler : IRequestHandler<UpdateEmailCommand, Upd
 
         if (!result.IsSuccess)
         {
-            return new UserIdentityError(result.Errors);
+            return new IdentityServiceError(result.Errors);
         }
 
         return Unit.Value;

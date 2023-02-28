@@ -23,7 +23,7 @@ public class UpdateUsernameCommand : ICommandRequest<UpdateUsernameResult>
 }
 
 [GenerateOneOf]
-public partial class UpdateUsernameResult : OneOfBase<Unit, NotFound, UserIdentityError>
+public partial class UpdateUsernameResult : OneOfBase<Unit, NotFound, IdentityServiceError>
 {
     
 }
@@ -55,7 +55,7 @@ public class UpdateUsernameCommandHandler : IRequestHandler<UpdateUsernameComman
 
         if (!result.IsSuccess)
         {
-            return new UserIdentityError(result.Errors);
+            return new IdentityServiceError(result.Errors);
         }
 
         return Unit.Value;

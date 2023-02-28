@@ -26,7 +26,7 @@ public class CreateUserCommand : ICommandRequest<CreateUserCommandResult>
 }
 
 [GenerateOneOf]
-public partial class CreateUserCommandResult : OneOfBase<UserViewModel, UserIdentityError>
+public partial class CreateUserCommandResult : OneOfBase<UserViewModel, IdentityServiceError>
 {
     
 }
@@ -61,7 +61,7 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Creat
 
         if (!identityResult.IsSuccess)
         {
-            return new UserIdentityError(identityResult.Errors);
+            return new IdentityServiceError(identityResult.Errors);
         }
 
         var user = new User(identityResult.IdentityId, trimmedUsername);
