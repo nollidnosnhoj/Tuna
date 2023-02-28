@@ -2,7 +2,7 @@
 
 ## Story
 
-This is a personal project I did during COVID to help me understand how to develop full-stack web applications.
+A full-stack application where artists can upload music and share.
 
 ## Branches
 
@@ -11,15 +11,17 @@ This is a personal project I did during COVID to help me understand how to devel
 
 ## Tech Stack
 
-- ASP.NET Core 5 (C# 9)
-- Entity Framework Core
+### Backend
+
+- ASP.NET Core 7 (.NET 7)
+- Hotchocolate GraphQL
 - PostgreSQL
 - Redis
 - Amazon S3
-- React Typescript
-- Next.JS
-- Chakra UI
-- Docker Compose
+
+### Frontend
+
+- Undecided
 
 ## How to build
 
