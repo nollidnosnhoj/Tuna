@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,7 +24,7 @@ namespace Audiochan.API.Features.Users;
 public class UserMutations
 {
     [Authorize]
-    [Error(typeof(UserErrorFactory))]
+    [Error(typeof(UserNotFoundError))]
     public async Task<UserDto> UpdateUserAsync(
         [ID(nameof(UserDto))] long id,
         string? displayName,
@@ -44,7 +45,7 @@ public class UserMutations
     
     [Authorize]
     [UseValidationError]
-    [Error(typeof(UserErrorFactory))]
+    [Error(typeof(UserNotFoundError))]
     public async Task<ImageUploadResult> UpdateUserPictureAsync(
         [ID(nameof(UserDto))] long id,
         string data,
@@ -64,7 +65,7 @@ public class UserMutations
     
     [Authorize]
     [UseValidationError]
-    [Error(typeof(UserErrorFactory))]
+    [Error(typeof(UserNotFoundError))]
     public async Task<ImageUploadResult> RemoveUserPictureAsync(
         [ID(nameof(UserDto))] long id,
         IMediator mediator,
@@ -84,7 +85,9 @@ public class UserMutations
     }
     
     [Authorize]
-    [Error(typeof(UserErrorFactory))]
+    [UseMutationConvention(PayloadFieldName = "success")]
+    [Error(typeof(IdentityError))]
+    [Error(typeof(UserNotFoundError))]
     public async Task<bool> UpdateUserNameAsync(
         [ID(nameof(UserDto))] long id,
         string newUsername,
@@ -102,11 +105,12 @@ public class UserMutations
         return result.Match(
             _ => true,
             _ => throw new EntityNotFoundException<User, long>(id),
-            idRes => throw new IdentityException(idRes.Errors));
+            err => throw new AggregateException(err.Errors.Select(e => new IdentityException(e))));
     }
     
     [Authorize]
-    [Error(typeof(UserErrorFactory))]
+    [UseMutationConvention(PayloadFieldName = "success")]
+    [Error(typeof(IdentityError))]
     public async Task<bool> UpdatePasswordAsync(
         string newPassword,
         string currentPassword,
@@ -119,11 +123,12 @@ public class UserMutations
         return result.Match(
             _ => true,
             _ => throw new UnauthorizedAccessException(),
-            id => throw new IdentityException(id.Errors));
+            id => throw new AggregateException(id.Errors.Select(e => new IdentityException(e))));
     }
     
     [Authorize]
-    [Error(typeof(UserErrorFactory))]
+    [UseMutationConvention(PayloadFieldName = "success")]
+    [Error(typeof(IdentityError))]
     public async Task<bool> UpdateEmailAsync(
         string email,
         IMediator mediator,
@@ -136,11 +141,13 @@ public class UserMutations
         return result.Match(
             _ => true,
             _ => throw new UnauthorizedAccessException(),
-            id => throw new IdentityException(id.Errors));
+            err => throw new AggregateException(err.Errors.Select(e => new IdentityException(e))));
     }
 
     [Authorize]
-    [Error(typeof(UserErrorFactory))]
+    [UseMutationConvention(PayloadFieldName = "followed")]
+    [Error(typeof(UserNotFoundError))]
+    [Error(typeof(CannotFollowYourselfError))]
     public async Task<bool> FollowUserAsync(
         [ID(nameof(UserDto))] long id,
         IMediator mediator, 
@@ -157,7 +164,9 @@ public class UserMutations
     }
     
     [Authorize]
-    [Error(typeof(UserErrorFactory))]
+    [UseMutationConvention(PayloadFieldName = "followed")]
+    [Error(typeof(UserNotFoundError))]
+    [Error(typeof(CannotFollowYourselfError))]
     public async Task<bool> UnfollowUserAsync(
         [ID(nameof(UserDto))] long id,
         IMediator mediator, 

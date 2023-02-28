@@ -1,20 +1,17 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Audiochan.Common.Models;
-using Microsoft.AspNetCore.Identity;
+﻿using Audiochan.Common.Models;
+using Audiochan.Core.Features.Auth.Exceptions;
 
 namespace Audiochan.API.Features.Users.Errors;
 
-public class IdentityErrors : IUserError
+public class IdentityError : IUserError
 {
-    public IReadOnlyList<IdentityError> Errors { get; }
-
-    public IdentityErrors(IEnumerable<IdentityError> errors)
+    public IdentityError(IdentityException exception)
     {
-        Errors = errors.ToList();
+        Code = exception.Error.Code;
+        Message = exception.Error.Description;
     }
 
-    public string Code => "IdenityError";
-    public string Message => "An identity error has occurred.";
+    public string Code { get; }
+    public string Message { get; }
 }
 

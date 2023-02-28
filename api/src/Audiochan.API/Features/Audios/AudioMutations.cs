@@ -22,7 +22,7 @@ public class AudioMutations
 {
     [Authorize]
     [UseValidationError]
-    [Error(typeof(AudioErrorFactory))]
+    [Error(typeof(AudioNotFoundError))]
     public async Task<AudioDto> CreateAudioAsync(
         string uploadId,
         string fileName,
@@ -50,7 +50,7 @@ public class AudioMutations
 
     [Authorize]
     [UseValidationError]
-    [Error(typeof(AudioErrorFactory))]
+    [Error(typeof(AudioNotFoundError))]
     public async Task<AudioDto> UpdateAudioAsync(
         [ID(nameof(AudioDto))] long id,
         string? title,
@@ -69,7 +69,7 @@ public class AudioMutations
     
     [Authorize]
     [UseValidationError]
-    [Error(typeof(AudioErrorFactory))]
+    [Error(typeof(AudioNotFoundError))]
     public async Task<ImageUploadResult> UpdateAudioPictureAsync(
         [ID(nameof(AudioDto))] long id,
         string data,
@@ -86,7 +86,7 @@ public class AudioMutations
     }
 
     [Authorize]
-    [Error(typeof(AudioErrorFactory))]
+    [Error(typeof(AudioNotFoundError))]
     public async Task<bool> RemoveAudioAsync(
         [ID(nameof(AudioDto))] long id,
         IMediator mediator,
@@ -103,7 +103,7 @@ public class AudioMutations
 
     [Authorize]
     [UseValidationError]
-    [Error(typeof(AudioErrorFactory))]
+    [Error(typeof(AudioNotFoundError))]
     public async Task<ImageUploadResult> RemoveAudioPictureAsync(
         [ID(nameof(AudioDto))] long id,
         IMediator mediator,
@@ -119,7 +119,8 @@ public class AudioMutations
     }
 
     [Authorize]
-    [Error(typeof(AudioErrorFactory))]
+    [UseMutationConvention(PayloadFieldName = "favorited")]
+    [Error(typeof(AudioNotFoundError))]
     public async Task<bool> FavoriteAudioAsync(
         [ID(nameof(AudioDto))] long id,
         IMediator mediator, 
@@ -135,7 +136,8 @@ public class AudioMutations
     }
     
     [Authorize]
-    [Error(typeof(AudioErrorFactory))]
+    [UseMutationConvention(PayloadFieldName = "favorited")]
+    [Error(typeof(AudioNotFoundError))]
     public async Task<bool> UnfavoriteAudioAsync(
         [ID(nameof(AudioDto))] long id,
         IMediator mediator, 

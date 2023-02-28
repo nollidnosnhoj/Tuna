@@ -5,8 +5,14 @@ namespace Audiochan.API.Features.Users.Errors;
 
 public class CannotFollowYourselfError : IUserError
 {
-    public string Code => GetType().Name;
-    public string Message => "Cannot follow yourself. Silly.";
+    public CannotFollowYourselfError(CannotFollowYourselfException _)
+    {
+        Code = GetType().Name;
+        Message = "Cannot follow yourself. Silly.";
+    }
+
+    public string Code { get; }
+    public string Message { get; }
 }
 
 public class CannotFollowYourselfException : Exception

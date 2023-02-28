@@ -1,19 +1,22 @@
 ﻿using Audiochan.Common.Models;
 using Audiochan.Core.Features.Users.Models;
+using Audiochan.Domain.Entities;
+using Audiochan.Domain.Exceptions;
 using HotChocolate.Types.Relay;
 
 namespace Audiochan.API.Features.Users.Errors;
 
 public record UserNotFoundError : IUserError
 {
-    public UserNotFoundError(long id, string? message = null)
+    public UserNotFoundError(EntityNotFoundException<User, long> ex)
     {
-        Id = id;
-        Message = message ?? $"User with id {id} was not found.";
+        Id = ex.Id;
+        Code = GetType().Name;
+        Message = ex.Message;
     }
     
     [ID(nameof(UserDto))]
     public long Id { get; }
-    public string Code => GetType().Name;
+    public string Code { get; }
     public string Message { get; }
 }

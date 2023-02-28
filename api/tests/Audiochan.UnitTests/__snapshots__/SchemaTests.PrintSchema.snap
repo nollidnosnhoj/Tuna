@@ -32,11 +32,6 @@ type AudioNotFoundError implements Error {
   message: String!
 }
 
-type AudioNotUploadedError implements Error {
-  code: String!
-  message: String!
-}
-
 type CannotFollowYourselfError implements Error {
   code: String!
   message: String!
@@ -56,12 +51,12 @@ type CreateAudioPayload {
 }
 
 type FavoriteAudioPayload {
-  boolean: Boolean
+  favorited: Boolean
   errors: [FavoriteAudioError!]
 }
 
 type FollowUserPayload {
-  boolean: Boolean
+  followed: Boolean
   errors: [FollowUserError!]
 }
 
@@ -81,13 +76,7 @@ type FollowingsCollectionSegment {
   items: [User!]
 }
 
-type IdentityError {
-  code: String!
-  description: String!
-}
-
-type IdentityErrors implements Error {
-  errors: [IdentityError!]!
+type IdentityError implements Error {
   code: String!
   message: String!
 }
@@ -143,12 +132,12 @@ type RemoveUserPicturePayload {
 }
 
 type UnfavoriteAudioPayload {
-  boolean: Boolean
+  favorited: Boolean
   errors: [UnfavoriteAudioError!]
 }
 
 type UnfollowUserPayload {
-  boolean: Boolean
+  followed: Boolean
   errors: [UnfollowUserError!]
 }
 
@@ -163,17 +152,17 @@ type UpdateAudioPicturePayload {
 }
 
 type UpdateEmailPayload {
-  boolean: Boolean
+  success: Boolean
   errors: [UpdateEmailError!]
 }
 
 type UpdatePasswordPayload {
-  boolean: Boolean
+  success: Boolean
   errors: [UpdatePasswordError!]
 }
 
 type UpdateUserNamePayload {
-  boolean: Boolean
+  success: Boolean
   errors: [UpdateUserNameError!]
 }
 
@@ -226,35 +215,35 @@ type ValidationFieldError {
   message: String!
 }
 
-union CreateAudioError = ValidationError | AudioNotFoundError | AudioNotUploadedError
+union CreateAudioError = ValidationError | AudioNotFoundError
 
-union FavoriteAudioError = AudioNotFoundError | AudioNotUploadedError
+union FavoriteAudioError = AudioNotFoundError
 
-union FollowUserError = UserNotFoundError | IdentityErrors | CannotFollowYourselfError
+union FollowUserError = UserNotFoundError | CannotFollowYourselfError
 
-union RemoveAudioError = AudioNotFoundError | AudioNotUploadedError
+union RemoveAudioError = AudioNotFoundError
 
-union RemoveAudioPictureError = ValidationError | AudioNotFoundError | AudioNotUploadedError
+union RemoveAudioPictureError = ValidationError | AudioNotFoundError
 
-union RemoveUserPictureError = ValidationError | UserNotFoundError | IdentityErrors | CannotFollowYourselfError
+union RemoveUserPictureError = ValidationError | UserNotFoundError
 
-union UnfavoriteAudioError = AudioNotFoundError | AudioNotUploadedError
+union UnfavoriteAudioError = AudioNotFoundError
 
-union UnfollowUserError = UserNotFoundError | IdentityErrors | CannotFollowYourselfError
+union UnfollowUserError = UserNotFoundError | CannotFollowYourselfError
 
-union UpdateAudioError = ValidationError | AudioNotFoundError | AudioNotUploadedError
+union UpdateAudioError = ValidationError | AudioNotFoundError
 
-union UpdateAudioPictureError = ValidationError | AudioNotFoundError | AudioNotUploadedError
+union UpdateAudioPictureError = ValidationError | AudioNotFoundError
 
-union UpdateEmailError = UserNotFoundError | IdentityErrors | CannotFollowYourselfError
+union UpdateEmailError = IdentityError
 
-union UpdatePasswordError = UserNotFoundError | IdentityErrors | CannotFollowYourselfError
+union UpdatePasswordError = IdentityError
 
-union UpdateUserError = UserNotFoundError | IdentityErrors | CannotFollowYourselfError
+union UpdateUserError = UserNotFoundError
 
-union UpdateUserNameError = UserNotFoundError | IdentityErrors | CannotFollowYourselfError
+union UpdateUserNameError = IdentityError | UserNotFoundError
 
-union UpdateUserPictureError = ValidationError | UserNotFoundError | IdentityErrors | CannotFollowYourselfError
+union UpdateUserPictureError = ValidationError | UserNotFoundError
 
 input CreateAudioInput {
   uploadId: String!

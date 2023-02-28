@@ -5,8 +5,14 @@ namespace Audiochan.API.Features.Audios.Errors;
 
 public class AudioNotUploadedError : IUserError
 {
-    public string Code => GetType().Name;
-    public string Message => "Audio has not been uploaded.";
+    public AudioNotUploadedError(AudioNotUploadedException ex)
+    {
+        Code = GetType().Name;
+        Message = ex.Message;
+    }
+    
+    public string Code { get; }
+    public string Message { get; }
 }
 
 public class AudioNotUploadedException : Exception
