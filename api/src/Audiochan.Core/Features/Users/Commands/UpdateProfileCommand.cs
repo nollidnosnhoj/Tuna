@@ -25,7 +25,7 @@ public class UpdateProfileCommand : ICommandRequest<UpdateProfileResult>
 }
 
 [GenerateOneOf]
-public partial class UpdateProfileResult : OneOfBase<UserViewModel, NotFound, Forbidden>
+public partial class UpdateProfileResult : OneOfBase<UserDto, NotFound, Forbidden>
 {
     
 }
@@ -47,7 +47,7 @@ public class UpdateProfileCommandHandler : IRequestHandler<UpdateProfileCommand,
             
         // TODO: Update user stuff
 
-        return new UserViewModel
+        return new UserDto
         {
             Id = user.Id,
             Picture = user.ImageId,

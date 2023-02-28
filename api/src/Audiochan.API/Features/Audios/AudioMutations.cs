@@ -3,14 +3,16 @@ using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.API.Errors;
 using Audiochan.API.Features.Audios.Errors;
-using Audiochan.API.Features.Audios.Inputs;
-using Audiochan.API.Features.Audios.Payloads;
 using Audiochan.Common.Extensions;
-using Audiochan.Common.Models;
 using Audiochan.Core.Features.Audios.Commands;
+using Audiochan.Core.Features.Audios.Models;
+using Audiochan.Core.Features.Upload.Models;
+using Audiochan.Domain.Entities;
+using Audiochan.Domain.Exceptions;
 using HotChocolate.Authorization;
 using HotChocolate.Language;
 using HotChocolate.Types;
+using HotChocolate.Types.Relay;
 using MediatR;
 
 namespace Audiochan.API.Features.Audios;
@@ -20,118 +22,131 @@ public class AudioMutations
 {
     [Authorize]
     [UseValidationError]
-    public async Task<AudioPayload> CreateAudioAsync(
-        CreateAudioInput input,
+    [Error(typeof(AudioErrorFactory))]
+    public async Task<AudioDto> CreateAudioAsync(
+        string uploadId,
+        string fileName,
+        long fileSize,
+        decimal duration,
+        string title,
+        string? description,
         IMediator mediator,
         ClaimsPrincipal claimsPrincipal,
         CancellationToken cancellationToken)
     {
         var command = new CreateAudioCommand(
-            input.UploadId,
-            input.FileName,
-            input.FileSize,
-            input.Duration,
-            input.Title,
-            input.Description,
+            uploadId,
+            fileName,
+            fileSize,
+            duration,
+            title,
+            description ?? "",
             claimsPrincipal.GetUserId());
         var result = await mediator.Send(command, cancellationToken);
         return result.Match(
-            audio => new AudioPayload(audio),
-            error => new AudioPayload(new AudioNotUploadedError(error.UploadId)));
+            audio => audio,
+            _ => throw new AudioNotUploadedException());
     }
 
     [Authorize]
     [UseValidationError]
-    public async Task<AudioPayload> UpdateAudioAsync(
-        UpdateAudioInput input,
+    [Error(typeof(AudioErrorFactory))]
+    public async Task<AudioDto> UpdateAudioAsync(
+        [ID(nameof(AudioDto))] long id,
+        string? title,
+        string? description,
         IMediator mediator,
         ClaimsPrincipal claimsPrincipal,
         CancellationToken cancellationToken)
     {
-        var (id, title, description) = input;
         var command = new UpdateAudioCommand(id, title, description, claimsPrincipal);
         var result = await mediator.Send(command, cancellationToken);
         return result.Match(
-            audio => new AudioPayload(audio),
-            _ => new AudioPayload(new AudioNotFoundError(id)),
-            _ => new AudioPayload(new AudioNotFoundError(id)));
+            audio => audio,
+            _ => throw new EntityNotFoundException<Audio, long>(id),
+            _ => throw new EntityNotFoundException<Audio, long>(id));
     }
     
     [Authorize]
     [UseValidationError]
-    public async Task<UpdatePicturePayload> UpdateAudioPictureAsync(
-        UpdateAudioPictureInput input,
+    [Error(typeof(AudioErrorFactory))]
+    public async Task<ImageUploadResult> UpdateAudioPictureAsync(
+        [ID(nameof(AudioDto))] long id,
+        string data,
         IMediator mediator,
         ClaimsPrincipal claimsPrincipal,
         CancellationToken cancellationToken)
     {
-        var (id, data) = input;
         var command = new UpdateAudioPictureCommand(id, data, claimsPrincipal);
         var result = await mediator.Send(command, cancellationToken);
         return result.Match(
-            res => new UpdatePicturePayload(res),
-            _ => new UpdatePicturePayload(new AudioNotFoundError(id)),
-            _ => new UpdatePicturePayload(new AudioNotFoundError(id)));
+            res => res,
+            _ => throw new EntityNotFoundException<Audio, long>(id),
+            _ => throw new EntityNotFoundException<Audio, long>(id));
     }
 
     [Authorize]
-    public async Task<RemoveAudioPayload> RemoveAudioAsync(
-        RemoveAudioInput input,
+    [Error(typeof(AudioErrorFactory))]
+    public async Task<bool> RemoveAudioAsync(
+        [ID(nameof(AudioDto))] long id,
         IMediator mediator,
         ClaimsPrincipal claimsPrincipal,
         CancellationToken cancellationToken)
     {
-        var command = new RemoveAudioCommand(input.Id, claimsPrincipal);
+        var command = new RemoveAudioCommand(id, claimsPrincipal);
         var result = await mediator.Send(command, cancellationToken);
         return result.Match(
-            _ => new RemoveAudioPayload(),
-            _ => new RemoveAudioPayload(new AudioNotFoundError(input.Id)),
-            _ => new RemoveAudioPayload(new AudioNotFoundError(input.Id)));
+            _ => true,
+            _ => throw new EntityNotFoundException<Audio, long>(id),
+            _ => throw new EntityNotFoundException<Audio, long>(id));
     }
 
     [Authorize]
     [UseValidationError]
-    public async Task<RemovePicturePayload> RemoveAudioPictureAsync(
-        RemoveAudioPictureInput input,
+    [Error(typeof(AudioErrorFactory))]
+    public async Task<ImageUploadResult> RemoveAudioPictureAsync(
+        [ID(nameof(AudioDto))] long id,
         IMediator mediator,
         ClaimsPrincipal claimsPrincipal,
         CancellationToken cancellationToken)
     {
-        var command = new UpdateAudioPictureCommand(input.Id, null, claimsPrincipal);
+        var command = new UpdateAudioPictureCommand(id, null, claimsPrincipal);
         var result = await mediator.Send(command, cancellationToken);
         return result.Match(
-            _ => new RemovePicturePayload(),
-            _ => new RemovePicturePayload(new AudioNotFoundError(input.Id)),
-            _ => new RemovePicturePayload(new AudioNotFoundError(input.Id)));
+            res => res,
+            _ => throw new EntityNotFoundException<Audio, long>(id),
+            _ => throw new EntityNotFoundException<Audio, long>(id));
     }
 
     [Authorize]
-    public async Task<SetFavoriteAudioPayload> FavoriteAudioAsync(
-        SetFavoriteAudioInput input,
+    [Error(typeof(AudioErrorFactory))]
+    public async Task<bool> FavoriteAudioAsync(
+        [ID(nameof(AudioDto))] long id,
         IMediator mediator, 
         ClaimsPrincipal claimsPrincipal,
         CancellationToken cancellationToken)
     {
         var userId = claimsPrincipal.GetUserId();
-        var command = new SetFavoriteAudioCommand(input.AudioId, userId, true);
+        var command = new SetFavoriteAudioCommand(id, userId, true);
         var result = await mediator.Send(command, cancellationToken);
         return result.Match(
-            isFavorited => new SetFavoriteAudioPayload(isFavorited),
-            _ => new SetFavoriteAudioPayload(new AudioNotFoundError(input.AudioId)));
+            isFavorited => isFavorited,
+            _ => throw new EntityNotFoundException<Audio, long>(id));
     }
     
     [Authorize]
-    public async Task<SetFavoriteAudioPayload> UnfavoriteAudioAsync(
-        SetFavoriteAudioInput input,
+    [Error(typeof(AudioErrorFactory))]
+    public async Task<bool> UnfavoriteAudioAsync(
+        [ID(nameof(AudioDto))] long id,
         IMediator mediator, 
         ClaimsPrincipal claimsPrincipal,
         CancellationToken cancellationToken)
     {
         var userId = claimsPrincipal.GetUserId();
-        var command = new SetFavoriteAudioCommand(input.AudioId, userId, false);
+        var command = new SetFavoriteAudioCommand(id, userId, false);
         var result = await mediator.Send(command, cancellationToken);
         return result.Match(
-            isFavorited => new SetFavoriteAudioPayload(isFavorited),
-            _ => new SetFavoriteAudioPayload(new AudioNotFoundError(input.AudioId)));
+            isFavorited => isFavorited,
+            _ => throw new EntityNotFoundException<Audio, long>(id));
     }
 }

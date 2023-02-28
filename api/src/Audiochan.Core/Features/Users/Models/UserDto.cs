@@ -1,6 +1,6 @@
 ﻿namespace Audiochan.Core.Features.Users.Models;
 
-public record UserViewModel
+public record UserDto
 {
     public long Id { get; init; }
     public string UserName { get; init; } = null!;

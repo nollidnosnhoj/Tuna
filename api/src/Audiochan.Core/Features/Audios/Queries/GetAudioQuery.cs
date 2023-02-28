@@ -7,9 +7,9 @@ using MediatR;
 
 namespace Audiochan.Core.Features.Audios.Queries;
 
-public record GetAudioQuery(long AudioId) : IQueryRequest<AudioViewModel?>;
+public record GetAudioQuery(long AudioId) : IQueryRequest<AudioDto?>;
 
-public class GetAudioQueryHandler : IRequestHandler<GetAudioQuery, AudioViewModel?>
+public class GetAudioQueryHandler : IRequestHandler<GetAudioQuery, AudioDto?>
 {
     private readonly GetAudioDataLoader _dataLoader;
 
@@ -18,7 +18,7 @@ public class GetAudioQueryHandler : IRequestHandler<GetAudioQuery, AudioViewMode
         _dataLoader = dataLoader;
     }
 
-    public async Task<AudioViewModel?> Handle(GetAudioQuery request, CancellationToken cancellationToken)
+    public async Task<AudioDto?> Handle(GetAudioQuery request, CancellationToken cancellationToken)
     {
         return await _dataLoader.LoadAsync(request.AudioId, cancellationToken);
     }

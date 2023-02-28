@@ -28,7 +28,7 @@ public class UpdateAudioCommand : AuthCommandRequest<UpdateAudioResult>
 }
 
 [GenerateOneOf]
-public partial class UpdateAudioResult : OneOfBase<AudioViewModel, NotFound, Forbidden>
+public partial class UpdateAudioResult : OneOfBase<AudioDto, NotFound, Forbidden>
 {
     
 }
@@ -93,7 +93,7 @@ public class UpdateAudioCommandHandler : IRequestHandler<UpdateAudioCommand, Upd
         _unitOfWork.Audios.Update(audio);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return new AudioViewModel
+        return new AudioDto
         {
             Id = audio.Id,
             Description = audio.Description ?? "",

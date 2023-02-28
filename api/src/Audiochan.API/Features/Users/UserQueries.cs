@@ -11,16 +11,16 @@ using MediatR;
 
 namespace Audiochan.API.Features.Users;
 
-[ExtendObjectType(OperationType.Mutation)]
+[ExtendObjectType(OperationType.Query)]
 public class UserQueries
 {
-    public async Task<UserViewModel?> GetUserAsync(long id, IMediator mediator, CancellationToken cancellationToken)
+    public async Task<UserDto?> GetUserAsync(long id, IMediator mediator, CancellationToken cancellationToken)
     {
         return await mediator.Send(new GetUserQuery(id), cancellationToken);
     }
 
     [UseOffsetPaging]
-    public async Task<CollectionSegment<UserViewModel>> GetFollowings(
+    public async Task<CollectionSegment<UserDto>> GetFollowings(
         long observerId,
         IResolverContext resolverContext,
         IMediator mediator,
@@ -32,7 +32,7 @@ public class UserQueries
     }
     
     [UseOffsetPaging]
-    public async Task<CollectionSegment<UserViewModel>> GetFollowers(
+    public async Task<CollectionSegment<UserDto>> GetFollowers(
         long targetId,
         IResolverContext resolverContext,
         IMediator mediator,

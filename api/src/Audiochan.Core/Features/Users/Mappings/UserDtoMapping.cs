@@ -6,9 +6,9 @@ namespace Audiochan.Core.Features.Users.Mappings;
 
 public static class Mappings
 {
-    public static IQueryable<UserViewModel> ProjectToDto(this IQueryable<User> queryable)
+    public static IQueryable<UserDto> ProjectToDto(this IQueryable<User> queryable)
     {
-        return queryable.Select(user => new UserViewModel
+        return queryable.Select(user => new UserDto
         {
             Id = user.Id,
             Picture = user.ImageId,
@@ -16,9 +16,9 @@ public static class Mappings
         });
     }
 
-    public static UserViewModel MapToDto(this User user)
+    public static UserDto MapToDto(this User user)
     {
-        return new UserViewModel
+        return new UserDto
         {
             Id = user.Id,
             Picture = user.ImageId,

@@ -10,9 +10,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Users.Queries;
 
-public record GetUserQuery(long UserId) : IQueryRequest<UserViewModel?>;
+public record GetUserQuery(long UserId) : IQueryRequest<UserDto?>;
 
-public class GetUserQueryHandler : IRequestHandler<GetUserQuery, UserViewModel?>
+public class GetUserQueryHandler : IRequestHandler<GetUserQuery, UserDto?>
 {
     private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
 
@@ -21,7 +21,7 @@ public class GetUserQueryHandler : IRequestHandler<GetUserQuery, UserViewModel?>
         _dbContextFactory = dbContextFactory;
     }
 
-    public async Task<UserViewModel?> Handle(GetUserQuery request, CancellationToken cancellationToken)
+    public async Task<UserDto?> Handle(GetUserQuery request, CancellationToken cancellationToken)
     {
         await using var dbContext = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
         return await dbContext.Users
