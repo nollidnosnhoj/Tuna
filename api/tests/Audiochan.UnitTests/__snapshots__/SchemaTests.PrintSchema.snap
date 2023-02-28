@@ -1,0 +1,255 @@
+﻿schema {
+  query: Query
+  mutation: Mutation
+}
+
+interface IUserError {
+  code: String!
+  message: String!
+}
+
+type AudioPayload {
+  audio: AudioViewModel
+  errors: [UserError!]!
+  message: String
+}
+
+type AudioViewModel {
+  id: Long!
+  title: String!
+  description: String!
+  duration: Decimal!
+  size: Long!
+  created: DateTime!
+  lastModified: DateTime
+  user: UserViewModel!
+  slug: String!
+  streamUrl: String!
+  imageUrl: String
+}
+
+"Information about the offset pagination."
+type CollectionSegmentInfo {
+  "Indicates whether more items exist following the set defined by the clients arguments."
+  hasNextPage: Boolean!
+  "Indicates whether more items exist prior the set defined by the clients arguments."
+  hasPreviousPage: Boolean!
+}
+
+type FollowUserPayload {
+  isFollowing: Boolean
+  errors: [IUserError!]!
+  message: String
+}
+
+"A segment of a collection."
+type FollowersCollectionSegment {
+  "Information to aid in pagination."
+  pageInfo: CollectionSegmentInfo!
+  "A flattened list of the items."
+  items: [UserViewModel!]
+}
+
+"A segment of a collection."
+type FollowingsCollectionSegment {
+  "Information to aid in pagination."
+  pageInfo: CollectionSegmentInfo!
+  "A flattened list of the items."
+  items: [UserViewModel!]
+}
+
+type ImageUploadResult {
+  url: String
+}
+
+type Mutation {
+  createAudio(input: CreateAudioInput!): AudioPayload! @authorize
+  updateAudio(input: UpdateAudioInput!): AudioPayload! @authorize
+  updateAudioPicture(input: UpdateAudioPictureInput!): UpdatePicturePayload! @authorize
+  removeAudio(input: RemoveAudioInput!): RemoveAudioPayload! @authorize
+  removeAudioPicture(input: RemoveAudioPictureInput!): RemovePicturePayload! @authorize
+  favoriteAudio(input: SetFavoriteAudioInput!): SetFavoriteAudioPayload! @authorize
+  unfavoriteAudio(input: SetFavoriteAudioInput!): SetFavoriteAudioPayload! @authorize
+  user(id: Long!): UserViewModel
+  followings(skip: Int take: Int observerId: Long!): FollowingsCollectionSegment
+  followers(skip: Int take: Int targetId: Long!): FollowersCollectionSegment
+  updateUser(input: UpdateUserInput!): UserPayload! @authorize
+  updateUserPicture(input: UpdateUserPictureInput!): UpdatePicturePayload! @authorize
+  removeUserPicture(input: RemoveUserPictureInput!): RemovePicturePayload! @authorize
+  updateUserName(input: UpdateUsernameInput!): UpdateUsernamePayload! @authorize
+  updatePassword(input: UpdatePasswordInput!): UpdatePasswordPayload! @authorize
+  updateEmail(input: UpdateEmailInput!): UpdateEmailPayload! @authorize
+  followUser(input: FollowUserInput!): FollowUserPayload! @authorize
+  unfollowUser(input: FollowUserInput!): FollowUserPayload! @authorize
+}
+
+type Query {
+  audio(slug: String!): AudioViewModel
+  userAudios(skip: Int take: Int userId: Long!): UserAudiosCollectionSegment
+  userFavoriteAudios(skip: Int take: Int userId: Long!): UserFavoriteAudiosCollectionSegment
+}
+
+type RemoveAudioPayload {
+  errors: [UserError!]!
+  message: String
+}
+
+type RemovePicturePayload {
+  errors: [UserError!]!
+  message: String
+}
+
+type SetFavoriteAudioPayload {
+  isFavorited: Boolean
+  errors: [UserError!]!
+  message: String
+}
+
+type UpdateEmailPayload {
+  errors: [IUserError!]!
+  message: String
+}
+
+type UpdatePasswordPayload {
+  errors: [IUserError!]!
+  message: String
+}
+
+type UpdatePicturePayload {
+  result: ImageUploadResult
+  errors: [UserError!]!
+  message: String
+}
+
+type UpdateUsernamePayload {
+  errors: [IUserError!]!
+  message: String
+}
+
+"A segment of a collection."
+type UserAudiosCollectionSegment {
+  "Information to aid in pagination."
+  pageInfo: CollectionSegmentInfo!
+  "A flattened list of the items."
+  items: [AudioViewModel!]
+}
+
+type UserError implements IUserError {
+  message: String!
+  code: String!
+}
+
+"A segment of a collection."
+type UserFavoriteAudiosCollectionSegment {
+  "Information to aid in pagination."
+  pageInfo: CollectionSegmentInfo!
+  "A flattened list of the items."
+  items: [AudioViewModel!]
+}
+
+type UserPayload {
+  user: UserViewModel
+  errors: [UserError!]!
+  message: String
+}
+
+type UserViewModel {
+  id: Long!
+  userName: String!
+  imageUrl: String
+}
+
+type ValidationError implements IUserError {
+  errors: [ValidationFieldError!]!
+  code: String!
+  message: String!
+}
+
+type ValidationFieldError {
+  field: String!
+  message: String!
+}
+
+input CreateAudioInput {
+  uploadId: String!
+  fileName: String!
+  fileSize: Long!
+  duration: Decimal!
+  title: String!
+  description: String!
+}
+
+input FollowUserInput {
+  userId: Long!
+}
+
+input RemoveAudioInput {
+  id: Long!
+}
+
+input RemoveAudioPictureInput {
+  id: Long!
+}
+
+input RemoveUserPictureInput {
+  userId: Long!
+}
+
+input SetFavoriteAudioInput {
+  audioId: Long!
+}
+
+input UpdateAudioInput {
+  id: Long!
+  title: String
+  description: String
+}
+
+input UpdateAudioPictureInput {
+  id: Long!
+  data: String!
+}
+
+input UpdateEmailInput {
+  email: String!
+}
+
+input UpdatePasswordInput {
+  currentPassword: String!
+  newPassword: String!
+}
+
+input UpdateUserInput {
+  userId: Long!
+  displayName: String
+}
+
+input UpdateUserPictureInput {
+  userId: Long!
+  data: String!
+}
+
+input UpdateUsernameInput {
+  userId: Long!
+  newUsername: String!
+}
+
+enum ApplyPolicy {
+  BEFORE_RESOLVER
+  AFTER_RESOLVER
+  VALIDATION
+}
+
+directive @authorize("The name of the authorization policy that determines access to the annotated resource." policy: String "Roles that are allowed to access the annotated resource." roles: [String!] "Defines when when the authorize directive shall be applied.By default the authorize directives are applied during the validation phase." apply: ApplyPolicy! = VALIDATION) repeatable on OBJECT | FIELD_DEFINITION
+
+"The `@specifiedBy` directive is used within the type system definition language to provide a URL for specifying the behavior of custom scalar definitions."
+directive @specifiedBy("The specifiedBy URL points to a human-readable specification. This field will only read a result for scalar types." url: String!) on SCALAR
+
+"The `DateTime` scalar represents an ISO-8601 compliant date time type."
+scalar DateTime @specifiedBy(url: "https:\/\/www.graphql-scalars.com\/date-time")
+
+"The built-in `Decimal` scalar type."
+scalar Decimal
+
+"The `Long` scalar type represents non-fractional signed whole 64-bit numeric values. Long can represent values between -(2^63) and 2^63 - 1."
+scalar Long
