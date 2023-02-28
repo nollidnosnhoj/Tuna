@@ -5,6 +5,7 @@ using Audiochan.Core.Features.Users;
 using Audiochan.Core.Persistence;
 using HashidsNet;
 using HotChocolate.Data;
+using HotChocolate.Execution.Configuration;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,22 +13,23 @@ namespace Audiochan.API.Configurations;
 
 public static class GraphQlConfiguration
 {
-    public static IServiceCollection ConfigureGraphQL(this IServiceCollection services)
+    public static IServiceCollection AddAudiochanGraphQl(this IServiceCollection services)
     {
-        services.AddGraphQLServer()
+        services.AddGraphQLServer().AddAudiochanSchema();
+
+        return services;
+    }
+    
+    public static IRequestExecutorBuilder AddAudiochanSchema(this IRequestExecutorBuilder builder)
+    {
+        return builder
             .AddAuthorization()
             .RegisterDbContext<ApplicationDbContext>(DbContextKind.Pooled)
             .RegisterService<IHashids>()
             .RegisterService<IMediator>()
             .AddQueryType()
             .AddMutationType()
-            .AddTypeExtension<AudioNode>()
-            .AddTypeExtension<UserNode>()
-            .AddTypeExtension<AudioQueries>()
-            .AddTypeExtension<UserQueries>()
-            .AddTypeExtension<AudioMutations>()
-            .AddTypeExtension<UserMutations>();
-
-        return services;
+            .AddAudioFeatures()
+            .AddUserFeature();
     }
 }

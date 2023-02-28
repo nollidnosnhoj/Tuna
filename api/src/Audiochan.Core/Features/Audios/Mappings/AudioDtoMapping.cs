@@ -1,24 +1,38 @@
 ﻿using System.Linq;
 using Audiochan.Core.Features.Audios.Models;
-using Audiochan.Core.Features.Users.Models;
 using Audiochan.Domain.Entities;
 
 namespace Audiochan.Core.Features.Audios.Mappings;
 
 public static class Mappings
 {
-    public static IQueryable<AudioViewModel> Project(this IQueryable<Audio> queryable)
+    public static IQueryable<AudioViewModel> ProjectToDto(this IQueryable<Audio> queryable)
     {
-        return queryable.Select(x => new AudioViewModel
+        return queryable.Select(audio => new AudioViewModel
         {
-            Id = x.Id,
-            Description = x.Description ?? "",
-            ObjectKey = x.ObjectKey,
-            Created = x.CreatedAt,
-            Duration = x.Duration,
-            Picture = x.ImageId,
-            Size = x.Size,
-            Title = x.Title
+            Id = audio.Id,
+            Description = audio.Description ?? "",
+            ObjectKey = audio.ObjectKey,
+            Created = audio.CreatedAt,
+            Duration = audio.Duration,
+            Picture = audio.ImageId,
+            Size = audio.Size,
+            Title = audio.Title
         });
+    }
+
+    public static AudioViewModel MapToDto(this Audio audio)
+    {
+        return new AudioViewModel
+        {
+            Id = audio.Id,
+            Description = audio.Description ?? "",
+            ObjectKey = audio.ObjectKey,
+            Created = audio.CreatedAt,
+            Duration = audio.Duration,
+            Picture = audio.ImageId,
+            Size = audio.Size,
+            Title = audio.Title
+        };
     }
 }

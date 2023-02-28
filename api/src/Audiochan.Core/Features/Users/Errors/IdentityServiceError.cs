@@ -4,11 +4,11 @@ using Audiochan.Core.Features.Auth.Models;
 
 namespace Audiochan.Core.Features.Users.Errors;
 
-public struct UserIdentityError
+public struct IdentityServiceError
 {
     public IReadOnlyList<IdentityError> Errors { get; }
 
-    public UserIdentityError(IEnumerable<IdentityError> errors)
+    public IdentityServiceError(IEnumerable<IdentityError> errors)
     {
         Errors = errors.ToList();
     }

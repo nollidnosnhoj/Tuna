@@ -30,7 +30,7 @@ public class GetUserAudiosQueryHandler : IRequestHandler<GetUserAudiosQuery, Col
         return await dbContext.Audios
             .Where(x => x.UserId == request.UserId)
             .OrderByDescending(x => x.CreatedAt)
-            .Project()
+            .ProjectToDto()
             .ApplyOffsetPaginationAsync(request.Skip, request.Take, cancellationToken);
     }
 }

@@ -32,7 +32,7 @@ public class GetUserFavoriteAudiosQueryHandler
             .Where(x => x.UserId == request.UserId)
             .Select(x => x.Audio)
             .OrderByDescending(x => x.CreatedAt)
-            .Project()
+            .ProjectToDto()
             .ApplyOffsetPaginationAsync(request.Skip, request.Take, cancellationToken);
     }
 }

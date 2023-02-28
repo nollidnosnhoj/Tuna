@@ -1,10 +1,10 @@
 ﻿using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Common.Extensions;
 using Audiochan.Common.Mediatr;
-using Audiochan.Core.Features.Audios.Errors;
-using Audiochan.Core.Features.Audios.Extensions;
 using Audiochan.Core.Features.Audios.Models;
+using Audiochan.Core.Features.Audios.Results;
 using Audiochan.Core.Persistence;
 using Audiochan.Core.Storage;
 using Audiochan.Domain.Entities;
@@ -61,8 +61,10 @@ public class CreateAudioCommandValidator : AbstractValidator<CreateAudioCommand>
         RuleFor(req => req.Duration)
             .NotEmpty()
             .WithMessage("Duration is required.");
-        RuleFor(req => req.FileSize).AudioFileSizeValidation();
-        RuleFor(req => req.FileName).AudioFileNameValidation();
+        RuleFor(req => req.FileSize)
+            .FileSizeValidation(MediaConfigurationConstants.AUDIO_MAX_FILE_SIZE);
+        RuleFor(req => req.FileName)
+            .FileNameValidation(MediaConfigurationConstants.AUDIO_VALID_TYPES);
         RuleFor(req => req.Title)
             .NotEmpty()
             .WithMessage("Title is required.")

@@ -23,7 +23,7 @@ public class GetAudioDataLoader : BatchDataLoader<long, AudioViewModel>
         await using var dbContext = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
         return await dbContext.Audios
             .Where(x => keys.Contains(x.Id))
-            .Project()
+            .ProjectToDto()
             .ToDictionaryAsync(x => x.Id, cancellationToken);
     }
 }
