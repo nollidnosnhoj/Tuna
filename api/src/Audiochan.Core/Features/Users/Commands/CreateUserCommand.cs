@@ -26,7 +26,7 @@ public class CreateUserCommand : ICommandRequest<CreateUserCommandResult>
 }
 
 [GenerateOneOf]
-public partial class CreateUserCommandResult : OneOfBase<UserViewModel, IdentityServiceError>
+public partial class CreateUserCommandResult : OneOfBase<UserDto, IdentityServiceError>
 {
     
 }
@@ -59,7 +59,7 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Creat
             request.Password,
             cancellationToken);
 
-        if (!identityResult.IsSuccess)
+        if (!identityResult.Succeeded)
         {
             return new IdentityServiceError(identityResult.Errors);
         }
@@ -69,7 +69,7 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Creat
         await _unitOfWork.Users.AddAsync(user, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return new UserViewModel
+        return new UserDto
         {
             Id = user.Id,
             Picture = user.ImageId,

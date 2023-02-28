@@ -2,26 +2,26 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Features.Audios.Models;
-using Audiochan.Core.Features.Audios.Mappings;
+using Audiochan.Core.Features.Users.Mappings;
+using Audiochan.Core.Features.Users.Models;
 using Audiochan.Core.Persistence;
 using GreenDonut;
 using Microsoft.EntityFrameworkCore;
 
-namespace Audiochan.Core.Features.Audios.DataLoaders;
+namespace Audiochan.Core.Features.Users.DataLoaders;
 
-public class GetAudioDataLoader : BatchDataLoader<long, AudioDto>
+public class GetUserDataLoader : BatchDataLoader<long, UserDto>
 {
     private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
-    public GetAudioDataLoader(IBatchScheduler batchScheduler, IDbContextFactory<ApplicationDbContext> dbContextFactory, DataLoaderOptions? options = null) : base(batchScheduler, options)
+    public GetUserDataLoader(IBatchScheduler batchScheduler, IDbContextFactory<ApplicationDbContext> dbContextFactory, DataLoaderOptions? options = null) : base(batchScheduler, options)
     {
         _dbContextFactory = dbContextFactory;
     }
 
-    protected override async Task<IReadOnlyDictionary<long, AudioDto>> LoadBatchAsync(IReadOnlyList<long> keys, CancellationToken cancellationToken)
+    protected override async Task<IReadOnlyDictionary<long, UserDto>> LoadBatchAsync(IReadOnlyList<long> keys, CancellationToken cancellationToken)
     {
         await using var dbContext = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
-        return await dbContext.Audios
+        return await dbContext.Users
             .Where(x => keys.Contains(x.Id))
             .ProjectToDto()
             .ToDictionaryAsync(x => x.Id, cancellationToken);

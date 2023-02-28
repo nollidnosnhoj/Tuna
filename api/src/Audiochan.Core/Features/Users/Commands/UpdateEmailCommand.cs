@@ -46,7 +46,7 @@ public class UpdateEmailCommandHandler : IRequestHandler<UpdateEmailCommand, Upd
 
         var result = await _identityService.UpdateEmailAsync(user.IdentityId, command.NewEmail, cancellationToken);
 
-        if (!result.IsSuccess)
+        if (!result.Succeeded)
         {
             return new IdentityServiceError(result.Errors);
         }

@@ -5,7 +5,7 @@ using Audiochan.Domain.Abstractions;
 
 namespace Audiochan.Core.Features.Audios.Models;
 
-public record AudioViewModel
+public record AudioDto
 {
     public long Id { get; set; }
     public string Title { get; set; } = null!;
@@ -16,5 +16,5 @@ public record AudioViewModel
     public DateTime Created { get; set; }
     public DateTime? LastModified { get; set; }
     public string ObjectKey { get; set; } = null!;
-    public UserViewModel User { get; set; } = null!;
+    public UserDto User { get; set; } = null!;
 }

@@ -15,7 +15,7 @@ namespace Audiochan.API.Features.Audios;
 [ExtendObjectType(OperationType.Query)]
 public class AudioQueries
 {
-    public async Task<AudioViewModel?> GetAudioAsync(
+    public async Task<AudioDto?> GetAudioAsync(
         string slug, 
         IHashids hashids, 
         IMediator mediator,
@@ -26,7 +26,7 @@ public class AudioQueries
     }
 
     [UseOffsetPaging]
-    public async Task<CollectionSegment<AudioViewModel>> GetUserAudiosAsync(
+    public async Task<CollectionSegment<AudioDto>> GetUserAudiosAsync(
         long userId,
         IResolverContext resolverContext,
         IMediator mediator,
@@ -38,7 +38,7 @@ public class AudioQueries
     }
     
     [UseOffsetPaging]
-    public async Task<CollectionSegment<AudioViewModel>> GetUserFavoriteAudiosAsync(
+    public async Task<CollectionSegment<AudioDto>> GetUserFavoriteAudiosAsync(
         long userId,
         IResolverContext resolverContext,
         IMediator mediator,

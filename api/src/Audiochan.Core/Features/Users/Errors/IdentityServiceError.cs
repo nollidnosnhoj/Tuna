@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Audiochan.Core.Features.Auth.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace Audiochan.Core.Features.Users.Errors;
 

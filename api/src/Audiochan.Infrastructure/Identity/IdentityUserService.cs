@@ -1,12 +1,11 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Features.Auth;
 using Audiochan.Core.Features.Auth.Models;
 using Audiochan.Infrastructure.Identity.Models;
-using Audiochan.Infrastructure.Identity.Extensions;
 using Microsoft.AspNetCore.Identity;
-using IdentityResult = Audiochan.Core.Features.Auth.Models.IdentityResult;
 using IdentityUser = Audiochan.Core.Features.Auth.Models.IdentityUser;
 
 namespace Audiochan.Infrastructure.Identity;
@@ -40,10 +39,12 @@ public class IdentityUserService : IIdentityService
         };
         var result = await _userManager.CreateAsync(user, password);
 
-        return new NewUserIdentityResult(
-            result.Succeeded,
-            user.Id,
-            result.Errors.ToAppIdentityError());
+        if (!result.Succeeded)
+        {
+            return (NewUserIdentityResult)IdentityResult.Failed(result.Errors.ToArray());
+        }
+
+        return NewUserIdentityResult.Success(user.Id);
     }
 
     public async Task<IdentityResult> UpdateUserNameAsync(string identityId, string userName, CancellationToken cancellationToken = default)
@@ -55,9 +56,7 @@ public class IdentityUserService : IIdentityService
             throw new UnauthorizedAccessException();
         }
         
-        var identityResult = await _userManager.SetUserNameAsync(user, userName);
-
-        return identityResult.ToAppIdentityResult();
+        return await _userManager.SetUserNameAsync(user, userName);
     }
 
     public async Task<IdentityResult> UpdateEmailAsync(string identityId, string email, CancellationToken cancellationToken = default)
@@ -69,9 +68,7 @@ public class IdentityUserService : IIdentityService
             throw new UnauthorizedAccessException();
         }
         
-        var identityResult = await _userManager.SetEmailAsync(user, email);
-
-        return identityResult.ToAppIdentityResult();
+        return await _userManager.SetEmailAsync(user, email);
     }
 
     public async Task<IdentityResult> UpdatePasswordAsync(string identityId, string currentPassword, string newPassword, CancellationToken cancellationToken = default)
@@ -83,8 +80,6 @@ public class IdentityUserService : IIdentityService
             throw new UnauthorizedAccessException();
         }
 
-        var identityResult = await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
-
-        return identityResult.ToAppIdentityResult();
+        return await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
     }
 }

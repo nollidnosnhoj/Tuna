@@ -3,29 +3,43 @@
   mutation: Mutation
 }
 
-interface IUserError {
-  code: String!
+interface Error {
   message: String!
 }
 
-type AudioPayload {
-  audio: AudioViewModel
-  errors: [UserError!]!
-  message: String
+"The node interface is implemented by entities that have a global unique identifier."
+interface Node {
+  id: ID!
 }
 
-type AudioViewModel {
-  id: Long!
+type Audio implements Node {
+  id: ID!
+  slug: String
+  streamUrl: String
+  imageUrl: String
   title: String!
   description: String!
   duration: Decimal!
   size: Long!
   created: DateTime!
   lastModified: DateTime
-  user: UserViewModel!
-  slug: String!
-  streamUrl: String!
-  imageUrl: String
+  user: User!
+}
+
+type AudioNotFoundError implements Error {
+  id: ID!
+  code: String!
+  message: String!
+}
+
+type AudioNotUploadedError implements Error {
+  code: String!
+  message: String!
+}
+
+type CannotFollowYourselfError implements Error {
+  code: String!
+  message: String!
 }
 
 "Information about the offset pagination."
@@ -36,10 +50,19 @@ type CollectionSegmentInfo {
   hasPreviousPage: Boolean!
 }
 
+type CreateAudioPayload {
+  audio: Audio
+  errors: [CreateAudioError!]
+}
+
+type FavoriteAudioPayload {
+  boolean: Boolean
+  errors: [FavoriteAudioError!]
+}
+
 type FollowUserPayload {
-  isFollowing: Boolean
-  errors: [IUserError!]!
-  message: String
+  boolean: Boolean
+  errors: [FollowUserError!]
 }
 
 "A segment of a collection."
@@ -47,7 +70,7 @@ type FollowersCollectionSegment {
   "Information to aid in pagination."
   pageInfo: CollectionSegmentInfo!
   "A flattened list of the items."
-  items: [UserViewModel!]
+  items: [User!]
 }
 
 "A segment of a collection."
@@ -55,7 +78,18 @@ type FollowingsCollectionSegment {
   "Information to aid in pagination."
   pageInfo: CollectionSegmentInfo!
   "A flattened list of the items."
-  items: [UserViewModel!]
+  items: [User!]
+}
+
+type IdentityError {
+  code: String!
+  description: String!
+}
+
+type IdentityErrors implements Error {
+  errors: [IdentityError!]!
+  code: String!
+  message: String!
 }
 
 type ImageUploadResult {
@@ -63,67 +97,100 @@ type ImageUploadResult {
 }
 
 type Mutation {
-  createAudio(input: CreateAudioInput!): AudioPayload! @authorize
-  updateAudio(input: UpdateAudioInput!): AudioPayload! @authorize
-  updateAudioPicture(input: UpdateAudioPictureInput!): UpdatePicturePayload! @authorize
+  createAudio(input: CreateAudioInput!): CreateAudioPayload! @authorize
+  updateAudio(input: UpdateAudioInput!): UpdateAudioPayload! @authorize
+  updateAudioPicture(input: UpdateAudioPictureInput!): UpdateAudioPicturePayload! @authorize
   removeAudio(input: RemoveAudioInput!): RemoveAudioPayload! @authorize
-  removeAudioPicture(input: RemoveAudioPictureInput!): RemovePicturePayload! @authorize
-  favoriteAudio(input: SetFavoriteAudioInput!): SetFavoriteAudioPayload! @authorize
-  unfavoriteAudio(input: SetFavoriteAudioInput!): SetFavoriteAudioPayload! @authorize
-  user(id: Long!): UserViewModel
-  followings(skip: Int take: Int observerId: Long!): FollowingsCollectionSegment
-  followers(skip: Int take: Int targetId: Long!): FollowersCollectionSegment
-  updateUser(input: UpdateUserInput!): UserPayload! @authorize
-  updateUserPicture(input: UpdateUserPictureInput!): UpdatePicturePayload! @authorize
-  removeUserPicture(input: RemoveUserPictureInput!): RemovePicturePayload! @authorize
-  updateUserName(input: UpdateUsernameInput!): UpdateUsernamePayload! @authorize
+  removeAudioPicture(input: RemoveAudioPictureInput!): RemoveAudioPicturePayload! @authorize
+  favoriteAudio(input: FavoriteAudioInput!): FavoriteAudioPayload! @authorize
+  unfavoriteAudio(input: UnfavoriteAudioInput!): UnfavoriteAudioPayload! @authorize
+  updateUser(input: UpdateUserInput!): UpdateUserPayload! @authorize
+  updateUserPicture(input: UpdateUserPictureInput!): UpdateUserPicturePayload! @authorize
+  removeUserPicture(input: RemoveUserPictureInput!): RemoveUserPicturePayload! @authorize
+  updateUserName(input: UpdateUserNameInput!): UpdateUserNamePayload! @authorize
   updatePassword(input: UpdatePasswordInput!): UpdatePasswordPayload! @authorize
   updateEmail(input: UpdateEmailInput!): UpdateEmailPayload! @authorize
   followUser(input: FollowUserInput!): FollowUserPayload! @authorize
-  unfollowUser(input: FollowUserInput!): FollowUserPayload! @authorize
+  unfollowUser(input: UnfollowUserInput!): UnfollowUserPayload! @authorize
 }
 
 type Query {
-  audio(slug: String!): AudioViewModel
+  "Fetches an object given its ID."
+  node("ID of the object." id: ID!): Node
+  "Lookup nodes by a list of IDs."
+  nodes("The list of node IDs." ids: [ID!]!): [Node]!
+  audio(slug: String!): Audio
   userAudios(skip: Int take: Int userId: Long!): UserAudiosCollectionSegment
   userFavoriteAudios(skip: Int take: Int userId: Long!): UserFavoriteAudiosCollectionSegment
+  user(id: Long!): User
+  followings(skip: Int take: Int observerId: Long!): FollowingsCollectionSegment
+  followers(skip: Int take: Int targetId: Long!): FollowersCollectionSegment
 }
 
 type RemoveAudioPayload {
-  errors: [UserError!]!
-  message: String
+  boolean: Boolean
+  errors: [RemoveAudioError!]
 }
 
-type RemovePicturePayload {
-  errors: [UserError!]!
-  message: String
+type RemoveAudioPicturePayload {
+  imageUploadResult: ImageUploadResult
+  errors: [RemoveAudioPictureError!]
 }
 
-type SetFavoriteAudioPayload {
-  isFavorited: Boolean
-  errors: [UserError!]!
-  message: String
+type RemoveUserPicturePayload {
+  imageUploadResult: ImageUploadResult
+  errors: [RemoveUserPictureError!]
+}
+
+type UnfavoriteAudioPayload {
+  boolean: Boolean
+  errors: [UnfavoriteAudioError!]
+}
+
+type UnfollowUserPayload {
+  boolean: Boolean
+  errors: [UnfollowUserError!]
+}
+
+type UpdateAudioPayload {
+  audio: Audio
+  errors: [UpdateAudioError!]
+}
+
+type UpdateAudioPicturePayload {
+  imageUploadResult: ImageUploadResult
+  errors: [UpdateAudioPictureError!]
 }
 
 type UpdateEmailPayload {
-  errors: [IUserError!]!
-  message: String
+  boolean: Boolean
+  errors: [UpdateEmailError!]
 }
 
 type UpdatePasswordPayload {
-  errors: [IUserError!]!
-  message: String
+  boolean: Boolean
+  errors: [UpdatePasswordError!]
 }
 
-type UpdatePicturePayload {
-  result: ImageUploadResult
-  errors: [UserError!]!
-  message: String
+type UpdateUserNamePayload {
+  boolean: Boolean
+  errors: [UpdateUserNameError!]
 }
 
-type UpdateUsernamePayload {
-  errors: [IUserError!]!
-  message: String
+type UpdateUserPayload {
+  user: User
+  errors: [UpdateUserError!]
+}
+
+type UpdateUserPicturePayload {
+  imageUploadResult: ImageUploadResult
+  errors: [UpdateUserPictureError!]
+}
+
+type User implements Node {
+  id: ID!
+  imageUrl: String
+  userName: String!
 }
 
 "A segment of a collection."
@@ -131,12 +198,7 @@ type UserAudiosCollectionSegment {
   "Information to aid in pagination."
   pageInfo: CollectionSegmentInfo!
   "A flattened list of the items."
-  items: [AudioViewModel!]
-}
-
-type UserError implements IUserError {
-  message: String!
-  code: String!
+  items: [Audio!]
 }
 
 "A segment of a collection."
@@ -144,22 +206,16 @@ type UserFavoriteAudiosCollectionSegment {
   "Information to aid in pagination."
   pageInfo: CollectionSegmentInfo!
   "A flattened list of the items."
-  items: [AudioViewModel!]
+  items: [Audio!]
 }
 
-type UserPayload {
-  user: UserViewModel
-  errors: [UserError!]!
-  message: String
+type UserNotFoundError implements Error {
+  id: ID!
+  code: String!
+  message: String!
 }
 
-type UserViewModel {
-  id: Long!
-  userName: String!
-  imageUrl: String
-}
-
-type ValidationError implements IUserError {
+type ValidationError implements Error {
   errors: [ValidationFieldError!]!
   code: String!
   message: String!
@@ -170,43 +226,81 @@ type ValidationFieldError {
   message: String!
 }
 
+union CreateAudioError = ValidationError | AudioNotFoundError | AudioNotUploadedError
+
+union FavoriteAudioError = AudioNotFoundError | AudioNotUploadedError
+
+union FollowUserError = UserNotFoundError | IdentityErrors | CannotFollowYourselfError
+
+union RemoveAudioError = AudioNotFoundError | AudioNotUploadedError
+
+union RemoveAudioPictureError = ValidationError | AudioNotFoundError | AudioNotUploadedError
+
+union RemoveUserPictureError = ValidationError | UserNotFoundError | IdentityErrors | CannotFollowYourselfError
+
+union UnfavoriteAudioError = AudioNotFoundError | AudioNotUploadedError
+
+union UnfollowUserError = UserNotFoundError | IdentityErrors | CannotFollowYourselfError
+
+union UpdateAudioError = ValidationError | AudioNotFoundError | AudioNotUploadedError
+
+union UpdateAudioPictureError = ValidationError | AudioNotFoundError | AudioNotUploadedError
+
+union UpdateEmailError = UserNotFoundError | IdentityErrors | CannotFollowYourselfError
+
+union UpdatePasswordError = UserNotFoundError | IdentityErrors | CannotFollowYourselfError
+
+union UpdateUserError = UserNotFoundError | IdentityErrors | CannotFollowYourselfError
+
+union UpdateUserNameError = UserNotFoundError | IdentityErrors | CannotFollowYourselfError
+
+union UpdateUserPictureError = ValidationError | UserNotFoundError | IdentityErrors | CannotFollowYourselfError
+
 input CreateAudioInput {
   uploadId: String!
   fileName: String!
   fileSize: Long!
   duration: Decimal!
   title: String!
-  description: String!
+  description: String
+}
+
+input FavoriteAudioInput {
+  id: ID!
 }
 
 input FollowUserInput {
-  userId: Long!
+  id: ID!
 }
 
 input RemoveAudioInput {
-  id: Long!
+  id: ID!
 }
 
 input RemoveAudioPictureInput {
-  id: Long!
+  id: ID!
 }
 
 input RemoveUserPictureInput {
-  userId: Long!
+  id: ID!
 }
 
-input SetFavoriteAudioInput {
-  audioId: Long!
+input UnfavoriteAudioInput {
+  id: ID!
+}
+
+input UnfollowUserInput {
+  id: ID!
 }
 
 input UpdateAudioInput {
-  id: Long!
+  id: ID!
   title: String
   description: String
 }
 
 input UpdateAudioPictureInput {
-  id: Long!
+  id: ID!
   data: String!
 }
 
@@ -215,23 +309,23 @@ input UpdateEmailInput {
 }
 
 input UpdatePasswordInput {
-  currentPassword: String!
   newPassword: String!
+  currentPassword: String!
 }
 
 input UpdateUserInput {
-  userId: Long!
+  id: ID!
   displayName: String
 }
 
-input UpdateUserPictureInput {
-  userId: Long!
-  data: String!
+input UpdateUserNameInput {
+  id: ID!
+  newUsername: String!
 }
 
-input UpdateUsernameInput {
-  userId: Long!
-  newUsername: String!
+input UpdateUserPictureInput {
+  id: ID!
+  data: String!
 }
 
 enum ApplyPolicy {

@@ -13,10 +13,10 @@ using Microsoft.EntityFrameworkCore;
 namespace Audiochan.Core.Features.Audios.Queries;
 
 public record GetUserFavoriteAudiosQuery(long UserId, int? Skip, int? Take) 
-    : OffsetPagedQuery(Skip, Take), IQueryRequest<CollectionSegment<AudioViewModel>>;
+    : OffsetPagedQuery(Skip, Take), IQueryRequest<CollectionSegment<AudioDto>>;
 
 public class GetUserFavoriteAudiosQueryHandler 
-    : IRequestHandler<GetUserFavoriteAudiosQuery, CollectionSegment<AudioViewModel>>
+    : IRequestHandler<GetUserFavoriteAudiosQuery, CollectionSegment<AudioDto>>
 {
     private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
 
@@ -25,7 +25,7 @@ public class GetUserFavoriteAudiosQueryHandler
         _dbContextFactory = dbContextFactory;
     }
     
-    public async Task<CollectionSegment<AudioViewModel>> Handle(GetUserFavoriteAudiosQuery request, CancellationToken cancellationToken)
+    public async Task<CollectionSegment<AudioDto>> Handle(GetUserFavoriteAudiosQuery request, CancellationToken cancellationToken)
     {
         await using var dbContext = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
         return await dbContext.FavoriteAudios

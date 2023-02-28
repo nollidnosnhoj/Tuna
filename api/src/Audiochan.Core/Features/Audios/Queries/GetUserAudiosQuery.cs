@@ -13,9 +13,9 @@ using Microsoft.EntityFrameworkCore;
 namespace Audiochan.Core.Features.Audios.Queries;
 
 public record GetUserAudiosQuery(long UserId, int? Skip, int? Take) 
-    : OffsetPagedQuery(Skip, Take), IQueryRequest<CollectionSegment<AudioViewModel>>;
+    : OffsetPagedQuery(Skip, Take), IQueryRequest<CollectionSegment<AudioDto>>;
 
-public class GetUserAudiosQueryHandler : IRequestHandler<GetUserAudiosQuery, CollectionSegment<AudioViewModel>>
+public class GetUserAudiosQueryHandler : IRequestHandler<GetUserAudiosQuery, CollectionSegment<AudioDto>>
 {
     private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
 
@@ -24,7 +24,7 @@ public class GetUserAudiosQueryHandler : IRequestHandler<GetUserAudiosQuery, Col
         _dbContextFactory = dbContextFactory;
     }
     
-    public async Task<CollectionSegment<AudioViewModel>> Handle(GetUserAudiosQuery request, CancellationToken cancellationToken)
+    public async Task<CollectionSegment<AudioDto>> Handle(GetUserAudiosQuery request, CancellationToken cancellationToken)
     {
         await using var dbContext = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
         return await dbContext.Audios

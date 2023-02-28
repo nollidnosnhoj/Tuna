@@ -53,7 +53,7 @@ public class UpdatePasswordCommandHandler : IRequestHandler<UpdatePasswordComman
             command.NewPassword, 
             cancellationToken);
 
-        if (!result.IsSuccess)
+        if (!result.Succeeded)
         {
             return new IdentityServiceError(result.Errors);
         }

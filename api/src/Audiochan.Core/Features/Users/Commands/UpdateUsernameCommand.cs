@@ -53,10 +53,13 @@ public class UpdateUsernameCommandHandler : IRequestHandler<UpdateUsernameComman
             command.NewUserName,
             cancellationToken);
 
-        if (!result.IsSuccess)
+        if (!result.Succeeded)
         {
             return new IdentityServiceError(result.Errors);
         }
+
+        user.UserName = command.NewUserName;
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;
     }

@@ -46,7 +46,7 @@ public class CreateAudioCommand : ICommandRequest<CreateAudioResult>
 }
 
 [GenerateOneOf]
-public partial class CreateAudioResult : OneOfBase<AudioViewModel, AudioNotUploaded>
+public partial class CreateAudioResult : OneOfBase<AudioDto, AudioNotUploaded>
 {
     
 }
@@ -122,7 +122,7 @@ public class CreateAudioCommandHandler : IRequestHandler<CreateAudioCommand, Cre
 
         await _unitOfWork.Audios.AddAsync(audio, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
-        return new AudioViewModel
+        return new AudioDto
         {
             Id = audio.Id,
             Description = audio.Description ?? "",

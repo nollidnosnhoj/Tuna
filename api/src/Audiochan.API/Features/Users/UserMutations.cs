@@ -3,15 +3,18 @@ using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.API.Errors;
-using Audiochan.API.Features.Audios.Payloads;
 using Audiochan.API.Features.Users.Errors;
-using Audiochan.API.Features.Users.Inputs;
-using Audiochan.API.Features.Users.Payloads;
 using Audiochan.Common.Extensions;
+using Audiochan.Core.Features.Auth.Exceptions;
+using Audiochan.Core.Features.Upload.Models;
 using Audiochan.Core.Features.Users.Commands;
+using Audiochan.Core.Features.Users.Models;
+using Audiochan.Domain.Entities;
+using Audiochan.Domain.Exceptions;
 using HotChocolate.Authorization;
 using HotChocolate.Language;
 using HotChocolate.Types;
+using HotChocolate.Types.Relay;
 using MediatR;
 
 namespace Audiochan.API.Features.Users;
@@ -20,141 +23,153 @@ namespace Audiochan.API.Features.Users;
 public class UserMutations
 {
     [Authorize]
-    public async Task<UserPayload> UpdateUserAsync(
-        UpdateUserInput input,
+    [Error(typeof(UserErrorFactory))]
+    public async Task<UserDto> UpdateUserAsync(
+        [ID(nameof(UserDto))] long id,
+        string? displayName,
         IMediator mediator,
         ClaimsPrincipal claimsPrincipal,
         CancellationToken cancellationToken)
     {
         var userId = claimsPrincipal.GetUserId();
-        if (userId != input.UserId)
+        if (userId != id)
             throw new UnauthorizedAccessException();
-        var command = new UpdateProfileCommand(input.UserId, input.DisplayName);
+        var command = new UpdateProfileCommand(id, displayName);
         var result = await mediator.Send(command, cancellationToken);
         return result.Match(
-            user => new UserPayload(user),
-            _ => throw new UnauthorizedAccessException(),
-            _ => throw new UnauthorizedAccessException());
+            user => user,
+            _ => throw new EntityNotFoundException<User, long>(id),
+            _ => throw new EntityNotFoundException<User, long>(id));
     }
     
     [Authorize]
     [UseValidationError]
-    public async Task<UpdatePicturePayload> UpdateUserPictureAsync(
-        UpdateUserPictureInput input,
+    [Error(typeof(UserErrorFactory))]
+    public async Task<ImageUploadResult> UpdateUserPictureAsync(
+        [ID(nameof(UserDto))] long id,
+        string data,
         IMediator mediator,
         ClaimsPrincipal claimsPrincipal,
         CancellationToken cancellationToken)
     {
         var userId = claimsPrincipal.GetUserId();
-        if (userId != input.UserId)
+        if (userId != id)
             throw new UnauthorizedAccessException();
-        var command = new UpdateUserPictureCommand(input.UserId, input.Data);
+        var command = new UpdateUserPictureCommand(id, data);
         var result = await mediator.Send(command, cancellationToken);
         return result.Match(
-            res => new UpdatePicturePayload(res),
-            _ => throw new UnauthorizedAccessException());
+            res => res,
+            _ => throw new EntityNotFoundException<User, long>(id));
     }
     
     [Authorize]
     [UseValidationError]
-    public async Task<RemovePicturePayload> RemoveUserPictureAsync(
-        RemoveUserPictureInput input,
+    [Error(typeof(UserErrorFactory))]
+    public async Task<ImageUploadResult> RemoveUserPictureAsync(
+        [ID(nameof(UserDto))] long id,
         IMediator mediator,
         ClaimsPrincipal claimsPrincipal,
         CancellationToken cancellationToken)
     {
         var userId = claimsPrincipal.GetUserId();
-        if (userId != input.UserId)
+        if (userId != id)
         {
             throw new UnauthorizedAccessException();
         }
-        var command = new UpdateUserPictureCommand(input.UserId, null);
+        var command = new UpdateUserPictureCommand(id, null);
         var result = await mediator.Send(command, cancellationToken);
         return result.Match(
-            _ => new RemovePicturePayload(),
-            _ => new RemovePicturePayload(new UserNotFoundError(input.UserId)));
+            res => res,
+            _ => throw new EntityNotFoundException<User, long>(id));
     }
     
     [Authorize]
-    public async Task<UpdateUsernamePayload> UpdateUserNameAsync(
-        UpdateUsernameInput input,
+    [Error(typeof(UserErrorFactory))]
+    public async Task<bool> UpdateUserNameAsync(
+        [ID(nameof(UserDto))] long id,
+        string newUsername,
         IMediator mediator,
         ClaimsPrincipal claimsPrincipal,
         CancellationToken cancellationToken)
     {
         var currentUserId = claimsPrincipal.GetUserId();
-        if (input.UserId != currentUserId)
+        if (id != currentUserId)
         {
             throw new UnauthorizedAccessException();
         }
-        var command = new UpdateUsernameCommand(input.UserId, input.NewUsername);
+        var command = new UpdateUsernameCommand(id, newUsername);
         var result = await mediator.Send(command, cancellationToken);
         return result.Match(
-            _ => new UpdateUsernamePayload(),
-            _ => throw new UnauthorizedAccessException(),
-            idRes => new UpdateUsernamePayload(idRes.Errors));
+            _ => true,
+            _ => throw new EntityNotFoundException<User, long>(id),
+            idRes => throw new IdentityException(idRes.Errors));
     }
     
     [Authorize]
-    public async Task<UpdatePasswordPayload> UpdatePasswordAsync(
-        UpdatePasswordInput input,
+    [Error(typeof(UserErrorFactory))]
+    public async Task<bool> UpdatePasswordAsync(
+        string newPassword,
+        string currentPassword,
         IMediator mediator,
         ClaimsPrincipal claimsPrincipal,
         CancellationToken cancellationToken)
     {
-        var command = new UpdatePasswordCommand(input.NewPassword, input.CurrentPassword, claimsPrincipal);
+        var command = new UpdatePasswordCommand(newPassword, currentPassword, claimsPrincipal);
         var result = await mediator.Send(command, cancellationToken);
         return result.Match(
-            _ => new UpdatePasswordPayload(),
+            _ => true,
             _ => throw new UnauthorizedAccessException(),
-            id => new UpdatePasswordPayload(id.Errors));
+            id => throw new IdentityException(id.Errors));
     }
     
     [Authorize]
-    public async Task<UpdateEmailPayload> UpdateEmailAsync(
-        UpdateEmailInput input,
+    [Error(typeof(UserErrorFactory))]
+    public async Task<bool> UpdateEmailAsync(
+        string email,
         IMediator mediator,
         ClaimsPrincipal claimsPrincipal,
         CancellationToken cancellationToken)
     {
         var userId = claimsPrincipal.GetUserId();
-        var command = new UpdateEmailCommand(userId, input.Email);
+        var command = new UpdateEmailCommand(userId, email);
         var result = await mediator.Send(command, cancellationToken);
         return result.Match(
-            _ => new UpdateEmailPayload(),
+            _ => true,
             _ => throw new UnauthorizedAccessException(),
-            id => new UpdateEmailPayload(id.Errors));
+            id => throw new IdentityException(id.Errors));
     }
 
     [Authorize]
-    public async Task<FollowUserPayload> FollowUserAsync(
-        FollowUserInput input,
+    [Error(typeof(UserErrorFactory))]
+    public async Task<bool> FollowUserAsync(
+        [ID(nameof(UserDto))] long id,
         IMediator mediator, 
         ClaimsPrincipal claimsPrincipal,
         CancellationToken cancellationToken)
     {
         var currentUserId = claimsPrincipal.GetUserId();
-        var command = new SetFollowCommand(input.UserId, currentUserId, true);
+        var command = new SetFollowCommand(id, currentUserId, true);
         var result = await mediator.Send(command, cancellationToken);
         return result.Match(
-            res => new FollowUserPayload(res),
-            _ => new FollowUserPayload(new UserNotFoundError(input.UserId)),
-            err => new FollowUserPayload(err));
+            res => res,
+            _ => throw new EntityNotFoundException<User, long>(id),
+            _ => throw new CannotFollowYourselfException());
     }
     
     [Authorize]
-    public async Task<FollowUserPayload> UnfollowUserAsync(
-        FollowUserInput input,
+    [Error(typeof(UserErrorFactory))]
+    public async Task<bool> UnfollowUserAsync(
+        [ID(nameof(UserDto))] long id,
         IMediator mediator, 
         ClaimsPrincipal claimsPrincipal,
         CancellationToken cancellationToken)
     {
         var currentUserId = claimsPrincipal.GetUserId();
-        var command = new SetFollowCommand(input.UserId, currentUserId, false);
+        var command = new SetFollowCommand(id, currentUserId, false);
         var result = await mediator.Send(command, cancellationToken);
         return result.Match(
-            res => new FollowUserPayload(res),
-            _ => new FollowUserPayload(new UserNotFoundError(input.UserId)),
-            err => new FollowUserPayload(err));
+            res => res,
+            _ => throw new EntityNotFoundException<User, long>(id),
+            _ => throw new CannotFollowYourselfException());
     }
 }

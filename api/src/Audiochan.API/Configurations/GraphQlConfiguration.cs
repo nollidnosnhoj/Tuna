@@ -24,6 +24,8 @@ public static class GraphQlConfiguration
     {
         return builder
             .AddAuthorization()
+            .AddMutationConventions()
+            .AddGlobalObjectIdentification()
             .RegisterDbContext<ApplicationDbContext>(DbContextKind.Pooled)
             .RegisterService<IHashids>()
             .RegisterService<IMediator>()

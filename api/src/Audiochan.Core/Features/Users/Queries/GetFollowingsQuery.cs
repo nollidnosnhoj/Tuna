@@ -12,9 +12,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Features.Users.Queries;
 
-public record GetFollowingsQuery(long UserId, int? Skip, int? Take) : OffsetPagedQuery(Skip, Take), IQueryRequest<CollectionSegment<UserViewModel>>;
+public record GetFollowingsQuery(long UserId, int? Skip, int? Take) : OffsetPagedQuery(Skip, Take), IQueryRequest<CollectionSegment<UserDto>>;
 
-public class GetFollowingsQueryHandler : IRequestHandler<GetFollowingsQuery, CollectionSegment<UserViewModel>>
+public class GetFollowingsQueryHandler : IRequestHandler<GetFollowingsQuery, CollectionSegment<UserDto>>
 {
     private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
 
@@ -23,7 +23,7 @@ public class GetFollowingsQueryHandler : IRequestHandler<GetFollowingsQuery, Col
         _dbContextFactory = dbContextFactory;
     }
     
-    public async  Task<CollectionSegment<UserViewModel>> Handle(GetFollowingsQuery request, CancellationToken cancellationToken)
+    public async  Task<CollectionSegment<UserDto>> Handle(GetFollowingsQuery request, CancellationToken cancellationToken)
     {
         await using var dbContext = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
         return await dbContext.FollowedUsers
