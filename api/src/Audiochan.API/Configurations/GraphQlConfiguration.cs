@@ -1,7 +1,6 @@
 ﻿using Audiochan.API.Features.Audios;
 using Audiochan.API.Features.Users;
-using Audiochan.Core.Features.Audios;
-using Audiochan.Core.Features.Users;
+using Audiochan.API.Types;
 using Audiochan.Core.Persistence;
 using HashidsNet;
 using HotChocolate.Data;
@@ -32,6 +31,7 @@ public static class GraphQlConfiguration
             .AddQueryType()
             .AddMutationType()
             .AddAudioFeatures()
-            .AddUserFeature();
+            .AddUserFeature()
+            .AddErrorInterfaceType<UserErrorType>();
     }
 }

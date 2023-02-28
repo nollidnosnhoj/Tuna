@@ -3,13 +3,14 @@
   mutation: Mutation
 }
 
-interface Error {
-  message: String!
-}
-
 "The node interface is implemented by entities that have a global unique identifier."
 interface Node {
   id: ID!
+}
+
+interface UserError {
+  code: String!
+  message: String!
 }
 
 type Audio implements Node {
@@ -26,13 +27,13 @@ type Audio implements Node {
   user: User!
 }
 
-type AudioNotFoundError implements Error {
+type AudioNotFoundError implements UserError {
   id: ID!
   code: String!
   message: String!
 }
 
-type CannotFollowYourselfError implements Error {
+type CannotFollowYourselfError implements UserError {
   code: String!
   message: String!
 }
@@ -53,6 +54,11 @@ type CreateAudioPayload {
 type FavoriteAudioPayload {
   favorited: Boolean
   errors: [FavoriteAudioError!]
+}
+
+type FieldError {
+  field: String!
+  message: String!
 }
 
 type FollowUserPayload {
@@ -76,7 +82,7 @@ type FollowingsCollectionSegment {
   items: [User!]
 }
 
-type IdentityError implements Error {
+type IdentityError implements UserError {
   code: String!
   message: String!
 }
@@ -198,20 +204,15 @@ type UserFavoriteAudiosCollectionSegment {
   items: [Audio!]
 }
 
-type UserNotFoundError implements Error {
+type UserNotFoundError implements UserError {
   id: ID!
   code: String!
   message: String!
 }
 
-type ValidationError implements Error {
-  errors: [ValidationFieldError!]!
+type ValidationError implements UserError {
+  fieldErrors: [FieldError!]!
   code: String!
-  message: String!
-}
-
-type ValidationFieldError {
-  field: String!
   message: String!
 }
 

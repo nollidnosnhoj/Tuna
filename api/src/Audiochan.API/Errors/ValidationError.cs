@@ -6,21 +6,21 @@ using HotChocolate.Types;
 
 namespace Audiochan.API.Errors;
 
-public record ValidationFieldError(string Field, string Message);
+public record FieldError(string Field, string Message);
 
 public class ValidationError : IUserError
 {
-    public IReadOnlyCollection<ValidationFieldError> Errors { get; }
+    public IReadOnlyCollection<FieldError> FieldErrors { get; }
 
-    public ValidationError(IEnumerable<ValidationFieldError> errors)
+    public ValidationError(IEnumerable<FieldError> errors)
     {
-        Errors = errors.ToList();
+        FieldErrors = errors.ToList();
     }
 
     public static ValidationError CreateErrorFrom(ValidationException exception)
     {
         return new ValidationError(
-            exception.Errors.Select(x => new ValidationFieldError(x.PropertyName, x.ErrorMessage)));
+            exception.Errors.Select(x => new FieldError(x.PropertyName, x.ErrorMessage)));
     }
 
     public string Code => GetType().Name;
