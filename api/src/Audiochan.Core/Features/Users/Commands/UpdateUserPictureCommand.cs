@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Common.Mediatr;
+using Audiochan.Shared.Mediatr;
 using Audiochan.Core.Features.Upload.Models;
 using Audiochan.Core.Persistence;
 using Audiochan.Core.Storage;

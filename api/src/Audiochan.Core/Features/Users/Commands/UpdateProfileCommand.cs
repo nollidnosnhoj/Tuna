@@ -1,11 +1,10 @@
 ﻿using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Common.Errors;
-using Audiochan.Common.Mediatr;
+using Audiochan.Shared.Errors;
+using Audiochan.Shared.Mediatr;
 using Audiochan.Core.Features.Users.Models;
 using Audiochan.Core.Persistence;
-using Audiochan.Domain.Entities;
 using MediatR;
 using OneOf;
 using OneOf.Types;

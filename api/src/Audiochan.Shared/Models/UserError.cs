@@ -1,0 +1,9 @@
+﻿namespace Audiochan.Shared.Models;
+
+public interface IUserError
+{
+    public string Code { get; }
+    public string Message { get; }
+}
+
+public record UserError(string Message, string Code) : IUserError;

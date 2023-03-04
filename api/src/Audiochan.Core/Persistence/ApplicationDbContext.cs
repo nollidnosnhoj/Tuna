@@ -1,8 +1,8 @@
 ﻿using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.Entities;
 using Audiochan.Core.Persistence.Interceptors;
-using Audiochan.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Core.Persistence
@@ -34,6 +34,7 @@ namespace Audiochan.Core.Persistence
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+            builder.HasDefaultSchema("public");
             builder.HasPostgresExtension("uuid-ossp");
             builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }

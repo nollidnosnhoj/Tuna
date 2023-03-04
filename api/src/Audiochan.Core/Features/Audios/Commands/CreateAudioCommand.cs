@@ -1,13 +1,13 @@
 ﻿using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Common.Extensions;
-using Audiochan.Common.Mediatr;
+using Audiochan.Shared.Extensions;
+using Audiochan.Shared.Mediatr;
+using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Audios.Models;
 using Audiochan.Core.Features.Audios.Results;
 using Audiochan.Core.Persistence;
 using Audiochan.Core.Storage;
-using Audiochan.Domain.Entities;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.Options;

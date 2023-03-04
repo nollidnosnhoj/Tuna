@@ -1,5 +1,5 @@
 ﻿using System;
-using Audiochan.Common.Models;
+using Audiochan.Shared.Models;
 
 namespace Audiochan.API.Features.Users.Errors;
 

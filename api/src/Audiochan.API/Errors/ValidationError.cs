@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Audiochan.Common.Models;
+using Audiochan.Shared.Models;
 using FluentValidation;
 using HotChocolate.Types;
 

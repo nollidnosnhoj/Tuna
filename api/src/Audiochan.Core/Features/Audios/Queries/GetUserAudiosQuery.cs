@@ -1,8 +1,8 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Common.Mediatr;
-using Audiochan.Common.Models;
+using Audiochan.Shared.Mediatr;
+using Audiochan.Shared.Models;
 using Audiochan.Core.Features.Audios.Mappings;
 using Audiochan.Core.Features.Audios.Models;
 using Audiochan.Core.Persistence;

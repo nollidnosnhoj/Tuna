@@ -1,9 +1,9 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.Entities;
 using Audiochan.Core.Persistence;
 using Audiochan.Core.Persistence.Repositories;
-using Audiochan.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Audiochan.Infrastructure.Persistence.Repositories

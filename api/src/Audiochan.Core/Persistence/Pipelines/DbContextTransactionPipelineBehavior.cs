@@ -3,7 +3,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Common.Mediatr;
+using Audiochan.Shared.Mediatr;
 using Audiochan.Core.Persistence.Pipelines.Attributes;
 using MediatR;
 

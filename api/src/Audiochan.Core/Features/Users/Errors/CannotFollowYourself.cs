@@ -1,4 +1,4 @@
-﻿using Audiochan.Common.Models;
+﻿using Audiochan.Shared.Models;
 
 namespace Audiochan.Core.Features.Users.Errors;
 

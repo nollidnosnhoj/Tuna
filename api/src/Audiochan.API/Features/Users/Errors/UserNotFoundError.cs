@@ -1,7 +1,7 @@
-﻿using Audiochan.Common.Models;
+﻿using Audiochan.Core.Entities;
+using Audiochan.Core.Exceptions;
 using Audiochan.Core.Features.Users.Models;
-using Audiochan.Domain.Entities;
-using Audiochan.Domain.Exceptions;
+using Audiochan.Shared.Models;
 using HotChocolate.Types.Relay;
 
 namespace Audiochan.API.Features.Users.Errors;

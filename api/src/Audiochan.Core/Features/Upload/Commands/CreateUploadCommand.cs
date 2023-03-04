@@ -1,4 +1,4 @@
-﻿using Audiochan.Common.Mediatr;
+﻿using Audiochan.Shared.Mediatr;
 using Audiochan.Core.Features.Upload.Models;
 
 namespace Audiochan.Core.Features.Upload.Commands;

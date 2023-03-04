@@ -1,7 +1,7 @@
 using System;
 using System.Reflection;
 using Audiochan.API.Configurations;
-using Audiochan.Common.Mediatr.Pipelines;
+using Audiochan.Shared.Mediatr.Pipelines;
 using Audiochan.Core;
 using Audiochan.Core.Persistence;
 using Audiochan.Core.Persistence.Pipelines;

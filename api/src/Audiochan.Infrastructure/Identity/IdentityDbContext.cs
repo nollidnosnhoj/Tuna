@@ -9,4 +9,10 @@ public class IdentityDbContext : Microsoft.AspNetCore.Identity.EntityFrameworkCo
     {
         
     }
+
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        builder.HasDefaultSchema("identity");
+        base.OnModelCreating(builder);
+    }
 }

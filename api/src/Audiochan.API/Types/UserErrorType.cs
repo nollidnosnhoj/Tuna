@@ -1,4 +1,4 @@
-﻿using Audiochan.Common.Models;
+﻿using Audiochan.Shared.Models;
 using HotChocolate.Types;
 
 namespace Audiochan.API.Types;

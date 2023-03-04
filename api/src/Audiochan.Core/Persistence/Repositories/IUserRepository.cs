@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Domain.Entities;
+using Audiochan.Core.Entities;
 
 namespace Audiochan.Core.Persistence.Repositories
 {
