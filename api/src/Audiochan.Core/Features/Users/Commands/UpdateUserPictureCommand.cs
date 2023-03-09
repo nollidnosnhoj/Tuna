@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Audiochan.Shared.Mediatr;
 using Audiochan.Core.Features.Upload.Models;
 using Audiochan.Core.Persistence;
-using Audiochan.Core.Storage;
+using Audiochan.Core.Services;
 using MediatR;
 using Microsoft.Extensions.Options;
 using OneOf;
@@ -32,17 +32,12 @@ public partial class UpdateUserPictureResult : OneOfBase<ImageUploadResult, NotF
 public class UpdateUserPictureCommandHandler : IRequestHandler<UpdateUserPictureCommand, UpdateUserPictureResult>
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IStorageService _storageService;
-    private readonly ApplicationSettings _appSettings;
+    private readonly IImageService _imageService;
 
-    public UpdateUserPictureCommandHandler(
-        IUnitOfWork unitOfWork,
-        IStorageService storageService,
-        IOptions<ApplicationSettings> appSettings)
+    public UpdateUserPictureCommandHandler(IUnitOfWork unitOfWork, IImageService imageService)
     {
         _unitOfWork = unitOfWork;
-        _storageService = storageService;
-        _appSettings = appSettings.Value;
+        _imageService = imageService;
     }
 
     public async Task<UpdateUserPictureResult> Handle(UpdateUserPictureCommand command, CancellationToken cancellationToken)
@@ -51,9 +46,9 @@ public class UpdateUserPictureCommandHandler : IRequestHandler<UpdateUserPicture
 
         if (user is null) return new NotFound();
         
-        if (string.IsNullOrEmpty(command.UploadId))
+        if (string.IsNullOrEmpty(command.UploadId) && !string.IsNullOrEmpty(user.ImageId))
         {
-            await RemoveOriginalPicture(user.ImageId, cancellationToken);
+            await _imageService.DeleteImageAsync(user.ImageId);
             user.ImageId = null;
         }
         else
@@ -64,14 +59,5 @@ public class UpdateUserPictureCommandHandler : IRequestHandler<UpdateUserPicture
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return ImageUploadResult.ToUserImage(user.ImageId);
-    }
-        
-    private async Task RemoveOriginalPicture(string? picture, CancellationToken cancellationToken = default)
-    {
-        if (!string.IsNullOrEmpty(picture))
-        {
-            var blobName = $"images/users/{picture}";
-            await _storageService.RemoveAsync(_appSettings.UploadBucket, blobName, cancellationToken);
-        }
     }
 }

@@ -8,7 +8,7 @@ using Audiochan.Shared.Errors;
 using Audiochan.Shared.Mediatr;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Persistence;
-using Audiochan.Core.Storage;
+using Audiochan.Core.Services;
 using MediatR;
 using Microsoft.Extensions.Options;
 using OneOf;

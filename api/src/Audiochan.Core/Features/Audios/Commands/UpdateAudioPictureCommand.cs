@@ -1,11 +1,12 @@
 ﻿using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core.Entities;
 using Audiochan.Shared.Errors;
 using Audiochan.Shared.Mediatr;
 using Audiochan.Core.Features.Upload.Models;
 using Audiochan.Core.Persistence;
-using Audiochan.Core.Storage;
+using Audiochan.Core.Services;
 using MediatR;
 using Microsoft.Extensions.Options;
 using OneOf;
@@ -34,17 +35,12 @@ public partial class UpdateAudioPictureResult : OneOfBase<ImageUploadResult, Not
 public class UpdateAudioPictureCommandHandler : IRequestHandler<UpdateAudioPictureCommand, UpdateAudioPictureResult>
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IStorageService _storageService;
-    private readonly ApplicationSettings _appSettings;
+    private readonly IImageService _imageService;
 
-    public UpdateAudioPictureCommandHandler(
-        IUnitOfWork unitOfWork, 
-        IStorageService storageService, 
-        IOptions<ApplicationSettings> applicationSettings)
+    public UpdateAudioPictureCommandHandler(IUnitOfWork unitOfWork, IImageService imageService)
     {
         _unitOfWork = unitOfWork;
-        _storageService = storageService;
-        _appSettings = applicationSettings.Value;
+        _imageService = imageService;
     }
 
     public async Task<UpdateAudioPictureResult> Handle(UpdateAudioPictureCommand command,
@@ -58,9 +54,9 @@ public class UpdateAudioPictureCommandHandler : IRequestHandler<UpdateAudioPictu
 
         if (audio.UserId != currentUserId) return new Forbidden();
 
-        if (string.IsNullOrEmpty(command.UploadId))
+        if (string.IsNullOrEmpty(command.UploadId) && !string.IsNullOrEmpty(audio.ImageId))
         {
-            await RemoveOriginalPicture(audio.ImageId, cancellationToken);
+            await _imageService.DeleteImageAsync(audio.ImageId);
             audio.ImageId = null;
         }
         else
@@ -71,14 +67,5 @@ public class UpdateAudioPictureCommandHandler : IRequestHandler<UpdateAudioPictu
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return ImageUploadResult.ToAudioImage(audio.ImageId);
-    }
-
-    private async Task RemoveOriginalPicture(string? picture, CancellationToken cancellationToken = default)
-    {
-        if (!string.IsNullOrEmpty(picture))
-        {
-            var blobName = $"images/audios/{picture}";
-            await _storageService.RemoveAsync(_appSettings.UploadBucket, blobName, cancellationToken);
-        }
     }
 }
