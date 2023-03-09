@@ -9,7 +9,8 @@ public static class AudioConfiguration
     public static IRequestExecutorBuilder AddAudioFeatures(this IRequestExecutorBuilder builder)
     {
         return builder
-            .AddType<AudioType>()
+            .AddTypeExtension<AudioNode>()
+            .AddTypeExtension<AudioExtensions>()
             .AddTypeExtension<AudioQueries>()
             .AddTypeExtension<AudioMutations>()
             .AddDataLoader<GetAudioDataLoader>();

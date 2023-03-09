@@ -9,7 +9,8 @@ public static class UserConfiguration
     public static IRequestExecutorBuilder AddUserFeature(this IRequestExecutorBuilder builder)
     {
         return builder
-            .AddType<UserType>()
+            .AddTypeExtension<UserNode>()
+            .AddTypeExtension<UserExtensions>()
             .AddTypeExtension<UserQueries>()
             .AddTypeExtension<UserMutations>()
             .AddDataLoader<GetUserDataLoader>();

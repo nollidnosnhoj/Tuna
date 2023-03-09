@@ -32,34 +32,12 @@ try
 
     builder.Services.Configure<AmazonS3Settings>(builder.Configuration.GetSection(nameof(AmazonS3Settings)));
     builder.Services.Configure<ApplicationSettings>(builder.Configuration.GetSection(nameof(ApplicationSettings)));
-    
-    builder.Services.AddMediatR(config => 
-        config.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+    builder.Services.AddMediatR(config => config.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
     builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-
-    builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehavior<,>));
-    builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(DbContextTransactionPipelineBehavior<,>));
+    builder.Services.AddMediatrPipelines();
     builder.Services.AddSingleton<IHashids>(_ => new Hashids(salt: "audiochan", minHashLength: 7));
-    
     builder.Services.AddInfrastructure(builder.Configuration, builder.Environment);
-    
-    builder.Services.AddPooledDbContextFactory<ApplicationDbContext>(o =>
-    {
-        if (builder.Environment.IsDevelopment())
-        {
-            o.UseInMemoryDatabase("devdb");
-        }
-        else
-        {
-            o.UseNpgsql(builder.Configuration.GetConnectionString("Database"));
-        }
-        o.UseSnakeCaseNamingConvention();
-        if (builder.Environment.IsDevelopment())
-        {
-            o.EnableSensitiveDataLogging();
-        }
-    });
-    
+    builder.Services.AddPersistence(builder.Configuration, builder.Environment);
     builder.Services.ConfigureAuthentication(builder.Configuration, builder.Environment);
     builder.Services.ConfigureAuthorization();
     builder.Services.AddHttpContextAccessor();

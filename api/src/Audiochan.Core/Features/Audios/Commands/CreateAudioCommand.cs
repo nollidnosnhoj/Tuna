@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Audiochan.Shared.Extensions;
 using Audiochan.Shared.Mediatr;
 using Audiochan.Core.Entities;
+using Audiochan.Core.Features.Audios.Mappings;
 using Audiochan.Core.Features.Audios.Models;
 using Audiochan.Core.Features.Audios.Results;
 using Audiochan.Core.Persistence;
@@ -122,17 +123,7 @@ public class CreateAudioCommandHandler : IRequestHandler<CreateAudioCommand, Cre
 
         await _unitOfWork.Audios.AddAsync(audio, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
-        return new AudioDto
-        {
-            Id = audio.Id,
-            Description = audio.Description ?? "",
-            ObjectKey = audio.ObjectKey,
-            Created = audio.CreatedAt,
-            Duration = audio.Duration,
-            Picture = audio.ImageId,
-            Size = audio.Size,
-            Title = audio.Title
-        };
+        return audio.MapToDto();
     }
         
     private async Task<bool> ExistsInTempStorage(string fileName, CancellationToken cancellationToken = default)

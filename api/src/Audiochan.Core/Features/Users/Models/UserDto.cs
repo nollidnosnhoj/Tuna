@@ -1,6 +1,9 @@
-﻿namespace Audiochan.Core.Features.Users.Models;
+﻿using HotChocolate;
 
-public record UserDto
+namespace Audiochan.Core.Features.Users.Models;
+
+[GraphQLName("User")]
+public class UserDto
 {
     public long Id { get; init; }
     public string UserName { get; init; } = null!;

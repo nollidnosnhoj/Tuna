@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Audiochan.Shared.Errors;
 using Audiochan.Shared.Mediatr;
 using Audiochan.Core.Entities;
+using Audiochan.Core.Features.Audios.Mappings;
 using Audiochan.Core.Features.Audios.Models;
 using Audiochan.Core.Persistence;
 using FluentValidation;
@@ -93,17 +94,7 @@ public class UpdateAudioCommandHandler : IRequestHandler<UpdateAudioCommand, Upd
         _unitOfWork.Audios.Update(audio);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return new AudioDto
-        {
-            Id = audio.Id,
-            Description = audio.Description ?? "",
-            ObjectKey = audio.ObjectKey,
-            Created = audio.CreatedAt,
-            Duration = audio.Duration,
-            Picture = audio.ImageId,
-            Size = audio.Size,
-            Title = audio.Title
-        };
+        return audio.MapToDto();
     }
 
     private void UpdateAudioFromCommandAsync(Audio audio, UpdateAudioCommand command)

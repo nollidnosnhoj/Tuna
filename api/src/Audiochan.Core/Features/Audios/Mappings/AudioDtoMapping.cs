@@ -13,11 +13,13 @@ public static class Mappings
             Id = audio.Id,
             Description = audio.Description ?? "",
             ObjectKey = audio.ObjectKey,
-            Created = audio.CreatedAt,
+            CreatedAt = audio.CreatedAt,
+            UpdatedAt = audio.UpdatedAt,
             Duration = audio.Duration,
             Picture = audio.ImageId,
             Size = audio.Size,
-            Title = audio.Title
+            Title = audio.Title,
+            UserId = audio.UserId
         });
     }
 
@@ -28,11 +30,13 @@ public static class Mappings
             Id = audio.Id,
             Description = audio.Description ?? "",
             ObjectKey = audio.ObjectKey,
-            Created = audio.CreatedAt,
+            CreatedAt = audio.CreatedAt,
+            UpdatedAt = audio.UpdatedAt,
             Duration = audio.Duration,
             Picture = audio.ImageId,
             Size = audio.Size,
-            Title = audio.Title
+            Title = audio.Title,
+            UserId = audio.UserId
         };
     }
 }
