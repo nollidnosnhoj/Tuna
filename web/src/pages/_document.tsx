@@ -1,15 +1,42 @@
-import { createGetInitialProps } from "@mantine/next";
-import Document, { Head, Html, Main, NextScript } from "next/document";
+import { createRelayDocument, RelayDocument } from "relay-nextjs/document";
+import NextDocument, {
+  Html,
+  Head,
+  DocumentContext,
+  Main,
+  NextScript,
+} from "next/document";
 
-const getInitialProps = createGetInitialProps();
+interface DocumentProps {
+  relayDocument: RelayDocument;
+}
 
-export default class _Document extends Document {
-  static getInitialProps = getInitialProps;
+class Document extends NextDocument<DocumentProps> {
+  static async getInitialProps(ctx: DocumentContext) {
+    const relayDocument = createRelayDocument();
+
+    const renderPage = ctx.renderPage;
+    ctx.renderPage = () =>
+      renderPage({
+        enhanceApp: (App) => relayDocument.enhance(App),
+      });
+
+    const initialProps = await NextDocument.getInitialProps(ctx);
+
+    return {
+      ...initialProps,
+      relayDocument,
+    };
+  }
 
   render() {
+    const { relayDocument } = this.props;
+
     return (
       <Html>
-        <Head />
+        <Head>
+          <relayDocument.Script />
+        </Head>
         <body>
           <Main />
           <NextScript />
@@ -18,3 +45,5 @@ export default class _Document extends Document {
     );
   }
 }
+
+export default Document;
