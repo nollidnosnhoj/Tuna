@@ -4,9 +4,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Features.Auth;
 using Audiochan.Core.Features.Auth.Models;
+using Audiochan.Core.Services;
 using Audiochan.Infrastructure.Identity.Models;
 using Microsoft.AspNetCore.Identity;
-using IdentityUser = Audiochan.Core.Features.Auth.Models.IdentityUser;
 
 namespace Audiochan.Infrastructure.Identity;
 
@@ -19,11 +19,11 @@ public class IdentityUserService : IIdentityService
         _userManager = userManager;
     }
 
-    public async Task<IdentityUser?> GetUserAsync(string id, CancellationToken cancellationToken = default)
+    public async Task<IdentityUserDto?> GetUserAsync(string id, CancellationToken cancellationToken = default)
     {
         var user = await _userManager.FindByIdAsync(id);
         if (user is null) return null;
-        return new IdentityUser
+        return new IdentityUserDto
         {
             Id = user.Id,
             Email = user.Email,

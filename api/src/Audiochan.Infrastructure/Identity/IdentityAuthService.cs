@@ -5,9 +5,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Auth;
+using Audiochan.Core.Features.Auth.Errors;
 using Audiochan.Core.Features.Auth.Models;
+using Audiochan.Core.Features.Auth.Results;
 using Audiochan.Core.Persistence;
-using Audiochan.Core.Security;
+using Audiochan.Core.Services;
 using Audiochan.Infrastructure.Identity.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -35,8 +37,7 @@ public class IdentityAuthService : IAuthService
 
         if (user is null)
         {
-            // TODO: Create custom exception for invalid login.
-            throw new UnauthorizedAccessException();
+            return new LoginWithPasswordFailed();
         }
 
         var appUser = await dbContext.Users.FirstOrDefaultAsync(x => x.IdentityId == user.Id, cancellationToken);
@@ -46,7 +47,7 @@ public class IdentityAuthService : IAuthService
         var claims = GetClaims(user, appUser);
         var token = _tokenService.GenerateAccessToken(claims);
 
-        return new LoginResult(token);
+        return new AuthTokenResult(token);
     }
 
     private IEnumerable<Claim> GetClaims(IdUser user, User? appUser)

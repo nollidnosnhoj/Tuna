@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Security.Claims;
 
-namespace Audiochan.Core.Security;
+namespace Audiochan.Core.Services;
 
 public interface ITokenService
 {

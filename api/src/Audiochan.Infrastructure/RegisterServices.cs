@@ -1,7 +1,6 @@
 ﻿using Amazon.S3;
 using Audiochan.Core.Features.Auth;
 using Audiochan.Core.Persistence;
-using Audiochan.Core.Security;
 using Audiochan.Core.Services;
 using Audiochan.Infrastructure.Persistence;
 using Audiochan.Infrastructure.Identity;

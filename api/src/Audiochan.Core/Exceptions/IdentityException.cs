@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Identity;
 
-namespace Audiochan.Core.Features.Auth.Exceptions;
+namespace Audiochan.Core.Exceptions;
 
 public class IdentityException : Exception
 {

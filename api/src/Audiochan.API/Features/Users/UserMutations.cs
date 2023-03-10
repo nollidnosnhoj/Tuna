@@ -7,7 +7,6 @@ using Audiochan.API.Errors;
 using Audiochan.API.Features.Users.Errors;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Exceptions;
-using Audiochan.Core.Features.Auth.Exceptions;
 using Audiochan.Core.Features.Upload.Models;
 using Audiochan.Core.Features.Users.Commands;
 using Audiochan.Core.Features.Users.Models;

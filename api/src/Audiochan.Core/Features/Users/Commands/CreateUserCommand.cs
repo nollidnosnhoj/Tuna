@@ -6,6 +6,7 @@ using Audiochan.Core.Features.Auth;
 using Audiochan.Core.Features.Users.Errors;
 using Audiochan.Core.Features.Users.Models;
 using Audiochan.Core.Persistence;
+using Audiochan.Core.Services;
 using MediatR;
 using OneOf;
 

@@ -1,6 +1,6 @@
 ﻿namespace Audiochan.Core.Features.Auth.Models;
 
-public class IdentityUser
+public class IdentityUserDto
 {
     public string Id { get; init; } = default!;
     public string? UserName { get; init; }

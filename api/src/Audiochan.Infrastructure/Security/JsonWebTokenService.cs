@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using Audiochan.Core.Security;
+using Audiochan.Core.Services;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Audiochan.Infrastructure.Security;
