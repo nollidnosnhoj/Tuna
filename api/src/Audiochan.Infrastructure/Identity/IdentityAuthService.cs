@@ -50,6 +50,12 @@ public class IdentityAuthService : IAuthService
         return new AuthTokenResult(token);
     }
 
+    public Task RevokeRefreshTokenAsync(string refreshToken, CancellationToken cancellationToken = default)
+    {
+        // TODO: Add implementation for revoking refresh token.
+        return Task.CompletedTask;
+    }
+
     private IEnumerable<Claim> GetClaims(IdUser user, User? appUser)
     {
         var claims = new List<Claim>

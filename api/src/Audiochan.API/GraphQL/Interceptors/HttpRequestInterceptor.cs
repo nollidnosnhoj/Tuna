@@ -4,7 +4,7 @@ using HotChocolate.AspNetCore;
 using HotChocolate.Execution;
 using Microsoft.AspNetCore.Http;
 
-namespace Audiochan.API.Interceptors;
+namespace Audiochan.API.GraphQL.Interceptors;
 
 public class HttpRequestInterceptor : DefaultHttpRequestInterceptor
 {

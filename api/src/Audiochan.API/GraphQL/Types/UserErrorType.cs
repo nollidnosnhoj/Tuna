@@ -1,7 +1,7 @@
 ﻿using Audiochan.Shared.Models;
 using HotChocolate.Types;
 
-namespace Audiochan.API.Types;
+namespace Audiochan.API.GraphQL.Types;
 
 public class UserErrorType : InterfaceType<IUserError>
 {

@@ -1,6 +1,6 @@
 ﻿using Audiochan.API.Features.Audios;
 using Audiochan.API.Features.Users;
-using Audiochan.API.Types;
+using Audiochan.API.GraphQL.Types;
 using Audiochan.Core.Persistence;
 using HashidsNet;
 using HotChocolate.Data;

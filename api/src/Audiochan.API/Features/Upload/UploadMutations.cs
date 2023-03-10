@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.API.Errors;
+using Audiochan.API.GraphQL.Errors;
 using Audiochan.Shared.Extensions;
 using Audiochan.Core.Features.Upload.Commands;
 using Audiochan.Core.Features.Upload.Models;

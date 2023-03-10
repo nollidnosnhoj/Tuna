@@ -4,7 +4,7 @@ using Audiochan.Shared.Models;
 using FluentValidation;
 using HotChocolate.Types;
 
-namespace Audiochan.API.Errors;
+namespace Audiochan.API.GraphQL.Errors;
 
 public record FieldError(string Field, string Message);
 
