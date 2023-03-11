@@ -21,7 +21,9 @@ A full-stack application where artists can upload music and share.
 
 ### Frontend
 
-- Undecided
+- Next.js
+- Mantine
+- React Relay
 
 ## How to build
 
@@ -31,7 +33,7 @@ TBA
 
 ### Backend
 
-The backend (ASP.NET Core application) contains unit and integration tests. The integration tests do require Docker in your machine, but nothing else.
+TBA
 
 ### Frontend
 
