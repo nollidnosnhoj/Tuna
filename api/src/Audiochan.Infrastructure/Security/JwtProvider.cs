@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using Audiochan.Core.Services;
 using Microsoft.Extensions.Options;
@@ -31,5 +32,10 @@ public class JwtProvider : ITokenProvider
         );
         var tokenString = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
         return tokenString;
+    }
+
+    public string GenerateRefreshToken()
+    {
+        return Convert.ToString(RandomNumberGenerator.GetBytes(16)) + "";
     }
 }

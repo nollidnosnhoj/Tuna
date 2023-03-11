@@ -7,4 +7,5 @@ namespace Audiochan.Core.Services;
 public interface ITokenProvider
 {
     string GenerateAccessToken(IEnumerable<Claim> claims, DateTime expiration);
+    string GenerateRefreshToken();
 }

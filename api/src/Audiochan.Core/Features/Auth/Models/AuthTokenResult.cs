@@ -1,3 +1,5 @@
-﻿namespace Audiochan.Core.Features.Auth.Models;
+﻿using System;
 
-public record AuthTokenResult(string Token);
+namespace Audiochan.Core.Features.Auth.Models;
+
+public record AuthTokenResult(string AccessToken, string RefreshToken, DateTime ExpiresAt);
