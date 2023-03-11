@@ -83,8 +83,8 @@ public static class RegisterServices
                 options.Password.RequireNonAlphanumeric = false;
             })
             .AddEntityFrameworkStores<IdentityDbContext>();
-        services.AddScoped<IAuthService, IdentityAuthService>();
-        services.AddScoped<IIdentityService, IdentityUserService>();
+        services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IIdentityService, UserService>();
         return services;
     }
 }

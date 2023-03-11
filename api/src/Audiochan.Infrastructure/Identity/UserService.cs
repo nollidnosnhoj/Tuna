@@ -10,11 +10,11 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Audiochan.Infrastructure.Identity;
 
-public class IdentityUserService : IIdentityService
+public class UserService : IIdentityService
 {
     private readonly UserManager<AudiochanIdentityUser> _userManager;
 
-    public IdentityUserService(UserManager<AudiochanIdentityUser> userManager)
+    public UserService(UserManager<AudiochanIdentityUser> userManager)
     {
         _userManager = userManager;
     }

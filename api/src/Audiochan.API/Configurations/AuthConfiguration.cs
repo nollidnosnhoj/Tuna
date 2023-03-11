@@ -17,7 +17,7 @@ namespace Audiochan.API.Configurations
             services.ConfigureOptions<JwtConfigureOptions>();
             services.ConfigureOptions<JwtBearerConfigureOptions>();
             
-            services.AddTransient<IAuthService, IdentityAuthService>();
+            services.AddTransient<IAuthService, AuthService>();
 
             return services;
         }

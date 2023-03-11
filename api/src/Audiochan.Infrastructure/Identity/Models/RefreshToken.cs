@@ -9,10 +9,9 @@ public class RefreshToken
         
     }
     
-    public RefreshToken(string token, string userId, string? createdByIp, DateTime createdAt, DateTime expiresAt)
+    public RefreshToken(string token, string? createdByIp, DateTime createdAt, DateTime expiresAt)
     {
         Token = token;
-        UserId = userId;
         CreatedByIp = createdByIp;
         CreatedAt = createdAt;
         ExpiresAt = expiresAt;
@@ -33,7 +32,7 @@ public class RefreshToken
     public string? ReplacedByToken { get; set; }
     public string? ReasonRevoked { get; private set; }
     
-    public void Revoke(DateTime revokedAt, string? revokedByIp, string reasonRevoked)
+    public void Revoke(DateTime revokedAt, string? revokedByIp, string reasonRevoked, string? replacedByToken = null)
     {
         if (IsRevoked)
             return;
@@ -42,5 +41,6 @@ public class RefreshToken
         RevokedAt = revokedAt;
         RevokedByIp = revokedByIp;
         ReasonRevoked = reasonRevoked;
+        ReplacedByToken = replacedByToken;
     }
 }
