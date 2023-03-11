@@ -2,22 +2,31 @@
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Text;
 using Audiochan.Core.Services;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Audiochan.Infrastructure.Security;
 
-public class JsonWebTokenService : ITokenService
+public class JwtProvider : ITokenProvider
 {
-    public string GenerateAccessToken(IEnumerable<Claim> claims)
+    private readonly JwtOptions _options;
+
+    public JwtProvider(IOptions<JwtOptions> options)
     {
-        var secret = new SymmetricSecurityKey("audiochan_secretkey"u8.ToArray());   // TODO: add key to configuration
+        _options = options.Value;
+    }
+    
+    public string GenerateAccessToken(IEnumerable<Claim> claims, DateTime expiration)
+    {
+        var secret = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.Secret));
         var signingCredentials = new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
         var tokenOptions = new JwtSecurityToken(
-            issuer: "http://localhost:5000",    // TODO: add to configuration
-            audience: "http://localhost:5000",  // TODO: add to configuration
+            issuer: _options.Issuer,
+            audience: _options.Audience,
             claims: claims,
-            expires: DateTime.UtcNow.AddHours(1),
+            expires: expiration,
             signingCredentials: signingCredentials
         );
         var tokenString = new JwtSecurityTokenHandler().WriteToken(tokenOptions);

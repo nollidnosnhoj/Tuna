@@ -12,9 +12,9 @@ namespace Audiochan.Infrastructure.Identity;
 
 public class IdentityUserService : IIdentityService
 {
-    private readonly UserManager<IdUser> _userManager;
+    private readonly UserManager<AudiochanIdentityUser> _userManager;
 
-    public IdentityUserService(UserManager<IdUser> userManager)
+    public IdentityUserService(UserManager<AudiochanIdentityUser> userManager)
     {
         _userManager = userManager;
     }
@@ -33,7 +33,7 @@ public class IdentityUserService : IIdentityService
 
     public async Task<NewUserIdentityResult> CreateUserAsync(string userName, string email, string password, CancellationToken cancellationToken = default)
     {
-        var user = new IdUser(userName)
+        var user = new AudiochanIdentityUser(userName)
         {
             Email = email
         };

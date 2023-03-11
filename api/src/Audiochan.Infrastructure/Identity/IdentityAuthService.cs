@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.Core;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Features.Auth;
 using Audiochan.Core.Features.Auth.Errors;
@@ -19,14 +20,14 @@ namespace Audiochan.Infrastructure.Identity;
 
 public class IdentityAuthService : IAuthService
 {
-    private readonly UserManager<IdUser> _userManager;
-    private readonly ITokenService _tokenService;
+    private readonly UserManager<AudiochanIdentityUser> _userManager;
+    private readonly ITokenProvider _tokenProvider;
     private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
 
-    public IdentityAuthService(UserManager<IdUser> userManager, ITokenService tokenService, IDbContextFactory<ApplicationDbContext> dbContextFactory)
+    public IdentityAuthService(UserManager<AudiochanIdentityUser> userManager, ITokenProvider tokenProvider, IDbContextFactory<ApplicationDbContext> dbContextFactory)
     {
         _userManager = userManager;
-        _tokenService = tokenService;
+        _tokenProvider = tokenProvider;
         _dbContextFactory = dbContextFactory;
     }
 
@@ -45,7 +46,7 @@ public class IdentityAuthService : IAuthService
         await EnsurePasswordIsValidAsync(user, password);
 
         var claims = GetClaims(user, appUser);
-        var token = _tokenService.GenerateAccessToken(claims);
+        var token = _tokenProvider.GenerateAccessToken(claims, DateTime.UtcNow.AddMinutes(30));
 
         return new AuthTokenResult(token);
     }
@@ -56,24 +57,24 @@ public class IdentityAuthService : IAuthService
         return Task.CompletedTask;
     }
 
-    private IEnumerable<Claim> GetClaims(IdUser user, User? appUser)
+    private IEnumerable<Claim> GetClaims(AudiochanIdentityUser user, User? appUser)
     {
         var claims = new List<Claim>
         {
             new(JwtRegisteredClaimNames.Sub, user.Id),
-            new("hasProfile", (appUser is not null).ToString())
+            new(ClaimNames.HasProfile, (appUser is not null).ToString())
         };
         
         if (appUser is not null)
         {
-            claims.Add(new Claim("userId", appUser.Id.ToString()));
+            claims.Add(new Claim(ClaimNames.UserId, appUser.Id.ToString()));
             claims.Add(new Claim(JwtRegisteredClaimNames.Name, appUser.UserName));
         }
 
         return claims;
     }
 
-    private async Task EnsurePasswordIsValidAsync(IdUser user, string password)
+    private async Task EnsurePasswordIsValidAsync(AudiochanIdentityUser user, string password)
     {
         var isPasswordValid = await _userManager.CheckPasswordAsync(user, password);
 

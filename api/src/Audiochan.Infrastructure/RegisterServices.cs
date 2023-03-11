@@ -29,7 +29,7 @@ public static class RegisterServices
         services.AddTransient<IDateTimeProvider, DateTimeProvider>();
         services.AddTransient<IUnitOfWork, UnitOfWork>();
         services.AddIdentity(configuration);
-        services.AddScoped<ITokenService, JsonWebTokenService>();
+        services.AddScoped<ITokenProvider, JwtProvider>();
         return services;
     }
 
@@ -70,7 +70,7 @@ public static class RegisterServices
         {
             options.UseNpgsql(configuration.GetConnectionString("IdentityDb"));
         });
-        services.AddIdentity<IdUser, IdentityRole>(options =>
+        services.AddIdentity<AudiochanIdentityUser, IdentityRole>(options =>
             {
                 options.User.AllowedUserNameCharacters =
                     "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-_";

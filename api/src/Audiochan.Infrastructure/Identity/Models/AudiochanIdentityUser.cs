@@ -2,9 +2,9 @@
 
 namespace Audiochan.Infrastructure.Identity.Models;
 
-public class IdUser : IdentityUser
+public class AudiochanIdentityUser : IdentityUser
 {
-    public IdUser(string userName) : base(userName)
+    public AudiochanIdentityUser(string userName) : base(userName)
     {
         
     }
