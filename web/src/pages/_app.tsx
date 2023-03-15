@@ -1,9 +1,8 @@
-import { MantineProvider } from "@mantine/core";
 import { RelayEnvironmentProvider } from "react-relay/hooks";
 import { getInitialPreloadedQuery, getRelayProps } from "relay-nextjs/app";
 import { getClientEnvironment } from "~/lib/relay";
 import type { AppProps } from "next/app";
-import { theme } from "~/lib/theme";
+import "~/styles/globals.css";
 
 const clientEnv = getClientEnvironment();
 const initialPreloadedQuery = getInitialPreloadedQuery({
@@ -15,11 +14,9 @@ function App({ Component, pageProps }: AppProps) {
   const env = relayProps.preloadedQuery?.environment ?? clientEnv!;
 
   return (
-    <MantineProvider withGlobalStyles withNormalizeCSS theme={theme}>
-      <RelayEnvironmentProvider environment={env}>
-        <Component {...pageProps} {...relayProps} />
-      </RelayEnvironmentProvider>
-    </MantineProvider>
+    <RelayEnvironmentProvider environment={env}>
+      <Component {...pageProps} {...relayProps} />
+    </RelayEnvironmentProvider>
   );
 }
 

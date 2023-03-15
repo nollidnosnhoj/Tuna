@@ -6,7 +6,6 @@ import NextDocument, {
   Main,
   NextScript,
 } from "next/document";
-import { createGetInitialProps } from "@mantine/next";
 
 interface DocumentProps {
   relayDocument: RelayDocument;
@@ -22,7 +21,7 @@ class Document extends NextDocument<DocumentProps> {
         enhanceApp: (App) => relayDocument.enhance(App),
       });
 
-    const initialProps = await createGetInitialProps()(ctx);
+    const initialProps = await NextDocument.getInitialProps(ctx);
 
     return {
       ...initialProps,
