@@ -31,7 +31,7 @@ public class UserService : IIdentityService
         };
     }
 
-    public async Task<NewUserIdentityResult> CreateUserAsync(string userName, string email, string password, CancellationToken cancellationToken = default)
+    public async Task<NewIdentityUserResult> CreateUserAsync(string userName, string email, string password, CancellationToken cancellationToken = default)
     {
         var user = new AudiochanIdentityUser(userName)
         {
@@ -41,10 +41,10 @@ public class UserService : IIdentityService
 
         if (!result.Succeeded)
         {
-            return (NewUserIdentityResult)IdentityResult.Failed(result.Errors.ToArray());
+            return (NewIdentityUserResult)IdentityResult.Failed(result.Errors.ToArray());
         }
 
-        return NewUserIdentityResult.Success(user.Id);
+        return NewIdentityUserResult.Success(user.Id);
     }
 
     public async Task<IdentityResult> UpdateUserNameAsync(string identityId, string userName, CancellationToken cancellationToken = default)

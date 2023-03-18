@@ -7,7 +7,7 @@ namespace Audiochan.Core.Features.Auth;
 
 public interface IAuthService
 {
-    Task<LoginResult> LoginWithPasswordAsync(string login, string password, string? ipAddress, CancellationToken cancellationToken = default);
-    Task<RefreshTokenResult> RefreshTokenAsync(string token,  string? ipAddress, CancellationToken cancellationToken = default);
-    Task<RevokeRefreshTokenResult> RevokeRefreshTokenAsync(string token, string? ipAddress, CancellationToken? cancellationToken = default);
+    Task<AuthServiceResult<AuthServiceTokens>> LoginWithPasswordAsync(string login, string password, string? ipAddress, CancellationToken cancellationToken = default);
+    Task<AuthServiceResult<AuthServiceTokens>> RefreshTokenAsync(string token,  string? ipAddress, CancellationToken cancellationToken = default);
+    Task<AuthServiceResult> RevokeRefreshTokenAsync(string token, string? ipAddress, CancellationToken? cancellationToken = default);
 }

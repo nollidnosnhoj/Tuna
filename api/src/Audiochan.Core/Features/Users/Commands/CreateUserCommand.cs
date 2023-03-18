@@ -27,7 +27,7 @@ public class CreateUserCommand : ICommandRequest<CreateUserCommandResult>
 }
 
 [GenerateOneOf]
-public partial class CreateUserCommandResult : OneOfBase<UserDto, IdentityServiceError>
+public partial class CreateUserCommandResult : OneOfBase<CurrentUserDto, IdentityServiceError>
 {
     
 }
@@ -38,6 +38,11 @@ public partial class CreateUserCommandResult : OneOfBase<UserDto, IdentityServic
 //     {
 //     }
 // }
+
+public class CreateUserCommandResponse
+{
+    
+}
 
 public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, CreateUserCommandResult>
 {
@@ -70,9 +75,10 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Creat
         await _unitOfWork.Users.AddAsync(user, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return new UserDto
+        return new CurrentUserDto
         {
             Id = user.Id,
+            IdentityId = identityResult.IdentityId,
             Picture = user.ImageId,
             UserName = user.UserName
         };

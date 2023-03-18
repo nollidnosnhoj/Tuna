@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Audiochan.API.Features.Auth.Extensions;
 using Audiochan.API.Features.Auth.Models;
 using Audiochan.Core.Features.Auth;
 using Audiochan.Core.Features.Auth.Models;
@@ -26,7 +27,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("login-with-password", Name = "Login")]
-    [ProducesResponseType(typeof(AuthTokenResult), 200)]
+    [ProducesResponseType(typeof(AuthServiceTokens), 200)]
     [ProducesResponseType(402)]
     [SwaggerOperation(
         Summary = "Login using your credentials.",
@@ -37,7 +38,7 @@ public class AuthController : ControllerBase
     {
         var result = await _authService.LoginWithPasswordAsync(request.Login, request.Password, IpAddress(), cancellationToken);
 
-        return result.Match<IActionResult>(
+        return result.ToActionResult(
             authTokenResult =>
             {
                 SetRefreshTokenCookie(authTokenResult.RefreshToken);
@@ -47,7 +48,7 @@ public class AuthController : ControllerBase
     }
     
     [HttpPost("refreshToken", Name = "RefreshToken")]
-    [ProducesResponseType(typeof(AuthTokenResult), 200)]
+    [ProducesResponseType(typeof(AuthServiceTokens), 200)]
     [ProducesResponseType(402)]
     [SwaggerOperation(
         Summary = "Refresh Access token.",
@@ -67,13 +68,12 @@ public class AuthController : ControllerBase
 
         var result = await _authService.RefreshTokenAsync(refreshToken, IpAddress(), cancellationToken);
 
-        return result.Match<IActionResult>(
+        return result.ToActionResult(
             authTokenResult =>
             {
                 SetRefreshTokenCookie(authTokenResult.RefreshToken);
                 return new OkObjectResult(authTokenResult);
             },
-            _ => new UnauthorizedResult(),
             _ => new UnauthorizedResult());
     }
 

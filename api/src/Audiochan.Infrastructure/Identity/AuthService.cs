@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core;
 using Audiochan.Core.Features.Auth;
-using Audiochan.Core.Features.Auth.Errors;
 using Audiochan.Core.Features.Auth.Models;
 using Audiochan.Core.Features.Auth.Results;
 using Audiochan.Core.Persistence;
@@ -33,14 +32,18 @@ public class AuthService : IAuthService
         _dateTimeProvider = dateTimeProvider;
     }
 
-    public async Task<LoginResult> LoginWithPasswordAsync(string login, string password, string? ipAddress = null, CancellationToken cancellationToken = default)
+    public async Task<AuthServiceResult<AuthServiceTokens>> LoginWithPasswordAsync(string login, string password, string? ipAddress = null, CancellationToken cancellationToken = default)
     {
         var user = await _userManager.Users
             .Include(x => x.RefreshTokens)
             .Where(u => u.UserName == login)
             .SingleOrDefaultAsync(cancellationToken);
 
-        if (user is null) return new LoginWithPasswordFailed();
+        if (user is null)
+        {
+            return AuthServiceResult<AuthServiceTokens>.Failed(
+                new AuthServiceError("LoginFailed","Invalid username or password."));
+        }
 
         await EnsurePasswordIsValidAsync(user, password);
 
@@ -54,13 +57,15 @@ public class AuthService : IAuthService
         RemoveOldRefreshTokens(user);
         await _userManager.UpdateAsync(user);
 
-        return new AuthTokenResult(token, refreshToken.Token, expirationDate);
+        return new AuthServiceTokens(token, refreshToken.Token, expirationDate, user.ToIdentityUserDto());
     }
 
-    public async Task<RefreshTokenResult> RefreshTokenAsync(string token, string? ipAddress, CancellationToken cancellationToken = default)
+    public async Task<AuthServiceResult<AuthServiceTokens>> RefreshTokenAsync(string token, string? ipAddress, CancellationToken cancellationToken = default)
     {
         var user = await _userManager.FindUserByRefreshTokenAsync(token);
-        if (user is null) return new IdentityUserNotFound();
+        
+        if (user is null) 
+            return new AuthServiceError("RefreshTokenNotFound", "Refresh token not found.");
         
         var refreshToken = user.RefreshTokens.First(x => x.Token == token);
         
@@ -71,7 +76,8 @@ public class AuthService : IAuthService
             await _userManager.UpdateAsync(user);
         }
         
-        if (!refreshToken.IsActive) return new RefreshTokenExpired();
+        if (!refreshToken.IsActive) 
+            return new AuthServiceError("RefreshTokenExpired", "Refresh token expired.");
 
         var newRefreshToken = RotateRefreshToken(refreshToken, ipAddress);
         user.RefreshTokens.Add(newRefreshToken);
@@ -79,18 +85,18 @@ public class AuthService : IAuthService
         
         var (accessToken, expirationDate) = await GenerateAccessToken(user, cancellationToken);
         
-        return new AuthTokenResult(accessToken, newRefreshToken.Token, expirationDate);
+        return new AuthServiceTokens(accessToken, newRefreshToken.Token, expirationDate, user.ToIdentityUserDto());
     }
 
-    public async Task<RevokeRefreshTokenResult> RevokeRefreshTokenAsync(string token, string? ipAddress, CancellationToken? cancellationToken = default)
+    public async Task<AuthServiceResult> RevokeRefreshTokenAsync(string token, string? ipAddress, CancellationToken? cancellationToken = default)
     {
         var user = await _userManager.FindUserByRefreshTokenAsync(token);
-        if (user is null) return new IdentityUserNotFound();
+        if (user is null) return new AuthServiceError("RefreshTokenNotFound", "Refresh token not found.");
         var refreshTokenModel = user.RefreshTokens.First(x => x.Token == token);
-        if (!refreshTokenModel.IsActive) return false;
+        if (!refreshTokenModel.IsActive) return new AuthServiceError("RefreshTokenExpired", "Refresh token expired.");
         refreshTokenModel.Revoke(_dateTimeProvider.Now, ipAddress, "Log out");
         await _userManager.UpdateAsync(user);
-        return true;
+        return AuthServiceResult.Succeed();
     }
 
     private RefreshToken RotateRefreshToken(RefreshToken refreshToken, string? ipAddress)
