@@ -1,0 +1,387 @@
+﻿schema {
+  query: Query
+  mutation: Mutation
+}
+
+"The node interface is implemented by entities that have a global unique identifier."
+interface Node {
+  id: ID!
+}
+
+interface UserError {
+  code: String!
+  message: String!
+}
+
+type Audio implements Node {
+  id: ID!
+  title: String!
+  description: String!
+  duration: Decimal!
+  size: Long!
+  createdAt: DateTime!
+  updatedAt: DateTime
+  user: User!
+  slug: String!
+  streamUrl: String!
+  imageUrl: String
+}
+
+type AudioNotFoundError implements UserError {
+  id: ID!
+  code: String!
+  message: String!
+}
+
+type AudioNotUploadedError implements UserError {
+  code: String!
+  message: String!
+}
+
+type CannotFollowYourselfError implements UserError {
+  code: String!
+  message: String!
+}
+
+"Information about the offset pagination."
+type CollectionSegmentInfo {
+  "Indicates whether more items exist following the set defined by the clients arguments."
+  hasNextPage: Boolean!
+  "Indicates whether more items exist prior the set defined by the clients arguments."
+  hasPreviousPage: Boolean!
+}
+
+type CreateAudioPayload {
+  createAudioResult: CreateAudioResult
+  errors: [CreateAudioError!]
+}
+
+type CreateAudioPicturePayload {
+  createUploadResult: CreateUploadResult
+  errors: [CreateAudioPictureError!]
+}
+
+type CreateAudioResult {
+  id: Long!
+  uploadUrl: String!
+}
+
+type CreateUploadResult {
+  uploadId: String!
+  uploadUrl: String!
+}
+
+type CreateUserPicturePayload {
+  url: CreateUploadResult
+  errors: [CreateUserPictureError!]
+}
+
+type FavoriteAudioPayload {
+  favorited: Boolean
+  errors: [FavoriteAudioError!]
+}
+
+type FieldError {
+  field: String!
+  message: String!
+}
+
+type FollowUserPayload {
+  followed: Boolean
+  errors: [FollowUserError!]
+}
+
+"A segment of a collection."
+type FollowersCollectionSegment {
+  "Information to aid in pagination."
+  pageInfo: CollectionSegmentInfo!
+  "A flattened list of the items."
+  items: [User!]
+}
+
+"A segment of a collection."
+type FollowingsCollectionSegment {
+  "Information to aid in pagination."
+  pageInfo: CollectionSegmentInfo!
+  "A flattened list of the items."
+  items: [User!]
+}
+
+type IdentityError implements UserError {
+  code: String!
+  message: String!
+}
+
+type Mutation {
+  createAudio(input: CreateAudioInput!): CreateAudioPayload! @authorize
+  publishAudio(input: PublishAudioInput!): PublishAudioPayload! @authorize
+  updateAudio(input: UpdateAudioInput!): UpdateAudioPayload! @authorize
+  createAudioPicture(input: CreateAudioPictureInput!): CreateAudioPicturePayload! @authorize
+  updateAudioPicture(input: UpdateAudioPictureInput!): UpdateAudioPicturePayload! @authorize
+  removeAudio(input: RemoveAudioInput!): RemoveAudioPayload! @authorize
+  removeAudioPicture(input: RemoveAudioPictureInput!): RemoveAudioPicturePayload! @authorize
+  favoriteAudio(input: FavoriteAudioInput!): FavoriteAudioPayload! @authorize
+  unfavoriteAudio(input: UnfavoriteAudioInput!): UnfavoriteAudioPayload! @authorize
+  updateUser(input: UpdateUserInput!): UpdateUserPayload! @authorize
+  createUserPicture(input: CreateUserPictureInput!): CreateUserPicturePayload! @authorize
+  updateUserPicture(input: UpdateUserPictureInput!): UpdateUserPicturePayload! @authorize
+  removeUserPicture(input: RemoveUserPictureInput!): RemoveUserPicturePayload! @authorize
+  updateUserName(input: UpdateUserNameInput!): UpdateUserNamePayload! @authorize
+  updatePassword(input: UpdatePasswordInput!): UpdatePasswordPayload! @authorize
+  updateEmail(input: UpdateEmailInput!): UpdateEmailPayload! @authorize
+  followUser(input: FollowUserInput!): FollowUserPayload! @authorize
+  unfollowUser(input: UnfollowUserInput!): UnfollowUserPayload! @authorize
+}
+
+type PublishAudioPayload {
+  audio: Audio
+  errors: [PublishAudioError!]
+}
+
+type Query {
+  "Fetches an object given its ID."
+  node("ID of the object." id: ID!): Node
+  "Lookup nodes by a list of IDs."
+  nodes("The list of node IDs." ids: [ID!]!): [Node]!
+  audio(slug: String!): Audio
+  userAudios(skip: Int take: Int userId: Long!): UserAudiosCollectionSegment
+  userFavoriteAudios(skip: Int take: Int userId: Long!): UserFavoriteAudiosCollectionSegment
+  user(id: Long!): User
+  followings(skip: Int take: Int observerId: Long!): FollowingsCollectionSegment
+  followers(skip: Int take: Int targetId: Long!): FollowersCollectionSegment
+}
+
+type RemoveAudioPayload {
+  removed: Boolean
+  errors: [RemoveAudioError!]
+}
+
+type RemoveAudioPicturePayload {
+  audioPictureRemoved: Boolean
+  errors: [RemoveAudioPictureError!]
+}
+
+type RemoveUserPicturePayload {
+  userPictureRemoved: Boolean
+  errors: [RemoveUserPictureError!]
+}
+
+type UnfavoriteAudioPayload {
+  favorited: Boolean
+  errors: [UnfavoriteAudioError!]
+}
+
+type UnfollowUserPayload {
+  followed: Boolean
+  errors: [UnfollowUserError!]
+}
+
+type UpdateAudioPayload {
+  audio: Audio
+  errors: [UpdateAudioError!]
+}
+
+type UpdateAudioPicturePayload {
+  url: String
+  errors: [UpdateAudioPictureError!]
+}
+
+type UpdateEmailPayload {
+  emailUpdated: Boolean
+  errors: [UpdateEmailError!]
+}
+
+type UpdatePasswordPayload {
+  passwordUpdated: Boolean
+  errors: [UpdatePasswordError!]
+}
+
+type UpdateUserNamePayload {
+  userUpdated: Boolean
+  errors: [UpdateUserNameError!]
+}
+
+type UpdateUserPayload {
+  user: User
+  errors: [UpdateUserError!]
+}
+
+type UpdateUserPicturePayload {
+  url: String
+  errors: [UpdateUserPictureError!]
+}
+
+type User implements Node {
+  id: ID!
+  userName: String!
+  imageUrl: String
+}
+
+"A segment of a collection."
+type UserAudiosCollectionSegment {
+  "Information to aid in pagination."
+  pageInfo: CollectionSegmentInfo!
+  "A flattened list of the items."
+  items: [Audio!]
+}
+
+"A segment of a collection."
+type UserFavoriteAudiosCollectionSegment {
+  "Information to aid in pagination."
+  pageInfo: CollectionSegmentInfo!
+  "A flattened list of the items."
+  items: [Audio!]
+}
+
+type UserNotFoundError implements UserError {
+  id: ID!
+  code: String!
+  message: String!
+}
+
+type ValidationError implements UserError {
+  fieldErrors: [FieldError!]!
+  code: String!
+  message: String!
+}
+
+union CreateAudioError = ValidationError
+
+union CreateAudioPictureError = ValidationError | AudioNotFoundError
+
+union CreateUserPictureError = ValidationError | UserNotFoundError
+
+union FavoriteAudioError = AudioNotFoundError
+
+union FollowUserError = UserNotFoundError | CannotFollowYourselfError
+
+union PublishAudioError = ValidationError | AudioNotFoundError | AudioNotUploadedError
+
+union RemoveAudioError = AudioNotFoundError
+
+union RemoveAudioPictureError = ValidationError | AudioNotFoundError
+
+union RemoveUserPictureError = ValidationError | UserNotFoundError
+
+union UnfavoriteAudioError = AudioNotFoundError
+
+union UnfollowUserError = UserNotFoundError | CannotFollowYourselfError
+
+union UpdateAudioError = ValidationError | AudioNotFoundError
+
+union UpdateAudioPictureError = ValidationError | AudioNotFoundError
+
+union UpdateEmailError = IdentityError
+
+union UpdatePasswordError = IdentityError
+
+union UpdateUserError = UserNotFoundError
+
+union UpdateUserNameError = IdentityError | UserNotFoundError
+
+union UpdateUserPictureError = ValidationError | UserNotFoundError
+
+input CreateAudioInput {
+  fileName: String!
+  fileSize: Long!
+}
+
+input CreateAudioPictureInput {
+  fileName: String!
+  fileSize: Long!
+}
+
+input CreateUserPictureInput {
+  fileName: String!
+  fileSize: Long!
+}
+
+input FavoriteAudioInput {
+  id: ID!
+}
+
+input FollowUserInput {
+  id: ID!
+}
+
+input PublishAudioInput {
+  id: ID!
+  duration: Decimal!
+  title: String!
+  description: String
+}
+
+input RemoveAudioInput {
+  id: ID!
+}
+
+input RemoveAudioPictureInput {
+  id: ID!
+}
+
+input RemoveUserPictureInput {
+  id: ID!
+}
+
+input UnfavoriteAudioInput {
+  id: ID!
+}
+
+input UnfollowUserInput {
+  id: ID!
+}
+
+input UpdateAudioInput {
+  id: ID!
+  title: String
+  description: String
+}
+
+input UpdateAudioPictureInput {
+  id: ID!
+  data: String!
+}
+
+input UpdateEmailInput {
+  email: String!
+}
+
+input UpdatePasswordInput {
+  newPassword: String!
+  currentPassword: String!
+}
+
+input UpdateUserInput {
+  id: ID!
+  displayName: String
+}
+
+input UpdateUserNameInput {
+  id: ID!
+  newUsername: String!
+}
+
+input UpdateUserPictureInput {
+  id: ID!
+  data: String!
+}
+
+enum ApplyPolicy {
+  BEFORE_RESOLVER
+  AFTER_RESOLVER
+  VALIDATION
+}
+
+directive @authorize("The name of the authorization policy that determines access to the annotated resource." policy: String "Roles that are allowed to access the annotated resource." roles: [String!] "Defines when when the authorize directive shall be applied.By default the authorize directives are applied during the validation phase." apply: ApplyPolicy! = VALIDATION) repeatable on OBJECT | FIELD_DEFINITION
+
+"The `@specifiedBy` directive is used within the type system definition language to provide a URL for specifying the behavior of custom scalar definitions."
+directive @specifiedBy("The specifiedBy URL points to a human-readable specification. This field will only read a result for scalar types." url: String!) on SCALAR
+
+"The `DateTime` scalar represents an ISO-8601 compliant date time type."
+scalar DateTime @specifiedBy(url: "https:\/\/www.graphql-scalars.com\/date-time")
+
+"The built-in `Decimal` scalar type."
+scalar Decimal
+
+"The `Long` scalar type represents non-fractional signed whole 64-bit numeric values. Long can represent values between -(2^63) and 2^63 - 1."
+scalar Long
