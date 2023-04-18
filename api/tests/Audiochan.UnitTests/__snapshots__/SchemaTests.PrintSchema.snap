@@ -19,8 +19,8 @@ type Audio implements Node {
   description: String!
   duration: Decimal!
   size: Long!
-  created: DateTime!
-  lastModified: DateTime
+  createdAt: DateTime!
+  updatedAt: DateTime
   user: User!
   slug: String!
   streamUrl: String!
@@ -29,6 +29,11 @@ type Audio implements Node {
 
 type AudioNotFoundError implements UserError {
   id: ID!
+  code: String!
+  message: String!
+}
+
+type AudioNotUploadedError implements UserError {
   code: String!
   message: String!
 }
@@ -47,8 +52,13 @@ type CollectionSegmentInfo {
 }
 
 type CreateAudioPayload {
-  audio: Audio
+  createAudioResult: CreateAudioResult
   errors: [CreateAudioError!]
+}
+
+type CreateAudioResult {
+  id: Long!
+  uploadUrl: String!
 }
 
 type FavoriteAudioPayload {
@@ -87,12 +97,9 @@ type IdentityError implements UserError {
   message: String!
 }
 
-type ImageUploadResult {
-  url: String
-}
-
 type Mutation {
   createAudio(input: CreateAudioInput!): CreateAudioPayload! @authorize
+  publishAudio(input: PublishAudioInput!): PublishAudioPayload! @authorize
   updateAudio(input: UpdateAudioInput!): UpdateAudioPayload! @authorize
   updateAudioPicture(input: UpdateAudioPictureInput!): UpdateAudioPicturePayload! @authorize
   removeAudio(input: RemoveAudioInput!): RemoveAudioPayload! @authorize
@@ -109,6 +116,11 @@ type Mutation {
   unfollowUser(input: UnfollowUserInput!): UnfollowUserPayload! @authorize
 }
 
+type PublishAudioPayload {
+  audio: Audio
+  errors: [PublishAudioError!]
+}
+
 type Query {
   "Fetches an object given its ID."
   node("ID of the object." id: ID!): Node
@@ -123,17 +135,17 @@ type Query {
 }
 
 type RemoveAudioPayload {
-  boolean: Boolean
+  removed: Boolean
   errors: [RemoveAudioError!]
 }
 
 type RemoveAudioPicturePayload {
-  imageUploadResult: ImageUploadResult
+  audioPictureRemoved: Boolean
   errors: [RemoveAudioPictureError!]
 }
 
 type RemoveUserPicturePayload {
-  imageUploadResult: ImageUploadResult
+  userPictureRemoved: Boolean
   errors: [RemoveUserPictureError!]
 }
 
@@ -153,22 +165,22 @@ type UpdateAudioPayload {
 }
 
 type UpdateAudioPicturePayload {
-  imageUploadResult: ImageUploadResult
+  url: String
   errors: [UpdateAudioPictureError!]
 }
 
 type UpdateEmailPayload {
-  success: Boolean
+  emailUpdated: Boolean
   errors: [UpdateEmailError!]
 }
 
 type UpdatePasswordPayload {
-  success: Boolean
+  passwordUpdated: Boolean
   errors: [UpdatePasswordError!]
 }
 
 type UpdateUserNamePayload {
-  success: Boolean
+  userUpdated: Boolean
   errors: [UpdateUserNameError!]
 }
 
@@ -178,7 +190,7 @@ type UpdateUserPayload {
 }
 
 type UpdateUserPicturePayload {
-  imageUploadResult: ImageUploadResult
+  url: String
   errors: [UpdateUserPictureError!]
 }
 
@@ -216,11 +228,13 @@ type ValidationError implements UserError {
   message: String!
 }
 
-union CreateAudioError = ValidationError | AudioNotFoundError
+union CreateAudioError = ValidationError
 
 union FavoriteAudioError = AudioNotFoundError
 
 union FollowUserError = UserNotFoundError | CannotFollowYourselfError
+
+union PublishAudioError = ValidationError | AudioNotFoundError | AudioNotUploadedError
 
 union RemoveAudioError = AudioNotFoundError
 
@@ -247,12 +261,8 @@ union UpdateUserNameError = IdentityError | UserNotFoundError
 union UpdateUserPictureError = ValidationError | UserNotFoundError
 
 input CreateAudioInput {
-  uploadId: String!
   fileName: String!
   fileSize: Long!
-  duration: Decimal!
-  title: String!
-  description: String
 }
 
 input FavoriteAudioInput {
@@ -261,6 +271,13 @@ input FavoriteAudioInput {
 
 input FollowUserInput {
   id: ID!
+}
+
+input PublishAudioInput {
+  id: ID!
+  duration: Decimal!
+  title: String!
+  description: String
 }
 
 input RemoveAudioInput {

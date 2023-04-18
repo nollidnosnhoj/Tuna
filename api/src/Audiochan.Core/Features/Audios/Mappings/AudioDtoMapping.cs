@@ -12,12 +12,12 @@ public static class Mappings
         {
             Id = audio.Id,
             Description = audio.Description ?? "",
-            ObjectKey = audio.ObjectKey,
+            ObjectKey = audio.FileId,
             CreatedAt = audio.CreatedAt,
             UpdatedAt = audio.UpdatedAt,
             Duration = audio.Duration,
             Picture = audio.ImageId,
-            Size = audio.Size,
+            Size = audio.FileSize,
             Title = audio.Title,
             UserId = audio.UserId
         });
@@ -29,12 +29,12 @@ public static class Mappings
         {
             Id = audio.Id,
             Description = audio.Description ?? "",
-            ObjectKey = audio.ObjectKey,
+            ObjectKey = audio.FileId,
             CreatedAt = audio.CreatedAt,
             UpdatedAt = audio.UpdatedAt,
             Duration = audio.Duration,
             Picture = audio.ImageId,
-            Size = audio.Size,
+            Size = audio.FileSize,
             Title = audio.Title,
             UserId = audio.UserId
         };

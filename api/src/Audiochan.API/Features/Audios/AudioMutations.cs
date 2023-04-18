@@ -8,7 +8,6 @@ using Audiochan.Core.Entities;
 using Audiochan.Core.Exceptions;
 using Audiochan.Core.Features.Audios.Commands;
 using Audiochan.Core.Features.Audios.Models;
-using Audiochan.Core.Features.Upload.Models;
 using HotChocolate.Authorization;
 using HotChocolate.Language;
 using HotChocolate.Types;
@@ -22,11 +21,24 @@ public class AudioMutations
 {
     [Authorize]
     [UseValidationError]
-    [Error(typeof(AudioNotFoundError))]
-    public async Task<AudioDto> CreateAudioAsync(
-        string uploadId,
+    public async Task<CreateAudioResult> CreateAudioAsync(
         string fileName,
         long fileSize,
+        IMediator mediator,
+        ClaimsPrincipal claimsPrincipal,
+        CancellationToken cancellationToken)
+    {
+        var userId = claimsPrincipal.GetUserId();
+        var command = new CreateAudioCommand(fileName, fileSize, userId);
+        return await mediator.Send(command, cancellationToken);
+    }
+    
+    [Authorize]
+    [UseValidationError]
+    [Error(typeof(AudioNotFoundError))]
+    [Error(typeof(AudioNotUploadedError))]
+    public async Task<AudioDto> PublishAudioAsync(
+        [ID<AudioDto>] long id,
         decimal duration,
         string title,
         string? description,
@@ -34,17 +46,16 @@ public class AudioMutations
         ClaimsPrincipal claimsPrincipal,
         CancellationToken cancellationToken)
     {
-        var command = new CreateAudioCommand(
-            uploadId,
-            fileName,
-            fileSize,
-            duration,
+        var command = new PublishAudioCommand(
+            id,
             title,
             description ?? "",
+            duration,
             claimsPrincipal.GetUserId());
         var result = await mediator.Send(command, cancellationToken);
         return result.Match(
             audio => audio,
+            _ => throw new EntityNotFoundException<Audio, long>(id),
             _ => throw new AudioNotUploadedException());
     }
 
@@ -68,9 +79,10 @@ public class AudioMutations
     }
     
     [Authorize]
+    [UseMutationConvention(PayloadFieldName = "url")]
     [UseValidationError]
     [Error(typeof(AudioNotFoundError))]
-    public async Task<ImageUploadResult> UpdateAudioPictureAsync(
+    public async Task<string> UpdateAudioPictureAsync(
         [ID(nameof(AudioDto))] long id,
         string data,
         IMediator mediator,
@@ -86,6 +98,7 @@ public class AudioMutations
     }
 
     [Authorize]
+    [UseMutationConvention(PayloadFieldName = "removed")]
     [Error(typeof(AudioNotFoundError))]
     public async Task<bool> RemoveAudioAsync(
         [ID(nameof(AudioDto))] long id,
@@ -102,9 +115,10 @@ public class AudioMutations
     }
 
     [Authorize]
+    [UseMutationConvention(PayloadFieldName = "audioPictureRemoved")]
     [UseValidationError]
     [Error(typeof(AudioNotFoundError))]
-    public async Task<ImageUploadResult> RemoveAudioPictureAsync(
+    public async Task<bool> RemoveAudioPictureAsync(
         [ID(nameof(AudioDto))] long id,
         IMediator mediator,
         ClaimsPrincipal claimsPrincipal,
@@ -113,7 +127,7 @@ public class AudioMutations
         var command = new UpdateAudioPictureCommand(id, null, claimsPrincipal);
         var result = await mediator.Send(command, cancellationToken);
         return result.Match(
-            res => res,
+            string.IsNullOrEmpty,
             _ => throw new EntityNotFoundException<Audio, long>(id),
             _ => throw new EntityNotFoundException<Audio, long>(id));
     }

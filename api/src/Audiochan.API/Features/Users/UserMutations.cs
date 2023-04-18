@@ -7,7 +7,6 @@ using Audiochan.API.Features.Users.Errors;
 using Audiochan.API.GraphQL.Errors;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Exceptions;
-using Audiochan.Core.Features.Upload.Models;
 using Audiochan.Core.Features.Users.Commands;
 using Audiochan.Core.Features.Users.Models;
 using Audiochan.Shared.Extensions;
@@ -43,9 +42,10 @@ public class UserMutations
     }
     
     [Authorize]
+    [UseMutationConvention(PayloadFieldName = "url")]
     [UseValidationError]
     [Error(typeof(UserNotFoundError))]
-    public async Task<ImageUploadResult> UpdateUserPictureAsync(
+    public async Task<string> UpdateUserPictureAsync(
         [ID(nameof(UserDto))] long id,
         string data,
         IMediator mediator,
@@ -58,14 +58,15 @@ public class UserMutations
         var command = new UpdateUserPictureCommand(id, data);
         var result = await mediator.Send(command, cancellationToken);
         return result.Match(
-            res => res,
+            url => url,
             _ => throw new EntityNotFoundException<User, long>(id));
     }
     
     [Authorize]
+    [UseMutationConvention(PayloadFieldName = "userPictureRemoved")]
     [UseValidationError]
     [Error(typeof(UserNotFoundError))]
-    public async Task<ImageUploadResult> RemoveUserPictureAsync(
+    public async Task<bool> RemoveUserPictureAsync(
         [ID(nameof(UserDto))] long id,
         IMediator mediator,
         ClaimsPrincipal claimsPrincipal,
@@ -79,12 +80,12 @@ public class UserMutations
         var command = new UpdateUserPictureCommand(id, null);
         var result = await mediator.Send(command, cancellationToken);
         return result.Match(
-            res => res,
+            string.IsNullOrEmpty,
             _ => throw new EntityNotFoundException<User, long>(id));
     }
     
     [Authorize]
-    [UseMutationConvention(PayloadFieldName = "success")]
+    [UseMutationConvention(PayloadFieldName = "userUpdated")]
     [Error(typeof(IdentityError))]
     [Error(typeof(UserNotFoundError))]
     public async Task<bool> UpdateUserNameAsync(
@@ -108,7 +109,7 @@ public class UserMutations
     }
     
     [Authorize]
-    [UseMutationConvention(PayloadFieldName = "success")]
+    [UseMutationConvention(PayloadFieldName = "passwordUpdated")]
     [Error(typeof(IdentityError))]
     public async Task<bool> UpdatePasswordAsync(
         string newPassword,
@@ -126,7 +127,7 @@ public class UserMutations
     }
     
     [Authorize]
-    [UseMutationConvention(PayloadFieldName = "success")]
+    [UseMutationConvention(PayloadFieldName = "emailUpdated")]
     [Error(typeof(IdentityError))]
     public async Task<bool> UpdateEmailAsync(
         string email,

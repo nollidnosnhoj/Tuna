@@ -87,14 +87,14 @@ public class RemoveAudioCommandHandler : IRequestHandler<RemoveAudioCommand, Rem
         
     private async Task RemoveAudioFromStorage(Audio audio, CancellationToken cancellationToken = default)
     {
-        var uploadId = audio.ObjectKey.Split('.').FirstOrDefault();
+        var uploadId = audio.FileId.Split('.').FirstOrDefault();
         if (uploadId is null)
         {
             throw new ArgumentException("Audio object key needs to have a file extension");
         }
         await _storageService.RemoveAsync(
             bucket: _appSettings.UploadBucket,
-            blobName: $"audios/{uploadId}/{audio.ObjectKey}",
+            blobName: $"audios/{uploadId}/{audio.FileId}",
             cancellationToken);
     }
 }

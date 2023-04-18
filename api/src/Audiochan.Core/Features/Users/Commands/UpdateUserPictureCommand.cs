@@ -1,11 +1,9 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Shared.Mediatr;
-using Audiochan.Core.Features.Upload.Models;
 using Audiochan.Core.Persistence;
 using Audiochan.Core.Services;
 using MediatR;
-using Microsoft.Extensions.Options;
 using OneOf;
 using OneOf.Types;
 
@@ -24,7 +22,7 @@ public class UpdateUserPictureCommand : ICommandRequest<UpdateUserPictureResult>
 }
 
 [GenerateOneOf]
-public partial class UpdateUserPictureResult : OneOfBase<ImageUploadResult, NotFound>
+public partial class UpdateUserPictureResult : OneOfBase<string, NotFound>
 {
     
 }
@@ -58,6 +56,6 @@ public class UpdateUserPictureCommandHandler : IRequestHandler<UpdateUserPicture
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return ImageUploadResult.ToUserImage(user.ImageId);
+        return user.ImageId;
     }
 }

@@ -1,14 +1,11 @@
 ﻿using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using Audiochan.Core.Entities;
 using Audiochan.Shared.Errors;
 using Audiochan.Shared.Mediatr;
-using Audiochan.Core.Features.Upload.Models;
 using Audiochan.Core.Persistence;
 using Audiochan.Core.Services;
 using MediatR;
-using Microsoft.Extensions.Options;
 using OneOf;
 using OneOf.Types;
 
@@ -27,7 +24,7 @@ public class UpdateAudioPictureCommand : AuthCommandRequest<UpdateAudioPictureRe
 }
 
 [GenerateOneOf]
-public partial class UpdateAudioPictureResult : OneOfBase<ImageUploadResult, NotFound, Forbidden>
+public partial class UpdateAudioPictureResult : OneOfBase<string, NotFound, Forbidden>
 {
     
 }
@@ -66,6 +63,6 @@ public class UpdateAudioPictureCommandHandler : IRequestHandler<UpdateAudioPictu
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return ImageUploadResult.ToAudioImage(audio.ImageId);
+        return audio.ImageId;
     }
 }

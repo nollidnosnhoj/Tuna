@@ -1,66 +1,78 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Audiochan.Core.Entities.Abstractions;
 
-namespace Audiochan.Core.Entities
+namespace Audiochan.Core.Entities;
+
+public enum AudioStatus
 {
-    public class Audio : AuditableEntity<long>
+    Draft,
+    Published
+}
+
+public class Audio : AuditableEntity<long>
+{
+    private Audio()
     {
-        private Audio()
-        {
             
-        }
+    }
 
-        public Audio(
-            string title,
-            string? description,
-            decimal duration,
-            string objectKey,
-            long size,
-            long userId)
-        {
-            Title = title;
-            Description = description;
-            Duration = duration;
-            ObjectKey = objectKey;
-            Size = size;
-            UserId = userId;
-        }
+    public Audio(string fileId, string fileName, long fileSize, long userId)
+    {
+        Title = Path.GetFileNameWithoutExtension(fileName);
+        FileSize = fileSize;
+        UserId = userId;
+        FileId = fileId;
+    }
         
-        public string Title { get; set; } = null!;
-        public string? Description { get; set; }
-        public decimal Duration { get; set; }
-        public string ObjectKey { get; set; } = null!;
-        public long Size { get; set; }
-        public string? ImageId { get; set; }
-        public long UserId { get; set; }
-        public User User { get; set; } = null!;
-        public ICollection<FavoriteAudio> FavoriteAudios { get; set; } = new HashSet<FavoriteAudio>();
+    public string Title { get; set; } = null!;
+    public string? Description { get; set; }
+    public decimal Duration { get; set; }
+    public string FileId { get; set; } = null!;
+    public long FileSize { get; set; }
+    public string? ImageId { get; set; }
+    public AudioStatus Status { get; set; } = AudioStatus.Draft;
+    public DateTime? PublishedAt { get; set; }
+    public DateTime? UploadedAt { get; set; }
+    public long UserId { get; set; }
+    public User User { get; set; } = null!;
+    public ICollection<FavoriteAudio> FavoriteAudios { get; set; } = new HashSet<FavoriteAudio>();
+    
+    public void Publish(DateTime publishedAt)
+    {
+        Status = AudioStatus.Published;
+        PublishedAt = publishedAt;
+    }
 
-        public void Favorite(long userId, DateTime favoritedDateTime)
+    public void CompleteUpload(DateTime uploadedAt)
+    {
+        UploadedAt = uploadedAt;
+    }
+
+    public void Favorite(long userId, DateTime favoritedDateTime)
+    {
+        var favoriteAudio = this.FavoriteAudios.FirstOrDefault(f => f.UserId == userId);
+
+        if (favoriteAudio is null)
         {
-            var favoriteAudio = this.FavoriteAudios.FirstOrDefault(f => f.UserId == userId);
-
-            if (favoriteAudio is null)
+            this.FavoriteAudios.Add(new FavoriteAudio
             {
-                this.FavoriteAudios.Add(new FavoriteAudio
-                {
-                    UserId = userId,
-                    AudioId = this.Id,
-                    Favorited = favoritedDateTime
-                });
-            }
+                UserId = userId,
+                AudioId = this.Id,
+                Favorited = favoritedDateTime
+            });
         }
+    }
 
-        public void UnFavorite(long userId)
+    public void UnFavorite(long userId)
+    {
+        var favoriteAudio = this.FavoriteAudios.FirstOrDefault(f => f.UserId == userId);
+
+        if (favoriteAudio is not null)
         {
-            var favoriteAudio = this.FavoriteAudios.FirstOrDefault(f => f.UserId == userId);
-
-            if (favoriteAudio is not null)
-            {
-                this.FavoriteAudios.Remove(favoriteAudio);
-            }
+            this.FavoriteAudios.Remove(favoriteAudio);
         }
     }
 }
