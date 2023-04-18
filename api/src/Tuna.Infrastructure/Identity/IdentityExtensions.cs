@@ -8,7 +8,8 @@ namespace Tuna.Infrastructure.Identity;
 
 public static class IdentityExtensions
 {
-    public static Task<AuthUser?> FindUserByRefreshTokenAsync(this UserManager<AuthUser> userManager, string refreshToken)
+    public static Task<AuthUser?> FindUserByRefreshTokenAsync(this UserManager<AuthUser> userManager,
+        string refreshToken)
     {
         return userManager.Users
             .Include(x => x.RefreshTokens)

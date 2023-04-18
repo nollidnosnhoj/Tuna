@@ -1,9 +1,9 @@
 ﻿using System.Text;
-using Tuna.Infrastructure.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Tuna.Infrastructure.Security;
 
 namespace Tuna.GraphQl.Options;
 

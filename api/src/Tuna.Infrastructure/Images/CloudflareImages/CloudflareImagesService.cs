@@ -13,14 +13,15 @@ public class CloudflareImagesService : IImageService
 {
     private readonly ICloudflareImagesApi _api;
     private readonly string _serveUrl;
-    
+
     public CloudflareImagesService(ICloudflareImagesApi api, IConfiguration configuration)
     {
         _api = api;
         _serveUrl = configuration.GetValue<string>("Cloudflare:Images:ServeUrl")
-            ?? throw new ArgumentNullException(nameof(configuration), "Missing serve url configuration for Cloudflare Images.");
+                    ?? throw new ArgumentNullException(nameof(configuration),
+                        "Missing serve url configuration for Cloudflare Images.");
     }
-    
+
     public async Task<PrepareUploadResult> PrepareUploadAsync(Dictionary<string, string>? metadata)
     {
         var request = new DirectUploadRequest
@@ -30,19 +31,14 @@ public class CloudflareImagesService : IImageService
                 ? JsonSerializer.Serialize(metadata)
                 : null
         };
-        
+
         var response = await _api.DirectUploadAsync(request);
 
-        if (response.Result is not null)
-        {
-            return new PrepareUploadResult(response.Result.UploadUrl, response.Result.Id);
-        }
+        if (response.Result is not null) return new PrepareUploadResult(response.Result.UploadUrl, response.Result.Id);
 
         if (response.Errors.Count > 0)
-        {
             throw new ImageServiceAggregateException("Failed to prepare image upload.", response.Errors);
-        }
-        
+
         throw new ImageServiceException("Failed to prepare image upload.");
     }
 
@@ -51,9 +47,7 @@ public class CloudflareImagesService : IImageService
         var response = await _api.DeleteImageAsync(imageId);
         if (response.Success) return;
         if (response.Errors.Count > 0)
-        {
             throw new ImageServiceAggregateException("Unable to remove image from Cloudflare Images.", response.Errors);
-        }
 
         throw new ImageServiceException("Unable to remove image from Cloudflare Images for unknown reasons.");
     }

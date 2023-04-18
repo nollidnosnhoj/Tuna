@@ -1,9 +1,9 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Tuna.Shared.Mediatr;
 using MediatR;
 using Tuna.Application.Features.Audios.DataLoaders;
 using Tuna.Application.Features.Audios.Models;
+using Tuna.Shared.Mediatr;
 
 namespace Tuna.Application.Features.Audios.Queries;
 

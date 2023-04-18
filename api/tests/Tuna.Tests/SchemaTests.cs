@@ -14,7 +14,7 @@ public class SchemaTests
             .AddGraphQLServer()
             .AddTunaSchema()
             .BuildSchemaAsync();
-        
+
         schema.Print().MatchSnapshot();
     }
 }

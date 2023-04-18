@@ -1,32 +1,32 @@
-﻿using Tuna.Application.Features.Auth;
-using Tuna.Infrastructure.Identity;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Tuna.Application.Features.Auth;
 using Tuna.GraphQl.Options;
+using Tuna.Infrastructure.Identity;
 
-namespace Tuna.GraphQl.Configurations
+namespace Tuna.GraphQl.Configurations;
+
+public static class AuthConfiguration
 {
-    public static class AuthConfiguration
+    public static IServiceCollection ConfigureAuthentication(this IServiceCollection services,
+        IConfiguration configuration,
+        IWebHostEnvironment environment)
     {
-        public static IServiceCollection ConfigureAuthentication(this IServiceCollection services, IConfiguration configuration, 
-            IWebHostEnvironment environment)
-        {
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
-            services.ConfigureOptions<JwtConfigureOptions>();
-            services.ConfigureOptions<JwtBearerConfigureOptions>();
-            
-            services.AddTransient<IAuthService, AuthService>();
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
+        services.ConfigureOptions<JwtConfigureOptions>();
+        services.ConfigureOptions<JwtBearerConfigureOptions>();
 
-            return services;
-        }
+        services.AddTransient<IAuthService, AuthService>();
 
-        public static IServiceCollection ConfigureAuthorization(this IServiceCollection services)
-        {
-            services.AddAuthorization();
+        return services;
+    }
 
-            return services;
-        }
+    public static IServiceCollection ConfigureAuthorization(this IServiceCollection services)
+    {
+        services.AddAuthorization();
+
+        return services;
     }
 }

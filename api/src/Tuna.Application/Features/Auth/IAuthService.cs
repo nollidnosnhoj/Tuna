@@ -7,7 +7,12 @@ namespace Tuna.Application.Features.Auth;
 
 public interface IAuthService
 {
-    Task<AuthServiceResult<AuthServiceTokens>> LoginWithPasswordAsync(string login, string password, string? ipAddress, CancellationToken cancellationToken = default);
-    Task<AuthServiceResult<AuthServiceTokens>> RefreshTokenAsync(string token,  string? ipAddress, CancellationToken cancellationToken = default);
-    Task<AuthServiceResult> RevokeRefreshTokenAsync(string token, string? ipAddress, CancellationToken? cancellationToken = default);
+    Task<AuthServiceResult<AuthServiceTokens>> LoginWithPasswordAsync(string login, string password, string? ipAddress,
+        CancellationToken cancellationToken = default);
+
+    Task<AuthServiceResult<AuthServiceTokens>> RefreshTokenAsync(string token, string? ipAddress,
+        CancellationToken cancellationToken = default);
+
+    Task<AuthServiceResult> RevokeRefreshTokenAsync(string token, string? ipAddress,
+        CancellationToken? cancellationToken = default);
 }

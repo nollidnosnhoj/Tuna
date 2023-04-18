@@ -1,9 +1,9 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Tuna.Application.Features.Audios.DataLoaders;
-using Tuna.Application.Features.Audios.Models;
 using HotChocolate.Types;
 using HotChocolate.Types.Relay;
+using Tuna.Application.Features.Audios.DataLoaders;
+using Tuna.Application.Features.Audios.Models;
 
 namespace Tuna.GraphQl.Features.Audios;
 

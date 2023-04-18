@@ -1,14 +1,14 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Tuna.Shared.Mediatr;
-using Tuna.Application.Features.Audios.Mappings;
 using FluentValidation;
 using MediatR;
 using OneOf;
 using OneOf.Types;
 using Tuna.Application.Features.Audios.Errors;
+using Tuna.Application.Features.Audios.Mappings;
 using Tuna.Application.Features.Audios.Models;
 using Tuna.Application.Persistence;
+using Tuna.Shared.Mediatr;
 
 namespace Tuna.Application.Features.Audios.Commands;
 
@@ -17,7 +17,7 @@ public class PublishAudioCommand : ICommandRequest<PublishAudioResult>
     public PublishAudioCommand(
         long audioId,
         string title,
-        string description, 
+        string description,
         decimal duration,
         long userId)
     {
@@ -27,6 +27,7 @@ public class PublishAudioCommand : ICommandRequest<PublishAudioResult>
         Description = description;
         UserId = userId;
     }
+
     public long AudioId { get; }
     public decimal Duration { get; }
     public string Title { get; }
@@ -37,9 +38,8 @@ public class PublishAudioCommand : ICommandRequest<PublishAudioResult>
 [GenerateOneOf]
 public partial class PublishAudioResult : OneOfBase<AudioDto, NotFound, AudioNotUploaded>
 {
-    
 }
-    
+
 public class PublishAudioCommandValidator : AbstractValidator<PublishAudioCommand>
 {
     public PublishAudioCommandValidator()
@@ -62,7 +62,7 @@ public class PublishAudioCommandValidator : AbstractValidator<PublishAudioComman
             .WithMessage("Description cannot be more than 500 characters long.");
     }
 }
-    
+
 public class PublishAudioCommandHandler : IRequestHandler<PublishAudioCommand, PublishAudioResult>
 {
     private readonly IUnitOfWork _unitOfWork;
@@ -82,7 +82,7 @@ public class PublishAudioCommandHandler : IRequestHandler<PublishAudioCommand, P
         audio.Title = command.Title;
         audio.Description = command.Description;
         audio.Duration = command.Duration;
-        
+
         await _unitOfWork.SaveChangesAsync(cancellationToken);
         return audio.MapToDto();
     }

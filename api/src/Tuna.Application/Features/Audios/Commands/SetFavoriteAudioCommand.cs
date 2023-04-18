@@ -1,31 +1,31 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Tuna.Shared.Mediatr;
 using MediatR;
 using OneOf;
 using OneOf.Types;
 using Tuna.Application.Persistence;
 using Tuna.Application.Services;
+using Tuna.Shared.Mediatr;
 
 namespace Tuna.Application.Features.Audios.Commands;
 
 public class SetFavoriteAudioCommand : ICommandRequest<SetFavoriteAudioResult>
 {
-    public long AudioId { get; }
-    public long UserId { get; }
-    public bool IsFavoriting { get; }
     public SetFavoriteAudioCommand(long audioId, long userId, bool isFavoriting)
     {
         AudioId = audioId;
         UserId = userId;
         IsFavoriting = isFavoriting;
     }
+
+    public long AudioId { get; }
+    public long UserId { get; }
+    public bool IsFavoriting { get; }
 }
 
 [GenerateOneOf]
 public partial class SetFavoriteAudioResult : OneOfBase<bool, NotFound>
 {
-    
 }
 
 public class SetFavoriteAudioCommandHandler : IRequestHandler<SetFavoriteAudioCommand, SetFavoriteAudioResult>
@@ -39,7 +39,8 @@ public class SetFavoriteAudioCommandHandler : IRequestHandler<SetFavoriteAudioCo
         _dateTimeProvider = dateTimeProvider;
     }
 
-    public async Task<SetFavoriteAudioResult> Handle(SetFavoriteAudioCommand command, CancellationToken cancellationToken)
+    public async Task<SetFavoriteAudioResult> Handle(SetFavoriteAudioCommand command,
+        CancellationToken cancellationToken)
     {
         var audio = await _unitOfWork.Audios
             .LoadAudioWithFavorites(command.AudioId, command.UserId, cancellationToken);

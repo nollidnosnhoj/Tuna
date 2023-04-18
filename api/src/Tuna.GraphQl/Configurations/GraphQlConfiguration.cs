@@ -1,12 +1,12 @@
-﻿using Tuna.GraphQl.Features.Audios;
-using Tuna.GraphQl.Features.Users;
-using Tuna.Application.Persistence;
-using HashidsNet;
+﻿using HashidsNet;
 using HotChocolate;
 using HotChocolate.Data;
 using HotChocolate.Execution.Configuration;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
+using Tuna.Application.Persistence;
+using Tuna.GraphQl.Features.Audios;
+using Tuna.GraphQl.Features.Users;
 using Tuna.GraphQl.GraphQL.Types;
 
 namespace Tuna.GraphQl.Configurations;
@@ -19,7 +19,7 @@ public static class GraphQlConfiguration
 
         return services;
     }
-    
+
     public static IRequestExecutorBuilder AddTunaSchema(this IRequestExecutorBuilder builder)
     {
         return builder

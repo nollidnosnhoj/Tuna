@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using Tuna.Application.Features.Users.Models;
 using HotChocolate;
 
 namespace Tuna.Application.Features.Audios.Models;

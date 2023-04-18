@@ -4,9 +4,6 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using Tuna.Shared.Errors;
-using Tuna.Shared.Mediatr;
-using Tuna.Shared;
 using MediatR;
 using Microsoft.Extensions.Options;
 using OneOf;
@@ -14,6 +11,8 @@ using OneOf.Types;
 using Tuna.Application.Entities;
 using Tuna.Application.Persistence;
 using Tuna.Application.Services;
+using Tuna.Shared.Errors;
+using Tuna.Shared.Mediatr;
 
 namespace Tuna.Application.Features.Audios.Commands;
 
@@ -23,26 +22,25 @@ public class RemoveAudioCommand : AuthCommandRequest<RemoveAudioResult>
     {
         Id = id;
     }
-        
+
     public long Id { get; }
 }
 
 [GenerateOneOf]
 public partial class RemoveAudioResult : OneOfBase<Unit, NotFound, Forbidden>
 {
-    
 }
 
 public class RemoveAudioCommandHandler : IRequestHandler<RemoveAudioCommand, RemoveAudioResult>
 {
-    private readonly IStorageService _storageService;
-    private readonly IUnitOfWork _unitOfWork;
     private readonly ApplicationSettings _appSettings;
     private readonly IImageService _imageService;
+    private readonly IStorageService _storageService;
+    private readonly IUnitOfWork _unitOfWork;
 
     public RemoveAudioCommandHandler(
-        IUnitOfWork unitOfWork, 
-        IStorageService storageService, 
+        IUnitOfWork unitOfWork,
+        IStorageService storageService,
         IOptions<ApplicationSettings> appSettings, IImageService imageService)
     {
         _unitOfWork = unitOfWork;
@@ -60,7 +58,7 @@ public class RemoveAudioCommandHandler : IRequestHandler<RemoveAudioCommand, Rem
         if (audio == null) return new NotFound();
 
         if (audio.UserId != currentUserId) return new Forbidden();
-            
+
         // TODO: Make this a job
         var afterDeletionTasks = GetTasksForAfterDeletion(audio, cancellationToken);
         _unitOfWork.Audios.Remove(audio);
@@ -75,25 +73,19 @@ public class RemoveAudioCommandHandler : IRequestHandler<RemoveAudioCommand, Rem
         {
             RemoveAudioFromStorage(audio, cancellationToken)
         };
-        
-        if (!string.IsNullOrEmpty(audio.ImageId))
-        {
-            tasks.Add(_imageService.DeleteImageAsync(audio.ImageId));
-        }
-        
+
+        if (!string.IsNullOrEmpty(audio.ImageId)) tasks.Add(_imageService.DeleteImageAsync(audio.ImageId));
+
         return tasks;
     }
-        
+
     private async Task RemoveAudioFromStorage(Audio audio, CancellationToken cancellationToken = default)
     {
         var uploadId = audio.FileId.Split('.').FirstOrDefault();
-        if (uploadId is null)
-        {
-            throw new ArgumentException("Audio object key needs to have a file extension");
-        }
+        if (uploadId is null) throw new ArgumentException("Audio object key needs to have a file extension");
         await _storageService.RemoveAsync(
-            bucket: _appSettings.UploadBucket,
-            blobName: $"audios/{uploadId}/{audio.FileId}",
+            _appSettings.UploadBucket,
+            $"audios/{uploadId}/{audio.FileId}",
             cancellationToken);
     }
 }

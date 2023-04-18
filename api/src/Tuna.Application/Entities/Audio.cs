@@ -16,7 +16,6 @@ public class Audio : AuditableEntity<long>
 {
     private Audio()
     {
-            
     }
 
     public Audio(string fileId, string fileName, long fileSize, long userId)
@@ -26,7 +25,7 @@ public class Audio : AuditableEntity<long>
         UserId = userId;
         FileId = fileId;
     }
-        
+
     public string Title { get; set; } = null!;
     public string? Description { get; set; }
     public decimal Duration { get; set; }
@@ -39,7 +38,7 @@ public class Audio : AuditableEntity<long>
     public long UserId { get; set; }
     public User User { get; set; } = null!;
     public ICollection<FavoriteAudio> FavoriteAudios { get; set; } = new HashSet<FavoriteAudio>();
-    
+
     public void Publish(DateTime publishedAt)
     {
         Status = AudioStatus.Published;
@@ -53,26 +52,21 @@ public class Audio : AuditableEntity<long>
 
     public void Favorite(long userId, DateTime favoritedDateTime)
     {
-        var favoriteAudio = this.FavoriteAudios.FirstOrDefault(f => f.UserId == userId);
+        var favoriteAudio = FavoriteAudios.FirstOrDefault(f => f.UserId == userId);
 
         if (favoriteAudio is null)
-        {
-            this.FavoriteAudios.Add(new FavoriteAudio
+            FavoriteAudios.Add(new FavoriteAudio
             {
                 UserId = userId,
-                AudioId = this.Id,
+                AudioId = Id,
                 Favorited = favoritedDateTime
             });
-        }
     }
 
     public void UnFavorite(long userId)
     {
-        var favoriteAudio = this.FavoriteAudios.FirstOrDefault(f => f.UserId == userId);
+        var favoriteAudio = FavoriteAudios.FirstOrDefault(f => f.UserId == userId);
 
-        if (favoriteAudio is not null)
-        {
-            this.FavoriteAudios.Remove(favoriteAudio);
-        }
+        if (favoriteAudio is not null) FavoriteAudios.Remove(favoriteAudio);
     }
 }

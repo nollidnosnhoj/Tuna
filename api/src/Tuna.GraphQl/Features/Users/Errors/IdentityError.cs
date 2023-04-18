@@ -14,4 +14,3 @@ public class IdentityError : IUserError
     public string Code { get; }
     public string Message { get; }
 }
-

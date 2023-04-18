@@ -1,6 +1,6 @@
-﻿using Tuna.Application.Features.Audios.DataLoaders;
-using HotChocolate.Execution.Configuration;
+﻿using HotChocolate.Execution.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Tuna.Application.Features.Audios.DataLoaders;
 
 namespace Tuna.GraphQl.Features.Audios;
 

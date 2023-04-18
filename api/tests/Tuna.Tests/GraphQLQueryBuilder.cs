@@ -18,9 +18,8 @@ internal class CustomQueryStringBuilder : QueryStringBuilder
 {
     public CustomQueryStringBuilder() : base(CamelCasePropertyNameFormatter.Format)
     {
-        
     }
-    
+
     protected override string FormatQueryParam(object value)
     {
         switch (value)
@@ -34,7 +33,7 @@ internal class CustomQueryStringBuilder : QueryStringBuilder
                 return base.FormatQueryParam(value);
         }
     }
-    
+
     private static string ToConstantCase(string name)
     {
         StringBuilder sb = new();
@@ -43,15 +42,13 @@ internal class CustomQueryStringBuilder : QueryStringBuilder
         {
             if (char.IsUpper(c))
             {
-                if (!firstUpperLetter)
-                {
-                    sb.Append('_');
-                }
+                if (!firstUpperLetter) sb.Append('_');
                 firstUpperLetter = false;
             }
 
             sb.Append(char.ToUpperInvariant(c));
         }
+
         var result = sb.ToString();
 
         return result;

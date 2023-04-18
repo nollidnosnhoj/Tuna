@@ -1,15 +1,15 @@
 ﻿using Amazon.S3;
-using Tuna.Application.Features.Auth;
-using Tuna.Application.Persistence;
-using Tuna.Application.Services;
-using Tuna.Infrastructure.Images.CloudflareImages;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Tuna.Application.Features.Auth;
+using Tuna.Application.Persistence;
+using Tuna.Application.Services;
 using Tuna.Infrastructure.Identity;
 using Tuna.Infrastructure.Identity.Models;
+using Tuna.Infrastructure.Images.CloudflareImages;
 using Tuna.Infrastructure.Persistence;
 using Tuna.Infrastructure.Security;
 using Tuna.Infrastructure.Shared;
@@ -39,20 +39,17 @@ public static class RegisterServices
         return serviceCollection.AddCloudflareImages(configuration);
     }
 
-    private static IServiceCollection AddCaching(this IServiceCollection services, IConfiguration configuration, IHostEnvironment environment)
+    private static IServiceCollection AddCaching(this IServiceCollection services, IConfiguration configuration,
+        IHostEnvironment environment)
     {
         if (!environment.IsProduction())
-        {
             services.AddDistributedMemoryCache();
-        }
         else
-        {
             services.AddStackExchangeRedisCache(options =>
             {
                 options.Configuration = configuration.GetConnectionString("Redis");
                 options.InstanceName = "tuna_redis";
             });
-        }
 
         return services;
     }

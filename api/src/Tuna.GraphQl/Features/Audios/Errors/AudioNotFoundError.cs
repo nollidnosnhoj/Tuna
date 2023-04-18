@@ -1,8 +1,8 @@
-﻿using Tuna.Shared.Models;
+﻿using HotChocolate.Types.Relay;
 using Tuna.Application.Entities;
 using Tuna.Application.Exceptions;
 using Tuna.Application.Features.Audios.Models;
-using HotChocolate.Types.Relay;
+using Tuna.Shared.Models;
 
 namespace Tuna.GraphQl.Features.Audios.Errors;
 
@@ -14,9 +14,9 @@ public class AudioNotFoundError : IUserError
         Code = GetType().Name;
         Message = ex.Message;
     }
-    
-    [ID(nameof(AudioDto))]
-    public long Id { get; }
+
+    [ID(nameof(AudioDto))] public long Id { get; }
+
     public string Code { get; }
     public string Message { get; }
 }

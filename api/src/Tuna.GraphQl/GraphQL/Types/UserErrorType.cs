@@ -1,5 +1,5 @@
-﻿using Tuna.Shared.Models;
-using HotChocolate.Types;
+﻿using HotChocolate.Types;
+using Tuna.Shared.Models;
 
 namespace Tuna.GraphQl.GraphQL.Types;
 

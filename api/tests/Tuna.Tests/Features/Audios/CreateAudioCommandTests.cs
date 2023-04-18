@@ -1,18 +1,5 @@
-﻿using System.Security.Claims;
-using Tuna.Application;
-using Tuna.Application.Features.Audios.Commands;
-using Tuna.Application.Features.Auth.Helpers;
-using Tuna.Application.Persistence;
+﻿using Moq;
 using Tuna.Application.Services;
-using Tuna.Tests.Extensions;
-using Bogus;
-using FluentAssertions;
-using HotChocolate;
-using HotChocolate.Execution;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
-using Moq;
-using Snapshooter.Xunit;
 
 namespace Tuna.Tests.Features.Audios;
 

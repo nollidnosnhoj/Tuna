@@ -2,10 +2,9 @@
 using System.Threading.Tasks;
 using Tuna.Application.Entities;
 
-namespace Tuna.Application.Persistence.Repositories
+namespace Tuna.Application.Persistence.Repositories;
+
+public interface IUserRepository : IEntityRepository<User>
 {
-    public interface IUserRepository : IEntityRepository<User>
-    {
-        Task<User?> LoadUserWithFollowers(long targetId, long observerId, CancellationToken cancellationToken = default);
-    }
+    Task<User?> LoadUserWithFollowers(long targetId, long observerId, CancellationToken cancellationToken = default);
 }

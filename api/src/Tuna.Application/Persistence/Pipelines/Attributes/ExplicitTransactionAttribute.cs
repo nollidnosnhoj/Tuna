@@ -3,10 +3,9 @@
 namespace Tuna.Application.Persistence.Pipelines.Attributes;
 
 /// <summary>
-/// Use this attribute when you want to explicitly handle database transaction on a command/query.
+///     Use this attribute when you want to explicitly handle database transaction on a command/query.
 /// </summary>
-[AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
+[AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
 public class ExplicitTransactionAttribute : Attribute
 {
-    
 }

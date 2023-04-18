@@ -1,18 +1,19 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Tuna.Shared.Mediatr;
-using Tuna.Shared.Models;
-using Tuna.Application.Features.Users.Mappings;
 using HotChocolate.Types.Pagination;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Tuna.Application.Features.Users.Mappings;
 using Tuna.Application.Features.Users.Models;
 using Tuna.Application.Persistence;
+using Tuna.Shared.Mediatr;
+using Tuna.Shared.Models;
 
 namespace Tuna.Application.Features.Users.Queries;
 
-public record GetFollowingsQuery(long UserId, int? Skip, int? Take) : OffsetPagedQuery(Skip, Take), IQueryRequest<CollectionSegment<UserDto>>;
+public record GetFollowingsQuery(long UserId, int? Skip, int? Take) : OffsetPagedQuery(Skip, Take),
+    IQueryRequest<CollectionSegment<UserDto>>;
 
 public class GetFollowingsQueryHandler : IRequestHandler<GetFollowingsQuery, CollectionSegment<UserDto>>
 {
@@ -22,8 +23,9 @@ public class GetFollowingsQueryHandler : IRequestHandler<GetFollowingsQuery, Col
     {
         _dbContextFactory = dbContextFactory;
     }
-    
-    public async  Task<CollectionSegment<UserDto>> Handle(GetFollowingsQuery request, CancellationToken cancellationToken)
+
+    public async Task<CollectionSegment<UserDto>> Handle(GetFollowingsQuery request,
+        CancellationToken cancellationToken)
     {
         await using var dbContext = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
         return await dbContext.FollowedUsers

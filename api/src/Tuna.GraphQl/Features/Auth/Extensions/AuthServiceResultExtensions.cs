@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Tuna.Application.Features.Auth.Results;
 using Microsoft.AspNetCore.Mvc;
+using Tuna.Application.Features.Auth.Results;
 
 namespace Tuna.GraphQl.Features.Auth.Extensions;
 
@@ -14,7 +14,7 @@ public static class AuthServiceResultExtensions
     {
         return result.Succeeded ? onSuccess() : onError(result.Errors);
     }
-    
+
     public static IActionResult ToActionResult<T>(
         this AuthServiceResult<T> result,
         Func<T, IActionResult> onSuccess,

@@ -7,24 +7,24 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.5.1" />
-      <PackageReference Include="GreenDonut" Version="13.0.5" />
-      <PackageReference Include="Hashids.net" Version="1.7.0" />
-      <PackageReference Include="HotChocolate.Types" Version="13.0.5" />
-      <PackageReference Include="HotChocolate.Types.CursorPagination" Version="13.0.5" />
-      <PackageReference Include="HotChocolate.Types.Mutations" Version="13.0.5" />
-      <PackageReference Include="HotChocolate.Types.OffsetPagination" Version="13.0.5" />
-      <PackageReference Include="MediatR" Version="12.0.1" />
-      <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.2.0" />
-      <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="7.0.0" />
-      <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="7.0.0" />
-      <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="7.0.4" />
-      <PackageReference Include="Microsoft.Extensions.Options" Version="7.0.1" />
-      <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="6.27.0" />
-      <PackageReference Include="Nanoid" Version="2.1.0" />
-      <PackageReference Include="OneOf" Version="3.0.243" />
-      <PackageReference Include="OneOf.SourceGenerator" Version="3.0.243" />
-      <PackageReference Include="SixLabors.ImageSharp" Version="3.0.0" />
+        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.5.1"/>
+        <PackageReference Include="GreenDonut" Version="13.0.5"/>
+        <PackageReference Include="Hashids.net" Version="1.7.0"/>
+        <PackageReference Include="HotChocolate.Types" Version="13.0.5"/>
+        <PackageReference Include="HotChocolate.Types.CursorPagination" Version="13.0.5"/>
+        <PackageReference Include="HotChocolate.Types.Mutations" Version="13.0.5"/>
+        <PackageReference Include="HotChocolate.Types.OffsetPagination" Version="13.0.5"/>
+        <PackageReference Include="MediatR" Version="12.0.1"/>
+        <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.2.0"/>
+        <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="7.0.0"/>
+        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="7.0.0"/>
+        <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="7.0.4"/>
+        <PackageReference Include="Microsoft.Extensions.Options" Version="7.0.1"/>
+        <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="6.27.0"/>
+        <PackageReference Include="Nanoid" Version="2.1.0"/>
+        <PackageReference Include="OneOf" Version="3.0.243"/>
+        <PackageReference Include="OneOf.SourceGenerator" Version="3.0.243"/>
+        <PackageReference Include="SixLabors.ImageSharp" Version="3.0.0"/>
     </ItemGroup>
 
 </Project>

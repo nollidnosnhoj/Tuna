@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentValidation;
-using HotChocolate;
 using MediatR;
-using Microsoft.Extensions.Options;
 using Tuna.Application.Features.Uploads.Models;
 using Tuna.Application.Services;
 using Tuna.Shared;
 using Tuna.Shared.Extensions;
 using Tuna.Shared.Mediatr;
-using Path = System.IO.Path;
 
 namespace Tuna.Application.Features.Uploads.Commands;
 
@@ -61,7 +57,7 @@ public class CreateImageUploadCommandHandler : IRequestHandler<CreateImageUpload
     {
         var metadata = new Dictionary<string, string>
         {
-            {"UserId", request.UserId.ToString()}
+            { "UserId", request.UserId.ToString() }
         };
         var result = await _imageService.PrepareUploadAsync(metadata);
         var response = new CreateUploadResult(result.UploadId, result.Url);

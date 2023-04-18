@@ -1,16 +1,16 @@
 ﻿using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using Tuna.Shared.Errors;
-using Tuna.Shared.Mediatr;
-using Tuna.Application.Features.Audios.Mappings;
 using FluentValidation;
 using MediatR;
 using OneOf;
 using OneOf.Types;
 using Tuna.Application.Entities;
+using Tuna.Application.Features.Audios.Mappings;
 using Tuna.Application.Features.Audios.Models;
 using Tuna.Application.Persistence;
+using Tuna.Shared.Errors;
+using Tuna.Shared.Mediatr;
 
 namespace Tuna.Application.Features.Audios.Commands;
 
@@ -22,7 +22,7 @@ public class UpdateAudioCommand : AuthCommandRequest<UpdateAudioResult>
         Title = title;
         Description = description;
     }
-        
+
     public long Id { get; }
     public string? Title { get; }
     public string? Description { get; }
@@ -31,7 +31,6 @@ public class UpdateAudioCommand : AuthCommandRequest<UpdateAudioResult>
 [GenerateOneOf]
 public partial class UpdateAudioResult : OneOfBase<AudioDto, NotFound, Forbidden>
 {
-    
 }
 
 public class UpdateAudioCommandValidator : AbstractValidator<UpdateAudioCommand>
@@ -74,7 +73,7 @@ public class UpdateAudioCommandHandler : IRequestHandler<UpdateAudioCommand, Upd
 
         if (audio == null) return new NotFound();
         if (audio.UserId != currentUserId) return new Forbidden();
-            
+
         UpdateAudioFromCommandAsync(audio, command);
         _unitOfWork.Audios.Update(audio);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
@@ -84,14 +83,8 @@ public class UpdateAudioCommandHandler : IRequestHandler<UpdateAudioCommand, Upd
 
     private void UpdateAudioFromCommandAsync(Audio audio, UpdateAudioCommand command)
     {
-        if (command.Title is not null && !string.IsNullOrWhiteSpace(command.Title))
-        {
-            audio.Title = command.Title;
-        }
+        if (command.Title is not null && !string.IsNullOrWhiteSpace(command.Title)) audio.Title = command.Title;
 
-        if (command.Description is not null)
-        {
-            audio.Description = command.Description;
-        }
+        if (command.Description is not null) audio.Description = command.Description;
     }
 }

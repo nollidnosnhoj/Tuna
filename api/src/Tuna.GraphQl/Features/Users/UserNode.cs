@@ -1,9 +1,9 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Tuna.Application.Features.Users.DataLoaders;
-using Tuna.Application.Features.Users.Models;
 using HotChocolate.Types;
 using HotChocolate.Types.Relay;
+using Tuna.Application.Features.Users.DataLoaders;
+using Tuna.Application.Features.Users.Models;
 
 namespace Tuna.GraphQl.Features.Users;
 

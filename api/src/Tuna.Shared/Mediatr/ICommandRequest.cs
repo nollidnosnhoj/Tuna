@@ -1,17 +1,15 @@
 ﻿using System.Security.Claims;
-using Tuna.Shared.Extensions;
 using MediatR;
+using Tuna.Shared.Extensions;
 
 namespace Tuna.Shared.Mediatr;
 
 public interface ICommandRequest : IRequest
 {
-    
 }
 
 public interface ICommandRequest<out TResponse> : IRequest<TResponse>
 {
-    
 }
 
 public abstract class AuthCommandRequest<TResponse> : ICommandRequest<TResponse>
@@ -21,15 +19,15 @@ public abstract class AuthCommandRequest<TResponse> : ICommandRequest<TResponse>
         User = user;
     }
 
+    public ClaimsPrincipal User { get; }
+
     public long GetUserId()
     {
         return User.GetUserId();
     }
-    
+
     public string GetUserName()
     {
         return User.GetUserName();
     }
-    
-    public ClaimsPrincipal User { get; }
 }

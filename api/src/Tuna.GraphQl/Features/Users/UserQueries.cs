@@ -1,13 +1,12 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Tuna.Application.Features.Users;
-using Tuna.Application.Features.Users.Models;
-using Tuna.Application.Features.Users.Queries;
 using HotChocolate.Language;
 using HotChocolate.Resolvers;
 using HotChocolate.Types;
 using HotChocolate.Types.Pagination;
 using MediatR;
+using Tuna.Application.Features.Users.Models;
+using Tuna.Application.Features.Users.Queries;
 
 namespace Tuna.GraphQl.Features.Users;
 
@@ -30,7 +29,7 @@ public class UserQueries
         var take = resolverContext.ArgumentOptional<int>("take");
         return await mediator.Send(new GetFollowingsQuery(observerId, skip, take), cancellationToken);
     }
-    
+
     [UseOffsetPaging]
     public async Task<CollectionSegment<UserDto>> GetFollowers(
         long targetId,

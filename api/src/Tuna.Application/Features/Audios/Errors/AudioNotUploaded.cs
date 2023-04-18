@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Tuna.Application.Features.Audios.Errors;
+﻿namespace Tuna.Application.Features.Audios.Errors;
 
 public struct AudioNotUploaded
 {

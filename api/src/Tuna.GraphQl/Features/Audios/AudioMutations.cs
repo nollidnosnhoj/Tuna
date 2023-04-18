@@ -1,20 +1,20 @@
 ﻿using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using Tuna.Shared.Extensions;
-using Tuna.Application.Entities;
-using Tuna.Application.Exceptions;
-using Tuna.Application.Features.Audios.Commands;
-using Tuna.Application.Features.Audios.Models;
 using HotChocolate.Authorization;
 using HotChocolate.Language;
 using HotChocolate.Types;
 using HotChocolate.Types.Relay;
 using MediatR;
+using Tuna.Application.Entities;
+using Tuna.Application.Exceptions;
+using Tuna.Application.Features.Audios.Commands;
+using Tuna.Application.Features.Audios.Models;
 using Tuna.Application.Features.Uploads.Commands;
 using Tuna.Application.Features.Uploads.Models;
 using Tuna.GraphQl.Features.Audios.Errors;
 using Tuna.GraphQl.GraphQL.Errors;
+using Tuna.Shared.Extensions;
 
 namespace Tuna.GraphQl.Features.Audios;
 
@@ -34,7 +34,7 @@ public class AudioMutations
         var command = new CreateAudioCommand(fileName, fileSize, userId);
         return await mediator.Send(command, cancellationToken);
     }
-    
+
     [Authorize]
     [UseValidationError]
     [Error(typeof(AudioNotFoundError))]
@@ -79,7 +79,7 @@ public class AudioMutations
             _ => throw new EntityNotFoundException<Audio, long>(id),
             _ => throw new EntityNotFoundException<Audio, long>(id));
     }
-    
+
     [Authorize]
     [UseValidationError]
     [Error(typeof(AudioNotFoundError))]
@@ -94,7 +94,7 @@ public class AudioMutations
         var command = new CreateImageUploadCommand(fileName, fileSize, UploadImageType.Audio, userId);
         return await mediator.Send(command, cancellationToken);
     }
-    
+
     [Authorize]
     [UseMutationConvention(PayloadFieldName = "url")]
     [UseValidationError]
@@ -154,7 +154,7 @@ public class AudioMutations
     [Error(typeof(AudioNotFoundError))]
     public async Task<bool> FavoriteAudioAsync(
         [ID(nameof(AudioDto))] long id,
-        IMediator mediator, 
+        IMediator mediator,
         ClaimsPrincipal claimsPrincipal,
         CancellationToken cancellationToken)
     {
@@ -165,13 +165,13 @@ public class AudioMutations
             isFavorited => isFavorited,
             _ => throw new EntityNotFoundException<Audio, long>(id));
     }
-    
+
     [Authorize]
     [UseMutationConvention(PayloadFieldName = "favorited")]
     [Error(typeof(AudioNotFoundError))]
     public async Task<bool> UnfavoriteAudioAsync(
         [ID(nameof(AudioDto))] long id,
-        IMediator mediator, 
+        IMediator mediator,
         ClaimsPrincipal claimsPrincipal,
         CancellationToken cancellationToken)
     {

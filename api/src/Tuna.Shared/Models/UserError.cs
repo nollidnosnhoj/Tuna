@@ -8,12 +8,12 @@ public interface IUserError
 
 public class UserError : IUserError
 {
-    public string Code { get; }
-    public string Message { get; }
-
     public UserError(string code, string message)
     {
         Code = code;
         Message = message;
     }
+
+    public string Code { get; }
+    public string Message { get; }
 }

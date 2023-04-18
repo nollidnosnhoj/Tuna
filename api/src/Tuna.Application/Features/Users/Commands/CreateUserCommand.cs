@@ -1,7 +1,5 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Tuna.Shared.Mediatr;
-using Tuna.Application.Features.Auth;
 using MediatR;
 using OneOf;
 using Tuna.Application.Entities;
@@ -9,6 +7,7 @@ using Tuna.Application.Features.Users.Errors;
 using Tuna.Application.Features.Users.Models;
 using Tuna.Application.Persistence;
 using Tuna.Application.Services;
+using Tuna.Shared.Mediatr;
 
 namespace Tuna.Application.Features.Users.Commands;
 
@@ -29,7 +28,6 @@ public class CreateUserCommand : ICommandRequest<CreateUserCommandResult>
 [GenerateOneOf]
 public partial class CreateUserCommandResult : OneOfBase<CurrentUserDto, IdentityServiceError>
 {
-    
 }
 
 // public class CreateUserCommandValidator : AbstractValidator<CreateUserCommand>
@@ -41,13 +39,12 @@ public partial class CreateUserCommandResult : OneOfBase<CurrentUserDto, Identit
 
 public class CreateUserCommandResponse
 {
-    
 }
 
 public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, CreateUserCommandResult>
 {
-    private readonly IUnitOfWork _unitOfWork;
     private readonly IIdentityService _identityService;
+    private readonly IUnitOfWork _unitOfWork;
 
     public CreateUserCommandHandler(IUnitOfWork unitOfWork, IIdentityService identityService)
     {
@@ -65,10 +62,7 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Creat
             request.Password,
             cancellationToken);
 
-        if (!identityResult.Succeeded)
-        {
-            return new IdentityServiceError(identityResult.Errors);
-        }
+        if (!identityResult.Succeeded) return new IdentityServiceError(identityResult.Errors);
 
         var user = new User(identityResult.IdentityId, trimmedUsername);
 

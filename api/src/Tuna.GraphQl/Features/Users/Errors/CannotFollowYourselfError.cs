@@ -17,8 +17,4 @@ public class CannotFollowYourselfError : IUserError
 
 public class CannotFollowYourselfException : Exception
 {
-    public CannotFollowYourselfException()
-    {
-        
-    }
 }

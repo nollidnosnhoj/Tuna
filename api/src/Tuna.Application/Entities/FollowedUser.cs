@@ -1,15 +1,14 @@
 ﻿using System;
 
-namespace Tuna.Application.Entities
+namespace Tuna.Application.Entities;
+
+public class FollowedUser
 {
-    public class FollowedUser
-    {
-        public long ObserverId { get; set; }
-        public User Observer { get; set; } = null!;
-        public long TargetId { get; set; }
-        public User Target { get; set; } = null!;
-        
-        public DateTime FollowedDate { get; set; }
-        public DateTime? UnfollowedDate { get; set; }
-    }
+    public long ObserverId { get; set; }
+    public User Observer { get; set; } = null!;
+    public long TargetId { get; set; }
+    public User Target { get; set; } = null!;
+
+    public DateTime FollowedDate { get; set; }
+    public DateTime? UnfollowedDate { get; set; }
 }

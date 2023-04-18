@@ -1,37 +1,35 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Tuna.Shared.Mediatr;
-using Tuna.Application.Features.Auth;
 using MediatR;
 using OneOf;
 using OneOf.Types;
 using Tuna.Application.Features.Users.Errors;
 using Tuna.Application.Persistence;
 using Tuna.Application.Services;
+using Tuna.Shared.Mediatr;
 
 namespace Tuna.Application.Features.Users.Commands;
 
 public class UpdateEmailCommand : ICommandRequest<UpdateEmailCommandResult>
 {
-    public long UserId { get; set; }
-    public string NewEmail { get; }
-
     public UpdateEmailCommand(long userId, string newEmail)
     {
         NewEmail = newEmail;
     }
+
+    public long UserId { get; set; }
+    public string NewEmail { get; }
 }
 
 [GenerateOneOf]
 public partial class UpdateEmailCommandResult : OneOfBase<Unit, NotFound, IdentityServiceError>
 {
-    
 }
 
 public class UpdateEmailCommandHandler : IRequestHandler<UpdateEmailCommand, UpdateEmailCommandResult>
 {
-    private readonly IUnitOfWork _unitOfWork;
     private readonly IIdentityService _identityService;
+    private readonly IUnitOfWork _unitOfWork;
 
     public UpdateEmailCommandHandler(IUnitOfWork unitOfWork, IIdentityService identityService)
     {
@@ -47,10 +45,7 @@ public class UpdateEmailCommandHandler : IRequestHandler<UpdateEmailCommand, Upd
 
         var result = await _identityService.UpdateEmailAsync(user.IdentityId, command.NewEmail, cancellationToken);
 
-        if (!result.Succeeded)
-        {
-            return new IdentityServiceError(result.Errors);
-        }
+        if (!result.Succeeded) return new IdentityServiceError(result.Errors);
 
         return Unit.Value;
     }

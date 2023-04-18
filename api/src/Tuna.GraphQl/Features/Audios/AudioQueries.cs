@@ -1,14 +1,13 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Tuna.Application.Features.Audios;
-using Tuna.Application.Features.Audios.Models;
-using Tuna.Application.Features.Audios.Queries;
 using HashidsNet;
 using HotChocolate.Language;
 using HotChocolate.Resolvers;
 using HotChocolate.Types;
 using HotChocolate.Types.Pagination;
 using MediatR;
+using Tuna.Application.Features.Audios.Models;
+using Tuna.Application.Features.Audios.Queries;
 
 namespace Tuna.GraphQl.Features.Audios;
 
@@ -16,8 +15,8 @@ namespace Tuna.GraphQl.Features.Audios;
 public class AudioQueries
 {
     public async Task<AudioDto?> GetAudioAsync(
-        string slug, 
-        IHashids hashids, 
+        string slug,
+        IHashids hashids,
         IMediator mediator,
         CancellationToken cancellationToken)
     {
@@ -36,7 +35,7 @@ public class AudioQueries
         var take = resolverContext.ArgumentOptional<int>("take");
         return await mediator.Send(new GetUserAudiosQuery(userId, skip, take), cancellationToken);
     }
-    
+
     [UseOffsetPaging]
     public async Task<CollectionSegment<AudioDto>> GetUserFavoriteAudiosAsync(
         long userId,

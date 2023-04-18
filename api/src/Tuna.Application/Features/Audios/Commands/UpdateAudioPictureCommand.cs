@@ -1,13 +1,13 @@
 ﻿using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using Tuna.Shared.Errors;
-using Tuna.Shared.Mediatr;
 using MediatR;
 using OneOf;
 using OneOf.Types;
 using Tuna.Application.Persistence;
 using Tuna.Application.Services;
+using Tuna.Shared.Errors;
+using Tuna.Shared.Mediatr;
 
 namespace Tuna.Application.Features.Audios.Commands;
 
@@ -26,13 +26,12 @@ public class UpdateAudioPictureCommand : AuthCommandRequest<UpdateAudioPictureRe
 [GenerateOneOf]
 public partial class UpdateAudioPictureResult : OneOfBase<string, NotFound, Forbidden>
 {
-    
 }
 
 public class UpdateAudioPictureCommandHandler : IRequestHandler<UpdateAudioPictureCommand, UpdateAudioPictureResult>
 {
-    private readonly IUnitOfWork _unitOfWork;
     private readonly IImageService _imageService;
+    private readonly IUnitOfWork _unitOfWork;
 
     public UpdateAudioPictureCommandHandler(IUnitOfWork unitOfWork, IImageService imageService)
     {

@@ -1,6 +1,4 @@
-﻿using Tuna.Application.Entities.Abstractions;
-using Tuna.Application.Persistence;
-using HotChocolate;
+﻿using HotChocolate;
 using HotChocolate.Execution;
 using MediatR;
 using Microsoft.AspNetCore.Hosting;
@@ -11,23 +9,29 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestPlatform.TestHost;
 using Respawn;
 using Testcontainers.PostgreSql;
+using Tuna.Application.Entities.Abstractions;
+using Tuna.Application.Persistence;
 
 namespace Tuna.Tests;
 
 [CollectionDefinition(nameof(TestFixture))]
-public class TextFixtureCollection : ICollectionFixture<TestFixture> { }
+public class TextFixtureCollection : ICollectionFixture<TestFixture>
+{
+}
 
 public class TestFixture : IAsyncLifetime
 {
+    private readonly IConfiguration _configuration;
+
     private readonly PostgreSqlContainer _dbContainer = new PostgreSqlBuilder()
         .WithDatabase("tuna_integration_test")
         .WithUsername("test")
         .WithPassword("testpassword")
         .Build();
-    private Respawner _respawner = default!;
-    private readonly IConfiguration _configuration;
-    private readonly IServiceScopeFactory _scopeFactory;
+
     private readonly WebApplicationFactory<Program> _factory;
+    private readonly IServiceScopeFactory _scopeFactory;
+    private Respawner _respawner = default!;
 
     public TestFixture()
     {
@@ -36,33 +40,21 @@ public class TestFixture : IAsyncLifetime
         _scopeFactory = _factory.Services.GetRequiredService<IServiceScopeFactory>();
     }
 
-    class TestApplicationFactory  : WebApplicationFactory<Program>
+    public async Task InitializeAsync()
     {
-        private readonly string _connectionString;
-
-        public TestApplicationFactory(string connectionString)
+        var connectionString = _configuration.GetConnectionString("Database");
+        _respawner = await Respawner.CreateAsync(connectionString!, new RespawnerOptions
         {
-            _connectionString = connectionString;
-        }
+            DbAdapter = DbAdapter.Postgres,
+            SchemasToInclude = new[] { "public", "identity" }
+        });
+        await _respawner.ResetAsync(connectionString!);
+    }
 
-        protected override void ConfigureWebHost(IWebHostBuilder builder)
-        {
-            builder.ConfigureAppConfiguration((_, configBuilder) =>
-            {
-                configBuilder.AddInMemoryCollection(new []
-                {
-                    new KeyValuePair<string, string?>("ConnectionStrings:Database", _connectionString)
-                });
-            });
-
-            builder.ConfigureTestServices(services =>
-            {
-                services.AddSingleton(
-                    sp => new RequestExecutorProxy(
-                        sp.GetRequiredService<IRequestExecutorResolver>(),
-                        Schema.DefaultName));
-            });
-        }
+    public Task DisposeAsync()
+    {
+        _factory.Dispose();
+        return Task.CompletedTask;
     }
 
     public async Task<IExecutionResult> ExecuteGraphQlRequestAsync(
@@ -89,32 +81,43 @@ public class TestFixture : IAsyncLifetime
         return await action(scope.ServiceProvider);
     }
 
-    public Task ExecuteDbContextAsync(Func<ApplicationDbContext, Task> action) 
-        => ExecuteScopeAsync(sp => action(sp.GetRequiredService<ApplicationDbContext>()));
+    public Task ExecuteDbContextAsync(Func<ApplicationDbContext, Task> action)
+    {
+        return ExecuteScopeAsync(sp => action(sp.GetRequiredService<ApplicationDbContext>()));
+    }
 
-    public Task ExecuteDbContextAsync(Func<ApplicationDbContext, ValueTask> action) 
-        => ExecuteScopeAsync(sp => action(sp.GetRequiredService<ApplicationDbContext>()).AsTask());
+    public Task ExecuteDbContextAsync(Func<ApplicationDbContext, ValueTask> action)
+    {
+        return ExecuteScopeAsync(sp => action(sp.GetRequiredService<ApplicationDbContext>()).AsTask());
+    }
 
-    public Task ExecuteDbContextAsync(Func<ApplicationDbContext, IMediator, Task> action) 
-        => ExecuteScopeAsync(sp => action(sp.GetRequiredService<ApplicationDbContext>(), sp.GetRequiredService<IMediator>()));
+    public Task ExecuteDbContextAsync(Func<ApplicationDbContext, IMediator, Task> action)
+    {
+        return ExecuteScopeAsync(sp =>
+            action(sp.GetRequiredService<ApplicationDbContext>(), sp.GetRequiredService<IMediator>()));
+    }
 
-    public Task<T> ExecuteDbContextAsync<T>(Func<ApplicationDbContext, Task<T>> action) 
-        => ExecuteScopeAsync(sp => action(sp.GetRequiredService<ApplicationDbContext>()));
+    public Task<T> ExecuteDbContextAsync<T>(Func<ApplicationDbContext, Task<T>> action)
+    {
+        return ExecuteScopeAsync(sp => action(sp.GetRequiredService<ApplicationDbContext>()));
+    }
 
-    public Task<T> ExecuteDbContextAsync<T>(Func<ApplicationDbContext, ValueTask<T>> action) 
-        => ExecuteScopeAsync(sp => action(sp.GetRequiredService<ApplicationDbContext>()).AsTask());
+    public Task<T> ExecuteDbContextAsync<T>(Func<ApplicationDbContext, ValueTask<T>> action)
+    {
+        return ExecuteScopeAsync(sp => action(sp.GetRequiredService<ApplicationDbContext>()).AsTask());
+    }
 
-    public Task<T> ExecuteDbContextAsync<T>(Func<ApplicationDbContext, IMediator, Task<T>> action) 
-        => ExecuteScopeAsync(sp => action(sp.GetRequiredService<ApplicationDbContext>(), sp.GetRequiredService<IMediator>()));
+    public Task<T> ExecuteDbContextAsync<T>(Func<ApplicationDbContext, IMediator, Task<T>> action)
+    {
+        return ExecuteScopeAsync(sp =>
+            action(sp.GetRequiredService<ApplicationDbContext>(), sp.GetRequiredService<IMediator>()));
+    }
 
     public Task InsertAsync<T>(params T[] entities) where T : class
     {
         return ExecuteDbContextAsync(db =>
         {
-            foreach (var entity in entities)
-            {
-                db.Set<T>().Add(entity);
-            }
+            foreach (var entity in entities) db.Set<T>().Add(entity);
             return db.SaveChangesAsync();
         });
     }
@@ -129,7 +132,7 @@ public class TestFixture : IAsyncLifetime
         });
     }
 
-    public Task InsertAsync<TEntity, TEntity2>(TEntity entity, TEntity2 entity2) 
+    public Task InsertAsync<TEntity, TEntity2>(TEntity entity, TEntity2 entity2)
         where TEntity : class
         where TEntity2 : class
     {
@@ -142,7 +145,7 @@ public class TestFixture : IAsyncLifetime
         });
     }
 
-    public Task InsertAsync<TEntity, TEntity2, TEntity3>(TEntity entity, TEntity2 entity2, TEntity3 entity3) 
+    public Task InsertAsync<TEntity, TEntity2, TEntity3>(TEntity entity, TEntity2 entity2, TEntity3 entity3)
         where TEntity : class
         where TEntity2 : class
         where TEntity3 : class
@@ -157,7 +160,8 @@ public class TestFixture : IAsyncLifetime
         });
     }
 
-    public Task InsertAsync<TEntity, TEntity2, TEntity3, TEntity4>(TEntity entity, TEntity2 entity2, TEntity3 entity3, TEntity4 entity4) 
+    public Task InsertAsync<TEntity, TEntity2, TEntity3, TEntity4>(TEntity entity, TEntity2 entity2, TEntity3 entity3,
+        TEntity4 entity4)
         where TEntity : class
         where TEntity2 : class
         where TEntity3 : class
@@ -174,7 +178,7 @@ public class TestFixture : IAsyncLifetime
         });
     }
 
-    public Task<T?> FindAsync<T, TKey>(TKey id) 
+    public Task<T?> FindAsync<T, TKey>(TKey id)
         where T : Entity<TKey>
         where TKey : IEquatable<TKey>, IComparable<TKey>
     {
@@ -201,20 +205,32 @@ public class TestFixture : IAsyncLifetime
         });
     }
 
-    public async Task InitializeAsync()
+    private class TestApplicationFactory : WebApplicationFactory<Program>
     {
-        var connectionString = _configuration.GetConnectionString("Database");
-        _respawner = await Respawner.CreateAsync(connectionString!, new RespawnerOptions
-        {
-            DbAdapter = DbAdapter.Postgres,
-            SchemasToInclude = new[] { "public", "identity" }
-        });
-        await _respawner.ResetAsync(connectionString!);
-    }
+        private readonly string _connectionString;
 
-    public Task DisposeAsync()
-    {
-        _factory.Dispose();
-        return Task.CompletedTask;
+        public TestApplicationFactory(string connectionString)
+        {
+            _connectionString = connectionString;
+        }
+
+        protected override void ConfigureWebHost(IWebHostBuilder builder)
+        {
+            builder.ConfigureAppConfiguration((_, configBuilder) =>
+            {
+                configBuilder.AddInMemoryCollection(new[]
+                {
+                    new KeyValuePair<string, string?>("ConnectionStrings:Database", _connectionString)
+                });
+            });
+
+            builder.ConfigureTestServices(services =>
+            {
+                services.AddSingleton(
+                    sp => new RequestExecutorProxy(
+                        sp.GetRequiredService<IRequestExecutorResolver>(),
+                        Schema.DefaultName));
+            });
+        }
     }
 }

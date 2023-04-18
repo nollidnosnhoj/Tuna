@@ -1,5 +1,5 @@
-﻿using Tuna.Application.Services;
-using HashidsNet;
+﻿using HashidsNet;
+using Tuna.Application.Services;
 
 namespace Tuna.Infrastructure;
 

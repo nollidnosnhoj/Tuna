@@ -1,10 +1,9 @@
 ﻿using System;
 using Tuna.Application.Services;
 
-namespace Tuna.Infrastructure.Shared
+namespace Tuna.Infrastructure.Shared;
+
+internal class DateTimeProvider : IDateTimeProvider
 {
-    internal class DateTimeProvider : IDateTimeProvider
-    {
-        public DateTime Now => DateTime.UtcNow;
-    }
+    public DateTime Now => DateTime.UtcNow;
 }

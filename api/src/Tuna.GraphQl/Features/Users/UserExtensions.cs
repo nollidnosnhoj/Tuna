@@ -1,6 +1,6 @@
-﻿using Tuna.Application.Features.Users.Models;
-using HotChocolate;
+﻿using HotChocolate;
 using HotChocolate.Types;
+using Tuna.Application.Features.Users.Models;
 using Tuna.Application.Services;
 
 namespace Tuna.GraphQl.Features.Users;

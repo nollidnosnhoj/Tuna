@@ -1,12 +1,12 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Tuna.Shared.Mediatr;
-using Tuna.Application.Features.Users.Mappings;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Tuna.Application.Features.Users.Mappings;
 using Tuna.Application.Features.Users.Models;
 using Tuna.Application.Persistence;
+using Tuna.Shared.Mediatr;
 
 namespace Tuna.Application.Features.Users.Queries;
 

@@ -6,10 +6,10 @@ using Amazon;
 using Amazon.Runtime;
 using Amazon.S3;
 using Amazon.S3.Model;
-using Tuna.Application.Exceptions;
-using Tuna.Shared.Extensions;
-using Tuna.Application.Services;
 using Microsoft.Extensions.Options;
+using Tuna.Application.Exceptions;
+using Tuna.Application.Services;
+using Tuna.Shared.Extensions;
 
 namespace Tuna.Infrastructure.Storage.AmazonS3;
 
@@ -34,7 +34,7 @@ internal class AmazonS3Service : IStorageService
         _client = new AmazonS3Client(credentials, s3Config);
     }
 
-    public string CreatePutPreSignedUrl(string bucket, string blobName, int expirationInMinutes, 
+    public string CreatePutPreSignedUrl(string bucket, string blobName, int expirationInMinutes,
         Dictionary<string, string>? metadata = null)
     {
         try
@@ -46,7 +46,7 @@ internal class AmazonS3Service : IStorageService
                 Key = blobName,
                 Expires = _dateTimeProvider.Now.AddMinutes(expirationInMinutes),
                 ContentType = contentType,
-                Verb = HttpVerb.PUT,
+                Verb = HttpVerb.PUT
             };
 
             presignedUrlRequest.Metadata.AddMetadata(metadata);
@@ -58,10 +58,10 @@ internal class AmazonS3Service : IStorageService
             throw new StorageException(ex.Message, ex);
         }
     }
-        
+
     public async Task RemoveAsync(string bucket, string blobName, CancellationToken cancellationToken = default)
     {
-        var deleteRequest = new DeleteObjectRequest {BucketName = bucket, Key = blobName};
+        var deleteRequest = new DeleteObjectRequest { BucketName = bucket, Key = blobName };
 
         try
         {
@@ -80,7 +80,7 @@ internal class AmazonS3Service : IStorageService
             var request = new GetObjectMetadataRequest
             {
                 Key = blobName,
-                BucketName = bucket,
+                BucketName = bucket
             };
             await _client.GetObjectMetadataAsync(request, cancellationToken);
             return true;

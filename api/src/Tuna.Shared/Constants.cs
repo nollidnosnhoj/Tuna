@@ -9,11 +9,11 @@ public static class ClaimNames
 public static class MediaConfigurationConstants
 {
     public const int AUDIO_MAX_FILE_SIZE = 262144000;
-    public static string[] AUDIO_VALID_TYPES = { "audio/mp3", "audio/mpeg" };
     public const int IMAGE_MAX_FILE_SIZE = 2097152;
+    public static string[] AUDIO_VALID_TYPES = { "audio/mp3", "audio/mpeg" };
     public static string[] IMAGE_VALID_TYPES = { "image/jpeg", "image/png", "image/gif" };
 }
-    
+
 public static class AssetContainerConstants
 {
     public const string AUDIO_STREAM = "audios";

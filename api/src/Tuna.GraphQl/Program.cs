@@ -1,23 +1,16 @@
 using System;
 using System.Reflection;
-using Tuna.GraphQl.Configurations;
-using Tuna.Shared.Mediatr.Pipelines;
-using Tuna.Application;
-using Tuna.Application.Persistence;
-using Tuna.Application.Persistence.Pipelines;
-using Tuna.Infrastructure;
-using Tuna.Infrastructure.Storage.AmazonS3;
 using FluentValidation;
 using HashidsNet;
-using MediatR;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Events;
+using Tuna.Application;
+using Tuna.GraphQl.Configurations;
+using Tuna.Infrastructure;
+using Tuna.Infrastructure.Storage.AmazonS3;
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Debug()
@@ -35,7 +28,7 @@ try
     builder.Services.AddMediatR(config => config.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
     builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
     builder.Services.AddMediatrPipelines();
-    builder.Services.AddSingleton<IHashids>(_ => new Hashids(salt: "saltytuna", minHashLength: 7));
+    builder.Services.AddSingleton<IHashids>(_ => new Hashids("saltytuna", 7));
     builder.Services.AddInfrastructure(builder.Configuration, builder.Environment);
     builder.Services.AddPersistence(builder.Configuration, builder.Environment);
     builder.Services.ConfigureAuthentication(builder.Configuration, builder.Environment);
@@ -47,7 +40,7 @@ try
     builder.Services.ConfigureRateLimiting();
     builder.Services.ConfigureCors();
     builder.Services.ConfigureSwagger();
-    
+
     builder.Logging.ClearProviders();
     builder.Logging.AddSerilog(Log.Logger);
 

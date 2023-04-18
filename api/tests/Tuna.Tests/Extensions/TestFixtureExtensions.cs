@@ -1,13 +1,14 @@
 ﻿using System.Security.Claims;
+using Bogus;
 using Tuna.Application.Entities;
 using Tuna.Application.Features.Auth.Helpers;
-using Bogus;
 
 namespace Tuna.Tests.Extensions;
 
 public static class TestFixtureExtensions
 {
-    public static async Task<(User user, ClaimsPrincipal principal)> CreateRandomUserAsync(this TestFixture fixture, Faker? faker = null)
+    public static async Task<(User user, ClaimsPrincipal principal)> CreateRandomUserAsync(this TestFixture fixture,
+        Faker? faker = null)
     {
         faker ??= new Faker();
         var user = new User(faker.Random.Guid().ToString(), faker.Internet.UserName());

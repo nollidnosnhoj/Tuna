@@ -4,9 +4,9 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using Tuna.Application.Services;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Tuna.Application.Services;
 
 namespace Tuna.Infrastructure.Security;
 
@@ -18,15 +18,15 @@ public class JwtProvider : ITokenProvider
     {
         _options = options.Value;
     }
-    
+
     public string GenerateAccessToken(IEnumerable<Claim> claims, DateTime expiration)
     {
         var secret = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.Secret));
         var signingCredentials = new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
         var tokenOptions = new JwtSecurityToken(
-            issuer: _options.Issuer,
-            audience: _options.Audience,
-            claims: claims,
+            _options.Issuer,
+            _options.Audience,
+            claims,
             expires: expiration,
             signingCredentials: signingCredentials
         );

@@ -1,6 +1,6 @@
-﻿using Tuna.Application.Features.Users.DataLoaders;
-using HotChocolate.Execution.Configuration;
+﻿using HotChocolate.Execution.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Tuna.Application.Features.Users.DataLoaders;
 
 namespace Tuna.GraphQl.Features.Users;
 

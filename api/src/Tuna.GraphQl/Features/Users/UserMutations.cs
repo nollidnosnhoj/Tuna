@@ -3,20 +3,20 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using Tuna.Application.Entities;
-using Tuna.Application.Exceptions;
-using Tuna.Application.Features.Users.Commands;
-using Tuna.Application.Features.Users.Models;
-using Tuna.Shared.Extensions;
 using HotChocolate.Authorization;
 using HotChocolate.Language;
 using HotChocolate.Types;
 using HotChocolate.Types.Relay;
 using MediatR;
+using Tuna.Application.Entities;
+using Tuna.Application.Exceptions;
 using Tuna.Application.Features.Uploads.Commands;
 using Tuna.Application.Features.Uploads.Models;
+using Tuna.Application.Features.Users.Commands;
+using Tuna.Application.Features.Users.Models;
 using Tuna.GraphQl.Features.Users.Errors;
 using Tuna.GraphQl.GraphQL.Errors;
+using Tuna.Shared.Extensions;
 
 namespace Tuna.GraphQl.Features.Users;
 
@@ -42,9 +42,8 @@ public class UserMutations
             _ => throw new EntityNotFoundException<User, long>(id),
             _ => throw new EntityNotFoundException<User, long>(id));
     }
-    
-    
-    
+
+
     [Authorize]
     [UseMutationConvention(PayloadFieldName = "url")]
     [UseValidationError]
@@ -60,7 +59,7 @@ public class UserMutations
         var command = new CreateImageUploadCommand(fileName, fileSize, UploadImageType.User, userId);
         return await mediator.Send(command, cancellationToken);
     }
-    
+
     [Authorize]
     [UseMutationConvention(PayloadFieldName = "url")]
     [UseValidationError]
@@ -81,7 +80,7 @@ public class UserMutations
             url => url,
             _ => throw new EntityNotFoundException<User, long>(id));
     }
-    
+
     [Authorize]
     [UseMutationConvention(PayloadFieldName = "userPictureRemoved")]
     [UseValidationError]
@@ -93,17 +92,14 @@ public class UserMutations
         CancellationToken cancellationToken)
     {
         var userId = claimsPrincipal.GetUserId();
-        if (userId != id)
-        {
-            throw new UnauthorizedAccessException();
-        }
+        if (userId != id) throw new UnauthorizedAccessException();
         var command = new UpdateUserPictureCommand(id, null);
         var result = await mediator.Send(command, cancellationToken);
         return result.Match(
             string.IsNullOrEmpty,
             _ => throw new EntityNotFoundException<User, long>(id));
     }
-    
+
     [Authorize]
     [UseMutationConvention(PayloadFieldName = "userUpdated")]
     [Error(typeof(IdentityError))]
@@ -116,10 +112,7 @@ public class UserMutations
         CancellationToken cancellationToken)
     {
         var currentUserId = claimsPrincipal.GetUserId();
-        if (id != currentUserId)
-        {
-            throw new UnauthorizedAccessException();
-        }
+        if (id != currentUserId) throw new UnauthorizedAccessException();
         var command = new UpdateUsernameCommand(id, newUsername);
         var result = await mediator.Send(command, cancellationToken);
         return result.Match(
@@ -127,7 +120,7 @@ public class UserMutations
             _ => throw new EntityNotFoundException<User, long>(id),
             err => throw new AggregateException(err.Errors.Select(e => new IdentityException(e))));
     }
-    
+
     [Authorize]
     [UseMutationConvention(PayloadFieldName = "passwordUpdated")]
     [Error(typeof(IdentityError))]
@@ -145,7 +138,7 @@ public class UserMutations
             _ => throw new UnauthorizedAccessException(),
             id => throw new AggregateException(id.Errors.Select(e => new IdentityException(e))));
     }
-    
+
     [Authorize]
     [UseMutationConvention(PayloadFieldName = "emailUpdated")]
     [Error(typeof(IdentityError))]
@@ -170,7 +163,7 @@ public class UserMutations
     [Error(typeof(CannotFollowYourselfError))]
     public async Task<bool> FollowUserAsync(
         [ID(nameof(UserDto))] long id,
-        IMediator mediator, 
+        IMediator mediator,
         ClaimsPrincipal claimsPrincipal,
         CancellationToken cancellationToken)
     {
@@ -182,14 +175,14 @@ public class UserMutations
             _ => throw new EntityNotFoundException<User, long>(id),
             _ => throw new CannotFollowYourselfException());
     }
-    
+
     [Authorize]
     [UseMutationConvention(PayloadFieldName = "followed")]
     [Error(typeof(UserNotFoundError))]
     [Error(typeof(CannotFollowYourselfError))]
     public async Task<bool> UnfollowUserAsync(
         [ID(nameof(UserDto))] long id,
-        IMediator mediator, 
+        IMediator mediator,
         ClaimsPrincipal claimsPrincipal,
         CancellationToken cancellationToken)
     {
