@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Audiochan.UnitTests", "test
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Audiochan.IntegrationTests", "tests\Audiochan.IntegrationTests\Audiochan.IntegrationTests.csproj", "{D290EBA4-EA8F-4460-B0B2-0BC416F7B84C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Audiochan.Tests.Shared", "tests\Audiochan.Tests.Shared\Audiochan.Tests.Shared.csproj", "{D82E602F-8013-4A1F-99A4-71A91D6267DE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +51,10 @@ Global
 		{D290EBA4-EA8F-4460-B0B2-0BC416F7B84C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D290EBA4-EA8F-4460-B0B2-0BC416F7B84C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D290EBA4-EA8F-4460-B0B2-0BC416F7B84C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D82E602F-8013-4A1F-99A4-71A91D6267DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D82E602F-8013-4A1F-99A4-71A91D6267DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D82E602F-8013-4A1F-99A4-71A91D6267DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D82E602F-8013-4A1F-99A4-71A91D6267DE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -63,5 +69,6 @@ Global
 		{1B59833A-1683-4FDB-A88B-1EF4324E1BBC} = {1E1DB829-84B6-4B45-92D4-C07C987000E5}
 		{F8DE5CA8-BAC5-4E9C-9294-DC1808A45819} = {6320CE6D-E22C-46E3-ACA4-32207BEDEC13}
 		{D290EBA4-EA8F-4460-B0B2-0BC416F7B84C} = {6320CE6D-E22C-46E3-ACA4-32207BEDEC13}
+		{D82E602F-8013-4A1F-99A4-71A91D6267DE} = {6320CE6D-E22C-46E3-ACA4-32207BEDEC13}
 	EndGlobalSection
 EndGlobal

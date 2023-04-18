@@ -3,6 +3,7 @@ using Audiochan.API.Features.Users;
 using Audiochan.API.GraphQL.Types;
 using Audiochan.Core.Persistence;
 using HashidsNet;
+using HotChocolate;
 using HotChocolate.Data;
 using HotChocolate.Execution.Configuration;
 using MediatR;
@@ -27,7 +28,7 @@ public static class GraphQlConfiguration
             .AddGlobalObjectIdentification()
             .RegisterDbContext<ApplicationDbContext>(DbContextKind.Pooled)
             .RegisterService<IHashids>()
-            .RegisterService<IMediator>()
+            .RegisterService<IMediator>(ServiceKind.Resolver)
             .AddQueryType()
             .AddMutationType()
             .AddAudioFeatures()

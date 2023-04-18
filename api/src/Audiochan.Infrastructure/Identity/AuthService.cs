@@ -6,11 +6,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using Audiochan.Core;
 using Audiochan.Core.Features.Auth;
+using Audiochan.Core.Features.Auth.Helpers;
 using Audiochan.Core.Features.Auth.Models;
 using Audiochan.Core.Features.Auth.Results;
 using Audiochan.Core.Persistence;
 using Audiochan.Core.Services;
 using Audiochan.Infrastructure.Identity.Models;
+using Audiochan.Shared;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.JsonWebTokens;
@@ -137,21 +139,11 @@ public class AuthService : IAuthService
         }
     }
 
-    private async Task<(string token, DateTime expirationDate)> GenerateAccessToken(AudiochanIdentityUser user, CancellationToken cancellationToken = default)
+    private async Task<(string token, DateTime expirationDate)> GenerateAccessToken(AudiochanIdentityUser identityUser, CancellationToken cancellationToken = default)
     {
         await using var dbContext = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
-        var appUser = await dbContext.Users.FirstOrDefaultAsync(x => x.IdentityId == user.Id, cancellationToken);
-        var claims = new List<Claim>
-        {
-            new(JwtRegisteredClaimNames.Sub, user.Id),
-            new(ClaimNames.HasProfile, (appUser is not null).ToString())
-        };
-        
-        if (appUser is not null)
-        {
-            claims.Add(new Claim(ClaimNames.UserId, appUser.Id.ToString()));
-            claims.Add(new Claim(JwtRegisteredClaimNames.Name, appUser.UserName));
-        }
+        var user = await dbContext.Users.FirstOrDefaultAsync(x => x.IdentityId == identityUser.Id, cancellationToken);
+        var claims = UserClaimsHelpers.ToClaims(identityUser.Id, user);
         var expiration = _dateTimeProvider.Now.AddMinutes(30);
         var token = _tokenProvider.GenerateAccessToken(claims, expiration);
         return (token, expiration);

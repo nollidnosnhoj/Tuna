@@ -1,15 +1,16 @@
 ﻿using Audiochan.Core.Entities.Abstractions;
 using Audiochan.Core.Persistence;
-using DotNet.Testcontainers.Builders;
-using DotNet.Testcontainers.Configurations;
-using DotNet.Testcontainers.Containers;
+using HotChocolate;
+using HotChocolate.Execution;
 using MediatR;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestPlatform.TestHost;
 using Respawn;
+using Testcontainers.PostgreSql;
 
 namespace Audiochan.IntegrationTests;
 
@@ -18,13 +19,11 @@ public class TextFixtureCollection : ICollectionFixture<TestFixture> { }
 
 public class TestFixture : IAsyncLifetime
 {
-    private readonly TestcontainerDatabase _dbContainer = new ContainerBuilder<PostgreSqlTestcontainer>()
-        .WithDatabase(new PostgreSqlTestcontainerConfiguration
-        {
-            Database = "audiochan_integration_test",
-            Username = "test",
-            Password = "testpassword"
-        }).Build();
+    private readonly PostgreSqlContainer _dbContainer = new PostgreSqlBuilder()
+        .WithDatabase("audiochan_integration_test")
+        .WithUsername("test")
+        .WithPassword("testpassword")
+        .Build();
     private Respawner _respawner = default!;
     private readonly IConfiguration _configuration;
     private readonly IServiceScopeFactory _scopeFactory;
@@ -32,7 +31,7 @@ public class TestFixture : IAsyncLifetime
 
     public TestFixture()
     {
-        _factory = new AudiochanTestApplicationFactory(_dbContainer.ConnectionString);
+        _factory = new AudiochanTestApplicationFactory(_dbContainer.GetConnectionString());
         _configuration = _factory.Services.GetRequiredService<IConfiguration>();
         _scopeFactory = _factory.Services.GetRequiredService<IServiceScopeFactory>();
     }
@@ -55,7 +54,27 @@ public class TestFixture : IAsyncLifetime
                     new KeyValuePair<string, string?>("ConnectionStrings:Database", _connectionString)
                 });
             });
+
+            builder.ConfigureTestServices(services =>
+            {
+                services.AddSingleton(
+                    sp => new RequestExecutorProxy(
+                        sp.GetRequiredService<IRequestExecutorResolver>(),
+                        Schema.DefaultName));
+            });
         }
+    }
+
+    public async Task<IExecutionResult> ExecuteGraphQlRequestAsync(
+        Action<IQueryRequestBuilder> configure,
+        CancellationToken cancellationToken = default)
+    {
+        await using var scope = _scopeFactory.CreateAsyncScope();
+        var executor = scope.ServiceProvider.GetRequiredService<RequestExecutorProxy>();
+        var requestBuilder = new QueryRequestBuilder();
+        configure(requestBuilder);
+        var request = requestBuilder.Create();
+        return await executor.ExecuteAsync(request, cancellationToken);
     }
 
     public async Task ExecuteScopeAsync(Func<IServiceProvider, Task> action)

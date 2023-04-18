@@ -1,4 +1,4 @@
-﻿namespace Audiochan.Core;
+﻿namespace Audiochan.Shared;
 
 public static class ClaimNames
 {

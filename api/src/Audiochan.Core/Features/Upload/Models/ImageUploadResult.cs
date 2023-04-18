@@ -1,4 +1,6 @@
-﻿namespace Audiochan.Core.Features.Upload.Models;
+﻿using Audiochan.Shared;
+
+namespace Audiochan.Core.Features.Upload.Models;
 
 public record ImageUploadResult(string? Url)
 {

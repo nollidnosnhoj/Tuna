@@ -9,6 +9,7 @@ using Audiochan.Shared.Mediatr;
 using Audiochan.Core.Entities;
 using Audiochan.Core.Persistence;
 using Audiochan.Core.Services;
+using Audiochan.Shared;
 using MediatR;
 using Microsoft.Extensions.Options;
 using OneOf;

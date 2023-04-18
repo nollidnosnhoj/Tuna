@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using Microsoft.IdentityModel.JsonWebTokens;
 
 namespace Audiochan.Shared.Extensions
 {
@@ -6,7 +7,7 @@ namespace Audiochan.Shared.Extensions
     {
         public static bool TryGetUserId(this ClaimsPrincipal? principal, out long userId)
         {
-            var claim = principal?.FindFirst(ClaimTypes.NameIdentifier);
+            var claim = principal?.FindFirst(ClaimNames.UserId);
 
             if (claim is not null)
             {
@@ -19,7 +20,7 @@ namespace Audiochan.Shared.Extensions
         
         public static bool TryGetUserName(this ClaimsPrincipal? principal, out string userName)
         {
-            var claim = principal?.FindFirst(ClaimTypes.Name);
+            var claim = principal?.FindFirst(JwtRegisteredClaimNames.Name);
 
             if (claim is not null && !string.IsNullOrWhiteSpace(claim.Value))
             {

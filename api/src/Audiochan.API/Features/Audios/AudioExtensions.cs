@@ -4,6 +4,7 @@ using Audiochan.Core;
 using Audiochan.Core.Features.Audios.Models;
 using Audiochan.Core.Features.Users.DataLoaders;
 using Audiochan.Core.Features.Users.Models;
+using Audiochan.Shared;
 using HashidsNet;
 using HotChocolate;
 using HotChocolate.Types;

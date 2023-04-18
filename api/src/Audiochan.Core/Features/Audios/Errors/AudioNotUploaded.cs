@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Audiochan.Core.Features.Audios.Results;
+namespace Audiochan.Core.Features.Audios.Errors;
 
 public struct AudioNotUploaded
 {

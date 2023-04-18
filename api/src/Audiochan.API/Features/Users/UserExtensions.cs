@@ -1,5 +1,6 @@
 ﻿using Audiochan.Core;
 using Audiochan.Core.Features.Users.Models;
+using Audiochan.Shared;
 using HotChocolate;
 using HotChocolate.Types;
 
