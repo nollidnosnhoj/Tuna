@@ -3,9 +3,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
-using Tuna.Application.Entities;
 using Tuna.Application.Persistence;
 using Tuna.Application.Persistence.Repositories;
+using Tuna.Domain.Entities;
 using Tuna.Infrastructure.Persistence.Repositories;
 
 namespace Tuna.Infrastructure.Persistence;

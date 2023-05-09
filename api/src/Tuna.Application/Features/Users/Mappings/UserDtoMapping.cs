@@ -1,6 +1,6 @@
 ﻿using System.Linq;
-using Tuna.Application.Entities;
 using Tuna.Application.Features.Users.Models;
+using Tuna.Domain.Entities;
 
 namespace Tuna.Application.Features.Users.Mappings;
 

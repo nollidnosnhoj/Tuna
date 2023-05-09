@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Tuna.Application.Entities;
+using Tuna.Domain.Entities;
 
 namespace Tuna.Application.Persistence.Repositories;
 

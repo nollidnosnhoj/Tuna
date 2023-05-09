@@ -8,9 +8,9 @@ using MediatR;
 using Microsoft.Extensions.Options;
 using OneOf;
 using OneOf.Types;
-using Tuna.Application.Entities;
 using Tuna.Application.Persistence;
 using Tuna.Application.Services;
+using Tuna.Domain.Entities;
 using Tuna.Shared.Errors;
 using Tuna.Shared.Mediatr;
 
@@ -18,7 +18,7 @@ namespace Tuna.Application.Features.Audios.Commands;
 
 public class RemoveAudioCommand : AuthCommandRequest<RemoveAudioResult>
 {
-    public RemoveAudioCommand(long id, ClaimsPrincipal user) : base(user)
+    public RemoveAudioCommand(long id)
     {
         Id = id;
     }
@@ -51,13 +51,11 @@ public class RemoveAudioCommandHandler : IRequestHandler<RemoveAudioCommand, Rem
 
     public async Task<RemoveAudioResult> Handle(RemoveAudioCommand command, CancellationToken cancellationToken)
     {
-        var currentUserId = command.GetUserId();
-
         var audio = await _unitOfWork.Audios.FindAsync(command.Id, cancellationToken);
 
         if (audio == null) return new NotFound();
 
-        if (audio.UserId != currentUserId) return new Forbidden();
+        if (audio.UserId != command.UserId) return new Forbidden();
 
         // TODO: Make this a job
         var afterDeletionTasks = GetTasksForAfterDeletion(audio, cancellationToken);

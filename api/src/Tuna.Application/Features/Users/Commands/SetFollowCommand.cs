@@ -39,9 +39,9 @@ public class SetFollowCommandHandler : IRequestHandler<SetFollowCommand, SetFoll
         if (target.Id == command.ObserverId) return new CannotFollowYourself();
 
         if (command.IsFollowing)
-            target.Follow(command.ObserverId, _dateTimeProvider.Now);
+            target.Follow(command.ObserverId, _dateTimeProvider.UtcNow);
         else
-            target.UnFollow(command.ObserverId, _dateTimeProvider.Now);
+            target.UnFollow(command.ObserverId, _dateTimeProvider.UtcNow);
 
         _unitOfWork.Users.Update(target);
         await _unitOfWork.SaveChangesAsync(cancellationToken);

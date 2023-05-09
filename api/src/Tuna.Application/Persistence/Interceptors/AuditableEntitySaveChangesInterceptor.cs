@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using Tuna.Application.Entities.Abstractions;
+using Tuna.Domain.Entities.Abstractions;
 
 namespace Tuna.Application.Persistence.Interceptors;
 

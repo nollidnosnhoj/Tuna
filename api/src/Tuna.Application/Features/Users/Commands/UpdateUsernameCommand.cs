@@ -29,13 +29,13 @@ public partial class UpdateUsernameResult : OneOfBase<Unit, NotFound, IdentitySe
 
 public class UpdateUsernameCommandHandler : IRequestHandler<UpdateUsernameCommand, UpdateUsernameResult>
 {
-    private readonly IIdentityService _identityService;
+    private readonly IUserService _userService;
     private readonly IUnitOfWork _unitOfWork;
 
-    public UpdateUsernameCommandHandler(IUnitOfWork unitOfWork, IIdentityService identityService)
+    public UpdateUsernameCommandHandler(IUnitOfWork unitOfWork, IUserService userService)
     {
         _unitOfWork = unitOfWork;
-        _identityService = identityService;
+        _userService = userService;
     }
 
     public async Task<UpdateUsernameResult> Handle(UpdateUsernameCommand command, CancellationToken cancellationToken)
@@ -44,7 +44,7 @@ public class UpdateUsernameCommandHandler : IRequestHandler<UpdateUsernameComman
 
         if (user is null) return new NotFound();
 
-        var result = await _identityService.UpdateUserNameAsync(
+        var result = await _userService.UpdateUserNameAsync(
             user.IdentityId,
             command.NewUserName,
             cancellationToken);

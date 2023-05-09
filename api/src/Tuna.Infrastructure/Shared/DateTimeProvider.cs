@@ -5,5 +5,6 @@ namespace Tuna.Infrastructure.Shared;
 
 internal class DateTimeProvider : IDateTimeProvider
 {
-    public DateTime Now => DateTime.UtcNow;
+    public DateTime LocalNow => DateTime.Now;
+    public DateTime UtcNow => DateTime.UtcNow;
 }

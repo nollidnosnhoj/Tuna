@@ -81,7 +81,7 @@ public static class RegisterServices
             })
             .AddEntityFrameworkStores<IdentityDbContext>();
         services.AddScoped<IAuthService, AuthService>();
-        services.AddScoped<IIdentityService, UserService>();
+        services.AddScoped<IUserService, UserService>();
         return services;
     }
 }

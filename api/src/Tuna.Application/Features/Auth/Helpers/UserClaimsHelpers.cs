@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Security.Claims;
 using Microsoft.IdentityModel.JsonWebTokens;
-using Tuna.Application.Entities;
+using Tuna.Domain.Entities;
 using Tuna.Shared;
 
 namespace Tuna.Application.Features.Auth.Helpers;

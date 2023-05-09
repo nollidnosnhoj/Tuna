@@ -1,6 +1,6 @@
 ﻿using System.Linq;
-using Tuna.Application.Entities;
 using Tuna.Application.Features.Audios.Models;
+using Tuna.Domain.Entities;
 
 namespace Tuna.Application.Features.Audios.Mappings;
 

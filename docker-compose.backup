@@ -1,0 +1,58 @@
+services:
+  database:
+    image: "postgres:latest"
+    ports:
+      - "5432:5432"
+    restart: on-failure:1
+    volumes:
+      - postgres-db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_DB: "tuna_db"
+    networks:
+      - tuna
+  redis:
+    image: redis
+  backend:
+    restart: on-failure:1
+    container_name: backend
+    build:
+      context: api
+      dockerfile: Dockerfile
+    environment:
+      - "ConnectionStrings__Database=Server=localhost;Port=5432;Database=${POSTGRES_DB};UserId=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
+      - "ConnectionStrings__Redis=http://redis:6379"
+      - "AmazonS3Settings__PublicKey=your_aws_public_key"
+      - "AmazonS3Settings__SecretKey=your_aws_secret_key"
+    depends_on:
+      - database
+    networks:
+      - tuna
+  frontend:
+    stdin_open: true
+    restart: on-failure:1
+    container_name: frontend
+    build:
+      context: web
+    environment:
+      - "NEXT_PUBLIC_IS_PRODUCTION=true"
+      - "NEXT_PUBLIC_BACKEND_API=http://backend/"
+      - "NEXT_PUBLIC_FRONTEND_URL=http://frontend/"
+    depends_on:
+      - backend
+    volumes:
+      - /app/node_modules
+      - /app/.next
+      - /app/public
+    networks:
+      - tuna
+
+networks:
+  tuna:
+    name: tuna-net
+    driver: bridge
+
+volumes:
+  postgres-db:
+    name: postgres-db

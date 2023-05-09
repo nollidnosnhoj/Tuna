@@ -48,8 +48,8 @@ public class AuthService : IAuthService
         var refreshToken = new RefreshToken(
             _tokenProvider.GenerateRefreshToken(),
             ipAddress,
-            _dateTimeProvider.Now,
-            _dateTimeProvider.Now.AddDays(7));
+            _dateTimeProvider.UtcNow,
+            _dateTimeProvider.UtcNow.AddDays(7));
         user.RefreshTokens.Add(refreshToken);
         RemoveOldRefreshTokens(user);
         await _userManager.UpdateAsync(user);
@@ -93,7 +93,7 @@ public class AuthService : IAuthService
         if (user is null) return new AuthServiceError("RefreshTokenNotFound", "Refresh token not found.");
         var refreshTokenModel = user.RefreshTokens.First(x => x.Token == token);
         if (!refreshTokenModel.IsActive) return new AuthServiceError("RefreshTokenExpired", "Refresh token expired.");
-        refreshTokenModel.Revoke(_dateTimeProvider.Now, ipAddress, "Log out");
+        refreshTokenModel.Revoke(_dateTimeProvider.UtcNow, ipAddress, "Log out");
         await _userManager.UpdateAsync(user);
         return AuthServiceResult.Succeed();
     }
@@ -103,9 +103,9 @@ public class AuthService : IAuthService
         var newRefreshToken = new RefreshToken(
             _tokenProvider.GenerateRefreshToken(),
             ipAddress,
-            _dateTimeProvider.Now,
-            _dateTimeProvider.Now.AddDays(7));
-        refreshToken.Revoke(_dateTimeProvider.Now, ipAddress, "Rotating refresh token.", newRefreshToken.Token);
+            _dateTimeProvider.UtcNow,
+            _dateTimeProvider.UtcNow.AddDays(7));
+        refreshToken.Revoke(_dateTimeProvider.UtcNow, ipAddress, "Rotating refresh token.", newRefreshToken.Token);
         return newRefreshToken;
     }
 
@@ -125,7 +125,7 @@ public class AuthService : IAuthService
         if (childToken is null) return;
 
         if (childToken.IsActive)
-            childToken.Revoke(_dateTimeProvider.Now, ipAddress, reason);
+            childToken.Revoke(_dateTimeProvider.UtcNow, ipAddress, reason);
         else
             RevokeDescendantRefreshTokens(childToken, user, ipAddress, reason);
     }
@@ -136,7 +136,7 @@ public class AuthService : IAuthService
         await using var dbContext = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
         var user = await dbContext.Users.FirstOrDefaultAsync(x => x.IdentityId == identityUser.Id, cancellationToken);
         var claims = UserClaimsHelpers.ToClaims(identityUser.Id, user);
-        var expiration = _dateTimeProvider.Now.AddMinutes(30);
+        var expiration = _dateTimeProvider.UtcNow.AddMinutes(30);
         var token = _tokenProvider.GenerateAccessToken(claims, expiration);
         return (token, expiration);
     }

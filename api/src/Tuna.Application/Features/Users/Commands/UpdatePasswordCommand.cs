@@ -11,14 +11,16 @@ using Tuna.Shared.Mediatr;
 
 namespace Tuna.Application.Features.Users.Commands;
 
-public class UpdatePasswordCommand : AuthCommandRequest<UpdatePasswordCommandResult>
+public class UpdatePasswordCommand : ICommandRequest<UpdatePasswordCommandResult>
 {
-    public UpdatePasswordCommand(string newPassword, string currentPassword, ClaimsPrincipal user) : base(user)
+    public UpdatePasswordCommand(long userId, string newPassword, string currentPassword)
     {
+        UserId = userId;
         CurrentPassword = currentPassword;
         NewPassword = newPassword;
     }
 
+    public long UserId { get; }
     public string CurrentPassword { get; }
     public string NewPassword { get; }
 }
@@ -30,24 +32,23 @@ public partial class UpdatePasswordCommandResult : OneOfBase<Unit, Unauthorized,
 
 public class UpdatePasswordCommandHandler : IRequestHandler<UpdatePasswordCommand, UpdatePasswordCommandResult>
 {
-    private readonly IIdentityService _identityService;
+    private readonly IUserService _userService;
     private readonly IUnitOfWork _unitOfWork;
 
-    public UpdatePasswordCommandHandler(IUnitOfWork unitOfWork, IIdentityService identityService)
+    public UpdatePasswordCommandHandler(IUnitOfWork unitOfWork, IUserService userService)
     {
         _unitOfWork = unitOfWork;
-        _identityService = identityService;
+        _userService = userService;
     }
 
     public async Task<UpdatePasswordCommandResult> Handle(UpdatePasswordCommand command,
         CancellationToken cancellationToken)
     {
-        var userId = command.GetUserId();
-        var user = await _unitOfWork.Users.FindAsync(userId, cancellationToken);
+        var user = await _unitOfWork.Users.FindAsync(command.UserId, cancellationToken);
 
         if (user is null) return new Unauthorized();
 
-        var result = await _identityService.UpdatePasswordAsync(
+        var result = await _userService.UpdatePasswordAsync(
             user.IdentityId,
             command.CurrentPassword,
             command.NewPassword,

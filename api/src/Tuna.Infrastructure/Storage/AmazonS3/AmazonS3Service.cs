@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Net;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Amazon;
@@ -18,7 +18,7 @@ internal class AmazonS3Service : IStorageService
     private readonly IAmazonS3 _client;
     private readonly IDateTimeProvider _dateTimeProvider;
 
-    public AmazonS3Service(IOptions<AmazonS3Settings> amazonS3Options, IDateTimeProvider dateTimeProvider)
+    public AmazonS3Service(IOptions<AWSSettings> amazonS3Options, IDateTimeProvider dateTimeProvider)
     {
         _dateTimeProvider = dateTimeProvider;
         var region = RegionEndpoint.GetBySystemName(amazonS3Options.Value.Region);
@@ -34,24 +34,24 @@ internal class AmazonS3Service : IStorageService
         _client = new AmazonS3Client(credentials, s3Config);
     }
 
-    public string CreatePutPreSignedUrl(string bucket, string blobName, int expirationInMinutes,
+    public string CreateUploadUrl(string bucket, string blobName, TimeSpan expiration,
         Dictionary<string, string>? metadata = null)
     {
         try
         {
             var contentType = blobName.GetContentType();
-            var presignedUrlRequest = new GetPreSignedUrlRequest
+            var request = new GetPreSignedUrlRequest
             {
                 BucketName = bucket,
                 Key = blobName,
-                Expires = _dateTimeProvider.Now.AddMinutes(expirationInMinutes),
+                Expires = _dateTimeProvider.UtcNow.Add(expiration),
                 ContentType = contentType,
                 Verb = HttpVerb.PUT
             };
 
-            presignedUrlRequest.Metadata.AddMetadata(metadata);
+            request.Metadata.AddMetadata(metadata);
 
-            return _client.GetPreSignedURL(presignedUrlRequest);
+            return _client.GetPreSignedURL(request);
         }
         catch (AmazonS3Exception ex)
         {
@@ -69,26 +69,6 @@ internal class AmazonS3Service : IStorageService
         }
         catch (AmazonS3Exception ex)
         {
-            throw new StorageException(ex.Message, ex);
-        }
-    }
-
-    public async Task<bool> ExistsAsync(string bucket, string blobName, CancellationToken cancellationToken = default)
-    {
-        try
-        {
-            var request = new GetObjectMetadataRequest
-            {
-                Key = blobName,
-                BucketName = bucket
-            };
-            await _client.GetObjectMetadataAsync(request, cancellationToken);
-            return true;
-        }
-        catch (AmazonS3Exception ex)
-        {
-            if (ex.StatusCode == HttpStatusCode.NotFound)
-                return false;
             throw new StorageException(ex.Message, ex);
         }
     }

@@ -29,10 +29,6 @@ public static class GraphQlConfiguration
             .RegisterDbContext<ApplicationDbContext>(DbContextKind.Pooled)
             .RegisterService<IHashids>()
             .RegisterService<IMediator>(ServiceKind.Resolver)
-            .AddQueryType()
-            .AddMutationType()
-            .AddAudioFeatures()
-            .AddUserFeature()
-            .AddErrorInterfaceType<UserErrorType>();
+            .AddGraphQlTypes();
     }
 }

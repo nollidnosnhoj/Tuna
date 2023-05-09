@@ -1,12 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.Options;
-using Tuna.Application.Entities;
 using Tuna.Application.Persistence;
 using Tuna.Application.Services;
+using Tuna.Domain.Entities;
 using Tuna.Shared;
 using Tuna.Shared.Extensions;
 using Tuna.Shared.Mediatr;
@@ -40,8 +41,7 @@ public class CreateAudioCommandValidator : AbstractValidator<CreateAudioCommand>
     }
 }
 
-public class CreateAudioCommandHandler
-    : IRequestHandler<CreateAudioCommand, CreateAudioResult>
+public class CreateAudioCommandHandler : IRequestHandler<CreateAudioCommand, CreateAudioResult>
 {
     private readonly ApplicationSettings _appSettings;
     private readonly IStorageService _storageService;
@@ -68,10 +68,10 @@ public class CreateAudioCommandHandler
 
         var blobName = $"{AssetContainerConstants.AUDIO_STREAM}/{audio.Id}/${fileId}.mp3";
         var metadata = new Dictionary<string, string> { { "UserId", command.UserId.ToString() } };
-        var url = _storageService.CreatePutPreSignedUrl(
+        var url = _storageService.CreateUploadUrl(
             _appSettings.UploadBucket,
             blobName,
-            5,
+            TimeSpan.FromMinutes(5),
             metadata);
         return new CreateAudioResult(audio.Id, url);
     }

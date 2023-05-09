@@ -28,13 +28,13 @@ public partial class UpdateEmailCommandResult : OneOfBase<Unit, NotFound, Identi
 
 public class UpdateEmailCommandHandler : IRequestHandler<UpdateEmailCommand, UpdateEmailCommandResult>
 {
-    private readonly IIdentityService _identityService;
+    private readonly IUserService _userService;
     private readonly IUnitOfWork _unitOfWork;
 
-    public UpdateEmailCommandHandler(IUnitOfWork unitOfWork, IIdentityService identityService)
+    public UpdateEmailCommandHandler(IUnitOfWork unitOfWork, IUserService userService)
     {
         _unitOfWork = unitOfWork;
-        _identityService = identityService;
+        _userService = userService;
     }
 
     public async Task<UpdateEmailCommandResult> Handle(UpdateEmailCommand command, CancellationToken cancellationToken)
@@ -43,7 +43,7 @@ public class UpdateEmailCommandHandler : IRequestHandler<UpdateEmailCommand, Upd
 
         if (user is null) return new NotFound();
 
-        var result = await _identityService.UpdateEmailAsync(user.IdentityId, command.NewEmail, cancellationToken);
+        var result = await _userService.UpdateEmailAsync(user.IdentityId, command.NewEmail, cancellationToken);
 
         if (!result.Succeeded) return new IdentityServiceError(result.Errors);
 

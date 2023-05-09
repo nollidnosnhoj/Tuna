@@ -2,8 +2,8 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Tuna.Application.Entities;
 using Tuna.Application.Persistence.Interceptors;
+using Tuna.Domain.Entities;
 
 namespace Tuna.Application.Persistence;
 

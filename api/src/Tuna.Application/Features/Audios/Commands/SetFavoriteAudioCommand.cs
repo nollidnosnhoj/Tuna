@@ -48,7 +48,7 @@ public class SetFavoriteAudioCommandHandler : IRequestHandler<SetFavoriteAudioCo
         if (audio == null) return new NotFound();
 
         if (command.IsFavoriting)
-            audio.Favorite(command.UserId, _dateTimeProvider.Now);
+            audio.Favorite(command.UserId, _dateTimeProvider.UtcNow);
         else
             audio.UnFavorite(command.UserId);
 

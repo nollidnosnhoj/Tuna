@@ -2,11 +2,11 @@
 using System.Threading.Tasks;
 using MediatR;
 using OneOf;
-using Tuna.Application.Entities;
 using Tuna.Application.Features.Users.Errors;
 using Tuna.Application.Features.Users.Models;
 using Tuna.Application.Persistence;
 using Tuna.Application.Services;
+using Tuna.Domain.Entities;
 using Tuna.Shared.Mediatr;
 
 namespace Tuna.Application.Features.Users.Commands;
@@ -43,20 +43,20 @@ public class CreateUserCommandResponse
 
 public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, CreateUserCommandResult>
 {
-    private readonly IIdentityService _identityService;
+    private readonly IUserService _userService;
     private readonly IUnitOfWork _unitOfWork;
 
-    public CreateUserCommandHandler(IUnitOfWork unitOfWork, IIdentityService identityService)
+    public CreateUserCommandHandler(IUnitOfWork unitOfWork, IUserService userService)
     {
         _unitOfWork = unitOfWork;
-        _identityService = identityService;
+        _userService = userService;
     }
 
     public async Task<CreateUserCommandResult> Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
         var trimmedUsername = request.Username.Trim();
 
-        var identityResult = await _identityService.CreateUserAsync(
+        var identityResult = await _userService.CreateUserAsync(
             trimmedUsername,
             request.Email,
             request.Password,

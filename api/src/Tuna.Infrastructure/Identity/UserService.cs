@@ -9,7 +9,7 @@ using Tuna.Infrastructure.Identity.Models;
 
 namespace Tuna.Infrastructure.Identity;
 
-public class UserService : IIdentityService
+public class UserService : IUserService
 {
     private readonly UserManager<AuthUser> _userManager;
 

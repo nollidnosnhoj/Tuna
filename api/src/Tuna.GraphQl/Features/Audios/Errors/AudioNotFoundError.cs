@@ -1,7 +1,9 @@
 ﻿using HotChocolate.Types.Relay;
-using Tuna.Application.Entities;
 using Tuna.Application.Exceptions;
 using Tuna.Application.Features.Audios.Models;
+using Tuna.Domain;
+using Tuna.Domain.Entities;
+using Tuna.Domain.Exceptions;
 using Tuna.Shared.Models;
 
 namespace Tuna.GraphQl.Features.Audios.Errors;

@@ -23,8 +23,8 @@ try
 {
     var builder = WebApplication.CreateBuilder();
 
-    builder.Services.Configure<AmazonS3Settings>(builder.Configuration.GetSection(nameof(AmazonS3Settings)));
-    builder.Services.Configure<ApplicationSettings>(builder.Configuration.GetSection(nameof(ApplicationSettings)));
+    builder.Services.Configure<AWSSettings>(builder.Configuration.GetSection("AWS"));
+    builder.Services.Configure<ApplicationSettings>(builder.Configuration);
     builder.Services.AddMediatR(config => config.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
     builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
     builder.Services.AddMediatrPipelines();

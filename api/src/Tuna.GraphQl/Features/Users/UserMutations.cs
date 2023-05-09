@@ -8,24 +8,26 @@ using HotChocolate.Language;
 using HotChocolate.Types;
 using HotChocolate.Types.Relay;
 using MediatR;
-using Tuna.Application.Entities;
 using Tuna.Application.Exceptions;
 using Tuna.Application.Features.Uploads.Commands;
 using Tuna.Application.Features.Uploads.Models;
 using Tuna.Application.Features.Users.Commands;
 using Tuna.Application.Features.Users.Models;
+using Tuna.Domain;
+using Tuna.Domain.Entities;
+using Tuna.Domain.Exceptions;
 using Tuna.GraphQl.Features.Users.Errors;
 using Tuna.GraphQl.GraphQL.Errors;
 using Tuna.Shared.Extensions;
 
 namespace Tuna.GraphQl.Features.Users;
 
-[ExtendObjectType(OperationType.Mutation)]
-public class UserMutations
+[MutationType]
+public static class UserMutations
 {
     [Authorize]
     [Error(typeof(UserNotFoundError))]
-    public async Task<UserDto> UpdateUserAsync(
+    public static async Task<UserDto> UpdateUserAsync(
         [ID(nameof(UserDto))] long id,
         string? displayName,
         IMediator mediator,
@@ -48,7 +50,7 @@ public class UserMutations
     [UseMutationConvention(PayloadFieldName = "url")]
     [UseValidationError]
     [Error(typeof(UserNotFoundError))]
-    public async Task<CreateUploadResult> CreateUserPictureAsync(
+    public static async Task<CreateUploadResult> CreateUserPictureAsync(
         string fileName,
         long fileSize,
         IMediator mediator,
@@ -64,7 +66,7 @@ public class UserMutations
     [UseMutationConvention(PayloadFieldName = "url")]
     [UseValidationError]
     [Error(typeof(UserNotFoundError))]
-    public async Task<string> UpdateUserPictureAsync(
+    public static async Task<string> UpdateUserPictureAsync(
         [ID(nameof(UserDto))] long id,
         string data,
         IMediator mediator,
@@ -85,7 +87,7 @@ public class UserMutations
     [UseMutationConvention(PayloadFieldName = "userPictureRemoved")]
     [UseValidationError]
     [Error(typeof(UserNotFoundError))]
-    public async Task<bool> RemoveUserPictureAsync(
+    public static async Task<bool> RemoveUserPictureAsync(
         [ID(nameof(UserDto))] long id,
         IMediator mediator,
         ClaimsPrincipal claimsPrincipal,
@@ -104,7 +106,7 @@ public class UserMutations
     [UseMutationConvention(PayloadFieldName = "userUpdated")]
     [Error(typeof(IdentityError))]
     [Error(typeof(UserNotFoundError))]
-    public async Task<bool> UpdateUserNameAsync(
+    public static async Task<bool> UpdateUserNameAsync(
         [ID(nameof(UserDto))] long id,
         string newUsername,
         IMediator mediator,
@@ -124,14 +126,15 @@ public class UserMutations
     [Authorize]
     [UseMutationConvention(PayloadFieldName = "passwordUpdated")]
     [Error(typeof(IdentityError))]
-    public async Task<bool> UpdatePasswordAsync(
+    public static async Task<bool> UpdatePasswordAsync(
         string newPassword,
         string currentPassword,
         IMediator mediator,
         ClaimsPrincipal claimsPrincipal,
         CancellationToken cancellationToken)
     {
-        var command = new UpdatePasswordCommand(newPassword, currentPassword, claimsPrincipal);
+        var userId = claimsPrincipal.GetUserId();
+        var command = new UpdatePasswordCommand(userId, newPassword, currentPassword);
         var result = await mediator.Send(command, cancellationToken);
         return result.Match(
             _ => true,
@@ -142,7 +145,7 @@ public class UserMutations
     [Authorize]
     [UseMutationConvention(PayloadFieldName = "emailUpdated")]
     [Error(typeof(IdentityError))]
-    public async Task<bool> UpdateEmailAsync(
+    public static async Task<bool> UpdateEmailAsync(
         string email,
         IMediator mediator,
         ClaimsPrincipal claimsPrincipal,
@@ -161,7 +164,7 @@ public class UserMutations
     [UseMutationConvention(PayloadFieldName = "followed")]
     [Error(typeof(UserNotFoundError))]
     [Error(typeof(CannotFollowYourselfError))]
-    public async Task<bool> FollowUserAsync(
+    public static async Task<bool> FollowUserAsync(
         [ID(nameof(UserDto))] long id,
         IMediator mediator,
         ClaimsPrincipal claimsPrincipal,
@@ -180,7 +183,7 @@ public class UserMutations
     [UseMutationConvention(PayloadFieldName = "followed")]
     [Error(typeof(UserNotFoundError))]
     [Error(typeof(CannotFollowYourselfError))]
-    public async Task<bool> UnfollowUserAsync(
+    public static async Task<bool> UnfollowUserAsync(
         [ID(nameof(UserDto))] long id,
         IMediator mediator,
         ClaimsPrincipal claimsPrincipal,

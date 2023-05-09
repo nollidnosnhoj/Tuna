@@ -11,10 +11,10 @@ using Tuna.Application.Features.Audios.Queries;
 
 namespace Tuna.GraphQl.Features.Audios;
 
-[ExtendObjectType(OperationType.Query)]
-public class AudioQueries
+[QueryType]
+public static class AudioQueries
 {
-    public async Task<AudioDto?> GetAudioAsync(
+    public static async Task<AudioDto?> GetAudioAsync(
         string slug,
         IHashids hashids,
         IMediator mediator,
@@ -25,7 +25,7 @@ public class AudioQueries
     }
 
     [UseOffsetPaging]
-    public async Task<CollectionSegment<AudioDto>> GetUserAudiosAsync(
+    public static async Task<CollectionSegment<AudioDto>> GetUserAudiosAsync(
         long userId,
         IResolverContext resolverContext,
         IMediator mediator,
@@ -37,7 +37,7 @@ public class AudioQueries
     }
 
     [UseOffsetPaging]
-    public async Task<CollectionSegment<AudioDto>> GetUserFavoriteAudiosAsync(
+    public static async Task<CollectionSegment<AudioDto>> GetUserFavoriteAudiosAsync(
         long userId,
         IResolverContext resolverContext,
         IMediator mediator,

@@ -5,10 +5,10 @@ using FluentValidation;
 using MediatR;
 using OneOf;
 using OneOf.Types;
-using Tuna.Application.Entities;
 using Tuna.Application.Features.Audios.Mappings;
 using Tuna.Application.Features.Audios.Models;
 using Tuna.Application.Persistence;
+using Tuna.Domain.Entities;
 using Tuna.Shared.Errors;
 using Tuna.Shared.Mediatr;
 
@@ -16,7 +16,7 @@ namespace Tuna.Application.Features.Audios.Commands;
 
 public class UpdateAudioCommand : AuthCommandRequest<UpdateAudioResult>
 {
-    public UpdateAudioCommand(long id, string? title, string? description, ClaimsPrincipal user) : base(user)
+    public UpdateAudioCommand(long id, string? title, string? description)
     {
         Id = id;
         Title = title;
@@ -67,12 +67,10 @@ public class UpdateAudioCommandHandler : IRequestHandler<UpdateAudioCommand, Upd
     public async Task<UpdateAudioResult> Handle(UpdateAudioCommand command,
         CancellationToken cancellationToken)
     {
-        var currentUserId = command.GetUserId();
-
         var audio = await _unitOfWork.Audios.FindAsync(command.Id, cancellationToken);
 
         if (audio == null) return new NotFound();
-        if (audio.UserId != currentUserId) return new Forbidden();
+        if (audio.UserId != command.UserId) return new Forbidden();
 
         UpdateAudioFromCommandAsync(audio, command);
         _unitOfWork.Audios.Update(audio);

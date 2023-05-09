@@ -13,7 +13,7 @@ namespace Tuna.Application.Features.Audios.Commands;
 
 public class UpdateAudioPictureCommand : AuthCommandRequest<UpdateAudioPictureResult>
 {
-    public UpdateAudioPictureCommand(long audioId, string? uploadId, ClaimsPrincipal user) : base(user)
+    public UpdateAudioPictureCommand(long audioId, string? uploadId)
     {
         AudioId = audioId;
         UploadId = uploadId;
@@ -42,13 +42,11 @@ public class UpdateAudioPictureCommandHandler : IRequestHandler<UpdateAudioPictu
     public async Task<UpdateAudioPictureResult> Handle(UpdateAudioPictureCommand command,
         CancellationToken cancellationToken)
     {
-        var currentUserId = command.GetUserId();
-
         var audio = await _unitOfWork.Audios.FindAsync(command.AudioId, cancellationToken);
 
         if (audio == null) return new NotFound();
 
-        if (audio.UserId != currentUserId) return new Forbidden();
+        if (audio.UserId != command.UserId) return new Forbidden();
 
         if (string.IsNullOrEmpty(command.UploadId) && !string.IsNullOrEmpty(audio.ImageId))
         {
