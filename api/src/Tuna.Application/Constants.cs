@@ -1,10 +1,4 @@
-﻿namespace Tuna.Shared;
-
-public static class ClaimNames
-{
-    public const string UserId = "userId";
-    public const string HasProfile = "hasProfile";
-}
+﻿namespace Tuna.Application;
 
 public static class MediaConfigurationConstants
 {

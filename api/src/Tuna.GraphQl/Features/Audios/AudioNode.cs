@@ -4,6 +4,7 @@ using HashidsNet;
 using HotChocolate;
 using HotChocolate.Types;
 using HotChocolate.Types.Relay;
+using Tuna.Application;
 using Tuna.Application.Features.Audios.DataLoaders;
 using Tuna.Application.Features.Audios.Models;
 using Tuna.Application.Features.Users.DataLoaders;

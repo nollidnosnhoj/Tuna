@@ -3,6 +3,12 @@ using Microsoft.IdentityModel.JsonWebTokens;
 
 namespace Tuna.Shared.Extensions;
 
+public static class ClaimNames
+{
+    public const string UserId = "userId";
+    public const string HasProfile = "hasProfile";
+}
+
 public static class ClaimsPrincipalExtensions
 {
     public static bool TryGetUserId(this ClaimsPrincipal? principal, out long userId)
