@@ -18,12 +18,12 @@ namespace Tuna.GraphQl.Features.Auth;
 public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
-    private readonly IDateTimeProvider _dateTimeProvider;
+    private readonly IClock _clock;
 
-    public AuthController(IAuthService authService, IDateTimeProvider dateTimeProvider)
+    public AuthController(IAuthService authService, IClock clock)
     {
         _authService = authService;
-        _dateTimeProvider = dateTimeProvider;
+        _clock = clock;
     }
 
     [HttpPost("login-with-password", Name = "Login")]

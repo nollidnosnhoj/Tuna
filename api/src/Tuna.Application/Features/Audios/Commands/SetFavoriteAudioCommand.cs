@@ -30,13 +30,13 @@ public partial class SetFavoriteAudioResult : OneOfBase<bool, NotFound>
 
 public class SetFavoriteAudioCommandHandler : IRequestHandler<SetFavoriteAudioCommand, SetFavoriteAudioResult>
 {
-    private readonly IDateTimeProvider _dateTimeProvider;
+    private readonly IClock _clock;
     private readonly IUnitOfWork _unitOfWork;
 
-    public SetFavoriteAudioCommandHandler(IUnitOfWork unitOfWork, IDateTimeProvider dateTimeProvider)
+    public SetFavoriteAudioCommandHandler(IUnitOfWork unitOfWork, IClock clock)
     {
         _unitOfWork = unitOfWork;
-        _dateTimeProvider = dateTimeProvider;
+        _clock = clock;
     }
 
     public async Task<SetFavoriteAudioResult> Handle(SetFavoriteAudioCommand command,
@@ -48,7 +48,7 @@ public class SetFavoriteAudioCommandHandler : IRequestHandler<SetFavoriteAudioCo
         if (audio == null) return new NotFound();
 
         if (command.IsFavoriting)
-            audio.Favorite(command.UserId, _dateTimeProvider.UtcNow);
+            audio.Favorite(command.UserId, _clock.UtcNow);
         else
             audio.UnFavorite(command.UserId);
 

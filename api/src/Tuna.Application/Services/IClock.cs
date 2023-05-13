@@ -2,7 +2,7 @@
 
 namespace Tuna.Application.Services;
 
-public interface IDateTimeProvider
+public interface IClock
 {
     DateTime LocalNow { get; }
     DateTime UtcNow { get; }

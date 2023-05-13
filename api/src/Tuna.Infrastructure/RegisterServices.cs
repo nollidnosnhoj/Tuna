@@ -26,7 +26,7 @@ public static class RegisterServices
         services.AddCaching(configuration, environment);
         services.AddStorage();
         services.AddImageStorage(configuration);
-        services.AddTransient<IDateTimeProvider, DateTimeProvider>();
+        services.AddTransient<IClock, Clock>();
         services.AddTransient<IUnitOfWork, UnitOfWork>();
         services.AddIdentity(configuration);
         services.AddScoped<ITokenProvider, JwtProvider>();

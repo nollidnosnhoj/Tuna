@@ -20,12 +20,12 @@ public partial class SetFollowCommandResult : OneOfBase<bool, NotFound, CannotFo
 
 public class SetFollowCommandHandler : IRequestHandler<SetFollowCommand, SetFollowCommandResult>
 {
-    private readonly IDateTimeProvider _dateTimeProvider;
+    private readonly IClock _clock;
     private readonly IUnitOfWork _unitOfWork;
 
-    public SetFollowCommandHandler(IDateTimeProvider dateTimeProvider, IUnitOfWork unitOfWork)
+    public SetFollowCommandHandler(IClock clock, IUnitOfWork unitOfWork)
     {
-        _dateTimeProvider = dateTimeProvider;
+        _clock = clock;
         _unitOfWork = unitOfWork;
     }
 
@@ -39,9 +39,9 @@ public class SetFollowCommandHandler : IRequestHandler<SetFollowCommand, SetFoll
         if (target.Id == command.ObserverId) return new CannotFollowYourself();
 
         if (command.IsFollowing)
-            target.Follow(command.ObserverId, _dateTimeProvider.UtcNow);
+            target.Follow(command.ObserverId, _clock.UtcNow);
         else
-            target.UnFollow(command.ObserverId, _dateTimeProvider.UtcNow);
+            target.UnFollow(command.ObserverId, _clock.UtcNow);
 
         _unitOfWork.Users.Update(target);
         await _unitOfWork.SaveChangesAsync(cancellationToken);

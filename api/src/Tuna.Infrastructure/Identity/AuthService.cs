@@ -16,18 +16,18 @@ namespace Tuna.Infrastructure.Identity;
 
 public class AuthService : IAuthService
 {
-    private readonly IDateTimeProvider _dateTimeProvider;
+    private readonly IClock _clock;
     private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
     private readonly ITokenProvider _tokenProvider;
     private readonly UserManager<AuthUser> _userManager;
 
     public AuthService(UserManager<AuthUser> userManager, ITokenProvider tokenProvider,
-        IDbContextFactory<ApplicationDbContext> dbContextFactory, IDateTimeProvider dateTimeProvider)
+        IDbContextFactory<ApplicationDbContext> dbContextFactory, IClock clock)
     {
         _userManager = userManager;
         _tokenProvider = tokenProvider;
         _dbContextFactory = dbContextFactory;
-        _dateTimeProvider = dateTimeProvider;
+        _clock = clock;
     }
 
     public async Task<AuthServiceResult<AuthServiceTokens>> LoginWithPasswordAsync(string login, string password,
@@ -48,8 +48,8 @@ public class AuthService : IAuthService
         var refreshToken = new RefreshToken(
             _tokenProvider.GenerateRefreshToken(),
             ipAddress,
-            _dateTimeProvider.UtcNow,
-            _dateTimeProvider.UtcNow.AddDays(7));
+            _clock.UtcNow,
+            _clock.UtcNow.AddDays(7));
         user.RefreshTokens.Add(refreshToken);
         RemoveOldRefreshTokens(user);
         await _userManager.UpdateAsync(user);
@@ -93,7 +93,7 @@ public class AuthService : IAuthService
         if (user is null) return new AuthServiceError("RefreshTokenNotFound", "Refresh token not found.");
         var refreshTokenModel = user.RefreshTokens.First(x => x.Token == token);
         if (!refreshTokenModel.IsActive) return new AuthServiceError("RefreshTokenExpired", "Refresh token expired.");
-        refreshTokenModel.Revoke(_dateTimeProvider.UtcNow, ipAddress, "Log out");
+        refreshTokenModel.Revoke(_clock.UtcNow, ipAddress, "Log out");
         await _userManager.UpdateAsync(user);
         return AuthServiceResult.Succeed();
     }
@@ -103,9 +103,9 @@ public class AuthService : IAuthService
         var newRefreshToken = new RefreshToken(
             _tokenProvider.GenerateRefreshToken(),
             ipAddress,
-            _dateTimeProvider.UtcNow,
-            _dateTimeProvider.UtcNow.AddDays(7));
-        refreshToken.Revoke(_dateTimeProvider.UtcNow, ipAddress, "Rotating refresh token.", newRefreshToken.Token);
+            _clock.UtcNow,
+            _clock.UtcNow.AddDays(7));
+        refreshToken.Revoke(_clock.UtcNow, ipAddress, "Rotating refresh token.", newRefreshToken.Token);
         return newRefreshToken;
     }
 
@@ -125,7 +125,7 @@ public class AuthService : IAuthService
         if (childToken is null) return;
 
         if (childToken.IsActive)
-            childToken.Revoke(_dateTimeProvider.UtcNow, ipAddress, reason);
+            childToken.Revoke(_clock.UtcNow, ipAddress, reason);
         else
             RevokeDescendantRefreshTokens(childToken, user, ipAddress, reason);
     }
@@ -136,7 +136,7 @@ public class AuthService : IAuthService
         await using var dbContext = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
         var user = await dbContext.Users.FirstOrDefaultAsync(x => x.IdentityId == identityUser.Id, cancellationToken);
         var claims = UserClaimsHelpers.ToClaims(identityUser.Id, user);
-        var expiration = _dateTimeProvider.UtcNow.AddMinutes(30);
+        var expiration = _clock.UtcNow.AddMinutes(30);
         var token = _tokenProvider.GenerateAccessToken(claims, expiration);
         return (token, expiration);
     }

@@ -16,11 +16,11 @@ namespace Tuna.Infrastructure.Storage.AmazonS3;
 internal class AmazonS3Service : IStorageService
 {
     private readonly IAmazonS3 _client;
-    private readonly IDateTimeProvider _dateTimeProvider;
+    private readonly IClock _clock;
 
-    public AmazonS3Service(IOptions<AWSSettings> amazonS3Options, IDateTimeProvider dateTimeProvider)
+    public AmazonS3Service(IOptions<AWSSettings> amazonS3Options, IClock clock)
     {
-        _dateTimeProvider = dateTimeProvider;
+        _clock = clock;
         var region = RegionEndpoint.GetBySystemName(amazonS3Options.Value.Region);
 
         var s3Config = new AmazonS3Config
@@ -44,7 +44,7 @@ internal class AmazonS3Service : IStorageService
             {
                 BucketName = bucket,
                 Key = blobName,
-                Expires = _dateTimeProvider.UtcNow.Add(expiration),
+                Expires = _clock.UtcNow.Add(expiration),
                 ContentType = contentType,
                 Verb = HttpVerb.PUT
             };

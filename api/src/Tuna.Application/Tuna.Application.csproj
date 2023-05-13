@@ -8,6 +8,9 @@
 
     <ItemGroup>
         <PackageReference Include="EFCore.NamingConventions" Version="7.0.2" />
+        <PackageReference Include="GreenDonut" Version="13.1.0-rc.1" />
+        <PackageReference Include="Hashids.net" Version="1.7.0" />
+        <PackageReference Include="HotChocolate.Types.OffsetPagination" Version="13.1.0-rc.1" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.5" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="7.0.5" />
         <PackageReference Include="MR.EntityFrameworkCore.KeysetPagination" Version="1.2.0" />
