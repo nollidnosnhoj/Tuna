@@ -19,7 +19,7 @@ public static class UserNode
     {
         return dataLoader.LoadAsync(id, cancellationToken);
     }
-    
+
     [BindMember(nameof(UserDto.ImageId))]
     public static string? GetImageUrl([Parent] UserDto audio, [Service] IImageService imageService)
     {

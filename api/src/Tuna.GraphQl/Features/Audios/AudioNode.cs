@@ -10,7 +10,6 @@ using Tuna.Application.Features.Audios.Models;
 using Tuna.Application.Features.Users.DataLoaders;
 using Tuna.Application.Features.Users.Models;
 using Tuna.Application.Services;
-using Tuna.Shared;
 
 namespace Tuna.GraphQl.Features.Audios;
 
@@ -24,7 +23,7 @@ public static class AudioNode
     {
         return dataLoader.LoadAsync(id, cancellationToken);
     }
-    
+
     [BindMember(nameof(AudioDto.UserId))]
     public static async Task<UserDto> GetUserAsync([Parent] AudioDto audio, GetUserDataLoader dataloader,
         CancellationToken cancellationToken)

@@ -6,7 +6,6 @@ using MediatR;
 using Tuna.Application.Exceptions;
 using Tuna.Application.Persistence;
 using Tuna.Application.Services;
-using Tuna.Shared.Errors;
 using Tuna.Shared.Mediatr;
 
 namespace Tuna.Application.Features.Users.Commands;
@@ -27,8 +26,8 @@ public class UpdatePasswordCommand : ICommandRequest<Result<bool>>
 
 public class UpdatePasswordCommandHandler : IRequestHandler<UpdatePasswordCommand, Result<bool>>
 {
-    private readonly IUserService _userService;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IUserService _userService;
 
     public UpdatePasswordCommandHandler(IUnitOfWork unitOfWork, IUserService userService)
     {

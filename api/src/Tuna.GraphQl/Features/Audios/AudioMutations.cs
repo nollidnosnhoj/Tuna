@@ -10,8 +10,6 @@ using Tuna.Application.Features.Audios.Exceptions;
 using Tuna.Application.Features.Audios.Models;
 using Tuna.Application.Features.Uploads.Commands;
 using Tuna.Application.Features.Uploads.Models;
-using Tuna.Domain.Entities;
-using Tuna.Domain.Exceptions;
 using Tuna.GraphQl.GraphQL.Errors;
 using Tuna.Shared.Extensions;
 

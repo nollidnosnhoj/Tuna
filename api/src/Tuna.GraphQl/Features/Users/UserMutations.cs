@@ -12,8 +12,6 @@ using Tuna.Application.Features.Uploads.Models;
 using Tuna.Application.Features.Users.Commands;
 using Tuna.Application.Features.Users.Exceptions;
 using Tuna.Application.Features.Users.Models;
-using Tuna.Domain.Entities;
-using Tuna.Domain.Exceptions;
 using Tuna.GraphQl.GraphQL.Errors;
 using Tuna.Shared.Extensions;
 

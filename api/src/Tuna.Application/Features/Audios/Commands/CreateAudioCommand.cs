@@ -8,7 +8,6 @@ using Microsoft.Extensions.Options;
 using Tuna.Application.Persistence;
 using Tuna.Application.Services;
 using Tuna.Domain.Entities;
-using Tuna.Shared;
 using Tuna.Shared.Extensions;
 using Tuna.Shared.Mediatr;
 

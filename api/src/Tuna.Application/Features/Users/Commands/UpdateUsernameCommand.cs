@@ -6,8 +6,6 @@ using Tuna.Application.Exceptions;
 using Tuna.Application.Features.Audios.Exceptions;
 using Tuna.Application.Persistence;
 using Tuna.Application.Services;
-using Tuna.Domain.Entities;
-using Tuna.Domain.Exceptions;
 using Tuna.Shared.Mediatr;
 
 namespace Tuna.Application.Features.Users.Commands;
@@ -26,8 +24,8 @@ public class UpdateUsernameCommand : ICommandRequest<Result<bool>>
 
 public class UpdateUsernameCommandHandler : IRequestHandler<UpdateUsernameCommand, Result<bool>>
 {
-    private readonly IUserService _userService;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IUserService _userService;
 
     public UpdateUsernameCommandHandler(IUnitOfWork unitOfWork, IUserService userService)
     {

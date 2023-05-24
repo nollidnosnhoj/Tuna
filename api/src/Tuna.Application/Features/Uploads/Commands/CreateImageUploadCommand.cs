@@ -5,7 +5,6 @@ using FluentValidation;
 using MediatR;
 using Tuna.Application.Features.Uploads.Models;
 using Tuna.Application.Services;
-using Tuna.Shared;
 using Tuna.Shared.Extensions;
 using Tuna.Shared.Mediatr;
 

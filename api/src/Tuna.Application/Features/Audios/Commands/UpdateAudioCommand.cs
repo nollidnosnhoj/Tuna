@@ -9,7 +9,6 @@ using Tuna.Application.Features.Audios.Mappings;
 using Tuna.Application.Features.Audios.Models;
 using Tuna.Application.Persistence;
 using Tuna.Domain.Entities;
-using Tuna.Domain.Exceptions;
 using Tuna.Shared.Mediatr;
 
 namespace Tuna.Application.Features.Audios.Commands;

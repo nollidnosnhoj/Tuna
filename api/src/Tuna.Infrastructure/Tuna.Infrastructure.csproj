@@ -7,19 +7,19 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="3.7.7" />
-        <PackageReference Include="AWSSDK.S3" Version="3.7.104.14" />
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.5" />
-        <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
-        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.5" />
-        <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="7.0.0" />
-        <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="7.0.5" />
-        <PackageReference Include="Refit" Version="6.3.2" />
-        <PackageReference Include="Refit.HttpClientFactory" Version="6.3.2" />
+        <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="3.7.7"/>
+        <PackageReference Include="AWSSDK.S3" Version="3.7.104.14"/>
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.5"/>
+        <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0"/>
+        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.5"/>
+        <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="7.0.0"/>
+        <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="7.0.5"/>
+        <PackageReference Include="Refit" Version="6.3.2"/>
+        <PackageReference Include="Refit.HttpClientFactory" Version="6.3.2"/>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Tuna.Application\Tuna.Application.csproj" />
+        <ProjectReference Include="..\Tuna.Application\Tuna.Application.csproj"/>
     </ItemGroup>
 
 </Project>

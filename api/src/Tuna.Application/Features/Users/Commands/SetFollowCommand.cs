@@ -5,8 +5,6 @@ using MediatR;
 using Tuna.Application.Features.Users.Exceptions;
 using Tuna.Application.Persistence;
 using Tuna.Application.Services;
-using Tuna.Domain.Entities;
-using Tuna.Domain.Exceptions;
 using Tuna.Shared.Mediatr;
 
 namespace Tuna.Application.Features.Users.Commands;

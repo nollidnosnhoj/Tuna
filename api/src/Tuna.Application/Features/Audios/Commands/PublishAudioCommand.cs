@@ -7,8 +7,6 @@ using Tuna.Application.Features.Audios.Exceptions;
 using Tuna.Application.Features.Audios.Mappings;
 using Tuna.Application.Features.Audios.Models;
 using Tuna.Application.Persistence;
-using Tuna.Domain.Entities;
-using Tuna.Domain.Exceptions;
 using Tuna.Shared.Mediatr;
 
 namespace Tuna.Application.Features.Audios.Commands;
@@ -72,7 +70,7 @@ public class PublishAudioCommandHandler : IRequestHandler<PublishAudioCommand, R
         CancellationToken cancellationToken)
     {
         var audio = await _unitOfWork.Audios.FindAsync(command.AudioId, cancellationToken);
-        if (audio is null || audio.UserId != command.UserId) 
+        if (audio is null || audio.UserId != command.UserId)
             return new Result<AudioDto>(new AudioNotFoundException(command.AudioId));
         if (audio.UploadedAt is null)
             return new Result<AudioDto>(new AudioNotUploadedException(command.AudioId));

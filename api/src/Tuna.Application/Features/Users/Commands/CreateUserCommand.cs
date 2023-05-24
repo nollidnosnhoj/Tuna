@@ -34,8 +34,8 @@ public class CreateUserCommand : ICommandRequest<Result<CurrentUserDto>>
 
 public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Result<CurrentUserDto>>
 {
-    private readonly IUserService _userService;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IUserService _userService;
 
     public CreateUserCommandHandler(IUnitOfWork unitOfWork, IUserService userService)
     {

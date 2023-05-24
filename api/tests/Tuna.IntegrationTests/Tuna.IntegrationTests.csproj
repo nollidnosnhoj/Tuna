@@ -9,17 +9,17 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Bogus" Version="34.0.2" />
-        <PackageReference Include="FluentAssertions" Version="6.11.0" />
-        <PackageReference Include="GraphQL.Query.Builder" Version="2.0.1" />
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="7.0.5" />
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
-        <PackageReference Include="Moq" Version="4.18.4" />
-        <PackageReference Include="Respawn" Version="6.0.0" />
-        <PackageReference Include="Snapshooter.Xunit" Version="0.13.0" />
-        <PackageReference Include="Testcontainers" Version="3.1.0" />
-        <PackageReference Include="Testcontainers.PostgreSql" Version="3.1.0" />
-        <PackageReference Include="xunit" Version="2.4.2" />
+        <PackageReference Include="Bogus" Version="34.0.2"/>
+        <PackageReference Include="FluentAssertions" Version="6.11.0"/>
+        <PackageReference Include="GraphQL.Query.Builder" Version="2.0.1"/>
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="7.0.5"/>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0"/>
+        <PackageReference Include="Moq" Version="4.18.4"/>
+        <PackageReference Include="Respawn" Version="6.0.0"/>
+        <PackageReference Include="Snapshooter.Xunit" Version="0.13.0"/>
+        <PackageReference Include="Testcontainers" Version="3.1.0"/>
+        <PackageReference Include="Testcontainers.PostgreSql" Version="3.1.0"/>
+        <PackageReference Include="xunit" Version="2.4.2"/>
         <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
@@ -31,7 +31,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\Tuna.GraphQl\Tuna.GraphQl.csproj" />
+        <ProjectReference Include="..\..\src\Tuna.GraphQl\Tuna.GraphQl.csproj"/>
     </ItemGroup>
 
 </Project>
