@@ -1,9 +1,9 @@
-﻿using System.Security.Claims;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using LanguageExt.Common;
 using MediatR;
-using OneOf;
-using Tuna.Application.Features.Users.Errors;
+using Tuna.Application.Exceptions;
 using Tuna.Application.Persistence;
 using Tuna.Application.Services;
 using Tuna.Shared.Errors;
@@ -11,7 +11,7 @@ using Tuna.Shared.Mediatr;
 
 namespace Tuna.Application.Features.Users.Commands;
 
-public class UpdatePasswordCommand : ICommandRequest<UpdatePasswordCommandResult>
+public class UpdatePasswordCommand : ICommandRequest<Result<bool>>
 {
     public UpdatePasswordCommand(long userId, string newPassword, string currentPassword)
     {
@@ -25,12 +25,7 @@ public class UpdatePasswordCommand : ICommandRequest<UpdatePasswordCommandResult
     public string NewPassword { get; }
 }
 
-[GenerateOneOf]
-public partial class UpdatePasswordCommandResult : OneOfBase<Unit, Unauthorized, IdentityServiceError>
-{
-}
-
-public class UpdatePasswordCommandHandler : IRequestHandler<UpdatePasswordCommand, UpdatePasswordCommandResult>
+public class UpdatePasswordCommandHandler : IRequestHandler<UpdatePasswordCommand, Result<bool>>
 {
     private readonly IUserService _userService;
     private readonly IUnitOfWork _unitOfWork;
@@ -41,12 +36,12 @@ public class UpdatePasswordCommandHandler : IRequestHandler<UpdatePasswordComman
         _userService = userService;
     }
 
-    public async Task<UpdatePasswordCommandResult> Handle(UpdatePasswordCommand command,
+    public async Task<Result<bool>> Handle(UpdatePasswordCommand command,
         CancellationToken cancellationToken)
     {
         var user = await _unitOfWork.Users.FindAsync(command.UserId, cancellationToken);
 
-        if (user is null) return new Unauthorized();
+        if (user is null) return new Result<bool>(new UnauthorizedAccessException());
 
         var result = await _userService.UpdatePasswordAsync(
             user.IdentityId,
@@ -54,10 +49,10 @@ public class UpdatePasswordCommandHandler : IRequestHandler<UpdatePasswordComman
             command.NewPassword,
             cancellationToken);
 
-        if (!result.Succeeded) return new IdentityServiceError(result.Errors);
+        if (!result.Succeeded) return new Result<bool>(new UserIdentityException(result.Errors));
 
         // TODO: Remove session
 
-        return Unit.Value;
+        return true;
     }
 }

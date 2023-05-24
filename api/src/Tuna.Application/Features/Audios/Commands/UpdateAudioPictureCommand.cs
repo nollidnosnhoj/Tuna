@@ -1,17 +1,18 @@
-﻿using System.Security.Claims;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using LanguageExt.Common;
 using MediatR;
-using OneOf;
-using OneOf.Types;
+using Tuna.Application.Features.Audios.Exceptions;
 using Tuna.Application.Persistence;
 using Tuna.Application.Services;
-using Tuna.Shared.Errors;
+using Tuna.Domain.Entities;
+using Tuna.Domain.Exceptions;
 using Tuna.Shared.Mediatr;
 
 namespace Tuna.Application.Features.Audios.Commands;
 
-public class UpdateAudioPictureCommand : AuthCommandRequest<UpdateAudioPictureResult>
+public class UpdateAudioPictureCommand : AuthCommandRequest<Result<string?>>
 {
     public UpdateAudioPictureCommand(long audioId, string? uploadId)
     {
@@ -23,12 +24,7 @@ public class UpdateAudioPictureCommand : AuthCommandRequest<UpdateAudioPictureRe
     public string? UploadId { get; }
 }
 
-[GenerateOneOf]
-public partial class UpdateAudioPictureResult : OneOfBase<string, NotFound, Forbidden>
-{
-}
-
-public class UpdateAudioPictureCommandHandler : IRequestHandler<UpdateAudioPictureCommand, UpdateAudioPictureResult>
+public class UpdateAudioPictureCommandHandler : IRequestHandler<UpdateAudioPictureCommand, Result<string?>>
 {
     private readonly IImageService _imageService;
     private readonly IUnitOfWork _unitOfWork;
@@ -39,14 +35,15 @@ public class UpdateAudioPictureCommandHandler : IRequestHandler<UpdateAudioPictu
         _imageService = imageService;
     }
 
-    public async Task<UpdateAudioPictureResult> Handle(UpdateAudioPictureCommand command,
+    public async Task<Result<string?>> Handle(UpdateAudioPictureCommand command,
         CancellationToken cancellationToken)
     {
         var audio = await _unitOfWork.Audios.FindAsync(command.AudioId, cancellationToken);
 
-        if (audio == null) return new NotFound();
-
-        if (audio.UserId != command.UserId) return new Forbidden();
+        if (audio == null)
+            return new Result<string?>(new AudioNotFoundException(command.AudioId));
+        if (audio.UserId != command.UserId)
+            return new Result<string?>(new UnauthorizedAccessException());
 
         if (string.IsNullOrEmpty(command.UploadId) && !string.IsNullOrEmpty(audio.ImageId))
         {

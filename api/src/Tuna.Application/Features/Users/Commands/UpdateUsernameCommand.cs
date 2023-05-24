@@ -1,16 +1,18 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using LanguageExt.Common;
 using MediatR;
-using OneOf;
-using OneOf.Types;
-using Tuna.Application.Features.Users.Errors;
+using Tuna.Application.Exceptions;
+using Tuna.Application.Features.Audios.Exceptions;
 using Tuna.Application.Persistence;
 using Tuna.Application.Services;
+using Tuna.Domain.Entities;
+using Tuna.Domain.Exceptions;
 using Tuna.Shared.Mediatr;
 
 namespace Tuna.Application.Features.Users.Commands;
 
-public class UpdateUsernameCommand : ICommandRequest<UpdateUsernameResult>
+public class UpdateUsernameCommand : ICommandRequest<Result<bool>>
 {
     public UpdateUsernameCommand(long userId, string newUserName)
     {
@@ -22,12 +24,7 @@ public class UpdateUsernameCommand : ICommandRequest<UpdateUsernameResult>
     public string NewUserName { get; }
 }
 
-[GenerateOneOf]
-public partial class UpdateUsernameResult : OneOfBase<Unit, NotFound, IdentityServiceError>
-{
-}
-
-public class UpdateUsernameCommandHandler : IRequestHandler<UpdateUsernameCommand, UpdateUsernameResult>
+public class UpdateUsernameCommandHandler : IRequestHandler<UpdateUsernameCommand, Result<bool>>
 {
     private readonly IUserService _userService;
     private readonly IUnitOfWork _unitOfWork;
@@ -38,22 +35,24 @@ public class UpdateUsernameCommandHandler : IRequestHandler<UpdateUsernameComman
         _userService = userService;
     }
 
-    public async Task<UpdateUsernameResult> Handle(UpdateUsernameCommand command, CancellationToken cancellationToken)
+    public async Task<Result<bool>> Handle(UpdateUsernameCommand command, CancellationToken cancellationToken)
     {
         var user = await _unitOfWork.Users.FindAsync(command.UserId, cancellationToken);
 
-        if (user is null) return new NotFound();
+        if (user is null)
+            return new Result<bool>(new AudioNotFoundException(command.UserId));
 
         var result = await _userService.UpdateUserNameAsync(
             user.IdentityId,
             command.NewUserName,
             cancellationToken);
 
-        if (!result.Succeeded) return new IdentityServiceError(result.Errors);
+        if (!result.Succeeded)
+            return new Result<bool>(new UserIdentityException(result.Errors));
 
         user.UserName = command.NewUserName;
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return Unit.Value;
+        return true;
     }
 }

@@ -1,22 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
+using LanguageExt.Common;
 using MediatR;
 using Microsoft.Extensions.Options;
-using OneOf;
-using OneOf.Types;
+using Tuna.Application.Features.Audios.Exceptions;
 using Tuna.Application.Persistence;
 using Tuna.Application.Services;
 using Tuna.Domain.Entities;
-using Tuna.Shared.Errors;
+using Tuna.Domain.Exceptions;
 using Tuna.Shared.Mediatr;
 
 namespace Tuna.Application.Features.Audios.Commands;
 
-public class RemoveAudioCommand : AuthCommandRequest<RemoveAudioResult>
+public class RemoveAudioCommand : AuthCommandRequest<Result<bool>>
 {
     public RemoveAudioCommand(long id)
     {
@@ -26,12 +25,7 @@ public class RemoveAudioCommand : AuthCommandRequest<RemoveAudioResult>
     public long Id { get; }
 }
 
-[GenerateOneOf]
-public partial class RemoveAudioResult : OneOfBase<Unit, NotFound, Forbidden>
-{
-}
-
-public class RemoveAudioCommandHandler : IRequestHandler<RemoveAudioCommand, RemoveAudioResult>
+public class RemoveAudioCommandHandler : IRequestHandler<RemoveAudioCommand, Result<bool>>
 {
     private readonly ApplicationSettings _appSettings;
     private readonly IImageService _imageService;
@@ -49,20 +43,22 @@ public class RemoveAudioCommandHandler : IRequestHandler<RemoveAudioCommand, Rem
         _appSettings = appSettings.Value;
     }
 
-    public async Task<RemoveAudioResult> Handle(RemoveAudioCommand command, CancellationToken cancellationToken)
+    public async Task<Result<bool>> Handle(RemoveAudioCommand command, CancellationToken cancellationToken)
     {
         var audio = await _unitOfWork.Audios.FindAsync(command.Id, cancellationToken);
 
-        if (audio == null) return new NotFound();
+        if (audio == null)
+            return new Result<bool>(new AudioNotFoundException(command.Id));
 
-        if (audio.UserId != command.UserId) return new Forbidden();
+        if (audio.UserId != command.UserId)
+            return new Result<bool>(new UnauthorizedAccessException());
 
         // TODO: Make this a job
         var afterDeletionTasks = GetTasksForAfterDeletion(audio, cancellationToken);
         _unitOfWork.Audios.Remove(audio);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
         await Task.WhenAll(afterDeletionTasks);
-        return Unit.Value;
+        return true;
     }
 
     private IEnumerable<Task> GetTasksForAfterDeletion(Audio audio, CancellationToken cancellationToken = default)

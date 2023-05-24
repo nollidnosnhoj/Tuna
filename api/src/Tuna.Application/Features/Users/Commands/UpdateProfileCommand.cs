@@ -1,16 +1,17 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using LanguageExt.Common;
 using MediatR;
-using OneOf;
-using OneOf.Types;
+using Tuna.Application.Features.Users.Exceptions;
 using Tuna.Application.Features.Users.Models;
 using Tuna.Application.Persistence;
-using Tuna.Shared.Errors;
+using Tuna.Domain.Entities;
+using Tuna.Domain.Exceptions;
 using Tuna.Shared.Mediatr;
 
 namespace Tuna.Application.Features.Users.Commands;
 
-public class UpdateProfileCommand : ICommandRequest<UpdateProfileResult>
+public class UpdateProfileCommand : ICommandRequest<Result<UserDto>>
 {
     public UpdateProfileCommand(long userId, string? displayName)
     {
@@ -22,12 +23,7 @@ public class UpdateProfileCommand : ICommandRequest<UpdateProfileResult>
     public string? DisplayName { get; }
 }
 
-[GenerateOneOf]
-public partial class UpdateProfileResult : OneOfBase<UserDto, NotFound, Forbidden>
-{
-}
-
-public class UpdateProfileCommandHandler : IRequestHandler<UpdateProfileCommand, UpdateProfileResult>
+public class UpdateProfileCommandHandler : IRequestHandler<UpdateProfileCommand, Result<UserDto>>
 {
     private readonly IUnitOfWork _unitOfWork;
 
@@ -36,11 +32,12 @@ public class UpdateProfileCommandHandler : IRequestHandler<UpdateProfileCommand,
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<UpdateProfileResult> Handle(UpdateProfileCommand command, CancellationToken cancellationToken)
+    public async Task<Result<UserDto>> Handle(UpdateProfileCommand command, CancellationToken cancellationToken)
     {
         var user = await _unitOfWork.Users.FindAsync(command.UserId, cancellationToken);
 
-        if (user is null) return new NotFound();
+        if (user is null)
+            return new Result<UserDto>(new UserNotFoundException(command.UserId));
 
         // TODO: Update user stuff
 

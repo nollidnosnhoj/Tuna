@@ -5,9 +5,6 @@ using HotChocolate.Execution.Configuration;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Tuna.Application.Persistence;
-using Tuna.GraphQl.Features.Audios;
-using Tuna.GraphQl.Features.Users;
-using Tuna.GraphQl.GraphQL.Types;
 
 namespace Tuna.GraphQl.Configurations;
 

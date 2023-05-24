@@ -1,8 +1,8 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using LanguageExt.Common;
 using MediatR;
-using OneOf;
-using Tuna.Application.Features.Users.Errors;
+using Tuna.Application.Exceptions;
 using Tuna.Application.Features.Users.Models;
 using Tuna.Application.Persistence;
 using Tuna.Application.Services;
@@ -11,7 +11,7 @@ using Tuna.Shared.Mediatr;
 
 namespace Tuna.Application.Features.Users.Commands;
 
-public class CreateUserCommand : ICommandRequest<CreateUserCommandResult>
+public class CreateUserCommand : ICommandRequest<Result<CurrentUserDto>>
 {
     public CreateUserCommand(string username, string email, string password)
     {
@@ -25,11 +25,6 @@ public class CreateUserCommand : ICommandRequest<CreateUserCommandResult>
     public string Password { get; }
 }
 
-[GenerateOneOf]
-public partial class CreateUserCommandResult : OneOfBase<CurrentUserDto, IdentityServiceError>
-{
-}
-
 // public class CreateUserCommandValidator : AbstractValidator<CreateUserCommand>
 // {
 //     public CreateUserCommandValidator()
@@ -37,11 +32,7 @@ public partial class CreateUserCommandResult : OneOfBase<CurrentUserDto, Identit
 //     }
 // }
 
-public class CreateUserCommandResponse
-{
-}
-
-public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, CreateUserCommandResult>
+public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Result<CurrentUserDto>>
 {
     private readonly IUserService _userService;
     private readonly IUnitOfWork _unitOfWork;
@@ -52,7 +43,7 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Creat
         _userService = userService;
     }
 
-    public async Task<CreateUserCommandResult> Handle(CreateUserCommand request, CancellationToken cancellationToken)
+    public async Task<Result<CurrentUserDto>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
         var trimmedUsername = request.Username.Trim();
 
@@ -62,7 +53,8 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Creat
             request.Password,
             cancellationToken);
 
-        if (!identityResult.Succeeded) return new IdentityServiceError(identityResult.Errors);
+        if (!identityResult.Succeeded)
+            return new Result<CurrentUserDto>(new UserIdentityException(identityResult.Errors));
 
         var user = new User(identityResult.IdentityId, trimmedUsername);
 

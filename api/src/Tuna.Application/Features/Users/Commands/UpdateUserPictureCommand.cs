@@ -1,15 +1,17 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using LanguageExt.Common;
 using MediatR;
-using OneOf;
-using OneOf.Types;
+using Tuna.Application.Features.Users.Exceptions;
 using Tuna.Application.Persistence;
 using Tuna.Application.Services;
+using Tuna.Domain.Entities;
+using Tuna.Domain.Exceptions;
 using Tuna.Shared.Mediatr;
 
 namespace Tuna.Application.Features.Users.Commands;
 
-public class UpdateUserPictureCommand : ICommandRequest<UpdateUserPictureResult>
+public class UpdateUserPictureCommand : ICommandRequest<Result<string?>>
 {
     public UpdateUserPictureCommand(long userId, string? uploadId)
     {
@@ -21,12 +23,7 @@ public class UpdateUserPictureCommand : ICommandRequest<UpdateUserPictureResult>
     public string? UploadId { get; }
 }
 
-[GenerateOneOf]
-public partial class UpdateUserPictureResult : OneOfBase<string, NotFound>
-{
-}
-
-public class UpdateUserPictureCommandHandler : IRequestHandler<UpdateUserPictureCommand, UpdateUserPictureResult>
+public class UpdateUserPictureCommandHandler : IRequestHandler<UpdateUserPictureCommand, Result<string?>>
 {
     private readonly IImageService _imageService;
     private readonly IUnitOfWork _unitOfWork;
@@ -37,12 +34,13 @@ public class UpdateUserPictureCommandHandler : IRequestHandler<UpdateUserPicture
         _imageService = imageService;
     }
 
-    public async Task<UpdateUserPictureResult> Handle(UpdateUserPictureCommand command,
+    public async Task<Result<string?>> Handle(UpdateUserPictureCommand command,
         CancellationToken cancellationToken)
     {
         var user = await _unitOfWork.Users.FindAsync(command.UserId, cancellationToken);
 
-        if (user is null) return new NotFound();
+        if (user is null)
+            return new Result<string?>(new UserNotFoundException(command.UserId));
 
         if (string.IsNullOrEmpty(command.UploadId) && !string.IsNullOrEmpty(user.ImageId))
         {

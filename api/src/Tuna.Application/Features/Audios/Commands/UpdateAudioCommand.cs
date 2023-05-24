@@ -1,20 +1,20 @@
-﻿using System.Security.Claims;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentValidation;
+using LanguageExt.Common;
 using MediatR;
-using OneOf;
-using OneOf.Types;
+using Tuna.Application.Features.Audios.Exceptions;
 using Tuna.Application.Features.Audios.Mappings;
 using Tuna.Application.Features.Audios.Models;
 using Tuna.Application.Persistence;
 using Tuna.Domain.Entities;
-using Tuna.Shared.Errors;
+using Tuna.Domain.Exceptions;
 using Tuna.Shared.Mediatr;
 
 namespace Tuna.Application.Features.Audios.Commands;
 
-public class UpdateAudioCommand : AuthCommandRequest<UpdateAudioResult>
+public class UpdateAudioCommand : AuthCommandRequest<Result<AudioDto>>
 {
     public UpdateAudioCommand(long id, string? title, string? description)
     {
@@ -26,11 +26,6 @@ public class UpdateAudioCommand : AuthCommandRequest<UpdateAudioResult>
     public long Id { get; }
     public string? Title { get; }
     public string? Description { get; }
-}
-
-[GenerateOneOf]
-public partial class UpdateAudioResult : OneOfBase<AudioDto, NotFound, Forbidden>
-{
 }
 
 public class UpdateAudioCommandValidator : AbstractValidator<UpdateAudioCommand>
@@ -55,7 +50,7 @@ public class UpdateAudioCommandValidator : AbstractValidator<UpdateAudioCommand>
     }
 }
 
-public class UpdateAudioCommandHandler : IRequestHandler<UpdateAudioCommand, UpdateAudioResult>
+public class UpdateAudioCommandHandler : IRequestHandler<UpdateAudioCommand, Result<AudioDto>>
 {
     private readonly IUnitOfWork _unitOfWork;
 
@@ -64,13 +59,15 @@ public class UpdateAudioCommandHandler : IRequestHandler<UpdateAudioCommand, Upd
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<UpdateAudioResult> Handle(UpdateAudioCommand command,
+    public async Task<Result<AudioDto>> Handle(UpdateAudioCommand command,
         CancellationToken cancellationToken)
     {
         var audio = await _unitOfWork.Audios.FindAsync(command.Id, cancellationToken);
 
-        if (audio == null) return new NotFound();
-        if (audio.UserId != command.UserId) return new Forbidden();
+        if (audio == null)
+            return new Result<AudioDto>(new AudioNotFoundException(command.Id));
+        if (audio.UserId != command.UserId)
+            return new Result<AudioDto>(new UnauthorizedAccessException());
 
         UpdateAudioFromCommandAsync(audio, command);
         _unitOfWork.Audios.Update(audio);

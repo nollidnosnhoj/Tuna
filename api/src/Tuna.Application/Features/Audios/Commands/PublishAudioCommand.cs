@@ -1,18 +1,19 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using FluentValidation;
+using LanguageExt.Common;
 using MediatR;
-using OneOf;
-using OneOf.Types;
-using Tuna.Application.Features.Audios.Errors;
+using Tuna.Application.Features.Audios.Exceptions;
 using Tuna.Application.Features.Audios.Mappings;
 using Tuna.Application.Features.Audios.Models;
 using Tuna.Application.Persistence;
+using Tuna.Domain.Entities;
+using Tuna.Domain.Exceptions;
 using Tuna.Shared.Mediatr;
 
 namespace Tuna.Application.Features.Audios.Commands;
 
-public class PublishAudioCommand : ICommandRequest<PublishAudioResult>
+public class PublishAudioCommand : ICommandRequest<Result<AudioDto>>
 {
     public PublishAudioCommand(
         long audioId,
@@ -33,11 +34,6 @@ public class PublishAudioCommand : ICommandRequest<PublishAudioResult>
     public string Title { get; }
     public string Description { get; }
     public long UserId { get; }
-}
-
-[GenerateOneOf]
-public partial class PublishAudioResult : OneOfBase<AudioDto, NotFound, AudioNotUploaded>
-{
 }
 
 public class PublishAudioCommandValidator : AbstractValidator<PublishAudioCommand>
@@ -63,7 +59,7 @@ public class PublishAudioCommandValidator : AbstractValidator<PublishAudioComman
     }
 }
 
-public class PublishAudioCommandHandler : IRequestHandler<PublishAudioCommand, PublishAudioResult>
+public class PublishAudioCommandHandler : IRequestHandler<PublishAudioCommand, Result<AudioDto>>
 {
     private readonly IUnitOfWork _unitOfWork;
 
@@ -72,12 +68,14 @@ public class PublishAudioCommandHandler : IRequestHandler<PublishAudioCommand, P
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<PublishAudioResult> Handle(PublishAudioCommand command,
+    public async Task<Result<AudioDto>> Handle(PublishAudioCommand command,
         CancellationToken cancellationToken)
     {
         var audio = await _unitOfWork.Audios.FindAsync(command.AudioId, cancellationToken);
-        if (audio is null || audio.UserId != command.UserId) return new NotFound();
-        if (audio.UploadedAt is null) return new AudioNotUploaded();
+        if (audio is null || audio.UserId != command.UserId) 
+            return new Result<AudioDto>(new AudioNotFoundException(command.AudioId));
+        if (audio.UploadedAt is null)
+            return new Result<AudioDto>(new AudioNotUploadedException(command.AudioId));
 
         audio.Title = command.Title;
         audio.Description = command.Description;

@@ -1,19 +1,22 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using LanguageExt.Common;
 using MediatR;
-using OneOf;
-using OneOf.Types;
-using Tuna.Application.Features.Users.Errors;
+using Tuna.Application.Exceptions;
+using Tuna.Application.Features.Users.Exceptions;
 using Tuna.Application.Persistence;
 using Tuna.Application.Services;
+using Tuna.Domain.Entities;
+using Tuna.Domain.Exceptions;
 using Tuna.Shared.Mediatr;
 
 namespace Tuna.Application.Features.Users.Commands;
 
-public class UpdateEmailCommand : ICommandRequest<UpdateEmailCommandResult>
+public class UpdateEmailCommand : ICommandRequest<Result<bool>>
 {
     public UpdateEmailCommand(long userId, string newEmail)
     {
+        UserId = userId;
         NewEmail = newEmail;
     }
 
@@ -21,12 +24,7 @@ public class UpdateEmailCommand : ICommandRequest<UpdateEmailCommandResult>
     public string NewEmail { get; }
 }
 
-[GenerateOneOf]
-public partial class UpdateEmailCommandResult : OneOfBase<Unit, NotFound, IdentityServiceError>
-{
-}
-
-public class UpdateEmailCommandHandler : IRequestHandler<UpdateEmailCommand, UpdateEmailCommandResult>
+public class UpdateEmailCommandHandler : IRequestHandler<UpdateEmailCommand, Result<bool>>
 {
     private readonly IUserService _userService;
     private readonly IUnitOfWork _unitOfWork;
@@ -37,16 +35,18 @@ public class UpdateEmailCommandHandler : IRequestHandler<UpdateEmailCommand, Upd
         _userService = userService;
     }
 
-    public async Task<UpdateEmailCommandResult> Handle(UpdateEmailCommand command, CancellationToken cancellationToken)
+    public async Task<Result<bool>> Handle(UpdateEmailCommand command, CancellationToken cancellationToken)
     {
         var user = await _unitOfWork.Users.FindAsync(command.UserId, cancellationToken);
 
-        if (user is null) return new NotFound();
+        if (user is null)
+            return new Result<bool>(new UserNotFoundException(command.UserId));
 
         var result = await _userService.UpdateEmailAsync(user.IdentityId, command.NewEmail, cancellationToken);
 
-        if (!result.Succeeded) return new IdentityServiceError(result.Errors);
+        if (!result.Succeeded)
+            return new Result<bool>(new UserIdentityException(result.Errors));
 
-        return Unit.Value;
+        return true;
     }
 }

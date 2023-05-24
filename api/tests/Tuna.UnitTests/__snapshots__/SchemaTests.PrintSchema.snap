@@ -12,11 +12,6 @@ interface Node {
   id: ID!
 }
 
-interface UserError {
-  code: String!
-  message: String!
-}
-
 type Audio implements Node {
   id: ID!
   title: String!
@@ -31,20 +26,15 @@ type Audio implements Node {
   imageUrl: String
 }
 
-type AudioNotFoundError implements Error & UserError {
-  id: ID!
-  code: String!
+type AudioNotFoundError implements Error {
   message: String!
+  entityName: String!
+  id: Long!
 }
 
-type AudioNotUploadedError implements Error & UserError {
-  code: String!
+type AudioNotUploadedError implements Error {
   message: String!
-}
-
-type CannotFollowYourselfError implements Error & UserError {
-  code: String!
-  message: String!
+  audioId: Long!
 }
 
 "Information about the offset pagination."
@@ -103,6 +93,11 @@ type FollowersCollectionSegment {
   items: [User!]
 }
 
+type FollowingError implements Error {
+  message: String!
+  targetId: Long!
+}
+
 "A segment of a collection."
 type FollowingsCollectionSegment {
   "Information to aid in pagination."
@@ -111,9 +106,9 @@ type FollowingsCollectionSegment {
   items: [User!]
 }
 
-type IdentityError implements Error & UserError {
+type IdentityError {
   code: String!
-  message: String!
+  description: String!
 }
 
 type Mutation {
@@ -237,13 +232,18 @@ type UserFavoriteAudiosCollectionSegment {
   items: [Audio!]
 }
 
-type UserNotFoundError implements Error & UserError {
-  id: ID!
-  code: String!
+type UserIdentityError implements Error {
   message: String!
+  errors: [IdentityError!]!
 }
 
-type ValidationError implements Error & UserError {
+type UserNotFoundError implements Error {
+  message: String!
+  entityName: String!
+  id: Long!
+}
+
+type ValidationError implements Error {
   fieldErrors: [FieldError!]!
   code: String!
   message: String!
@@ -251,13 +251,13 @@ type ValidationError implements Error & UserError {
 
 union CreateAudioError = ValidationError
 
-union CreateAudioPictureError = ValidationError | AudioNotFoundError
+union CreateAudioPictureError = ValidationError
 
-union CreateUserPictureError = ValidationError | UserNotFoundError
+union CreateUserPictureError = ValidationError
 
 union FavoriteAudioError = AudioNotFoundError
 
-union FollowUserError = UserNotFoundError | CannotFollowYourselfError
+union FollowUserError = UserNotFoundError | FollowingError
 
 union PublishAudioError = ValidationError | AudioNotFoundError | AudioNotUploadedError
 
@@ -269,19 +269,19 @@ union RemoveUserPictureError = ValidationError | UserNotFoundError
 
 union UnfavoriteAudioError = AudioNotFoundError
 
-union UnfollowUserError = UserNotFoundError | CannotFollowYourselfError
+union UnfollowUserError = UserNotFoundError | FollowingError
 
 union UpdateAudioError = ValidationError | AudioNotFoundError
 
 union UpdateAudioPictureError = ValidationError | AudioNotFoundError
 
-union UpdateEmailError = IdentityError
+union UpdateEmailError = UserIdentityError
 
-union UpdatePasswordError = IdentityError
+union UpdatePasswordError = UserIdentityError
 
 union UpdateUserError = UserNotFoundError
 
-union UpdateUserNameError = IdentityError | UserNotFoundError
+union UpdateUserNameError = UserIdentityError | UserNotFoundError
 
 union UpdateUserPictureError = ValidationError | UserNotFoundError
 
@@ -376,7 +376,9 @@ enum ApplyPolicy {
   VALIDATION
 }
 
-directive @authorize("The name of the authorization policy that determines access to the annotated resource." policy: String "Roles that are allowed to access the annotated resource." roles: [String!] "Defines when when the authorize directive shall be applied.By default the authorize directives are applied during the validation phase." apply: ApplyPolicy! = VALIDATION) repeatable on OBJECT | FIELD_DEFINITION
+directive @allowAnonymous repeatable on FIELD_DEFINITION
+
+directive @authorize("The name of the authorization policy that determines access to the annotated resource." policy: String "Roles that are allowed to access the annotated resource." roles: [String!] "Defines when when the authorize directive shall be applied.By default the authorize directives are applied during the validation phase." apply: ApplyPolicy! = BEFORE_RESOLVER) repeatable on OBJECT | FIELD_DEFINITION
 
 "The `@specifiedBy` directive is used within the type system definition language to provide a URL for specifying the behavior of custom scalar definitions."
 directive @specifiedBy("The specifiedBy URL points to a human-readable specification. This field will only read a result for scalar types." url: String!) on SCALAR

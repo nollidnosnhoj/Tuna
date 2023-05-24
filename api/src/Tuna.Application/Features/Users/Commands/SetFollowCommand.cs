@@ -1,24 +1,20 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using LanguageExt.Common;
 using MediatR;
-using OneOf;
-using OneOf.Types;
-using Tuna.Application.Features.Users.Errors;
+using Tuna.Application.Features.Users.Exceptions;
 using Tuna.Application.Persistence;
 using Tuna.Application.Services;
+using Tuna.Domain.Entities;
+using Tuna.Domain.Exceptions;
 using Tuna.Shared.Mediatr;
 
 namespace Tuna.Application.Features.Users.Commands;
 
 public record SetFollowCommand
-    (long TargetId, long ObserverId, bool IsFollowing) : ICommandRequest<SetFollowCommandResult>;
+    (long TargetId, long ObserverId, bool IsFollowing) : ICommandRequest<Result<bool>>;
 
-[GenerateOneOf]
-public partial class SetFollowCommandResult : OneOfBase<bool, NotFound, CannotFollowYourself>
-{
-}
-
-public class SetFollowCommandHandler : IRequestHandler<SetFollowCommand, SetFollowCommandResult>
+public class SetFollowCommandHandler : IRequestHandler<SetFollowCommand, Result<bool>>
 {
     private readonly IClock _clock;
     private readonly IUnitOfWork _unitOfWork;
@@ -29,14 +25,16 @@ public class SetFollowCommandHandler : IRequestHandler<SetFollowCommand, SetFoll
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<SetFollowCommandResult> Handle(SetFollowCommand command, CancellationToken cancellationToken)
+    public async Task<Result<bool>> Handle(SetFollowCommand command, CancellationToken cancellationToken)
     {
         var target = await _unitOfWork.Users
             .LoadUserWithFollowers(command.TargetId, command.ObserverId, cancellationToken);
 
-        if (target == null) return new NotFound();
+        if (target == null)
+            return new Result<bool>(new UserNotFoundException(command.TargetId));
 
-        if (target.Id == command.ObserverId) return new CannotFollowYourself();
+        if (target.Id == command.ObserverId)
+            return new Result<bool>(new FollowingException(command.TargetId, "You can't follow yourself."));
 
         if (command.IsFollowing)
             target.Follow(command.ObserverId, _clock.UtcNow);
